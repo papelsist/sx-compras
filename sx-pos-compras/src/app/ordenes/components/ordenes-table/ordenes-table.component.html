@@ -1,0 +1,22 @@
+<div class="ordenes-table mat-elevation-z8">
+  <mat-table class="ordenes-table " [dataSource]="dataSource">
+    <ng-container matColumnDef="folio">
+      <mat-header-cell *matHeaderCellDef>Folio</mat-header-cell>
+      <mat-cell *matCellDef="let compra">{{compra.folio}}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="fecha">
+      <mat-header-cell *matHeaderCellDef>Fecha</mat-header-cell>
+      <mat-cell *matCellDef="let compra">{{compra.fecha | date: 'dd/MM/yyyy'}}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="proveedor">
+      <mat-header-cell *matHeaderCellDef>Proveedor</mat-header-cell>
+      <mat-cell *matCellDef="let compra">{{compra.proveedor}}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="comentario">
+      <mat-header-cell *matHeaderCellDef>Comentario</mat-header-cell>
+      <mat-cell *matCellDef="let compra">{{compra.comentario}}</mat-cell>
+    </ng-container>
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="onSelect(row)"></mat-row>
+  </mat-table>
+</div>

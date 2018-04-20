@@ -1,0 +1,12 @@
+<mat-input-container class="fill">
+  <input type="text" matInput [formControl]="searchControl" placeholder="Proveedor" [required]="required" [matAutocomplete]="auto">
+  <mat-error>
+    Debe selccionar un proveedor
+  </mat-error>
+</mat-input-container>
+
+<mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+  <mat-option *ngFor="let proveedor of proveedores$ | async" [value]="proveedor">
+    {{ proveedor.nombre }}
+  </mat-option>
+</mat-autocomplete>

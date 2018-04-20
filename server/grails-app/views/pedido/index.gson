@@ -1,0 +1,8 @@
+import sx.core.Venta
+
+model {
+	Iterable<Venta> ventaList
+	Integer ventaCount
+}
+json tmpl.pedido(ventaList ?: [])
+

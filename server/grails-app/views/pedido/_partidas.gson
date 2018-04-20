@@ -1,0 +1,10 @@
+import sx.core.VentaDet
+
+model {
+	VentaDet ventaDet
+}
+
+json g.render(ventaDet, [excludes: ['producto','sucursal','venta', 'dateCreated', 'lastUpdated']]){
+    producto g.render(ventaDet.producto, [includes: ['di','clave','descripcion']])
+}
+
