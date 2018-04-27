@@ -1,0 +1,49 @@
+<div class=" productos-table-container mat-elevation-z8">
+  <mat-table [dataSource]="dataSource">
+
+    <!-- Position Column -->
+    <ng-container matColumnDef="clave">
+      <mat-header-cell *matHeaderCellDef> Clave </mat-header-cell>
+      <mat-cell *matCellDef="let prod"> {{prod.clave}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="descripcion">
+      <mat-header-cell *matHeaderCellDef>Producto</mat-header-cell>
+      <mat-cell *matCellDef="let producto">{{producto.descripcion}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="kilos">
+      <mat-header-cell *matHeaderCellDef>Kilos</mat-header-cell>
+      <mat-cell *matCellDef="let producto">{{producto.kilos}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="precioCredito">
+      <mat-header-cell *matHeaderCellDef>P. Crédito</mat-header-cell>
+      <mat-cell *matCellDef="let producto">{{producto.precioCredito}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="precioContado">
+      <mat-header-cell *matHeaderCellDef>P. Contado</mat-header-cell>
+      <mat-cell *matCellDef="let producto">{{producto.precioContado}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="linea">
+      <mat-header-cell *matHeaderCellDef>Línea</mat-header-cell>
+      <mat-cell *matCellDef="let producto">{{producto.linea.linea}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="marca">
+      <mat-header-cell *matHeaderCellDef>Marca</mat-header-cell>
+      <mat-cell *matCellDef="let producto">{{producto.marca.marca}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="clase">
+      <mat-header-cell *matHeaderCellDef>Clase</mat-header-cell>
+      <mat-cell *matCellDef="let producto">{{producto.clase.clase}}</mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+
+  </mat-table>
+</div>

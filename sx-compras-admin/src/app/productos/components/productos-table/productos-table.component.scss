@@ -1,0 +1,44 @@
+
+.productos-table-container {
+  display: flex;
+  flex-direction: column;
+  //max-height: 500px;
+  min-width: 300px;
+}
+
+.mat-table {
+  overflow: auto;
+  max-height: 500px;
+  border-collapse: collapse;
+}
+
+.mat-row {
+  cursor: pointer;
+  min-height: 35px;
+  position: relative; // For matRipple
+  &:hover {
+    background: #ccc4c4;
+  }
+  &:active {
+    background: #f5f5f5;
+  }
+}
+.mat-column-clave{
+  min-width: 120px;
+}
+.mat-column-descripcion {
+  min-width: 350px;
+}
+.mat-column-comentario {
+  font-size: 10px;
+}
+.mat-column-kilos {
+  min-width: 50px;
+}
+.mat-column-precioCredito, .mat-column-precioContado {
+  min-width: 110px;
+}
+
+.mat-column-linea, .mat-column-clase, .mat-column-marca {
+  min-width: 110px;
+}
