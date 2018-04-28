@@ -6,7 +6,8 @@ import {
   CatalogosPageComponent,
   LineasComponent,
   MarcasComponent,
-  ClasesComponent
+  ClasesComponent,
+  ProductoComponent,
 } from './containers';
 
 const routes: Routes = [
@@ -15,15 +16,16 @@ const routes: Routes = [
     component: CatalogosPageComponent,
     children: [
       { path: 'productos', component: ProductosComponent },
+      { path: 'productos/:productoId', component: ProductoComponent },
       { path: 'lineas', component: LineasComponent },
       { path: 'marcas', component: MarcasComponent },
-      { path: 'clases', component: ClasesComponent }
-    ]
-  }
+      { path: 'clases', component: ClasesComponent },
+    ],
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
 export class ProductosRoutingModule {}
