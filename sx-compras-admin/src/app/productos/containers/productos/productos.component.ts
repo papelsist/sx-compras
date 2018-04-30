@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { MatTableDataSource } from '@angular/material';
 
 import { Store } from '@ngrx/store';
@@ -10,12 +11,15 @@ import { Producto } from '../../models/producto';
 @Component({
   selector: 'sx-productos',
   templateUrl: './productos.component.html',
-  styles: []
+  styles: [],
 })
 export class ProductosComponent implements OnInit {
   dataSource = new MatTableDataSource([]);
   productos$: Observable<Producto[]>;
-  constructor(private store: Store<fromStore.CatalogosState>) {}
+  constructor(
+    private store: Store<fromStore.CatalogosState>,
+    private router: Router,
+  ) {}
 
   ngOnInit() {
     this.productos$ = this.store.select(fromStore.getAllProductos);
@@ -24,5 +28,9 @@ export class ProductosComponent implements OnInit {
     });
 
     this.store.dispatch(new fromStore.LoadProductos());
+  }
+
+  onSelect(row) {
+    this.router.navigate(['/productos/productos', row.id]);
   }
 }

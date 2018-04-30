@@ -1,9 +1,9 @@
-
 import { createSelector } from '@ngrx/store';
 
 import * as fromRoot from 'app/store';
 import * as fromFeature from '../reducers';
-import * as fromProductos from '../reducers/productos.reducers';
+import * as fromProductos from '../reducers/productos.reducer';
+import { Producto } from '../../models/producto';
 
 export const getProductoState = createSelector(
   fromFeature.getCatalogosState,
@@ -30,4 +30,12 @@ export const getProductosLoaded = createSelector(
 export const getProductosLoading = createSelector(
   getProductoState,
   fromProductos.getProductosLoading,
+);
+
+export const getSelectedProducto = createSelector(
+  getProductosEntities,
+  fromRoot.getRouterState,
+  (entities, router): Producto => {
+    return router.state && entities[router.state.params.productoId];
+  },
 );

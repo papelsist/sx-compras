@@ -1,6 +1,6 @@
 import { ActionReducerMap, createFeatureSelector } from '@ngrx/store';
 
-import * as fromProductos from './productos.reducers';
+import * as fromProductos from './productos.reducer';
 
 export interface CatalogosState {
   productos: fromProductos.ProductoState;

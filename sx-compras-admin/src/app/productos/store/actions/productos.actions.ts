@@ -2,9 +2,9 @@ import { Action } from '@ngrx/store';
 
 import { Producto } from '../../models/producto';
 
-export const LOAD_PRODUCTOS = '[Productos] Load productos';
-export const LOAD_PRODUCTOS_FAIL = '[Productos] Load productos fail';
-export const LOAD_PRODUCTOS_SUCCESS = '[Productos] Load productos success';
+export const LOAD_PRODUCTOS = '[Catalogos] Load productos';
+export const LOAD_PRODUCTOS_FAIL = '[Catalogos] Load productos fail';
+export const LOAD_PRODUCTOS_SUCCESS = '[Catalogos] Load productos success';
 
 export class LoadProductos implements Action {
   readonly type = LOAD_PRODUCTOS;

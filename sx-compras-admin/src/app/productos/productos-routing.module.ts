@@ -16,6 +16,7 @@ const routes: Routes = [
     component: CatalogosPageComponent,
     children: [
       { path: 'productos', component: ProductosComponent },
+      { path: 'productos/create', component: ProductoComponent },
       { path: 'productos/:productoId', component: ProductoComponent },
       { path: 'lineas', component: LineasComponent },
       { path: 'marcas', component: MarcasComponent },
