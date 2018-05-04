@@ -32,17 +32,24 @@ export class ProductosService {
     return this.http.get<Producto>(url);
   }
 
-  save(producto: Producto) {
-    return this.http.post(this.apiUrl, producto);
+  save(producto: Producto): Observable<Producto> {
+    return this.http
+      .post<Producto>(this.apiUrl, producto)
+      .pipe(catchError(error => Observable.throw(error)));
   }
 
   update(prod: Producto): Observable<Producto> {
-    return this.http.put<Producto>(this.apiUrl, prod);
+    const url = `${this.apiUrl}/${prod.id}`;
+    return this.http
+      .put<Producto>(url, prod)
+      .pipe(catchError(error => Observable.throw(error)));
   }
 
   delete(id: string) {
-    const params = new HttpParams().set('id', id);
-    return this.http.delete(this.apiUrl, { params: params });
+    const url = `${this.apiUrl}/${id}`;
+    return this.http
+      .delete(url)
+      .pipe(catchError(error => Observable.throw(error)));
   }
 
   print(producto: Producto) {

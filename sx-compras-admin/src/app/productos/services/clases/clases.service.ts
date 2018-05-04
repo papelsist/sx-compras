@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
+
 import { Observable } from 'rxjs/Observable';
+import { map, switchMap, catchError } from 'rxjs/operators';
+
 import * as _ from 'lodash';
 
 import { ConfigService } from 'app/utils/config.service';
@@ -14,29 +17,9 @@ export class ClasesService {
     this.apiUrl = configService.buildApiUrl('clases');
   }
 
-  list(filtro): Observable<Clase[]> {
-    let params = new HttpParams();
-    _.forIn(filtro, (value, key) => {
-      params = params.set(key, value);
-    });
-    return this.http.get<Clase[]>(this.apiUrl, { params: params });
-  }
-
-  get(id: string): Observable<Clase> {
-    const url = `${this.apiUrl}/${id}`;
-    return this.http.get<Clase>(url);
-  }
-
-  save(clase: Clase) {
-    return this.http.post(this.apiUrl, clase);
-  }
-
-  update(clase: Clase): Observable<Clase> {
-    return this.http.put<Clase>(this.apiUrl, clase);
-  }
-
-  delete(id: string) {
-    const params = new HttpParams().set('id', id);
-    return this.http.delete(this.apiUrl, { params: params });
+  list(): Observable<Clase[]> {
+    return this.http
+      .get<Clase[]>(this.apiUrl)
+      .pipe(catchError((error: any) => Observable.throw(error)));
   }
 }

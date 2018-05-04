@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
+
 import { Observable } from 'rxjs/Observable';
+import { catchError } from 'rxjs/operators';
+
 import * as _ from 'lodash';
 
 import { ConfigService } from 'app/utils/config.service';
@@ -14,12 +17,15 @@ export class MarcasService {
     this.apiUrl = configService.buildApiUrl('marcas');
   }
 
-  list(filtro): Observable<Marca[]> {
+  list(filtro = {}): Observable<Marca[]> {
     let params = new HttpParams();
     _.forIn(filtro, (value, key) => {
       params = params.set(key, value);
     });
-    return this.http.get<Marca[]>(this.apiUrl, { params: params });
+
+    return this.http
+      .get<Marca[]>(this.apiUrl, { params: params })
+      .pipe(catchError(error => Observable.throw(error)));
   }
 
   get(id: string): Observable<Marca> {

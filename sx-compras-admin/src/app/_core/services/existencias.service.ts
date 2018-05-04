@@ -3,7 +3,7 @@ import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
 import { ConfigService } from 'app/utils/config.service';
-import { Producto } from 'app/models/producto';
+
 import { Existencia } from 'app/models/existencia';
 
 @Injectable()
@@ -14,12 +14,10 @@ export class ExistenciasService {
     this.apiUrl = config.buildApiUrl('existencias');
   }
 
-  buscarExistencias(producto: Producto, fecha: Date = new Date()) {
+  buscarExistencias(producto: any, fecha: Date = new Date()) {
     const year = fecha.getFullYear();
     const month = fecha.getMonth() + 1;
     const url = `${this.apiUrl}/${producto.id}/${year}/${month}`;
-    // console.log(`Buscando existencias del producto ${producto.clave} para el ${month} - ${year}`);
-    // console.log('URL: ', url);
     return this.http.get<Existencia[]>(url);
   }
 

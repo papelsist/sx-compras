@@ -45,6 +45,50 @@ export function reducer(
         loaded: false
       };
     }
+
+    case fromProductos.REMOVE_PRODUCTO:
+    case fromProductos.CREATE_PRODUCTO:
+    case fromProductos.UPDATE_PRODUCTO: {
+      return {
+        ...state,
+        loading: true
+      };
+    }
+
+    case fromProductos.REMOVE_PRODUCTO_FAIL:
+    case fromProductos.CREATE_PRODUCTO_FAIL:
+    case fromProductos.UPDATE_PRODUCTO_FAIL: {
+      return {
+        ...state,
+        loading: false,
+        loaded: false
+      };
+    }
+
+    case fromProductos.UPDATE_PRODUCTO_SUCCESS:
+    case fromProductos.CREATE_PRODUCTO_SUCCESS: {
+      const producto = action.payload;
+      const entities = {
+        ...state.entities,
+        [producto.id]: producto
+      };
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        entities
+      };
+    }
+
+    case fromProductos.REMOVE_PRODUCTO_SUCCESS: {
+      const producto = action.payload;
+      const { [producto.id]: result, ...entities } = state.entities;
+      return {
+        ...state,
+        loading: false,
+        entities
+      };
+    }
   }
 
   return state;

@@ -12,6 +12,7 @@ import { SucursalFieldComponent } from './sucursal-field/sucursal-field.componen
 import { UsuarioSecFieldComponent } from './usuario-sec-field/usuario-sec-field.component';
 import { ProveedorFieldComponent } from './proveedor-field/proveedor-field.component';
 import { ProductoProvFieldComponent } from './producto-prov-field/producto-prov-field.component';
+import { UpperCaseFieldComponent } from './upper-case-field/upper-case-field.component';
 
 export const components = [
   DireccionComponent,
@@ -27,7 +28,8 @@ export const components = [
   SucursalFieldComponent,
   UsuarioSecFieldComponent,
   ProveedorFieldComponent,
-  ProductoProvFieldComponent
+  ProductoProvFieldComponent,
+  UpperCaseFieldComponent
 ];
 
 export const entyComponents: any[] = [
@@ -47,3 +49,4 @@ export * from './periodo-dialog/periodo-dialog.component';
 export * from './periodo-picker/periodo-picker.component';
 export * from './proveedor-field/proveedor-field.component';
 export * from './producto-prov-field/producto-prov-field.component';
+export * from './upper-case-field/upper-case-field.component';

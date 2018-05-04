@@ -13,7 +13,7 @@ export class ClasesComponent implements OnInit {
   constructor(private service: ClasesService) {}
 
   ngOnInit() {
-    this.service.list({}).subscribe(data => (this.clases = data));
+    this.service.list().subscribe(data => (this.clases = data));
   }
   onSelect(clase) {
     console.log('Select: ', clase);

@@ -10,7 +10,7 @@ import {
 import { StoreModule, MetaReducer } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 
-import { reducers, CustomSerializer } from './store';
+import { reducers, effects, CustomSerializer } from './store';
 
 // Not used in production
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
@@ -47,7 +47,7 @@ export function onAppInit(configService: ConfigService): () => Promise<any> {
       name: 'SIIPAPX Dev Tools',
       logOnly: environment.production
     }),
-    EffectsModule.forRoot([]),
+    EffectsModule.forRoot(effects),
     StoreRouterConnectingModule,
 
     SharedModule,

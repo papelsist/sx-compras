@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
+
 import { Observable } from 'rxjs/Observable';
+import { catchError } from 'rxjs/operators';
+
 import * as _ from 'lodash';
 
 import { ConfigService } from 'app/utils/config.service';
@@ -14,12 +17,14 @@ export class LineasService {
     this.apiUrl = configService.buildApiUrl('lineas');
   }
 
-  list(filtro): Observable<Linea[]> {
+  list(filtro: any = {}): Observable<Linea[]> {
     let params = new HttpParams();
     _.forIn(filtro, (value, key) => {
       params = params.set(key, value);
     });
-    return this.http.get<Linea[]>(this.apiUrl, { params: params });
+    return this.http
+      .get<Linea[]>(this.apiUrl, { params: params })
+      .pipe(catchError((error: any) => Observable.throw(error)));
   }
 
   get(id: string): Observable<Linea> {

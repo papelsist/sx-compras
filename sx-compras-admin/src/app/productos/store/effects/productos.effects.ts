@@ -6,6 +6,7 @@ import { of } from 'rxjs/observable/of';
 
 import * as productoActions from '../actions/productos.actions';
 import * as fromServices from '../../services';
+import * as fromRoot from 'app/store';
 
 @Injectable()
 export class ProductosEffects {
@@ -23,6 +24,58 @@ export class ProductosEffects {
           map(productos => new productoActions.LoadProductosSuccess(productos)),
           catchError(error => of(new productoActions.LoadProductosFail(error)))
         );
+    })
+  );
+
+  @Effect()
+  createProducto$ = this.actions$.ofType(productoActions.CREATE_PRODUCTO).pipe(
+    map((action: productoActions.CreateProducto) => action.payload),
+    switchMap(newProduct => {
+      return this.productosService
+        .save(newProduct)
+        .pipe(
+          map(producto => new productoActions.CreateProductoSuccess(producto)),
+          catchError(error => of(new productoActions.CreateProductoFail(error)))
+        );
+    })
+  );
+
+  @Effect()
+  createProductoSuccess$ = this.actions$
+    .ofType(productoActions.CREATE_PRODUCTO_SUCCESS)
+    .pipe(
+      map((action: productoActions.CreateProductoSuccess) => action.payload),
+      map(producto => {
+        return new fromRoot.Go({
+          path: ['productos/productos', producto.id]
+        });
+      })
+    );
+
+  @Effect()
+  updateProducto$ = this.actions$.ofType(productoActions.UPDATE_PRODUCTO).pipe(
+    map((action: productoActions.UpdateProducto) => action.payload),
+    switchMap(newProduct => {
+      return this.productosService
+        .update(newProduct)
+        .pipe(
+          map(producto => new productoActions.UpdateProductoSuccess(producto)),
+          catchError(error => of(new productoActions.UpdateProductoFail(error)))
+        );
+    })
+  );
+
+  @Effect()
+  removeProducto$ = this.actions$.ofType(productoActions.REMOVE_PRODUCTO).pipe(
+    map((action: productoActions.RemoveProducto) => action.payload),
+    switchMap(producto => {
+      return this.productosService.delete(producto.id).pipe(
+        map(() => new productoActions.RemoveProductoSuccess(producto)),
+        catchError(error => {
+          console.log('Error in dispatch event: ', error);
+          return of(new productoActions.RemoveProductoFail(error));
+        })
+      );
     })
   );
 }

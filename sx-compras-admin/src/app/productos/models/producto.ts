@@ -26,5 +26,5 @@ export interface Producto {
   precioContado: number;
   precioCredito: number;
   presentacion: string;
-  modificado: string;
+  lastUpdated?: string;
 }

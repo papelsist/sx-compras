@@ -1,9 +1,9 @@
-import { Sucursal, Producto } from '.';
+import { Sucursal } from '.';
 
 export interface Existencia {
   id: string;
   sucursal: Sucursal;
-  producto: Producto;
+  producto: { id: string; descripcion: string };
   anio: number;
   mes: number;
   nacional: boolean;

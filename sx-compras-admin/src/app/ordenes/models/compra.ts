@@ -1,9 +1,9 @@
-import { Sucursal, Proveedor } from 'app/models';
+import { Sucursal } from 'app/models';
 
 export interface Compra {
   id?: string;
   sucursal: Sucursal;
-  proveedor: Proveedor;
+  proveedor: { id: string; nombre: string };
   folio: number;
   fecha: string;
   entrega?: string;

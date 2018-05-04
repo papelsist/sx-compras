@@ -15,9 +15,9 @@ export class LoadLineasFail implements Action {
   constructor(public payload: any) {}
 }
 
-export class LoadLineaSuccess implements Action {
+export class LoadLineasSuccess implements Action {
   readonly type = LOAD_LINEAS_SUCCESS;
   constructor(public payload: Linea[]) {}
 }
 
-export type LineasActions = LoadLineas | LoadLineasFail | LoadLineaSuccess;
+export type LineasActions = LoadLineas | LoadLineasFail | LoadLineasSuccess;

@@ -1,9 +1,8 @@
-import * as _ from 'lodash';
-
 import * as fromLineas from '../actions/lineas.actions';
 
 import { Linea } from '../../models/linea';
 
+import * as _ from 'lodash';
 
 export interface LineaState {
   entities: { [id: string]: Linea };
@@ -14,12 +13,12 @@ export interface LineaState {
 export const initialState: LineaState = {
   entities: {},
   loaded: false,
-  loading: false,
+  loading: false
 };
 
 export function reducer(
   state = initialState,
-  action: fromLineas.LineasActions,
+  action: fromLineas.LineasActions
 ): LineaState {
   switch (action.type) {
     case fromLineas.LOAD_LINEAS: {
@@ -29,14 +28,26 @@ export function reducer(
       };
     }
     case fromLineas.LOAD_LINEAS_SUCCESS: {
-      const lineas = action.payload;
-
+      const entities = _.keyBy(action.payload, 'id');
       return {
         ...state,
         loaded: true,
+        loading: false,
+        entities
+      };
+    }
+
+    case fromLineas.LOAD_LINEAS_FAIL: {
+      return {
+        ...state,
+        loaded: false,
         loading: false
-      }
+      };
     }
   }
   return state;
 }
+
+export const getLineasEntities = (state: LineaState) => state.entities;
+export const getLineasLoaded = (state: LineaState) => state.loaded;
+export const getLineasLoading = (state: LineaState) => state.loading;

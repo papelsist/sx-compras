@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
 import { ConfigService } from '../../utils/config.service';
-import { Proveedor } from '../../models/proveedor';
+import { Proveedor } from '../models/proveedor';
 
 @Injectable()
 export class ProveedoresService {

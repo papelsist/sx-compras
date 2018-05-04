@@ -9,8 +9,8 @@ import {
 } from '@angular/forms';
 import * as _ from 'lodash';
 
-import { Proveedor } from '../../../models/proveedor';
-import { ConfigService } from '../../../utils/config.service';
+import { Proveedor } from 'app/proveedores/models/proveedor';
+import { ConfigService } from 'app/utils/config.service';
 
 export const PROVEEDOR_LOOKUPFIELD_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
