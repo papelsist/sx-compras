@@ -15,6 +15,9 @@ import { containers } from './containers';
 // services
 import { services } from './services';
 
+// gards
+import { guards } from './guards';
+
 @NgModule({
   imports: [
     SharedModule,
@@ -23,6 +26,6 @@ import { services } from './services';
     EffectsModule.forFeature(effects)
   ],
   declarations: [...components, ...containers],
-  providers: [...services]
+  providers: [...services, ...guards]
 })
 export class ProductosModule {}

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatTableDataSource } from '@angular/material';
 
@@ -10,6 +10,7 @@ import { Producto } from '../../models/producto';
 
 @Component({
   selector: 'sx-productos',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './productos.component.html',
   styles: [],
 })
@@ -27,7 +28,7 @@ export class ProductosComponent implements OnInit {
       this.dataSource.data = productos;
     });
 
-    this.store.dispatch(new fromStore.LoadProductos());
+    // this.store.dispatch(new fromStore.LoadProductos());
   }
 
   onSelect(row) {

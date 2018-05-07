@@ -1,8 +1,9 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'sx-producto-clave',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <mat-form-field [formGroup]="parent" >
       <input matInput placeholder="Clave" sxUpperCase formControlName="clave" autocomplete="off" required="true">
