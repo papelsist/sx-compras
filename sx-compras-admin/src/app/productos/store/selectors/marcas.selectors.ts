@@ -1,7 +1,10 @@
 import { createSelector } from '@ngrx/store';
 
+import * as _ from 'lodash';
+
 import * as fromFeature from '../reducers';
 import * as fromMarcas from '../reducers/marcas.reducer';
+import { Marca } from '../../models/marca';
 
 export const getMarcasState = createSelector(
   fromFeature.getCatalogosState,
@@ -14,7 +17,7 @@ export const getMarcasEntities = createSelector(
 );
 
 export const getAllMarcas = createSelector(getMarcasEntities, entities =>
-  Object.keys(entities).map(id => entities[id])
+  _.sortBy(Object.keys(entities).map(id => entities[id]), 'marca')
 );
 
 export const getMarcasLoading = createSelector(

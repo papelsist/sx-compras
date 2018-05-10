@@ -15,7 +15,7 @@ export class ProductosGuard implements CanActivate {
   canActivate(): Observable<boolean> {
     return this.checkStore().pipe(
       switchMap(() => of(true)),
-      catchError(() => of(false)),
+      catchError(() => of(false))
     );
   }
 
@@ -27,9 +27,7 @@ export class ProductosGuard implements CanActivate {
         }
       }),
       filter(loaded => loaded), // Waiting for loaded
-      take(1), // End the stream
+      take(1) // End the stream
     );
   }
-
-
-
+}

@@ -39,6 +39,7 @@ import 'rxjs/add/observable/merge';
 import 'rxjs/add/observable/forkJoin';
 import 'rxjs/add/observable/interval';
 import 'rxjs/add/observable/timer';
+import 'rxjs/add/observable/throw';
 
 if (environment.production) {
   enableProdMode();

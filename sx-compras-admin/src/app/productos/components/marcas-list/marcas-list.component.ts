@@ -10,13 +10,24 @@ import {
 @Component({
   selector: 'sx-marcas-list',
   templateUrl: './marcas-list.component.html',
-  styles: [],
+  styles: [
+    `.marcas-container {
+      display: flex;
+      flex-direction: column;
+      min-width: 300px;
+      overflow: auto;
+      max-height: 500px;
+    }
+  `
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MarcasListComponent implements OnInit {
   @Input() marcas = [];
 
-  @Output() select = new EventEmitter();
+  @Output() edit = new EventEmitter();
+  @Output() delete = new EventEmitter();
+  @Output() info = new EventEmitter();
 
   constructor() {}
 

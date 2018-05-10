@@ -7,11 +7,12 @@ import {
   LineasComponent,
   MarcasComponent,
   ClasesComponent,
-  ProductoComponent,
+  ProductoComponent
 } from './containers';
 
 // Guards
 import * as fromGuards from './guards';
+import { LineasGuard, MarcasGuard, ClasesGuard } from './guards';
 
 const routes: Routes = [
   {
@@ -21,7 +22,7 @@ const routes: Routes = [
       {
         path: 'productos',
         canActivate: [fromGuards.ProductosGuard],
-        component: ProductosComponent,
+        component: ProductosComponent
       },
       {
         path: 'productos/create',
@@ -29,9 +30,9 @@ const routes: Routes = [
           fromGuards.ProductosGuard,
           fromGuards.LineasGuard,
           fromGuards.MarcasGuard,
-          fromGuards.ClasesGuard,
+          fromGuards.ClasesGuard
         ],
-        component: ProductoComponent,
+        component: ProductoComponent
       },
       {
         path: 'productos/:productoId',
@@ -39,19 +40,27 @@ const routes: Routes = [
           fromGuards.ProductoExistsGuard,
           fromGuards.LineasGuard,
           fromGuards.MarcasGuard,
-          fromGuards.ClasesGuard,
+          fromGuards.ClasesGuard
         ],
-        component: ProductoComponent,
+        component: ProductoComponent
       },
-      { path: 'lineas', component: LineasComponent },
-      { path: 'marcas', component: MarcasComponent },
-      { path: 'clases', component: ClasesComponent },
-    ],
-  },
+      {
+        path: 'lineas',
+        canActivate: [LineasGuard],
+        component: LineasComponent
+      },
+      {
+        path: 'marcas',
+        canActivate: [MarcasGuard],
+        component: MarcasComponent
+      },
+      { path: 'clases', canActivate: [ClasesGuard], component: ClasesComponent }
+    ]
+  }
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule],
+  exports: [RouterModule]
 })
 export class ProductosRoutingModule {}

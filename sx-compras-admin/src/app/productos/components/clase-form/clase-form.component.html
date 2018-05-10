@@ -1,0 +1,19 @@
+<form novalidate [formGroup]="form">
+
+  <h2 mat-dialog-title>
+    <span *ngIf="clase">Mantenimieto de clase</span>
+    <span *ngIf="!clase">Alta de Clase</span>
+  </h2>
+  <mat-dialog-content>
+    <div layout>
+      <sx-upper-case-field flex formControlName="clase" placeholder="Nombre"></sx-upper-case-field>
+      <mat-checkbox formControlName="activa"> Activa</mat-checkbox>
+    </div>
+
+  </mat-dialog-content>
+
+  <mat-dialog-actions>
+    <button mat-button mat-dialog-close>Cancelar</button>
+    <button mat-button [mat-dialog-close]="form.value" [disabled]="form.invalid || form.pristine">Salvar</button>
+  </mat-dialog-actions>
+</form>

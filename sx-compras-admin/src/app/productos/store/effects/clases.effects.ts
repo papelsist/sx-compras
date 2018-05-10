@@ -23,4 +23,30 @@ export class ClasesEffects {
         );
     })
   );
+
+  @Effect()
+  createClase$ = this.actions$.ofType(fromClases.CREATE_CLASE).pipe(
+    map((action: fromClases.CreateClase) => action.payload),
+    switchMap(clase => {
+      return this.service
+        .save(clase)
+        .pipe(
+          map(res => new fromClases.CreateClaseSuccess(res)),
+          catchError(error => of(new fromClases.CreateClaseFail(error)))
+        );
+    })
+  );
+
+  @Effect()
+  updateClase$ = this.actions$.ofType(fromClases.UPDATE_CLASE).pipe(
+    map((action: fromClases.UpdateClase) => action.payload),
+    switchMap(clase => {
+      return this.service
+        .update(clase)
+        .pipe(
+          map(res => new fromClases.UpdateClaseSuccess(res)),
+          catchError(error => of(new fromClases.UpdateClaseFail(error)))
+        );
+    })
+  );
 }

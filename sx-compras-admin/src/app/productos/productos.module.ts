@@ -9,7 +9,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { reducers, effects } from './store';
 
 // components
-import { components } from './components';
+import { components, entryComponents } from './components';
 // containers
 import { containers } from './containers';
 // services
@@ -26,6 +26,7 @@ import { guards } from './guards';
     EffectsModule.forFeature(effects)
   ],
   declarations: [...components, ...containers],
+  entryComponents: [...entryComponents],
   providers: [...services, ...guards]
 })
 export class ProductosModule {}

@@ -42,6 +42,16 @@ export function reducer(
         loaded: false
       };
     }
+
+    case fromClases.UPDATE_CLASE_SUCCESS:
+    case fromClases.CREATE_CLASE_SUCCESS: {
+      const clase = action.payload;
+      const entities = { ...state.entities, [clase.id]: clase };
+      return {
+        ...state,
+        entities
+      };
+    }
   }
   return state;
 }

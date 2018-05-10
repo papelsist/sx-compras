@@ -44,6 +44,25 @@ export function reducer(
         loaded: false
       };
     }
+
+    case fromMarcas.UPDATE_MARCA_SUCCESS:
+    case fromMarcas.CREATE_MARCA_SUCCESS: {
+      const marca = action.payload;
+      const entities = { ...state.entities, [marca.id]: marca };
+      return {
+        ...state,
+        entities
+      };
+    }
+
+    case fromMarcas.REMOVE_MARCA_SUCCESS: {
+      const marca = action.payload;
+      const { [marca.id]: result, ...entities } = state.entities;
+      return {
+        ...state,
+        entities
+      };
+    }
   }
   return state;
 }

@@ -22,4 +22,24 @@ export class ClasesService {
       .get<Clase[]>(this.apiUrl)
       .pipe(catchError((error: any) => Observable.throw(error)));
   }
+
+  save(clase: Clase): Observable<Clase> {
+    return this.http
+      .post<Clase>(this.apiUrl, clase)
+      .pipe(catchError(error => Observable.throw(error)));
+  }
+
+  update(clase: Clase): Observable<Clase> {
+    const url = `${this.apiUrl}/${clase.id}`;
+    return this.http
+      .put<Clase>(url, clase)
+      .pipe(catchError(error => Observable.throw(error)));
+  }
+
+  delete(clase: Clase) {
+    const url = `${this.apiUrl}/${clase.id}`;
+    return this.http
+      .delete(url)
+      .pipe(catchError(error => Observable.throw(error)));
+  }
 }

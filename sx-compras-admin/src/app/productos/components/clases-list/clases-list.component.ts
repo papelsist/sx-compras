@@ -23,6 +23,8 @@ export class ClasesListComponent implements OnInit {
   @Input() clases = [];
 
   @Output() select = new EventEmitter();
+  @Output() edit = new EventEmitter();
+  @Output() delete = new EventEmitter();
 
   constructor() {}
 

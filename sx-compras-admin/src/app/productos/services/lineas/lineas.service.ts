@@ -3,6 +3,7 @@ import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 
 import { Observable } from 'rxjs/Observable';
 import { catchError } from 'rxjs/operators';
+import { of } from 'rxjs/observable/of';
 
 import * as _ from 'lodash';
 
@@ -32,16 +33,21 @@ export class LineasService {
     return this.http.get<Linea>(url);
   }
 
-  save(linea: Linea) {
-    return this.http.post(this.apiUrl, linea);
+  save(linea: Linea): Observable<Linea> {
+    return this.http
+      .post<Linea>(this.apiUrl, linea)
+      .pipe(catchError(error => Observable.throw(error)));
   }
 
   update(linea: Linea): Observable<Linea> {
-    return this.http.put<Linea>(this.apiUrl, linea);
+    const url = `${this.apiUrl}/${linea.id}`;
+    return this.http.put<Linea>(url, linea);
   }
 
   delete(id: string) {
-    const params = new HttpParams().set('id', id);
-    return this.http.delete(this.apiUrl, { params: params });
+    const url = `${this.apiUrl}/${id}`;
+    return this.http
+      .delete(url)
+      .pipe(catchError(error => Observable.throw(error)));
   }
 }

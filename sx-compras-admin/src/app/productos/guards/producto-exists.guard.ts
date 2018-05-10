@@ -18,7 +18,7 @@ export class ProductoExistsGuard implements CanActivate {
       switchMap(() => {
         const id = route.params.productoId;
         return this.hasProducto(id);
-      }),
+      })
     );
   }
 
@@ -27,7 +27,7 @@ export class ProductoExistsGuard implements CanActivate {
       .select(fromStore.getProductosEntities)
       .pipe(
         map((entities: { [key: string]: Producto }) => !!entities[id]),
-        take(1),
+        take(1)
       );
   }
 
@@ -39,7 +39,7 @@ export class ProductoExistsGuard implements CanActivate {
         }
       }),
       filter(loaded => loaded), // Waiting for loaded
-      take(1), // End the stream
+      take(1) // End the stream
     );
   }
 }

@@ -3,6 +3,13 @@
   <mat-card>
     <sx-search-title title="Catálogo de marcas"></sx-search-title>
     <mat-divider></mat-divider>
-    <sx-marcas-list [marcas]="marcas"></sx-marcas-list>
+    <div>
+      <sx-marcas-list [marcas]="marcas$ | async" (edit)="onEdit($event)" (delete)="onDelete($event)">
+      </sx-marcas-list>
+    </div>
   </mat-card>
+  <a mat-fab matTooltip="Alta de Marca" matTooltipPosition="before" color="accent" class="mat-fab-position-bottom-right z-3"
+    (click)="onCreate()">
+    <mat-icon>add</mat-icon>
+  </a>
 </div>

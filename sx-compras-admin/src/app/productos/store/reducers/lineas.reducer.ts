@@ -44,6 +44,26 @@ export function reducer(
         loading: false
       };
     }
+
+    case fromLineas.CREATE_LINEA_SUCCESS:
+    case fromLineas.UPDATE_LINEA_SUCCESS: {
+      const linea = action.payload;
+      const entities = { ...state.entities, [linea.id]: linea };
+
+      return {
+        ...state,
+        entities
+      };
+    }
+
+    case fromLineas.REMOVE_LINEA_SUCCESS: {
+      const linea = action.payload;
+      const { [linea.id]: result, ...entities } = state.entities;
+      return {
+        ...state,
+        entities
+      };
+    }
   }
   return state;
 }

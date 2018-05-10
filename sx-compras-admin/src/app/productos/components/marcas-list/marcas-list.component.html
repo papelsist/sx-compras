@@ -1,14 +1,20 @@
 <mat-list>
   <mat-list-item>Nombre</mat-list-item>
 </mat-list>
-<div class="mat-elevation-z8">
+<div class="marcas-container mat-elevation-z8">
   <mat-nav-list>
     <mat-list-item *ngFor="let marca of marcas; last as last">
       <mat-icon matListAvatar>local_mall</mat-icon>
       <a matLine>{{ marca.marca}}</a>
+      <button mat-icon-button (click)="edit.emit(marca)">
+        <mat-icon color="primary">edit</mat-icon>
+      </button>
+      <button mat-icon-button (click)="delete.emit(marca)">
+        <mat-icon color="warn">delete</mat-icon>
+      </button>
       <mat-divider [inset]="true" *ngIf="!last"></mat-divider>
     </mat-list-item>
   </mat-nav-list>
-  <mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" [showFirstLastButtons]="true">
-  </mat-paginator>
+  <!-- <mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" [showFirstLastButtons]="true">
+  </mat-paginator> -->
 </div>

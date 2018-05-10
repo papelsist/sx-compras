@@ -3,6 +3,7 @@ import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 
 import { Observable } from 'rxjs/Observable';
 import { catchError } from 'rxjs/operators';
+import { fromEvent } from 'rxjs/observable/fromEvent';
 
 import * as _ from 'lodash';
 
@@ -33,16 +34,21 @@ export class MarcasService {
     return this.http.get<Marca>(url);
   }
 
-  save(marca: Marca) {
-    return this.http.post(this.apiUrl, marca);
+  save(marca: Marca): Observable<Marca> {
+    return this.http
+      .post<Marca>(this.apiUrl, marca)
+      .pipe(catchError(error => Observable.throw(error)));
   }
 
   update(marca: Marca): Observable<Marca> {
-    return this.http.put<Marca>(this.apiUrl, marca);
+    const url = `${this.apiUrl}/${marca.id}`;
+    return this.http
+      .put<Marca>(url, marca)
+      .pipe(catchError(error => Observable.throw(error)));
   }
 
   delete(id: string) {
-    const params = new HttpParams().set('id', id);
-    return this.http.delete(this.apiUrl, { params: params });
+    const url = `${this.apiUrl}/${id}`;
+    return this.http.delete(url);
   }
 }
