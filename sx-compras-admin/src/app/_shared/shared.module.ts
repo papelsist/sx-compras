@@ -10,6 +10,7 @@ import { components, entyComponents } from './components';
 // Directives
 import { directives } from './directives';
 import { pipes } from './pipes';
+import { MAT_DATE_LOCALE } from '@angular/material';
 
 @NgModule({
   imports: [
@@ -31,6 +32,7 @@ import { pipes } from './pipes';
     ...pipes
   ],
   declarations: [...components, ...directives, ...pipes],
-  entryComponents: [...entyComponents]
+  entryComponents: [...entyComponents],
+  providers: [{ provide: MAT_DATE_LOCALE, useValue: 'es-MX' }]
 })
 export class SharedModule {}
