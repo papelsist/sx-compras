@@ -1,7 +1,0 @@
-import sx.core.Cliente
-
-model {
-	Cliente cliente
-}
-
-json tmpl.cliente(cliente)
