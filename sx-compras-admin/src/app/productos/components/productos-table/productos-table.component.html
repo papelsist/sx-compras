@@ -12,6 +12,11 @@
       <mat-cell *matCellDef="let producto">{{producto.descripcion}}</mat-cell>
     </ng-container>
 
+    <ng-container matColumnDef="unidad">
+      <mat-header-cell *matHeaderCellDef>Uni</mat-header-cell>
+      <mat-cell *matCellDef="let producto">{{producto.unidad}}</mat-cell>
+    </ng-container>
+
     <ng-container matColumnDef="kilos">
       <mat-header-cell *matHeaderCellDef>Kilos</mat-header-cell>
       <mat-cell *matCellDef="let producto">{{producto.kilos}}</mat-cell>
@@ -19,12 +24,12 @@
 
     <ng-container matColumnDef="precioCredito">
       <mat-header-cell *matHeaderCellDef>P. Crédito</mat-header-cell>
-      <mat-cell *matCellDef="let producto">{{producto.precioCredito}}</mat-cell>
+      <mat-cell *matCellDef="let producto">{{producto.precioCredito | currency}}</mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="precioContado">
       <mat-header-cell *matHeaderCellDef>P. Contado</mat-header-cell>
-      <mat-cell *matCellDef="let producto">{{producto.precioContado}}</mat-cell>
+      <mat-cell *matCellDef="let producto">{{producto.precioContado | currency}}</mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="linea">

@@ -27,6 +27,13 @@ export function reducer(
         loading: true
       };
     }
+    case fromProductos.LOAD_PRODUCTOS_FAIL: {
+      return {
+        ...state,
+        loading: false,
+        loaded: false
+      };
+    }
 
     case fromProductos.LOAD_PRODUCTOS_SUCCESS: {
       const entities = _.keyBy(action.payload, 'id');
@@ -35,14 +42,6 @@ export function reducer(
         loading: false,
         loaded: true,
         entities
-      };
-    }
-
-    case fromProductos.LOAD_PRODUCTOS_FAIL: {
-      return {
-        ...state,
-        loading: false,
-        loaded: false
       };
     }
 
@@ -86,6 +85,17 @@ export function reducer(
       return {
         ...state,
         loading: false,
+        entities
+      };
+    }
+
+    case fromProductos.SEARCH_PRODUCTOS_SUCCESS: {
+      const newEntities = _.keyBy(action.payload, 'id');
+      const entities = { ...state.entities, ...newEntities };
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
         entities
       };
     }

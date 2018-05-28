@@ -12,7 +12,7 @@ import * as fromRoot from 'app/store';
 export class ProductosEffects {
   constructor(
     private actions$: Actions,
-    private productosService: fromServices.ProductosService,
+    private productosService: fromServices.ProductosService
   ) {}
 
   @Effect()
@@ -22,9 +22,9 @@ export class ProductosEffects {
         .list()
         .pipe(
           map(productos => new productoActions.LoadProductosSuccess(productos)),
-          catchError(error => of(new productoActions.LoadProductosFail(error))),
+          catchError(error => of(new productoActions.LoadProductosFail(error)))
         );
-    }),
+    })
   );
 
   @Effect()
@@ -35,11 +35,9 @@ export class ProductosEffects {
         .save(newProduct)
         .pipe(
           map(producto => new productoActions.CreateProductoSuccess(producto)),
-          catchError(error =>
-            of(new productoActions.CreateProductoFail(error)),
-          ),
+          catchError(error => of(new productoActions.CreateProductoFail(error)))
         );
-    }),
+    })
   );
 
   @Effect()
@@ -49,9 +47,9 @@ export class ProductosEffects {
       map((action: productoActions.CreateProductoSuccess) => action.payload),
       map(producto => {
         return new fromRoot.Go({
-          path: ['productos/productos', producto.id],
+          path: ['productos/productos', producto.id]
         });
-      }),
+      })
     );
 
   @Effect()
@@ -62,11 +60,9 @@ export class ProductosEffects {
         .update(newProduct)
         .pipe(
           map(producto => new productoActions.UpdateProductoSuccess(producto)),
-          catchError(error =>
-            of(new productoActions.UpdateProductoFail(error)),
-          ),
+          catchError(error => of(new productoActions.UpdateProductoFail(error)))
         );
-    }),
+    })
   );
 
   @Effect()
@@ -77,24 +73,39 @@ export class ProductosEffects {
         .delete(producto.id)
         .pipe(
           map(() => new productoActions.RemoveProductoSuccess(producto)),
-          catchError(error =>
-            of(new productoActions.RemoveProductoFail(error)),
-          ),
+          catchError(error => of(new productoActions.RemoveProductoFail(error)))
         );
-    }),
+    })
   );
 
   @Effect()
   handleProductoSuccess$ = this.actions$
     .ofType(
       productoActions.UPDATE_PRODUCTO_SUCCESS,
-      productoActions.REMOVE_PRODUCTO_SUCCESS,
+      productoActions.REMOVE_PRODUCTO_SUCCESS
     )
     .pipe(
       map(pizza => {
         return new fromRoot.Go({
-          path: ['/productos/productos'],
+          path: ['/productos/productos']
         });
-      }),
+      })
+    );
+
+  @Effect()
+  searchProductos$ = this.actions$
+    .ofType(productoActions.SEARCH_PRODUCTOS)
+    .pipe(
+      map((action: productoActions.SearchProductos) => action.payload),
+      switchMap(criteria => {
+        return this.productosService
+          .list(criteria)
+          .pipe(
+            map(res => new productoActions.SearchProductosSuccess(res)),
+            catchError(error =>
+              of(new productoActions.SearchProductosFail(error))
+            )
+          );
+      })
     );
 }

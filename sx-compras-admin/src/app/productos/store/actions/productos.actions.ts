@@ -82,6 +82,25 @@ export class RemoveProductoSuccess implements Action {
   constructor(public payload: Producto) {}
 }
 
+export const SEARCH_PRODUCTOS = '[Catalogos] Search productos';
+export const SEARCH_PRODUCTOS_FAIL = '[Catalogos] Search productos fail';
+export const SEARCH_PRODUCTOS_SUCCESS = '[Catalogos] Search productos success';
+
+export class SearchProductos implements Action {
+  readonly type = SEARCH_PRODUCTOS;
+  constructor(public payload: { term: string }) {}
+}
+
+export class SearchProductosFail implements Action {
+  readonly type = SEARCH_PRODUCTOS_FAIL;
+  constructor(public payload: any) {}
+}
+
+export class SearchProductosSuccess implements Action {
+  readonly type = SEARCH_PRODUCTOS_SUCCESS;
+  constructor(public payload: Producto[]) {}
+}
+
 export type ProductosAction =
   | LoadProductos
   | LoadProductosFail
@@ -94,4 +113,7 @@ export type ProductosAction =
   | UpdateProductoSuccess
   | RemoveProducto
   | RemoveProductoFail
-  | RemoveProductoSuccess;
+  | RemoveProductoSuccess
+  | SearchProductos
+  | SearchProductosFail
+  | SearchProductosSuccess;

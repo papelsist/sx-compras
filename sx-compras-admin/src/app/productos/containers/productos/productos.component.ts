@@ -1,9 +1,9 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { Router } from '@angular/router';
-import { MatTableDataSource } from '@angular/material';
+
+import { Observable } from 'rxjs/Observable';
 
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs/Observable';
+import * as fromRoot from 'app/store';
 import * as fromStore from '../../store';
 
 import { Producto } from '../../models/producto';
@@ -12,26 +12,21 @@ import { Producto } from '../../models/producto';
   selector: 'sx-productos',
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './productos.component.html',
-  styles: [],
+  styles: []
 })
 export class ProductosComponent implements OnInit {
-  dataSource = new MatTableDataSource([]);
   productos$: Observable<Producto[]>;
-  constructor(
-    private store: Store<fromStore.CatalogosState>,
-    private router: Router,
-  ) {}
+  constructor(private store: Store<fromStore.CatalogosState>) {}
 
   ngOnInit() {
     this.productos$ = this.store.select(fromStore.getAllProductos);
-    this.productos$.subscribe(productos => {
-      this.dataSource.data = productos;
-    });
-
-    // this.store.dispatch(new fromStore.LoadProductos());
   }
 
-  onSelect(row) {
-    this.router.navigate(['/productos/productos', row.id]);
+  onSelect(event: Producto) {
+    this.store.dispatch(
+      new fromRoot.Go({
+        path: ['/productos/productos', event.id]
+      })
+    );
   }
 }
