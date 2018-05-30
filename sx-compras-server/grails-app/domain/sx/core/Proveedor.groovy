@@ -4,7 +4,7 @@ import groovy.transform.ToString
 import groovy.transform.EqualsAndHashCode
 
 @ToString(excludes ='id,version,dateCreated,lastUpdated,sw2,direccion',includeNames=true,includePackage=false)
-@EqualsAndHashCode(includes='id')
+@EqualsAndHashCode(includes='id, nombre, rfc')
 class Proveedor {
 
     String id
@@ -17,6 +17,8 @@ class Proveedor {
 
     Boolean activo = true
 
+    Boolean nacional = true
+
     String tipo = 'COMPRAS'
 
     String telefono1
@@ -25,15 +27,23 @@ class Proveedor {
 
     String telefono3
 
-    boolean nacional = true
-
     String	cuentaBancaria
 
     Integer plazo = 0
 
+    BigDecimal limiteDeCredito = 0.0
+
     Direccion direccion
 
     Long sw2
+
+    Long descuentoF = 0.0
+
+    Long diasDF = 0
+
+    Boolean	fechaRevision = true
+
+    Boolean	imprimirCosto = false
 
     Date dateCreated
 
