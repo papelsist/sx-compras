@@ -40,7 +40,7 @@ export function onAppInit(configService: ConfigService): () => Promise<any> {
     BrowserAnimationsModule,
     HttpClientModule,
     AppRoutingModule,
-
+    // ProveedoresModule.forRoot(),
     // Ngrx Store configuration
     StoreModule.forRoot(reducers, { metaReducers }),
     StoreDevtoolsModule.instrument({
@@ -51,8 +51,7 @@ export function onAppInit(configService: ConfigService): () => Promise<any> {
     StoreRouterConnectingModule,
 
     SharedModule,
-    CoreModule,
-    ProveedoresModule
+    CoreModule
   ],
   providers: [
     ConfigService,

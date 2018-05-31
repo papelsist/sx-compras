@@ -1,0 +1,16 @@
+<mat-table [dataSource]="dataSource">
+  <ng-container matColumnDef="nombre">
+    <mat-header-cell *matHeaderCellDef>Nombre</mat-header-cell>
+    <mat-cell *matCellDef="let proveedor">{{proveedor.nombre}}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="tipo">
+    <mat-header-cell *matHeaderCellDef>Tipo</mat-header-cell>
+    <mat-cell *matCellDef="let proveedor">{{proveedor.tipo}}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="rfc">
+    <mat-header-cell *matHeaderCellDef>RFC</mat-header-cell>
+    <mat-cell *matCellDef="let proveedor">{{proveedor.rfc}}</mat-cell>
+  </ng-container>
+  <mat-header-row *matHeaderRowDef="columnsToDisplay"></mat-header-row>
+  <mat-row *matRowDef="let proveedor; columns: columnsToDisplay"></mat-row>
+</mat-table>

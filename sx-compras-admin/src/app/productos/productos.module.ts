@@ -18,12 +18,16 @@ import { services } from './services';
 // gards
 import { guards } from './guards';
 
+import { ProveedoresModule } from '../proveedores/proveedores.module';
+
 @NgModule({
   imports: [
     SharedModule,
     ProductosRoutingModule,
     StoreModule.forFeature('catalogos', reducers),
-    EffectsModule.forFeature(effects)
+    EffectsModule.forFeature(effects),
+
+    ProveedoresModule
   ],
   declarations: [...components, ...containers],
   entryComponents: [...entryComponents],

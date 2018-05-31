@@ -7,7 +7,7 @@ class UrlMappings {
         "/api/lineas"(resources: 'linea')
         "/api/marcas"(resources: 'marca')
         "/api/productos"(resources: 'producto')
-        "/api/proveedores"(resources: 'proveedores')
+        "/api/proveedores"(resources: 'proveedor')
 
         "/"(controller: 'application', action:'index')
         "500"(view: '/error')

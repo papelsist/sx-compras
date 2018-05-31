@@ -14,6 +14,8 @@ import {
 import * as fromGuards from './guards';
 import { LineasGuard, MarcasGuard, ClasesGuard } from './guards';
 
+import { ProveedoresComponent } from '../proveedores/containers';
+
 const routes: Routes = [
   {
     path: '',
@@ -54,7 +56,15 @@ const routes: Routes = [
         canActivate: [MarcasGuard],
         component: MarcasComponent
       },
-      { path: 'clases', canActivate: [ClasesGuard], component: ClasesComponent }
+      {
+        path: 'clases',
+        canActivate: [ClasesGuard],
+        component: ClasesComponent
+      },
+      {
+        path: 'proveedores',
+        component: ProveedoresComponent
+      }
     ]
   }
 ];
