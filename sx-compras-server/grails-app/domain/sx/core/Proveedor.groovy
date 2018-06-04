@@ -53,7 +53,7 @@ class Proveedor {
         rfc size:12..13
         nombre unique: true
         clave unique: true
-        tipo inList:['COMPRAS','GASTOS']
+        tipo inList:['COMPRAS','GASTOS', 'MIXTO']
         telefono1 nullable:true ,maxSize:30
         telefono2 nullable:true ,maxSize:30
         telefono3 nullable:true ,maxSize:30
