@@ -1,9 +1,8 @@
+
+import {throwError as observableThrowError,  Observable ,  fromEvent } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
-
-import { Observable } from 'rxjs/Observable';
 import { catchError } from 'rxjs/operators';
-import { fromEvent } from 'rxjs/observable/fromEvent';
 
 import * as _ from 'lodash';
 
@@ -26,7 +25,7 @@ export class MarcasService {
 
     return this.http
       .get<Marca[]>(this.apiUrl, { params: params })
-      .pipe(catchError(error => Observable.throw(error)));
+      .pipe(catchError(error => observableThrowError(error)));
   }
 
   get(id: string): Observable<Marca> {
@@ -37,14 +36,14 @@ export class MarcasService {
   save(marca: Marca): Observable<Marca> {
     return this.http
       .post<Marca>(this.apiUrl, marca)
-      .pipe(catchError(error => Observable.throw(error)));
+      .pipe(catchError(error => observableThrowError(error)));
   }
 
   update(marca: Marca): Observable<Marca> {
     const url = `${this.apiUrl}/${marca.id}`;
     return this.http
       .put<Marca>(url, marca)
-      .pipe(catchError(error => Observable.throw(error)));
+      .pipe(catchError(error => observableThrowError(error)));
   }
 
   delete(id: string) {

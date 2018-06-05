@@ -13,6 +13,10 @@ const routes: Routes = [
       {
         path: 'catalogos',
         loadChildren: './productos/productos.module#ProductosModule'
+      },
+      {
+        path: 'cxp',
+        loadChildren: './cxp/cxp.module#CxpModule'
       }
     ]
   }

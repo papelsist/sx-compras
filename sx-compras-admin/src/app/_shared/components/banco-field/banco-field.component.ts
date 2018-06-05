@@ -14,10 +14,12 @@ import {
   NG_VALUE_ACCESSOR
 } from '@angular/forms';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
+
+import { Observable } from 'rxjs';
+import { startWith, switchMap } from 'rxjs/operators';
 
 import * as _ from 'lodash';
-import { ConfigService } from '../../../utils/config.service';
+import { ConfigService } from 'app/utils/config.service';
 
 export const BANCO_LOOKUPFIELD_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
@@ -60,12 +62,13 @@ export class BancoFieldComponent implements OnInit, ControlValueAccessor {
   }
 
   ngOnInit() {
-    this.bancos$ = this.searchControl.valueChanges
-      .startWith(null)
-      .switchMap(term => {
+    this.bancos$ = this.searchControl.valueChanges.pipe(
+      startWith(null),
+      switchMap(term => {
         const params = new HttpParams().set('term', term);
         return this.http.get<any>(this.apiUrl, { params: params });
-      });
+      })
+    );
   }
 
   select(event) {

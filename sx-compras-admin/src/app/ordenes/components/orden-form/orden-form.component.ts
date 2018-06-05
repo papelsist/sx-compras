@@ -17,7 +17,10 @@ import {
   Validators,
   FormControl
 } from '@angular/forms';
-import { Subject } from 'rxjs/Subject';
+
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+
 import { MatDialog, MatTable } from '@angular/material';
 
 import * as moment from 'moment';
@@ -63,7 +66,7 @@ export class OrdenFormComponent implements OnInit, OnChanges, OnDestroy {
   private onProveedor() {
     this.form
       .get('proveedor')
-      .valueChanges.takeUntil(this.destroy$)
+      .valueChanges.pipe(takeUntil(this.destroy$))
       .subscribe(val => this.proveedorChange.emit(val));
   }
 

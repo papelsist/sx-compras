@@ -1,13 +1,21 @@
 import { Component, Input, OnInit, forwardRef } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
 import {
   ControlValueAccessor,
   FormControl,
   NG_VALUE_ACCESSOR
 } from '@angular/forms';
 import * as _ from 'lodash';
+
+import { Observable, Subscription } from 'rxjs';
+import {
+  skip,
+  switchMap,
+  tap,
+  debounceTime,
+  distinctUntilChanged,
+  filter
+} from 'rxjs/operators';
 
 import { Proveedor } from 'app/proveedores/models/proveedor';
 import { ConfigService } from 'app/utils/config.service';
@@ -42,21 +50,22 @@ export class ProveedorFieldComponent implements OnInit, ControlValueAccessor {
   }
 
   ngOnInit() {
-    this.proveedores$ = this.searchControl.valueChanges.switchMap(term =>
-      this.lookupProveedores(term)
+    this.proveedores$ = this.searchControl.valueChanges.pipe(
+      switchMap(term => this.lookupProveedores(term))
     );
-
     this.prepareControl();
   }
 
   private prepareControl() {
     this.subscription = this.searchControl.valueChanges
-      .skip(1)
-      .do(() => this.onTouch())
-      .debounceTime(500)
-      .distinctUntilChanged()
-      .filter(value => _.isObject(value))
-      .distinctUntilChanged((p: Proveedor, q: Proveedor) => p.id === q.id)
+      .pipe(
+        skip(1),
+        tap(() => this.onTouch()),
+        debounceTime(500),
+        distinctUntilChanged(),
+        filter(value => _.isObject(value)),
+        distinctUntilChanged((p: Proveedor, q: Proveedor) => p.id === q.id)
+      )
       .subscribe(val => {
         this.onChange(val);
       });

@@ -1,7 +1,7 @@
+
+import {throwError as observableThrowError,  Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
-
-import { Observable } from 'rxjs/Observable';
 import { catchError } from 'rxjs/operators';
 
 import * as _ from 'lodash';
@@ -24,7 +24,7 @@ export class ProductosService {
     });
     return this.http
       .get<Producto[]>(this.apiUrl, { params: params })
-      .pipe(catchError((error: any) => Observable.throw(error.json())));
+      .pipe(catchError((error: any) => observableThrowError(error.json())));
   }
 
   get(id: string): Observable<Producto> {
@@ -35,21 +35,21 @@ export class ProductosService {
   save(producto: Producto): Observable<Producto> {
     return this.http
       .post<Producto>(this.apiUrl, producto)
-      .pipe(catchError(error => Observable.throw(error)));
+      .pipe(catchError(error => observableThrowError(error)));
   }
 
   update(prod: Producto): Observable<Producto> {
     const url = `${this.apiUrl}/${prod.id}`;
     return this.http
       .put<Producto>(url, prod)
-      .pipe(catchError(error => Observable.throw(error)));
+      .pipe(catchError(error => observableThrowError(error)));
   }
 
   delete(id: string) {
     const url = `${this.apiUrl}/${id}`;
     return this.http
       .delete(url)
-      .pipe(catchError(error => Observable.throw(error)));
+      .pipe(catchError(error => observableThrowError(error)));
   }
 
   print(producto: Producto) {

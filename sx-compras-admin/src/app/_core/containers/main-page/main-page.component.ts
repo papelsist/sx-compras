@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
+
+import { of as observableOf, Observable } from 'rxjs';
 
 @Component({
   selector: 'sx-main-page',
@@ -22,6 +23,11 @@ export class MainPageComponent implements OnInit {
       icon: 'shopping_cart',
       route: '/ordenes',
       title: 'Ordenes'
+    },
+    {
+      icon: 'my_library_books',
+      route: '/cxp',
+      title: 'Cuentas por pagar (CXP)'
     }
   ];
 
@@ -50,6 +56,6 @@ export class MainPageComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {
-    this.modulo$ = Observable.of('PENDIENTE');
+    this.modulo$ = observableOf('PENDIENTE');
   }
 }
