@@ -7,10 +7,10 @@ import { Proveedor } from '../models/proveedor';
 
 @Injectable()
 export class ProveedoresService {
-  private apiUrl: string;
+  private _apiUrl: string;
 
   constructor(private http: HttpClient, private config: ConfigService) {
-    this.apiUrl = config.buildApiUrl('proveedores');
+    // this.apiUrl = config.buildApiUrl('proveedores');
   }
 
   list(): Observable<Proveedor[]> {
@@ -25,5 +25,12 @@ export class ProveedoresService {
   get(id: string): Observable<Proveedor> {
     const url = `${this.apiUrl}/${id}`;
     return this.http.get<Proveedor>(url);
+  }
+
+  get apiUrl() {
+    if (!this._apiUrl) {
+      this._apiUrl = this.config.buildApiUrl('proveedores');
+    }
+    return this._apiUrl;
   }
 }

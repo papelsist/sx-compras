@@ -18,20 +18,25 @@ import { containers } from './containers';
 
 @NgModule({
   imports: [
-    SharedModule,
-    ProveedoresRoutingModule,
-    StoreModule.forFeature('proveedores', reducers),
-    EffectsModule.forFeature(effects)
+    SharedModule
   ],
   declarations: [...components, ...containers],
   exports: [...containers, ...components],
-  providers: [...services]
 })
 export class ProveedoresModule {
   static forRoot(): ModuleWithProviders {
     return {
-      ngModule: ProveedoresModule,
+      ngModule: RootProveedoresModule,
       providers: [...services]
     };
   }
 }
+
+@NgModule({
+  imports: [
+    ProveedoresRoutingModule,
+    StoreModule.forFeature('proveedores', reducers),
+    EffectsModule.forFeature(effects)
+  ]
+})
+export class RootProveedoresModule {}

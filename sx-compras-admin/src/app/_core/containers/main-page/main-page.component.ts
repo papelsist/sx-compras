@@ -14,9 +14,9 @@ export class MainPageComponent implements OnInit {
       title: 'Inicio'
     },
     {
-      icon: 'layers',
-      route: '/productos',
-      title: 'Productos'
+      icon: 'storage',
+      route: '/catalogos',
+      title: 'Catálogos'
     },
     {
       icon: 'shopping_cart',

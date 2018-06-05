@@ -11,7 +11,7 @@ const routes: Routes = [
     children: [
       { path: '', component: HomePageComponent },
       {
-        path: 'productos',
+        path: 'catalogos',
         loadChildren: './productos/productos.module#ProductosModule'
       }
     ]

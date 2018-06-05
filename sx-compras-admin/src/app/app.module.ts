@@ -22,9 +22,9 @@ import { SharedModule } from './_shared/shared.module';
 import { CoreModule } from './_core/core.module';
 
 import { ConfigService } from './utils/config.service';
-import { ProveedoresModule } from './proveedores/proveedores.module';
 
 import { environment } from 'environments/environment.prod';
+import { ProveedoresModule } from './proveedores/proveedores.module';
 
 export const metaReducers: MetaReducer<any>[] = !environment.production
   ? [storeFreeze]
@@ -40,7 +40,7 @@ export function onAppInit(configService: ConfigService): () => Promise<any> {
     BrowserAnimationsModule,
     HttpClientModule,
     AppRoutingModule,
-    // ProveedoresModule.forRoot(),
+
     // Ngrx Store configuration
     StoreModule.forRoot(reducers, { metaReducers }),
     StoreDevtoolsModule.instrument({
@@ -49,9 +49,9 @@ export function onAppInit(configService: ConfigService): () => Promise<any> {
     }),
     EffectsModule.forRoot(effects),
     StoreRouterConnectingModule,
-
     SharedModule,
-    CoreModule
+    CoreModule,
+    ProveedoresModule.forRoot()
   ],
   providers: [
     ConfigService,
