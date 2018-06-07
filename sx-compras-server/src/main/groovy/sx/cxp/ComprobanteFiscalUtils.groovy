@@ -16,9 +16,9 @@ class ComprobanteFiscalUtils {
     def getAcuse(ComprobanteFiscal comprobanteFiscal) {
 
         String ex = "?re=${comprobanteFiscal.emisorRfc}&rr=${comprobanteFiscal.receptorRfc}&tt=${comprobanteFiscal.total}&id=${comprobanteFiscal.uuid}"
-        String url = 'http://tempuri.org/IConsultaCFDIService/Consulta'
+        String url = 'https://consultaqr.facturaelectronica.sat.gob.mx/ConsultaCFDIService.svc'
         SOAPResponse response = client.send(SOAPAction: url, sslTrustAllCerts:true){
-            body{
+            body('xmlns:cfdi': 'http://tempuri.org/IConsultaCFDIService/Consulta'){
                 Consulta {
                     expresionImpresa(ex)
                 }
