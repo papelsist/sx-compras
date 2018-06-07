@@ -1,0 +1,8 @@
+import sx.cxp.ComprobanteFiscal
+
+model {
+	Iterable<ComprobanteFiscal> comprobanteFiscalList
+}
+
+json tmpl.comprobanteFiscal(comprobanteFiscalList ?: [])
+

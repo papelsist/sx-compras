@@ -1,0 +1,7 @@
+import sx.cxp.ComprobanteFiscal
+
+model {
+	ComprobanteFiscal comprobanteFiscal
+}
+
+json tmpl.comprobanteFiscal(comprobanteFiscal)

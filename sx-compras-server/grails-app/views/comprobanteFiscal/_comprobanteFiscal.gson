@@ -1,0 +1,10 @@
+import sx.cxp.ComprobanteFiscal
+
+model {
+	ComprobanteFiscal comprobanteFiscal
+}
+
+json g.render(comprobanteFiscal, [resolveTemplate: false, excludes: ['xml', 'pdf','acuse', 'dateCreated', 'lastUpdated', 'version']]){
+    pdf comprobanteFiscal.pdf != null
+    xml comprobanteFiscal.xml != null
+}

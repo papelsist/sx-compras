@@ -65,6 +65,7 @@ dependencies {
 
     // compile "lx.siipapx:sx-core-plugin:1.0.0"
     compile 'com.google.firebase:firebase-admin:6.1.0'
+    compile 'com.github.groovy-wslite:groovy-wslite:1.1.2'
 
     compile "org.grails.plugins:gsp"
     runtime 'org.grails.plugins:grails-console:2.1.1'
@@ -72,6 +73,7 @@ dependencies {
 
 bootRun {
     jvmArgs('-Dspring.output.ansi.enabled=always')
+    jvmArgs('-Xmx1024m')
     addResources = true
     String springProfilesActive = 'spring.profiles.active'
     systemProperty springProfilesActive, System.getProperty(springProfilesActive)
