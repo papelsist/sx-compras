@@ -39,6 +39,7 @@ export class CfdisTableComponent implements OnInit, OnChanges {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @Output() xml = new EventEmitter();
   @Output() pdf = new EventEmitter();
+  @Output() select = new EventEmitter();
   constructor() {}
 
   ngOnInit() {
@@ -50,5 +51,11 @@ export class CfdisTableComponent implements OnInit, OnChanges {
     if (changes.comprobantes && changes.comprobantes.currentValue) {
       this.dataSource.data = changes.comprobantes.currentValue;
     }
+  }
+
+  toogleSelect(event: ComprobanteFiscal) {
+    event.selected = !event.selected;
+    const data = this.comprobantes.filter(item => item.selected);
+    this.select.emit([...data]);
   }
 }

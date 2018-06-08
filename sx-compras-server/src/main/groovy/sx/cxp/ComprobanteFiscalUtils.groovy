@@ -3,7 +3,7 @@ package sx.cxp
 import groovy.transform.CompileDynamic
 import groovy.xml.XmlUtil
 import org.springframework.stereotype.Component
-import sx.core.Empresa
+
 import wslite.soap.SOAPClient
 import wslite.soap.SOAPResponse
 

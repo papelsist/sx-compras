@@ -33,7 +33,13 @@ class ComprobanteFiscal {
 
     String moneda
     BigDecimal tipoDeCambio
-    BigDecimal total
+
+    //Importes
+    BigDecimal subTotal = 0.0
+    BigDecimal descuento = 0.0
+    BigDecimal impuestoTrasladado
+    BigDecimal impuestoRetenido
+    BigDecimal total = 0.0
 
     String comentario
 
@@ -68,9 +74,14 @@ class ComprobanteFiscal {
         comentario nullable: true
         usoCfdi maxSize: 10, nullable: true
 
+        subTotal scale: 4
+        descuento nullable: true, scale: 4
+        impuestoTrasladado nullable: true, scale: 4
+        impuestoRetenido nullable: true, scale: 4
+
     }
 
-    static  mapping={
+    static  mapping = {
         id generator:'uuid'
         fecha index: 'CF_IDX1'
         uuid index: 'CF_IDX2'

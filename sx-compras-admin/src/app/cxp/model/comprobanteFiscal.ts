@@ -20,4 +20,5 @@ export interface ComprobanteFiscal {
   analizado: boolean;
   pdf: boolean;
   xml: boolean;
+  selected?: boolean;
 }

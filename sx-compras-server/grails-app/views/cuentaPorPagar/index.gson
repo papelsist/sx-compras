@@ -1,0 +1,8 @@
+import sx.cxp.CuentaPorPagar
+
+model {
+	Iterable<CuentaPorPagar> cuentaPorPagarList
+}
+
+json tmpl.cuentaPorPagar(cuentaPorPagarList ?: [])
+

@@ -1,0 +1,7 @@
+import sx.cxp.CuentaPorPagar
+
+model {
+	CuentaPorPagar cuentaPorPagar
+}
+
+json tmpl.cuentaPorPagar(cuentaPorPagar)

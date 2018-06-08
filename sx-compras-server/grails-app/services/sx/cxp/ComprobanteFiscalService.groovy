@@ -68,7 +68,11 @@ class ComprobanteFiscalService {
         def fecha = Date.parse(DATE_FORMAT, xml.attributes()['Fecha'])
         def timbre = xml.breadthFirst().find { it.name() == 'TimbreFiscalDigital'}
         def uuid = timbre.attributes()['UUID']
+
         def total = data['Total'] as BigDecimal
+        def subTotal = data['SubTotal'] as BigDecimal
+        def descuento = data['Descuento'] as BigDecimal
+
         def formaDePago = data['FormaPago']
         def metodoDePago = data['MetodoPago']
         def tipo =  data['TipoDeComprobante']
@@ -93,6 +97,8 @@ class ComprobanteFiscalService {
                 emisorRfc: emisorRfc,
                 receptorRfc: receptorRfc,
                 receptorNombre: receptorNombre,
+                subTotal: subTotal,
+                descuento: descuento,
                 total: total,
                 fecha: fecha,
                 formaDePago: formaDePago,
@@ -106,7 +112,32 @@ class ComprobanteFiscalService {
         return comprobanteFiscal
     }
 
-    def importarDirectorio(File dir = null) {
+    def generarCuentaPorPagar(ComprobanteFiscal comprobanteFiscal, String tipo) {
+        CuentaPorPagar cxp  = new CuentaPorPagar(tipo: tipo)
+        cxp.with {
+            proveedor = comprobanteFiscal.proveedor
+            nombre = comprobanteFiscal.emisorNombre
+            folio = comprobanteFiscal.folio
+            serie = comprobanteFiscal.serie
+            fecha = comprobanteFiscal.fecha
+            moneda = Currency.getInstance(comprobanteFiscal.moneda)
+            tipoDeCambio = comprobanteFiscal.tipoDeCambio
+            subTotal = comprobanteFiscal.subTotal ?: 0.0
+            impuestoTrasladado = comprobanteFiscal.impuestoTrasladado ?: 0.0
+            impuestoRetenido = comprobanteFiscal.impuestoRetenido?: 0.0
+            total = comprobanteFiscal.total
+            descuentoFinanciero = comprobanteFiscal.proveedor.descuentoF
+            uuid = comprobanteFiscal.uuid
+
+        }
+        def plazo = comprobanteFiscal.proveedor.plazo ?: 0
+        cxp.vencimiento = cxp.fecha + plazo
+        cxp.createUser = 'PENDIENTE'
+        cxp.updateUser = 'PENDIENTE'
+        return cxp
+    }
+
+    def importarDirectorio(File dir = null, String tipo = 'COMPRAS') {
         if(!dir)
             dir = new File("/Users/rubencancino/Documents/compras2018")
         if(dir.isDirectory()){
@@ -128,6 +159,9 @@ class ComprobanteFiscalService {
                             cf.pdf = pdf.bytes
                         }
                         cf.save failOnError: true, flush: true
+                        CuentaPorPagar cxp = this.generarCuentaPorPagar(cf, tipo)
+                        cxp.comprobanteFiscal = cf
+                        cxp.save failOnError: true, flush: true
                     }catch (Exception ex) {
                         String m = ExceptionUtils.getRootCauseMessage(ex)
                         log.error(m)

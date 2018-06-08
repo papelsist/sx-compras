@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
+import { shareReplay } from 'rxjs/operators';
 
 import { ComprobanteFiscalService } from '../../services';
 import { ComprobanteFiscal } from '../../model/comprobanteFiscal';
@@ -21,17 +22,27 @@ import { Periodo } from '../../../_core/models/periodo';
         <span flex></span>
       </div>
       <mat-divider></mat-divider>
-      <div class="cfdis-panel">
-        <sx-cfdis-table [comprobantes]="cfdis$ | async" (pdf)="onPdf($event)" (xml)="onXml($event)"></sx-cfdis-table>
+      <div layout="column">
+        <div class="cfdis-panel">
+          <sx-cfdis-table [comprobantes]="cfdis$ | async" (pdf)="onPdf($event)"
+            (xml)="onXml($event)" (select)="onSelect($event)"></sx-cfdis-table>
+        </div>
+        <ng-container *ngIf="selected$ | async as selected">
+          <div class="cfdis-det-panel" *ngIf="selected.length > 0" layout>
+            <sx-cfdis-totales-panel [comprobantes]="selected"></sx-cfdis-totales-panel>
+          </div>
+        </ng-container>
       </div>
     </mat-card>
   `,
   styles: [
     `
-    .cfdis-panel2 {
+    .cfdis-panel {
       min-height: 200px;
-      max-height: 550px;
       overflow: auto;
+    }
+    .cfdis-det-panel {
+      min-height: 200px;
     }
   `
   ]
@@ -40,6 +51,7 @@ export class CfdisComponent implements OnInit, OnDestroy {
   cfdis$: Observable<ComprobanteFiscal[]>;
   periodo: Periodo;
   filtro: any;
+  selected$ = new Subject<any[]>();
   constructor(private service: ComprobanteFiscalService) {}
 
   ngOnInit() {
@@ -52,7 +64,7 @@ export class CfdisComponent implements OnInit, OnDestroy {
   }
 
   load() {
-    this.cfdis$ = this.service.list(this.filtro);
+    this.cfdis$ = this.service.list(this.filtro).pipe(shareReplay());
   }
 
   searchEmisor(event: string) {
@@ -87,7 +99,6 @@ export class CfdisComponent implements OnInit, OnDestroy {
   }
 
   onXml(event: ComprobanteFiscal) {
-    console.log('Mostrando XML:', event);
     this.service.mostrarXml(event).subscribe(res => {
       const blob = new Blob([res], {
         type: 'text/xml'
@@ -95,5 +106,9 @@ export class CfdisComponent implements OnInit, OnDestroy {
       const fileURL = window.URL.createObjectURL(blob);
       window.open(fileURL, '_blank');
     });
+  }
+
+  onSelect(event: ComprobanteFiscal[]) {
+    this.selected$.next(event);
   }
 }
