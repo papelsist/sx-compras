@@ -27,6 +27,12 @@ export class Periodo {
     }
   }
 
+  static fromNow(days: number): Periodo {
+    const f1 = moment().subtract(days, 'days');
+    const f2 = moment();
+    return new Periodo(f1.toDate(), f2.toDate());
+  }
+
   static monthToDay(): Periodo {
     const now = moment();
     const f1 = moment(now).startOf('month');
@@ -34,10 +40,11 @@ export class Periodo {
     return new Periodo(f1.toDate(), f2.toDate());
   }
 
-  static fromNow(days: number): Periodo {
-    const f1 = moment().subtract(days, 'days');
-    const f2 = moment();
-    return new Periodo(f1.toDate(), f2.toDate());
+  static fromStorage(key: string, notFound: Periodo = Periodo.mesActual()) {
+    return this.fromJson(localStorage.getItem(key)) || notFound;
+  }
+  static saveOnStorage(key: string, periodo: Periodo) {
+    return localStorage.setItem(key, periodo.toJson());
   }
 
   constructor(
@@ -53,5 +60,12 @@ export class Periodo {
 
   toJson() {
     return JSON.stringify(this);
+  }
+
+  toApiJSON() {
+    return {
+      fechaInicial: this.fechaInicial.toISOString(),
+      fechaFinal: this.fechaFinal.toISOString()
+    };
   }
 }

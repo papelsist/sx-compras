@@ -13,7 +13,9 @@ import {
   FormControl,
   NG_VALUE_ACCESSOR
 } from '@angular/forms';
-import { Observable } from 'rxjs/Observable';
+
+import { Observable } from 'rxjs';
+import { startWith, switchMap } from 'rxjs/operators';
 
 import * as _ from 'lodash';
 
@@ -61,14 +63,15 @@ export class CuentaBancoFieldComponent implements OnInit, ControlValueAccessor {
   }
 
   ngOnInit() {
-    this.cuentas$ = this.searchControl.valueChanges
-      .startWith(null)
-      .switchMap((term: any) => {
+    this.cuentas$ = this.searchControl.valueChanges.pipe(
+      startWith(null),
+      switchMap((term: any) => {
         const params = new HttpParams()
           .set('term', term)
           .set('activa', 'activa');
         return this.http.get<any[]>(this.apiUrl, { params: params });
-      });
+      })
+    );
   }
 
   select(event) {

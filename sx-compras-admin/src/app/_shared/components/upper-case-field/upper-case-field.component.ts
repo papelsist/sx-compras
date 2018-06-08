@@ -6,7 +6,8 @@ import {
   Renderer2,
   ElementRef,
   forwardRef,
-  Self
+  Self,
+  Optional
 } from '@angular/core';
 import {
   ControlValueAccessor,
@@ -46,7 +47,7 @@ export class UpperCaseFieldComponent implements OnInit, ControlValueAccessor {
 
   constructor(
     private renderer: Renderer2,
-    @Self() public controlDir: NgControl
+    @Optional() @Self() public controlDir: NgControl
   ) {
     controlDir.valueAccessor = this;
   }

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { map, switchMap, catchError } from 'rxjs/operators';
-import { of } from 'rxjs/observable/of';
+import { of } from 'rxjs';
 
 import * as fromClases from '../actions/clases.actions';
 

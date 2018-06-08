@@ -10,13 +10,14 @@ import {
   ElementRef
 } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
 import {
   ControlValueAccessor,
   FormControl,
   NG_VALUE_ACCESSOR
 } from '@angular/forms';
+
+import { of as observableOf, Observable, Subscription } from 'rxjs';
+import { map, switchMap, startWith, skip, filter } from 'rxjs/operators';
 
 import * as _ from 'lodash';
 
@@ -70,10 +71,10 @@ export class ProductoProvFieldComponent
   }
 
   ngOnInit() {
-    this.productos$ = this.searchControl.valueChanges
-      .startWith(null)
-      .switchMap(term => this.lookupProductos(term))
-      .map(prods => {
+    this.productos$ = this.searchControl.valueChanges.pipe(
+      startWith(null),
+      switchMap(term => this.lookupProductos(term)),
+      map(prods => {
         const filtrados = _.differenceWith(
           prods,
           this.excludes,
@@ -81,17 +82,15 @@ export class ProductoProvFieldComponent
             return val1.producto.clave === val2;
           }
         );
-        // console.log('Filtrando con excludes', filtrados);
         return filtrados;
-      });
-    // .do( prods => console.log('ProvProds localizados: ', prods))
+      })
+    );
     this.prepareControl();
   }
 
   private prepareControl() {
     this.subscription = this.searchControl.valueChanges
-      .skip(1)
-      .filter(value => value !== null)
+      .pipe(skip(1), filter(value => value !== null))
       .subscribe(value => {
         if (_.isObject(value)) {
           this.onChange(value);
@@ -109,7 +108,7 @@ export class ProductoProvFieldComponent
 
   lookupProductos(term: string): Observable<Array<any>> {
     if (this.proveedor == null) {
-      return Observable.of([]);
+      return observableOf([]);
     }
     let params = new HttpParams().set('term', term);
     if (this.activos === true) {

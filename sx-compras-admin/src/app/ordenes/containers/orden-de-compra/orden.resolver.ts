@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Resolve, ActivatedRouteSnapshot } from '@angular/router';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
-import 'rxjs/add/observable/of';
-import 'rxjs/add/operator/delay';
+
+
 import { OrdenesService } from '../../services';
 
 @Injectable()

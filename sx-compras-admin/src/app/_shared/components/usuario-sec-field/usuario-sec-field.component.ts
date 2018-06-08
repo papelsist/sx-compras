@@ -13,7 +13,9 @@ import {
 } from '@angular/common/http';
 
 import { TdDialogService } from '@covalent/core';
-import { Observable } from 'rxjs/Observable';
+
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 
 import { User } from 'app/_auth/models/user';
 import { ConfigService } from 'app/utils/config.service';
@@ -55,10 +57,9 @@ export class UsuarioSecFieldComponent implements OnInit {
     const params = new HttpParams().set('nip', val);
     return this.http
       .get<User>(url, { params: params })
-      .finally(() => (this.procesando = false))
+      .pipe(finalize(() => (this.procesando = false)))
       .subscribe(
         res => {
-          //console.log('Found: ', res);
           this.usuarioFound.emit(res);
         },
         error2 => this.handleError(error2)
@@ -67,14 +68,5 @@ export class UsuarioSecFieldComponent implements OnInit {
 
   handleError(error) {
     window.alert('Usuario no localizado');
-    /*
-    this._dialogService.openAlert({
-      message: ' Usuario no localizado',
-      disableClose: true,
-      viewContainerRef: this._viewContainerRef,
-      title: 'Aviso',
-      closeButton: 'Cerrar',
-    });
-    */
   }
 }
