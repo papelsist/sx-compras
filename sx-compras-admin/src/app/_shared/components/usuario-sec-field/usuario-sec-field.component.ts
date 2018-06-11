@@ -17,7 +17,7 @@ import { TdDialogService } from '@covalent/core';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
-import { User } from 'app/_auth/models/user';
+import { User } from 'app/auth/models/user';
 import { ConfigService } from 'app/utils/config.service';
 
 @Component({

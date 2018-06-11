@@ -25,6 +25,7 @@ import { ConfigService } from './utils/config.service';
 
 import { environment } from 'environments/environment.prod';
 import { ProveedoresModule } from './proveedores/proveedores.module';
+import { AuthModule } from './auth/auth.module';
 
 export const metaReducers: MetaReducer<any>[] = !environment.production
   ? [storeFreeze]
@@ -50,6 +51,7 @@ export function onAppInit(configService: ConfigService): () => Promise<any> {
     EffectsModule.forRoot(effects),
     StoreRouterConnectingModule,
     SharedModule,
+    AuthModule.forRoot(),
     CoreModule,
     ProveedoresModule.forRoot()
   ],

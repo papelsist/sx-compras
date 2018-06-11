@@ -1,9 +1,3 @@
-export interface Authenticate {
-  username: string;
-  password: string;
-  returnUrl?: string;
-}
-
 export class User {
   constructor(public username: string, public roles: Array<string>) {}
 
