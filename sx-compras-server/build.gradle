@@ -69,6 +69,9 @@ dependencies {
 
     compile "org.grails.plugins:gsp"
     runtime 'org.grails.plugins:grails-console:2.1.1'
+
+    // compile 'org.grails.plugins:spring-security-core:3.2.1'
+    // compile 'org.grails.plugins:spring-security-rest:2.0.0.RC1'
 }
 
 bootRun {
