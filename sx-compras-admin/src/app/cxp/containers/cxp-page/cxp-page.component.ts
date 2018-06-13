@@ -12,6 +12,12 @@ export class CxpPageComponent implements OnInit {
       title: 'CFDIs',
       description: 'Comprobantes fiscales',
       icon: 'account_balance_wallet'
+    },
+    {
+      route: 'analisis',
+      title: 'Análisis',
+      description: 'Análisis de facturas',
+      icon: 'rate_review'
     }
   ];
   constructor(public media: TdMediaService) {}

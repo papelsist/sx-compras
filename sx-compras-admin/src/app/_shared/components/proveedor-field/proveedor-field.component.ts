@@ -17,7 +17,7 @@ import {
   filter
 } from 'rxjs/operators';
 
-import { Proveedor } from 'app/proveedores/models/proveedor';
+import { Proveedor, EstadoType } from 'app/proveedores/models/proveedor';
 import { ConfigService } from 'app/utils/config.service';
 
 export const PROVEEDOR_LOOKUPFIELD_VALUE_ACCESSOR: any = {
@@ -38,6 +38,8 @@ export class ProveedorFieldComponent implements OnInit, ControlValueAccessor {
   searchControl = new FormControl();
 
   @Input() required = false;
+  @Input() tipo = 'COMPRAS';
+  @Input() estado: EstadoType = EstadoType.ACTIVOS;
 
   proveedores$: Observable<Proveedor[]>;
 
@@ -72,13 +74,20 @@ export class ProveedorFieldComponent implements OnInit, ControlValueAccessor {
   }
 
   lookupProveedores(value: string): Observable<Proveedor[]> {
+    const params = new HttpParams()
+      .set('term', value)
+      .set('tipo', this.tipo)
+      .set('estado', this.estado);
     return this.http.get<Proveedor[]>(this.apiUrl, {
-      params: new HttpParams().set('term', value)
+      params: params
     });
   }
 
   displayFn(proveedor: Proveedor) {
-    return proveedor ? proveedor.nombre : proveedor;
+    if (!proveedor) {
+      return '';
+    }
+    return `${proveedor.nombre} (${proveedor.tipo})`;
   }
 
   writeValue(obj: any): void {

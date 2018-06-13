@@ -4,7 +4,7 @@ import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 
 @ToString(excludes = ['id,version,sw2,dateCreated,lastUpdated'],includeNames=true,includePackage=false)
-@EqualsAndHashCode(includeFields = true,includes = ['id'])
+@EqualsAndHashCode(includeFields = true,includes = ['id, com, '])
 class AnalisisDeFacturaDet {
 
     String id
@@ -42,6 +42,7 @@ class AnalisisDeFacturaDet {
         desc3 scale:4
         desc4 scale:4
         costoUnitario scale:6
+        com unique: true
         sw2 nullable:true
     }
 

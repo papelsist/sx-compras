@@ -6,9 +6,9 @@ import { CxpRoutingModule } from './cxp-routing.module';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 
-import { reducers } from './store/reducers';
+import { reducers, effects } from './store';
 
-import { components } from './components';
+import { components, entryComponents } from './components';
 import { containers } from './containers';
 import { services } from './services';
 
@@ -17,9 +17,10 @@ import { services } from './services';
     SharedModule,
     CxpRoutingModule,
     StoreModule.forFeature('cxp', reducers),
-    EffectsModule.forFeature([])
+    EffectsModule.forFeature(effects)
   ],
   declarations: [...components, ...containers],
+  entryComponents: [...entryComponents],
   providers: [...services]
 })
 export class CxpModule {}

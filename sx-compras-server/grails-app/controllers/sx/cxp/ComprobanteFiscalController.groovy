@@ -91,8 +91,14 @@ class ComprobanteFiscalController extends RestfulController<ComprobanteFiscal> {
     def descargarCfdi(ComprobanteFiscal cf){
         response.setContentType("application/octet-stream")
         response.setHeader("Content-disposition", "attachment; filename=\"$cf.cfdiFileName\"")
-        ByteArrayInputStream is=new ByteArrayInputStream(cf.cfdi)
+        ByteArrayInputStream is=new ByteArrayInputStream(cf.xml)
         response.outputStream << is
+    }
 
+    def pendientes() {
+        log.info('Pendientes: {}', params)
+        String id = params.proveedorId
+        def res = ComprobanteFiscal.where{proveedor.id == id && analizado == false}.list()
+        respond res
     }
 }

@@ -7,6 +7,6 @@
 
 <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
   <mat-option *ngFor="let proveedor of proveedores$ | async" [value]="proveedor">
-    {{ proveedor.nombre }}
+    {{ proveedor.nombre }} ({{proveedor.tipo}})
   </mat-option>
 </mat-autocomplete>

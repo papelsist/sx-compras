@@ -1,0 +1,7 @@
+import sx.cxp.AnalisisDeFacturaDet
+
+model {
+	AnalisisDeFacturaDet analisisDeFacturaDet
+}
+
+json g.render(analisisDeFacturaDet, [resolveTemplate: false])

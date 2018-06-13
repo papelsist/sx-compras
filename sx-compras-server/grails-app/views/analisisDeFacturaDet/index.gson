@@ -1,0 +1,8 @@
+import sx.cxp.AnalisisDeFacturaDet
+
+model {
+	Iterable<AnalisisDeFacturaDet> analisisDeFacturaDetList
+}
+
+json tmpl.analisisDeFacturaDet(analisisDeFacturaDetList ?: [])
+

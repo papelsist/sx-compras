@@ -8,7 +8,12 @@ const routes: Routes = [
     path: '',
     component: fromContainers.CxpPageComponent,
     children: [
-      { path: 'cfdis', component: fromContainers.CfdisComponent, children: [] }
+      { path: 'cfdis', component: fromContainers.CfdisComponent, children: [] },
+      { path: 'analisis', component: fromContainers.AnalisisComponent },
+      {
+        path: 'analisis/create',
+        component: fromContainers.AnalisisDeFacturaComponent
+      }
     ]
   }
 ];

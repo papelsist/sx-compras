@@ -1,0 +1,7 @@
+import sx.cxp.AnalisisDeFactura
+
+model {
+	AnalisisDeFactura analisisDeFactura
+}
+
+json tmpl.analisisDeFactura(analisisDeFactura)

@@ -45,4 +45,11 @@ export class ComprobanteFiscalService {
       responseType: 'blob'
     });
   }
+
+  pendientesDeAnalizar(proveedorId: string): Observable<ComprobanteFiscal[]> {
+    const url = `${this.apiUrl}/pendientes/${proveedorId}`;
+    return this.http
+      .get<ComprobanteFiscal[]>(url)
+      .pipe(catchError((error: any) => throwError(error)));
+  }
 }

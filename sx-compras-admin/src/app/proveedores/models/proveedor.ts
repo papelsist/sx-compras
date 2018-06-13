@@ -13,3 +13,9 @@ export interface Proveedor {
   telefono3?: string;
   tipo: string;
 }
+
+export enum EstadoType {
+  ACTIVOS = 'ACTIVOS',
+  INACTIVOS = 'INACTIVOS',
+  TODOS = 'TODOS'
+}

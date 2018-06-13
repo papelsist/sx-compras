@@ -1,11 +1,18 @@
-import { Component, OnInit, Input } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  ChangeDetectionStrategy
+} from '@angular/core';
 
 import { ComprobanteFiscal } from '../../model/comprobanteFiscal';
 
 import * as _ from 'lodash';
+import {} from '@angular/compiler/src/core';
 
 @Component({
   selector: 'sx-cfdis-totales-panel',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <mat-list class="totales-list">
       <mat-list-item>

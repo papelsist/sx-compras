@@ -2,12 +2,15 @@ package sx.cxp
 
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
+import sx.core.Proveedor
 
 @ToString(excludes = ['id,version,sw2,dateCreated,lastUpdated'],includeNames=true,includePackage=false)
 @EqualsAndHashCode(includeFields = true,includes = ['id'])
 class AnalisisDeFactura {
 
     String id
+
+    Proveedor proveedor
 
     Date fecha = new Date()
 
@@ -24,6 +27,9 @@ class AnalisisDeFactura {
     Date dateCreated
     Date lastUpdated
 
+    String createUser
+    String updateUser
+
     static hasMany =[partidas: AnalisisDeFacturaDet]
 
     static constraints = {
@@ -36,4 +42,6 @@ class AnalisisDeFactura {
         id generator:'uuid'
         fecha type:'date' ,index: 'ANALISIS_IDX1'
     }
+
+
 }

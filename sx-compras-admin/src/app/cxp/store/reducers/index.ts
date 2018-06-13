@@ -10,4 +10,4 @@ export const reducers: ActionReducerMap<CxpState> = {
   analisis: formAnalisis.reducer
 };
 
-export const getCatalogosState = createFeatureSelector<CxpState>('cxp');
+export const getCxpState = createFeatureSelector<CxpState>('cxp');
