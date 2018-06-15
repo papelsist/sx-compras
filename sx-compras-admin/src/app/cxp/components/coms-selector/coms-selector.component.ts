@@ -10,7 +10,15 @@ import { CuentaPorPagar } from '../../model/cuentaPorPagar';
 @Component({
   selector: 'sx-coms-selector',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './coms-selector.component.html'
+  templateUrl: './coms-selector.component.html',
+  styles: [
+    `
+    .comst-table-panel {
+      height: 500px;
+      overflow: auto;
+    }
+  `
+  ]
 })
 export class ComsSelectorComponent implements OnInit {
   coms: any[];

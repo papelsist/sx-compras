@@ -4,6 +4,17 @@ model {
 	RecepcionDeCompra recepcionDeCompra
 }
 
-json g.render(recepcionDeCompra, [excludes: ['compra'], resolveTemplate: false]){
-    compra g.render(recepcionDeCompra.compra, [excludes: ['moneda']])
+json g.render(recepcionDeCompra, [excludes: ['compra','sucursal','proveedor'], resolveTemplate: false]){
+    compra {
+        id recepcionDeCompra.compra.id
+    }
+    sucursal {
+        id recepcionDeCompra.sucursal.id
+        nombre recepcionDeCompra.sucursal.nombre
+    }
+    proveedor {
+        id recepcionDeCompra.proveedor.id
+        nombre recepcionDeCompra.proveedor.nombre
+    }
+    partidas g.render(recepcionDeCompra.partidas)
 }

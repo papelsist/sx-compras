@@ -8,6 +8,7 @@ import { ConfigService } from 'app/utils/config.service';
 
 import * as _ from 'lodash';
 import { Analisis } from '../model/analisis';
+import { RecepcionDeCompra } from '../model/recepcionDeCompra';
 
 @Injectable()
 export class AnalisisService {
@@ -54,10 +55,12 @@ export class AnalisisService {
       .pipe(catchError((error: any) => throwError(error)));
   }
 
-  comsPendientes(proveedorId: string) {
-    const url = this.configService.buildApiUrl(`coms/${proveedorId}`);
+  comsPendientes(proveedorId: string): Observable<RecepcionDeCompra[]> {
+    const url = this.configService.buildApiUrl(
+      `coms/pendientesDeAnalisis/${proveedorId}`
+    );
     return this.http
-      .get<any[]>(this.apiUrl)
+      .get<RecepcionDeCompra[]>(url)
       .pipe(catchError((error: any) => throwError(error)));
   }
 }

@@ -1,14 +1,11 @@
 import { Injectable } from '@angular/core';
 
 import { Effect, Actions, ofType } from '@ngrx/effects';
-import { map, switchMap, catchError } from 'rxjs/operators';
+import { map, switchMap, catchError, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 
 import * as analisisActions from '../actions/analisis.actions';
-import {
-  AnalisisActionTypes,
-  AnalisisActions
-} from '../actions/analisis.actions';
+import { AnalisisActionTypes } from '../actions/analisis.actions';
 import * as fromServices from '../../services';
 import * as fromRoot from 'app/store';
 
@@ -73,6 +70,24 @@ export class AnalisisEffects {
           ),
           catchError(error =>
             of(new analisisActions.LoadFacturasPendientesFail(error))
+          )
+        );
+    })
+  );
+
+  @Effect()
+  loadComsProveedor$ = this.actions$.pipe(
+    ofType<analisisActions.LoadFacturasPendientes>(
+      analisisActions.AnalisisActionTypes.LOAD_COMS_PENDIENTES
+    ),
+    map(action => action.payload),
+    switchMap(proveedor => {
+      return this.analisisService
+        .comsPendientes(proveedor.id)
+        .pipe(
+          map(coms => new analisisActions.LoadComsPendientesSuccess(coms)),
+          catchError(error =>
+            of(new analisisActions.LoadComsPendientesFail(error))
           )
         );
     })

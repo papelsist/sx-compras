@@ -1,0 +1,36 @@
+<mat-card>
+  <mat-card-title>
+    <div layout>
+      <span class="pad-right">Analisis de factura: </span>
+      <sx-factura-header [factura]="analisis.factura"></sx-factura-header>
+      <span flex></span>
+      <span layout>
+        <span>Sub Total:</span>
+      </span>
+    </div>
+  </mat-card-title>
+  <mat-card-subtitle>
+    <span>{{analisis.proveedor.nombre}}</span>
+  </mat-card-subtitle>
+  <mat-divider></mat-divider>
+
+  <div class="partidas-panel">
+    <form [formGroup]="form" novalidate>
+      <sx-analisis-partidas-table [parent]="form" [partidas]="partidas.value"></sx-analisis-partidas-table>
+    </form>
+  </div>
+
+  <mat-divider></mat-divider>
+
+
+  <mat-card-actions>
+    <button mat-button (click)="cancel.emit($event)" type="button"> Cancelar </button>
+    <button mat-button (click)="onSubmit()" type="button" (click)="onAgregarCom()">
+      <mat-icon>assignment_returned</mat-icon> Agregar COM
+    </button>
+    <button mat-button (click)="onSubmit()" color="accent" [disabled]="form.invalid && form.pristine">
+      <mat-icon>save</mat-icon> Actualizar
+    </button>
+  </mat-card-actions>
+
+</mat-card>
