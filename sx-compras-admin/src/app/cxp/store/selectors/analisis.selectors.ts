@@ -1,7 +1,9 @@
 import { createSelector } from '@ngrx/store';
 
+import * as fromRoot from 'app/store';
 import * as fromFeature from '../reducers';
 import * as fromAnalisis from '../reducers/analisis.reducer';
+import { Analisis } from '../../model/analisis';
 
 import * as _ from 'lodash';
 
@@ -38,4 +40,22 @@ export const getFacturasPendientesEntities = createSelector(
 export const getAllFacturasPendientes = createSelector(
   getFacturasPendientesEntities,
   entities => _.sortBy(Object.keys(entities).map(id => entities[id]), 'folio')
+);
+
+export const getSelectedAnalisis = createSelector(
+  getAnalisisEntities,
+  fromRoot.getRouterState,
+  (entities, router): Analisis => {
+    return router.state && entities[router.state.params.analisisId];
+  }
+);
+
+export const getComsPendientesEntities = createSelector(
+  getAnalisisState,
+  fromAnalisis.getComsPendientes
+);
+
+export const getAllComsPendientes = createSelector(
+  getComsPendientesEntities,
+  entities => Object.keys(entities).map(id => entities[id])
 );

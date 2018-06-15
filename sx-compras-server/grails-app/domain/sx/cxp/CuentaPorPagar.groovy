@@ -7,7 +7,7 @@ import groovy.transform.ToString
 import sx.core.Proveedor
 
 @ToString(includeNames=true,includePackage=false, includes = 'nombre, serie, folio, fecha ,total, uuid')
-@EqualsAndHashCode(includeFields = true,includes = ['id, uuid'])
+@EqualsAndHashCode(includeFields = true,includes = 'id, uuid')
 class CuentaPorPagar {
 
     String id
@@ -26,7 +26,7 @@ class CuentaPorPagar {
 
     Date vencimiento
 
-    Currency moneda = Currency.getInstance('MXN')
+    String moneda = Currency.getInstance('MXN').currencyCode
     BigDecimal tipoDeCambio=1.0
 
     //Importes
@@ -57,6 +57,7 @@ class CuentaPorPagar {
         tipo inList:['COMPRAS', 'GASTOS']
         folio maxSize: 10
         serie maxSize: 10
+        moneda maxSize: 5
         tipoDeCambio(scale:6)
         subTotal(scale:4)
         descuento(scale: 4)

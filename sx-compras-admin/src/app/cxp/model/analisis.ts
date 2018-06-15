@@ -8,4 +8,5 @@ export interface Analisis {
   comentario?: string;
   importe: number;
   partidas: AnalisisDet[];
+  selected?: boolean;
 }

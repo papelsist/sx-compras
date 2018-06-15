@@ -3,8 +3,10 @@ import * as _ from 'lodash';
 import * as fromAnalisis from '../actions/analisis.actions';
 
 import { Analisis } from '../../model/analisis';
-import { ComprobanteFiscal } from '../../model/comprobanteFiscal';
+
 import { Proveedor } from 'app/proveedores/models/proveedor';
+import { CuentaPorPagar } from '../../model/cuentaPorPagar';
+import { RecepcionDeCompra } from '../../model/recepcionDeCompra';
 
 export interface AnalisisDeFacturaState {
   entities: { [id: string]: Analisis };
@@ -12,7 +14,8 @@ export interface AnalisisDeFacturaState {
   loading: boolean;
   // Analisis CRUD
   curentProveedor: Proveedor;
-  facturasPendientes: { [id: string]: ComprobanteFiscal };
+  facturasPendientes: { [id: string]: CuentaPorPagar };
+  comsPendientes: { [id: string]: RecepcionDeCompra };
 }
 
 export const initialState: AnalisisDeFacturaState = {
@@ -20,7 +23,8 @@ export const initialState: AnalisisDeFacturaState = {
   loaded: false,
   loading: false,
   curentProveedor: undefined,
-  facturasPendientes: {}
+  facturasPendientes: {},
+  comsPendientes: {}
 };
 
 export function reducer(
@@ -78,6 +82,55 @@ export function reducer(
         facturasPendientes
       };
     }
+
+    case fromAnalisis.AnalisisActionTypes.SAVE_ANALISIS: {
+      return {
+        ...state,
+        loading: true
+      };
+    }
+
+    case fromAnalisis.AnalisisActionTypes.SAVE_ANALISIS_FAIL: {
+      return {
+        ...state,
+        loading: false
+      };
+    }
+
+    case fromAnalisis.AnalisisActionTypes.SAVE_ANALISIS_SUCCESS: {
+      const analisis = action.payload;
+      const entities = {
+        ...state.entities,
+        [analisis.id]: analisis
+      };
+      return {
+        ...state,
+        loading: false,
+        entities
+      };
+    }
+
+    //
+    case fromAnalisis.AnalisisActionTypes.LOAD_COMS_PENDIENTES: {
+      return {
+        ...state,
+        loading: true
+      };
+    }
+    case fromAnalisis.AnalisisActionTypes.LOAD_COMS_PENDIENTES_FAIL: {
+      return {
+        ...state,
+        loaded: false
+      };
+    }
+    case fromAnalisis.AnalisisActionTypes.LOAD_COMS_PENDIENTES_SUCCESS: {
+      const comsPendientes = _.keyBy(action.payload, 'id');
+      return {
+        ...state,
+        loading: false,
+        comsPendientes
+      };
+    }
   }
   return state;
 }
@@ -91,3 +144,6 @@ export const getAnalisisEntities = (state: AnalisisDeFacturaState) =>
 
 export const getFacturasPendientes = (state: AnalisisDeFacturaState) =>
   state.facturasPendientes;
+
+export const getComsPendientes = (state: AnalisisDeFacturaState) =>
+  state.comsPendientes;

@@ -8,6 +8,7 @@ import { ConfigService } from 'app/utils/config.service';
 import { ComprobanteFiscal } from '../model/comprobanteFiscal';
 
 import * as _ from 'lodash';
+import { CuentaPorPagar } from '../model/cuentaPorPagar';
 
 @Injectable()
 export class ComprobanteFiscalService {
@@ -44,12 +45,5 @@ export class ComprobanteFiscalService {
       headers: headers,
       responseType: 'blob'
     });
-  }
-
-  pendientesDeAnalizar(proveedorId: string): Observable<ComprobanteFiscal[]> {
-    const url = `${this.apiUrl}/pendientes/${proveedorId}`;
-    return this.http
-      .get<ComprobanteFiscal[]>(url)
-      .pipe(catchError((error: any) => throwError(error)));
   }
 }

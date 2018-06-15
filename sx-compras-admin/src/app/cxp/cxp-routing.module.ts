@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import * as fromContainers from './containers';
+import * as fromGuards from './guards';
 
 const routes: Routes = [
   {
@@ -9,10 +10,21 @@ const routes: Routes = [
     component: fromContainers.CxpPageComponent,
     children: [
       { path: 'cfdis', component: fromContainers.CfdisComponent, children: [] },
-      { path: 'analisis', component: fromContainers.AnalisisComponent },
       {
-        path: 'analisis/create',
-        component: fromContainers.AnalisisDeFacturaComponent
+        path: 'analisis',
+        canActivate: [fromGuards.AnalisisGuard],
+        children: [
+          { path: '', component: fromContainers.AnalisisComponent },
+          {
+            path: 'create',
+            component: fromContainers.AnalisisDeFacturaComponent
+          },
+          {
+            path: ':analisisId',
+            canActivate: [fromGuards.AnalisisExistsGuard],
+            component: fromContainers.AnalisisEditComponent
+          }
+        ]
       }
     ]
   }

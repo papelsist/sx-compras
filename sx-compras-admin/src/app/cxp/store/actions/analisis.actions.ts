@@ -2,7 +2,8 @@ import { Action } from '@ngrx/store';
 
 import { Analisis } from '../../model/analisis';
 import { Proveedor } from 'app/proveedores/models/proveedor';
-import { ComprobanteFiscal } from '../../model/comprobanteFiscal';
+import { CuentaPorPagar } from '../../model/cuentaPorPagar';
+import { RecepcionDeCompra } from '../../model/recepcionDeCompra';
 
 export enum AnalisisActionTypes {
   LOAD = '[Analisis de factura] Load',
@@ -12,7 +13,14 @@ export enum AnalisisActionTypes {
   SET_CURRENT_PROVEEDOR = '[Analisis de factura] Set current Proveedor',
   LOAD_FACTURAS_PENDIENTES = '[Analisis de factura] Load facturas pendientes',
   LOAD_FACTURAS_PENDIENTES_FAIL = '[Analisis de factura] Load facturas pendientes fail',
-  LOAD_FACTURAS_PENDIENTES_SUCCESS = '[Analisis de factura] Load facturas pendientes success'
+  LOAD_FACTURAS_PENDIENTES_SUCCESS = '[Analisis de factura] Load facturas pendientes success',
+  LOAD_COMS_PENDIENTES = '[Analisis de factura] Load Coms pendientes',
+  LOAD_COMS_PENDIENTES_FAIL = '[Analisis de factura] Load Coms pendientes fail',
+  LOAD_COMS_PENDIENTES_SUCCESS = '[Analisis de factura] Load Coms pendientes success',
+  // CRUD
+  SAVE_ANALISIS = '[Analisis de factura] Save',
+  SAVE_ANALISIS_FAIL = '[Analisis de factura] Save fail',
+  SAVE_ANALISIS_SUCCESS = '[Analisis de factura] Save success'
 }
 
 export class Load implements Action {
@@ -35,6 +43,7 @@ export class SetCurrentProveedor implements Action {
 }
 export class LoadFacturasPendientes implements Action {
   readonly type = AnalisisActionTypes.LOAD_FACTURAS_PENDIENTES;
+  constructor(public payload: Proveedor) {}
 }
 export class LoadFacturasPendientesFail implements Action {
   readonly type = AnalisisActionTypes.LOAD_FACTURAS_PENDIENTES_FAIL;
@@ -42,7 +51,35 @@ export class LoadFacturasPendientesFail implements Action {
 }
 export class LoadFacturasPendientesSuccess implements Action {
   readonly type = AnalisisActionTypes.LOAD_FACTURAS_PENDIENTES_SUCCESS;
-  constructor(public payload: ComprobanteFiscal[]) {}
+  constructor(public payload: CuentaPorPagar[]) {}
+}
+
+// COMS
+export class LoadComsPendientes implements Action {
+  readonly type = AnalisisActionTypes.LOAD_COMS_PENDIENTES;
+  constructor(public payload: Proveedor) {}
+}
+export class LoadComsPendientesFail implements Action {
+  readonly type = AnalisisActionTypes.LOAD_COMS_PENDIENTES_FAIL;
+  constructor(public payload: any) {}
+}
+export class LoadComsPendientesSuccess implements Action {
+  readonly type = AnalisisActionTypes.LOAD_COMS_PENDIENTES_SUCCESS;
+  constructor(public payload: RecepcionDeCompra[]) {}
+}
+
+// CRUD
+export class SaveAnalisis implements Action {
+  readonly type = AnalisisActionTypes.SAVE_ANALISIS;
+  constructor(public payload: Analisis) {}
+}
+export class SaveAnalisisFail implements Action {
+  readonly type = AnalisisActionTypes.SAVE_ANALISIS_FAIL;
+  constructor(public payload: any) {}
+}
+export class SaveAnalisisSuccess implements Action {
+  readonly type = AnalisisActionTypes.SAVE_ANALISIS_SUCCESS;
+  constructor(public payload: Analisis) {}
 }
 
 export type AnalisisActions =
@@ -52,4 +89,10 @@ export type AnalisisActions =
   | SetCurrentProveedor
   | LoadFacturasPendientes
   | LoadFacturasPendientesFail
-  | LoadFacturasPendientesSuccess;
+  | LoadFacturasPendientesSuccess
+  | LoadComsPendientes
+  | LoadComsPendientesFail
+  | LoadComsPendientesSuccess
+  | SaveAnalisis
+  | SaveAnalisisFail
+  | SaveAnalisisSuccess;

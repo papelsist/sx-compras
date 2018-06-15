@@ -11,6 +11,7 @@ import { reducers, effects } from './store';
 import { components, entryComponents } from './components';
 import { containers } from './containers';
 import { services } from './services';
+import { guards } from './guards';
 
 @NgModule({
   imports: [
@@ -21,6 +22,6 @@ import { services } from './services';
   ],
   declarations: [...components, ...containers],
   entryComponents: [...entryComponents],
-  providers: [...services]
+  providers: [...services, ...guards]
 })
 export class CxpModule {}

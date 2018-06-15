@@ -8,17 +8,17 @@ import { MAT_DIALOG_DATA } from '@angular/material';
 import { CuentaPorPagar } from '../../model/cuentaPorPagar';
 
 @Component({
-  selector: 'sx-factura-selector',
+  selector: 'sx-coms-selector',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './factura-selector.component.html'
+  templateUrl: './coms-selector.component.html'
 })
-export class FacturaSelectorComponent implements OnInit {
-  facturas: any[];
+export class ComsSelectorComponent implements OnInit {
+  coms: any[];
   title: string;
   selected: CuentaPorPagar[];
   constructor(@Inject(MAT_DIALOG_DATA) public data: any) {
-    this.facturas = data.facturas;
-    this.title = data.title || 'Selector de facturas';
+    this.coms = data.coms;
+    this.title = data.title || 'Selector de COMs';
     this.selected = data.selected || undefined;
   }
 

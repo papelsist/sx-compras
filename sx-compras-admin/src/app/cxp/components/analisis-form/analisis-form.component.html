@@ -4,28 +4,33 @@
   <form [formGroup]="form" novalidate class="pad" layout="column">
     <div layout>
       <sx-proveedor-field formControlName="proveedor" flex></sx-proveedor-field>
-    </div>
-    <div layout>
-      <mat-form-field>
+      <mat-form-field class="pad-left">
         <input matInput [matDatepicker]="myDatepicker" formControlName="fecha">
         <mat-datepicker-toggle matSuffix [for]="myDatepicker"></mat-datepicker-toggle>
         <mat-datepicker #myDatepicker></mat-datepicker>
       </mat-form-field>
-      <div layout flex layout-align="center center">
+    </div>
+
+    <div layout>
+
+      <div layout flex layout-align="start center">
         <div>
           <button mat-button [disabled]="!proveedor" color="primary" (click)="seleccionarFactura()">Factura (XML)</button>
         </div>
         <mat-form-field class="pad-left">
-          <input matInput placeholder="Serie / Folio" [disabled]="true" />
+          <input matInput placeholder="Serie / Folio" [disabled]="true" value="{{factura?.serie}}  {{factura?.folio}}" />
         </mat-form-field>
         <mat-form-field>
-          <input matInput placeholder="Importe" [disabled]="true" />
+          <input matInput placeholder="Fecha" [disabled]="true" value="{{factura?.fecha | date: 'dd/MM/yyyy'}} " />
         </mat-form-field>
         <mat-form-field>
-          <input matInput placeholder="Impuestos" [disabled]="true" />
+          <input matInput placeholder="Vto" [disabled]="true" value="{{factura?.vencimiento | date: 'dd/MM/yyyy'}} " />
         </mat-form-field>
         <mat-form-field>
-          <input matInput placeholder="Total" [disabled]="true" />
+          <input matInput placeholder="SubTotal" [disabled]="true" [value]="factura?.subTotal | currency" />
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput placeholder="Total" [disabled]="true" [value]="factura?.total | currency" />
         </mat-form-field>
       </div>
     </div>
@@ -35,8 +40,8 @@
 
   </form>
   <mat-card-actions>
-    <button mat-button>Cancelar</button>
-    <button mat-button [disabled]="form.invalid || form.pristine">
+    <button mat-button (click)="cancelar.emit($event)">Cancelar</button>
+    <button mat-button [disabled]="form.invalid || form.pristine" (click)="onSubmit()">
       <mat-icon>save</mat-icon> Salvar</button>
     <button mat-icon-button>
       <mat-icon>print</mat-icon>

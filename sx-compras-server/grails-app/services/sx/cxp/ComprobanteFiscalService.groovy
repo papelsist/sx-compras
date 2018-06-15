@@ -113,6 +113,7 @@ class ComprobanteFiscalService {
     }
 
     def generarCuentaPorPagar(ComprobanteFiscal comprobanteFiscal, String tipo) {
+        if(comprobanteFiscal.tipoDeComprobante != 'I') return null
         CuentaPorPagar cxp  = new CuentaPorPagar(tipo: tipo)
         cxp.with {
             proveedor = comprobanteFiscal.proveedor
@@ -159,9 +160,11 @@ class ComprobanteFiscalService {
                             cf.pdf = pdf.bytes
                         }
                         cf.save failOnError: true, flush: true
-                        CuentaPorPagar cxp = this.generarCuentaPorPagar(cf, tipo)
-                        cxp.comprobanteFiscal = cf
-                        cxp.save failOnError: true, flush: true
+                        if (cf.tipoDeComprobante == 'I'){
+                            CuentaPorPagar cxp = this.generarCuentaPorPagar(cf, tipo)
+                            cxp.comprobanteFiscal = cf
+                            cxp.save failOnError: true, flush: true
+                        }
                     }catch (Exception ex) {
                         String m = ExceptionUtils.getRootCauseMessage(ex)
                         log.error(m)

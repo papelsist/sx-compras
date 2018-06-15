@@ -22,7 +22,6 @@ export class AnalisisService {
     _.forIn(filtro, (value, key) => {
       params = params.set(key, value);
     });
-    console.log('Params: ', filtro);
     return this.http
       .get<Analisis[]>(this.apiUrl, { params: params })
       .pipe(catchError((error: any) => throwError(error)));
@@ -52,6 +51,13 @@ export class AnalisisService {
     const url = `${this.apiUrl}/${id}`;
     return this.http
       .delete(url)
+      .pipe(catchError((error: any) => throwError(error)));
+  }
+
+  comsPendientes(proveedorId: string) {
+    const url = this.configService.buildApiUrl(`coms/${proveedorId}`);
+    return this.http
+      .get<any[]>(this.apiUrl)
       .pipe(catchError((error: any) => throwError(error)));
   }
 }

@@ -95,10 +95,5 @@ class ComprobanteFiscalController extends RestfulController<ComprobanteFiscal> {
         response.outputStream << is
     }
 
-    def pendientes() {
-        log.info('Pendientes: {}', params)
-        String id = params.proveedorId
-        def res = ComprobanteFiscal.where{proveedor.id == id && analizado == false}.list()
-        respond res
-    }
+
 }

@@ -3,8 +3,10 @@ import {
   OnInit,
   ChangeDetectionStrategy,
   OnDestroy,
+  Input,
   Output,
-  EventEmitter
+  EventEmitter,
+  ChangeDetectorRef
 } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material';
@@ -12,6 +14,7 @@ import { MatDialog } from '@angular/material';
 import { Subscription } from 'rxjs';
 
 import { FacturaSelectorComponent } from '../factura-selector/factura-selector.component';
+import { CuentaPorPagar } from '../../model/cuentaPorPagar';
 
 @Component({
   selector: 'sx-analisis-form',
@@ -21,8 +24,15 @@ import { FacturaSelectorComponent } from '../factura-selector/factura-selector.c
 export class AnalisisFormComponent implements OnInit, OnDestroy {
   form: FormGroup;
   subsrciptions: Subscription[] = [];
+  @Input() facturas: CuentaPorPagar[];
   @Output() proveedorSelected = new EventEmitter();
-  constructor(private fb: FormBuilder, private dialog: MatDialog) {}
+  @Output() cancelar = new EventEmitter();
+  @Output() save = new EventEmitter();
+  constructor(
+    private fb: FormBuilder,
+    private dialog: MatDialog,
+    private cd: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
     this.buildForm();
@@ -41,22 +51,43 @@ export class AnalisisFormComponent implements OnInit, OnDestroy {
     this.form = this.fb.group({
       proveedor: [null, Validators.required],
       fecha: [new Date(), Validators.required],
-      factura: [null],
+      factura: [null, Validators.required],
       comentario: [null]
     });
   }
 
   seleccionarFactura() {
     const dialogRef = this.dialog.open(FacturaSelectorComponent, {
-      data: { title: 'Facturas pendientes de analizar' },
-      width: '750px'
+      data: {
+        title: 'Facturas pendientes de analizar',
+        facturas: this.facturas
+      },
+      width: '850px'
     });
-    dialogRef.afterClosed().subscribe(factura => {
-      console.log('Factura seleccionada: ', factura);
+    dialogRef.afterClosed().subscribe((facturas: CuentaPorPagar[]) => {
+      if (facturas.length > 0) {
+        this.form.get('factura').setValue(facturas[0]);
+        this.cd.detectChanges();
+      }
     });
   }
 
   get proveedor() {
     return this.form.get('proveedor').value;
+  }
+
+  get factura(): CuentaPorPagar {
+    return this.form.get('factura').value;
+  }
+
+  onSubmit() {
+    if (this.form.valid) {
+      const fecha: Date = this.form.value.fecha;
+      const analisis = {
+        ...this.form.value,
+        fecha: fecha.toISOString()
+      };
+      this.save.emit(analisis);
+    }
   }
 }

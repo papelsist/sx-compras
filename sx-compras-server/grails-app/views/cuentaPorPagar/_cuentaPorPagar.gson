@@ -5,3 +5,4 @@ model {
 }
 
 json g.render(cuentaPorPagar, [resolveTemplate: false])
+

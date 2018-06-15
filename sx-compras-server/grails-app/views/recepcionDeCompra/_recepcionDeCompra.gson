@@ -1,0 +1,9 @@
+import sx.compras.RecepcionDeCompra
+
+model {
+	RecepcionDeCompra recepcionDeCompra
+}
+
+json g.render(recepcionDeCompra, [excludes: ['compra'], resolveTemplate: false]){
+    compra g.render(recepcionDeCompra.compra, [excludes: ['moneda']])
+}

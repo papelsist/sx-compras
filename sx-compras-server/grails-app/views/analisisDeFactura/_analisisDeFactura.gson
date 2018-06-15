@@ -4,4 +4,10 @@ model {
 	AnalisisDeFactura analisisDeFactura
 }
 
-json g.render(analisisDeFactura, [resolveTemplate: false])
+json g.render(analisisDeFactura, [ excludes: ['proveedor','factura'], resolveTemplate: false]){
+	proveedor {
+        id analisisDeFactura.proveedor.id
+        nombre analisisDeFactura.proveedor.nombre
+    }
+    factura g.render(analisisDeFactura.factura)
+}
