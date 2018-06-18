@@ -1,0 +1,8 @@
+import sx.cxp.Contrarecibo
+
+model {
+	Iterable<Contrarecibo> contrareciboList
+}
+
+json tmpl.contrarecibo(contrareciboList ?: [])
+

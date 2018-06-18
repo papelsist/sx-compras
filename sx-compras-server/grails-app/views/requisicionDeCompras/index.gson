@@ -1,0 +1,8 @@
+import sx.cxp.RequisicionDeCompras
+
+model {
+	Iterable<RequisicionDeCompras> requisicionDeComprasList
+}
+
+json tmpl.requisicionDeCompras(requisicionDeComprasList ?: [])
+

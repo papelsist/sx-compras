@@ -43,6 +43,8 @@ class CuentaPorPagar {
 
     String comentario
 
+    Boolean analizada = false
+
     Date dateCreated
     Date lastUpdated
 

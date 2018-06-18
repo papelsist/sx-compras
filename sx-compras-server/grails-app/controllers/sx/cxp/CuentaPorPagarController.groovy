@@ -1,18 +1,19 @@
 package sx.cxp
 
+import grails.compiler.GrailsCompileStatic
+import grails.rest.RestfulController
 
-import grails.rest.*
-import grails.converters.*
 
-class CuentaPorPagarController extends RestfulController {
-    static responseFormats = ['json', 'xml']
+@GrailsCompileStatic
+class CuentaPorPagarController extends RestfulController<CuentaPorPagar> {
+    static responseFormats = ['json']
     CuentaPorPagarController() {
         super(CuentaPorPagar)
     }
 
     def pendientesDeAnalisis() {
         String id = params.proveedorId
-        List<CuentaPorPagar> res = CuentaPorPagar.where{proveedor.id == id && comprobanteFiscal.analizado == false}.list()
+        List<CuentaPorPagar> res = CuentaPorPagar.where{proveedor.id == id &&analizada == false}.list()
         respond res
     }
 }

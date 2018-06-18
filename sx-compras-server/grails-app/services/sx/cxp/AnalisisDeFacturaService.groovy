@@ -7,9 +7,9 @@ class AnalisisDeFacturaService {
 
     AnalisisDeFactura save(AnalisisDeFactura analisisDeFactura) {
         analisisDeFactura.save failOnError: true
-        ComprobanteFiscal factura = analisisDeFactura.factura
-        factura.analizado = true
-        factura.save flush: true
+        CuentaPorPagar cxp = analisisDeFactura.factura
+        cxp.analizada = true
+        cxp.save flush: true
         return analisisDeFactura
     }
 }

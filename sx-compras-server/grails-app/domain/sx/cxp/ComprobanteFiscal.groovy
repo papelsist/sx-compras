@@ -43,8 +43,6 @@ class ComprobanteFiscal {
 
     String comentario
 
-    Boolean analizado = false
-
     byte[] pdf
     byte[] acuse
 

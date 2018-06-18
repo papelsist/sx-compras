@@ -92,7 +92,14 @@ import { AnalisisDet } from '../../model/analisisDet';
 export class AnalisisPartidasTableComponent implements OnInit {
   @Input() partidas: any[] = [];
   @Input() parent: FormGroup;
-  displayColumns = ['producto', 'descripcion', 'cantidad', 'precio', 'desc1'];
+  displayColumns = [
+    'producto',
+    'descripcion',
+    'cantidad',
+    'precio',
+    'desc1',
+    'importe'
+  ];
 
   @ViewChild('table') table: MatTable<any>;
 
@@ -106,5 +113,11 @@ export class AnalisisPartidasTableComponent implements OnInit {
 
   asignarPrecio(precio: number, row: AnalisisDet) {
     row.precioDeLista = precio;
+    this.actualizar(row);
+  }
+
+  actualizar(row: AnalisisDet) {
+    const { cantidad, precioDeLista, desc1 } = row;
+    row.importe = cantidad * precioDeLista;
   }
 }

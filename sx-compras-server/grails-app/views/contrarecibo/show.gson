@@ -1,0 +1,7 @@
+import sx.cxp.Contrarecibo
+
+model {
+	Contrarecibo contrarecibo
+}
+
+json tmpl.contrarecibo(contrarecibo)

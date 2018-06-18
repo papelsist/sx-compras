@@ -5,7 +5,8 @@
       <sx-factura-header [factura]="analisis.factura"></sx-factura-header>
       <span flex></span>
       <span layout>
-        <span>Sub Total:</span>
+        <span>Analizado:</span>
+        <span class="pad-left">{{totalAnalizado | currency}}</span>
       </span>
     </div>
   </mat-card-title>

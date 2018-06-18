@@ -15,6 +15,8 @@ import { Analisis } from '../../model/analisis';
 import { AnalisisDet, buildFromCom } from '../../model/analisisDet';
 import { RecepcionDeCompra } from '../../model/recepcionDeCompra';
 
+import * as _ from 'lodash';
+
 @Component({
   selector: 'sx-analisis-edit-form',
   templateUrl: './analisis-edit-form.component.html',
@@ -60,6 +62,10 @@ export class AnalisisEditFormComponent implements OnInit {
 
   get partidas() {
     return this.form.get('partidas') as FormArray;
+  }
+
+  get totalAnalizado(): number {
+    return _.sumBy(this.partidas.value.importe);
   }
 
   onAgregarCom() {
