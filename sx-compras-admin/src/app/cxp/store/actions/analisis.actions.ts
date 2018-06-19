@@ -20,7 +20,11 @@ export enum AnalisisActionTypes {
   // CRUD
   SAVE_ANALISIS = '[Analisis de factura] Save',
   SAVE_ANALISIS_FAIL = '[Analisis de factura] Save fail',
-  SAVE_ANALISIS_SUCCESS = '[Analisis de factura] Save success'
+  SAVE_ANALISIS_SUCCESS = '[Analisis de factura] Save success',
+
+  UPDATE_ANALISIS = '[Analisis de factura] Update',
+  UPDATE_ANALISIS_FAIL = '[Analisis de factura] Update Fail',
+  UPDATE_ANALISIS_SUCCESS = '[Analisis de factura] Update Success'
 }
 
 export class Load implements Action {
@@ -81,6 +85,18 @@ export class SaveAnalisisSuccess implements Action {
   readonly type = AnalisisActionTypes.SAVE_ANALISIS_SUCCESS;
   constructor(public payload: Analisis) {}
 }
+export class UpdateAnalisis implements Action {
+  readonly type = AnalisisActionTypes.UPDATE_ANALISIS;
+  constructor(public payload: Analisis) {}
+}
+export class UpdateAnalisisFail implements Action {
+  readonly type = AnalisisActionTypes.UPDATE_ANALISIS_FAIL;
+  constructor(public payload: any) {}
+}
+export class UpdateAnalisisSuccess implements Action {
+  readonly type = AnalisisActionTypes.UPDATE_ANALISIS_SUCCESS;
+  constructor(public payload: Analisis) {}
+}
 
 export type AnalisisActions =
   | Load
@@ -95,4 +111,7 @@ export type AnalisisActions =
   | LoadComsPendientesSuccess
   | SaveAnalisis
   | SaveAnalisisFail
-  | SaveAnalisisSuccess;
+  | SaveAnalisisSuccess
+  | UpdateAnalisis
+  | UpdateAnalisisFail
+  | UpdateAnalisisSuccess;

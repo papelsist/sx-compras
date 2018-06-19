@@ -11,6 +11,8 @@ import { MatTableDataSource, MatTable } from '@angular/material';
 
 import { AnalisisDet } from '../../model/analisisDet';
 
+import * as _ from 'lodash';
+
 @Component({
   selector: 'sx-analisis-partidas-table',
   template: `
@@ -37,7 +39,7 @@ import { AnalisisDet } from '../../model/analisisDet';
       <ng-container matColumnDef="desc1">
         <th mat-header-cell *matHeaderCellDef >Desc 1</th>
         <td mat-cell *matCellDef="let row">
-          <input type="number" [(ngModel)]="row.desc1" [ngModelOptions]="{standalone: true}">
+          <input type="number" [(ngModel)]="row.desc1" [ngModelOptions]="{standalone: true}" (input)="actualizar(row)">
         </td>
       </ng-container>
       <ng-container matColumnDef="importe">
@@ -92,6 +94,7 @@ import { AnalisisDet } from '../../model/analisisDet';
 export class AnalisisPartidasTableComponent implements OnInit {
   @Input() partidas: any[] = [];
   @Input() parent: FormGroup;
+  @Output() update = new EventEmitter();
   displayColumns = [
     'producto',
     'descripcion',
@@ -118,6 +121,17 @@ export class AnalisisPartidasTableComponent implements OnInit {
 
   actualizar(row: AnalisisDet) {
     const { cantidad, precioDeLista, desc1 } = row;
-    row.importe = cantidad * precioDeLista;
+    const importeBtuto = cantidad * precioDeLista;
+    let importe = importeBtuto;
+    if (desc1) {
+      const impDesc1 = this.getImporteDescuento(importe, desc1);
+      importe = importe - impDesc1;
+    }
+    row.importe = importe;
+    this.update.emit(row);
+  }
+
+  private getImporteDescuento(importe: number, descuento: number) {
+    return _.round(importe * (descuento / 100));
   }
 }

@@ -83,6 +83,7 @@ export function reducer(
       };
     }
 
+    case fromAnalisis.AnalisisActionTypes.UPDATE_ANALISIS:
     case fromAnalisis.AnalisisActionTypes.SAVE_ANALISIS: {
       return {
         ...state,
@@ -90,6 +91,7 @@ export function reducer(
       };
     }
 
+    case fromAnalisis.AnalisisActionTypes.UPDATE_ANALISIS_FAIL:
     case fromAnalisis.AnalisisActionTypes.SAVE_ANALISIS_FAIL: {
       return {
         ...state,
@@ -97,6 +99,7 @@ export function reducer(
       };
     }
 
+    case fromAnalisis.AnalisisActionTypes.UPDATE_ANALISIS_SUCCESS:
     case fromAnalisis.AnalisisActionTypes.SAVE_ANALISIS_SUCCESS: {
       const analisis = action.payload;
       const entities = {

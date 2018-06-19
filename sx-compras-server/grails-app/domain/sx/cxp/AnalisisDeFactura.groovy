@@ -4,11 +4,15 @@ import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import sx.core.Proveedor
 
-@ToString(excludes = ['id,version,sw2,dateCreated,lastUpdated'],includeNames=true,includePackage=false)
+@ToString(includes = ['folio', 'nombre', 'importe'],includeNames=true,includePackage=false)
 @EqualsAndHashCode(includeFields = true,includes = ['id'])
 class AnalisisDeFactura {
 
     String id
+
+    Long folio
+
+    String nombre
 
     Proveedor proveedor
 
@@ -20,7 +24,7 @@ class AnalisisDeFactura {
 
     BigDecimal importe = 0.0
 
-    List partidas = []
+    List<AnalisisDeFacturaDet> partidas = []
 
     Long sw2
 
@@ -41,6 +45,12 @@ class AnalisisDeFactura {
         partidas cascade: "all-delete-orphan"
         id generator:'uuid'
         fecha type:'date' ,index: 'ANALISIS_IDX1'
+    }
+
+    def beforeValidate() {
+        if(proveedor) {
+            this.nombre = proveedor.nombre;
+        }
     }
 
 

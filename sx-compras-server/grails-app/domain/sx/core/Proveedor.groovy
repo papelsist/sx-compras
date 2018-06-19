@@ -3,7 +3,7 @@ package sx.core
 import groovy.transform.ToString
 import groovy.transform.EqualsAndHashCode
 
-@ToString(excludes ='id,version,dateCreated,lastUpdated,sw2,direccion',includeNames=true,includePackage=false)
+@ToString(includes ='nombre, clave, rfc',includeNames=true,includePackage=false)
 @EqualsAndHashCode(includes='id, nombre, rfc')
 class Proveedor {
 

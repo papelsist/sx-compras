@@ -16,6 +16,7 @@ import { AnalisisDet, buildFromCom } from '../../model/analisisDet';
 import { RecepcionDeCompra } from '../../model/recepcionDeCompra';
 
 import * as _ from 'lodash';
+import { CuentaPorPagar } from '../../model/cuentaPorPagar';
 
 @Component({
   selector: 'sx-analisis-edit-form',
@@ -23,9 +24,13 @@ import * as _ from 'lodash';
   styles: [
     `
     .partidas-panel {
-      min-height: 350px;
-      max-height: 700px;
+      min-height: 300px;
+      max-height: 600px;
       overflow: auto;
+    }
+    .totales-panel {
+
+      padding: 5px 15px 5px 15px;
     }
     `
   ]
@@ -50,8 +55,11 @@ export class AnalisisEditFormComponent implements OnInit {
       factura: [this.analisis.factura.id],
       comentario: [this.analisis.comentario],
       fecha: [this.analisis.fecha, [Validators.required]],
+      importe: [0.0, [Validators.required, Validators.min(1.0)]],
+      pendiente: [0.0],
       partidas: this.fb.array([])
     });
+    this.actualizar();
   }
 
   onSubmit() {
@@ -64,10 +72,6 @@ export class AnalisisEditFormComponent implements OnInit {
     return this.form.get('partidas') as FormArray;
   }
 
-  get totalAnalizado(): number {
-    return _.sumBy(this.partidas.value.importe);
-  }
-
   onAgregarCom() {
     const dialogRef = this.dialog.open(ComsSelectorComponent, {
       data: { title: 'COMs pendientes', coms: this.comsDisponibles },
@@ -75,15 +79,45 @@ export class AnalisisEditFormComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe((selected: RecepcionDeCompra[]) => {
       if (selected) {
-        console.log('Recepcion de Compra: ', selected);
         selected.forEach(item => {
           item.partidas.forEach(com => {
-            console.log('COM: ', com);
             const det = buildFromCom(com);
             this.partidas.push(new FormControl(det));
+            this.actualizar();
           });
         });
       }
     });
+  }
+
+  onUpdateRow(event: AnalisisDet) {
+    this.actualizar();
+  }
+
+  private actualizar() {
+    const importe = _.sumBy(this.partidas.value, 'importe');
+    this.form.get('importe').setValue(importe);
+    this.form.get('pendiente').setValue(importe / this.factura.subTotal);
+  }
+
+  get factura(): CuentaPorPagar {
+    return this.analisis.factura;
+  }
+
+  get importe(): number {
+    return this.form.value.importe;
+  }
+
+  get diferencia() {
+    const subTotal = this.factura.subTotal;
+    const analizado = this.importe;
+    return _.round(subTotal - analizado);
+  }
+  get diferenciaPorcentaje() {
+    const subTotal = this.factura.subTotal;
+    return _.round(this.diferencia / subTotal);
+  }
+  get pendiente() {
+    return this.form.get('pendiente').value;
   }
 }

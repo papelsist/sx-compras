@@ -2,15 +2,19 @@ package sx.cxp
 
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
+import sx.compras.RecepcionDeCompraDet
 
-@ToString(excludes = ['id,version,sw2,dateCreated,lastUpdated'],includeNames=true,includePackage=false)
-@EqualsAndHashCode(includeFields = true,includes = ['id, com, '])
+@ToString(includes = 'clave, descripcion, cantdad, importe',includeNames=true,includePackage=false)
+@EqualsAndHashCode(includeFields = true,includes = ['id', 'com'])
 class AnalisisDeFacturaDet {
 
     String id
 
-    // RecepcionDeCompraDet entrada
-    String com
+    String clave
+
+    String descripcion
+
+    RecepcionDeCompraDet com
 
     BigDecimal cantidad = 0.0
 
@@ -36,6 +40,7 @@ class AnalisisDeFacturaDet {
     static belongsTo = [analisis: AnalisisDeFactura]
 
     static constraints = {
+        clave maxSize:15
         precioDeLista scale:2
         desc1 scale:4
         desc2 scale:4
@@ -50,4 +55,12 @@ class AnalisisDeFacturaDet {
         id generator:'uuid'
         com type:'date' ,index: 'ANALISISDET_IDX1'
     }
+
+    def beforeValidate() {
+        if(com) {
+            clave = com.producto.clave
+            descripcion = com.producto.descripcion
+        }
+    }
+
 }

@@ -2,11 +2,13 @@
   <mat-card-title>
     <div layout>
       <span class="pad-right">Analisis de factura: </span>
+      <span class="pad-right">{{analisis.folio}}</span>
+      <span class="pad-right"> Factura: </span>
       <sx-factura-header [factura]="analisis.factura"></sx-factura-header>
       <span flex></span>
       <span layout>
         <span>Analizado:</span>
-        <span class="pad-left">{{totalAnalizado | currency}}</span>
+        <span class="pad-left">{{importe | currency}}</span>
       </span>
     </div>
   </mat-card-title>
@@ -17,13 +19,29 @@
 
   <div class="partidas-panel">
     <form [formGroup]="form" novalidate>
-      <sx-analisis-partidas-table [parent]="form" [partidas]="partidas.value"></sx-analisis-partidas-table>
+      <sx-analisis-partidas-table [parent]="form" [partidas]="partidas.value" (update)="onUpdateRow($event)">
+      </sx-analisis-partidas-table>
     </form>
   </div>
 
   <mat-divider></mat-divider>
+  <div layout>
+    <span flex></span>
+    <div class="totales-panel" layout layout-padding>
+      <mat-form-field>
+        <input matInput placeholder="Factura (Subtotal)" [disabled]="true" [value]="factura.subTotal | currency">
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput placeholder="Analizado" [disabled]="true" [value]="importe | currency">
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput placeholder="Pendiente" [disabled]="true" value="{{diferencia | currency}} ({{pendiente | percent}})">
+      </mat-form-field>
+    </div>
+  </div>
 
 
+  <mat-divider></mat-divider>
   <mat-card-actions>
     <button mat-button (click)="cancel.emit($event)" type="button"> Cancelar </button>
     <button mat-button (click)="onSubmit()" type="button" (click)="onAgregarCom()">

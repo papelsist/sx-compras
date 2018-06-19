@@ -1,8 +1,7 @@
 package sx.cxp
 
 import grails.compiler.GrailsCompileStatic
-import grails.rest.*
-import grails.converters.*
+import grails.rest.RestfulController
 
 @GrailsCompileStatic
 class AnalisisDeFacturaController extends RestfulController<AnalisisDeFactura> {
@@ -20,11 +19,17 @@ class AnalisisDeFacturaController extends RestfulController<AnalisisDeFactura> {
         bindData analisisDeFactura, getObjectToBind()
         analisisDeFactura.createUser = 'PENDIENTE'
         analisisDeFactura.updateUser = 'PENDIENTE'
+        analisisDeFactura.folio = 0L
         return analisisDeFactura
     }
 
     @Override
     protected AnalisisDeFactura saveResource(AnalisisDeFactura resource) {
         return this.analisisDeFacturaService.save(resource)
+    }
+
+    @Override
+    protected AnalisisDeFactura updateResource(AnalisisDeFactura resource) {
+        return analisisDeFacturaService.update(resource)
     }
 }

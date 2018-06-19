@@ -8,8 +8,6 @@ import { Store } from '@ngrx/store';
 import * as fromRoot from 'app/store';
 import * as fromStore from '../../store';
 
-import { ComsSelectorComponent } from '../../components';
-
 import { Analisis } from '../../model/analisis';
 import { CuentaPorPagar } from '../../model/cuentaPorPagar';
 import { Proveedor } from '../../../proveedores/models/proveedor';
@@ -62,5 +60,6 @@ export class AnalisisEditComponent implements OnInit, OnDestroy {
 
   onUpdate(event: Analisis) {
     console.log('Actualizar analisis: ', event);
+    this.store.dispatch(new fromStore.UpdateAnalisis(event));
   }
 }

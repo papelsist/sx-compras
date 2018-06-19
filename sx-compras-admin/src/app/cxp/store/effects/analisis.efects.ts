@@ -47,6 +47,22 @@ export class AnalisisEffects {
   );
 
   @Effect()
+  update$ = this.actions$.pipe(
+    ofType<analisisActions.UpdateAnalisis>(
+      analisisActions.AnalisisActionTypes.UPDATE_ANALISIS
+    ),
+    map(action => action.payload),
+    switchMap(analisis => {
+      return this.analisisService
+        .update(analisis)
+        .pipe(
+          map(res => new analisisActions.UpdateAnalisisSuccess(res)),
+          catchError(error => of(new analisisActions.UpdateAnalisisFail(error)))
+        );
+    })
+  );
+
+  @Effect()
   setCurrentProveedor$ = this.actions$.pipe(
     ofType<analisisActions.SetCurrentProveedor>(
       analisisActions.AnalisisActionTypes.SET_CURRENT_PROVEEDOR
