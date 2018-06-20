@@ -8,10 +8,8 @@ import { Store } from '@ngrx/store';
 import * as fromRoot from 'app/store';
 import * as fromStore from '../../store';
 
-import { Analisis } from '../../model/analisis';
-import { CuentaPorPagar } from '../../model/cuentaPorPagar';
+import { Analisis, CuentaPorPagar, RecepcionDeCompra } from '../../model';
 import { Proveedor } from '../../../proveedores/models/proveedor';
-import { RecepcionDeCompra } from '../../model/recepcionDeCompra';
 
 @Component({
   selector: 'sx-analisis-edit',
@@ -59,7 +57,7 @@ export class AnalisisEditComponent implements OnInit, OnDestroy {
   }
 
   onUpdate(event: Analisis) {
-    console.log('Actualizar analisis: ', event);
+    // console.log('Actualizar analisis: ', event);
     this.store.dispatch(new fromStore.UpdateAnalisis(event));
   }
 }

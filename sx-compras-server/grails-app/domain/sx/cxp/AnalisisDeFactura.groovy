@@ -26,6 +26,8 @@ class AnalisisDeFactura {
 
     List<AnalisisDeFacturaDet> partidas = []
 
+    // Date cerrada
+
     Long sw2
 
     Date dateCreated
@@ -38,6 +40,7 @@ class AnalisisDeFactura {
 
     static constraints = {
         comentario nullable:true
+        // cerrada nullabe: true
         sw2 nullable:true
     }
 
@@ -45,6 +48,7 @@ class AnalisisDeFactura {
         partidas cascade: "all-delete-orphan"
         id generator:'uuid'
         fecha type:'date' ,index: 'ANALISIS_IDX1'
+        // cerrada type: 'date'
     }
 
     def beforeValidate() {

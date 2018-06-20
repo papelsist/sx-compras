@@ -9,12 +9,15 @@ import { AnalisisActionTypes } from '../actions/analisis.actions';
 import * as fromServices from '../../services';
 import * as fromRoot from 'app/store';
 
+import { MatSnackBar } from '@angular/material';
+
 @Injectable()
 export class AnalisisEffects {
   constructor(
     private actions$: Actions,
     private analisisService: fromServices.AnalisisService,
-    private cuentaPorPagarSercice: fromServices.CuentaPorPagarService
+    private cuentaPorPagarSercice: fromServices.CuentaPorPagarService,
+    public snackBar: MatSnackBar
   ) {}
 
   @Effect()
@@ -60,6 +63,18 @@ export class AnalisisEffects {
           catchError(error => of(new analisisActions.UpdateAnalisisFail(error)))
         );
     })
+  );
+
+  @Effect()
+  updateSuccess$ = this.actions$.pipe(
+    ofType<analisisActions.UpdateAnalisisSuccess>(
+      analisisActions.AnalisisActionTypes.UPDATE_ANALISIS_SUCCESS
+    ),
+    map(action => action.payload),
+    tap(analisis =>
+      this.snackBar.open('Actualización exitosa', 'Cerrar', { duration: 1000 })
+    ),
+    map(analisis => new fromRoot.Go({ path: ['cxp/analisis', analisis.id] }))
   );
 
   @Effect()

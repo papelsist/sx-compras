@@ -1,10 +1,12 @@
 package sx.cxp
 
 import grails.compiler.GrailsCompileStatic
+import grails.events.annotation.Publisher
 import grails.gorm.transactions.Transactional
 import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
 import sx.core.Folio
+import sx.utils.MonedaUtils
 
 @Slf4j
 @Transactional
@@ -22,11 +24,13 @@ class AnalisisDeFacturaService {
         return analisis
     }
 
+    @Publisher('actualizarAnalisis')
     AnalisisDeFactura update(AnalisisDeFactura analisis) {
         log.debug("UPDATE: {}", analisis)
         analisis.partidas.each {
             it.clave = it.com.producto.clave
             it.descripcion = it.com.producto.descripcion
+            it.costoUnitario = MonedaUtils.aplicarDescuentosEnCascada(it.precioDeLista, it.desc1, it.desc2, it.desc3, it.desc4)
         }
         analisis.save flush: true
         return analisis

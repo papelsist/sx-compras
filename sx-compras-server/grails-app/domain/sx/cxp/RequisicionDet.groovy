@@ -12,6 +12,8 @@ class RequisicionDet {
 
     CuentaPorPagar cxp
 
+    BigDecimal importe = 0.0
+
     String comentario
 
     Date dateCreated

@@ -55,9 +55,12 @@ export class AnalisisEditFormComponent implements OnInit {
       factura: [this.analisis.factura.id],
       comentario: [this.analisis.comentario],
       fecha: [this.analisis.fecha, [Validators.required]],
-      importe: [0.0, [Validators.required, Validators.min(1.0)]],
+      importe: [this.analisis.importe],
       pendiente: [0.0],
       partidas: this.fb.array([])
+    });
+    this.analisis.partidas.forEach(item => {
+      this.partidas.push(new FormControl(item));
     });
     this.actualizar();
   }
@@ -92,12 +95,14 @@ export class AnalisisEditFormComponent implements OnInit {
 
   onUpdateRow(event: AnalisisDet) {
     this.actualizar();
+    this.form.markAsDirty();
   }
 
   private actualizar() {
     const importe = _.sumBy(this.partidas.value, 'importe');
     this.form.get('importe').setValue(importe);
-    this.form.get('pendiente').setValue(importe / this.factura.subTotal);
+    const pendiente = 1 - importe / this.factura.subTotal;
+    this.form.get('pendiente').setValue(pendiente);
   }
 
   get factura(): CuentaPorPagar {

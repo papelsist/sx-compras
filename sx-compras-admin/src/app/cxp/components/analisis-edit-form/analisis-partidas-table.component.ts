@@ -20,11 +20,11 @@ import * as _ from 'lodash';
     <table mat-table formArrayName="partidas" [dataSource]="partidas">
       <ng-container matColumnDef="producto">
         <th mat-header-cell *matHeaderCellDef >Producto</th>
-        <td mat-cell *matCellDef="let row">{{row.com.producto.clave}}</td>
+        <td mat-cell *matCellDef="let row">{{row.clave}}</td>
       </ng-container>
       <ng-container matColumnDef="descripcion">
         <th mat-header-cell *matHeaderCellDef >Descripción</th>
-        <td mat-cell *matCellDef="let row">{{row.com.producto.descripcion}}</td>
+        <td mat-cell *matCellDef="let row">{{row.descripcion}}</td>
       </ng-container>
       <ng-container matColumnDef="cantidad">
         <th mat-header-cell *matHeaderCellDef >Cantidad</th>
@@ -33,7 +33,7 @@ import * as _ from 'lodash';
       <ng-container matColumnDef="precio">
         <th mat-header-cell *matHeaderCellDef >Precio</th>
         <td mat-cell *matCellDef="let row">
-          <input type="number" (input)="asignarPrecio($event.target.value, row)">
+          <input type="number" (input)="asignarPrecio($event.target.value, row)" [value]="row.precioDeLista">
         </td>
       </ng-container>
       <ng-container matColumnDef="desc1">

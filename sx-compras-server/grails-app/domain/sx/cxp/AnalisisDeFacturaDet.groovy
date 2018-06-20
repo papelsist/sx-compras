@@ -47,7 +47,7 @@ class AnalisisDeFacturaDet {
         desc3 scale:4
         desc4 scale:4
         costoUnitario scale:6
-        com unique: true
+        // com unique: true
         sw2 nullable:true
     }
 

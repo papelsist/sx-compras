@@ -3,6 +3,8 @@ import { RecepcionDeCompraDet } from './recepcionDeCompraDet';
 export interface AnalisisDet {
   id: string;
   com: Partial<RecepcionDeCompraDet>;
+  clave: string;
+  descripcion: string;
   cantidad: number;
   precioDeLista: number;
   desc1: number;
@@ -17,6 +19,8 @@ export function buildFromCom(com: RecepcionDeCompraDet): Partial<AnalisisDet> {
   const { id, cantidad, producto } = com;
   return {
     com: { id, cantidad, producto },
+    clave: com.producto.clave,
+    descripcion: com.producto.descripcion,
     cantidad: com.cantidad,
     precioDeLista: 0.0,
     desc1: 0.0,

@@ -1,55 +1,59 @@
-<mat-card>
-  <mat-card-title>
-    <div layout>
-      <span class="pad-right">Analisis de factura: </span>
-      <span class="pad-right">{{analisis.folio}}</span>
-      <span class="pad-right"> Factura: </span>
-      <sx-factura-header [factura]="analisis.factura"></sx-factura-header>
-      <span flex></span>
-      <span layout>
-        <span>Analizado:</span>
-        <span class="pad-left">{{importe | currency}}</span>
-      </span>
-    </div>
-  </mat-card-title>
-  <mat-card-subtitle>
-    <span>{{analisis.proveedor.nombre}}</span>
-  </mat-card-subtitle>
-  <mat-divider></mat-divider>
+<form [formGroup]="form" novalidate>
+  <mat-card>
+    <mat-card-title>
+      <div layout>
+        <span class="pad-right">Analisis de factura: </span>
+        <span class="pad-right">{{analisis.folio}}</span>
+        <span class="pad-right"> Factura: </span>
+        <sx-factura-header [factura]="analisis.factura"></sx-factura-header>
+        <span flex></span>
+        <span layout>
+          <span>Analizado:</span>
+          <span class="pad-left">{{importe | currency}}</span>
+        </span>
+      </div>
+    </mat-card-title>
+    <mat-card-subtitle>
+      <span>{{analisis.proveedor.nombre}}</span>
+    </mat-card-subtitle>
+    <mat-divider></mat-divider>
 
-  <div class="partidas-panel">
-    <form [formGroup]="form" novalidate>
+
+
+    <div class="partidas-panel">
       <sx-analisis-partidas-table [parent]="form" [partidas]="partidas.value" (update)="onUpdateRow($event)">
       </sx-analisis-partidas-table>
-    </form>
-  </div>
-
-  <mat-divider></mat-divider>
-  <div layout>
-    <span flex></span>
-    <div class="totales-panel" layout layout-padding>
-      <mat-form-field>
-        <input matInput placeholder="Factura (Subtotal)" [disabled]="true" [value]="factura.subTotal | currency">
-      </mat-form-field>
-      <mat-form-field>
-        <input matInput placeholder="Analizado" [disabled]="true" [value]="importe | currency">
-      </mat-form-field>
-      <mat-form-field>
-        <input matInput placeholder="Pendiente" [disabled]="true" value="{{diferencia | currency}} ({{pendiente | percent}})">
-      </mat-form-field>
     </div>
-  </div>
+    <mat-divider></mat-divider>
+    <div layout>
+      <mat-form-field flex class="pad-left">
+        <input matInput formControlName="comentario" placeholder="Comentario">
+      </mat-form-field>
+      <span flex></span>
+      <div class="totales-panel" layout layout-padding>
+        <mat-form-field>
+          <input matInput placeholder="Factura (Subtotal)" [disabled]="true" [value]="factura.subTotal | currency">
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput placeholder="Analizado" [disabled]="true" [value]="importe | currency">
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput placeholder="Pendiente" [disabled]="true" value="{{diferencia | currency}} ({{pendiente | percent:'2.2-2'}})">
+        </mat-form-field>
+      </div>
+    </div>
 
 
-  <mat-divider></mat-divider>
-  <mat-card-actions>
-    <button mat-button (click)="cancel.emit($event)" type="button"> Cancelar </button>
-    <button mat-button (click)="onSubmit()" type="button" (click)="onAgregarCom()">
-      <mat-icon>assignment_returned</mat-icon> Agregar COM
-    </button>
-    <button mat-button (click)="onSubmit()" color="accent" [disabled]="form.invalid && form.pristine">
-      <mat-icon>save</mat-icon> Actualizar
-    </button>
-  </mat-card-actions>
+    <mat-divider></mat-divider>
+    <mat-card-actions>
+      <button mat-button (click)="cancel.emit($event)" type="button"> Cancelar </button>
+      <button mat-button (click)="onSubmit()" type="button" (click)="onAgregarCom()" [disabled]="pendiente <= 0">
+        <mat-icon>assignment_returned</mat-icon> Agregar COM
+      </button>
+      <button mat-button (click)="onSubmit()" color="accent" [disabled]="form.invalid || form.pristine">
+        <mat-icon>save</mat-icon> Actualizar
+      </button>
+    </mat-card-actions>
 
-</mat-card>
+  </mat-card>
+</form>
