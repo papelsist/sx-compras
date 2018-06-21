@@ -30,7 +30,11 @@ class RecepcionDeCompraController extends RestfulController<RecepcionDeCompra> {
         params.max = 100
         params.sort = 'lastUpdated'
         params.order = 'desc'
-        def query = RecepcionDeCompra.where {proveedor == proveedor && fechaInventario != null}
-        respond query.list(params)
+        //def query = RecepcionDeCompra.where {proveedor == proveedor && fechaInventario != null && pendienteDeAnalisis > 0}
+        //respond query.list(params)
+        def list = RecepcionDeCompraDet.findAll(
+                "select distinct(d.recepcion) from RecepcionDeCompraDet d where d.recepcion.proveedor =? and d.cantidad - d.analizado > 0 ",
+                [proveedor])
+        respond list
     }
 }

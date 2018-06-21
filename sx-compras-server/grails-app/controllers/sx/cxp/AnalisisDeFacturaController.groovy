@@ -3,7 +3,7 @@ package sx.cxp
 import grails.compiler.GrailsCompileStatic
 import grails.rest.RestfulController
 
-@GrailsCompileStatic
+
 class AnalisisDeFacturaController extends RestfulController<AnalisisDeFactura> {
     static responseFormats = ['json']
 
@@ -31,5 +31,6 @@ class AnalisisDeFacturaController extends RestfulController<AnalisisDeFactura> {
     @Override
     protected AnalisisDeFactura updateResource(AnalisisDeFactura resource) {
         return analisisDeFacturaService.update(resource)
+
     }
 }

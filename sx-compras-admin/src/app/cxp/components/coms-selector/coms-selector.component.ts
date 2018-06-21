@@ -13,8 +13,8 @@ import { CuentaPorPagar } from '../../model/cuentaPorPagar';
   templateUrl: './coms-selector.component.html',
   styles: [
     `
-    .comst-table-panel {
-      height: 500px;
+    .coms-table-panel {
+      max-height: 500px;
       overflow: auto;
     }
   `

@@ -9,7 +9,7 @@ import * as fromRoot from 'app/store';
 import * as fromStore from '../../store';
 
 import { Analisis, CuentaPorPagar, RecepcionDeCompra } from '../../model';
-import { Proveedor } from '../../../proveedores/models/proveedor';
+import { Proveedor } from 'app/proveedores/models/proveedor';
 
 @Component({
   selector: 'sx-analisis-edit',
@@ -18,6 +18,7 @@ import { Proveedor } from '../../../proveedores/models/proveedor';
     <sx-analisis-edit-form
       [analisis]="analisis$ | async"
       [comsDisponibles]="coms$ | async"
+      (cancel)="onCancel()"
       (update)="onUpdate($event)">
     </sx-analisis-edit-form>
   </div>
@@ -52,12 +53,12 @@ export class AnalisisEditComponent implements OnInit, OnDestroy {
     this.subscriptions.forEach(item => item.unsubscribe());
   }
 
-  onCancelar() {
+  onCancel() {
     this.store.dispatch(new fromRoot.Back());
   }
 
   onUpdate(event: Analisis) {
-    // console.log('Actualizar analisis: ', event);
+    console.log('Actualizar analisis: ', event);
     this.store.dispatch(new fromStore.UpdateAnalisis(event));
   }
 }

@@ -43,6 +43,8 @@ class RecepcionDeCompra {
 
     Date fechaInventario
 
+    BigDecimal pendienteDeAnalisis = 0
+
 
     static hasMany =[partidas:RecepcionDeCompraDet]
 
@@ -59,11 +61,11 @@ class RecepcionDeCompra {
     }
 
 
-
     static mapping = {
         id generator:'uuid'
         partidas cascade: "all-delete-orphan"
         fecha type:'date', index: 'RECOMPRA_IDX1'
+        pendienteDeAnalisis formula: '(select COALESCE(sum(x.cantidad - x.analizado), 0) from recepcion_de_compra_det x where x.recepcion_id = id )'
     }
 
 

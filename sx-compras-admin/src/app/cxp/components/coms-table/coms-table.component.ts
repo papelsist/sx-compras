@@ -28,7 +28,8 @@ export class ComsTableComponent implements OnInit, OnChanges {
     'documento',
     'fecha',
     'remision',
-    'fechaRemision'
+    'fechaRemision',
+    'pendiente'
   ];
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;

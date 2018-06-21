@@ -84,9 +84,11 @@ export class AnalisisEditFormComponent implements OnInit {
       if (selected) {
         selected.forEach(item => {
           item.partidas.forEach(com => {
+            console.log('Agregando COM: ', com);
             const det = buildFromCom(com);
             this.partidas.push(new FormControl(det));
             this.actualizar();
+            this.form.markAsDirty();
           });
         });
       }
@@ -94,6 +96,12 @@ export class AnalisisEditFormComponent implements OnInit {
   }
 
   onUpdateRow(event: AnalisisDet) {
+    this.actualizar();
+    this.form.markAsDirty();
+  }
+
+  onDeleteRow(index: number) {
+    this.partidas.removeAt(index);
     this.actualizar();
     this.form.markAsDirty();
   }

@@ -1,5 +1,12 @@
 <div layout>
-  <h3 mat-dialog-title>{{title}}</h3>
+
+  <span>
+    <span mat-dialog-title>{{title}}</span>
+    <span *ngIf="selected">
+      Seleccionados: {{selected.length}}
+    </span>
+  </span>
+
   <span flex></span>
   <mat-form-field flex>
     <input matInput (keyup)="table.applyFilter($event.target.value)" placeholder="Filtrar">
@@ -7,11 +14,9 @@
 </div>
 
 <mat-divider></mat-divider>
-<div class="comst-table-panel">
+<div class="coms-table-panel">
   <sx-coms-table [coms]="coms" #table (select)="onSelection($event)"></sx-coms-table>
-  <pre *ngIf="selected">
-    Seleccionados: {{selected.length}}
-  </pre>
+
 </div>
 <mat-dialog-actions>
   <button mat-button mat-dialog-close>Cancelar</button>

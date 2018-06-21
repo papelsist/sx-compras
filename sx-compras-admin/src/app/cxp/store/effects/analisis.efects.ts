@@ -50,6 +50,15 @@ export class AnalisisEffects {
   );
 
   @Effect()
+  saveSuccess$ = this.actions$.pipe(
+    ofType<analisisActions.SaveAnalisisSuccess>(
+      analisisActions.AnalisisActionTypes.SAVE_ANALISIS_SUCCESS
+    ),
+    map(action => action.payload),
+    map(analisis => new fromRoot.Go({ path: ['cxp/analisis', analisis.id] }))
+  );
+
+  @Effect()
   update$ = this.actions$.pipe(
     ofType<analisisActions.UpdateAnalisis>(
       analisisActions.AnalisisActionTypes.UPDATE_ANALISIS
@@ -72,7 +81,9 @@ export class AnalisisEffects {
     ),
     map(action => action.payload),
     tap(analisis =>
-      this.snackBar.open('Actualización exitosa', 'Cerrar', { duration: 1000 })
+      this.snackBar.open(`Análisis ${analisis.folio} actualizado `, 'Cerrar', {
+        duration: 2000
+      })
     ),
     map(analisis => new fromRoot.Go({ path: ['cxp/analisis', analisis.id] }))
   );

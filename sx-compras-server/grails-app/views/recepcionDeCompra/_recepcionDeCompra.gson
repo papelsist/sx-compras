@@ -8,13 +8,12 @@ json g.render(recepcionDeCompra, [excludes: ['compra','sucursal','proveedor'], r
     compra {
         id recepcionDeCompra.compra.id
     }
-    sucursal {
-        id recepcionDeCompra.sucursal.id
-        nombre recepcionDeCompra.sucursal.nombre
-    }
     proveedor {
         id recepcionDeCompra.proveedor.id
         nombre recepcionDeCompra.proveedor.nombre
     }
+    sucursal recepcionDeCompra.sucursal.nombre
     partidas g.render(recepcionDeCompra.partidas)
+
+
 }

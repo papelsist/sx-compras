@@ -12,12 +12,25 @@ import { MatTableDataSource, MatTable } from '@angular/material';
 import { AnalisisDet } from '../../model/analisisDet';
 
 import * as _ from 'lodash';
+import { aplicarDescuentosEnCascada } from 'app/utils/money-utils';
 
 @Component({
   selector: 'sx-analisis-partidas-table',
   template: `
   <div [formGroup]="parent">
     <table mat-table formArrayName="partidas" [dataSource]="partidas">
+      <ng-container matColumnDef="sucursal">
+        <th mat-header-cell *matHeaderCellDef >Sucursal</th>
+        <td mat-cell *matCellDef="let row">{{row.sucursal}}</td>
+      </ng-container>
+      <ng-container matColumnDef="remision">
+        <th mat-header-cell *matHeaderCellDef >Remisión</th>
+        <td mat-cell *matCellDef="let row">{{row.remision}}</td>
+      </ng-container>
+      <ng-container matColumnDef="com">
+        <th mat-header-cell *matHeaderCellDef >COM</th>
+        <td mat-cell *matCellDef="let row">{{row.folioCom}}</td>
+      </ng-container>
       <ng-container matColumnDef="producto">
         <th mat-header-cell *matHeaderCellDef >Producto</th>
         <td mat-cell *matCellDef="let row">{{row.clave}}</td>
@@ -42,14 +55,43 @@ import * as _ from 'lodash';
           <input type="number" [(ngModel)]="row.desc1" [ngModelOptions]="{standalone: true}" (input)="actualizar(row)">
         </td>
       </ng-container>
+      <ng-container matColumnDef="desc2">
+        <th mat-header-cell *matHeaderCellDef >Desc 2</th>
+        <td mat-cell *matCellDef="let row">
+          <input type="number" [(ngModel)]="row.desc2" [ngModelOptions]="{standalone: true}" (input)="actualizar(row)">
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="desc3">
+        <th mat-header-cell *matHeaderCellDef >Desc 3</th>
+        <td mat-cell *matCellDef="let row" class="descuento">
+          <input type="number" [(ngModel)]="row.desc3" [ngModelOptions]="{standalone: true}" (input)="actualizar(row)">
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="desc4">
+        <th mat-header-cell *matHeaderCellDef >Desc 4</th>
+        <td mat-cell *matCellDef="let row"class="descuento">
+          <input type="number" [(ngModel)]="row.desc4" [ngModelOptions]="{standalone: true}" (input)="actualizar(row)">
+        </td>
+      </ng-container>
+
       <ng-container matColumnDef="importe">
         <th mat-header-cell *matHeaderCellDef >Importe</th>
         <td mat-cell *matCellDef="let row">
           {{row.importe | currency}}
         </td>
       </ng-container>
+
+      <ng-container matColumnDef="operaciones">
+        <th mat-header-cell *matHeaderCellDef ></th>
+        <td mat-cell *matCellDef="let row, let i = index">
+          <mat-icon color="warn" class="cursor-pointer" (click)="delete.emit(i)">delete</mat-icon>
+        </td>
+      </ng-container>
+
       <tr mat-header-row *matHeaderRowDef="displayColumns"></tr>
-      <tr mat-row *matRowDef="let cfdi; columns: displayColumns"></tr>
+      <tr mat-row *matRowDef="let cfdi; columns: displayColumns; "></tr>
     </table>
   </div>
   `,
@@ -69,10 +111,11 @@ import * as _ from 'lodash';
     .mat-column-precio {
       width: 100px;
     }
-    .mat-column-desc1 {
-      width: 100px;
+    .mat-column-desc1, .mat-column-desc2 {
+      width: 80px;
       padding: 0px;
     }
+
 
     td {
       .mat-column-precio {
@@ -88,20 +131,33 @@ import * as _ from 'lodash';
       width: 90%;
       height:100%;
     }
+
+    .descuento {
+      width: 80px;
+      padding: 0px;
+    }
   `
   ]
 })
 export class AnalisisPartidasTableComponent implements OnInit {
-  @Input() partidas: any[] = [];
+  @Input() partidas: AnalisisDet[] = [];
   @Input() parent: FormGroup;
   @Output() update = new EventEmitter();
+  @Output() delete = new EventEmitter();
   displayColumns = [
+    'sucursal',
+    'remision',
+    'com',
     'producto',
     'descripcion',
     'cantidad',
     'precio',
     'desc1',
-    'importe'
+    'desc2',
+    'desc3',
+    'desc4',
+    'importe',
+    'operaciones'
   ];
 
   @ViewChild('table') table: MatTable<any>;
@@ -120,14 +176,15 @@ export class AnalisisPartidasTableComponent implements OnInit {
   }
 
   actualizar(row: AnalisisDet) {
-    const { cantidad, precioDeLista, desc1 } = row;
-    const importeBtuto = cantidad * precioDeLista;
-    let importe = importeBtuto;
-    if (desc1) {
-      const impDesc1 = this.getImporteDescuento(importe, desc1);
-      importe = importe - impDesc1;
-    }
-    row.importe = importe;
+    const { cantidad, precioDeLista, desc1, desc2, desc3, desc4 } = row;
+    const importeBtuto = cantidad * precioDeLista / 1000;
+    const importeNeto = aplicarDescuentosEnCascada(importeBtuto, [
+      desc1,
+      desc2,
+      desc3,
+      desc4
+    ]);
+    row.importe = importeNeto;
     this.update.emit(row);
   }
 

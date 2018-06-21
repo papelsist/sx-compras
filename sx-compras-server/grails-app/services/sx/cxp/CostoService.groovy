@@ -8,7 +8,7 @@ import groovy.util.logging.Slf4j
 import sx.core.Inventario
 
 @Slf4j
-@CompileStatic
+// @CompileStatic
 // @Transactional
 class CostoService {
 
@@ -17,20 +17,26 @@ class CostoService {
      *
      * @param analisis
      */
-    @CompileDynamic
-    @Subscriber
-    void onActualizarAnalisis(AnalisisDeFactura analisis){
+    // @CompileDynamic
+    @Subscriber()
+    void onAnalisisActualizado(AnalisisDeFactura analisis){
+        // log.debug('Actualizando costos relacionados con analisis {}', analisis.id)
         log.debug('Actualizando costo del inventario por analisis: {} Partidas: {}', analisis.folio, analisis.partidas.size())
+
+
         Inventario.withNewSession {
             List<AnalisisDeFacturaDet> partidas = AnalisisDeFacturaDet.where {analisis.id == analisis.id}.list()
             partidas.each {
                 Inventario inventario = it.com.inventario
                 inventario.costo = it.costoUnitario
-                // log.debug("Act costo de : {} {} {}", it.clave, it.costoUnitario, inventario.id)
+                log.debug("Costo de : {} = {} ", it.clave, it.costoUnitario)
                 inventario.save flush: true
             }
         }
+
+
     }
+
 
 
 }

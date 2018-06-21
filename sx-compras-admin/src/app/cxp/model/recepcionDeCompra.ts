@@ -9,4 +9,5 @@ export interface RecepcionDeCompra {
   fechaRemision: string;
   selected?: boolean;
   partidas: RecepcionDeCompraDet[];
+  pendienteDeAnalisis?: number;
 }

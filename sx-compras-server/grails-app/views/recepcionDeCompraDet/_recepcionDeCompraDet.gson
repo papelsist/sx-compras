@@ -10,4 +10,7 @@ json g.render(recepcionDeCompraDet, [resolveTemplate: false, excludes: ['product
         clave recepcionDeCompraDet.producto.clave
         descripcion recepcionDeCompraDet.producto.descripcion
     }
+    com recepcionDeCompraDet.recepcion.documento
+    remision recepcionDeCompraDet.recepcion.remision
+    sucursal recepcionDeCompraDet.recepcion.sucursal.nombre
 }

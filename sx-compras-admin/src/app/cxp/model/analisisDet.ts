@@ -13,6 +13,9 @@ export interface AnalisisDet {
   desc4: number;
   costoUnitario: number;
   importe: number;
+  remision: string;
+  folioCom: number;
+  sucursal: string;
 }
 
 export function buildFromCom(com: RecepcionDeCompraDet): Partial<AnalisisDet> {
@@ -22,6 +25,9 @@ export function buildFromCom(com: RecepcionDeCompraDet): Partial<AnalisisDet> {
     clave: com.producto.clave,
     descripcion: com.producto.descripcion,
     cantidad: com.cantidad,
+    sucursal: com.sucursal,
+    folioCom: com.com,
+    remision: com.remision,
     precioDeLista: 0.0,
     desc1: 0.0,
     desc2: 0.0,

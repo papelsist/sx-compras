@@ -16,6 +16,12 @@ class AnalisisDeFacturaDet {
 
     RecepcionDeCompraDet com
 
+    String remision
+
+    Long folioCom
+
+    String sucursal
+
     BigDecimal cantidad = 0.0
 
     BigDecimal precioDeLista = 0.0
@@ -47,13 +53,14 @@ class AnalisisDeFacturaDet {
         desc3 scale:4
         desc4 scale:4
         costoUnitario scale:6
+        remision maxSize: 20
+        sucursal maxSize: 20
         // com unique: true
         sw2 nullable:true
     }
 
     static mapping = {
         id generator:'uuid'
-        com type:'date' ,index: 'ANALISISDET_IDX1'
     }
 
     def beforeValidate() {

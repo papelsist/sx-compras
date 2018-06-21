@@ -9,4 +9,7 @@ export interface RecepcionDeCompraDet {
   devuelto: number;
   kilos: number;
   comentario?: string;
+  sucursal: string;
+  com: number;
+  remision: string;
 }

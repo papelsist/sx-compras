@@ -6,9 +6,9 @@ import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
-@Transactional
+// @Transactional
 @Slf4j
-@CompileStatic
+// @CompileStatic
 class CuentaPorPagarService {
 
     /**
@@ -16,10 +16,10 @@ class CuentaPorPagarService {
      *
      * @param analisis
      */
-    @CompileDynamic
+    /*
     @Subscriber
     void onActualizarAnalisis(AnalisisDeFactura analisis){
-        /*
+
         if(analisis.cerrada) {
             log.debug('Actualizando analizado de la cuenta por pagar {}', analisis.factura.id)
             CuentaPorPagar.withNewSession {
@@ -28,7 +28,8 @@ class CuentaPorPagarService {
                 // cxp.save()
             }
         }
-        */
+
         log.debug('Actualizando analizado de la cuenta por pagar {}', analisis.factura.id)
     }
+    */
 }
