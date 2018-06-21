@@ -24,7 +24,7 @@ export function buildFromCom(com: RecepcionDeCompraDet): Partial<AnalisisDet> {
     com: { id, cantidad, producto },
     clave: com.producto.clave,
     descripcion: com.producto.descripcion,
-    cantidad: com.cantidad,
+    cantidad: com.cantidad - com.analizado,
     sucursal: com.sucursal,
     folioCom: com.com,
     remision: com.remision,

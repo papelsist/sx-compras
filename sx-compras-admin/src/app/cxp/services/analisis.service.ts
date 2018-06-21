@@ -48,6 +48,13 @@ export class AnalisisService {
       .pipe(catchError((error: any) => throwError(error)));
   }
 
+  cerrar(analisis: Analisis): Observable<Analisis> {
+    const url = `${this.apiUrl}/cerrar/${analisis.id}`;
+    return this.http
+      .put<Analisis>(url, analisis)
+      .pipe(catchError((error: any) => throwError(error)));
+  }
+
   delete(id: string) {
     const url = `${this.apiUrl}/${id}`;
     return this.http

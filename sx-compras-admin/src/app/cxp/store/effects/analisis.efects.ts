@@ -77,7 +77,8 @@ export class AnalisisEffects {
   @Effect()
   updateSuccess$ = this.actions$.pipe(
     ofType<analisisActions.UpdateAnalisisSuccess>(
-      analisisActions.AnalisisActionTypes.UPDATE_ANALISIS_SUCCESS
+      analisisActions.AnalisisActionTypes.UPDATE_ANALISIS_SUCCESS,
+      analisisActions.AnalisisActionTypes.CERRAR_ANALISIS_SUCCESS
     ),
     map(action => action.payload),
     tap(analisis =>
@@ -86,6 +87,44 @@ export class AnalisisEffects {
       })
     ),
     map(analisis => new fromRoot.Go({ path: ['cxp/analisis', analisis.id] }))
+  );
+
+  @Effect()
+  cerrar$ = this.actions$.pipe(
+    ofType<analisisActions.CerrarAnalisis>(
+      analisisActions.AnalisisActionTypes.CERRAR_ANALISIS
+    ),
+    map(action => action.payload),
+    switchMap(analisis => {
+      return this.analisisService
+        .cerrar(analisis)
+        .pipe(
+          map(res => new analisisActions.CerrarAnalisisSuccess(res)),
+          catchError(error => of(new analisisActions.CerrarAnalisisFail(error)))
+        );
+    })
+  );
+
+  @Effect()
+  delete$ = this.actions$.pipe(
+    ofType<analisisActions.DeleteAnalisis>(
+      analisisActions.AnalisisActionTypes.DELETE_ANALISIS
+    ),
+    map(action => action.payload),
+    switchMap(analisis => {
+      return this.analisisService
+        .delete(analisis.id)
+        .pipe(
+          map(res => new analisisActions.DeleteAnalisisSuccess(analisis)),
+          catchError(error => of(new analisisActions.DeleteAnalisisFail(error)))
+        );
+    })
+  );
+
+  @Effect()
+  deleteSuccess$ = this.actions$.pipe(
+    ofType(analisisActions.AnalisisActionTypes.DELETE_ANALISIS_SUCCESS),
+    map(() => new fromRoot.Go({ path: ['cxp/analisis'] }))
   );
 
   @Effect()

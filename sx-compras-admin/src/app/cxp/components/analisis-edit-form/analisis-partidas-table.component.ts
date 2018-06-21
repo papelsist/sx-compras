@@ -7,7 +7,7 @@ import {
   ViewChild
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { MatTableDataSource, MatTable } from '@angular/material';
+import { MatTable } from '@angular/material';
 
 import { AnalisisDet } from '../../model/analisisDet';
 
@@ -41,38 +41,46 @@ import { aplicarDescuentosEnCascada } from 'app/utils/money-utils';
       </ng-container>
       <ng-container matColumnDef="cantidad">
         <th mat-header-cell *matHeaderCellDef >Cantidad</th>
-        <td mat-cell *matCellDef="let row">{{row.cantidad}}</td>
+        <td mat-cell *matCellDef="let row">
+          <input type="number" [(ngModel)]="row.cantidad" [ngModelOptions]="{standalone: true}" (input)="actualizar(row)"
+            [disabled]="readOnly">
+        </td>
       </ng-container>
       <ng-container matColumnDef="precio">
         <th mat-header-cell *matHeaderCellDef >Precio</th>
         <td mat-cell *matCellDef="let row">
-          <input type="number" (input)="asignarPrecio($event.target.value, row)" [value]="row.precioDeLista">
+          <input type="number" (input)="asignarPrecio($event.target.value, row)" [value]="row.precioDeLista"
+            [disabled]="readOnly">
         </td>
       </ng-container>
       <ng-container matColumnDef="desc1">
         <th mat-header-cell *matHeaderCellDef >Desc 1</th>
         <td mat-cell *matCellDef="let row">
-          <input type="number" [(ngModel)]="row.desc1" [ngModelOptions]="{standalone: true}" (input)="actualizar(row)">
+          <input type="number" [disabled]="readOnly"
+            [(ngModel)]="row.desc1" [ngModelOptions]="{standalone: true}" (input)="actualizar(row)">
         </td>
       </ng-container>
       <ng-container matColumnDef="desc2">
         <th mat-header-cell *matHeaderCellDef >Desc 2</th>
         <td mat-cell *matCellDef="let row">
-          <input type="number" [(ngModel)]="row.desc2" [ngModelOptions]="{standalone: true}" (input)="actualizar(row)">
+          <input type="number" [disabled]="readOnly"
+            [(ngModel)]="row.desc2" [ngModelOptions]="{standalone: true}" (input)="actualizar(row)">
         </td>
       </ng-container>
 
       <ng-container matColumnDef="desc3">
         <th mat-header-cell *matHeaderCellDef >Desc 3</th>
         <td mat-cell *matCellDef="let row" class="descuento">
-          <input type="number" [(ngModel)]="row.desc3" [ngModelOptions]="{standalone: true}" (input)="actualizar(row)">
+          <input type="number" [disabled]="readOnly"
+            [(ngModel)]="row.desc3" [ngModelOptions]="{standalone: true}" (input)="actualizar(row)">
         </td>
       </ng-container>
 
       <ng-container matColumnDef="desc4">
         <th mat-header-cell *matHeaderCellDef >Desc 4</th>
         <td mat-cell *matCellDef="let row"class="descuento">
-          <input type="number" [(ngModel)]="row.desc4" [ngModelOptions]="{standalone: true}" (input)="actualizar(row)">
+          <input type="number" [disabled]="readOnly"
+            [(ngModel)]="row.desc4" [ngModelOptions]="{standalone: true}" (input)="actualizar(row)">
         </td>
       </ng-container>
 
@@ -86,7 +94,8 @@ import { aplicarDescuentosEnCascada } from 'app/utils/money-utils';
       <ng-container matColumnDef="operaciones">
         <th mat-header-cell *matHeaderCellDef ></th>
         <td mat-cell *matCellDef="let row, let i = index">
-          <mat-icon color="warn" class="cursor-pointer" (click)="delete.emit(i)">delete</mat-icon>
+          <mat-icon color="warn" class="cursor-pointer" *ngIf="!readOnly"
+            (click)="delete.emit(i)">delete</mat-icon>
         </td>
       </ng-container>
 
@@ -142,6 +151,7 @@ import { aplicarDescuentosEnCascada } from 'app/utils/money-utils';
 export class AnalisisPartidasTableComponent implements OnInit {
   @Input() partidas: AnalisisDet[] = [];
   @Input() parent: FormGroup;
+  @Input() readOnly = false;
   @Output() update = new EventEmitter();
   @Output() delete = new EventEmitter();
   displayColumns = [

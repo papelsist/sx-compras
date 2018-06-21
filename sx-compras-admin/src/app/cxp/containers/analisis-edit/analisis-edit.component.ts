@@ -1,5 +1,4 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { MatDialog } from '@angular/material';
 
 import { Observable, Subscription } from 'rxjs';
 import { pluck } from 'rxjs/operators';
@@ -9,44 +8,51 @@ import * as fromRoot from 'app/store';
 import * as fromStore from '../../store';
 
 import { Analisis, CuentaPorPagar, RecepcionDeCompra } from '../../model';
-import { Proveedor } from 'app/proveedores/models/proveedor';
+import { TdDialogService } from '@covalent/core';
 
 @Component({
   selector: 'sx-analisis-edit',
   template: `
-  <div>
-    <sx-analisis-edit-form
-      [analisis]="analisis$ | async"
-      [comsDisponibles]="coms$ | async"
-      (cancel)="onCancel()"
-      (update)="onUpdate($event)">
-    </sx-analisis-edit-form>
-  </div>
+  <ng-template tdLoading [tdLoadingUntil]="!(loading$ | async)"  tdLoadingStrategy="overlay" >
+    <div>
+      <sx-analisis-edit-form
+        [analisis]="analisis$ | async"
+        [comsDisponibles]="coms$ | async"
+        (cancel)="onCancel()"
+        (update)="onUpdate($event)"
+        (delete)="onDelete($event)"
+        (cerrar)="onCerrar($event)"
+        (print)="onPrint($event)">
+      </sx-analisis-edit-form>
+    </div>
+  </ng-template>
   `
 })
 export class AnalisisEditComponent implements OnInit, OnDestroy {
   analisis$: Observable<Analisis>;
   factura$: Observable<CuentaPorPagar>;
   coms$: Observable<RecepcionDeCompra[]>;
+  loading$: Observable<boolean>;
 
   subscriptions: Subscription[] = [];
   constructor(
     private store: Store<fromStore.CxpState>,
-    private dialog: MatDialog
+    private dialogService: TdDialogService
   ) {}
 
   ngOnInit() {
     this.analisis$ = this.store.select(fromStore.getSelectedAnalisis);
     this.factura$ = this.analisis$.pipe(pluck('factura'));
+    this.loading$ = this.store.select(fromStore.getLoading);
     this.coms$ = this.store.select(fromStore.getAllComsPendientes);
 
-    this.subscriptions.push(
-      this.analisis$
-        .pipe(pluck('proveedor'))
-        .subscribe((proveedor: Proveedor) => {
-          this.store.dispatch(new fromStore.LoadComsPendientes(proveedor));
-        })
-    );
+    this.analisis$.subscribe(analisis => {
+      if (analisis && !analisis.cerrado) {
+        this.store.dispatch(
+          new fromStore.LoadComsPendientes(analisis.proveedor)
+        );
+      }
+    });
   }
 
   ngOnDestroy() {
@@ -58,7 +64,44 @@ export class AnalisisEditComponent implements OnInit, OnDestroy {
   }
 
   onUpdate(event: Analisis) {
-    console.log('Actualizar analisis: ', event);
     this.store.dispatch(new fromStore.UpdateAnalisis(event));
+  }
+
+  onDelete(event: Analisis) {
+    this.dialogService
+      .openConfirm({
+        title: 'Eliminar análisis',
+        message: `Análisis ${event.folio}`,
+        acceptButton: 'Eliminar',
+        cancelButton: 'Cancelar'
+      })
+      .afterClosed()
+      .subscribe(res => {
+        if (res) {
+          this.store.dispatch(new fromStore.DeleteAnalisis(event));
+        }
+      });
+  }
+
+  onCerrar(event: Analisis) {
+    if (!event.cerrado) {
+      this.dialogService
+        .openConfirm({
+          title: `Cerrar Análisis ${event.folio}`,
+          message: `ADVERTENCIA: Ya no sera posible modificarlo!`,
+          acceptButton: 'Cerrar',
+          cancelButton: 'Cancelar'
+        })
+        .afterClosed()
+        .subscribe(res => {
+          if (res) {
+            this.store.dispatch(new fromStore.CerrarAnalisis(event));
+          }
+        });
+    }
+  }
+
+  onPrint(event: Analisis) {
+    console.log('Imprimiendo analisis de factura: ', event);
   }
 }

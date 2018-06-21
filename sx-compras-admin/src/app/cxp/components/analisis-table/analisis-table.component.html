@@ -21,6 +21,11 @@
     <td mat-cell *matCellDef="let row">{{row.factura.uuid}}</td>
   </ng-container>
 
+  <ng-container matColumnDef="cerrado">
+    <th mat-header-cell *matHeaderCellDef>Cerrado</th>
+    <td mat-cell *matCellDef="let row">{{row.cerrado | date: 'dd/MM/yyyy'}}</td>
+  </ng-container>
+
   <ng-container matColumnDef="operaciones">
     <th mat-header-cell *matHeaderCellDef></th>
     <td mat-cell *matCellDef="let row">

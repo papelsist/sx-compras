@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 
+import { AnalisisActionTypes } from '../actions/analisis.actions';
 import * as fromAnalisis from '../actions/analisis.actions';
 
 import { Analisis } from '../../model/analisis';
@@ -83,24 +84,28 @@ export function reducer(
       };
     }
 
+    case fromAnalisis.AnalisisActionTypes.SAVE_ANALISIS:
     case fromAnalisis.AnalisisActionTypes.UPDATE_ANALISIS:
-    case fromAnalisis.AnalisisActionTypes.SAVE_ANALISIS: {
+    case fromAnalisis.AnalisisActionTypes.CERRAR_ANALISIS: {
       return {
         ...state,
         loading: true
       };
     }
 
+    case fromAnalisis.AnalisisActionTypes.SAVE_ANALISIS_FAIL:
     case fromAnalisis.AnalisisActionTypes.UPDATE_ANALISIS_FAIL:
-    case fromAnalisis.AnalisisActionTypes.SAVE_ANALISIS_FAIL: {
+    case fromAnalisis.AnalisisActionTypes.DELETE_ANALISIS_FAIL:
+    case fromAnalisis.AnalisisActionTypes.CERRAR_ANALISIS_FAIL: {
       return {
         ...state,
         loading: false
       };
     }
 
+    case fromAnalisis.AnalisisActionTypes.SAVE_ANALISIS_SUCCESS:
     case fromAnalisis.AnalisisActionTypes.UPDATE_ANALISIS_SUCCESS:
-    case fromAnalisis.AnalisisActionTypes.SAVE_ANALISIS_SUCCESS: {
+    case fromAnalisis.AnalisisActionTypes.CERRAR_ANALISIS_SUCCESS: {
       const analisis = action.payload;
       const entities = {
         ...state.entities,
@@ -131,6 +136,18 @@ export function reducer(
       return {
         ...state,
         loading: false,
+        comsPendientes
+      };
+    }
+    // Delete analisis
+    case AnalisisActionTypes.DELETE_ANALISIS_SUCCESS: {
+      const analisis = action.payload;
+      const { [analisis.id]: result, ...entities } = state.entities;
+      const comsPendientes = {};
+      return {
+        ...state,
+        loading: false,
+        entities,
         comsPendientes
       };
     }

@@ -6,6 +6,7 @@ export interface RecepcionDeCompraDet {
   compraDet: { id: string };
   producto: Producto;
   cantidad: number;
+  analizado: number;
   devuelto: number;
   kilos: number;
   comentario?: string;

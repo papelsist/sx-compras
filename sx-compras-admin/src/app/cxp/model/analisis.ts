@@ -11,4 +11,5 @@ export interface Analisis {
   importe: number;
   partidas: AnalisisDet[];
   selected?: boolean;
+  cerrado?: string;
 }

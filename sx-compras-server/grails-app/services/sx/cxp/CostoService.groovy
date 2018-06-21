@@ -5,6 +5,7 @@ import grails.gorm.transactions.Transactional
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+import sx.compras.RecepcionDeCompraDet
 import sx.core.Inventario
 
 @Slf4j
@@ -35,6 +36,22 @@ class CostoService {
         }
 
 
+    }
+
+    @Subscriber()
+    void onAnalisisEliminado(List<String> ...coms){
+        log.debug('DELETE costo de coms: {}', coms.size())
+        Inventario.withNewSession {
+            coms.each {
+                RecepcionDeCompraDet com = RecepcionDeCompraDet.get(it)
+                if(com.analizado <= 0) {
+                    Inventario inventario = com.inventario
+                    inventario.costo = 0
+                    log.debug("Costo de : {} = {} ", inventario.clave, inventario.costo)
+                    inventario.save flush: true
+                }
+            }
+        }
     }
 
 

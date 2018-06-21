@@ -23,7 +23,14 @@ export class AnalisisTableComponent implements OnInit, OnChanges {
   @Output() edit = new EventEmitter();
   @Output() select = new EventEmitter();
   dataSource = new MatTableDataSource<Analisis>([]);
-  displayColumns = ['proveedor', 'factura', 'importe', 'uuid', 'operaciones']; // , 'serie', 'folio', 'total'];
+  displayColumns = [
+    'proveedor',
+    'factura',
+    'importe',
+    'uuid',
+    'cerrado',
+    'operaciones'
+  ]; // , 'serie', 'folio', 'total'];
 
   constructor() {}
 

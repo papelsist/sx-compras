@@ -31,6 +31,19 @@ class AnalisisDeFacturaController extends RestfulController<AnalisisDeFactura> {
     @Override
     protected AnalisisDeFactura updateResource(AnalisisDeFactura resource) {
         return analisisDeFacturaService.update(resource)
+    }
 
+    @Override
+    protected void deleteResource(AnalisisDeFactura resource) {
+        analisisDeFacturaService.delete(resource)
+    }
+
+    def cerrar(AnalisisDeFactura analisis) {
+        if(analisis == null) {
+            notFound()
+            return
+        }
+        analisis = analisisDeFacturaService.cerrar(analisis)
+        respond analisis
     }
 }

@@ -24,7 +24,15 @@ export enum AnalisisActionTypes {
 
   UPDATE_ANALISIS = '[Analisis de factura] Update',
   UPDATE_ANALISIS_FAIL = '[Analisis de factura] Update Fail',
-  UPDATE_ANALISIS_SUCCESS = '[Analisis de factura] Update Success'
+  UPDATE_ANALISIS_SUCCESS = '[Analisis de factura] Update Success',
+
+  DELETE_ANALISIS = '[Analisis de factura] Delete',
+  DELETE_ANALISIS_FAIL = '[Analisis de factura] Delete Fail',
+  DELETE_ANALISIS_SUCCESS = '[Analisis de factura] Delete Success',
+  // Cerrar el analisis
+  CERRAR_ANALISIS = '[Analisis de factura] Cerrar',
+  CERRAR_ANALISIS_FAIL = '[Analisis de factura] Cerrar Fail',
+  CERRAR_ANALISIS_SUCCESS = '[Analisis de factura] Cerrar Success'
 }
 
 export class Load implements Action {
@@ -61,7 +69,7 @@ export class LoadFacturasPendientesSuccess implements Action {
 // COMS
 export class LoadComsPendientes implements Action {
   readonly type = AnalisisActionTypes.LOAD_COMS_PENDIENTES;
-  constructor(public payload: Proveedor) {}
+  constructor(public payload: Partial<Proveedor>) {}
 }
 export class LoadComsPendientesFail implements Action {
   readonly type = AnalisisActionTypes.LOAD_COMS_PENDIENTES_FAIL;
@@ -72,7 +80,7 @@ export class LoadComsPendientesSuccess implements Action {
   constructor(public payload: RecepcionDeCompra[]) {}
 }
 
-// CRUD
+// Save
 export class SaveAnalisis implements Action {
   readonly type = AnalisisActionTypes.SAVE_ANALISIS;
   constructor(public payload: Analisis) {}
@@ -85,6 +93,8 @@ export class SaveAnalisisSuccess implements Action {
   readonly type = AnalisisActionTypes.SAVE_ANALISIS_SUCCESS;
   constructor(public payload: Analisis) {}
 }
+
+// Update
 export class UpdateAnalisis implements Action {
   readonly type = AnalisisActionTypes.UPDATE_ANALISIS;
   constructor(public payload: Analisis) {}
@@ -95,6 +105,34 @@ export class UpdateAnalisisFail implements Action {
 }
 export class UpdateAnalisisSuccess implements Action {
   readonly type = AnalisisActionTypes.UPDATE_ANALISIS_SUCCESS;
+  constructor(public payload: Analisis) {}
+}
+
+// Delete
+export class DeleteAnalisis implements Action {
+  readonly type = AnalisisActionTypes.DELETE_ANALISIS;
+  constructor(public payload: Analisis) {}
+}
+export class DeleteAnalisisFail implements Action {
+  readonly type = AnalisisActionTypes.DELETE_ANALISIS_FAIL;
+  constructor(public payload: any) {}
+}
+export class DeleteAnalisisSuccess implements Action {
+  readonly type = AnalisisActionTypes.DELETE_ANALISIS_SUCCESS;
+  constructor(public payload: Analisis) {}
+}
+
+// Cerrar
+export class CerrarAnalisis implements Action {
+  readonly type = AnalisisActionTypes.CERRAR_ANALISIS;
+  constructor(public payload: Analisis) {}
+}
+export class CerrarAnalisisFail implements Action {
+  readonly type = AnalisisActionTypes.CERRAR_ANALISIS_FAIL;
+  constructor(public payload: any) {}
+}
+export class CerrarAnalisisSuccess implements Action {
+  readonly type = AnalisisActionTypes.CERRAR_ANALISIS_SUCCESS;
   constructor(public payload: Analisis) {}
 }
 
@@ -114,4 +152,10 @@ export type AnalisisActions =
   | SaveAnalisisSuccess
   | UpdateAnalisis
   | UpdateAnalisisFail
-  | UpdateAnalisisSuccess;
+  | UpdateAnalisisSuccess
+  | DeleteAnalisis
+  | DeleteAnalisisFail
+  | DeleteAnalisisSuccess
+  | CerrarAnalisis
+  | CerrarAnalisisFail
+  | CerrarAnalisisSuccess;

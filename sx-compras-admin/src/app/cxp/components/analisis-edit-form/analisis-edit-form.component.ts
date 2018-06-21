@@ -40,6 +40,9 @@ export class AnalisisEditFormComponent implements OnInit {
   @Input() comsDisponibles: RecepcionDeCompra[];
   @Output() update = new EventEmitter();
   @Output() cancel = new EventEmitter();
+  @Output() delete = new EventEmitter();
+  @Output() cerrar = new EventEmitter();
+  @Output() print = new EventEmitter();
 
   form: FormGroup;
 
@@ -62,6 +65,9 @@ export class AnalisisEditFormComponent implements OnInit {
     this.analisis.partidas.forEach(item => {
       this.partidas.push(new FormControl(item));
     });
+    if (this.analisis.cerrado) {
+      this.form.disable();
+    }
     this.actualizar();
   }
 
@@ -85,10 +91,12 @@ export class AnalisisEditFormComponent implements OnInit {
         selected.forEach(item => {
           item.partidas.forEach(com => {
             console.log('Agregando COM: ', com);
-            const det = buildFromCom(com);
-            this.partidas.push(new FormControl(det));
-            this.actualizar();
-            this.form.markAsDirty();
+            if (com.cantidad - com.analizado > 0) {
+              const det = buildFromCom(com);
+              this.partidas.push(new FormControl(det));
+              this.actualizar();
+              this.form.markAsDirty();
+            }
           });
         });
       }
