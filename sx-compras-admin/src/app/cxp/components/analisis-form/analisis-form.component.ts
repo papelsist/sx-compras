@@ -28,6 +28,7 @@ export class AnalisisFormComponent implements OnInit, OnDestroy {
   @Output() proveedorSelected = new EventEmitter();
   @Output() cancelar = new EventEmitter();
   @Output() save = new EventEmitter();
+  @Output() printFactura = new EventEmitter();
   constructor(
     private fb: FormBuilder,
     private dialog: MatDialog,

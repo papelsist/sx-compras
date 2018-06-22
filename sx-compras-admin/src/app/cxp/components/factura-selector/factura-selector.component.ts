@@ -10,7 +10,15 @@ import { CuentaPorPagar } from '../../model/cuentaPorPagar';
 @Component({
   selector: 'sx-factura-selector',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './factura-selector.component.html'
+  templateUrl: './factura-selector.component.html',
+  styles: [
+    `
+    .facturas-table-panel {
+      max-height: 500px;
+      overflow: auto;
+    }
+  `
+  ]
 })
 export class FacturaSelectorComponent implements OnInit {
   facturas: any[];

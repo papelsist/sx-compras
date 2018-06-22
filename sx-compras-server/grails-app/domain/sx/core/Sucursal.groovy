@@ -1,5 +1,6 @@
 package sx.core
 
+
 import groovy.transform.ToString
 import groovy.transform.EqualsAndHashCode
 

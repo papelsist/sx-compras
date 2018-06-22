@@ -38,12 +38,23 @@ export class ComprobanteFiscalService {
     });
   }
 
-  imprimirCfdi(comprobanteFiscal: ComprobanteFiscal) {
-    const url = `${this.apiUrl}/pdf/${comprobanteFiscal.id}`;
+  imprimirCfdi(cfdiId: string) {
+    const url = `${this.apiUrl}/pdf/${cfdiId}`;
     const headers = new HttpHeaders().set('Content-type', 'application/pdf');
-    return this.http.get(url, {
-      headers: headers,
-      responseType: 'blob'
-    });
+    return this.http
+      .get(url, {
+        headers: headers,
+        responseType: 'blob'
+      })
+      .subscribe(
+        res => {
+          const blob = new Blob([res], {
+            type: 'application/pdf'
+          });
+          const fileURL = window.URL.createObjectURL(blob);
+          window.open(fileURL, '_blank');
+        },
+        error => console.log('Error ', error)
+      );
   }
 }

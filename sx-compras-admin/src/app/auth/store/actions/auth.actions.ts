@@ -5,8 +5,10 @@ import { User } from '../../models/user';
 
 export enum AuthActionTypes {
   LOGIN = '[Auth] Login',
-  LOGIN_SUCCESS = '[Auth] Login success',
-  LOGIN_FAIL = '[Auth] Login fail'
+  LOGIN_SUCCESS = '[Auth] Login Success',
+  LOGIN_FAIL = '[Auth] Login Fail',
+  LOGIN_REDIRECT = '[Auth] Login Redirect',
+  LOGOUT = '[Auth] Logout'
 }
 
 export class Login implements Action {
@@ -22,4 +24,17 @@ export class LoginSuccess implements Action {
   constructor(public payload: User) {}
 }
 
-export type AuthActions = Login | LoginFail | LoginSuccess;
+export class Logout implements Action {
+  readonly type = AuthActionTypes.LOGOUT;
+}
+
+export class LoginRedirect implements Action {
+  readonly type = AuthActionTypes.LOGIN_REDIRECT;
+}
+
+export type AuthActions =
+  | Login
+  | LoginFail
+  | LoginSuccess
+  | Logout
+  | LoginRedirect;

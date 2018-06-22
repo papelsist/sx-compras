@@ -47,7 +47,8 @@
         </mat-form-field>
 
         <mat-form-field>
-          <input matInput placeholder="Flete" [disabled]="true" [value]="analisis.importeFlete | currency">
+          <input matInput formControlName="importeFlete" placeholder="Flete" type="number" autocomplete="off">
+          <span matPrefix>$&nbsp;</span>
         </mat-form-field>
 
 

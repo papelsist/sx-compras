@@ -86,16 +86,7 @@ export class CfdisComponent implements OnInit, OnDestroy {
   }
 
   onPdf(event: ComprobanteFiscal) {
-    this.service.imprimirCfdi(event).subscribe(
-      res => {
-        const blob = new Blob([res], {
-          type: 'application/pdf'
-        });
-        const fileURL = window.URL.createObjectURL(blob);
-        window.open(fileURL, '_blank');
-      },
-      error => console.log('Error ', error)
-    );
+    this.service.imprimirCfdi(event.id);
   }
 
   onXml(event: ComprobanteFiscal) {

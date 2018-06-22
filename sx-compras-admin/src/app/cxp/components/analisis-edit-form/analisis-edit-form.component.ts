@@ -1,4 +1,11 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+  OnDestroy
+} from '@angular/core';
 
 import {
   FormGroup,
@@ -9,11 +16,15 @@ import {
 } from '@angular/forms';
 
 import { MatDialog } from '@angular/material';
+import { Subscription } from 'rxjs';
 
 import { ComsSelectorComponent } from '../coms-selector/coms-selector.component';
-import { Analisis } from '../../model/analisis';
-import { AnalisisDet, buildFromCom } from '../../model/analisisDet';
-import { RecepcionDeCompra } from '../../model/recepcionDeCompra';
+import {
+  Analisis,
+  AnalisisDet,
+  buildFromCom,
+  RecepcionDeCompra
+} from '../../model';
 
 import * as _ from 'lodash';
 import { CuentaPorPagar } from '../../model/cuentaPorPagar';
@@ -35,7 +46,7 @@ import { CuentaPorPagar } from '../../model/cuentaPorPagar';
     `
   ]
 })
-export class AnalisisEditFormComponent implements OnInit {
+export class AnalisisEditFormComponent implements OnInit, OnDestroy {
   @Input() analisis: Analisis;
   @Input() comsDisponibles: RecepcionDeCompra[];
   @Output() update = new EventEmitter();
@@ -45,10 +56,18 @@ export class AnalisisEditFormComponent implements OnInit {
 
   form: FormGroup;
 
+  subscription: Subscription;
+
   constructor(private fb: FormBuilder, private dialog: MatDialog) {}
 
   ngOnInit() {
+    console.log('Analisis: ', this.analisis);
     this.buildForm();
+  }
+  ngOnDestroy() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 
   private buildForm() {
@@ -58,6 +77,7 @@ export class AnalisisEditFormComponent implements OnInit {
       comentario: [this.analisis.comentario],
       fecha: [this.analisis.fecha, [Validators.required]],
       importe: [this.analisis.importe],
+      importeFlete: [this.analisis.importeFlete],
       pendiente: [0.0],
       partidas: this.fb.array([])
     });
@@ -66,6 +86,10 @@ export class AnalisisEditFormComponent implements OnInit {
     });
     if (this.analisis.cerrado) {
       this.form.disable();
+    } else {
+      this.subscription = this.form
+        .get('importeFlete')
+        .valueChanges.subscribe(() => this.actualizar());
     }
     this.actualizar();
   }
@@ -114,8 +138,9 @@ export class AnalisisEditFormComponent implements OnInit {
   }
 
   private actualizar() {
+    console.log('Actualizando analisis');
     const importe = _.sumBy(this.partidas.value, 'importe');
-    const flete = this.analisis.importeFlete;
+    const flete = this.form.value.importeFlete;
     this.form.get('importe').setValue(importe);
     const pendiente = 1 - importe / (this.factura.subTotal - flete);
     this.form.get('pendiente').setValue(pendiente);
@@ -131,8 +156,9 @@ export class AnalisisEditFormComponent implements OnInit {
 
   get diferencia() {
     const subTotal = this.factura.subTotal;
+    const importeFlete = this.form.value.importeFlete;
     const analizado = this.importe;
-    return _.round(subTotal - analizado);
+    return _.round(subTotal - importeFlete - analizado);
   }
   get diferenciaPorcentaje() {
     const subTotal = this.factura.subTotal;

@@ -1,8 +1,8 @@
 table {
   width: 100%;
-  min-height: 200px;
+  // min-height: 200px;
   max-height: 500px;
-  overflow: auto;
+  overflow-x: auto;
 }
 .mat-cell {
   font-size: 11px;

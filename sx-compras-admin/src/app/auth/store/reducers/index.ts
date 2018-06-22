@@ -9,27 +9,33 @@ export interface AuthState {
   user: User;
   loggedIn: boolean;
   loading: boolean;
+  authError: any;
 }
 
 const initialState: AuthState = {
   token: undefined,
   user: undefined,
   loggedIn: false,
-  loading: false
+  loading: false,
+  authError: undefined
 };
 
 export function reducer(state = initialState, action: fromActions.AuthActions) {
   switch (action.type) {
     case fromActions.AuthActionTypes.LOGIN: {
-      return  {
+      return {
         ...state,
-        loading: false
+        loading: true,
+        authError: undefined
       };
     }
     case fromActions.AuthActionTypes.LOGIN_FAIL: {
-      return  {
+      const authError = action.payload;
+      console.log('Error: ', authError);
+      return {
         ...state,
-        loading: false
+        loading: false,
+        authError
       };
     }
     case fromActions.AuthActionTypes.LOGIN_SUCCESS: {
@@ -37,7 +43,9 @@ export function reducer(state = initialState, action: fromActions.AuthActions) {
       return {
         ...state,
         user,
-        loading: false
+        loggedIn: true,
+        loading: false,
+        authError: undefined
       };
     }
   }
@@ -45,6 +53,16 @@ export function reducer(state = initialState, action: fromActions.AuthActions) {
 }
 
 export const getAuthState = createFeatureSelector<AuthState>('auth');
-export const getAuthLoading = createSelector(getAuthState, state => state.loading);
-export const getIsLoggedIn = createSelector(getAuthState, state => state.loggedIn);
+export const getAuthLoading = createSelector(
+  getAuthState,
+  state => state.loading
+);
+export const getLoggedIn = createSelector(
+  getAuthState,
+  state => state.loggedIn
+);
 
+export const getAuthError = createSelector(
+  getAuthState,
+  state => state.authError
+);

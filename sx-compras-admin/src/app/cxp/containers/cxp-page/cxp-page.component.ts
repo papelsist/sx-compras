@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material';
 import { TdMediaService } from '@covalent/core';
 
 import { RepPeriodoSucursalComponent } from 'app/reportes/components';
+import { ReportService } from '../../../reportes/services/report.service';
 
 @Component({
   selector: 'sx-cxp-page',
@@ -24,7 +25,11 @@ export class CxpPageComponent implements OnInit {
       icon: 'rate_review'
     }
   ];
-  constructor(public media: TdMediaService, private dialog: MatDialog) {}
+  constructor(
+    public media: TdMediaService,
+    private dialog: MatDialog,
+    private reportService: ReportService
+  ) {}
 
   ngOnInit() {}
 
@@ -35,9 +40,12 @@ export class CxpPageComponent implements OnInit {
         width: '500px'
       })
       .afterClosed()
-      .subscribe(res => {
-        if (res) {
-          console.log('Ejecutar con: ', res);
+      .subscribe(params => {
+        if (params) {
+          this.reportService.runReport(
+            'analisisDeFactura/entradasAnalizadas',
+            params
+          );
         }
       });
   }

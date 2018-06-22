@@ -9,6 +9,8 @@ class UrlMappings {
         "/api/productos"(resources: 'producto')
         "/api/proveedores"(resources: 'proveedor')
 
+        "/api/sucursales"(resources: 'sucursal')
+
         "/api/comprobanteFiscal"(resources: 'comprobanteFiscal')
         "/api/comprobanteFiscal/xml/$id"(controller: 'comprobanteFiscal', action: 'xml')
         "/api/comprobanteFiscal/pdf/$id"(controller: 'comprobanteFiscal', action: 'pdf')
@@ -22,6 +24,7 @@ class UrlMappings {
         }
         "/api/analisisDeFactura/cerrar/$id"(controller: 'analisisDeFactura', action: 'cerrar', method: 'PUT')
         "/api/analisisDeFactura/print/$id"(controller: 'analisisDeFactura', action: 'print', method: 'GET')
+        "/api/analisisDeFactura/entradasAnalizadas"(controller: 'analisisDeFactura', action: 'entradasAnalizadas', method: 'GET')
 
         "/api/coms"(resources: 'recepcionDeCompra'){
             "/partidas"(resources: 'recepcionDeCompraDet', excludes:['create', 'edit','patch'])

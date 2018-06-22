@@ -1,8 +1,10 @@
 package sx.cxp
 
-import grails.compiler.GrailsCompileStatic
+
 import grails.rest.RestfulController
 import sx.reports.ReportService
+
+import sx.reports.SucursalPeriodoCommand
 
 
 class AnalisisDeFacturaController extends RestfulController<AnalisisDeFactura> {
@@ -53,5 +55,10 @@ class AnalisisDeFacturaController extends RestfulController<AnalisisDeFactura> {
     def print( ) {
         def pdf =  reportService.run('AnalisisDeFactura.jrxml', [ID: params.id])
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'AnalisisDeFactura.pdf')
+    }
+
+    def entradasAnalizadas(SucursalPeriodoCommand command) {
+        def pdf =  reportService.run('EntradasAnalizadas.jrxml', command.toReportMap())
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'EntradasAnalizadas.pdf')
     }
 }

@@ -74,7 +74,7 @@ export class RepPeriodoSucursalComponent implements OnInit {
     const res = {
       fechaIni: fechaIni.toISOString(),
       fechaFin: fechaFin.toISOString(),
-      sucursal: sucursal ? sucursal.id : null
+      sucursal: sucursal ? sucursal.id : '%'
     };
     this.dialogRef.close(res);
   }

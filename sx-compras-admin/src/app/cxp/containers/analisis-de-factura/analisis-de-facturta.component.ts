@@ -11,6 +11,8 @@ import * as fromActions from '../../store/actions/analisis.actions';
 import { Proveedor } from 'app/proveedores/models/proveedor';
 import { CuentaPorPagar } from '../../model/cuentaPorPagar';
 import { Analisis } from '../../model/analisis';
+import { ComprobanteFiscalService } from '../../services';
+import { ComprobanteFiscal } from '../../model';
 
 @Component({
   selector: 'sx-analisis-de-factura',
@@ -20,7 +22,8 @@ import { Analisis } from '../../model/analisis';
         (proveedorSelected)="onProveedorSelected($event)"
         [facturas]="facturas$ | async"
         (cancelar)="onCancelar($event)"
-        (save)="onSave($event)">
+        (save)="onSave($event)"
+        (printFactura)="onPrintFactura($event)">
       </sx-analisis-form>
     </ng-template>
   `
@@ -29,7 +32,10 @@ export class AnalisisDeFacturaComponent implements OnInit, OnDestroy {
   facturas$: Observable<CuentaPorPagar[]>;
   loading$: Observable<boolean>;
 
-  constructor(private store: Store<fromStore.CxpState>) {}
+  constructor(
+    private store: Store<fromStore.CxpState>,
+    private service: ComprobanteFiscalService
+  ) {}
 
   ngOnInit() {
     this.facturas$ = this.store.select(fromStore.getAllFacturasPendientes);
@@ -48,5 +54,9 @@ export class AnalisisDeFacturaComponent implements OnInit, OnDestroy {
 
   onSave(event: Analisis) {
     this.store.dispatch(new fromActions.SaveAnalisis(event));
+  }
+
+  onPrintFactura(event: CuentaPorPagar) {
+    this.service.imprimirCfdi(event.comprobanteFiscal.id);
   }
 }

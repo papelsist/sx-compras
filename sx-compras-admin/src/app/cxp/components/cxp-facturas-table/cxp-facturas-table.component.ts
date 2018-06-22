@@ -66,4 +66,10 @@ export class CxpFacturasTableComponent implements OnInit, OnChanges {
       this.select.emit([event]);
     }
   }
+
+  applyFilter(filterValue: string) {
+    filterValue = filterValue.trim();
+    filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
+    this.dataSource.filter = filterValue;
+  }
 }
