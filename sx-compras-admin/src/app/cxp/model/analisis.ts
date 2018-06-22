@@ -9,6 +9,7 @@ export interface Analisis {
   factura: CuentaPorPagar;
   comentario?: string;
   importe: number;
+  importeFlete: number;
   partidas: AnalisisDet[];
   selected?: boolean;
   cerrado?: string;

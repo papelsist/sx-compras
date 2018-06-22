@@ -23,9 +23,17 @@
       <mat-divider [inset]="true" *ngIf="!last"></mat-divider>
     </ng-template>
     <mat-divider></mat-divider>
+
     <h3 matSubheader>Reportes</h3>
+    <a mat-list-item (click)="entradasAnalizadas()">
+      <mat-icon matListAvatar>picture_as_pdf</mat-icon>
+      <h3 matLine> Entradas analizadas </h3>
+    </a>
+    <mat-divider></mat-divider>
 
   </mat-nav-list>
+
+
 
   <router-outlet></router-outlet>
 

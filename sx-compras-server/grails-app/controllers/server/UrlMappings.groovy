@@ -21,6 +21,7 @@ class UrlMappings {
             "/partidas"(resources: 'analisisDeFacturaDet', excludes:['create', 'edit','patch'])
         }
         "/api/analisisDeFactura/cerrar/$id"(controller: 'analisisDeFactura', action: 'cerrar', method: 'PUT')
+        "/api/analisisDeFactura/print/$id"(controller: 'analisisDeFactura', action: 'print', method: 'GET')
 
         "/api/coms"(resources: 'recepcionDeCompra'){
             "/partidas"(resources: 'recepcionDeCompraDet', excludes:['create', 'edit','patch'])

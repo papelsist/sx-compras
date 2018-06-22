@@ -2,12 +2,15 @@ package sx.cxp
 
 import grails.compiler.GrailsCompileStatic
 import grails.rest.RestfulController
+import sx.reports.ReportService
 
 
 class AnalisisDeFacturaController extends RestfulController<AnalisisDeFactura> {
     static responseFormats = ['json']
 
     AnalisisDeFacturaService analisisDeFacturaService
+
+    ReportService reportService
 
     AnalisisDeFacturaController() {
         super(AnalisisDeFactura)
@@ -45,5 +48,10 @@ class AnalisisDeFacturaController extends RestfulController<AnalisisDeFactura> {
         }
         analisis = analisisDeFacturaService.cerrar(analisis)
         respond analisis
+    }
+
+    def print( ) {
+        def pdf =  reportService.run('AnalisisDeFactura.jrxml', [ID: params.id])
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'AnalisisDeFactura.pdf')
     }
 }

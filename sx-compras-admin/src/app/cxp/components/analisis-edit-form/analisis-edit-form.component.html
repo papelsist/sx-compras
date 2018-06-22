@@ -41,9 +41,16 @@
         <mat-form-field>
           <input matInput placeholder="Factura (Subtotal)" [disabled]="true" [value]="factura.subTotal | currency">
         </mat-form-field>
+
         <mat-form-field>
           <input matInput placeholder="Analizado" [disabled]="true" [value]="importe | currency">
         </mat-form-field>
+
+        <mat-form-field>
+          <input matInput placeholder="Flete" [disabled]="true" [value]="analisis.importeFlete | currency">
+        </mat-form-field>
+
+
         <mat-form-field>
           <input matInput placeholder="Pendiente" [disabled]="true" value="{{diferencia | currency}} ({{pendiente | percent:'2.2-2'}})">
         </mat-form-field>
@@ -70,9 +77,7 @@
           <mat-icon>grid_off</mat-icon> Cerrar
         </button>
       </ng-container>
-      <button mat-button color="accent" type="button" (click)="print.emit(analisis)">
-        <mat-icon>print</mat-icon> Imprimir
-      </button>
+      <sx-report-button url="analisisDeFactura/print/{{analisis.id}}"></sx-report-button>
 
     </mat-card-actions>
 

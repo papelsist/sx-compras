@@ -24,6 +24,12 @@ class AnalisisDeFactura {
 
     BigDecimal importe = 0.0
 
+    BigDecimal importeFlete = 0.0
+
+    BigDecimal impuestoFlete = 0.0
+
+    BigDecimal retencionFlete = 0.0
+
     List<AnalisisDeFacturaDet> partidas = []
 
     Date cerrado

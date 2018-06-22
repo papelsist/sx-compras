@@ -29,7 +29,8 @@
   <ng-container matColumnDef="operaciones">
     <th mat-header-cell *matHeaderCellDef></th>
     <td mat-cell *matCellDef="let row">
-      <mat-icon (click)="onEdit($event, row)">edit</mat-icon>
+      <mat-icon (click)="onEdit($event, row)" class="pad-right">edit</mat-icon>
+      <sx-report-button url="analisisDeFactura/print/{{row.id}}" [smallIcon]="true"></sx-report-button>
     </td>
   </ng-container>
 

@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 
 import { SharedModule } from '../_shared/shared.module';
+import { ReportesModule } from '../reportes/reportes.module';
 import { CxpRoutingModule } from './cxp-routing.module';
 
 import { StoreModule } from '@ngrx/store';
@@ -17,6 +18,7 @@ import { guards } from './guards';
   imports: [
     SharedModule,
     CxpRoutingModule,
+    ReportesModule,
     StoreModule.forFeature('cxp', reducers),
     EffectsModule.forFeature(effects)
   ],

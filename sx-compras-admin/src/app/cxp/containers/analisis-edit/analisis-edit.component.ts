@@ -21,8 +21,7 @@ import { TdDialogService } from '@covalent/core';
         (cancel)="onCancel()"
         (update)="onUpdate($event)"
         (delete)="onDelete($event)"
-        (cerrar)="onCerrar($event)"
-        (print)="onPrint($event)">
+        (cerrar)="onCerrar($event)">
       </sx-analisis-edit-form>
     </div>
   </ng-template>
@@ -99,9 +98,5 @@ export class AnalisisEditComponent implements OnInit, OnDestroy {
           }
         });
     }
-  }
-
-  onPrint(event: Analisis) {
-    console.log('Imprimiendo analisis de factura: ', event);
   }
 }

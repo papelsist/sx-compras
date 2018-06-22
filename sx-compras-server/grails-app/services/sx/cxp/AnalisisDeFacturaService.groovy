@@ -1,17 +1,15 @@
 package sx.cxp
 
-import grails.compiler.GrailsCompileStatic
-import grails.events.EventPublisher
 import grails.events.annotation.Publisher
 import grails.gorm.transactions.Transactional
-import groovy.transform.CompileDynamic
+
 import groovy.util.logging.Slf4j
+
 import sx.core.Folio
 import sx.utils.MonedaUtils
 
 @Slf4j
 @Transactional
-// @GrailsCompileStatic
 class AnalisisDeFacturaService {
 
     AnalisisDeFactura save(AnalisisDeFactura analisis) {
@@ -20,6 +18,7 @@ class AnalisisDeFacturaService {
         CuentaPorPagar cxp = analisis.factura
         cxp.analizada = true
         cxp.save flush: true
+        actualizarFlete(analisis)
         analisis.folio = Folio.nextFolio('ANALISIS', 'CXP')
         analisis.save failOnError: true, flush: true
         return analisis
@@ -33,6 +32,7 @@ class AnalisisDeFacturaService {
             it.descripcion = it.com.producto.descripcion
             it.costoUnitario = MonedaUtils.aplicarDescuentosEnCascada(it.precioDeLista, it.desc1, it.desc2, it.desc3, it.desc4)
         }
+        actualizarFlete(analisis)
         analisis.save flush: true
         return analisis
     }
@@ -54,6 +54,13 @@ class AnalisisDeFacturaService {
         analisis.cerrado = new Date()
         analisis.save flush: true
         return analisis
+    }
+
+    private actualizarFlete(AnalisisDeFactura analisis)  {
+        if(analisis.importeFlete > 0 ){
+            analisis.impuestoFlete = MonedaUtils.calcularImpuesto(analisis.importeFlete)
+            analisis.retencionFlete = MonedaUtils.calcularImpuesto(analisis.importeFlete, 0.04)
+        }
     }
 
 

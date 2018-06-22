@@ -52,6 +52,7 @@ export class AnalisisFormComponent implements OnInit, OnDestroy {
       proveedor: [null, Validators.required],
       fecha: [new Date(), Validators.required],
       factura: [null, Validators.required],
+      importeFlete: [null],
       comentario: [null]
     });
   }
@@ -83,10 +84,13 @@ export class AnalisisFormComponent implements OnInit, OnDestroy {
   onSubmit() {
     if (this.form.valid) {
       const fecha: Date = this.form.value.fecha;
+
       const analisis = {
         ...this.form.value,
-        fecha: fecha.toISOString()
+        fecha: fecha.toISOString(),
+        importeFlete: this.form.value.importeFlete || 0.0
       };
+      console.log('Salvando: ', analisis);
       this.save.emit(analisis);
     }
   }

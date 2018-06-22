@@ -42,7 +42,6 @@ export class AnalisisEditFormComponent implements OnInit {
   @Output() cancel = new EventEmitter();
   @Output() delete = new EventEmitter();
   @Output() cerrar = new EventEmitter();
-  @Output() print = new EventEmitter();
 
   form: FormGroup;
 
@@ -116,8 +115,9 @@ export class AnalisisEditFormComponent implements OnInit {
 
   private actualizar() {
     const importe = _.sumBy(this.partidas.value, 'importe');
+    const flete = this.analisis.importeFlete;
     this.form.get('importe').setValue(importe);
-    const pendiente = 1 - importe / this.factura.subTotal;
+    const pendiente = 1 - importe / (this.factura.subTotal - flete);
     this.form.get('pendiente').setValue(pendiente);
   }
 
