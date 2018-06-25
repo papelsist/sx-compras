@@ -1,12 +1,14 @@
 package sx.cxp
 
 import grails.compiler.GrailsCompileStatic
+import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.*
 import grails.converters.*
 import org.springframework.web.multipart.MultipartFile
 import sx.utils.Periodo
 
 // @GrailsCompileStatic
+@Secured("IS_AUTHENTICATED_ANONYMOUSLY")
 class ComprobanteFiscalController extends RestfulController<ComprobanteFiscal> {
     static responseFormats = ['json', 'xml']
 

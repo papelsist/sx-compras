@@ -1,11 +1,14 @@
 package sx.compras
 
 import grails.compiler.GrailsCompileStatic
-import grails.rest.*
-import grails.converters.*
+import grails.plugin.springsecurity.annotation.Secured
+import grails.rest.RestfulController
+
+
 import sx.core.Proveedor
 
 @GrailsCompileStatic
+@Secured("IS_AUTHENTICATED_ANONYMOUSLY")
 class RecepcionDeCompraController extends RestfulController<RecepcionDeCompra> {
     static responseFormats = ['json']
 

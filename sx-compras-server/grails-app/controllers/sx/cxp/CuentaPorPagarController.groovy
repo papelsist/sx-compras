@@ -1,10 +1,12 @@
 package sx.cxp
 
 import grails.compiler.GrailsCompileStatic
+import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.RestfulController
 
 
 @GrailsCompileStatic
+@Secured("IS_AUTHENTICATED_ANONYMOUSLY")
 class CuentaPorPagarController extends RestfulController<CuentaPorPagar> {
     static responseFormats = ['json']
     CuentaPorPagarController() {

@@ -19,9 +19,9 @@ export class LoginPageComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.loading$ = this.store.select(fromStore.getLoggedIn);
+    this.loading$ = this.store.select(fromStore.getAuthLoading);
     this.error$ = this.store.pipe(select(fromStore.getAuthError));
-    this.loading$.subscribe(loading => console.log('Loading: ', loading));
+
     this.form = this.fb.group({
       username: [null, [Validators.required, Validators.minLength(4)]],
       password: [null, [Validators.required, Validators.minLength(4)]]

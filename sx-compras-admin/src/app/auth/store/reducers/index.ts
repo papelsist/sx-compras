@@ -3,19 +3,18 @@ import { createFeatureSelector, createSelector } from '@ngrx/store';
 import * as fromActions from '../actions/auth.actions';
 
 import { User } from '../../models/user';
+import { AuthSession, readFromStore } from '../../models/authSession';
 
 export interface AuthState {
-  token: string;
   user: User;
-  loggedIn: boolean;
+  session: AuthSession;
   loading: boolean;
   authError: any;
 }
 
 const initialState: AuthState = {
-  token: undefined,
+  session: readFromStore(),
   user: undefined,
-  loggedIn: false,
   loading: false,
   authError: undefined
 };
@@ -31,19 +30,19 @@ export function reducer(state = initialState, action: fromActions.AuthActions) {
     }
     case fromActions.AuthActionTypes.LOGIN_FAIL: {
       const authError = action.payload;
-      console.log('Error: ', authError);
       return {
         ...state,
         loading: false,
+        session: undefined,
         authError
       };
     }
     case fromActions.AuthActionTypes.LOGIN_SUCCESS: {
-      const user = action.payload;
+      const session = action.payload;
       return {
         ...state,
-        user,
-        loggedIn: true,
+        session,
+        user: undefined,
         loading: false,
         authError: undefined
       };
@@ -57,9 +56,12 @@ export const getAuthLoading = createSelector(
   getAuthState,
   state => state.loading
 );
+
+export const getSession = createSelector(getAuthState, state => state.session);
+
 export const getLoggedIn = createSelector(
   getAuthState,
-  state => state.loggedIn
+  state => state.session !== null
 );
 
 export const getAuthError = createSelector(

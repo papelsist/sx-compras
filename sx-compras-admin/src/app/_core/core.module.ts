@@ -6,9 +6,13 @@ import { MainPageComponent } from './containers/main-page/main-page.component';
 import { HomePageComponent } from './containers/home-page/home-page.component';
 import { PagosUtils } from './services/pagos-utils.service';
 
+import { components } from './components';
+import { AuthModule } from '../auth/auth.module';
+
 @NgModule({
-  imports: [SharedModule, RouterModule.forChild([])],
-  declarations: [MainPageComponent, HomePageComponent],
+  imports: [SharedModule, RouterModule.forChild([]), AuthModule],
+  declarations: [...components, MainPageComponent, HomePageComponent],
+  exports: [...components],
   providers: [PagosUtils]
 })
 export class CoreModule {}

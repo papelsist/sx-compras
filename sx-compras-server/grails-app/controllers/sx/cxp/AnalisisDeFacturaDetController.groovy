@@ -1,6 +1,6 @@
 package sx.cxp
 
-
+import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.RestfulController
 
 import groovy.transform.CompileDynamic
@@ -10,6 +10,7 @@ import groovy.util.logging.Slf4j
 
 @CompileStatic
 @Slf4j
+@Secured("IS_AUTHENTICATED_ANONYMOUSLY")
 class AnalisisDeFacturaDetController extends RestfulController<AnalisisDeFacturaDet> {
     static responseFormats = ['json']
     AnalisisDeFacturaDetController() {

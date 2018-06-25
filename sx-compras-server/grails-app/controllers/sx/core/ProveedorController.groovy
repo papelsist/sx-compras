@@ -1,9 +1,11 @@
 package sx.core
 
 import grails.compiler.GrailsCompileStatic
-import grails.rest.*
+import grails.plugin.springsecurity.annotation.Secured
+import grails.rest.RestfulController
 
 @GrailsCompileStatic
+@Secured("IS_AUTHENTICATED_ANONYMOUSLY")
 class ProveedorController extends RestfulController<Proveedor> {
     static responseFormats = ['json']
     ProveedorController() {

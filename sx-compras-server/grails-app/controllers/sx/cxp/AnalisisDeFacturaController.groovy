@@ -1,12 +1,12 @@
 package sx.cxp
 
-
+import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.RestfulController
 import sx.reports.ReportService
 
 import sx.reports.SucursalPeriodoCommand
 
-
+@Secured("IS_AUTHENTICATED_ANONYMOUSLY")
 class AnalisisDeFacturaController extends RestfulController<AnalisisDeFactura> {
     static responseFormats = ['json']
 

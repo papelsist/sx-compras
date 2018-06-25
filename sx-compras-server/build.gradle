@@ -18,6 +18,7 @@ apply plugin:"war"
 apply plugin:"org.grails.grails-web"
 apply plugin:"org.grails.plugins.views-json"
 apply plugin: 'project-report'
+apply plugin:"org.grails.grails-gsp"
 
 repositories {
     mavenLocal()
@@ -67,13 +68,15 @@ dependencies {
     compile 'com.google.firebase:firebase-admin:6.1.0'
     compile 'com.github.groovy-wslite:groovy-wslite:1.1.2'
 
+    // Grails console
     compile "org.grails.plugins:gsp"
     runtime 'org.grails.plugins:grails-console:2.1.1'
 
     compile 'org.grails.plugins:jasper:2.1.0.RC1'
 
-    // compile 'org.grails.plugins:spring-security-core:3.2.1'
-    // compile 'org.grails.plugins:spring-security-rest:2.0.0.RC1'
+    compile 'org.grails.plugins:spring-security-core:3.2.1'
+    compile 'org.grails.plugins:spring-security-rest:2.0.0.RC1'
+
 }
 
 bootRun {

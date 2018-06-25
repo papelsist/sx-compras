@@ -14,11 +14,10 @@ export class AuthGuard implements CanActivate {
 
   canActivate(): Observable<boolean> {
     return this.store.pipe(
-      select(fromStore.getLoggedIn),
-      map(loggedIn => {
-        console.log('Logged: ', loggedIn);
-        if (!loggedIn) {
-          this.store.dispatch(new fromAuth.LoginRedirect());
+      select(fromStore.getSession),
+      map(session => {
+        if (session == null) {
+          this.store.dispatch(new fromAuth.Logout());
           return false;
         }
         return true;

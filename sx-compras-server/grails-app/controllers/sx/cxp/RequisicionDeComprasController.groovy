@@ -1,11 +1,15 @@
 package sx.cxp
 
+import grails.compiler.GrailsCompileStatic
+import grails.plugin.springsecurity.annotation.Secured
+import grails.rest.RestfulController
 
-import grails.rest.*
-import grails.converters.*
+@Secured("IS_AUTHENTICATED_ANONYMOUSLY")
+@GrailsCompileStatic
+class RequisicionDeComprasController extends RestfulController<RequisicionDeCompras> {
 
-class RequisicionDeComprasController extends RestfulController {
-    static responseFormats = ['json', 'xml']
+    static responseFormats = ['json']
+
     RequisicionDeComprasController() {
         super(RequisicionDeCompras)
     }

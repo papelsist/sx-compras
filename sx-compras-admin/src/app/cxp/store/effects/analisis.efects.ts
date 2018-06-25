@@ -28,7 +28,7 @@ export class AnalisisEffects {
         .list({})
         .pipe(
           map(res => new analisisActions.LoadSuccess(res)),
-          catchError(error => of(new analisisActions.SaveAnalisisFail(error)))
+          catchError(error => of(new analisisActions.LoadFail(error)))
         );
     })
   );
