@@ -23,7 +23,6 @@ export class ComprobanteFiscalService {
     _.forIn(filtro, (value, key) => {
       params = params.set(key, value);
     });
-    console.log('Params: ', filtro);
     return this.http
       .get<ComprobanteFiscal[]>(this.apiUrl, { params: params })
       .pipe(catchError((error: any) => throwError(error)));

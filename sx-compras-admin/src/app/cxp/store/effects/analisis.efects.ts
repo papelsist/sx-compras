@@ -173,4 +173,22 @@ export class AnalisisEffects {
         );
     })
   );
+
+  @Effect({ dispatch: false })
+  errorHandler$ = this.actions$.pipe(
+    ofType(
+      AnalisisActionTypes.UPDATE_ANALISIS_FAIL,
+      AnalisisActionTypes.SAVE_ANALISIS_FAIL
+    ),
+    map((action: any) => {
+      const error = action.payload;
+      this.snackBar.open(
+        `Error: ${error.status}: ${error.statusText}`,
+        'Cerrar',
+        {
+          duration: 7000
+        }
+      );
+    })
+  );
 }

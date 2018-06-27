@@ -19,6 +19,12 @@ class AnalisisDeFacturaController extends RestfulController<AnalisisDeFactura> {
     }
 
     @Override
+    protected List<AnalisisDeFactura> listAllResources(Map params) {
+        params.max = 50
+        return super.listAllResources(params)
+    }
+
+    @Override
     protected AnalisisDeFactura createResource() {
         AnalisisDeFactura analisisDeFactura  = new AnalisisDeFactura()
         bindData analisisDeFactura, getObjectToBind()

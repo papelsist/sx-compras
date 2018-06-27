@@ -37,7 +37,7 @@ class Proveedor {
 
     Long sw2
 
-    Long descuentoF = 0.0
+    BigDecimal descuentoF = 0.0
 
     Long diasDF = 0
 

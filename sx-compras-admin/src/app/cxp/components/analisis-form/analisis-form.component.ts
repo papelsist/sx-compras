@@ -67,7 +67,7 @@ export class AnalisisFormComponent implements OnInit, OnDestroy {
       width: '850px'
     });
     dialogRef.afterClosed().subscribe((facturas: CuentaPorPagar[]) => {
-      if (facturas.length > 0) {
+      if (facturas && facturas.length > 0) {
         this.form.get('factura').setValue(facturas[0]);
         this.cd.detectChanges();
       }

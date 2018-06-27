@@ -20,7 +20,12 @@
       </div>
     </mat-card-title>
     <mat-card-subtitle>
-      <span>{{analisis.proveedor.nombre}}</span>
+      <span layout>
+        <span>{{analisis.proveedor.nombre}}</span>
+        <span flex></span>
+        <span *ngIf="analisis.updateUser !== analisis.createUser">Creado: {{analisis.createUser}}</span>
+        <span class="pad-left">Modificado: {{analisis.updateUser}}</span>
+      </span>
     </mat-card-subtitle>
     <mat-divider></mat-divider>
 

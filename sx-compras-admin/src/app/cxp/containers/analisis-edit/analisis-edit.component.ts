@@ -33,7 +33,8 @@ export class AnalisisEditComponent implements OnInit, OnDestroy {
   coms$: Observable<RecepcionDeCompra[]>;
   loading$: Observable<boolean>;
 
-  subscriptions: Subscription[] = [];
+  subscription: Subscription;
+
   constructor(
     private store: Store<fromStore.CxpState>,
     private dialogService: TdDialogService
@@ -45,7 +46,7 @@ export class AnalisisEditComponent implements OnInit, OnDestroy {
     this.loading$ = this.store.select(fromStore.getLoading);
     this.coms$ = this.store.select(fromStore.getAllComsPendientes);
 
-    this.analisis$.subscribe(analisis => {
+    this.subscription = this.analisis$.subscribe(analisis => {
       if (analisis && !analisis.cerrado) {
         this.store.dispatch(
           new fromStore.LoadComsPendientes(analisis.proveedor)
@@ -55,11 +56,14 @@ export class AnalisisEditComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.subscriptions.forEach(item => item.unsubscribe());
+    // this.subscriptions.forEach(item => item.unsubscribe());
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 
   onCancel() {
-    this.store.dispatch(new fromRoot.Back());
+    this.store.dispatch(new fromRoot.Go({ path: ['cxp/analisis'] }));
   }
 
   onUpdate(event: Analisis) {

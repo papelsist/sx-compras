@@ -13,4 +13,6 @@ export interface Analisis {
   partidas: AnalisisDet[];
   selected?: boolean;
   cerrado?: string;
+  updateUser?: string;
+  createUser?: string;
 }

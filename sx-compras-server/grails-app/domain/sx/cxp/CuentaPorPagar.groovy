@@ -58,8 +58,8 @@ class CuentaPorPagar {
 
     static constraints = {
         tipo inList:['COMPRAS', 'GASTOS']
-        folio maxSize: 10
-        serie maxSize: 10
+        folio nullable: true, maxSize: 30
+        serie nullable: true, maxSize: 30
         moneda maxSize: 5
         tipoDeCambio(scale:6)
         subTotal(scale:4)

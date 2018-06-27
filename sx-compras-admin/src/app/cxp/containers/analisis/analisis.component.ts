@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { Observable, Subject, BehaviorSubject } from 'rxjs';
 
 import { Store } from '@ngrx/store';
 
@@ -7,31 +7,12 @@ import * as fromRoot from 'app/store';
 import * as fromStore from '../../store';
 
 import { Analisis } from '../../model/analisis';
+import { Periodo } from 'app/_core/models/periodo';
+import { AnalisisTableComponent } from '../../components';
 
 @Component({
   selector: 'sx-analisis',
-  template: `
-    <mat-card>
-      <sx-search-title title="Análisis de facturas"></sx-search-title>
-      <mat-divider></mat-divider>
-      <div class="mat-elevation-z8 analisis-table-panel">
-        <sx-analisis-table [analisis]=" analisis$ | async"
-        (select)="onSelect($event)" (edit)="onEdit($event)">
-        </sx-analisis-table>
-      </div>
-    </mat-card>
-    <div layout *ngIf="selected">
-      <mat-card class="analisis-partidas-panel" flex="60">
-
-      </mat-card>
-    </div>
-
-
-    <a mat-fab matTooltip="Nuevo análisis" matTooltipPosition="before" color="accent" class="mat-fab-position-bottom-right z-3"
-      [routerLink]="['create']">
-	    <mat-icon>add</mat-icon>
-    </a>
-  `,
+  templateUrl: './analisis.component.html',
   styles: [
     `
     .analisis-table-panel {
@@ -50,9 +31,14 @@ import { Analisis } from '../../model/analisis';
 export class AnalisisComponent implements OnInit {
   analisis$: Observable<Analisis[]>;
   selected: any;
+  filtro: { proveedor?: string; periodo?: Periodo; factura?: string } = {};
+  proveedor: string;
+  periodo: Periodo;
+  @ViewChild('table') table: AnalisisTableComponent;
   constructor(private store: Store<fromStore.CxpState>) {}
 
   ngOnInit() {
+    this.periodo = Periodo.monthToDay();
     this.analisis$ = this.store.select(fromStore.getAllAnalisis);
   }
 
@@ -63,5 +49,9 @@ export class AnalisisComponent implements OnInit {
   onEdit(event: Analisis) {
     console.log('Editando: ', event);
     this.store.dispatch(new fromRoot.Go({ path: ['cxp/analisis', event.id] }));
+  }
+
+  onSearch(event: string) {
+    this.table.dataSource.filter = event;
   }
 }

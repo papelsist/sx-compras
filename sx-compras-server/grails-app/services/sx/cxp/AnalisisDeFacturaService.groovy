@@ -2,7 +2,7 @@ package sx.cxp
 
 import grails.events.annotation.Publisher
 import grails.gorm.transactions.Transactional
-
+import grails.plugin.springsecurity.SpringSecurityService
 import groovy.util.logging.Slf4j
 
 import sx.core.Folio
@@ -12,12 +12,17 @@ import sx.utils.MonedaUtils
 @Transactional
 class AnalisisDeFacturaService {
 
+    SpringSecurityService springSecurityService
+
     AnalisisDeFactura save(AnalisisDeFactura analisis) {
         // Actualizar el status de a cuenta por pagar
+        logEntity(analisis)
         log.debug("Salvando analisis de factura  {}", analisis)
         CuentaPorPagar cxp = analisis.factura
         cxp.analizada = true
+        cxp.updateUser = analisis.updateUser
         cxp.save flush: true
+
         actualizarFlete(analisis)
         analisis.folio = Folio.nextFolio('ANALISIS', 'CXP')
         analisis.save failOnError: true, flush: true
@@ -33,6 +38,7 @@ class AnalisisDeFacturaService {
             it.costoUnitario = MonedaUtils.aplicarDescuentosEnCascada(it.precioDeLista, it.desc1, it.desc2, it.desc3, it.desc4)
         }
         actualizarFlete(analisis)
+        logEntity(analisis)
         analisis.save flush: true
         return analisis
     }
@@ -47,10 +53,14 @@ class AnalisisDeFacturaService {
 
     AnalisisDeFactura cerrar(AnalisisDeFactura analisis) {
         log.debug("CERRANDO analisis de factura  {}", analisis)
+        logEntity(analisis)
+
         CuentaPorPagar cxp = analisis.factura
         cxp.analizada = true
-        cxp.importaPorPagar = analisis.importe
+        cxp.importaPorPagar = (analisis.importe - analisis.importeFlete)
+        cxp.updateUser = analisis.updateUser
         cxp.save flush: true
+
         analisis.cerrado = new Date()
         analisis.save flush: true
         return analisis
@@ -60,6 +70,16 @@ class AnalisisDeFacturaService {
         if(analisis.importeFlete > 0 ){
             analisis.impuestoFlete = MonedaUtils.calcularImpuesto(analisis.importeFlete)
             analisis.retencionFlete = MonedaUtils.calcularImpuesto(analisis.importeFlete, 0.04)
+        }
+    }
+
+    private logEntity(AnalisisDeFactura analisis ){
+        def user = springSecurityService.getCurrentUser()
+        if(user) {
+            String username = user.username
+            if(analisis.id == null)
+                analisis.createUser = username
+            analisis.updateUser = username
         }
     }
 

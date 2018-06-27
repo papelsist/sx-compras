@@ -4,7 +4,7 @@ import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import sx.core.Proveedor
 
-@ToString(excludes ='id,version,dateCreated,lastUpdated, xml, pdf',includeNames=true,includePackage=false)
+@ToString(includes ='emisorRfc, serie, folio, fileName',includeNames=true,includePackage=false)
 @EqualsAndHashCode(includes='id, uuid')
 class ComprobanteFiscal {
 
@@ -51,23 +51,20 @@ class ComprobanteFiscal {
     Date lastUpdated
 
     static constraints = {
-
-        xml maxSize:(1024 * 512)  // 50kb para almacenar el xml
-        fileName nullable: true
         serie nullable:true,maxSize:30
         folio nullable:true,maxSize:30
         emisorNombre nullable: true
         emisorRfc minSize: 12, maxSize:13
         receptorNombre nullable: true
         receptorRfc minSize: 12, maxSize:13
-        tipoDeComprobante inList: ['I','E','T']
+        tipoDeComprobante inList: ['I','E','T', 'P']
         uuid maxSize:40,unique:true
-        fileName maxSize:30
-        formaDePago maxSize:5
-        metodoDePago maxSize:5
+        formaDePago nullable: true, maxSize:5
+        metodoDePago nullable: true, maxSize:5
         moneda maxSize: 5
         tipoDeCambio scale: 6
-        pdf nullable: true , maxSize:(1024 * 512 * 10)
+        xml maxSize:(1024 * 512)  // 50kb para almacenar el xml
+        pdf nullable: true , maxSize:(1024 * 512 * 20) // 10 MB
         acuse nullable: true, maxSize:(1024 * 512)  // 50kb para almacenar el xml
         comentario nullable: true
         usoCfdi maxSize: 10, nullable: true

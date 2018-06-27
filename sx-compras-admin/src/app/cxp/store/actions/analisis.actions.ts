@@ -32,7 +32,11 @@ export enum AnalisisActionTypes {
   // Cerrar el analisis
   CERRAR_ANALISIS = '[Analisis de factura] Cerrar',
   CERRAR_ANALISIS_FAIL = '[Analisis de factura] Cerrar Fail',
-  CERRAR_ANALISIS_SUCCESS = '[Analisis de factura] Cerrar Success'
+  CERRAR_ANALISIS_SUCCESS = '[Analisis de factura] Cerrar Success',
+  // Search analisis
+  SEARCH = '[Analisis de factura] Search',
+  SEARCH_COMPLETE = '[Analisis de factura] Search Complete',
+  SEARCH_ERROR = '[Analisis de factura] Search Error'
 }
 
 export class Load implements Action {
@@ -136,6 +140,20 @@ export class CerrarAnalisisSuccess implements Action {
   constructor(public payload: Analisis) {}
 }
 
+// Search actions
+export class Search implements Action {
+  readonly type = AnalisisActionTypes.SEARCH;
+  constructor(public payload: any) {}
+}
+export class SearchError implements Action {
+  readonly type = AnalisisActionTypes.SEARCH_ERROR;
+  constructor(public payload: any) {}
+}
+export class SearComplete implements Action {
+  readonly type = AnalisisActionTypes.SEARCH_COMPLETE;
+  constructor(public payload: Analisis[]) {}
+}
+
 export type AnalisisActions =
   | Load
   | LoadFail
@@ -158,4 +176,7 @@ export type AnalisisActions =
   | DeleteAnalisisSuccess
   | CerrarAnalisis
   | CerrarAnalisisFail
-  | CerrarAnalisisSuccess;
+  | CerrarAnalisisSuccess
+  | Search
+  | SearchError
+  | SearComplete;

@@ -58,6 +58,7 @@ class RecepcionDeCompra {
         createUser nullable: true
         updateUser nullable: true
         fechaInventario nullable: true
+        pendienteDeAnalisis nullable: true
     }
 
 
@@ -65,7 +66,11 @@ class RecepcionDeCompra {
         id generator:'uuid'
         partidas cascade: "all-delete-orphan"
         fecha type:'date', index: 'RECOMPRA_IDX1'
-        pendienteDeAnalisis formula: '(select COALESCE(sum(x.cantidad - x.analizado), 0) from recepcion_de_compra_det x where x.recepcion_id = id )'
+        // pendienteDeAnalisis formula: '(select COALESCE(sum(x.cantidad - x.analizado), 0) from recepcion_de_compra_det x where x.recepcion_id = id )'
+    }
+
+    def actualizarPendiente() {
+        this.pendienteDeAnalisis = this.partidas.sum { it.cantidad - it.analizado}
     }
 
 

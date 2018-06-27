@@ -78,7 +78,8 @@ environments:
     development:
         dataSource:
             dbCreate: update
-            url: jdbc:mysql://localhost/sx_compras?autoReconnect=false
+            url: jdbc:mysql://localhost/siipapx_oficinas?autoReconnect=false
+            #url: jdbc:mysql://${JDBC_CONNECTION_STRING}?autoReconnect=true
             username: root
             password: sys
     test:
@@ -93,7 +94,29 @@ environments:
     production:
         dataSource:
             dbCreate: update
-            url: jdbc:mysql://10.10.1.229/siipapx?autoReconnect=false
+            #url: jdbc:mysql://10.10.1.229/siipapx?autoReconnect=false
+            url: jdbc:mysql://${JDBC_CONNECTION_STRING}?autoReconnect=true
+            username: root
+            password: sys
+            properties:
+                maxActive: 10
+                maxIdle: 10
+                minIdle: 3
+                initialSize: 3
+                minEvictableIdleTimeMillis: 1800000
+                timeBetweenEvictionRunsMillis: 1800000
+                numTestsPerEvictionRun: 3
+                testOnBorrow: true
+                testWhileIdle: true
+                testOnReturn: true
+                maxWait: 10000
+                validationQuery: 'SELECT 1'
+                validationQueryTimeout: 3
+                validationInterval: 15000
+    certificacion:
+        dataSource:
+            dbCreate: update
+            url: jdbc:mysql://localhost/siipapx_cert?autoReconnect=false
             username: root
             password: sys
             properties:
@@ -113,8 +136,13 @@ environments:
                 validationInterval: 15000
 ---
 server:
-  port: 9095
+  port: 9195
   contextPath: /siipapx
+---
+environments:
+    certificacion:
+        server:
+            port: 9199
 ---
 grails:
     cors:

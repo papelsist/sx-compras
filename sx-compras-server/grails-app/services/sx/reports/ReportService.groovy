@@ -8,7 +8,7 @@ import groovy.util.logging.Slf4j
 
 
 @Slf4j
-@GrailsCompileStatic
+// @GrailsCompileStatic
 class ReportService {
 
     JasperService jasperService

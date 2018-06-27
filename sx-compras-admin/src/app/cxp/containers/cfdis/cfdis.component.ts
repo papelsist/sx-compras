@@ -5,7 +5,7 @@ import { shareReplay } from 'rxjs/operators';
 
 import { ComprobanteFiscalService } from '../../services';
 import { ComprobanteFiscal } from '../../model/comprobanteFiscal';
-import { Periodo } from '../../../_core/models/periodo';
+import { Periodo } from 'app/_core/models/periodo';
 
 @Component({
   selector: 'sx-cxp-cfdis',
@@ -73,12 +73,14 @@ export class CfdisComponent implements OnInit, OnDestroy {
   }
 
   cambiarPeriodo(event: Periodo) {
-    this.periodo = event;
-    this.filtro = {
-      ...this.filtro,
-      ...this.periodo.toApiJSON()
-    };
-    this.load();
+    if (event) {
+      this.periodo = event;
+      this.filtro = {
+        ...this.filtro,
+        ...this.periodo.toApiJSON()
+      };
+      this.load();
+    }
   }
 
   ngOnDestroy() {

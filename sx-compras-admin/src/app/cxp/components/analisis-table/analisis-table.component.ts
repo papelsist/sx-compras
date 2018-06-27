@@ -6,11 +6,12 @@ import {
   EventEmitter,
   ChangeDetectionStrategy,
   OnChanges,
-  SimpleChanges
+  SimpleChanges,
+  ViewChild
 } from '@angular/core';
 
 import { Analisis } from '../../model/analisis';
-import { MatTableDataSource } from '@angular/material';
+import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 
 @Component({
   selector: 'sx-analisis-table',
@@ -20,25 +21,37 @@ import { MatTableDataSource } from '@angular/material';
 })
 export class AnalisisTableComponent implements OnInit, OnChanges {
   @Input() analisis: Analisis[] = [];
+  @Input() searchTerm: string;
   @Output() edit = new EventEmitter();
   @Output() select = new EventEmitter();
   dataSource = new MatTableDataSource<Analisis>([]);
   displayColumns = [
+    'folio',
     'proveedor',
     'factura',
     'importe',
     'uuid',
     'cerrado',
+    'updateUser',
     'operaciones'
   ]; // , 'serie', 'folio', 'total'];
 
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
+
   constructor() {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.analisis && changes.analisis.currentValue) {
       this.dataSource.data = changes.analisis.currentValue;
+    }
+    if (changes.searchTerm && changes.searchTerm.currentValue) {
+      this.dataSource.filter = changes.searchTerm.currentValue;
     }
   }
 

@@ -32,19 +32,20 @@ if (Environment.isDevelopmentMode() && targetDir != null) {
         }
     }
     logger("StackTrace", ERROR, ['FULL_STACKTRACE'], false)
+    logger("org.springframework.security", OFF, ['STDOUT'], false)
+    logger("grails.plugin.springsecurity", OFF, ['STDOUT'], false)
+    logger("org.pac4j", OFF, ['STDOUT'], false)
+
+    logger("org.springframework.security", OFF, ['STDOUT'], false)
+    logger("grails.plugin.springsecurity", OFF, ['STDOUT'], false)
+    logger("org.pac4j", OFF, ['STDOUT'], false)
+
+    logger("sx.core", DEBUG, ['STDOUT'], false)
+    logger("sx.cxp", DEBUG, ['STDOUT'], false)
+    logger("sx.compras", DEBUG, ['STDOUT'], false)
+    logger("sx.reports", DEBUG, ['STDOUT'], false)
 }
 root(ERROR, ['STDOUT'])
-
-logger("org.springframework.security", OFF, ['STDOUT'], false)
-logger("grails.plugin.springsecurity", OFF, ['STDOUT'], false)
-logger("org.pac4j", OFF, ['STDOUT'], false)
-
-logger("org.springframework.security", OFF, ['STDOUT'], false)
-logger("grails.plugin.springsecurity", OFF, ['STDOUT'], false)
-logger("org.pac4j", OFF, ['STDOUT'], false)
-
-logger("sx.core", DEBUG, ['STDOUT'], false)
-logger("sx.cxp", DEBUG, ['STDOUT'], false)
-logger("sx.compras", DEBUG, ['STDOUT'], false)
 logger("sx.reports", DEBUG, ['STDOUT'], false)
+
 
