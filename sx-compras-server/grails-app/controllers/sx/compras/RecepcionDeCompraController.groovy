@@ -30,13 +30,11 @@ class RecepcionDeCompraController extends RestfulController<RecepcionDeCompra> {
      */
     @CompileDynamic
     def pendientesDeAnalisis(Proveedor proveedor) {
-        params.max = 100
-        params.sort = 'lastUpdated'
-        params.order = 'desc'
-        //def query = RecepcionDeCompra.where {proveedor == proveedor && fechaInventario != null && pendienteDeAnalisis > 0}
-        //respond query.list(params)
         List list = RecepcionDeCompraDet.findAll(
-                "select distinct(d.recepcion) from RecepcionDeCompraDet d where d.recepcion.proveedor =? and d.cantidad - d.analizado > 0 ",
+                "select distinct(d.recepcion) from RecepcionDeCompraDet d " +
+                        " where d.recepcion.proveedor =? " +
+                        " and d.cantidad - d.analizado > 0 " +
+                        " order by d.recepcion.fecha ",
                 [proveedor])
         list*.actualizarPendiente()
         respond list

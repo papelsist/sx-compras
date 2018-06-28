@@ -25,6 +25,18 @@ const routes: Routes = [
             component: fromContainers.AnalisisEditComponent
           }
         ]
+      },
+      {
+        path: 'requisiciones',
+        children: [
+          { path: '', component: fromContainers.RequisicionesComponent },
+          { path: 'create', component: fromContainers.RequisicionComponent },
+          {
+            path: ':requisicionId',
+            canActivate: [fromGuards.RequisicionExistsGuard],
+            component: fromContainers.RequisicionComponent
+          }
+        ]
       }
     ]
   }

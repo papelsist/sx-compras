@@ -71,9 +71,10 @@ dependencies {
     // Grails console
     compile "org.grails.plugins:gsp"
     runtime 'org.grails.plugins:grails-console:2.1.1'
-
+    /** Jasper plugin **/
     compile 'org.grails.plugins:jasper:2.1.0.RC1'
-
+    compile 'org.eclipse.jdt.core.compiler:ecj:4.4'
+    /****/
     compile 'org.grails.plugins:spring-security-core:3.2.1'
     compile 'org.grails.plugins:spring-security-rest:2.0.0.RC1'
 
@@ -102,7 +103,7 @@ springBoot {
 
 war {
     String env = System.getProperty('grails.env') ?: 'prod'
-    war.baseName = "${rootProject.name}-${env}"
+    war.baseName = "${rootProject.name}-${env.substring(0,3)}"
     war.version = ''
 }
 

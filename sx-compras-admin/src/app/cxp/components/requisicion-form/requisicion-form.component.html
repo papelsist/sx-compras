@@ -1,0 +1,54 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <mat-card>
+    <mat-card-title *ngIf="requisicion">
+      <span class="pad-right"> Requisición: {{requisicion.folio}}</span>
+      <span class="pad-left"> {{requisicion.nombre}}</span>
+    </mat-card-title>
+    <mat-card-title *ngIf="!requisicion">Alta de Requisición</mat-card-title>
+    <mat-divider></mat-divider>
+    <div layout="column" class="pad">
+      <div layout>
+        <sx-proveedor-field formControlName="proveedor" flex *ngIf="!requisicion">
+        </sx-proveedor-field>
+        <mat-form-field class="pad-left">
+          <input matInput [matDatepicker]="myDatepicker" formControlName="fecha" placeholder="Fecha">
+          <mat-datepicker-toggle matSuffix [for]="myDatepicker"></mat-datepicker-toggle>
+          <mat-datepicker #myDatepicker></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field class="pad-left">
+          <input matInput [matDatepicker]="myDatepicker2" formControlName="fechaDePago" placeholder="Fecha pago">
+          <mat-datepicker-toggle matSuffix [for]="myDatepicker2"></mat-datepicker-toggle>
+          <mat-datepicker #myDatepicker2></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div layout>
+        <mat-form-field class="pad-right">
+          <mat-select placeholder="Forma de pago" formControlName="formaDePago">
+            <mat-option *ngFor="let tipo of ['TRANSFERENCIA','CHEQUE']" [value]="tipo">{{tipo}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field class="pad-right" [style.width.px]="60">
+          <mat-select placeholder="Moneda" formControlName="moneda">
+            <mat-option *ngFor="let tipo of ['MXN','USD', 'EUR']" [value]="tipo">{{tipo}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field class="pad-right" [style.width.px]="60">
+          <input matInput formControlName="tipoDeCambio" type="number" placeholder="T.C">
+        </mat-form-field>
+        <mat-form-field class="pad-right" [style.width.px]="120">
+          <input matInput formControlName="total" type="number" placeholder="Total">
+        </mat-form-field>
+        <mat-form-field flex>
+          <input matInput formControlName="comentario" placeholder="Comentario">
+        </mat-form-field>
+      </div>
+    </div>
+    <mat-divider></mat-divider>
+    <mat-card-actions>
+      <button mat-button type="button" (click)="cancel.emit($event)">Cancelar</button>
+      <button mat-button [disabled]="form.invalid || form.pristine">
+        <mat-icon>save</mat-icon> Salvar</button>
+
+    </mat-card-actions>
+  </mat-card>
+</form>

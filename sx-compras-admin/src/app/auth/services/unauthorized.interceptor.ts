@@ -15,6 +15,10 @@ import { catchError } from 'rxjs/operators';
 import { AuthService } from './auth.service';
 import { SESSION_KEY } from '../models/authSession';
 
+import { Store } from '@ngrx/store';
+import * as fromRoot from 'app/store';
+import * as fromStore from '../store';
+
 /**
  * HTTP 401 Interceptor to redirect to Login (NOT JET USED)
  *
@@ -22,7 +26,10 @@ import { SESSION_KEY } from '../models/authSession';
 @Injectable()
 export class UnautorizedInterceptor implements HttpInterceptor {
   private authService: AuthService;
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private store: Store<fromStore.AuthState>
+  ) {}
 
   intercept(
     request: HttpRequest<any>,
@@ -35,6 +42,7 @@ export class UnautorizedInterceptor implements HttpInterceptor {
           console.log('HTTP 401 Unauthorized', response);
           // localStorage.removeItem(SESSION_KEY);
           // this.router.navigateByUrl('/login');
+          // this.store.dispatch(new fromStore.Logout());
         }
         return throwError(response);
       })

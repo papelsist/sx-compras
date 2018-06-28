@@ -32,6 +32,8 @@ class Requisicion {
 
     String comentario
 
+    Date cerrada
+
     Long sw2
 
     Date dateCreated
@@ -49,6 +51,7 @@ class Requisicion {
         formaDePago inList:['TRANSFERENCIA','CHEQUE']
         comentario nullable:true
         sw2 nullable:true
+        cerrada nullable: true
     }
 
     static mapping = {
@@ -57,21 +60,8 @@ class Requisicion {
         nombre index: 'REQ_IDX1'
         fechaDePago type:'date' , index: 'REQ_IDX2'
         fecha type:'date', index: 'REQ_IDX3'
+        cerrada type: 'date'
     }
 
-    def actualizar(){
-        if(!nombre)
-            nombre = proveedor.nombre
-    }
-
-    def beforeInsert(){
-        actualizar()
-    }
-
-    /*
-    enum Entidad {
-        GASTOS, COMPRAS, REEMBOLSO, NOMINA, GENERICA, COMISION, COMPRA_DOLARES, TESORERIA
-    }
-    */
 
 }

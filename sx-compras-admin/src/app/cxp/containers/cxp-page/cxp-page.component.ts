@@ -23,6 +23,12 @@ export class CxpPageComponent implements OnInit {
       title: 'Análisis',
       description: 'Análisis de facturas',
       icon: 'rate_review'
+    },
+    {
+      route: 'requisiciones',
+      title: 'Requisiciones',
+      description: 'Requisiciones',
+      icon: 'gradient'
     }
   ];
   constructor(

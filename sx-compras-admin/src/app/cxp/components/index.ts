@@ -9,6 +9,8 @@ import { ComsSelectorComponent } from './coms-selector/coms-selector.component';
 import { ComsTableComponent } from './coms-table/coms-table.component';
 import { AnalisisEditFormComponent } from './analisis-edit-form/analisis-edit-form.component';
 import { AnalisisPartidasTableComponent } from './analisis-edit-form/analisis-partidas-table.component';
+import { RequisicionesTableComponent } from './requisiciones-table/requisiciones-table.component';
+import { RequisicionFormComponent } from './requisicion-form/requisicion-form.component';
 
 export const components: any[] = [
   CfdisTableComponent,
@@ -21,7 +23,9 @@ export const components: any[] = [
   CxpFacturasTableComponent,
   FacturaHeaderComponent,
   ComsSelectorComponent,
-  ComsTableComponent
+  ComsTableComponent,
+  RequisicionesTableComponent,
+  RequisicionFormComponent,
 ];
 
 export const entryComponents = [
@@ -40,3 +44,5 @@ export * from './cxp-facturas-table/cxp-facturas-table.component';
 export * from './factura-header/factura-header.component';
 export * from './coms-selector/coms-selector.component';
 export * from './coms-table/coms-table.component';
+export * from './requisiciones-table/requisiciones-table.component';
+export * from './requisicion-form/requisicion-form.component';

@@ -7,7 +7,7 @@ class RequisicionDeCompras extends Requisicion{
 
     static constraints = {
         descuentoFinanciero scale: 4
-        contrarecibo nullabel: true
+        contrarecibo nullable: true
     }
 
 }
