@@ -21,7 +21,7 @@ import { CuentaPorPagar } from '../../model/cuentaPorPagar';
 })
 export class CxpFacturasTableComponent implements OnInit, OnChanges {
   @Input() facturas: CuentaPorPagar[] = [];
-  @Input() multipleSelection = false;
+  @Input() multipleSelection = true;
   dataSource = new MatTableDataSource<CuentaPorPagar>([]);
 
   displayColumns = [

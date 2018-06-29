@@ -14,7 +14,7 @@ import { CuentaPorPagar } from '../../model/cuentaPorPagar';
   styles: [
     `
     .facturas-table-panel {
-      max-height: 500px;
+      max-height: 700px;
       overflow: auto;
     }
   `
