@@ -17,7 +17,12 @@ export enum RequisicionActionTypes {
 
   DELETE_REQUISICION = '[Requisicion de compra] Delete',
   DELETE_REQUISICION_FAIL = '[Requisicion de compra] Delete Fail',
-  DELETE_REQUISICION_SUCCESS = '[Requisicion de compra] Delete Success'
+  DELETE_REQUISICION_SUCCESS = '[Requisicion de compra] Delete Success',
+
+  // Cerrar el analisis
+  CERRAR_REQUISICION = '[Requisicion de compra] Cerrar',
+  CERRAR_REQUISICION_FAIL = '[Requisicion de compra] Cerrar Fail',
+  CERRAR_REQUISICION_SUCCESS = '[Requisicion de compra] Cerrar Success'
 }
 
 export class LoadRequisicion implements Action {
@@ -71,6 +76,20 @@ export class DeleteRequisicionSuccess implements Action {
   constructor(public payload: Requisicion) {}
 }
 
+// Cerrar
+export class CerrarRequisicion implements Action {
+  readonly type = RequisicionActionTypes.CERRAR_REQUISICION;
+  constructor(public payload: Requisicion) {}
+}
+export class CerrarRequisicionFail implements Action {
+  readonly type = RequisicionActionTypes.CERRAR_REQUISICION_FAIL;
+  constructor(public payload: any) {}
+}
+export class CerrarRequisicionSuccess implements Action {
+  readonly type = RequisicionActionTypes.CERRAR_REQUISICION_SUCCESS;
+  constructor(public payload: Requisicion) {}
+}
+
 export type RequisicionActions =
   | LoadRequisicion
   | LoadRequisicionFail
@@ -82,4 +101,7 @@ export type RequisicionActions =
   | UpdateRequisicionSuccess
   | DeleteRequisicion
   | DeleteRequisicionFail
-  | DeleteRequisicionSuccess;
+  | DeleteRequisicionSuccess
+  | CerrarRequisicion
+  | CerrarRequisicionFail
+  | CerrarRequisicionSuccess;

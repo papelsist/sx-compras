@@ -1,13 +1,27 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
   <mat-card>
     <mat-card-title *ngIf="requisicion">
-      <span class="pad-right"> Requisición: {{requisicion.folio}}</span>
-      <span class="pad-left"> {{requisicion.nombre}}</span>
+      <div layout>
+        <span class="pad-right"> Requisición: {{requisicion.folio}}</span>
+        <span class="pad-left"> {{requisicion.nombre}}</span>
+        <span flex></span>
+        <ng-container *ngIf="requisicion.cerrada">
+          <span class="tc-pink-600 pad-right"> CERRADA: </span>
+          <span class="tc-pink-600"> {{requisicion.cerrada | date:'dd/MM/yyyy'}} </span>
+        </ng-container>
+      </div>
     </mat-card-title>
+
     <mat-card-title *ngIf="!requisicion">Alta de Requisición</mat-card-title>
+    <div *ngIf="requisicion && requisicion.cerrada" class="md-title pad-bottom-sm" layout>
+      <span class="pad-left pad-right">Fecha: </span>
+      <span class="pad-left"> {{requisicion.fecha | date:'dd/MM/yyyy'}}</span>
+      <span class="pad-left">Pago: </span>
+      <span class="pad-left"> {{requisicion.fechaDePago| date:'dd/MM/yyyy'}}</span>
+    </div>
     <mat-divider></mat-divider>
     <div layout="column" class="pad">
-      <div layout>
+      <div layout *ngIf="!requisicion?.cerrada">
         <sx-proveedor-field formControlName="proveedor" flex *ngIf="!requisicion">
         </sx-proveedor-field>
         <mat-form-field class="pad-left">
@@ -43,7 +57,8 @@
     </div>
 
     <div class="partidas-panel">
-      <sx-requisicion-partidas [parent]="form" [partidas]="partidas.value" (delete)="onDeleteRow($event)" (update)="onUpdateRow($event)">
+      <sx-requisicion-partidas [parent]="form" [partidas]="partidas.value" (delete)="onDeleteRow($event)" (update)="onUpdateRow($event)"
+        [readOnly]="form.disabled">
       </sx-requisicion-partidas>
     </div>
     <div class="totales-panel" layout layout-padding>
@@ -55,7 +70,7 @@
     <mat-divider></mat-divider>
     <mat-card-actions>
       <button mat-button type="button" (click)="cancel.emit($event)">Cancelar</button>
-      <button mat-button [disabled]="form.invalid || form.pristine">
+      <button mat-button [disabled]="form.invalid || form.pristine" *ngIf="!form.disabled">
         <mat-icon>save</mat-icon> Salvar
       </button>
       <sx-agregar-facturas [facturas]="facturas" (selected)="onAgregarFactura($event)"></sx-agregar-facturas>
@@ -67,7 +82,7 @@
           <mat-icon>grid_off</mat-icon> Cerrar
         </button>
       </ng-container>
-      <sx-report-button url="requisicionDeCompra/print/{{requisicion.id}}" *ngIf="requisicion">
+      <sx-report-button url="requisicionesDeCompras/print/{{requisicion.id}}" *ngIf="requisicion">
       </sx-report-button>
 
     </mat-card-actions>

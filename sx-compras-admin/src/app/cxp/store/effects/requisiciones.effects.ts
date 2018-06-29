@@ -69,7 +69,8 @@ export class RequisicionesEffects {
   @Effect()
   updateSuccess$ = this.actions$.pipe(
     ofType<fromRequisicion.UpdateRequisicionSuccess>(
-      RequisicionActionTypes.UPDATE_REQUISICION_SUCCESS
+      RequisicionActionTypes.UPDATE_REQUISICION_SUCCESS,
+      RequisicionActionTypes.CERRAR_REQUISICION_SUCCESS
     ),
     map(action => action.payload),
     map(() => new fromRoot.Go({ path: ['cxp/requisiciones'] }))
@@ -99,11 +100,30 @@ export class RequisicionesEffects {
     map(() => new fromRoot.Go({ path: ['cxp/requisiciones'] }))
   );
 
+  @Effect()
+  cerrar$ = this.actions$.pipe(
+    ofType<fromRequisicion.CerrarRequisicion>(
+      RequisicionActionTypes.CERRAR_REQUISICION
+    ),
+    map(action => action.payload),
+    switchMap(requisicion => {
+      return this.service
+        .cerrar(requisicion)
+        .pipe(
+          map(res => new fromRequisicion.CerrarRequisicionSuccess(res)),
+          catchError(error =>
+            of(new fromRequisicion.CerrarRequisicionFail(error))
+          )
+        );
+    })
+  );
+
   @Effect({ dispatch: false })
   errorHandler$ = this.actions$.pipe(
     ofType(
       RequisicionActionTypes.UPDATE_REQUISICION_FAIL,
-      RequisicionActionTypes.SAVE_REQUISICION_FAIL
+      RequisicionActionTypes.SAVE_REQUISICION_FAIL,
+      RequisicionActionTypes.CERRAR_REQUISICION_FAIL
     ),
     map((action: any) => {
       const error = action.payload;

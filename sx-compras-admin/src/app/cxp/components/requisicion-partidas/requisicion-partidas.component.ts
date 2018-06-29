@@ -24,6 +24,7 @@ export class RequisicionPartidasComponent implements OnInit {
   @Input() readOnly = false;
   @Output() update = new EventEmitter();
   @Output() delete = new EventEmitter();
+
   displayColumns = [
     'documentoSerie',
     'documentoFolio',

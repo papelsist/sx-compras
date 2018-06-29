@@ -46,7 +46,8 @@ export function reducer(
     }
 
     case RequisicionActionTypes.SAVE_REQUISICION:
-    case RequisicionActionTypes.UPDATE_REQUISICION: {
+    case RequisicionActionTypes.UPDATE_REQUISICION:
+    case RequisicionActionTypes.CERRAR_REQUISICION: {
       return {
         ...state,
         loading: true
@@ -54,7 +55,8 @@ export function reducer(
     }
     case RequisicionActionTypes.SAVE_REQUISICION_FAIL:
     case RequisicionActionTypes.UPDATE_REQUISICION_FAIL:
-    case RequisicionActionTypes.DELETE_REQUISICION_FAIL: {
+    case RequisicionActionTypes.DELETE_REQUISICION_FAIL:
+    case RequisicionActionTypes.CERRAR_REQUISICION_FAIL: {
       return {
         ...state,
         loading: false
@@ -62,7 +64,8 @@ export function reducer(
     }
 
     case RequisicionActionTypes.SAVE_REQUISICION_SUCCESS:
-    case RequisicionActionTypes.UPDATE_REQUISICION_SUCCESS: {
+    case RequisicionActionTypes.UPDATE_REQUISICION_SUCCESS:
+    case RequisicionActionTypes.CERRAR_REQUISICION_SUCCESS: {
       const requisicion = action.payload;
       const entities = {
         ...state.entities,

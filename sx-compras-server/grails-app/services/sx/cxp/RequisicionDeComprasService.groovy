@@ -42,4 +42,12 @@ class RequisicionDeComprasService implements LogUser, FolioLog{
         }
         requisicion.apagar = requisicion.partidas.sum 0, {RequisicionDet det -> det.apagar}
     }
+
+    RequisicionDeCompras cerrar(RequisicionDeCompras requisicion) {
+        log.debug("CERRANDO requisicion de comras  {}", requisicion)
+        logEntity(requisicion)
+        requisicion.cerrada = new Date()
+        requisicion.save flush: true
+        return requisicion
+    }
 }

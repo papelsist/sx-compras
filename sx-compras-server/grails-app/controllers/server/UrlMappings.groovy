@@ -29,7 +29,7 @@ class UrlMappings {
 
 
         "/api/requisicionesDeCompras"(resources: 'requisicionDeCompras')
-        "/api/requisicionesDeCompras/cerrar/$id"(controller: 'requisicionDeCompras', action: 'cerrar', method: 'PUT')
+        "/api/requisicionesDeCompras/cerrar/$id"(controller:'requisicionDeCompras', action: 'cerrar', method: 'PUT')
         "/api/requisicionesDeCompras/print/$id"(controller: 'requisicionDeCompras', action: 'print', method: 'GET')
         "/api/requisicionesDeCompras/pendientes/$proveedorId"(controller: 'requisicionDeCompras', action: 'pendientes', method: 'GET')
 

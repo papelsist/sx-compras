@@ -90,7 +90,7 @@ class AnalisisDeFacturaService {
         }
     }
 
-    Long nextFolio(){
+    Long  nextFolio(){
         Folio folio = Folio.findOrCreateWhere(entidad: 'ANALISIS', serie: 'CXP')
         Long res = folio.folio + 1
         log.info('Asignando folio: {}', res)

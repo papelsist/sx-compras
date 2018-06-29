@@ -47,11 +47,13 @@ export class RequisicionFormComponent implements OnInit, OnDestroy {
     this.buildForm();
     if (this.requisicion) {
       this.form.patchValue(this.requisicion);
-      console.log('Editando requisicion: ', this.requisicion);
-      // console.log('Partidas: ', this.requisicion.partidas);
+      // console.log('Editando requisicion: ', this.requisicion);
       this.requisicion.partidas.forEach(det => {
         this.partidas.push(new FormControl(det));
       });
+      if (this.requisicion.cerrada) {
+        this.form.disable();
+      }
     } else {
       this.subscription = this.form
         .get('proveedor')
@@ -85,7 +87,7 @@ export class RequisicionFormComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
-    if (this.form.valid) {
+    if (this.form.valid && !this.form.disabled) {
       const proveedor: any = this.form.value.proveedor;
       let fecha = this.form.value.fecha;
       if (fecha instanceof Date) {

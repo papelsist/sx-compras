@@ -73,9 +73,23 @@ class RequisicionDeComprasController extends RestfulController<RequisicionDeComp
         List<CuentaPorPagar> facturas = CuentaPorPagar
                 .findAll("from CuentaPorPagar c where c.proveedor.id = ? " +
                 "  and c.importePorPagar > 0 " +
-                // "  and c not in(select d.cxp from RequisicionDet d where d.requisicion.proveedor = c.proveedor)" +
+                "  and c not in(select d.cxp from RequisicionDet d where d.requisicion.proveedor = c.proveedor)" +
                 "  order by c.fecha ",
                 [id], [max: 200])
         respond facturas
+    }
+
+    def cerrar(RequisicionDeCompras requisicion) {
+        if(requisicion == null) {
+            notFound()
+            return
+        }
+        requisicion = requisicionDeComprasService.cerrar(requisicion)
+        respond requisicion
+    }
+
+    def print( ) {
+        def pdf =  reportService.run('Requisicion.jrxml', [ID: params.id])
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'Requisicion.pdf')
     }
 }

@@ -101,7 +101,7 @@ export class RequisicionComponent implements OnInit, OnDestroy {
         .afterClosed()
         .subscribe(res => {
           if (res) {
-            // this.store.dispatch(new fromStore.CerrarAnalisis(event));
+            this.store.dispatch(new fromStore.CerrarRequisicion(event));
           }
         });
     }
