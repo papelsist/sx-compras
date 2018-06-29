@@ -14,6 +14,12 @@ class RequisicionDet {
 
     BigDecimal total = 0.0
 
+    BigDecimal descuentof = 0.0
+
+    BigDecimal descuentofImporte = 0.0
+
+    BigDecimal apagar = 0.0
+
 
     String documentoSerie
     String documentoFolio

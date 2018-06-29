@@ -34,5 +34,12 @@ class RequisicionDeComprasService implements LogUser, FolioLog{
     def actualizarImportes(RequisicionDeCompras requisicion) {
         log.debug('Actualizando importes de la requisicion {}', requisicion)
         requisicion.total = requisicion.partidas.sum 0, {RequisicionDet det -> det.total}
+        requisicion.partidas.each {
+            if(requisicion.descuentof > 0.0 ){
+                it.descuentof = requisicion.descuentof
+            }
+            it.apagar = it.total
+        }
+        requisicion.apagar = requisicion.partidas.sum 0, {RequisicionDet det -> det.apagar}
     }
 }
