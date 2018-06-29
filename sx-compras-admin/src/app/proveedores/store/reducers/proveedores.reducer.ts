@@ -3,17 +3,20 @@ import * as fromProveedor from '../actions/proveedores.actions';
 import { Proveedor } from '../../models/proveedor';
 
 import * as _ from 'lodash';
+import { ProveedoresSearch } from '../../models/proveedorSearch';
 
 export interface ProveedorState {
   entities: { [id: string]: Proveedor };
   loaded: boolean;
   loading: boolean;
+  searchFilter: ProveedoresSearch;
 }
 
 export const initialState: ProveedorState = {
   entities: {},
   loaded: false,
-  loading: false
+  loading: false,
+  searchFilter: {}
 };
 
 export function reducer(
@@ -40,7 +43,16 @@ export function reducer(
       return {
         ...state,
         loaded: true,
-        loading: false
+        loading: false,
+        entities
+      };
+    }
+
+    case fromProveedor.SET_PROVEEDORES_FILTER: {
+      const searchFilter = action.payload;
+      return {
+        ...state,
+        searchFilter
       };
     }
   }
@@ -50,3 +62,5 @@ export function reducer(
 export const getProveedorEntites = (state: ProveedorState) => state.entities;
 export const getProveedoresLoaded = (state: ProveedorState) => state.loaded;
 export const getProveedoresLoading = (state: ProveedorState) => state.loading;
+export const getProveedoresSearchFilter = (state: ProveedorState) =>
+  state.searchFilter;

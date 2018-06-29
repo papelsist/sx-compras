@@ -143,7 +143,7 @@ class ComprobanteFiscalService implements  LogUser{
             if(it.isDirectory())
                 importarDirectorio(it)
             else {
-                if(it.name.endsWith('xml')) {
+                if(it.name.toLowerCase().endsWith('xml')) {
                     try{
                         importar(it, tipo)
                         cleanFile(it);

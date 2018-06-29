@@ -5,6 +5,8 @@ import * as fromFeature from '../reducers';
 import * as fromProveedores from '../reducers/proveedores.reducer';
 import { Proveedor } from '../../models/proveedor';
 
+import * as _ from 'lodash';
+
 export const getProveedorState = createSelector(
   fromFeature.getProveedoresState,
   (state: fromFeature.ProveedoresState) => state.proveedores
@@ -37,5 +39,37 @@ export const getSelectedProveedor = createSelector(
   fromRoot.getRouterState,
   (entities, router): Proveedor => {
     return router.state && entities[router.state.params.proveedorId];
+  }
+);
+
+export const getProveedoresFilter = createSelector(
+  getProveedorState,
+  fromProveedores.getProveedoresSearchFilter
+);
+
+export const getFilteredProveedores = createSelector(
+  getAllProveedores,
+  getProveedoresFilter,
+  (proveedores, filter) => {
+    let filtered = [...proveedores];
+    if (filter.term) {
+      filtered = _.filter(
+        proveedores,
+        item =>
+          item.nombre.toLowerCase().indexOf(filter.term.toLowerCase()) !== -1
+      );
+    }
+    if (filter.activos) {
+      filtered = _.filter(filtered, item => item.activo === filter.activos);
+    }
+
+    if (filter.suspendidos) {
+      filtered = _.filter(
+        filtered,
+        item => item.activo === !filter.suspendidos
+      );
+    }
+
+    return filtered;
   }
 );

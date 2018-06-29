@@ -16,7 +16,7 @@ export class ProveedoresEffects {
   ) {}
 
   @Effect()
-  loadProductos$ = this.actions$.ofType(proveedorActions.LOAD_PROVEEDORES).pipe(
+  loadEntites$ = this.actions$.ofType(proveedorActions.LOAD_PROVEEDORES).pipe(
     switchMap(() => {
       return this.service
         .list()

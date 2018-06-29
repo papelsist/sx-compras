@@ -1,8 +1,4 @@
-import {
-  NgModule,
-  ModuleWithProviders,
-  ModuleWithComponentFactories
-} from '@angular/core';
+import { NgModule, ModuleWithProviders } from '@angular/core';
 
 import { ProveedoresRoutingModule } from './proveedores-routing.module';
 import { SharedModule } from '../_shared/shared.module';
@@ -13,28 +9,27 @@ import { EffectsModule } from '@ngrx/effects';
 import { reducers, effects } from './store';
 
 import { services } from './services';
+import { guards } from './guards';
 import { components } from './components';
 import { containers } from './containers';
 
 @NgModule({
-  imports: [
-    SharedModule
-  ],
+  imports: [SharedModule, ProveedoresRoutingModule],
   declarations: [...components, ...containers],
-  exports: [...containers, ...components],
+  exports: [...containers, ...components]
 })
 export class ProveedoresModule {
   static forRoot(): ModuleWithProviders {
     return {
       ngModule: RootProveedoresModule,
-      providers: [...services]
+      providers: [...services, ...guards]
     };
   }
 }
 
 @NgModule({
   imports: [
-    ProveedoresRoutingModule,
+    ProveedoresModule,
     StoreModule.forFeature('proveedores', reducers),
     EffectsModule.forFeature(effects)
   ]

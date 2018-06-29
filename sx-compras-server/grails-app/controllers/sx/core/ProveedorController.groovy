@@ -14,13 +14,14 @@ class ProveedorController extends RestfulController<Proveedor> {
 
     @Override
     protected List<Proveedor> listAllResources(Map params) {
-        // log.info('List {}', params)
-        def query = Proveedor.where {}
-        params.max = 50
+        log.info('List {}', params)
+        params.max = 1000
 
-        String tipo = this.params.tipo
-        if(tipo)
-            query = query.where {tipo == tipo}
+        String tipo = params.tipo?: 'COMPRAS'
+        def query = Proveedor.where{tipo == 'COMPRAS'}
+
+        if(tipo != 'COMPRAS')
+            params.max = 50
 
         String estado = this.params.estado
         if (estado) {

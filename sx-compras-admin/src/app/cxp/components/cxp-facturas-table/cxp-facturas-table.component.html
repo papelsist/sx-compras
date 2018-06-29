@@ -37,4 +37,4 @@
   <tr mat-header-row *matHeaderRowDef="displayColumns"></tr>
   <tr mat-row *matRowDef="let cfdi; columns: displayColumns" class="cursor-pointer" (click)="toogleSelect(cfdi)" [ngClass]="{'active': cfdi.selected}"></tr>
 </table>
-<mat-paginator [pageSizeOptions]="[10, 20, 50, 100, 200]" showFirstLastButtons></mat-paginator>
+<mat-paginator [pageSizeOptions]="[20, 50, 100, 200]" showFirstLastButtons></mat-paginator>

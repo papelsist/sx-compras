@@ -19,6 +19,10 @@ const routes: Routes = [
       {
         path: 'cxp',
         loadChildren: './cxp/cxp.module#CxpModule'
+      },
+      {
+        path: 'proveedores',
+        loadChildren: './proveedores/proveedores.module#ProveedoresModule'
       }
     ]
   }
