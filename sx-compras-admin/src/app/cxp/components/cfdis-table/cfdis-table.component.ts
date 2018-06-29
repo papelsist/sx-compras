@@ -31,6 +31,9 @@ export class CfdisTableComponent implements OnInit, OnChanges {
     'moneda',
     'tipoDeCambio',
     'total',
+    'metodoDePago',
+    'formaDePago',
+    'usoCfdi',
     'uuid',
     'tipoDeComprobante',
     'operaciones'

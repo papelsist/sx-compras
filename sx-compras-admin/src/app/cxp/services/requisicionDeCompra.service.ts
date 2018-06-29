@@ -9,7 +9,6 @@ import { ConfigService } from 'app/utils/config.service';
 import * as _ from 'lodash';
 import { Requisicion } from '../model';
 
-
 @Injectable()
 export class RequisicionDeCompraService {
   private apiUrl: string;
@@ -59,6 +58,13 @@ export class RequisicionDeCompraService {
     const url = `${this.apiUrl}/${id}`;
     return this.http
       .delete(url)
+      .pipe(catchError((error: any) => throwError(error)));
+  }
+
+  pendientes(proveedorId: string): Observable<any> {
+    const url = `${this.apiUrl}/pendientes/${proveedorId}`;
+    return this.http
+      .get<any>(url)
       .pipe(catchError((error: any) => throwError(error)));
   }
 }

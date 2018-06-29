@@ -4,24 +4,41 @@ import {
   Input,
   ChangeDetectionStrategy,
   Output,
-  EventEmitter
+  EventEmitter,
+  OnDestroy
 } from '@angular/core';
-import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormArray,
+  Validators,
+  FormControl
+} from '@angular/forms';
 
-import { Requisicion } from '../../model';
+import { Requisicion, CuentaPorPagar } from '../../model';
+import { RequisicionDet, fromFactura } from '../../model/requisicionDet';
 
+import * as _ from 'lodash';
 import * as moment from 'moment';
+
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'sx-requisicion-form',
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './requisicion-form.component.html'
 })
-export class RequisicionFormComponent implements OnInit {
+export class RequisicionFormComponent implements OnInit, OnDestroy {
   @Input() requisicion: Requisicion;
+  @Input() facturas: CuentaPorPagar[];
   @Output() save = new EventEmitter();
   @Output() update = new EventEmitter();
   @Output() cancel = new EventEmitter();
+  @Output() delete = new EventEmitter();
+  @Output() cerrar = new EventEmitter();
+  @Output() proveedor = new EventEmitter();
+
+  subscription: Subscription;
 
   form: FormGroup;
   constructor(private fb: FormBuilder) {}
@@ -29,14 +46,24 @@ export class RequisicionFormComponent implements OnInit {
   ngOnInit() {
     this.buildForm();
     if (this.requisicion) {
-      console.log('Editando requisicion: ', this.requisicion);
       this.form.patchValue(this.requisicion);
-      /*
-      this.form.get('fecha').setValue(moment(this.requisicion.fecha));
-      this.form
-        .get('fechaDePago')
-        .setValue(moment(this.requisicion.fechaDePago));
-        */
+      console.log('Editando requisicion: ', this.requisicion);
+      // console.log('Partidas: ', this.requisicion.partidas);
+      this.requisicion.partidas.forEach(det => {
+        this.partidas.push(new FormControl(det));
+      });
+    } else {
+      this.subscription = this.form
+        .get('proveedor')
+        .valueChanges.subscribe(prov => {
+          this.proveedor.emit(prov);
+        });
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
     }
   }
 
@@ -52,7 +79,8 @@ export class RequisicionFormComponent implements OnInit {
         { value: 0.0, disabled: true },
         [Validators.required, Validators.min(1)]
       ],
-      comentario: []
+      comentario: [],
+      partidas: this.fb.array([])
     });
   }
 
@@ -81,5 +109,29 @@ export class RequisicionFormComponent implements OnInit {
         this.update.emit(entity);
       }
     }
+  }
+
+  get partidas() {
+    return this.form.get('partidas') as FormArray;
+  }
+
+  onAgregarFactura(selected: CuentaPorPagar[]) {
+    selected.forEach(cxp => {
+      const det = fromFactura(cxp);
+      this.partidas.push(new FormControl(det));
+    });
+    this.form.markAsDirty();
+  }
+
+  onDeleteRow(index: number) {
+    this.partidas.removeAt(index);
+    this.form.markAsDirty();
+  }
+  onUpdateRow(event) {
+    this.form.markAsDirty();
+  }
+
+  get total() {
+    return _.sumBy(this.partidas.value, 'total');
   }
 }

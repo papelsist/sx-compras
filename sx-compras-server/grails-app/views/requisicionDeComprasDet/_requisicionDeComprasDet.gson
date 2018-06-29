@@ -1,0 +1,7 @@
+import sx.cxp.RequisicionDeComprasDet
+
+model {
+	RequisicionDeComprasDet requisicionDeComprasDet
+}
+
+json g.render(requisicionDeComprasDet, [excludes: ['dateCreated','lastUpdated'], resolveTemplate: false])

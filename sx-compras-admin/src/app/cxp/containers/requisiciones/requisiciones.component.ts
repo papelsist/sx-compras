@@ -85,7 +85,7 @@ export class RequisicionesComponent implements OnInit, OnDestroy {
   }
 
   searchEmisor(event: string) {
-    this.filtro.emisor = event;
+    this.filtro.nombre = event;
     this.load();
   }
 

@@ -39,9 +39,9 @@ class Folio {
     static Long nextFolio(String entidad, String serie){
         Folio.withTransaction {
             Folio folio = Folio.findOrCreateWhere(entidad: entidad, serie: serie)
-            Long res = folio.next()
+            Long res = folio.folio + 1
             folio.folio = res
-            folio.save()
+            folio.save flush: true
             return res
         }
     }

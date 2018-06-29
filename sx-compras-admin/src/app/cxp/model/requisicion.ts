@@ -11,6 +11,9 @@ export interface Requisicion {
   fechaDePago: string;
   formaDePago: 'CHEQUE' | 'TRANSFERENCIA';
   total: number;
+  descuentof: number;
+  descuentofImporte: number;
+  apagar: number;
   partidas: RequisicionDet[];
   comentario: string;
   selected: boolean;

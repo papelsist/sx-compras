@@ -24,7 +24,7 @@ class AnalisisDeFacturaService {
         cxp.save flush: true
 
         actualizarFlete(analisis)
-        analisis.folio = Folio.nextFolio('ANALISIS', 'CXP')
+        analisis.folio = nextFolio()
         analisis.save failOnError: true, flush: true
         return analisis
     }
@@ -57,13 +57,20 @@ class AnalisisDeFacturaService {
 
         CuentaPorPagar cxp = analisis.factura
         cxp.analizada = true
-        cxp.importaPorPagar = (analisis.importe - analisis.importeFlete)
+        calcularImporteAPagar(analisis, cxp)
         cxp.updateUser = analisis.updateUser
         cxp.save flush: true
 
         analisis.cerrado = new Date()
         analisis.save flush: true
         return analisis
+    }
+
+    void calcularImporteAPagar(AnalisisDeFactura analisis, CuentaPorPagar cxp) {
+        BigDecimal importeAnalizado = analisis.importe
+        BigDecimal impuestoAnalizado = MonedaUtils.calcularImpuesto(importeAnalizado)
+        BigDecimal apagar = importeAnalizado + impuestoAnalizado + analisis.importeFlete + analisis.impuestoFlete - analisis.retencionFlete
+        cxp.importePorPagar = apagar
     }
 
     private actualizarFlete(AnalisisDeFactura analisis)  {
@@ -81,6 +88,15 @@ class AnalisisDeFacturaService {
                 analisis.createUser = username
             analisis.updateUser = username
         }
+    }
+
+    Long nextFolio(){
+        Folio folio = Folio.findOrCreateWhere(entidad: 'ANALISIS', serie: 'CXP')
+        Long res = folio.folio + 1
+        log.info('Asignando folio: {}', res)
+        folio.folio = res
+        folio.save flush: true
+        return res
     }
 
 

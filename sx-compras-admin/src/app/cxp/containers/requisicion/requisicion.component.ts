@@ -2,11 +2,11 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 
 import { Observable, Subscription } from 'rxjs';
 
-import { Store } from '@ngrx/store';
+import { Store, select } from '@ngrx/store';
 import * as fromRoot from 'app/store';
 import * as fromStore from '../../store';
 
-import { Requisicion } from '../../model';
+import { Requisicion, CuentaPorPagar } from '../../model';
 
 import { TdDialogService } from '@covalent/core';
 
@@ -21,7 +21,9 @@ import { TdDialogService } from '@covalent/core';
         (save)="onSave($event)"
         (update)="onUpdate($event)"
         (delete)="onDelete($event)"
-        (cerrar)="onCerrar($event)">
+        (cerrar)="onCerrar($event)"
+        (proveedor)="onProveedor($event)"
+        [facturas]="facturasPendientes$ | async">
       </sx-requisicion-form>
     </div>
   </ng-template>
@@ -29,6 +31,7 @@ import { TdDialogService } from '@covalent/core';
 })
 export class RequisicionComponent implements OnInit, OnDestroy {
   requisicion$: Observable<Requisicion>;
+  facturasPendientes$: Observable<CuentaPorPagar[]>;
   loading$: Observable<boolean>;
   subscription: Subscription;
 
@@ -38,11 +41,25 @@ export class RequisicionComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.requisicion$ = this.store.select(fromStore.getSelectedRequisicion);
-    this.loading$ = this.store.select(fromStore.getRequisicionLoading);
+    this.requisicion$ = this.store.pipe(
+      select(fromStore.getSelectedRequisicion)
+    );
+    this.requisicion$.subscribe(requisicion => {
+      if (requisicion && !requisicion.cerrada) {
+        this.onProveedor(requisicion.proveedor);
+      }
+    });
+    this.facturasPendientes$ = this.store.pipe(
+      select(fromStore.getAllFacturasPorRequisitar)
+    );
+    this.loading$ = this.store.select(fromStore.getRequisicionFormLoading);
   }
 
   ngOnDestroy() {}
+
+  onProveedor(event: any) {
+    this.store.dispatch(new fromStore.LoadFacturasPorRequisitar(event.id));
+  }
 
   onCancel() {
     this.store.dispatch(new fromRoot.Go({ path: ['cxp/requisiciones'] }));
@@ -67,7 +84,7 @@ export class RequisicionComponent implements OnInit, OnDestroy {
       .afterClosed()
       .subscribe(res => {
         if (res) {
-          // this.store.dispatch(new fromStore.DeleteAnalisis(event));
+          this.store.dispatch(new fromStore.DeleteRequisicion(event));
         }
       });
   }

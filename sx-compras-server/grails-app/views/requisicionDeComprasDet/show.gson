@@ -1,0 +1,7 @@
+import sx.cxp.RequisicionDeComprasDet
+
+model {
+	RequisicionDeComprasDet requisicionDeComprasDet
+}
+
+json tmpl.requisicionDeComprasDet(requisicionDeComprasDet)

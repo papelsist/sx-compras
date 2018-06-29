@@ -113,7 +113,6 @@ export class AnalisisEditFormComponent implements OnInit, OnDestroy {
       if (selected) {
         selected.forEach(item => {
           item.partidas.forEach(com => {
-            console.log('Agregando COM: ', com);
             if (com.cantidad - com.analizado > 0) {
               const det = buildFromCom(com);
               this.partidas.push(new FormControl(det));

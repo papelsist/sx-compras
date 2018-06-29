@@ -11,6 +11,7 @@ export interface CuentaPorPagar {
   impuestoTrasladado: number;
   impuestoRetenido: number;
   total: number;
+  importePorPagar?: number;
   vencimiento: string;
   selected?: boolean;
   comprobanteFiscal: { id: string };

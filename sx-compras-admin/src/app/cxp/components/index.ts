@@ -9,8 +9,11 @@ import { ComsSelectorComponent } from './coms-selector/coms-selector.component';
 import { ComsTableComponent } from './coms-table/coms-table.component';
 import { AnalisisEditFormComponent } from './analisis-edit-form/analisis-edit-form.component';
 import { AnalisisPartidasTableComponent } from './analisis-edit-form/analisis-partidas-table.component';
+// Requisiciones
 import { RequisicionesTableComponent } from './requisiciones-table/requisiciones-table.component';
 import { RequisicionFormComponent } from './requisicion-form/requisicion-form.component';
+import { RequisicionPartidasComponent } from './requisicion-partidas/requisicion-partidas.component';
+import { AgregarFacturasComponent } from './requisicion-form/agregar-facturas.component';
 
 export const components: any[] = [
   CfdisTableComponent,
@@ -26,6 +29,8 @@ export const components: any[] = [
   ComsTableComponent,
   RequisicionesTableComponent,
   RequisicionFormComponent,
+  RequisicionPartidasComponent,
+  AgregarFacturasComponent
 ];
 
 export const entryComponents = [
@@ -44,5 +49,8 @@ export * from './cxp-facturas-table/cxp-facturas-table.component';
 export * from './factura-header/factura-header.component';
 export * from './coms-selector/coms-selector.component';
 export * from './coms-table/coms-table.component';
+// Requisiciones
 export * from './requisiciones-table/requisiciones-table.component';
 export * from './requisicion-form/requisicion-form.component';
+export * from './requisicion-partidas/requisicion-partidas.component';
+export * from './requisicion-form/agregar-facturas.component';

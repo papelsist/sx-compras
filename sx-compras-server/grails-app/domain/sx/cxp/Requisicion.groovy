@@ -28,6 +28,8 @@ class Requisicion {
 
     BigDecimal total = 0.0
 
+    BigDecimal apagar = 0.0
+
     List partidas = []
 
     String comentario
@@ -47,6 +49,7 @@ class Requisicion {
 
     static constraints = {
         total scale:4
+        apagar scale: 4
         tipoDeCambio scale: 6
         formaDePago inList:['TRANSFERENCIA','CHEQUE']
         comentario nullable:true

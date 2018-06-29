@@ -44,6 +44,9 @@
       <span flex></span>
       <div class="totales-panel" layout layout-padding>
         <mat-form-field>
+          <input matInput placeholder="Factura (Subtotal)" [disabled]="true" [value]="factura.total | currency">
+        </mat-form-field>
+        <mat-form-field>
           <input matInput placeholder="Factura (Subtotal)" [disabled]="true" [value]="factura.subTotal | currency">
         </mat-form-field>
 

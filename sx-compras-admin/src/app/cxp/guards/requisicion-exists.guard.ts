@@ -20,7 +20,8 @@ export class RequisicionExistsGuard implements CanActivate {
 
   canActivate(route: ActivatedRouteSnapshot): Observable<boolean> {
     const id = route.params.requisicionId;
-    return this.hasEntity(id);
+    // return this.hasEntity(id);
+    return this.hasEntityInApi(id);
   }
 
   /**
@@ -31,7 +32,7 @@ export class RequisicionExistsGuard implements CanActivate {
   hasEntity(id: string): Observable<boolean> {
     return this.hasEntityInStore(id).pipe(
       switchMap(inStore => {
-        console.log('Requisicion in store: ', inStore);
+        // console.log('Requisicion in store: ', inStore);
         if (inStore) {
           return of(inStore);
         }
@@ -55,7 +56,7 @@ export class RequisicionExistsGuard implements CanActivate {
   hasEntityInApi(id: string): Observable<boolean> {
     return this.service.get(id).pipe(
       map(req => new fromStore.LoadRequisicion(req)),
-      tap(action => console.log('Req in api dispatchin action: ', action)),
+      // tap(action => console.log('Req in api dispatchin action: ', action)),
       tap(action => this.store.dispatch(action)),
       map(requisicion => !!requisicion),
       catchError(() => {

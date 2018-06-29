@@ -2,11 +2,13 @@ package sx.cxp
 
 class RequisicionDeCompras extends Requisicion{
 
-    BigDecimal descuentoFinanciero = 0.0
+    BigDecimal descuentof = 0.0
+    BigDecimal descuentofImporte = 0.0
     Contrarecibo contrarecibo;
 
     static constraints = {
-        descuentoFinanciero scale: 4
+        descuentof scale: 4
+        descuentofImporte nullable: true
         contrarecibo nullable: true
     }
 

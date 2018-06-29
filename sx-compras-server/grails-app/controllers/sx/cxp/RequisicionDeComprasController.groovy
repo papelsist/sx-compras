@@ -27,7 +27,6 @@ class RequisicionDeComprasController extends RestfulController<RequisicionDeComp
         params.max = 200
         params.sort = 'fecha'
         params.order = 'asc'
-        log.debug('List {}', params)
         def query = RequisicionDeCompras.where{}
 
         if(params.fechaInicial) {
@@ -59,5 +58,24 @@ class RequisicionDeComprasController extends RestfulController<RequisicionDeComp
         if(!res.nombre)
             res.nombre = res.proveedor.nombre
         return res
+    }
+
+
+    /**
+     *
+     * @return La Lista de facturas pendientes
+     * @TODO Modificar el hql query para contemplar solo las analizadas y descriminar
+     * las ya incluidas en una requisicion
+     */
+    def pendientes() {
+        log.debug('Facturas pendientes {}', params)
+        String id = params.proveedorId
+        List<CuentaPorPagar> facturas = CuentaPorPagar
+                .findAll("from CuentaPorPagar c where c.proveedor.id = ? " +
+                "  and c.importePorPagar > 0 " +
+                // "  and c not in(select d.cxp from RequisicionDet d where d.requisicion.proveedor = c.proveedor)" +
+                "  order by c.fecha ",
+                [id], [max: 200])
+        respond facturas
     }
 }

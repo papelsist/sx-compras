@@ -44,7 +44,7 @@ class CuentaPorPagar {
     String comentario
 
     Boolean analizada = false
-    BigDecimal importaPorPagar = 0.0
+    BigDecimal importePorPagar = 0.0
 
     Date dateCreated
     Date lastUpdated

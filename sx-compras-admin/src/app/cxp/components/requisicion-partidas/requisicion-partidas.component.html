@@ -1,0 +1,43 @@
+<div [formGroup]="parent">
+  <table mat-table formArrayName="partidas" [dataSource]="partidas">
+    <ng-container matColumnDef="documentoFolio">
+      <th mat-header-cell *matHeaderCellDef>Folio (Dcto)</th>
+      <td mat-cell *matCellDef="let row">{{row.documentoFolio}}</td>
+    </ng-container>
+    <ng-container matColumnDef="documentoSerie">
+      <th mat-header-cell *matHeaderCellDef>Serie (Dcto)</th>
+      <td mat-cell *matCellDef="let row">{{row.documentoSerie}}</td>
+    </ng-container>
+    <ng-container matColumnDef="documentoFecha">
+      <th mat-header-cell *matHeaderCellDef>Fecha (Docto)</th>
+      <td mat-cell *matCellDef="let row">{{row.documentoFecha | date: 'dd/MM/yyyy'}}</td>
+    </ng-container>
+    <ng-container matColumnDef="documentoTotal">
+      <th mat-header-cell *matHeaderCellDef>Total (Docto)</th>
+      <td mat-cell *matCellDef="let row">{{row.documentoTotal | currency}}</td>
+      <td mat-footer-cell *matFooterCellDef> Total </td>
+    </ng-container>
+    <ng-container matColumnDef="total">
+      <th mat-header-cell *matHeaderCellDef>Por Pagar</th>
+      <td mat-cell *matCellDef="let row">
+        {{row.total | currency}}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="comentario">
+      <th mat-header-cell *matHeaderCellDef>Comentario</th>
+      <td mat-cell *matCellDef="let row, let i = index" class="comentario">
+        <input [(ngModel)]="row.comentario" [ngModelOptions]="{standalone: true}" (input)="update.emit(row, i)">
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="operaciones">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let row, let i = index">
+        <mat-icon color="warn" class="cursor-pointer" *ngIf="!readOnly" (click)="delete.emit(i)">delete</mat-icon>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayColumns"></tr>
+    <tr mat-row *matRowDef="let cfdi; columns: displayColumns; "></tr>
+
+  </table>
+</div>

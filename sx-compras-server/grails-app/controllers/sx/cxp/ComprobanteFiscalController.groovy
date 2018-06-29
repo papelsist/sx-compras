@@ -32,7 +32,7 @@ class ComprobanteFiscalController extends RestfulController<ComprobanteFiscal> {
         }
         def emisor = params.emisor
         if(emisor) {
-            String search = emisor + '%'
+            String search = '%' + emisor + '%'
             query = query.where { emisorNombre =~ search  }
         }
 
