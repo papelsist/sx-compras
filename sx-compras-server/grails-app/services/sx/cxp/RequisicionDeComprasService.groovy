@@ -50,4 +50,23 @@ class RequisicionDeComprasService implements LogUser, FolioLog{
         requisicion.save flush: true
         return requisicion
     }
+
+    void delete(RequisicionDeCompras requisicion) throws RequisicionException{
+        if(requisicion.cerrada) throw new RequisicionCerradaException(requisicion)
+        requisicion.delete flush: true
+    }
+}
+
+class RequisicionException extends RuntimeException {
+
+    RequisicionException(String msg) {
+        super(msg)
+    }
+}
+
+class RequisicionCerradaException extends RequisicionException {
+
+    RequisicionCerradaException(Requisicion requisicion){
+        super("La requisicion ${requisicion.id} ya esta cerrada no se puede eliminar")
+    }
 }

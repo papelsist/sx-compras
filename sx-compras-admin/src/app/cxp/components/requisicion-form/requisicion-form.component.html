@@ -73,7 +73,7 @@
       <button mat-button [disabled]="form.invalid || form.pristine" *ngIf="!form.disabled">
         <mat-icon>save</mat-icon> Salvar
       </button>
-      <sx-agregar-facturas [facturas]="facturas" (selected)="onAgregarFactura($event)"></sx-agregar-facturas>
+      <sx-agregar-facturas *ngIf="!requisicion?.cerrada" [facturas]="facturas" (selected)="onAgregarFactura($event)"></sx-agregar-facturas>
       <ng-container *ngIf="requisicion  && !requisicion.cerrada">
         <button mat-button color="warn" type="button" (click)="delete.emit(requisicion)">
           <mat-icon>delete</mat-icon> Eliminar
