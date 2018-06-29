@@ -180,8 +180,8 @@ export class AnalisisPartidasTableComponent implements OnInit {
     this.table.renderRows();
   }
 
-  asignarPrecio(precio: number, row: AnalisisDet) {
-    row.precioDeLista = precio;
+  asignarPrecio(precio, row: AnalisisDet) {
+    row.precioDeLista = parseFloat(precio);
     this.actualizar(row);
   }
 

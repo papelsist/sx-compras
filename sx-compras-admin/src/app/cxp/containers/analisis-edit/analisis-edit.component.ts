@@ -67,6 +67,7 @@ export class AnalisisEditComponent implements OnInit, OnDestroy {
   }
 
   onUpdate(event: Analisis) {
+    // console.log('Acutalizando analisis: ', event);
     this.store.dispatch(new fromStore.UpdateAnalisis(event));
   }
 

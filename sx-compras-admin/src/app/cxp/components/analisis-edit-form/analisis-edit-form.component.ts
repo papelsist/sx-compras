@@ -137,7 +137,7 @@ export class AnalisisEditFormComponent implements OnInit, OnDestroy {
   }
 
   private actualizar() {
-    console.log('Actualizando analisis');
+    // console.log('Actualizando analisis');
     const importe = _.sumBy(this.partidas.value, 'importe');
     const flete = this.form.value.importeFlete;
     this.form.get('importe').setValue(importe);
