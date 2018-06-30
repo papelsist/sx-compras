@@ -11,6 +11,9 @@ export interface RequisicionDet {
   acuse?: string;
   impuestos?: number;
   total?: number;
+  descuentof?: number;
+  descuentofImporte?: number;
+  apagar?: number;
   analizado?: number;
   comentario?: string;
 }

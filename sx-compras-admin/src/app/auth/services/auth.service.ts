@@ -10,13 +10,12 @@ import { AuthSession, readFromStore } from '../models/authSession';
 
 @Injectable()
 export class AuthService {
-  private _session: AuthSession;
   constructor(private http: HttpClient, private config: ConfigService) {}
 
   login(authenticate: Authenticate): Observable<any> {
     const url = this.config.buildApiUrl('login');
     return this.http
-      .post<any>(url, authenticate) // .pipe(delay(3000));
+      .post<any>(url, authenticate)
       .pipe(catchError((error: any) => throwError(error)));
   }
 
@@ -28,9 +27,6 @@ export class AuthService {
   }
 
   get session() {
-    if (!this._session) {
-      this._session = readFromStore();
-    }
-    return this._session;
+    return readFromStore();
   }
 }

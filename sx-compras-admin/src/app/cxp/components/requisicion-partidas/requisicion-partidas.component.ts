@@ -31,6 +31,8 @@ export class RequisicionPartidasComponent implements OnInit {
     'documentoFecha',
     'documentoTotal',
     'total',
+    'descuentof',
+    'apagar',
     'comentario',
     'operaciones'
   ];

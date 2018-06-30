@@ -47,6 +47,13 @@ export function reducer(state = initialState, action: fromActions.AuthActions) {
         authError: undefined
       };
     }
+
+    case fromActions.AuthActionTypes.LOGOUT: {
+      return {
+        ...state,
+        session: undefined
+      };
+    }
   }
   return state;
 }

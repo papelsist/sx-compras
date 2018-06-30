@@ -50,6 +50,11 @@
           <input matInput formControlName="tipoDeCambio" type="number" placeholder="T.C">
         </mat-form-field>
 
+        <mat-form-field class="pad-right" [style.width.px]="120">
+          <input matInput formControlName="descuentof" type="number" placeholder="Descuento F.">
+        </mat-form-field>
+
+
         <mat-form-field flex>
           <input matInput formControlName="comentario" placeholder="Comentario">
         </mat-form-field>
@@ -65,6 +70,12 @@
       <span flex></span>
       <mat-form-field>
         <input matInput value="{{total | currency}}" placeholder="Total" [disabled]="true">
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput value="{{descuento | currency}}" placeholder="Descto F" [disabled]="true">
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput value="{{apagar | currency}}" placeholder="A Pagar" [disabled]="true">
       </mat-form-field>
     </div>
     <mat-divider></mat-divider>

@@ -44,7 +44,7 @@ export class RequisicionComponent implements OnInit, OnDestroy {
     this.requisicion$ = this.store.pipe(
       select(fromStore.getSelectedRequisicion)
     );
-    this.requisicion$.subscribe(requisicion => {
+    this.subscription = this.requisicion$.subscribe(requisicion => {
       if (requisicion && !requisicion.cerrada) {
         this.onProveedor(requisicion.proveedor);
       }
@@ -55,7 +55,11 @@ export class RequisicionComponent implements OnInit, OnDestroy {
     this.loading$ = this.store.select(fromStore.getRequisicionFormLoading);
   }
 
-  ngOnDestroy() {}
+  ngOnDestroy() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
 
   onProveedor(event: any) {
     this.store.dispatch(new fromStore.LoadFacturasPorRequisitar(event.id));

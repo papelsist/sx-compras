@@ -77,6 +77,7 @@ export class RequisicionFormComponent implements OnInit, OnDestroy {
       formaDePago: ['TRANSFERENCIA', [Validators.required]],
       moneda: ['MXN', [Validators.required]],
       tipoDeCambio: [1.0, [Validators.required, Validators.min(1)]],
+      descuentof: [0.0, [Validators.min(0.0), Validators.max(100)]],
       total: [
         { value: 0.0, disabled: true },
         [Validators.required, Validators.min(1)]
@@ -135,5 +136,21 @@ export class RequisicionFormComponent implements OnInit, OnDestroy {
 
   get total() {
     return _.sumBy(this.partidas.value, 'total');
+  }
+
+  get descuento() {
+    if (this.requisicion) {
+      return this.requisicion.descuentofImporte;
+    } else {
+      return 0.0;
+    }
+  }
+
+  get apagar() {
+    if (this.requisicion) {
+      return this.requisicion.apagar;
+    } else {
+      return 0.0;
+    }
   }
 }

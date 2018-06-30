@@ -30,6 +30,8 @@ export class RequisicionesTableComponent implements OnInit, OnChanges {
     'moneda',
     'tipoDeCambio',
     'total',
+    'descuentofImporte',
+    'apagar',
     'cerrada',
     'comentario',
     'operaciones'

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { Effect, Actions, ofType } from '@ngrx/effects';
-import { map, switchMap, catchError, tap } from 'rxjs/operators';
+import { map, switchMap, catchError, tap, delay } from 'rxjs/operators';
 import { of } from 'rxjs';
 
 import * as fromRequisicion from '../actions/requisicion.actions';
@@ -45,7 +45,7 @@ export class RequisicionesEffects {
       RequisicionActionTypes.SAVE_REQUISICION_SUCCESS
     ),
     map(action => action.payload),
-    map(() => new fromRoot.Go({ path: ['cxp/requisiciones'] }))
+    map(res => new fromRoot.Go({ path: ['cxp/requisiciones', res.id] }))
   );
 
   @Effect()
@@ -73,7 +73,16 @@ export class RequisicionesEffects {
       RequisicionActionTypes.CERRAR_REQUISICION_SUCCESS
     ),
     map(action => action.payload),
-    map(() => new fromRoot.Go({ path: ['cxp/requisiciones'] }))
+    tap(requisicion =>
+      this.snackBar.open(
+        `Requisición ${requisicion.folio} actualizada `,
+        'Cerrar',
+        {
+          duration: 2000
+        }
+      )
+    ),
+    map(res => new fromRoot.Go({ path: ['cxp/requisiciones', res.id] }))
   );
 
   @Effect()

@@ -48,7 +48,11 @@ class RequisicionDeComprasController extends RestfulController<RequisicionDeComp
         return requisicionDeComprasService.save(resource)
     }
 
-    /**
+    @Override
+    protected RequisicionDeCompras updateResource(RequisicionDeCompras resource) {
+        return requisicionDeComprasService.update(resource)
+    }
+/**
      * Elimina la requisicion
      *
      * @param resource

@@ -42,7 +42,7 @@ export class UnautorizedInterceptor implements HttpInterceptor {
           console.log('HTTP 401 Unauthorized', response);
           // localStorage.removeItem(SESSION_KEY);
           // this.router.navigateByUrl('/login');
-          // this.store.dispatch(new fromStore.Logout());
+          this.store.dispatch(new fromStore.Logout());
         }
         return throwError(response);
       })

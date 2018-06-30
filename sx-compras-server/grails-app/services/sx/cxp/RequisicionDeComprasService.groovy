@@ -7,6 +7,7 @@ import groovy.util.logging.Slf4j
 
 import sx.core.FolioLog
 import sx.core.LogUser
+import sx.utils.MonedaUtils
 
 
 @Transactional
@@ -16,7 +17,8 @@ class RequisicionDeComprasService implements LogUser, FolioLog{
 
     RequisicionDeCompras save(RequisicionDeCompras requisicion) {
         log.debug("Salvando requisicion  {}", requisicion)
-        requisicion.folio = nextFolio('REQUISICION', 'COMPRAS_CXP')
+        if(!requisicion.id )
+            requisicion.folio = nextFolio('REQUISICION', 'COMPRAS_CXP')
         actualizarImportes(requisicion)
         logEntity(requisicion)
         requisicion.save failOnError: true, flush: true
@@ -34,12 +36,16 @@ class RequisicionDeComprasService implements LogUser, FolioLog{
     def actualizarImportes(RequisicionDeCompras requisicion) {
         log.debug('Actualizando importes de la requisicion {}', requisicion)
         requisicion.total = requisicion.partidas.sum 0, {RequisicionDet det -> det.total}
-        requisicion.partidas.each {
+        requisicion.partidas.each {RequisicionDet det ->
             if(requisicion.descuentof > 0.0 ){
-                it.descuentof = requisicion.descuentof
+                det.descuentof = requisicion.descuentof
+                det.descuentofImporte = MonedaUtils.round( (det.descuentof/100) * det.total)
+                det.apagar = MonedaUtils.aplicarDescuentosEnCascada(det.total, det.descuentof)
+            } else {
+                det.apagar = det.total
             }
-            it.apagar = it.total
         }
+        requisicion.descuentofImporte = requisicion.partidas.sum 0, {RequisicionDet det -> det.descuentofImporte}
         requisicion.apagar = requisicion.partidas.sum 0, {RequisicionDet det -> det.apagar}
     }
 
