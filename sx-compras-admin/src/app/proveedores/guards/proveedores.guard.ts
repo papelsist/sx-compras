@@ -22,7 +22,7 @@ export class ProveedoresGuard implements CanActivate {
     return this.store.select(fromStore.getProveedoresLoaded).pipe(
       tap(loaded => {
         if (!loaded) {
-          this.store.dispatch(new fromStore.LoadProveedores({}));
+          this.store.dispatch(new fromStore.LoadProveedores());
         }
       }),
       filter(loaded => loaded), // Waiting for loaded

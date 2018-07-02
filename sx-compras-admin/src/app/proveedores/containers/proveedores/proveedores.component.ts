@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { Store, select } from '@ngrx/store';
+import * as fromRoot from 'app/store';
 import * as fromStore from '../../store';
 
 import { Observable } from 'rxjs';
@@ -44,5 +45,9 @@ export class ProveedoresComponent implements OnInit {
 
   search(event: string) {
     // this.store.dispatch(new fromStore.SetSearchFilter(event));
+  }
+
+  onSelect(event: Proveedor) {
+    this.store.dispatch(new fromRoot.Go({ path: ['proveedores', event.id] }));
   }
 }

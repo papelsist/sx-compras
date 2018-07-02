@@ -1,7 +1,15 @@
-<mat-table [dataSource]="dataSource">
+<mat-table [dataSource]="dataSource" class="mat-elevation-z8">
   <ng-container matColumnDef="nombre">
     <mat-header-cell *matHeaderCellDef>Nombre</mat-header-cell>
     <mat-cell *matCellDef="let proveedor">{{proveedor.nombre}}
+    </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="estado">
+    <mat-header-cell *matHeaderCellDef>Estado</mat-header-cell>
+    <mat-cell *matCellDef="let proveedor">
+      <span [ngClass]="{'tc-pink-700': !proveedor.activo}">
+        {{proveedor.activo ? 'ACTIVO' : 'SUSPENDIDO'}}
+      </span>
     </mat-cell>
   </ng-container>
   <ng-container matColumnDef="tipo">
@@ -13,5 +21,6 @@
     <mat-cell *matCellDef="let proveedor">{{proveedor.rfc}}</mat-cell>
   </ng-container>
   <mat-header-row *matHeaderRowDef="columnsToDisplay"></mat-header-row>
-  <mat-row *matRowDef="let proveedor; columns: columnsToDisplay" [ngClass]="{'bgc-red-50': !proveedor.activo}"></mat-row>
+  <mat-row *matRowDef="let proveedor; columns: columnsToDisplay" (click)="select.emit(proveedor)"></mat-row>
 </mat-table>
+<mat-paginator [pageSizeOptions]="[20, 50, 100, 200]" showFirstLastButtons></mat-paginator>

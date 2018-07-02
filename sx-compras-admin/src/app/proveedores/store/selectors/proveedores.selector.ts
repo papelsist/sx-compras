@@ -34,6 +34,14 @@ export const getProveedoresLoading = createSelector(
   fromProveedores.getProveedoresLoading
 );
 
+export const getCurrentProveedor = createSelector(
+  getProveedorState,
+  getProveedoresEntities,
+  (state, entities) => {
+    return state.current && entities[state.current];
+  }
+);
+
 export const getSelectedProveedor = createSelector(
   getProveedoresEntities,
   fromRoot.getRouterState,

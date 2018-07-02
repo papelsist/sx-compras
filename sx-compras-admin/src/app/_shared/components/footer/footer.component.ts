@@ -1,5 +1,9 @@
 import { Component, OnInit, Input } from '@angular/core';
 
+import { Store, select } from '@ngrx/store';
+import * as fromRoot from 'app/store';
+import * as fromAuth from 'app/auth/store';
+
 import { AuthSession } from 'app/auth/models/authSession';
 
 @Component({
@@ -17,7 +21,12 @@ import { AuthSession } from 'app/auth/models/authSession';
 })
 export class FooterComponent implements OnInit {
   @Input() session: AuthSession;
-  constructor() {}
 
-  ngOnInit() {}
+  constructor(private store: Store<fromAuth.AuthState>) {}
+
+  ngOnInit() {
+    this.store
+      .pipe(select(fromAuth.getSession))
+      .subscribe(session => (this.session = session));
+  }
 }

@@ -3,10 +3,13 @@ import {
   OnInit,
   ChangeDetectionStrategy,
   Input,
+  Output,
+  EventEmitter,
   OnChanges,
-  SimpleChanges
+  SimpleChanges,
+  ViewChild
 } from '@angular/core';
-import { MatTableDataSource } from '@angular/material';
+import { MatTableDataSource, MatPaginator } from '@angular/material';
 
 import { Proveedor } from '../../models/proveedor';
 
@@ -19,10 +22,14 @@ import { Proveedor } from '../../models/proveedor';
 export class ProveedoresTableComponent implements OnInit, OnChanges {
   dataSource = new MatTableDataSource<Proveedor>([]);
   @Input() proveedores: Proveedor[];
-  @Input() columnsToDisplay = ['nombre', 'tipo', 'rfc'];
+  @Input() columnsToDisplay = ['nombre', 'tipo', 'estado', 'rfc'];
+  @Output() select = new EventEmitter<Proveedor>();
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   constructor() {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.dataSource.paginator = this.paginator;
+  }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.proveedores && changes.proveedores.currentValue) {

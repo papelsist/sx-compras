@@ -14,7 +14,6 @@ class ProveedorController extends RestfulController<Proveedor> {
 
     @Override
     protected List<Proveedor> listAllResources(Map params) {
-        log.info('List {}', params)
         params.max = 1000
 
         String tipo = params.tipo?: 'COMPRAS'

@@ -10,13 +10,15 @@ export interface ProveedorState {
   loaded: boolean;
   loading: boolean;
   searchFilter: ProveedoresSearch;
+  current: string;
 }
 
 export const initialState: ProveedorState = {
   entities: {},
   loaded: false,
   loading: false,
-  searchFilter: {}
+  searchFilter: {},
+  current: undefined
 };
 
 export function reducer(
@@ -55,6 +57,14 @@ export function reducer(
         searchFilter
       };
     }
+
+    case fromProveedor.SET_CURRENT_PORVEEDOR: {
+      const current = action.payload;
+      return {
+        ...state,
+        current
+      };
+    }
   }
   return state;
 }
@@ -64,3 +74,4 @@ export const getProveedoresLoaded = (state: ProveedorState) => state.loaded;
 export const getProveedoresLoading = (state: ProveedorState) => state.loading;
 export const getProveedoresSearchFilter = (state: ProveedorState) =>
   state.searchFilter;
+export const getCurrentProveedor = (state: ProveedorState) => state.current;

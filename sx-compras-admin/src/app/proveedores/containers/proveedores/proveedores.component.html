@@ -11,6 +11,6 @@
   </div>
   <mat-divider></mat-divider>
   <div class="proveedores-container">
-    <sx-proveedores-table [proveedores]="proveedores$ | async"></sx-proveedores-table>
+    <sx-proveedores-table [proveedores]="proveedores$ | async" (select)="onSelect($event)"></sx-proveedores-table>
   </div>
 </mat-card>

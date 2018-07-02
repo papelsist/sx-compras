@@ -12,9 +12,10 @@ import { services } from './services';
 import { guards } from './guards';
 import { components } from './components';
 import { containers } from './containers';
+import { AuthModule } from '../auth/auth.module';
 
 @NgModule({
-  imports: [SharedModule, ProveedoresRoutingModule],
+  imports: [SharedModule, ProveedoresRoutingModule, AuthModule],
   declarations: [...components, ...containers],
   exports: [...containers, ...components]
 })
