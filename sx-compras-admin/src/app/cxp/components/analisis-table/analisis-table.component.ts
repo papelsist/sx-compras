@@ -28,6 +28,7 @@ export class AnalisisTableComponent implements OnInit, OnChanges {
   displayColumns = [
     'folio',
     'proveedor',
+    'fecha',
     'factura',
     'importe',
     'moneda',

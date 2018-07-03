@@ -1,14 +1,15 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Observable, Subject, BehaviorSubject } from 'rxjs';
 
-import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
 
+import { Store, select } from '@ngrx/store';
 import * as fromRoot from 'app/store';
 import * as fromStore from '../../store';
 
 import { Analisis } from '../../model/analisis';
 import { Periodo } from 'app/_core/models/periodo';
 import { AnalisisTableComponent } from '../../components';
+import { pluck } from 'rxjs/operators';
 
 @Component({
   selector: 'sx-analisis',
@@ -31,15 +32,19 @@ import { AnalisisTableComponent } from '../../components';
 export class AnalisisComponent implements OnInit {
   analisis$: Observable<Analisis[]>;
   selected: any;
-  filtro: { proveedor?: string; periodo?: Periodo; factura?: string } = {};
-  proveedor: string;
-  periodo: Periodo;
+  periodo$: Observable<Periodo>;
+  tipo$: Observable<string>;
   @ViewChild('table') table: AnalisisTableComponent;
+
   constructor(private store: Store<fromStore.CxpState>) {}
 
   ngOnInit() {
-    this.periodo = Periodo.monthToDay();
-    this.analisis$ = this.store.select(fromStore.getAllAnalisis);
+    this.analisis$ = this.store.select(fromStore.getFilteredAnalisis);
+    this.periodo$ = this.store.pipe(select(fromStore.getAnalisisPeriodo));
+    this.tipo$ = this.store.pipe(
+      select(fromStore.getAnalisisFilter),
+      pluck('tipo')
+    );
   }
 
   onSelect(event: Analisis[]) {
@@ -47,11 +52,20 @@ export class AnalisisComponent implements OnInit {
   }
 
   onEdit(event: Analisis) {
-    console.log('Editando: ', event);
     this.store.dispatch(new fromRoot.Go({ path: ['cxp/analisis', event.id] }));
   }
 
   onSearch(event: string) {
     this.table.dataSource.filter = event;
+  }
+
+  onPeriodo(event: Periodo) {
+    if (event) {
+      this.store.dispatch(new fromStore.SetAnalisisPeriodo(event));
+    }
+  }
+
+  onTipo(event: string) {
+    this.store.dispatch(new fromStore.SetSearchFilter({ tipo: event }));
   }
 }

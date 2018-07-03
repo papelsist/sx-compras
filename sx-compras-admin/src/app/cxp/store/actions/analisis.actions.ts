@@ -4,6 +4,7 @@ import { Analisis } from '../../model/analisis';
 import { Proveedor } from 'app/proveedores/models/proveedor';
 import { CuentaPorPagar } from '../../model/cuentaPorPagar';
 import { RecepcionDeCompra } from '../../model/recepcionDeCompra';
+import { Periodo } from 'app/_core/models/periodo';
 
 export enum AnalisisActionTypes {
   LOAD = '[Analisis de factura] Load',
@@ -36,7 +37,10 @@ export enum AnalisisActionTypes {
   // Search analisis
   SEARCH = '[Analisis de factura] Search',
   SEARCH_COMPLETE = '[Analisis de factura] Search Complete',
-  SEARCH_ERROR = '[Analisis de factura] Search Error'
+  SEARCH_ERROR = '[Analisis de factura] Search Error',
+
+  SET_ANALSIS_PERIODO = '[Analisis de factura], Set Analisis Periodo',
+  SET_SEARCH_FILTER = '[Analisis de factura], Set Search Filter'
 }
 
 export class Load implements Action {
@@ -153,6 +157,14 @@ export class SearComplete implements Action {
   readonly type = AnalisisActionTypes.SEARCH_COMPLETE;
   constructor(public payload: Analisis[]) {}
 }
+export class SetAnalisisPeriodo implements Action {
+  readonly type = AnalisisActionTypes.SET_ANALSIS_PERIODO;
+  constructor(public payload: Periodo) {}
+}
+export class SetSearchFilter implements Action {
+  readonly type = AnalisisActionTypes.SET_SEARCH_FILTER;
+  constructor(public payload: any) {}
+}
 
 export type AnalisisActions =
   | Load
@@ -179,4 +191,6 @@ export type AnalisisActions =
   | CerrarAnalisisSuccess
   | Search
   | SearchError
-  | SearComplete;
+  | SearComplete
+  | SetAnalisisPeriodo
+  | SetSearchFilter;

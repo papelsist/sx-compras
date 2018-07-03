@@ -18,7 +18,7 @@ export const getAnalisisEntities = createSelector(
 );
 
 export const getAllAnalisis = createSelector(getAnalisisEntities, entities =>
-  _.sortBy(Object.keys(entities).map(id => entities[id]), 'id')
+  Object.keys(entities).map(id => entities[id])
 );
 
 export const getLoading = createSelector(
@@ -58,4 +58,30 @@ export const getComsPendientesEntities = createSelector(
 export const getAllComsPendientes = createSelector(
   getComsPendientesEntities,
   entities => Object.keys(entities).map(id => entities[id])
+);
+
+export const getAnalisisPeriodo = createSelector(
+  getAnalisisState,
+  fromAnalisis.getAnalisisPeriodo
+);
+
+export const getAnalisisFilter = createSelector(
+  getAnalisisState,
+  fromAnalisis.getAnalisisFilter
+);
+
+export const getFilteredAnalisis = createSelector(
+  getAllAnalisis,
+  getAnalisisFilter,
+  (analisis, filter: any) => {
+    let filtered = [...analisis];
+    if (filter.tipo) {
+      if (filter.tipo === 'Pendientes') {
+        filtered = _.filter(filtered, item => !item.cerrado);
+      } else if (filter.tipo === 'Cerradas') {
+        filtered = _.filter(filtered, item => item.cerrado);
+      }
+    }
+    return filtered;
+  }
 );

@@ -5,10 +5,13 @@ import grails.rest.RestfulController
 import sx.reports.ReportService
 
 import sx.reports.SucursalPeriodoCommand
+import sx.utils.Periodo
 
 @Secured("IS_AUTHENTICATED_ANONYMOUSLY")
 class AnalisisDeFacturaController extends RestfulController<AnalisisDeFactura> {
     static responseFormats = ['json']
+
+    // static namespace = 'cxp'
 
     AnalisisDeFacturaService analisisDeFacturaService
 
@@ -20,10 +23,24 @@ class AnalisisDeFacturaController extends RestfulController<AnalisisDeFactura> {
 
     @Override
     protected List<AnalisisDeFactura> listAllResources(Map params) {
-        params.max = 150
+        log.info('List: {}', params)
+        params.max = 1000
         params.sort = 'folio'
         params.order = 'desc'
-        return super.listAllResources(params)
+        def query = AnalisisDeFactura.where {}
+        if(params.periodo) {
+            Periodo periodo = params.periodo
+            query = query.where { fecha >= periodo.fechaInicial && fecha <= periodo.fechaFinal}
+        }
+        /*
+        if(params.fechaInicial) {
+            Periodo periodo = new Periodo()
+            bindData(periodo, params)
+            log.info('Periodo: {}',periodo)
+            query = query.where { fecha >= periodo.fechaInicial && fecha <= periodo.fechaFinal}
+        }
+        */
+        return query.list(params)
     }
 
     @Override

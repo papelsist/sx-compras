@@ -30,8 +30,13 @@
   </ng-container>
 
   <ng-container matColumnDef="folio">
-    <th mat-header-cell *matHeaderCellDef>Folio</th>
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Folio</th>
     <td mat-cell *matCellDef="let row">{{row.folio}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="fecha">
+    <th mat-header-cell *matHeaderCellDef>Fecha</th>
+    <td mat-cell *matCellDef="let row">{{row.fecha | date: 'dd/MM/yyyy'}}</td>
   </ng-container>
 
   <ng-container matColumnDef="updateUser">

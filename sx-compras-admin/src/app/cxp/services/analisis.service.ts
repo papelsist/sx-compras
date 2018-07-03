@@ -9,6 +9,7 @@ import { ConfigService } from 'app/utils/config.service';
 import * as _ from 'lodash';
 import { Analisis } from '../model/analisis';
 import { RecepcionDeCompra } from '../model/recepcionDeCompra';
+import { Periodo } from 'app/_core/models/periodo';
 
 @Injectable()
 export class AnalisisService {
@@ -21,7 +22,13 @@ export class AnalisisService {
   list(filtro: any = {}): Observable<Analisis[]> {
     let params = new HttpParams();
     _.forIn(filtro, (value, key) => {
-      params = params.set(key, value);
+      if (value instanceof Periodo) {
+        const per = value.toApiJSON();
+        params = params.set('fechaInicial', per.fechaInicial);
+        params = params.set('fechaFinal', per.fechaFinal);
+      } else {
+        params = params.set(key, value);
+      }
     });
     return this.http
       .get<Analisis[]>(this.apiUrl, { params: params })

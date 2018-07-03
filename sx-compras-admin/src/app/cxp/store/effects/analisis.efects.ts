@@ -1,15 +1,21 @@
 import { Injectable } from '@angular/core';
 
 import { Effect, Actions, ofType } from '@ngrx/effects';
-import { map, switchMap, catchError, tap } from 'rxjs/operators';
+import { map, switchMap, catchError, tap, take } from 'rxjs/operators';
 import { of } from 'rxjs';
+
+import { Store, select } from '@ngrx/store';
+import * as fromRoot from 'app/store';
+import * as fromStore from '../../store/reducers';
+import * as fromSelectors from '../../store/selectors';
 
 import * as analisisActions from '../actions/analisis.actions';
 import { AnalisisActionTypes } from '../actions/analisis.actions';
+
 import * as fromServices from '../../services';
-import * as fromRoot from 'app/store';
 
 import { MatSnackBar } from '@angular/material';
+import { Periodo } from '../../../_core/models/periodo';
 
 @Injectable()
 export class AnalisisEffects {
@@ -17,9 +23,11 @@ export class AnalisisEffects {
     private actions$: Actions,
     private analisisService: fromServices.AnalisisService,
     private cuentaPorPagarSercice: fromServices.CuentaPorPagarService,
-    public snackBar: MatSnackBar
+    public snackBar: MatSnackBar,
+    public store: Store<fromStore.CxpState>
   ) {}
 
+  /*
   @Effect()
   load$ = this.actions$.pipe(
     ofType<analisisActions.Load>(AnalisisActionTypes.LOAD),
@@ -31,6 +39,34 @@ export class AnalisisEffects {
           catchError(error => of(new analisisActions.LoadFail(error)))
         );
     })
+  );
+  */
+  @Effect()
+  load$ = this.actions$.pipe(
+    ofType<analisisActions.Load>(AnalisisActionTypes.LOAD),
+    switchMap(() => {
+      return this.store.pipe(select(fromSelectors.getAnalisisPeriodo), take(1));
+    }),
+    switchMap(periodo => {
+      return this.analisisService
+        .list({ periodo: periodo })
+        .pipe(
+          map(res => new analisisActions.LoadSuccess(res)),
+          catchError(error => of(new analisisActions.LoadFail(error)))
+        );
+    })
+  );
+
+  @Effect()
+  periodo$ = this.actions$.pipe(
+    ofType<analisisActions.SetAnalisisPeriodo>(
+      AnalisisActionTypes.SET_ANALSIS_PERIODO
+    ),
+    map(action => action.payload),
+    tap(periodo =>
+      Periodo.saveOnStorage('sx-compras.analisis.periodo', periodo)
+    ),
+    map(() => new analisisActions.Load())
   );
 
   @Effect()

@@ -8,9 +8,12 @@ import { Analisis } from '../../model/analisis';
 import { Proveedor } from 'app/proveedores/models/proveedor';
 import { CuentaPorPagar } from '../../model/cuentaPorPagar';
 import { RecepcionDeCompra } from '../../model/recepcionDeCompra';
+import { Periodo } from '../../../_core/models/periodo';
 
 export interface AnalisisDeFacturaState {
   entities: { [id: string]: Analisis };
+  periodo: Periodo;
+  filter: Object;
   loaded: boolean;
   loading: boolean;
   // Analisis CRUD
@@ -21,6 +24,11 @@ export interface AnalisisDeFacturaState {
 
 export const initialState: AnalisisDeFacturaState = {
   entities: {},
+  periodo: Periodo.fromStorage(
+    'sx-compras.analisis.periodo',
+    Periodo.monthToDay()
+  ),
+  filter: { tipo: 'Pendientes' },
   loaded: false,
   loading: false,
   curentProveedor: undefined,
@@ -151,6 +159,21 @@ export function reducer(
         comsPendientes
       };
     }
+
+    case AnalisisActionTypes.SET_SEARCH_FILTER: {
+      const filter = action.payload;
+      return {
+        ...state,
+        filter
+      };
+    }
+    case AnalisisActionTypes.SET_ANALSIS_PERIODO: {
+      const periodo = action.payload;
+      return {
+        ...state,
+        periodo
+      };
+    }
   }
   return state;
 }
@@ -167,3 +190,9 @@ export const getFacturasPendientes = (state: AnalisisDeFacturaState) =>
 
 export const getComsPendientes = (state: AnalisisDeFacturaState) =>
   state.comsPendientes;
+
+export const getAnalisisPeriodo = (state: AnalisisDeFacturaState) =>
+  state.periodo;
+
+export const getAnalisisFilter = (state: AnalisisDeFacturaState) =>
+  state.filter;

@@ -5,8 +5,19 @@
       <span class="mat-title">Análisis de facturas</span>
     </span>
 
-    <span class="pad-left">{{periodo}}</span>
-    <sx-periodo-picker [periodo]="periodo"></sx-periodo-picker>
+    <ng-container *ngIf="periodo$ | async as periodo">
+      <span class="pad-left pad-right">{{periodo}}</span>
+      <sx-periodo-picker [periodo]="periodo" (change)="onPeriodo($event)"></sx-periodo-picker>
+    </ng-container>
+
+    <mat-form-field class="pad-left">
+      <mat-select [value]="tipo$ | async" (selectionChange)="onTipo($event.value)">
+        <mat-option value="Todas">Todas</mat-option>
+        <mat-option value="Pendientes">Pendientes</mat-option>
+        <mat-option value="Cerradas">Cerradas</mat-option>
+      </mat-select>
+    </mat-form-field>
+
     <span flex></span>
     <td-search-box class="push-right-sm" placeholder="Proveedor/Factura" flex (searchDebounce)="onSearch($event)">
     </td-search-box>
