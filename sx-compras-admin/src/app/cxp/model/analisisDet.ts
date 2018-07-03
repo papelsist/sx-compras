@@ -4,6 +4,7 @@ export interface AnalisisDet {
   id: string;
   com: Partial<RecepcionDeCompraDet>;
   clave: string;
+  unidad: string;
   descripcion: string;
   cantidad: number;
   precioDeLista: number;
@@ -24,6 +25,7 @@ export function buildFromCom(com: RecepcionDeCompraDet): Partial<AnalisisDet> {
     com: { id, cantidad, producto },
     clave: com.producto.clave,
     descripcion: com.producto.descripcion,
+    unidad: com.producto.unidad,
     cantidad: com.cantidad - com.analizado,
     sucursal: com.sucursal,
     folioCom: com.com,

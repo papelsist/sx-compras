@@ -49,7 +49,23 @@ export class ProveedorFormComponent implements OnInit {
       ],
       tipo: ['COMPRAS', [Validators.required]],
       activo: [true, [Validators.required]],
-      nacional: [true, [Validators.required]]
+      nacional: [true, [Validators.required]],
+      telefono1: [null],
+      telefono2: [null],
+      telefono3: [null]
     });
+  }
+
+  onSubmit() {
+    if (this.form.valid) {
+      this.save.emit(this.preparEntity());
+    }
+  }
+
+  private preparEntity() {
+    const res = {
+      ...this.form.value
+    };
+    return res;
   }
 }

@@ -32,10 +32,15 @@ class AnalisisDeFacturaService {
     @Publisher('analisisActualizado')
     AnalisisDeFactura update(AnalisisDeFactura analisis) {
         log.info('UPDATE: {}', analisis.id)
-        analisis.partidas.each {
+        analisis.partidas.each { AnalisisDeFacturaDet it ->
             it.clave = it.com.producto.clave
             it.descripcion = it.com.producto.descripcion
             it.costoUnitario = MonedaUtils.aplicarDescuentosEnCascada(it.precioDeLista, it.desc1, it.desc2, it.desc3, it.desc4)
+            // Actualizacion de importes
+            BigDecimal cantidad = it.com.producto.unidad == 'MIL' ? it.cantidad/1000 : it.cantidad;
+            it.importe = it.precioDeLista * cantidad;
+            it.importe = MonedaUtils.aplicarDescuentosEnCascada(it.importe, it.desc1, it.desc2, it.desc3, it.desc4)
+
         }
         actualizarFlete(analisis)
         logEntity(analisis)

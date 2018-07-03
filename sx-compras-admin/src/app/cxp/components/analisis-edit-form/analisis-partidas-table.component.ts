@@ -186,15 +186,16 @@ export class AnalisisPartidasTableComponent implements OnInit {
   }
 
   actualizar(row: AnalisisDet) {
-    const { cantidad, precioDeLista, desc1, desc2, desc3, desc4 } = row;
-    const importeBtuto = cantidad * precioDeLista / 1000;
+    const { cantidad, unidad, precioDeLista, desc1, desc2, desc3, desc4 } = row;
+    const factor = unidad === 'MIL' ? 1000 : 1;
+    const importeBtuto = cantidad * precioDeLista / factor;
     const importeNeto = aplicarDescuentosEnCascada(importeBtuto, [
       desc1,
       desc2,
       desc3,
       desc4
     ]);
-    row.importe = importeNeto;
+    row.importe = _.round(importeNeto);
     this.update.emit(row);
   }
 

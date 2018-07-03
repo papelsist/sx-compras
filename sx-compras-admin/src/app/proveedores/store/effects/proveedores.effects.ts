@@ -1,18 +1,20 @@
 import { Injectable } from '@angular/core';
 
-import { Effect, Actions } from '@ngrx/effects';
-import { map, switchMap, catchError } from 'rxjs/operators';
+import { Effect, Actions, ofType } from '@ngrx/effects';
+import { map, tap, switchMap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 
 import * as proveedorActions from '../actions/proveedores.actions';
 import * as fromServices from '../../services';
 import * as fromRoot from 'app/store';
+import { MatSnackBar } from '@angular/material';
 
 @Injectable()
 export class ProveedoresEffects {
   constructor(
     private actions$: Actions,
-    private service: fromServices.ProveedoresService
+    private service: fromServices.ProveedoresService,
+    private snackBar: MatSnackBar
   ) {}
 
   @Effect()
@@ -31,6 +33,45 @@ export class ProveedoresEffects {
         );
     })
   );
+
+  @Effect()
+  updateProducto$ = this.actions$
+    .ofType(proveedorActions.UPDATE_PROVEEDOR_ACTION)
+    .pipe(
+      map((action: proveedorActions.UpdateProveedor) => action.payload),
+      switchMap(proveedor => {
+        return this.service
+          .update(proveedor)
+          .pipe(
+            map(res => new proveedorActions.UpdateProveedorSuccess(res)),
+            catchError(error =>
+              of(new proveedorActions.UpdateProveedorFail(error))
+            )
+          );
+      })
+    );
+
+  @Effect()
+  updateSuccess$ = this.actions$.pipe(
+    ofType<proveedorActions.UpdateProveedorSuccess>(
+      proveedorActions.UPDATE_PROVEEDOR_ACTION_SUCCESS
+    ),
+    map(action => action.payload),
+    tap(proveedores =>
+      this.snackBar.open(
+        `Proveedor ${proveedores.nombre} actualizado `,
+        'Cerrar',
+        {
+          duration: 2000
+        }
+      )
+    ),
+    map(
+      proveedores =>
+        new fromRoot.Go({ path: ['cxp/proveedores', proveedores.id] })
+    )
+  );
+
   /*
   @Effect()
   createProducto$ = this.actions$.ofType(productoActions.CREATE_PRODUCTO).pipe(
@@ -57,18 +98,7 @@ export class ProveedoresEffects {
       })
     );
 
-  @Effect()
-  updateProducto$ = this.actions$.ofType(productoActions.UPDATE_PRODUCTO).pipe(
-    map((action: productoActions.UpdateProducto) => action.payload),
-    switchMap(newProduct => {
-      return this.productosService
-        .update(newProduct)
-        .pipe(
-          map(producto => new productoActions.UpdateProductoSuccess(producto)),
-          catchError(error => of(new productoActions.UpdateProductoFail(error)))
-        );
-    })
-  );
+
 
   @Effect()
   removeProducto$ = this.actions$.ofType(productoActions.REMOVE_PRODUCTO).pipe(

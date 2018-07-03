@@ -65,6 +65,33 @@ export function reducer(
         current
       };
     }
+
+    case fromProveedor.UPDATE_PROVEEDOR_ACTION: {
+      return {
+        ...state,
+        loading: true
+      };
+    }
+
+    case fromProveedor.UPDATE_PROVEEDOR_ACTION_FAIL: {
+      return {
+        ...state,
+        loading: false
+      };
+    }
+
+    case fromProveedor.UPDATE_PROVEEDOR_ACTION_SUCCESS: {
+      const proveedor = action.payload;
+      const entities = {
+        ...state.entities,
+        [proveedor.id]: proveedor
+      };
+      return {
+        ...state,
+        entities,
+        loading: false
+      };
+    }
   }
   return state;
 }

@@ -5,7 +5,7 @@ import groovy.transform.ToString
 import sx.cxp.CuentaPorPagar
 
 @ToString(excludes ='id,version,dateCreated,lastUpdated,requisicion',includeNames=true,includePackage=false)
-@EqualsAndHashCode(includes='id, cxp')
+@EqualsAndHashCode(includes='id, cxp, documentoSeria, documentoFolio, uuid')
 class RequisicionDet {
 
     String id

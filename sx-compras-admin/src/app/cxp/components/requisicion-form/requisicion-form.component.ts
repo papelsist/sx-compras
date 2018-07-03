@@ -121,7 +121,10 @@ export class RequisicionFormComponent implements OnInit, OnDestroy {
   onAgregarFactura(selected: CuentaPorPagar[]) {
     selected.forEach(cxp => {
       const det = fromFactura(cxp);
-      this.partidas.push(new FormControl(det));
+      const found = _.find(this.partidas.value, ['uuid', cxp.uuid]);
+      if (!found) {
+        this.partidas.push(new FormControl(det));
+      }
     });
     this.form.markAsDirty();
   }

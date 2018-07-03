@@ -14,6 +14,8 @@ class AnalisisDeFacturaDet {
 
     String descripcion
 
+    String unidad
+
     RecepcionDeCompraDet com
 
     String remision
@@ -48,6 +50,7 @@ class AnalisisDeFacturaDet {
     static constraints = {
         clave maxSize:15
         precioDeLista scale:2
+        unidad nullable: true, maxSize: 5
         desc1 scale:4
         desc2 scale:4
         desc3 scale:4

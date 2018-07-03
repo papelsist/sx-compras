@@ -4,4 +4,6 @@ model {
 	AnalisisDeFacturaDet analisisDeFacturaDet
 }
 
-json g.render(analisisDeFacturaDet, [resolveTemplate: false])
+json g.render(analisisDeFacturaDet, [resolveTemplate: false]){
+    unidad analisisDeFacturaDet.com.producto.unidad
+}

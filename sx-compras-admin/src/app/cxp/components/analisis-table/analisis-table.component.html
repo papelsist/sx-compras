@@ -57,4 +57,4 @@
   <tr mat-row *matRowDef="let row; columns: displayColumns" class="cursor-pointer" [ngClass]="{'active': row.selected}" (click)="toogleSelect(row)">
   </tr>
 </table>
-<mat-paginator [pageSizeOptions]="[10, 20, 50, 100, 200]" showFirstLastButtons></mat-paginator>
+<mat-paginator [pageSizeOptions]="[20, 50, 100, 200]" showFirstLastButtons></mat-paginator>

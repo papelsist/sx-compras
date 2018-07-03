@@ -9,6 +9,10 @@ export const SET_PROVEEDORES_FILTER = '[Proveedor] Search proveedor filter';
 
 export const SET_CURRENT_PORVEEDOR = '[Proveedor] Set current proveedor';
 
+export const UPDATE_PROVEEDOR_ACTION = '[Proveedor] Update proveedor';
+export const UPDATE_PROVEEDOR_ACTION_FAIL = '[Proveedor] Update proveedor';
+export const UPDATE_PROVEEDOR_ACTION_SUCCESS = '[Proveedor] Update proveedor';
+
 export class LoadProveedores implements Action {
   readonly type = LOAD_PROVEEDORES;
 }
@@ -33,9 +37,27 @@ export class SetCurrentProveedor implements Action {
   constructor(public payload: string) {}
 }
 
+// CRUD Actions
+
+export class UpdateProveedor implements Action {
+  readonly type = UPDATE_PROVEEDOR_ACTION;
+  constructor(public payload: Proveedor) {}
+}
+export class UpdateProveedorFail implements Action {
+  readonly type = UPDATE_PROVEEDOR_ACTION_FAIL;
+  constructor(public payload: any) {}
+}
+export class UpdateProveedorSuccess implements Action {
+  readonly type = UPDATE_PROVEEDOR_ACTION_SUCCESS;
+  constructor(public payload: Proveedor) {}
+}
+
 export type ProveedoresActions =
   | LoadProveedores
   | LoadProveedoresFail
   | LoadProveedoresSuccess
   | SetSearchFilter
-  | SetCurrentProveedor;
+  | SetCurrentProveedor
+  | UpdateProveedor
+  | UpdateProveedorFail
+  | UpdateProveedorSuccess;

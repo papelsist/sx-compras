@@ -20,7 +20,9 @@ class AnalisisDeFacturaController extends RestfulController<AnalisisDeFactura> {
 
     @Override
     protected List<AnalisisDeFactura> listAllResources(Map params) {
-        params.max = 50
+        params.max = 150
+        params.sort = 'folio'
+        params.order = 'desc'
         return super.listAllResources(params)
     }
 

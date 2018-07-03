@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 import { ConfigService } from '../../utils/config.service';
 import { Proveedor } from '../models/proveedor';
@@ -32,5 +34,25 @@ export class ProveedoresService {
       this._apiUrl = this.config.buildApiUrl('proveedores');
     }
     return this._apiUrl;
+  }
+
+  save(proveedor: Proveedor): Observable<Proveedor> {
+    return this.http
+      .post<Proveedor>(this.apiUrl, proveedor)
+      .pipe(catchError((error: any) => throwError(error)));
+  }
+
+  update(proveedor: Proveedor): Observable<Proveedor> {
+    const url = `${this.apiUrl}/${proveedor.id}`;
+    return this.http
+      .put<Proveedor>(url, proveedor)
+      .pipe(catchError((error: any) => throwError(error)));
+  }
+
+  delete(id: string) {
+    const url = `${this.apiUrl}/${id}`;
+    return this.http
+      .delete(url)
+      .pipe(catchError((error: any) => throwError(error)));
   }
 }
