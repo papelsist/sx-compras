@@ -10,8 +10,9 @@ export const SET_PROVEEDORES_FILTER = '[Proveedor] Search proveedor filter';
 export const SET_CURRENT_PORVEEDOR = '[Proveedor] Set current proveedor';
 
 export const UPDATE_PROVEEDOR_ACTION = '[Proveedor] Update proveedor';
-export const UPDATE_PROVEEDOR_ACTION_FAIL = '[Proveedor] Update proveedor';
-export const UPDATE_PROVEEDOR_ACTION_SUCCESS = '[Proveedor] Update proveedor';
+export const UPDATE_PROVEEDOR_ACTION_FAIL = '[Proveedor] Update proveedor fail';
+export const UPDATE_PROVEEDOR_ACTION_SUCCESS =
+  '[Proveedor] Update proveedor success';
 
 export class LoadProveedores implements Action {
   readonly type = LOAD_PROVEEDORES;

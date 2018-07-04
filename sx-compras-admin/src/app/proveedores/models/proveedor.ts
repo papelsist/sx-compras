@@ -12,6 +12,14 @@ export interface Proveedor {
   telefono2?: string;
   telefono3?: string;
   tipo: string;
+  // Linea de credito
+  plazo: number;
+  limiteDeCredito: number;
+  descuentoF: number;
+  diasDF: number;
+  fechaRevision: boolean;
+  imprimirCosto: boolean;
+  cuentaBancaria?: string;
 }
 
 export enum EstadoType {

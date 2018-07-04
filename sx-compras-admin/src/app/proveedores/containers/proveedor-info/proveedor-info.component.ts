@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 
 import { Store, select } from '@ngrx/store';
+import * as fromRoot from 'app/store';
 import * as fromStore from '../../store';
 import * as fromActions from '../../store/actions';
 
@@ -12,7 +13,7 @@ import { Proveedor } from '../../models/proveedor';
   selector: 'sx-proveedor-info',
   template: `
     <div >
-      <sx-proveedor-form [proveedor]="proveedor$ | async" (save)="onSave($event)">
+      <sx-proveedor-form [proveedor]="proveedor$ | async" (save)="onSave($event)" (cancel)="onCancel($event)">
       </sx-proveedor-form>
     </div>
   `
@@ -29,5 +30,8 @@ export class ProveedorInfoComponent implements OnInit {
     if (event.id) {
       this.store.dispatch(new fromActions.UpdateProveedor(event));
     }
+  }
+  onCancel(event) {
+    this.store.dispatch(new fromRoot.Go({ path: ['/proveedores'] }));
   }
 }

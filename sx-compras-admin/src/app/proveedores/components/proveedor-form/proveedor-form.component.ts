@@ -19,6 +19,7 @@ import { Proveedor } from '../../models/proveedor';
 export class ProveedorFormComponent implements OnInit {
   @Input() proveedor: Proveedor;
   @Output() save = new EventEmitter<Proveedor>();
+  @Output() cancel = new EventEmitter<Proveedor>();
   form: FormGroup;
   constructor(private fb: FormBuilder) {}
 
@@ -27,6 +28,7 @@ export class ProveedorFormComponent implements OnInit {
     if (this.proveedor) {
       this.form.patchValue(this.proveedor);
     }
+    console.log(this.form);
   }
 
   private buildForm() {
@@ -50,20 +52,33 @@ export class ProveedorFormComponent implements OnInit {
       tipo: ['COMPRAS', [Validators.required]],
       activo: [true, [Validators.required]],
       nacional: [true, [Validators.required]],
+      comentario: [],
       telefono1: [null],
       telefono2: [null],
-      telefono3: [null]
+      telefono3: [null],
+      // Linea de credito
+      plazo: [0, [Validators.required]],
+      limiteDeCredito: [0, [Validators.required, Validators.min(0)]],
+      descuentoF: [0, [Validators.required]],
+      diasDF: [
+        0,
+        [Validators.required, Validators.min(0), Validators.max(100)]
+      ],
+      fechaRevision: [false],
+      imprimirCosto: [false]
     });
   }
 
   onSubmit() {
     if (this.form.valid) {
       this.save.emit(this.preparEntity());
+      this.form.markAsPristine();
     }
   }
 
   private preparEntity() {
     const res = {
+      ...this.proveedor,
       ...this.form.value
     };
     return res;
