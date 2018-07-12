@@ -195,7 +195,8 @@ export class AnalisisPartidasTableComponent implements OnInit {
       desc3,
       desc4
     ]);
-    row.importe = _.round(importeNeto);
+    //row.importe = _.round(importeNeto);
+    row.importe = importeNeto;
     this.update.emit(row);
   }
 

@@ -52,6 +52,8 @@ class AnalisisDeFacturaService {
     List<String> delete(AnalisisDeFactura analisis) {
         log.info('DELETE Analisis: {}', analisis.folio)
         List<String> coms = analisis.partidas.collect{it.com.id}
+        analisis.factura.analizada=false
+        analisis.factura.save failOnError: true,flush: true
         analisis.delete flush: true
         return coms
     }
@@ -94,6 +96,7 @@ class AnalisisDeFacturaService {
             analisis.updateUser = username
         }
     }
+
 
     Long  nextFolio(){
         Folio folio = Folio.findOrCreateWhere(entidad: 'ANALISIS', serie: 'CXP')
