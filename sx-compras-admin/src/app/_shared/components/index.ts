@@ -13,6 +13,7 @@ import { UsuarioSecFieldComponent } from './usuario-sec-field/usuario-sec-field.
 import { ProveedorFieldComponent } from './proveedor-field/proveedor-field.component';
 import { ProductoProvFieldComponent } from './producto-prov-field/producto-prov-field.component';
 import { UpperCaseFieldComponent } from './upper-case-field/upper-case-field.component';
+import { DireccionFormComponent } from './direccion-form/direccion-form.component';
 
 export const components = [
   DireccionComponent,
@@ -29,7 +30,8 @@ export const components = [
   UsuarioSecFieldComponent,
   ProveedorFieldComponent,
   ProductoProvFieldComponent,
-  UpperCaseFieldComponent
+  UpperCaseFieldComponent,
+  DireccionFormComponent
 ];
 
 export const entyComponents: any[] = [
@@ -50,3 +52,4 @@ export * from './periodo-picker/periodo-picker.component';
 export * from './proveedor-field/proveedor-field.component';
 export * from './producto-prov-field/producto-prov-field.component';
 export * from './upper-case-field/upper-case-field.component';
+export * from './direccion-form/direccion-form.component';

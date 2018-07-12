@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { CanActivate } from '@angular/router';
 
 import { Store, select } from '@ngrx/store';
+import * as fromRoot from 'app/store';
 import * as fromStore from '../store';
 import * as fromAuth from '../store/actions/auth.actions';
 
@@ -17,7 +18,7 @@ export class AuthGuard implements CanActivate {
       select(fromStore.getSession),
       map(session => {
         if (session == null) {
-          this.store.dispatch(new fromAuth.Logout());
+          this.store.dispatch(new fromRoot.Go({ path: ['/login'] }));
           return false;
         }
         return true;

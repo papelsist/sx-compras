@@ -10,6 +10,7 @@ import { FormGroup } from '@angular/forms';
 import { HttpClient, HttpParams } from '@angular/common/http';
 
 import { Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import * as _ from 'lodash';
 
@@ -41,8 +42,9 @@ export class DireccionFormComponent implements OnInit, OnDestroy {
     this.http
       .get('http://sepomex.icalialabs.com/api/v1/zip_codes', {
         params: params
-      })
-      .map((response: any) => response.zip_codes)
+      }).pipe(
+        map((response: any) => response.zip_codes)
+      )
       .subscribe((registros: any[]) => {
         const estado: string = _.map(registros, item => item.d_estado)[0];
         const municipio: string = _.map(registros, item => item.d_mnpio)[0];

@@ -65,7 +65,17 @@ export class ProveedorFormComponent implements OnInit {
         [Validators.required, Validators.min(0), Validators.max(100)]
       ],
       fechaRevision: [false],
-      imprimirCosto: [false]
+      imprimirCosto: [false],
+      direccion: this.fb.group({
+        calle: [],
+        numeroExterior: [],
+        numeroInterior: [],
+        codigoPostal: [],
+        colonia: [],
+        estado: [],
+        municipio: [],
+        pais: []
+      })
     });
   }
 

@@ -7,7 +7,7 @@ import { FormGroup } from '@angular/forms';
   <mat-expansion-panel [formGroup]="parent">
     <mat-expansion-panel-header>
       <mat-panel-title>
-        Dirección fiscal
+        <sx-direccion-form [parent]="parent"></sx-direccion-form>
       </mat-panel-title>
     </mat-expansion-panel-header>
   </mat-expansion-panel>
