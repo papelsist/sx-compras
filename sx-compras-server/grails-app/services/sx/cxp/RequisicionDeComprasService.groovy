@@ -38,10 +38,12 @@ class RequisicionDeComprasService implements LogUser, FolioLog{
         requisicion.total = requisicion.partidas.sum 0, {RequisicionDet det -> det.total}
         requisicion.partidas.each {RequisicionDet det ->
             if(requisicion.descuentof > 0.0 ){
+                det.total = det.cxp.importePorPagar
                 det.descuentof = requisicion.descuentof
                 det.descuentofImporte = MonedaUtils.round( (det.descuentof/100) * det.total)
                 det.apagar = MonedaUtils.aplicarDescuentosEnCascada(det.total, det.descuentof)
             } else {
+                det.total = det.cxp.importePorPagar
                 det.apagar = det.total
             }
         }

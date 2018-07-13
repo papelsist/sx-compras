@@ -15,4 +15,6 @@ export interface Analisis {
   cerrado?: string;
   updateUser?: string;
   createUser?: string;
+  facturaInfo?: string;
+  uuid?: string;
 }

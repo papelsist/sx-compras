@@ -44,8 +44,18 @@ export class AnalisisTableComponent implements OnInit, OnChanges {
   constructor() {}
 
   ngOnInit() {
+    // this.setFilter();
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+  }
+
+  private setFilter() {
+    this.dataSource.filterPredicate = (data: Analisis, filter: string) => {
+      const props = ['folio', 'nombre'];
+      return (
+        data.factura.folio.toLowerCase().indexOf(filter.toLowerCase()) !== -1
+      );
+    };
   }
 
   ngOnChanges(changes: SimpleChanges) {

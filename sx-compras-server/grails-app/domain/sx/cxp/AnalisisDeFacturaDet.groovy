@@ -55,7 +55,7 @@ class AnalisisDeFacturaDet {
         desc2 scale:4
         desc3 scale:4
         desc4 scale:4
-        costoUnitario scale:6
+        costoUnitario scale:4
         remision maxSize: 20
         sucursal maxSize: 20
         // com unique: true

@@ -11,6 +11,13 @@
     </td>
   </ng-container>
 
+  <ng-container matColumnDef="serie">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Serie</th>
+    <td mat-cell *matCellDef="let row">
+      {{row.facturaInfo}}
+    </td>
+  </ng-container>
+
   <ng-container matColumnDef="moneda">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Mon</th>
     <td mat-cell *matCellDef="let row">

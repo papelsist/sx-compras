@@ -36,12 +36,16 @@ class AnalisisDeFacturaService {
             it.clave = it.com.producto.clave
             it.descripcion = it.com.producto.descripcion
             it.costoUnitario = MonedaUtils.aplicarDescuentosEnCascada(it.precioDeLista, it.desc1, it.desc2, it.desc3, it.desc4)
+            log.debug("{} Costo unitario: {}",it.clave, it.costoUnitario)
             // Actualizacion de importes
             BigDecimal cantidad = it.com.producto.unidad == 'MIL' ? it.cantidad/1000 : it.cantidad;
-            it.importe = it.precioDeLista * cantidad;
-            it.importe = MonedaUtils.aplicarDescuentosEnCascada(it.importe, it.desc1, it.desc2, it.desc3, it.desc4)
+            BigDecimal importeBruto = it.precioDeLista * cantidad
+            importeBruto = MonedaUtils.aplicarDescuentosEnCascada(importeBruto, it.desc1, it.desc2, it.desc3, it.desc4)
+            it.importe = importeBruto
 
         }
+        BigDecimal importe = analisis.partidas.sum 0.0, { it.importe }
+        analisis.importe = importe
         actualizarFlete(analisis)
         logEntity(analisis)
         analisis.save flush: true
@@ -64,6 +68,8 @@ class AnalisisDeFacturaService {
 
         CuentaPorPagar cxp = analisis.factura
         cxp.analizada = true
+        BigDecimal importe = analisis.partidas.sum 0.0, { it.importe }
+        analisis.importe = importe
         calcularImporteAPagar(analisis, cxp)
         cxp.updateUser = analisis.updateUser
         cxp.save flush: true
@@ -76,6 +82,7 @@ class AnalisisDeFacturaService {
     void calcularImporteAPagar(AnalisisDeFactura analisis, CuentaPorPagar cxp) {
         BigDecimal importeAnalizado = analisis.importe
         BigDecimal impuestoAnalizado = MonedaUtils.calcularImpuesto(importeAnalizado)
+        impuestoAnalizado = MonedaUtils.round(impuestoAnalizado)
         BigDecimal apagar = importeAnalizado + impuestoAnalizado + analisis.importeFlete + analisis.impuestoFlete - analisis.retencionFlete
         cxp.importePorPagar = apagar
     }

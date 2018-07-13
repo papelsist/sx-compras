@@ -56,7 +56,7 @@ export class AnalisisComponent implements OnInit {
   }
 
   onSearch(event: string) {
-    this.table.dataSource.filter = event;
+    this.table.dataSource.filter = event.toLowerCase();
   }
 
   onPeriodo(event: Periodo) {
