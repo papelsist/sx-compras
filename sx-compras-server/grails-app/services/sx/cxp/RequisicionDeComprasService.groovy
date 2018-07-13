@@ -35,20 +35,24 @@ class RequisicionDeComprasService implements LogUser, FolioLog{
     @CompileDynamic
     def actualizarImportes(RequisicionDeCompras requisicion) {
         log.debug('Actualizando importes de la requisicion {}', requisicion)
-        requisicion.total = requisicion.partidas.sum 0, {RequisicionDet det -> det.total}
         requisicion.partidas.each {RequisicionDet det ->
-            if(requisicion.descuentof > 0.0 ){
-                det.total = det.cxp.importePorPagar
-                det.descuentof = requisicion.descuentof
-                det.descuentofImporte = MonedaUtils.round( (det.descuentof/100) * det.total)
-                det.apagar = MonedaUtils.aplicarDescuentosEnCascada(det.total, det.descuentof)
+            CuentaPorPagar cxp = det.cxp
+            det.total = cxp.importePorPagar
+            log.info("Fac {} Total docto: {} Analizado: {}", cxp.folio, cxp.total, cxp.importePorPagar)
+            det.descuentof = requisicion.descuentof
+            if(requisicion.descuentof){
+                det.descuentofImporte = (det.descuentof/100) * det.total
+                BigDecimal apagar = det.total - det.descuentofImporte
+                det.apagar = MonedaUtils.round(apagar, 2)
             } else {
-                det.total = det.cxp.importePorPagar
+                det.descuentofImporte = 0.0
                 det.apagar = det.total
             }
         }
-        requisicion.descuentofImporte = requisicion.partidas.sum 0, {RequisicionDet det -> det.descuentofImporte}
-        requisicion.apagar = requisicion.partidas.sum 0, {RequisicionDet det -> det.apagar}
+        requisicion.total = requisicion.partidas.sum 0.0, {RequisicionDet det -> det.total}
+        requisicion.descuentofImporte = requisicion.partidas.sum 0.0, {RequisicionDet det -> det.descuentofImporte}
+        requisicion.apagar = requisicion.partidas.sum 0.0, {RequisicionDet det -> det.apagar}
+
     }
 
     RequisicionDeCompras cerrar(RequisicionDeCompras requisicion) {

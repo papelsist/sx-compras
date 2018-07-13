@@ -1,0 +1,7 @@
+import sx.core.ProveedorProducto
+
+model {
+	ProveedorProducto proveedorProducto
+}
+
+json tmpl.proveedorProducto(proveedorProducto)

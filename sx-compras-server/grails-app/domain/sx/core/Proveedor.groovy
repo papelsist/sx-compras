@@ -1,10 +1,12 @@
 package sx.core
 
+import grails.compiler.GrailsCompileStatic
 import groovy.transform.ToString
 import groovy.transform.EqualsAndHashCode
 
 @ToString(includes ='nombre, clave, rfc',includeNames=true,includePackage=false)
 @EqualsAndHashCode(includes='id, nombre, rfc')
+@GrailsCompileStatic
 class Proveedor {
 
     String id
@@ -45,9 +47,13 @@ class Proveedor {
 
     Boolean	imprimirCosto = false
 
+
     Date dateCreated
 
     Date lastUpdated
+
+    String createUser
+    String updateUser
 
     static constraints = {
         rfc size:12..13
@@ -60,6 +66,8 @@ class Proveedor {
         cuentaBancaria nullable: true
         direccion nullable: true
         sw2 nullable: true
+        updateUser nullable: true
+        createUser nullable: true
     }
 
     static embedded = ['direccion']
@@ -67,6 +75,7 @@ class Proveedor {
     static mapping={
         id generator:'uuid'
     }
+
 
 
 }

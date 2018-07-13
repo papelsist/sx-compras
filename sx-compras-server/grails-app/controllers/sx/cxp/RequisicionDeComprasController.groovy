@@ -82,7 +82,7 @@ class RequisicionDeComprasController extends RestfulController<RequisicionDeComp
      * las ya incluidas en una requisicion
      */
     def pendientes() {
-        log.debug('Facturas pendientes {}', params)
+        // log.debug('Facturas pendientes {}', params)
         String id = params.proveedorId
         List<CuentaPorPagar> facturas = CuentaPorPagar
                 .findAll("from CuentaPorPagar c where c.proveedor.id = ? " +

@@ -7,6 +7,7 @@ import grails.rest.RestfulController
 @GrailsCompileStatic
 @Secured("IS_AUTHENTICATED_ANONYMOUSLY")
 class ProveedorController extends RestfulController<Proveedor> {
+    ProveedorService proveedorService
     static responseFormats = ['json']
     ProveedorController() {
         super(Proveedor)
@@ -37,5 +38,15 @@ class ProveedorController extends RestfulController<Proveedor> {
             query = query.where { nombre =~ search}
         }
         return query.list(params)
+    }
+
+    @Override
+    protected Proveedor saveResource(Proveedor resource) {
+        return proveedorService.save(resource)
+    }
+
+    @Override
+    protected Proveedor updateResource(Proveedor resource) {
+        return proveedorService.save(resource)
     }
 }

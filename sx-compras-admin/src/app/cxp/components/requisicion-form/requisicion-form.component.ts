@@ -5,7 +5,9 @@ import {
   ChangeDetectionStrategy,
   Output,
   EventEmitter,
-  OnDestroy
+  OnDestroy,
+  OnChanges,
+  SimpleChanges
 } from '@angular/core';
 import {
   FormBuilder,
@@ -28,7 +30,7 @@ import { Subscription } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './requisicion-form.component.html'
 })
-export class RequisicionFormComponent implements OnInit, OnDestroy {
+export class RequisicionFormComponent implements OnInit, OnDestroy, OnChanges {
   @Input() requisicion: Requisicion;
   @Input() facturas: CuentaPorPagar[];
   @Output() save = new EventEmitter();
@@ -44,16 +46,7 @@ export class RequisicionFormComponent implements OnInit, OnDestroy {
   constructor(private fb: FormBuilder) {}
 
   ngOnInit() {
-    this.buildForm();
     if (this.requisicion) {
-      this.form.patchValue(this.requisicion);
-      // console.log('Editando requisicion: ', this.requisicion);
-      this.requisicion.partidas.forEach(det => {
-        this.partidas.push(new FormControl(det));
-      });
-      if (this.requisicion.cerrada) {
-        this.form.disable();
-      }
     } else {
       this.subscription = this.form
         .get('proveedor')
@@ -69,22 +62,49 @@ export class RequisicionFormComponent implements OnInit, OnDestroy {
     }
   }
 
-  private buildForm() {
-    this.form = this.fb.group({
-      proveedor: [null, [Validators.required]],
-      fecha: [new Date(), [Validators.required]],
-      fechaDePago: [new Date(), [Validators.required]],
-      formaDePago: ['TRANSFERENCIA', [Validators.required]],
-      moneda: ['MXN', [Validators.required]],
-      tipoDeCambio: [1.0, [Validators.required, Validators.min(1)]],
-      descuentof: [0.0, [Validators.min(0.0), Validators.max(100)]],
-      total: [
-        { value: 0.0, disabled: true },
-        [Validators.required, Validators.min(1)]
-      ],
-      comentario: [],
-      partidas: this.fb.array([])
+  ngOnChanges(changes: SimpleChanges) {
+    this.buildForm();
+    if (changes.requisicion && changes.requisicion.currentValue) {
+      // console.log('Editando requisicion: ', this.requisicion);
+      this.setRequisicion();
+    }
+  }
+
+  setRequisicion() {
+    this.form.patchValue(this.requisicion);
+    this.cleanPartidas();
+    this.requisicion.partidas.forEach(det => {
+      this.partidas.push(new FormControl(det));
     });
+    if (this.requisicion.cerrada) {
+      this.form.disable();
+    }
+  }
+
+  private buildForm() {
+    if (!this.form) {
+      this.form = this.fb.group({
+        proveedor: [null, [Validators.required]],
+        fecha: [new Date(), [Validators.required]],
+        fechaDePago: [new Date(), [Validators.required]],
+        formaDePago: ['TRANSFERENCIA', [Validators.required]],
+        moneda: ['MXN', [Validators.required]],
+        tipoDeCambio: [1.0, [Validators.required, Validators.min(1)]],
+        descuentof: [0.0, [Validators.min(0.0), Validators.max(100)]],
+        total: [
+          { value: 0.0, disabled: true },
+          [Validators.required, Validators.min(1)]
+        ],
+        comentario: [],
+        partidas: this.fb.array([])
+      });
+    }
+  }
+
+  private cleanPartidas() {
+    while (this.partidas.length !== 0) {
+      this.partidas.removeAt(0);
+    }
   }
 
   onSubmit() {

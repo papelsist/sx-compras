@@ -4,9 +4,10 @@ model {
 	RequisicionDeCompras requisicionDeCompras
 }
 
-json g.render(requisicionDeCompras, [excludes: ['proveedor'], resolveTemplate: false]) {
+json g.render(requisicionDeCompras, [excludes: ['proveedor','partidas'], resolveTemplate: false]) {
 	proveedor {
         id requisicionDeCompras.proveedor.id
         nombre: requisicionDeCompras.proveedor.nombre
     }
+    partidas g.render(requisicionDeCompras.partidas)
 }
