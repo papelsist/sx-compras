@@ -2,7 +2,11 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import * as fromContainers from './containers';
-import { ProveedoresGuard, ProveedorExistsGuard } from './guards';
+import {
+  ProveedoresGuard,
+  ProveedorExistsGuard,
+  ProveedorProductosGuard
+} from './guards';
 
 const routes: Routes = [
   {
@@ -23,6 +27,7 @@ const routes: Routes = [
       },
       {
         path: 'productos',
+        canActivate: [ProveedorProductosGuard],
         component: fromContainers.ProveedoProductosComponent
       }
     ]

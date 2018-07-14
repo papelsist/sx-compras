@@ -26,7 +26,7 @@ class ProveedorProductoController extends RestfulController<ProveedorProducto> {
 
     @Override
     protected List<ProveedorProducto> listAllResources(Map params) {
-        String recepcionId = params.proveedorId
+        String proveedorId = params.proveedorId
         return ProveedorProducto.where{ proveedor.id == proveedorId}.list()
     }
 }

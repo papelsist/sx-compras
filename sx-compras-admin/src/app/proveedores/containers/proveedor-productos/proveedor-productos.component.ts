@@ -1,13 +1,58 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+
+import { Store, select } from '@ngrx/store';
+import * as fromRoot from 'app/store';
+import * as fromStore from '../../store';
+import * as fromActions from '../../store/actions';
+
+import { Observable, Subject } from 'rxjs';
+
+import { Proveedor } from '../../models/proveedor';
+import { ProveedorProducto } from '../../models/proveedorProducto';
 
 @Component({
   selector: 'sx-proveedor-productos',
   template: `
-    <h1>Prodctos que vende el proveedor</h1>
+    <div>
+      <mat-card>
+        <sx-search-title title="Productos" (search)="onSearch($event)"></sx-search-title>
+        <mat-divider></mat-divider>
+        <sx-proveedor-productos-table
+          [productos]="productos$ | async"
+          [search]="search$ | async"
+          (edit)="onEdit($event)"
+          (delete)="onDelete($event)"
+          (select)="onSelect($event)">
+        </sx-proveedor-productos-table>
+      </mat-card>
+    </div>
   `
 })
 export class ProveedoProductosComponent implements OnInit {
-  constructor() {}
+  proveedor$: Observable<Proveedor>;
+  productos$: Observable<ProveedorProducto[]>;
+  search$ = new Subject();
+  constructor(private store: Store<fromStore.ProveedoresState>) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.proveedor$ = this.store.pipe(select(fromStore.getCurrentProveedor));
+    this.productos$ = this.store.pipe(
+      select(fromStore.getAllProveedorProductos)
+    );
+  }
+
+  onSearch(event: string) {
+    this.search$.next(event.toLowerCase());
+  }
+
+  onEdit(event: ProveedorProducto) {
+    this.store.dispatch(new fromStore.EditProveedorProducto(event));
+  }
+  onDelete(event: ProveedorProducto) {
+    console.log('Delete: ', event);
+  }
+
+  onSelect(event: ProveedorProducto[]) {
+    console.log('Selection: ', event);
+  }
 }

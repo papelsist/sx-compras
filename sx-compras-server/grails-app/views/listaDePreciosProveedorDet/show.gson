@@ -1,0 +1,7 @@
+import sx.compras.ListaDePreciosProveedorDet
+
+model {
+	ListaDePreciosProveedorDet listaDePreciosProveedorDet
+}
+
+json tmpl.listaDePreciosProveedorDet(listaDePreciosProveedorDet)

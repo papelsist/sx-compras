@@ -23,6 +23,8 @@ class ProveedorProducto {
 
     Integer piezaPaquete = 0
 
+    String moneda = 'MXN'
+
     BigDecimal precioBruto = 0.0
 
     BigDecimal desc1 = 0.0
@@ -35,7 +37,9 @@ class ProveedorProducto {
 
     BigDecimal precio = 0.0
 
-    Date fecha
+    Long lista
+
+    Date aplicado
 
     Date dateCreated
 
@@ -49,9 +53,11 @@ class ProveedorProducto {
         claveProveedor nullable:true
         codigoProveedor nullable:true
         descripcionProveedor nullable:true
-        fecha nullable: true
+        aplicado nullable: true
+        lista nullable: true
         dateCreated nullable: true
         lastUpdated nullable: true
+        moneda maxSize: 5
     }
 
     static mapping = {

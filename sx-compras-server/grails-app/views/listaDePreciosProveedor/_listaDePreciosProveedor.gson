@@ -1,0 +1,7 @@
+import sx.compras.ListaDePreciosProveedor
+
+model {
+	ListaDePreciosProveedor listaDePreciosProveedor
+}
+
+json g.render(listaDePreciosProveedor, [resolveTemplate: false])

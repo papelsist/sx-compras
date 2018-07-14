@@ -4,4 +4,13 @@ model {
 	ProveedorProducto proveedorProducto
 }
 
-json g.render(proveedorProducto, [resolveTemplate: false])
+json g.render(proveedorProducto, [excludes: ['proveedor'], resolveTemplate: false]) {
+	proveedor {
+        id proveedorProducto.proveedor.id
+        nombre proveedorProducto.proveedor.nombre
+        clave proveedorProducto.proveedor.clave
+    }
+    clave proveedorProducto.producto.clave
+    descripcion proveedorProducto.producto.descripcion
+    unidad proveedorProducto.producto.unidad
+}

@@ -28,6 +28,7 @@ export class ProveedorExistsGuard implements CanActivate {
       tap(found => {
         if (found) {
           this.store.dispatch(new fromStore.SetCurrentProveedor(id));
+          // this.store.dispatch(new fromStore.LoadProveedorProductos(id));
         }
       }),
       take(1)

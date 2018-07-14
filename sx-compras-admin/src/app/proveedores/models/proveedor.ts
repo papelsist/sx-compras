@@ -1,5 +1,5 @@
 export interface Proveedor {
-  id: string;
+  id?: string;
   activo: boolean;
   clave: string;
   dateCreated: string;
