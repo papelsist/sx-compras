@@ -7,7 +7,9 @@ class UrlMappings {
         "/api/lineas"(resources: 'linea')
         "/api/marcas"(resources: 'marca')
         "/api/productos"(resources: 'producto')
-        "/api/proveedores"(resources: 'proveedor')
+        "/api/proveedores"(resources: 'proveedor'){
+            "/productos"(resources: 'proveedorProducto', excludes:['create', 'edit','patch'])
+        }
 
         "/api/sucursales"(resources: 'sucursal')
 
