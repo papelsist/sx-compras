@@ -48,15 +48,16 @@ class ListaDePreciosProveedor {
         moneda maxSize: 5
         sw2 nullable: true
         copia nullable: true
+        aplicado nullable: true
     }
 
     static hasMany =[partidas:ListaDePreciosProveedorDet]
 
-    static mapping ={
+    static mapping = {
         partidas cascade: "all-delete-orphan"
         fechaInicial type:'date'
         fechaFinal type:'date'
-        aplicado type: 'data'
+        aplicado type: 'date'
     }
 
 

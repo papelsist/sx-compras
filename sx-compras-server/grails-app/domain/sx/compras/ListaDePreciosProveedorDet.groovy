@@ -15,6 +15,8 @@ class ListaDePreciosProveedorDet {
 
     String descripcion
 
+    String unidad
+
     BigDecimal precioBruto = 0.0
 
     BigDecimal neto = 0.0
