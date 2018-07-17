@@ -19,14 +19,10 @@ class ComprobanteFiscalService implements  LogUser{
 
     static String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss"
 
-    def importadorCfdi32
+    ImportadorCfdi32 importadorCfdi32
 
     ComprobanteFiscal save(ComprobanteFiscal comprobanteFiscal) {
         comprobanteFiscal.save failOnError: true, flush: true
-    }
-
-    ComprobanteFiscal buildFromXml2(MultipartFile xmlFile) {
-        return buildFromXml(xmlFile.getBytes(), xmlFile.getOriginalFilename())
     }
 
     @CompileDynamic

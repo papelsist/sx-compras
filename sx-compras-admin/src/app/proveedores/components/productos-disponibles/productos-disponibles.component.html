@@ -1,0 +1,22 @@
+<div layout>
+  <span>
+    <span mat-dialog-title>Productos disponibles</span>
+    <span *ngIf="selected">
+      Seleccionados: {{selected.length}}
+    </span>
+  </span>
+  <span flex></span>
+  <mat-form-field flex>
+    <input matInput placeholder="Filtrar" autocomplete="off" (value)="onSearch($event)">
+  </mat-form-field>
+</div>
+
+<mat-divider></mat-divider>
+<div class="productos-table-panel">
+  <!-- <sx-coms-table [coms]="coms" #table (select)="onSelection($event)"></sx-coms-table> -->
+
+</div>
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close>Cancelar</button>
+  <button mat-button [mat-dialog-close]="selected" [disabled]="!selected">Seleccionar</button>
+</mat-dialog-actions>

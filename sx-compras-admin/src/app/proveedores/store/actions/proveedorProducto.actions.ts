@@ -21,6 +21,16 @@ export const UPDATE_PROVEEDOR_PRODUCTO_ACTION_SUCCESS =
 export const EDIT_PROVEEDOR_PRODUCTO_ACTION =
   '[ProveedorProductos] Edit proveedor producto';
 
+export const SELECT_PRODUCTOS_TO_ADD =
+  '[ProveedorProductos] Select productos to add ';
+
+export const ADD_PROVEEDOR_PRODUCTO =
+  '[ProveedorProductos] Add proveedor producto';
+export const ADD_PROVEEDOR_PRODUCTO_FAIL =
+  '[ProveedorProductos] Add proveedor producto fail';
+export const ADD_PROVEEDOR_PRODUCTO_SUCCESS =
+  '[ProveedorProductos] Add proveedor producto succes';
+
 export class LoadProveedorProductos implements Action {
   readonly type = LOAD_PROVEEDOR_PRODUCTOS;
   constructor(public payload: string) {}
@@ -60,6 +70,24 @@ export class EditProveedorProducto implements Action {
   constructor(public payload: ProveedorProducto) {}
 }
 
+// Add
+export class SelectProductosToAdd implements Action {
+  readonly type = SELECT_PRODUCTOS_TO_ADD;
+  constructor(public payload: string) {}
+}
+export class AddProveedorProducto implements Action {
+  readonly type = ADD_PROVEEDOR_PRODUCTO;
+  constructor(public payload: ProveedorProducto) {}
+}
+export class AddProveedorProductoFail implements Action {
+  readonly type = ADD_PROVEEDOR_PRODUCTO_FAIL;
+  constructor(public payload: any) {}
+}
+export class AddProveedorProductoSuccess implements Action {
+  readonly type = ADD_PROVEEDOR_PRODUCTO_SUCCESS;
+  constructor(public payload: ProveedorProducto) {}
+}
+
 export type ProveedorProductosActions =
   | LoadProveedorProductos
   | LoadProveedorProductosFail
@@ -68,4 +96,8 @@ export type ProveedorProductosActions =
   | UpdateProveedorProducto
   | UpdateProveedorProductoFail
   | UpdateProveedorProductoSuccess
-  | EditProveedorProducto;
+  | EditProveedorProducto
+  | AddProveedorProducto
+  | AddProveedorProductoFail
+  | AddProveedorProductoSuccess
+  | SelectProductosToAdd;
