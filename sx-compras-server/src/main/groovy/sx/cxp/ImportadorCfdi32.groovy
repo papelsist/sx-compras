@@ -97,7 +97,7 @@ class ImportadorCfdi32{
                 metodoDePago: metodoDePago,
                 tipoDeComprobante: tipo,
                 moneda: moneda,
-                version: '3.2',
+                versionCfdi: '3.2',
                 tipoDeCambio: tipoDeCamio?: 1.0
                 
               

@@ -21,4 +21,5 @@ export interface ComprobanteFiscal {
   pdf: boolean;
   xml: boolean;
   selected?: boolean;
+  versionCfdi: string;
 }

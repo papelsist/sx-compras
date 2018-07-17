@@ -36,6 +36,7 @@ export class CfdisTableComponent implements OnInit, OnChanges {
     'usoCfdi',
     'uuid',
     'tipoDeComprobante',
+    'versionCfdi',
     'operaciones'
   ];
   @ViewChild(MatSort) sort: MatSort;
