@@ -41,7 +41,7 @@ class ComprobanteFiscal {
     BigDecimal impuestoRetenido
     BigDecimal total = 0.0
 
-    String version 
+    String versionCfdi
 
     String comentario
 
@@ -75,7 +75,7 @@ class ComprobanteFiscal {
         descuento nullable: true, scale: 4
         impuestoTrasladado nullable: true, scale: 4
         impuestoRetenido nullable: true, scale: 4
-        version nullable:true
+        versionCfdi nullable:true
 
     }
 

@@ -39,13 +39,9 @@ class ComprobanteFiscalService implements  LogUser{
             throw new ComprobanteFiscalException(message:"${fileName} no es un CFDI valido")
         def version = data.Version
 
-        println xml.name()
-        println version
-        println data.version
-
 
         if(version == null || version != '3.3'){
-           
+            log.debug('Tratando de importar con ver 3.2')
             return importadorCfdi32.buildFromXml32(xml, xmlData ,fileName)
            // throw new ComprobanteFiscalException(message:"${fileName} no es un CFDI version 3.3")
         }
@@ -113,7 +109,7 @@ class ComprobanteFiscalService implements  LogUser{
                 moneda: moneda,
                 tipoDeCambio: tipoDeCamio?: 1.0,
                 usoCfdi: usoCfdi,
-                version: '3.3'
+                versionCfdi: '3.3'
         )
         // comprobanteFiscal.save failOnError: true, flush: true
         return comprobanteFiscal
