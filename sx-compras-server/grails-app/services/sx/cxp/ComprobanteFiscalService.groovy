@@ -19,6 +19,8 @@ class ComprobanteFiscalService implements  LogUser{
 
     static String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss"
 
+    def importadorCfdi32
+
     ComprobanteFiscal save(ComprobanteFiscal comprobanteFiscal) {
         comprobanteFiscal.save failOnError: true, flush: true
     }
@@ -37,10 +39,17 @@ class ComprobanteFiscalService implements  LogUser{
             throw new ComprobanteFiscalException(message:"${fileName} no es un CFDI valido")
         def version = data.Version
 
+        println xml.name()
+        println version
+        println data.version
+
 
         if(version == null || version != '3.3'){
-            throw new ComprobanteFiscalException(message:"${fileName} no es un CFDI version 3.3")
+           
+            return importadorCfdi32.buildFromXml32(xml, xmlData ,fileName)
+           // throw new ComprobanteFiscalException(message:"${fileName} no es un CFDI version 3.3")
         }
+        
 
 
         def receptorNode = xml.breadthFirst().find { it.name() == 'Receptor'}
@@ -103,7 +112,8 @@ class ComprobanteFiscalService implements  LogUser{
                 tipoDeComprobante: tipo,
                 moneda: moneda,
                 tipoDeCambio: tipoDeCamio?: 1.0,
-                usoCfdi: usoCfdi
+                usoCfdi: usoCfdi,
+                version: '3.3'
         )
         // comprobanteFiscal.save failOnError: true, flush: true
         return comprobanteFiscal

@@ -41,6 +41,8 @@ class ComprobanteFiscal {
     BigDecimal impuestoRetenido
     BigDecimal total = 0.0
 
+    String version 
+
     String comentario
 
     byte[] pdf
@@ -59,7 +61,7 @@ class ComprobanteFiscal {
         receptorRfc minSize: 12, maxSize:13
         tipoDeComprobante inList: ['I','E','T', 'P']
         uuid maxSize:40,unique:true
-        formaDePago nullable: true, maxSize:5
+        formaDePago nullable: true, maxSize:35
         metodoDePago nullable: true, maxSize:5
         moneda maxSize: 5
         tipoDeCambio scale: 6
@@ -73,6 +75,7 @@ class ComprobanteFiscal {
         descuento nullable: true, scale: 4
         impuestoTrasladado nullable: true, scale: 4
         impuestoRetenido nullable: true, scale: 4
+        version nullable:true
 
     }
 
