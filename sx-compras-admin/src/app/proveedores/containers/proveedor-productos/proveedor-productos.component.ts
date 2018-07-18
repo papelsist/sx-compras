@@ -25,6 +25,12 @@ import { ProveedorProducto } from '../../models/proveedorProducto';
           (select)="onSelect($event)">
         </sx-proveedor-productos-table>
       </mat-card>
+      <a mat-fab (click)="onAgregar(proveedor)" *ngIf="proveedor$ | async as proveedor"
+        matTooltip="Agregar producto"
+        matTooltipPosition="before" color="accent"
+        class="mat-fab-position-bottom-right ">
+      <mat-icon>add</mat-icon>
+      </a>
     </div>
   `
 })
@@ -54,5 +60,9 @@ export class ProveedoProductosComponent implements OnInit {
 
   onSelect(event: ProveedorProducto[]) {
     console.log('Selection: ', event);
+  }
+
+  onAgregar(proveedor) {
+    this.store.dispatch(new fromStore.SelectProductosToAdd(proveedor.id));
   }
 }

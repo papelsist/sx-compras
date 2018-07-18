@@ -10,13 +10,14 @@ import { reducers, effects } from './store';
 
 import { services } from './services';
 import { guards } from './guards';
-import { components } from './components';
+import { components, entryComponents } from './components';
 import { containers } from './containers';
 import { AuthModule } from '../auth/auth.module';
 
 @NgModule({
   imports: [SharedModule, ProveedoresRoutingModule, AuthModule],
   declarations: [...components, ...containers],
+  entryComponents: [...entryComponents],
   exports: [...containers, ...components]
 })
 export class ProveedoresModule {
