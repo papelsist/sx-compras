@@ -42,7 +42,7 @@
 	<parameter name="AUTORIZADO" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="ID" isForPrompting="true" class="java.lang.String"/>
 	<queryString><![CDATA[SELECT r.id,r.folio,r.nombre,r.fecha,r.fecha_de_pago,r.moneda,r.tipo_de_cambio,r.forma_de_pago,r.comentario,r.descuentof
-,concat(d.documento_serie,d.documento_folio) as documento,d.documento_fecha,'PAGO' AS concepto,d.total,d.apagar,d.documento_total,d.uuid,d.acuse
+,concat(ifnull(d.documento_serie,''),ifnull(d.documento_folio,'')) as documento,d.documento_fecha,'PAGO' AS concepto,d.total,d.apagar,d.documento_total,d.uuid,d.acuse
 FROM requisicion R 
 LEFT JOIN requisicion_det  D ON(D.requisicion_id=R.id) 
 WHERE R.ID=$P{ID}]]></queryString>
