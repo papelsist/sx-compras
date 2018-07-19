@@ -30,7 +30,7 @@ class AnalisisDeFacturaController extends RestfulController<AnalisisDeFactura> {
         def query = AnalisisDeFactura.where {}
         if(params.periodo) {
             Periodo periodo = params.periodo
-            query = query.where { fecha >= periodo.fechaInicial && fecha <= periodo.fechaFinal}
+            query = query.where { fechaEntrada >= periodo.fechaInicial && fechaEntrada <= periodo.fechaFinal}
         }
         /*
         if(params.fechaInicial) {
@@ -78,7 +78,9 @@ class AnalisisDeFacturaController extends RestfulController<AnalisisDeFactura> {
     }
 
     def print( ) {
-        def pdf =  reportService.run('AnalisisDeFactura.jrxml', [ID: params.id])
+        Map repParams = [ID: params.id]
+        repParams.MONEDA = params.moneda
+        def pdf =  reportService.run('AnalisisDeFactura.jrxml', repParams)
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'AnalisisDeFactura.pdf')
     }
 

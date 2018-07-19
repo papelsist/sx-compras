@@ -18,6 +18,8 @@ class AnalisisDeFactura {
 
     Date fecha = new Date()
 
+    Date fechaEntrada
+
     CuentaPorPagar factura
 
     String comentario
@@ -48,6 +50,7 @@ class AnalisisDeFactura {
         comentario nullable:true
         cerrado nullable:true
         sw2 nullable:true
+        fechaEntrada nullable: true
     }
 
     static mapping = {
@@ -55,11 +58,12 @@ class AnalisisDeFactura {
         id generator:'uuid'
         fecha type:'date' ,index: 'ANALISIS_IDX1'
         cerrado type: 'date'
+        fechaEntrada type:'date' ,index: 'ANALISIS_FCOM_IDX4'
     }
 
     def beforeValidate() {
         if(proveedor) {
-            this.nombre = proveedor.nombre;
+            this.nombre = proveedor.nombre
         }
     }
 

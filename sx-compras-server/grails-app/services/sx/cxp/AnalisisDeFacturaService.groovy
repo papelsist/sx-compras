@@ -25,6 +25,7 @@ class AnalisisDeFacturaService {
 
         actualizarFlete(analisis)
         analisis.folio = nextFolio()
+        analisis.fechaEntrada = analisis.fecha
         analisis.save failOnError: true, flush: true
         return analisis
     }
@@ -42,6 +43,7 @@ class AnalisisDeFacturaService {
             BigDecimal importeBruto = it.precioDeLista * cantidad
             importeBruto = MonedaUtils.aplicarDescuentosEnCascada(importeBruto, it.desc1, it.desc2, it.desc3, it.desc4)
             it.importe = importeBruto
+            analisis.fechaEntrada = it.com.recepcion.fecha
 
         }
         BigDecimal importe = analisis.partidas.sum 0.0, { it.importe }

@@ -29,6 +29,7 @@ export class AnalisisTableComponent implements OnInit, OnChanges {
     'folio',
     'proveedor',
     'fecha',
+    'fechaEntrada',
     'factura',
     'importe',
     'moneda',

@@ -103,7 +103,9 @@ class RequisicionDeComprasController extends RestfulController<RequisicionDeComp
     }
 
     def print( ) {
-        def pdf =  reportService.run('Requisicion.jrxml', [ID: params.id])
+        Map repParams = [ID: params.id]
+        repParams.MONEDA = params.moneda
+        def pdf =  reportService.run('Requisicion.jrxml', repParams)
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'Requisicion.pdf')
     }
 }

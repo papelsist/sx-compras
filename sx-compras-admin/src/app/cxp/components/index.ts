@@ -14,6 +14,8 @@ import { RequisicionesTableComponent } from './requisiciones-table/requisiciones
 import { RequisicionFormComponent } from './requisicion-form/requisicion-form.component';
 import { RequisicionPartidasComponent } from './requisicion-partidas/requisicion-partidas.component';
 import { AgregarFacturasComponent } from './requisicion-form/agregar-facturas.component';
+import { PrintAnalisisComponent } from './print-analisis/print-analisis.component';
+import { PrintRequisicionComponent } from './print-requisicion/print-requisicion.component';
 
 export const components: any[] = [
   CfdisTableComponent,
@@ -22,6 +24,7 @@ export const components: any[] = [
   AnalisisFormComponent,
   AnalisisEditFormComponent,
   AnalisisPartidasTableComponent,
+  PrintAnalisisComponent,
   FacturaSelectorComponent,
   CxpFacturasTableComponent,
   FacturaHeaderComponent,
@@ -30,6 +33,7 @@ export const components: any[] = [
   RequisicionesTableComponent,
   RequisicionFormComponent,
   RequisicionPartidasComponent,
+  PrintRequisicionComponent,
   AgregarFacturasComponent
 ];
 
@@ -44,6 +48,7 @@ export * from './analisis-table/analisis-table.component';
 export * from './analisis-form/analisis-form.component';
 export * from './analisis-edit-form/analisis-edit-form.component';
 export * from './analisis-edit-form/analisis-partidas-table.component';
+export * from './print-analisis/print-analisis.component';
 export * from './factura-selector/factura-selector.component';
 export * from './cxp-facturas-table/cxp-facturas-table.component';
 export * from './factura-header/factura-header.component';
@@ -54,3 +59,4 @@ export * from './requisiciones-table/requisiciones-table.component';
 export * from './requisicion-form/requisicion-form.component';
 export * from './requisicion-partidas/requisicion-partidas.component';
 export * from './requisicion-form/agregar-facturas.component';
+export * from './print-requisicion/print-requisicion.component';
