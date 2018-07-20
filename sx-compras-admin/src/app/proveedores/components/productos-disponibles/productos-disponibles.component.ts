@@ -2,10 +2,16 @@ import {
   Component,
   OnInit,
   ChangeDetectionStrategy,
-  Input,
-  Inject
+  Inject,
+  ViewChild
 } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material';
+import {
+  MAT_DIALOG_DATA,
+  MatSort,
+  MatPaginator,
+  MatTableDataSource
+} from '@angular/material';
+
 import { Producto } from '../../../productos/models/producto';
 
 @Component({
@@ -17,18 +23,35 @@ import { Producto } from '../../../productos/models/producto';
 export class ProductosDisponiblesComponent implements OnInit {
   productos: Producto[] = [];
   selected: Producto[];
+  displayColumns = ['clave', 'descripcion', 'linea'];
+  moneda = 'MXN';
+  dataSource = new MatTableDataSource<Producto>([]);
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+
   constructor(@Inject(MAT_DIALOG_DATA) public data: any) {
     this.productos = data.productos;
+    this.moneda = data.moneda;
     this.selected = data.selected || undefined;
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.dataSource.data = this.productos;
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
 
   onSelection(event: Producto[]) {
     this.selected = event;
   }
 
   onSearch(event) {
-    console.log('Search: ', event);
+    this.dataSource.filter = event;
+  }
+
+  toogleSelect(event: Producto) {
+    event.selected = !event.selected;
+    const data = this.productos.filter(item => item.selected);
+    this.selected = [...data];
   }
 }

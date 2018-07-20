@@ -24,12 +24,19 @@ export const EDIT_PROVEEDOR_PRODUCTO_ACTION =
 export const SELECT_PRODUCTOS_TO_ADD =
   '[ProveedorProductos] Select productos to add ';
 
-export const ADD_PROVEEDOR_PRODUCTO =
-  '[ProveedorProductos] Add proveedor producto';
-export const ADD_PROVEEDOR_PRODUCTO_FAIL =
-  '[ProveedorProductos] Add proveedor producto fail';
-export const ADD_PROVEEDOR_PRODUCTO_SUCCESS =
-  '[ProveedorProductos] Add proveedor producto succes';
+export const ADD_PROVEEDOR_PRODUCTOS =
+  '[ProveedorProductos] Add proveedor productos';
+export const ADD_PROVEEDOR_PRODUCTOS_FAIL =
+  '[ProveedorProductos] Add proveedor productos fail';
+export const ADD_PROVEEDOR_PRODUCTOS_SUCCESS =
+  '[ProveedorProductos] Add proveedor productos succes';
+
+export const DELETE_PROVEEDOR_PRODUCTO =
+  '[ProveedorProductos] Delete proveedor producto';
+export const DELETE_PROVEEDOR_PRODUCTO_FAIL =
+  '[ProveedorProductos] Delete proveedor producto fail';
+export const DELETE_PROVEEDOR_PRODUCTO_SUCCESS =
+  '[ProveedorProductos] Delete proveedor producto success';
 
 export class LoadProveedorProductos implements Action {
   readonly type = LOAD_PROVEEDOR_PRODUCTOS;
@@ -73,18 +80,36 @@ export class EditProveedorProducto implements Action {
 // Add
 export class SelectProductosToAdd implements Action {
   readonly type = SELECT_PRODUCTOS_TO_ADD;
-  constructor(public payload: string) {}
+  constructor(public payload: { proveedorId: string; moneda: string }) {}
 }
-export class AddProveedorProducto implements Action {
-  readonly type = ADD_PROVEEDOR_PRODUCTO;
-  constructor(public payload: ProveedorProducto) {}
+export class AddProveedorProductos implements Action {
+  readonly type = ADD_PROVEEDOR_PRODUCTOS;
+  constructor(
+    public payload: { proveedorId: string; moneda: string; productos: string[] }
+  ) {}
 }
-export class AddProveedorProductoFail implements Action {
-  readonly type = ADD_PROVEEDOR_PRODUCTO_FAIL;
+export class AddProveedorProductosFail implements Action {
+  readonly type = ADD_PROVEEDOR_PRODUCTOS_FAIL;
   constructor(public payload: any) {}
 }
-export class AddProveedorProductoSuccess implements Action {
-  readonly type = ADD_PROVEEDOR_PRODUCTO_SUCCESS;
+export class AddProveedorProductosSuccess implements Action {
+  readonly type = ADD_PROVEEDOR_PRODUCTOS_SUCCESS;
+  constructor(public payload: ProveedorProducto[]) {}
+}
+
+// Delete
+export class DeleteProveedorProducto implements Action {
+  readonly type = DELETE_PROVEEDOR_PRODUCTO;
+  constructor(public payload: ProveedorProducto) {}
+}
+
+export class DeleteProveedorProductoFail implements Action {
+  readonly type = DELETE_PROVEEDOR_PRODUCTO_FAIL;
+  constructor(public payload: any) {}
+}
+
+export class DeleteProveedorProductoSuccess implements Action {
+  readonly type = DELETE_PROVEEDOR_PRODUCTO_SUCCESS;
   constructor(public payload: ProveedorProducto) {}
 }
 
@@ -97,7 +122,10 @@ export type ProveedorProductosActions =
   | UpdateProveedorProductoFail
   | UpdateProveedorProductoSuccess
   | EditProveedorProducto
-  | AddProveedorProducto
-  | AddProveedorProductoFail
-  | AddProveedorProductoSuccess
-  | SelectProductosToAdd;
+  | AddProveedorProductos
+  | AddProveedorProductosFail
+  | AddProveedorProductosSuccess
+  | SelectProductosToAdd
+  | DeleteProveedorProducto
+  | DeleteProveedorProductoFail
+  | DeleteProveedorProductoSuccess;

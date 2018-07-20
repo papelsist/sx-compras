@@ -14,11 +14,12 @@ trait LogUser {
     SpringSecurityService springSecurityService
 
     void logEntity(def entity) {
+
         if(entity.hasProperty('createUser')) {
             def user = springSecurityService.getCurrentUser()
             if(user) {
                 String username = user.username
-                if(entity.id == null)
+                if(entity.id == null || entity.createUser == null)
                     entity.createUser = username
                 entity.updateUser = username
             }

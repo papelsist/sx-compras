@@ -37,6 +37,7 @@ export function reducer(
         loading: true
       };
     }
+
     case fromProductos.LOAD_PROVEEDOR_PRODUCTOS_SUCCESS: {
       const entities = _.keyBy(action.payload, 'id');
       return {
@@ -65,6 +66,42 @@ export function reducer(
         ...state,
         entities,
         loading: false
+      };
+    }
+
+    case fromProductos.DELETE_PROVEEDOR_PRODUCTO:
+    case fromProductos.ADD_PROVEEDOR_PRODUCTOS: {
+      return {
+        ...state,
+        loading: true
+      };
+    }
+
+    case fromProductos.DELETE_PROVEEDOR_PRODUCTO_FAIL:
+    case fromProductos.ADD_PROVEEDOR_PRODUCTOS_FAIL: {
+      return {
+        ...state,
+        loading: false
+      };
+    }
+
+    case fromProductos.ADD_PROVEEDOR_PRODUCTOS_SUCCESS: {
+      const productos = _.keyBy(action.payload, 'id');
+      const entities = { ...state.entities, ...productos };
+      return {
+        ...state,
+        loading: false,
+        entities
+      };
+    }
+
+    case fromProductos.DELETE_PROVEEDOR_PRODUCTO_SUCCESS: {
+      const producto = action.payload;
+      const { [producto.id]: result, ...entities } = state.entities;
+      return {
+        ...state,
+        loading: false,
+        entities
       };
     }
   }

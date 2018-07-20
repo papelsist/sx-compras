@@ -9,7 +9,10 @@ class UrlMappings {
         "/api/productos"(resources: 'producto')
         "/api/proveedores"(resources: 'proveedor'){
             "/productos"(resources: 'proveedorProducto', excludes:['create', 'edit','patch'])
+            "/productos/disponibles"(controller: 'proveedorProducto', action: 'disponibles')
+            "/productos/agregarProductos"(controller: 'proveedorProducto', action: 'agregarProductos', method: 'PUT')
         }
+
 
         "/api/sucursales"(resources: 'sucursal')
 

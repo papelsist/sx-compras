@@ -4,7 +4,7 @@ import { ProveedorCreditoComponent } from './proveedor-form/proveedor-credito.co
 import { ProveedorDireccionComponent } from './proveedor-form/proveedor-direccion.component';
 import { ProveedorProductosTableComponent } from './proveedor-productos-table/proveedor-productos-table.component';
 import { ProductosDisponiblesComponent } from './productos-disponibles/productos-disponibles.component';
-import { AgregarProvProductoComponent } from './productos-disponibles/agregar-prov-producto.component';
+import { ProveedorProductoFormComponent } from './proveedor-producto-form/proveedor-producto-form.component';
 
 export const components: any[] = [
   ProveedoresTableComponent,
@@ -12,16 +12,19 @@ export const components: any[] = [
   ProveedorCreditoComponent,
   ProveedorDireccionComponent,
   ProveedorProductosTableComponent,
-  AgregarProvProductoComponent,
-  ProductosDisponiblesComponent
+  ProductosDisponiblesComponent,
+  ProveedorProductoFormComponent
 ];
 
-export const entryComponents: any[] = [ProductosDisponiblesComponent];
+export const entryComponents: any[] = [
+  ProductosDisponiblesComponent,
+  ProveedorProductoFormComponent
+];
 
 export * from './proveedores-table/proveedores-table.component';
 export * from './proveedor-form/proveedor-form.component';
 export * from './proveedor-form/proveedor-credito.component';
 export * from './proveedor-form/proveedor-direccion.component';
 export * from './proveedor-productos-table/proveedor-productos-table.component';
-export * from './productos-disponibles/agregar-prov-producto.component';
 export * from './productos-disponibles/productos-disponibles.component';
+export * from './proveedor-producto-form/proveedor-producto-form.component';
