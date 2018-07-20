@@ -19,8 +19,6 @@ class ListaDePreciosProveedorDet {
 
     BigDecimal precioBruto = 0.0
 
-    BigDecimal neto = 0.0
-
     BigDecimal desc1 = 0.0
 
     BigDecimal desc2 = 0.0

@@ -5,7 +5,8 @@ import * as fromContainers from './containers';
 import {
   ProveedoresGuard,
   ProveedorExistsGuard,
-  ProveedorProductosGuard
+  ProveedorProductosGuard,
+  ProveedorListasGuard
 } from './guards';
 
 const routes: Routes = [
@@ -29,6 +30,16 @@ const routes: Routes = [
         path: 'productos',
         canActivate: [ProveedorProductosGuard],
         component: fromContainers.ProveedoProductosComponent
+      },
+      {
+        path: 'listas',
+        canActivate: [ProveedorListasGuard],
+        component: fromContainers.ProveedorListasComponent
+      },
+      {
+        path: 'listas/create',
+        canActivate: [ProveedorProductosGuard],
+        component: fromContainers.ProveedorListaCreateComponent
       }
     ]
   }
