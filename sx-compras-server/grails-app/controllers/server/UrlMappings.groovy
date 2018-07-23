@@ -13,6 +13,8 @@ class UrlMappings {
             "/productos/agregarProductos"(controller: 'proveedorProducto', action: 'agregarProductos', method: 'PUT')
         }
 
+        "/api/listaDePreciosProveedor"(resources: 'listaDePreciosProveedor')
+
 
         "/api/sucursales"(resources: 'sucursal')
 

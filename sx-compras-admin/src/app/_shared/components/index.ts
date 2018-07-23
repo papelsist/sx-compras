@@ -14,6 +14,8 @@ import { ProveedorFieldComponent } from './proveedor-field/proveedor-field.compo
 import { ProductoProvFieldComponent } from './producto-prov-field/producto-prov-field.component';
 import { UpperCaseFieldComponent } from './upper-case-field/upper-case-field.component';
 import { DireccionFormComponent } from './direccion-form/direccion-form.component';
+import { EjercicioFieldComponent } from './ejercicio-field/ejercicio-field.component';
+import { MesFieldComponent } from './mes-field/mes-field.component';
 
 export const components = [
   DireccionComponent,
@@ -31,7 +33,9 @@ export const components = [
   ProveedorFieldComponent,
   ProductoProvFieldComponent,
   UpperCaseFieldComponent,
-  DireccionFormComponent
+  DireccionFormComponent,
+  EjercicioFieldComponent,
+  MesFieldComponent
 ];
 
 export const entyComponents: any[] = [
@@ -53,3 +57,5 @@ export * from './proveedor-field/proveedor-field.component';
 export * from './producto-prov-field/producto-prov-field.component';
 export * from './upper-case-field/upper-case-field.component';
 export * from './direccion-form/direccion-form.component';
+export * from './ejercicio-field/ejercicio-field.component';
+export * from './mes-field/mes-field.component';

@@ -11,10 +11,11 @@ export interface ListaDePreciosProveedor {
   descripcion?: string;
   moneda: string;
   partidas: ListaDePreciosProveedorDet[];
-  aplicado?: string;
+  aplicada?: string;
   dateCreated?: string;
   lastUpdated?: string;
   createUser?: string;
   updateUser?: string;
   copia?: number;
+  selected?: boolean;
 }

@@ -7,7 +7,6 @@ export interface ListaDePreciosProveedorDet {
   descripcion?: string;
   unidad?: string;
   precioBruto: number;
-  neto: number;
   desc1?: number;
   desc2?: number;
   desc3?: number;
@@ -24,8 +23,8 @@ export function buildPartida(
     clave: prodProv.clave,
     descripcion: prodProv.descripcion,
     unidad: prodProv.unidad,
-    precioBruto: 0.0,
-    neto: 0.0,
+    precioAnterior: prodProv.precio,
+    precioBruto: prodProv.precio,
     desc1: 0.0,
     desc2: 0.0,
     desc3: 0.0,

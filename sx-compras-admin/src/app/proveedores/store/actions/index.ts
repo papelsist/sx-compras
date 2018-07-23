@@ -1,3 +1,3 @@
 export * from './proveedores.actions';
 export * from './proveedorProducto.actions';
-export * from './listasPrecioProveedor.actions';
+export * from './listasDePrecios.actions';
