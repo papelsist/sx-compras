@@ -133,5 +133,8 @@
     "@schematics/angular:directive": {
       "prefix": "sx"
     }
+  },
+  "cli": {
+    "defaultCollection": "@ngrx/schematics"
   }
 }
