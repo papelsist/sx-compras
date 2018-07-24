@@ -5,7 +5,7 @@ import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
 import groovy.util.slurpersupport.GPathResult
 import org.apache.commons.lang3.exception.ExceptionUtils
-import org.springframework.web.multipart.MultipartFile
+
 import sx.core.LogUser
 import sx.core.Proveedor
 

@@ -6,6 +6,7 @@ import { catchError } from 'rxjs/operators';
 
 import { ConfigService } from '../../utils/config.service';
 import { ProveedorProducto } from '../models/proveedorProducto';
+import { Producto } from '../../productos/models/producto';
 
 @Injectable()
 export class ProveedorProductoService {
@@ -19,6 +20,15 @@ export class ProveedorProductoService {
   get(proveedorId: string, id: string): Observable<ProveedorProducto> {
     const url = `${this.getUrl(proveedorId)}/${id}`;
     return this.http.get<ProveedorProducto>(url);
+  }
+
+  disponibles(data: {
+    proveedorId: string;
+    moneda: string;
+  }): Observable<Producto[]> {
+    const url = `${this.getUrl(data.proveedorId)}/disponibles`;
+    const params = new HttpParams().set('moneda', data.moneda);
+    return this.http.get<Producto[]>(url, { params: params });
   }
 
   save(prod: ProveedorProducto): Observable<ProveedorProducto> {
@@ -35,10 +45,21 @@ export class ProveedorProductoService {
       .pipe(catchError((error: any) => throwError(error)));
   }
 
-  delete(proveedorId: string, id: string) {
-    const url = `${this.getUrl(proveedorId)}/${id}`;
+  delete(prodProv: ProveedorProducto) {
+    const url = `${this.getUrl(prodProv.proveedor.id)}/${prodProv.id}`;
     return this.http
       .delete(url)
+      .pipe(catchError((error: any) => throwError(error)));
+  }
+
+  agregarProductos(command: {
+    proveedorId: string;
+    moneda: string;
+    productos: string[];
+  }): Observable<ProveedorProducto[]> {
+    const url = `${this.getUrl(command.proveedorId)}/agregarProductos`;
+    return this.http
+      .put<ProveedorProducto[]>(url, command)
       .pipe(catchError((error: any) => throwError(error)));
   }
 

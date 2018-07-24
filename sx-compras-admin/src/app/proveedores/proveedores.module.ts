@@ -13,9 +13,10 @@ import { guards } from './guards';
 import { components, entryComponents } from './components';
 import { containers } from './containers';
 import { AuthModule } from '../auth/auth.module';
+import { ReportesModule } from '../reportes/reportes.module';
 
 @NgModule({
-  imports: [SharedModule, ProveedoresRoutingModule, AuthModule],
+  imports: [SharedModule, ProveedoresRoutingModule, AuthModule, ReportesModule],
   declarations: [...components, ...containers],
   entryComponents: [...entryComponents],
   exports: [...containers, ...components]

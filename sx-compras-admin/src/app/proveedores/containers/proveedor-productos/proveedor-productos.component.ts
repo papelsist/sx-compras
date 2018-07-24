@@ -1,21 +1,30 @@
 import { Component, OnInit, Input } from '@angular/core';
 
 import { Store, select } from '@ngrx/store';
-import * as fromRoot from 'app/store';
+
 import * as fromStore from '../../store';
-import * as fromActions from '../../store/actions';
 
 import { Observable, Subject } from 'rxjs';
 
 import { Proveedor } from '../../models/proveedor';
 import { ProveedorProducto } from '../../models/proveedorProducto';
 
+import { TdDialogService } from '@covalent/core';
+
 @Component({
   selector: 'sx-proveedor-productos',
   template: `
-    <div>
-      <mat-card>
-        <sx-search-title title="Productos" (search)="onSearch($event)"></sx-search-title>
+    <div *ngIf="proveedor$ | async as proveedor">
+      <mat-card >
+        <sx-search-title title="Productos"
+          (search)="onSearch($event)">
+          <button mat-menu-item class="actions" (click)="onAgregar(proveedor, 'MXN')">
+            <mat-icon>add</mat-icon> Agregar (MXN)
+          </button>
+          <button mat-menu-item class="actions" (click)="onAgregar(proveedor, 'USD')">
+            <mat-icon>add</mat-icon> Agregar (USD)
+          </button>
+        </sx-search-title>
         <mat-divider></mat-divider>
         <sx-proveedor-productos-table
           [productos]="productos$ | async"
@@ -25,7 +34,7 @@ import { ProveedorProducto } from '../../models/proveedorProducto';
           (select)="onSelect($event)">
         </sx-proveedor-productos-table>
       </mat-card>
-      <a mat-fab (click)="onAgregar(proveedor)" *ngIf="proveedor$ | async as proveedor"
+      <a mat-fab (click)="onAgregar(proveedor, 'MXN')"
         matTooltip="Agregar producto"
         matTooltipPosition="before" color="accent"
         class="mat-fab-position-bottom-right ">
@@ -38,7 +47,10 @@ export class ProveedoProductosComponent implements OnInit {
   proveedor$: Observable<Proveedor>;
   productos$: Observable<ProveedorProducto[]>;
   search$ = new Subject();
-  constructor(private store: Store<fromStore.ProveedoresState>) {}
+  constructor(
+    private store: Store<fromStore.ProveedoresState>,
+    private dialogService: TdDialogService
+  ) {}
 
   ngOnInit() {
     this.proveedor$ = this.store.pipe(select(fromStore.getCurrentProveedor));
@@ -54,15 +66,29 @@ export class ProveedoProductosComponent implements OnInit {
   onEdit(event: ProveedorProducto) {
     this.store.dispatch(new fromStore.EditProveedorProducto(event));
   }
+
   onDelete(event: ProveedorProducto) {
-    console.log('Delete: ', event);
+    this.dialogService
+      .openConfirm({
+        message: event.descripcion,
+        title: 'Quitar producto del proveedor',
+        cancelButton: 'Cancelar',
+        acceptButton: 'Eliminar'
+      })
+      .afterClosed()
+      .subscribe(res => {
+        if (res) {
+          this.store.dispatch(new fromStore.DeleteProveedorProducto(event));
+        }
+      });
   }
 
   onSelect(event: ProveedorProducto[]) {
     console.log('Selection: ', event);
   }
 
-  onAgregar(proveedor) {
-    this.store.dispatch(new fromStore.SelectProductosToAdd(proveedor.id));
+  onAgregar(proveedor, moneda) {
+    const params = { proveedorId: proveedor.id, moneda };
+    this.store.dispatch(new fromStore.SelectProductosToAdd(params));
   }
 }

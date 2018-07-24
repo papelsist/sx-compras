@@ -27,4 +27,5 @@ export interface Producto {
   precioCredito: number;
   presentacion: string;
   lastUpdated?: string;
+  selected?: boolean;
 }

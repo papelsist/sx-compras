@@ -27,6 +27,12 @@ export class ProveedorPageComponent implements OnInit {
       title: 'Productos',
       descripcion: 'Productos del proveedor',
       icon: 'layers'
+    },
+    {
+      route: 'listas',
+      title: 'Listas',
+      descripcion: 'Listas de precios',
+      icon: 'list'
     }
   ];
 

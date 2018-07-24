@@ -93,8 +93,9 @@
           <mat-icon>grid_off</mat-icon> Cerrar
         </button>
       </ng-container>
-      <sx-report-button url="requisicionesDeCompras/print/{{requisicion.id}}" *ngIf="requisicion">
-      </sx-report-button>
+      <!-- <sx-report-button url="requisicionesDeCompras/print/{{requisicion.id}}" *ngIf="requisicion"> </sx-report-button>-->
+      <sx-print-requisicion [requisicion]="requisicion" *ngIf="requisicion"></sx-print-requisicion>
+
 
     </mat-card-actions>
   </mat-card>

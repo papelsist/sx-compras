@@ -13,31 +13,40 @@
 
     <div layout>
 
-      <div layout flex layout-align="start center">
+      <div layout flex layout-padding>
         <div>
           <button mat-button [disabled]="!proveedor" color="primary" (click)="seleccionarFactura()">Factura (XML)</button>
         </div>
-        <mat-form-field class="pad-left pad-right">
+        <mat-form-field flex>
           <input matInput placeholder="Serie / Folio" [disabled]="true" value="{{factura?.serie}}  {{factura?.folio}}" />
           <mat-icon matSuffix color="accent" class="cursor-pointer" (click)="printFactura.emit(factura)" *ngIf="factura">picture_as_pdf</mat-icon>
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field flex>
           <input matInput placeholder="Fecha" [disabled]="true" value="{{factura?.fecha | date: 'dd/MM/yyyy'}} " />
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field flex>
           <input matInput placeholder="Vto" [disabled]="true" value="{{factura?.vencimiento | date: 'dd/MM/yyyy'}} " />
         </mat-form-field>
-        <mat-form-field>
-          <input matInput placeholder="SubTotal" [disabled]="true" [value]="factura?.subTotal | currency" />
-        </mat-form-field>
-        <mat-form-field>
-          <input matInput placeholder="Total" [disabled]="true" [value]="factura?.total | currency" />
-        </mat-form-field>
 
-        <mat-form-field class="pad-left">
+
+        <mat-form-field flex>
           <input matInput type="number" placeholder="Flete" autocomplete="off" formControlName="importeFlete" />
         </mat-form-field>
       </div>
+    </div>
+    <div layout layout-padding>
+      <mat-form-field flex>
+        <input matInput placeholder="Moneda" [disabled]="true" [value]="factura?.moneda" />
+      </mat-form-field>
+      <mat-form-field flex>
+        <input matInput placeholder="T.C" [disabled]="true" [value]="factura?.tipoDeCambio" />
+      </mat-form-field>
+      <mat-form-field flex>
+        <input matInput placeholder="SubTotal" [disabled]="true" [value]="factura?.subTotal | currency" />
+      </mat-form-field>
+      <mat-form-field flex>
+        <input matInput placeholder="Total" [disabled]="true" [value]="factura?.total | currency" />
+      </mat-form-field>
     </div>
     <mat-form-field flex>
       <textarea matInput placeholder="Comentario" formControlName="comentario"></textarea>

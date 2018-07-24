@@ -23,6 +23,8 @@ class Proveedor {
 
     String tipo = 'COMPRAS'
 
+    String comentario
+
     String telefono1
 
     String telefono2
@@ -68,6 +70,7 @@ class Proveedor {
         sw2 nullable: true
         updateUser nullable: true
         createUser nullable: true
+        comentario nullable: true
     }
 
     static embedded = ['direccion']

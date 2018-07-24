@@ -11,6 +11,13 @@
       <td mat-cell *matCellDef="let prod">{{prod.clave}}</td>
     </ng-container>
 
+    <ng-container matColumnDef="claveProveedor">
+      <th mat-header-cell *matHeaderCellDef>Desc Proveedor</th>
+      <td mat-cell *matCellDef="let prod">
+        ({{prod.claveProveedor}}) - {{prod.descripcionProveedor}}
+      </td>
+    </ng-container>
+
     <ng-container matColumnDef="descripcion">
       <th mat-header-cell *matHeaderCellDef>Descripción</th>
       <td mat-cell *matCellDef="let prod">
@@ -23,6 +30,11 @@
     <ng-container matColumnDef="unidad">
       <th mat-header-cell *matHeaderCellDef>U</th>
       <td mat-cell *matCellDef="let prod">{{prod.unidad}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="moneda">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>MOM</th>
+      <td mat-cell *matCellDef="let prod">{{prod.moneda}}</td>
     </ng-container>
 
     <ng-container matColumnDef="precioBruto">

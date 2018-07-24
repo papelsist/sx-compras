@@ -61,7 +61,6 @@ export class AnalisisEditFormComponent implements OnInit, OnDestroy {
   constructor(private fb: FormBuilder, private dialog: MatDialog) {}
 
   ngOnInit() {
-    console.log('Analisis: ', this.analisis);
     this.buildForm();
   }
   ngOnDestroy() {

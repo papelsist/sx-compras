@@ -43,7 +43,8 @@
     <th mat-header-cell *matHeaderCellDef></th>
     <td mat-cell *matCellDef="let req">
       <mat-icon (click)="edit.emit(req)" class="cursor-pointer pad-right">edit</mat-icon>
-      <sx-report-button url="requisicionesDeCompras/print/{{req.id}}" smallIcon="true"></sx-report-button>
+
+      <sx-print-requisicion [requisicion]="req" smallIcon="true"></sx-print-requisicion>
     </td>
   </ng-container>
   <tr mat-header-row *matHeaderRowDef="displayColumns"></tr>

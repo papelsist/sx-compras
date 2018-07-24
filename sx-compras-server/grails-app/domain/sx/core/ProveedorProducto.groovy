@@ -4,7 +4,7 @@ package sx.core
 import groovy.transform.EqualsAndHashCode
 
 
-@EqualsAndHashCode(includes='id, producto, proveedor')
+@EqualsAndHashCode(includes='id, proveedor, producto')
 class ProveedorProducto {
 
     String id
@@ -57,11 +57,14 @@ class ProveedorProducto {
         lista nullable: true
         dateCreated nullable: true
         lastUpdated nullable: true
+        createUser nullable: true
+        updateUser nullable: true
         moneda maxSize: 5
     }
 
     static mapping = {
         id generator:'uuid'
+        producto unique: ['moneda']
     }
 
     String toString() {

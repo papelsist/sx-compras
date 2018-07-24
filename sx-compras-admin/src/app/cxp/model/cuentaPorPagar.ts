@@ -10,6 +10,8 @@ export interface CuentaPorPagar {
   descuento: number;
   impuestoTrasladado: number;
   impuestoRetenido: number;
+  moneda: string;
+  tipoDeCambio: number;
   total: number;
   importePorPagar?: number;
   vencimiento: string;

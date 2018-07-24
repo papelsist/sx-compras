@@ -6,6 +6,7 @@ export interface Analisis {
   folio: number;
   proveedor: { id: string; nombre: string };
   fecha: string;
+  fechaEntrada: string;
   factura: CuentaPorPagar;
   comentario?: string;
   importe: number;

@@ -27,7 +27,7 @@ class ListaDePreciosProveedor {
 
     List<ListaDePreciosProveedorDet> partidas
 
-    Date aplicado
+    Date aplicada
 
     Date dateCreated
 
@@ -48,7 +48,7 @@ class ListaDePreciosProveedor {
         moneda maxSize: 5
         sw2 nullable: true
         copia nullable: true
-        aplicado nullable: true
+        aplicada nullable: true
     }
 
     static hasMany =[partidas:ListaDePreciosProveedorDet]
@@ -57,7 +57,7 @@ class ListaDePreciosProveedor {
         partidas cascade: "all-delete-orphan"
         fechaInicial type:'date'
         fechaFinal type:'date'
-        aplicado type: 'date'
+        aplicada type: 'date'
     }
 
 

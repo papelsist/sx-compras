@@ -23,6 +23,8 @@
       <span layout>
         <span>{{analisis.proveedor.nombre}}</span>
         <span flex></span>
+        <span>{{analisis.factura.moneda}}</span>
+        <span class="pad-left pad-right" *ngIf="analisis.factura.moneda !== 'MXN'"> T.C: {{analisis.factura.tipoDeCambio}}</span>
         <span *ngIf="analisis.updateUser !== analisis.createUser">Creado: {{analisis.createUser}}</span>
         <span class="pad-left">Modificado: {{analisis.updateUser}}</span>
       </span>
@@ -86,7 +88,8 @@
           <mat-icon>grid_off</mat-icon> Cerrar
         </button>
       </ng-container>
-      <sx-report-button url="analisisDeFactura/print/{{analisis.id}}"></sx-report-button>
+      <!-- <sx-report-button url="analisisDeFactura/print/{{analisis.id}}"></sx-report-button> -->
+      <sx-print-analisis [analisis]="analisis"></sx-print-analisis>
 
     </mat-card-actions>
 

@@ -1,11 +1,17 @@
 package sx.compras
 
-import grails.gorm.transactions.Transactional
+import grails.compiler.GrailsCompileStatic
+import grails.gorm.services.Service
+import sx.core.LogUser
 
-@Transactional
-class ListaDePreciosProveedorService {
 
-    def serviceMethod() {
+@GrailsCompileStatic
+@Service(ListaDePreciosProveedor)
+abstract class ListaDePreciosProveedorService implements LogUser{
 
+    ListaDePreciosProveedor save(ListaDePreciosProveedor lp) {
+        logEntity(lp)
+        lp.save failOnError:true, flush:true
+        return lp
     }
 }

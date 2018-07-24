@@ -24,10 +24,12 @@ export class ProveedorProductosTableComponent implements OnInit, OnChanges {
   @Input() productos: ProveedorProducto[];
   @Input()
   columnsToDisplay = [
-    'proveedor',
+    // 'proveedor',
     'clave',
     'descripcion',
     'unidad',
+    'claveProveedor',
+    'moneda',
     'precioBruto',
     'desc1',
     'desc2',
