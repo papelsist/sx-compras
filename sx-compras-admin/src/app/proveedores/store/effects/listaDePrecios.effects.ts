@@ -5,7 +5,14 @@ import { MatSnackBar } from '@angular/material';
 import { Store, select } from '@ngrx/store';
 import { Effect, Actions, ofType } from '@ngrx/effects';
 
-import { map, tap, switchMap, catchError, take } from 'rxjs/operators';
+import {
+  map,
+  tap,
+  switchMap,
+  concatMap,
+  catchError,
+  take
+} from 'rxjs/operators';
 import { of } from 'rxjs';
 
 import * as listasActions from '../actions/listasDePrecios.actions';
@@ -168,7 +175,7 @@ export class ListaDePreciosEffects {
       listasActions.DELETE_LISTA_PROVEEDOR
     ),
     map(action => action.payload),
-    switchMap(lista => {
+    concatMap(lista => {
       return this.service
         .delete(lista.id)
         .pipe(
@@ -180,6 +187,7 @@ export class ListaDePreciosEffects {
     })
   );
 
+  /*
   @Effect()
   deleteListaSuccess$ = this.actions$.pipe(
     ofType<listasActions.DeleteListaDePreciosProveedorSuccess>(
@@ -191,4 +199,5 @@ export class ListaDePreciosEffects {
         new fromRoot.Go({ path: [`proveedores/${lista.proveedor.id}/listas`] })
     )
   );
+  */
 }

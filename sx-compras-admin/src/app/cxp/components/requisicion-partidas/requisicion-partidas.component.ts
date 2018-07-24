@@ -5,10 +5,12 @@ import {
   Output,
   EventEmitter,
   ViewChild,
+  OnChanges,
+  SimpleChanges,
   ChangeDetectionStrategy
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { MatTable } from '@angular/material';
+import { MatTable, MatTableDataSource, MatSort } from '@angular/material';
 
 import { RequisicionDet } from '../../model';
 
@@ -18,12 +20,15 @@ import { RequisicionDet } from '../../model';
   templateUrl: './requisicion-partidas.component.html',
   styleUrls: ['./requisicion-partidas.component.scss']
 })
-export class RequisicionPartidasComponent implements OnInit {
+export class RequisicionPartidasComponent implements OnInit, OnChanges {
   @Input() partidas: RequisicionDet[] = [];
   @Input() parent: FormGroup;
   @Input() readOnly = false;
   @Output() update = new EventEmitter();
   @Output() delete = new EventEmitter();
+  @ViewChild(MatSort) sort: MatSort;
+
+  dataSource = new MatTableDataSource<RequisicionDet>([]);
 
   displayColumns = [
     'documentoSerie',
@@ -41,7 +46,15 @@ export class RequisicionPartidasComponent implements OnInit {
 
   constructor() {}
 
-  ngOnInit() {}
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.partidas && changes.partidas.currentValue) {
+      this.dataSource.data = changes.partidas.currentValue;
+    }
+  }
+
+  ngOnInit() {
+    this.dataSource.sort = this.sort;
+  }
 
   refresh() {
     this.table.renderRows();

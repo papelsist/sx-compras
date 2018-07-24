@@ -6,6 +6,6 @@ model {
 
 json g.render(listaDePreciosProveedor, [ excludes: ['partidas', 'dateCreated', 'lastUpdated'], resolveTemplate: false]) {
     partidas g.render(listaDePreciosProveedor.partidas)
-    creado listaDePreciosProveedor.dateCreated
-    modificado listaDePreciosProveedor.lastUpdated
+    creada listaDePreciosProveedor.dateCreated
+    modificada listaDePreciosProveedor.lastUpdated
 }

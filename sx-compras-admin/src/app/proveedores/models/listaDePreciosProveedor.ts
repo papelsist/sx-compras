@@ -17,8 +17,8 @@ export interface ListaDePreciosProveedor {
   moneda: string;
   partidas: ListaDePreciosProveedorDet[];
   aplicada?: string;
-  dateCreated?: string;
-  lastUpdated?: string;
+  creada?: string;
+  modificada?: string;
   createUser?: string;
   updateUser?: string;
   copia?: number;

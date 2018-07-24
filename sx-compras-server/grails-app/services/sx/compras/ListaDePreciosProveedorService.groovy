@@ -34,4 +34,6 @@ abstract class ListaDePreciosProveedorService implements LogUser{
         return this.save(lista)
 
     }
+
+    abstract void delete(Serializable id)
 }

@@ -44,6 +44,9 @@ if (Environment.isDevelopmentMode() && targetDir != null) {
     logger("sx.cxp", DEBUG, ['STDOUT'], false)
     logger("sx.compras", DEBUG, ['STDOUT'], false)
     logger("sx.reports", DEBUG, ['STDOUT'], false)
+
+    // Log Listeners
+    logger("sx.audit", DEBUG, ['STDOUT'], false)
 }
 root(ERROR, ['STDOUT'])
 logger("sx.reports", DEBUG, ['STDOUT'], false)

@@ -1,7 +1,7 @@
 <div [formGroup]="parent">
-  <table mat-table formArrayName="partidas" [dataSource]="partidas">
+  <table mat-table formArrayName="partidas" [dataSource]="dataSource" matSort>
     <ng-container matColumnDef="documentoFolio">
-      <th mat-header-cell *matHeaderCellDef>Folio (Dcto)</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Folio (Dcto)</th>
       <td mat-cell *matCellDef="let row">{{row.documentoFolio}}</td>
     </ng-container>
     <ng-container matColumnDef="documentoSerie">
@@ -13,7 +13,7 @@
       <td mat-cell *matCellDef="let row">{{row.documentoFecha | date: 'dd/MM/yyyy'}}</td>
     </ng-container>
     <ng-container matColumnDef="documentoTotal">
-      <th mat-header-cell *matHeaderCellDef>Total (Docto)</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Total (Docto)</th>
       <td mat-cell *matCellDef="let row">{{row.documentoTotal | currency}}</td>
     </ng-container>
     <ng-container matColumnDef="descuentof">
@@ -21,13 +21,13 @@
       <td mat-cell *matCellDef="let row">{{row.descuentofImporte | currency}}</td>
     </ng-container>
     <ng-container matColumnDef="total">
-      <th mat-header-cell *matHeaderCellDef>Analizado</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Analizado</th>
       <td mat-cell *matCellDef="let row">
         {{row.total | currency}}
       </td>
     </ng-container>
     <ng-container matColumnDef="apagar">
-      <th mat-header-cell *matHeaderCellDef>Por Pagar</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Por Pagar</th>
       <td mat-cell *matCellDef="let row">
         {{row.apagar | currency}}
       </td>

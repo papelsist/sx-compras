@@ -15,6 +15,7 @@ class UrlMappings {
 
         "/api/listaDePreciosProveedor"(resources: 'listaDePreciosProveedor')
         "/api/listaDePreciosProveedor/aplicar/$id"(controller: 'listaDePreciosProveedor', action: 'aplicar', method: 'PUT')
+        "/api/listaDePreciosProveedor/print/$id"(controller: 'listaDePreciosProveedor', action: 'print', method: 'GET')
 
 
         "/api/sucursales"(resources: 'sucursal')

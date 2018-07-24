@@ -3,6 +3,7 @@ package sx.compras
 import grails.compiler.GrailsCompileStatic
 import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.*
+import sx.reports.ReportService
 
 
 @GrailsCompileStatic
@@ -10,14 +11,16 @@ import grails.rest.*
 class ListaDePreciosProveedorController extends RestfulController<ListaDePreciosProveedor> {
 
     static responseFormats = ['json']
+
     ListaDePreciosProveedorService listaDePreciosProveedorService
+    ReportService reportService
+
     ListaDePreciosProveedorController() {
         super(ListaDePreciosProveedor)
     }
 
     @Override
     protected List<ListaDePreciosProveedor> listAllResources(Map params) {
-        log.debug('List: {}', this.params)
         if(params.proveedorId)
             return ListaDePreciosProveedor.where{ proveedor.id == params.proveedorId}.list()
         return super.listAllResources(params)
@@ -42,11 +45,24 @@ class ListaDePreciosProveedorController extends RestfulController<ListaDePrecios
         return resource
     }
 
+
+
+    @Override
+    protected void deleteResource(ListaDePreciosProveedor resource) {
+        listaDePreciosProveedorService.delete(resource.id)
+    }
+
     def aplicar(ListaDePreciosProveedor lista) {
         if(lista == null ){
             notFound()
             return
         }
         respond listaDePreciosProveedorService.aplicarListaDePrecios(lista)
+    }
+
+    def print( ) {
+        Map repParams = [ID: params.long('id')]
+        def pdf =  reportService.run('ListaDePrecios.jrxml', repParams)
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'ListaDePrecios.pdf')
     }
 }

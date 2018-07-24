@@ -3,7 +3,7 @@ import { MatDialog, MatSnackBar } from '@angular/material';
 
 import { Store } from '@ngrx/store';
 import { Effect, Actions, ofType } from '@ngrx/effects';
-import { map, tap, switchMap, catchError } from 'rxjs/operators';
+import { map, tap, switchMap, concatMap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 
 import * as productosActions from '../actions/proveedorProducto.actions';
@@ -140,7 +140,7 @@ export class ProveedorProductosEffects {
       productosActions.DELETE_PROVEEDOR_PRODUCTO
     ),
     map(action => action.payload),
-    switchMap(provProd => {
+    concatMap(provProd => {
       return this.service
         .delete(provProd)
         .pipe(

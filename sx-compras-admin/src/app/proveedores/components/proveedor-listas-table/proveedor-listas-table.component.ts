@@ -31,6 +31,9 @@ export class ProveedorListasTableComponent implements OnInit, OnChanges {
     'moneda',
     'descripcion',
     'aplicada',
+    'createUser',
+    'updateUser',
+    'modificada',
     'operaciones'
   ];
   @Input() search: string;
