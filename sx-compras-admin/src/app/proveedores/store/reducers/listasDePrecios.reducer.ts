@@ -60,6 +60,11 @@ export function reducer(
       return adapter.addOne(action.payload, state);
     }
 
+    // Delete
+    case fromListas.DELETE_LISTA_PROVEEDOR_SUCCESS: {
+      return adapter.removeOne(action.payload.id, state);
+    }
+
     default:
       return state;
   }
