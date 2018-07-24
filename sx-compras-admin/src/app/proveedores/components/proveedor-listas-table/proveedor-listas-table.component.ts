@@ -28,6 +28,7 @@ export class ProveedorListasTableComponent implements OnInit, OnChanges {
     'id',
     'ejercicio',
     'mes',
+    'moneda',
     'descripcion',
     'aplicada',
     'operaciones'

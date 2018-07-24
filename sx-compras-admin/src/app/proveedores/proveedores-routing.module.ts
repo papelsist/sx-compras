@@ -6,7 +6,8 @@ import {
   ProveedoresGuard,
   ProveedorExistsGuard,
   ProveedorProductosGuard,
-  ProveedorListasGuard
+  ProveedorListasGuard,
+  ProveedorListaExistsGuard
 } from './guards';
 
 const routes: Routes = [
@@ -40,6 +41,11 @@ const routes: Routes = [
         path: 'listas/create',
         canActivate: [ProveedorProductosGuard],
         component: fromContainers.ProveedorListaCreateComponent
+      },
+      {
+        path: 'listas/:id',
+        canActivate: [ProveedorProductosGuard, ProveedorListaExistsGuard],
+        component: fromContainers.ProveedorListaEditComponent
       }
     ]
   }

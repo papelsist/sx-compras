@@ -16,6 +16,7 @@ import { UpperCaseFieldComponent } from './upper-case-field/upper-case-field.com
 import { DireccionFormComponent } from './direccion-form/direccion-form.component';
 import { EjercicioFieldComponent } from './ejercicio-field/ejercicio-field.component';
 import { MesFieldComponent } from './mes-field/mes-field.component';
+import { MonedaFieldComponent } from './moneda-field/moneda-field.component';
 
 export const components = [
   DireccionComponent,
@@ -35,7 +36,8 @@ export const components = [
   UpperCaseFieldComponent,
   DireccionFormComponent,
   EjercicioFieldComponent,
-  MesFieldComponent
+  MesFieldComponent,
+  MonedaFieldComponent
 ];
 
 export const entyComponents: any[] = [
@@ -59,3 +61,4 @@ export * from './upper-case-field/upper-case-field.component';
 export * from './direccion-form/direccion-form.component';
 export * from './ejercicio-field/ejercicio-field.component';
 export * from './mes-field/mes-field.component';
+export * from './moneda-field/moneda-field.component';

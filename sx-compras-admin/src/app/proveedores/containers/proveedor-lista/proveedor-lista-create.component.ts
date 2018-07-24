@@ -5,55 +5,57 @@ import * as fromRoot from 'app/store';
 import * as fromStore from '../../store';
 import * as fromActions from '../../store/actions/listasDePrecios.actions';
 
-import { Observable } from 'rxjs';
-import { withLatestFrom, map } from 'rxjs/operators';
+import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
+import { map, withLatestFrom } from 'rxjs/operators';
 
 import { Proveedor } from '../../models/proveedor';
 import { ProveedorProducto } from '../../models/proveedorProducto';
-import { ListaDePreciosProveedor } from '../../models/listaDePreciosProveedor';
+import {
+  ListaDePreciosProveedor,
+  buildLista
+} from '../../models/listaDePreciosProveedor';
 
 import { Periodo } from 'app/_core/models/periodo';
 
 @Component({
   selector: 'sx-proveedor-lista-create',
   template: `
-    <div *ngIf="proveedor$ | async as proveedor">
+    <div>
       <sx-proveedor-lista-form [listaDePrecios]="listaNueva$ | async" (save)="onSave($event)"
-        [productos]="productos$ | async"></sx-proveedor-lista-form>
+        (cancel)="onCancel()">
+        </sx-proveedor-lista-form>
     </div>
   `
 })
 export class ProveedorListaCreateComponent implements OnInit {
-  proveedor$: Observable<Proveedor>;
   productos$: Observable<ProveedorProducto[]>;
   listaNueva$: Observable<Partial<ListaDePreciosProveedor>>;
+
   constructor(private store: Store<fromStore.ProveedoresState>) {}
 
   ngOnInit() {
-    this.proveedor$ = this.store.pipe(select(fromStore.getCurrentProveedor));
     this.productos$ = this.store.pipe(
-      select(fromStore.getAllProveedorProductos)
+      select(fromStore.getAltaDeListaProductos)
     );
-    this.listaNueva$ = this.proveedor$.pipe(
-      map(proveedor => this.buildLista(proveedor))
+    this.buildListaNueva();
+  }
+
+  buildListaNueva() {
+    this.listaNueva$ = combineLatest(
+      this.store.select(fromStore.getSelectedProveedor),
+      this.store.select(fromStore.getCreateListMoneda),
+      this.store.pipe(select(fromStore.getAltaDeListaProductos)),
+      (proveedor, moneda, productos) => {
+        return buildLista(proveedor, moneda, productos);
+      }
     );
   }
 
   onSave(event: ListaDePreciosProveedor) {
-    console.log('Salvando lista de precios: ', event);
     this.store.dispatch(new fromActions.AddListaDePreciosProveedor(event));
   }
 
-  buildLista(proveedor: Proveedor): Partial<ListaDePreciosProveedor> {
-    console.log('Build para: ', proveedor);
-    const periodo = Periodo.mesActual();
-    return {
-      proveedor: proveedor,
-      ejercicio: periodo.fechaFinal.getFullYear(),
-      mes: periodo.fechaInicial.getMonth(),
-      fechaInicial: periodo.fechaInicial.toISOString(),
-      fechaFinal: periodo.fechaFinal.toISOString(),
-      partidas: []
-    };
+  onCancel() {
+    this.store.dispatch(new fromRoot.Back());
   }
 }

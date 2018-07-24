@@ -13,6 +13,7 @@ export interface ProveedorProducto {
   descripcionProveedor: string;
   paqueteTarima: number;
   piezaPaquete: number;
+  moneda: string;
   precioBruto: number;
   desc1: number;
   desc2: number;

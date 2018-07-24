@@ -30,6 +30,7 @@ export class ProveedorListaPartidasComponent implements OnInit {
     'clave',
     'descripcion',
     'unidad',
+    'moneda',
     'precioAnterior',
     'precioBruto',
     'desc1',

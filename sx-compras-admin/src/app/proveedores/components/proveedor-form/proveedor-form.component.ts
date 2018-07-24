@@ -28,7 +28,6 @@ export class ProveedorFormComponent implements OnInit {
     if (this.proveedor) {
       this.form.patchValue(this.proveedor);
     }
-    console.log(this.form);
   }
 
   private buildForm() {

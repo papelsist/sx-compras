@@ -5,6 +5,7 @@ import { ProveedorInfoComponent } from './proveedor-info/proveedor-info.componen
 import { ProveedoProductosComponent } from './proveedor-productos/proveedor-productos.component';
 import { ProveedorListasComponent } from './proveedor-listas/proveedor-listas.component';
 import { ProveedorListaCreateComponent } from './proveedor-lista/proveedor-lista-create.component';
+import { ProveedorListaEditComponent } from './proveedor-lista/proveedor-lista-edit.component';
 
 export const containers: any[] = [
   ProveedoresPageComponent,
@@ -13,7 +14,8 @@ export const containers: any[] = [
   ProveedorInfoComponent,
   ProveedoProductosComponent,
   ProveedorListasComponent,
-  ProveedorListaCreateComponent
+  ProveedorListaCreateComponent,
+  ProveedorListaEditComponent
 ];
 
 export * from './proveedores-page/proveedores-page.component';
@@ -23,3 +25,4 @@ export * from './proveedor-info/proveedor-info.component';
 export * from './proveedor-productos/proveedor-productos.component';
 export * from './proveedor-listas/proveedor-listas.component';
 export * from './proveedor-lista/proveedor-lista-create.component';
+export * from './proveedor-lista/proveedor-lista-edit.component';

@@ -24,6 +24,42 @@ export const getAllProveedorProductos = createSelector(
   }
 );
 
+/**
+ * Selector que con ayuda del router (RouterState ngrx-router)
+ * regresa la moneda adecuada deacuerdo a la ruta Ej:proveedor/:id/create?moneda=MXN
+ */
+export const getCreateListMoneda = createSelector(
+  fromRoot.getRouterState,
+  routerState => {
+    const mon = routerState.state.queryParams.moneda;
+    return mon;
+  }
+);
+
+/**
+ * Selector para obtener con los productos por proveedor disponibles para
+ * el alta de la lista de precios. Estos son todos los productos por proveedor vigentes
+ * filtrados por la moneda definida el la ruta Ej: proveedor/:id/create?moneda=MXN par
+ * produtos en moneda nacional
+ */
+export const getAltaDeListaProductos = createSelector(
+  getAllProveedorProductos,
+  getCreateListMoneda,
+  (productos, mon) => {
+    return productos.filter(item => item.moneda === mon);
+  }
+);
+
+export const getProductosDisponibles = createSelector(
+  getAllProveedorProductos,
+  fromRoot.getRouterState,
+  (productos, routerState) => {
+    // console.log('routerState: ', routerState.state);
+    const mon = routerState.state.queryParams.moneda;
+    return productos.filter(item => item.moneda === mon);
+  }
+);
+
 export const getProveedorProductosLoaded = createSelector(
   getProveedorProductosState,
   fromProductos.getProveedorProductosLoaded

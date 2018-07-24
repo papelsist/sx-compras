@@ -23,6 +23,10 @@ import { TdDialogService } from '@covalent/core';
           </button>
           <button mat-menu-item class="actions" (click)="onAgregar(proveedor, 'USD')">
             <mat-icon>add</mat-icon> Agregar (USD)
+          </button >
+          <button mat-menu-item class="actions" [disabled]="selected.length === 0"
+            (click)="onDelete(selected)">
+            <mat-icon>cancel</mat-icon> Quitar
           </button>
         </sx-search-title>
         <mat-divider></mat-divider>
@@ -30,7 +34,7 @@ import { TdDialogService } from '@covalent/core';
           [productos]="productos$ | async"
           [search]="search$ | async"
           (edit)="onEdit($event)"
-          (delete)="onDelete($event)"
+          (delete)="onDeleteRow($event)"
           (select)="onSelect($event)">
         </sx-proveedor-productos-table>
       </mat-card>
@@ -46,6 +50,7 @@ import { TdDialogService } from '@covalent/core';
 export class ProveedoProductosComponent implements OnInit {
   proveedor$: Observable<Proveedor>;
   productos$: Observable<ProveedorProducto[]>;
+  selected: ProveedorProducto[] = [];
   search$ = new Subject();
   constructor(
     private store: Store<fromStore.ProveedoresState>,
@@ -67,24 +72,30 @@ export class ProveedoProductosComponent implements OnInit {
     this.store.dispatch(new fromStore.EditProveedorProducto(event));
   }
 
-  onDelete(event: ProveedorProducto) {
+  onDeleteRow(event: ProveedorProducto) {
+    this.onDelete([event]);
+  }
+
+  onDelete(event: ProveedorProducto[]) {
     this.dialogService
       .openConfirm({
-        message: event.descripcion,
-        title: 'Quitar producto del proveedor',
+        message: `${event.length} productos seleccionados`,
+        title: 'Eliminar/Quitar producto(s)',
         cancelButton: 'Cancelar',
         acceptButton: 'Eliminar'
       })
       .afterClosed()
       .subscribe(res => {
         if (res) {
-          this.store.dispatch(new fromStore.DeleteProveedorProducto(event));
+          event.forEach(item =>
+            this.store.dispatch(new fromStore.DeleteProveedorProducto(item))
+          );
         }
       });
   }
 
   onSelect(event: ProveedorProducto[]) {
-    console.log('Selection: ', event);
+    this.selected = [...event];
   }
 
   onAgregar(proveedor, moneda) {

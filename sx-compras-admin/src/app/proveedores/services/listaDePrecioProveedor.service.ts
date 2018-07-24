@@ -14,8 +14,11 @@ export class ListaDePreciosProveedorService {
 
   constructor(private http: HttpClient, private config: ConfigService) {}
 
-  list(): Observable<ListaDePreciosProveedor[]> {
-    return this.http.get<ListaDePreciosProveedor[]>(this.apiUrl);
+  list(proveedorId: string): Observable<ListaDePreciosProveedor[]> {
+    const params = new HttpParams().set('proveedorId', proveedorId);
+    return this.http.get<ListaDePreciosProveedor[]>(this.apiUrl, {
+      params: params
+    });
   }
 
   getPartidas(lp: ListaDePreciosProveedor): Observable<any[]> {
@@ -48,7 +51,14 @@ export class ListaDePreciosProveedorService {
       .pipe(catchError((error: any) => throwError(error)));
   }
 
-  delete(id: string) {
+  aplicar(lp: ListaDePreciosProveedor): Observable<ListaDePreciosProveedor> {
+    const url = `${this.apiUrl}/aplicar/${lp.id}`;
+    return this.http
+      .put<ListaDePreciosProveedor>(url, {})
+      .pipe(catchError((error: any) => throwError(error)));
+  }
+
+  delete(id: number) {
     const url = `${this.apiUrl}/${id}`;
     return this.http
       .delete(url)

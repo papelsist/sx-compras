@@ -46,7 +46,11 @@ export const getSelectedProveedor = createSelector(
   getProveedoresEntities,
   fromRoot.getRouterState,
   (entities, router): Proveedor => {
-    return router.state && entities[router.state.params.proveedorId];
+    return (
+      router.state &&
+      router.state.parentParams &&
+      entities[router.state.parentParams.proveedorId]
+    );
   }
 );
 

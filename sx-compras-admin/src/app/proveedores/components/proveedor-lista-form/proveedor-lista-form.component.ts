@@ -19,10 +19,7 @@ import {
 import { ListaDePreciosProveedor } from '../../models/listaDePreciosProveedor';
 import { Proveedor } from '../../models/proveedor';
 import { ProveedorProducto } from '../../models/proveedorProducto';
-import {
-  ListaDePreciosProveedorDet,
-  buildPartida
-} from '../../models/listaDePreciosProveedorDet';
+import { ListaDePreciosProveedorDet } from '../../models/listaDePreciosProveedorDet';
 
 @Component({
   selector: 'sx-proveedor-lista-form',
@@ -34,6 +31,7 @@ export class ProveedorListaFormComponent implements OnInit, OnChanges {
   @Input() listaDePrecios: ListaDePreciosProveedor;
   @Input() productos: ProveedorProducto[];
   @Output() save = new EventEmitter<ListaDePreciosProveedor>();
+  @Output() aplicar = new EventEmitter<number>();
   @Output() cancel = new EventEmitter();
 
   constructor(private fb: FormBuilder) {}
@@ -44,16 +42,16 @@ export class ProveedorListaFormComponent implements OnInit, OnChanges {
     if (!this.form) {
       this.buildForm();
     }
-    if (changes.listaDePrecios) {
+    if (changes.listaDePrecios && changes.listaDePrecios.currentValue) {
+      // console.log('Lista de precios: ', changes.listaDePrecios.currentValue);
       this.form.patchValue(this.listaDePrecios);
-    }
-    if (changes.productos && changes.productos.currentValue) {
-      changes.productos.currentValue.forEach(item => {
-        console.log(item);
-        const det: ListaDePreciosProveedorDet = buildPartida(item);
-        console.log(det);
-        this.partidas.push(new FormControl(det));
-      });
+      changes.listaDePrecios.currentValue.partidas.forEach(item =>
+        this.partidas.push(new FormControl(item))
+      );
+      if (this.listaDePrecios.id) {
+        this.form.get('mes').disable();
+        this.form.get('ejercicio').disable();
+      }
     }
   }
 
@@ -62,6 +60,7 @@ export class ProveedorListaFormComponent implements OnInit, OnChanges {
       descripcion: [''],
       ejercicio: [null, [Validators.required]],
       mes: [null, [Validators.required, Validators.min(1), Validators.max(12)]],
+      moneda: [{ value: null, disabled: true }, [Validators.required]],
       partidas: this.fb.array([])
     });
   }
@@ -75,10 +74,14 @@ export class ProveedorListaFormComponent implements OnInit, OnChanges {
   }
 
   get title() {
+    if (!this.listaDePrecios) {
+      return '';
+    }
     return this.listaDePrecios.id
       ? `Lista de precios ${this.listaDePrecios.id}`
       : 'Alta de Lista de precios';
   }
+  /*
   get subtitle() {
     if (this.listaDePrecios.id) {
       return `Ejercicio ${this.listaDePrecios.ejercicio} Mes: ${
@@ -87,6 +90,11 @@ export class ProveedorListaFormComponent implements OnInit, OnChanges {
     } else {
       return 'Actualize los precios de los productos ';
     }
+  }
+  */
+
+  get id() {
+    return this.listaDePrecios.id;
   }
 
   onUpdateRow(event: ListaDePreciosProveedorDet) {
@@ -107,6 +115,7 @@ export class ProveedorListaFormComponent implements OnInit, OnChanges {
         partidas
       };
       this.save.emit(res);
+      this.form.markAsPristine();
     }
   }
 }

@@ -9,6 +9,7 @@ import { Observable, Subject } from 'rxjs';
 
 import { Proveedor } from '../../models/proveedor';
 import { ListaDePreciosProveedor } from '../../models/listaDePreciosProveedor';
+import { Moneda } from '../../../models';
 
 @Component({
   selector: 'sx-proveedor-listas',
@@ -18,7 +19,10 @@ import { ListaDePreciosProveedor } from '../../models/listaDePreciosProveedor';
         <sx-search-title title="Listas de precios"
           (search)="onSearch($event)">
           <button mat-menu-item class="actions" (click)="onAgregar(proveedor)">
-            <mat-icon>add</mat-icon> Agregar
+            <mat-icon>add</mat-icon> Agregar ('MXN')
+          </button>
+          <button mat-menu-item class="actions" (click)="onAgregar(proveedor, 'USD')">
+            <mat-icon>add</mat-icon> Agregar ('USD')
           </button>
         </sx-search-title>
         <mat-divider></mat-divider>
@@ -55,14 +59,22 @@ export class ProveedorListasComponent implements OnInit {
     this.search$.next(event.toLowerCase());
   }
 
-  onAgregar(proveedor: Proveedor) {
+  onAgregar(proveedor: Proveedor, moneda: Moneda = Moneda.MXN) {
     this.store.dispatch(
-      new fromRoot.Go({ path: [`proveedores/${proveedor.id}/listas/create`] })
+      new fromRoot.Go({
+        path: [`proveedores/${proveedor.id}/listas/create`],
+        query: { moneda }
+      })
     );
   }
 
   onEdit(event: ListaDePreciosProveedor) {
     console.log('Eidt: ', event);
+    this.store.dispatch(
+      new fromRoot.Go({
+        path: [`proveedores/${event.proveedor.id}/listas/${event.id}`]
+      })
+    );
   }
   onSelect(event: ListaDePreciosProveedor) {}
 

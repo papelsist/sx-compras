@@ -4,4 +4,8 @@ model {
 	ListaDePreciosProveedor listaDePreciosProveedor
 }
 
-json g.render(listaDePreciosProveedor, [resolveTemplate: false])
+json g.render(listaDePreciosProveedor, [ excludes: ['partidas', 'dateCreated', 'lastUpdated'], resolveTemplate: false]) {
+    partidas g.render(listaDePreciosProveedor.partidas)
+    creado listaDePreciosProveedor.dateCreated
+    modificado listaDePreciosProveedor.lastUpdated
+}

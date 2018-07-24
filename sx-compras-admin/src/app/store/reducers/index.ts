@@ -10,6 +10,7 @@ export interface RouterStateUrl {
   url: string;
   queryParams: Params;
   params: Params;
+  parentParams?: Params;
 }
 
 export interface State {
@@ -35,7 +36,12 @@ export class CustomSerializer
       state = state.firstChild;
     }
     const { params } = state;
+    let parentParams;
+    if (state.parent) {
+      // console.log('Adding parrent params: ', state);
+      parentParams = state.parent.params;
+    }
 
-    return { url, queryParams, params };
+    return { url, queryParams, params, parentParams };
   }
 }

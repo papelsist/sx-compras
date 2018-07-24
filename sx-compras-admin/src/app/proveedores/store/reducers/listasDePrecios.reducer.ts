@@ -30,7 +30,8 @@ export function reducer(
     case fromListas.LOAD_LISTAS_PROVEEDOR: {
       return {
         ...state,
-        loading: true
+        loading: true,
+        loaded: false
       };
     }
     case fromListas.LOAD_LISTAS_PROVEEDOR_FAIL: {

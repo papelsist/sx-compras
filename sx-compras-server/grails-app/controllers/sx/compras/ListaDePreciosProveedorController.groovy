@@ -16,6 +16,14 @@ class ListaDePreciosProveedorController extends RestfulController<ListaDePrecios
     }
 
     @Override
+    protected List<ListaDePreciosProveedor> listAllResources(Map params) {
+        log.debug('List: {}', this.params)
+        if(params.proveedorId)
+            return ListaDePreciosProveedor.where{ proveedor.id == params.proveedorId}.list()
+        return super.listAllResources(params)
+    }
+
+    @Override
     protected ListaDePreciosProveedor saveResource(ListaDePreciosProveedor resource) {
         return listaDePreciosProveedorService.save(resource)
     }
@@ -32,5 +40,13 @@ class ListaDePreciosProveedorController extends RestfulController<ListaDePrecios
         resource.createUser = ''
         resource.updateUser = ''
         return resource
+    }
+
+    def aplicar(ListaDePreciosProveedor lista) {
+        if(lista == null ){
+            notFound()
+            return
+        }
+        respond listaDePreciosProveedorService.aplicarListaDePrecios(lista)
     }
 }
