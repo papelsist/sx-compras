@@ -4,7 +4,7 @@ export enum AlcanceActionTypes {
   LoadAlcances = '[Alcance] Load Alcances'
 }
 
-export class Alcance implements Action {
+export class LoadAlcances implements Action {
   readonly type = AlcanceActionTypes.LoadAlcances;
 }
 
