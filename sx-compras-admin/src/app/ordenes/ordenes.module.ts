@@ -15,7 +15,13 @@ import { StoreModule } from '@ngrx/store';
 import * as fromState from './store/reducers';
 
 @NgModule({
-  imports: [SharedModule, OrdenesRoutingModule, StoreModule.forFeature('state', fromState.reducers, { metaReducers: fromState.metaReducers })],
+  imports: [
+    SharedModule,
+    OrdenesRoutingModule,
+    StoreModule.forFeature('state', fromState.reducers, {
+      metaReducers: fromState.metaReducers
+    })
+  ],
   declarations: [...components, ...containers],
   entryComponents: [...entryComponents],
   providers: [...services]
