@@ -1,0 +1,7 @@
+import sx.compras.Compra
+
+model {
+	Compra compra
+}
+
+json tmpl.compra(compra)

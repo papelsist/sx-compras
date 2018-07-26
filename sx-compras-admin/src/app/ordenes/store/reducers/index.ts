@@ -1,11 +1,5 @@
-import {
-  ActionReducer,
-  ActionReducerMap,
-  createFeatureSelector,
-  createSelector,
-  MetaReducer
-} from '@ngrx/store';
-import { environment } from '../../../../environments/environment';
+import { ActionReducerMap, createFeatureSelector } from '@ngrx/store';
+
 import * as fromAlcance from './alcance.reducer';
 import * as fromCompras from './compra.reducer';
 
@@ -19,10 +13,4 @@ export const reducers: ActionReducerMap<State> = {
   alcance: fromAlcance.reducer
 };
 
-export const metaReducers: MetaReducer<State>[] = !environment.production
-  ? []
-  : [];
-
-/**
- * Generado con ng g store ordenes/State -m ordenes.module.ts --statePath store/reducers
- */
+export const getOrdenesState = createFeatureSelector<State>('ordenes');

@@ -1,20 +1,8 @@
-import { OrdenesTableComponent } from './ordenes-table/ordenes-table.component';
-import { OrdenFormComponent } from './orden-form/orden-form.component';
-import { OrdenFormButtonsComponent } from './orden-form/orden-form-buttons';
-import { OrdenDetFormComponent } from './orden-det-form/orden-det-form.component';
-import { OrdenFormTableComponent } from './orden-form-table/orden-form-partidas.component';
+import { ComprasTableComponent } from './compras-table/compras-table.component';
+import { CompraFormComponent } from './compra-form/compra-form.component';
 
-export const components: any[] = [
-  OrdenesTableComponent,
-  OrdenFormComponent,
-  OrdenFormButtonsComponent,
-  OrdenDetFormComponent,
-  OrdenFormTableComponent
-];
-export const entryComponents: any[] = [OrdenDetFormComponent];
+export const components: any[] = [ComprasTableComponent, CompraFormComponent];
+export const entryComponents: any[] = [];
 
-export * from './ordenes-table/ordenes-table.component';
-export * from './orden-form/orden-form.component';
-export * from './orden-form/orden-form-buttons';
-export * from './orden-det-form/orden-det-form.component';
-export * from './orden-form-table/orden-form-partidas.component';
+export * from './compras-table/compras-table.component';
+export * from './compra-form/compra-form.component';

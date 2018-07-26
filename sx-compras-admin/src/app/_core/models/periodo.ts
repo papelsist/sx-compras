@@ -40,7 +40,7 @@ export class Periodo {
     return new Periodo(f1.toDate(), f2.toDate());
   }
 
-  static fromStorage(key: string, notFound: Periodo = Periodo.mesActual()) {
+  static fromStorage(key: string, notFound: Periodo = Periodo.monthToDay()) {
     return this.fromJson(localStorage.getItem(key)) || notFound;
   }
   static saveOnStorage(key: string, periodo: Periodo) {

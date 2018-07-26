@@ -2,53 +2,79 @@ import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 
 import { Compra } from '../../models/compra';
 import { CompraActions, CompraActionTypes } from '../actions/compra.actions';
+import { Periodo } from 'app/_core/models/periodo';
 
 export interface State extends EntityState<Compra> {
-  // additional entities state properties
+  loading: boolean;
+  loaded: boolean;
+  periodo: Periodo;
+  searchTerm: string;
 }
 
 export const adapter: EntityAdapter<Compra> = createEntityAdapter<Compra>();
 
 export const initialState: State = adapter.getInitialState({
-  // additional entity state properties
+  loading: false,
+  loaded: false,
+  periodo: Periodo.fromStorage('sx-compras.compras.periodo'),
+  searchTerm: undefined
 });
 
 export function reducer(state = initialState, action: CompraActions): State {
   switch (action.type) {
-    case CompraActionTypes.AddCompra: {
-      return adapter.addOne(action.payload.compra, state);
+    case CompraActionTypes.SetPeriodo: {
+      const periodo = action.payload;
+      return {
+        ...state,
+        periodo
+      };
+    }
+    case CompraActionTypes.SetSearchTerm: {
+      const searchTerm = action.payload;
+      return {
+        ...state,
+        searchTerm
+      };
+    }
+    case CompraActionTypes.AddCompra:
+    case CompraActionTypes.LoadCompras: {
+      return {
+        ...state,
+        loading: true
+      };
+    }
+    case CompraActionTypes.AddCompraFail:
+    case CompraActionTypes.LoadComprasFail: {
+      return {
+        ...state,
+        loading: true
+      };
+    }
+    case CompraActionTypes.LoadComprasSuccess: {
+      return adapter.addAll(action.payload, {
+        ...state,
+        loading: false,
+        loaded: true
+      });
+    }
+
+    case CompraActionTypes.AddCompraSuccess: {
+      return adapter.addOne(action.payload, {
+        ...state,
+        loading: false
+      });
     }
 
     case CompraActionTypes.UpsertCompra: {
       return adapter.upsertOne(action.payload.compra, state);
     }
 
-    case CompraActionTypes.AddCompras: {
-      return adapter.addMany(action.payload.compras, state);
-    }
-
-    case CompraActionTypes.UpsertCompras: {
-      return adapter.upsertMany(action.payload.compras, state);
-    }
-
     case CompraActionTypes.UpdateCompra: {
       return adapter.updateOne(action.payload.compra, state);
     }
 
-    case CompraActionTypes.UpdateCompras: {
-      return adapter.updateMany(action.payload.compras, state);
-    }
-
     case CompraActionTypes.DeleteCompra: {
       return adapter.removeOne(action.payload.id, state);
-    }
-
-    case CompraActionTypes.DeleteCompras: {
-      return adapter.removeMany(action.payload.ids, state);
-    }
-
-    case CompraActionTypes.LoadCompras: {
-      return adapter.addAll(action.payload.compras, state);
     }
 
     case CompraActionTypes.ClearCompras: {
@@ -67,3 +93,8 @@ export const {
   selectAll,
   selectTotal
 } = adapter.getSelectors();
+
+export const getComprasLoading = (state: State) => state.loading;
+export const getComprasLoaded = (state: State) => state.loaded;
+export const getPeriodo = (state: State) => state.periodo;
+export const getSearchTerm = (state: State) => state.searchTerm;

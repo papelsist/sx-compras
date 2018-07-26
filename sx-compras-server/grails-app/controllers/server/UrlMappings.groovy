@@ -4,6 +4,8 @@ class UrlMappings {
 
     static mappings = {
 
+        "/api/sucursales"(resources: 'sucursal')
+
         "/api/lineas"(resources: 'linea')
         "/api/marcas"(resources: 'marca')
         "/api/productos"(resources: 'producto')
@@ -17,8 +19,11 @@ class UrlMappings {
         "/api/listaDePreciosProveedor/aplicar/$id"(controller: 'listaDePreciosProveedor', action: 'aplicar', method: 'PUT')
         "/api/listaDePreciosProveedor/print/$id"(controller: 'listaDePreciosProveedor', action: 'print', method: 'GET')
 
-
-        "/api/sucursales"(resources: 'sucursal')
+        // Ordenes de compra
+        "/api/compras"(resources: 'compra'){
+            "/partidas"(resources: 'compraDet', excludes:['create', 'edit','patch'])
+        }
+        "/api/compra/print/$id"(controller: 'compra', action: 'print', method: 'GET')
 
         "/api/comprobanteFiscal"(resources: 'comprobanteFiscal')
         "/api/comprobanteFiscal/xml/$id"(controller: 'comprobanteFiscal', action: 'xml')

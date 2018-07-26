@@ -39,8 +39,7 @@ class RequisicionDeComprasController extends RestfulController<RequisicionDeComp
             String search = nombre + '%'
             query = query.where { nombre =~ search  }
         }
-
-        respond query.list(params);
+        return query.list(params);
     }
 
     @Override

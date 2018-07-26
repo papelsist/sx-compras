@@ -1,9 +1,12 @@
 import { Sucursal } from 'app/models';
+import { CompraDet } from './compraDet';
 
 export interface Compra {
   id?: string;
   sucursal: Sucursal;
+  sucursalNombre?: string;
   proveedor: { id: string; nombre: string };
+  nombre?: string;
   folio: number;
   fecha: string;
   entrega?: string;
@@ -14,7 +17,11 @@ export interface Compra {
   importeNeto?: number;
   impuestos?: number;
   total?: number;
-  partidas: any[];
+  partidas: CompraDet[];
   tipoDeCambio?: number;
-  modificado?: string;
+  modificada?: string;
+  selected?: boolean;
+  createUser?: string;
+  updateUser?: string;
+  status?: string;
 }

@@ -6,20 +6,21 @@ import * as _ from 'lodash';
 import { ConfigService } from '../../utils/config.service';
 import { Sucursal } from '../../models';
 import { Compra } from '../models/compra';
+import { Periodo } from 'app/_core/models/periodo';
 
 @Injectable()
-export class OrdenesService {
+export class ComprasService {
   private apiUrl: string;
 
   constructor(private http: HttpClient, private configService: ConfigService) {
     this.apiUrl = configService.buildApiUrl('compras');
   }
 
-  list(filtro): Observable<Compra[]> {
-    let params = new HttpParams();
-    _.forIn(filtro, (value, key) => {
-      params = params.set(key, value);
-    });
+  list(periodo: Periodo): Observable<Compra[]> {
+    const { fechaInicial, fechaFinal } = periodo.toApiJSON();
+    const params = new HttpParams()
+      .set('fechaInicial', fechaInicial)
+      .set('fechaFinal', fechaFinal);
     return this.http.get<Compra[]>(this.apiUrl, { params: params });
   }
 

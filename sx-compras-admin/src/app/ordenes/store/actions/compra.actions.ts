@@ -1,30 +1,50 @@
 import { Action } from '@ngrx/store';
 import { Update } from '@ngrx/entity';
+
 import { Compra } from '../../models/compra';
+import { Periodo } from 'app/_core/models/periodo';
 
 export enum CompraActionTypes {
   LoadCompras = '[Compra] Load Compras',
+  LoadComprasFail = '[Compra] Load Compras fail',
+  LoadComprasSuccess = '[Compra] Load Compras Success',
   AddCompra = '[Compra] Add Compra',
+  AddCompraFail = '[Compra] Add Compra Fail',
+  AddCompraSuccess = '[Compra] Add Compra Success',
   UpsertCompra = '[Compra] Upsert Compra',
-  AddCompras = '[Compra] Add Compras',
-  UpsertCompras = '[Compra] Upsert Compras',
   UpdateCompra = '[Compra] Update Compra',
-  UpdateCompras = '[Compra] Update Compras',
   DeleteCompra = '[Compra] Delete Compra',
-  DeleteCompras = '[Compra] Delete Compras',
-  ClearCompras = '[Compra] Clear Compras'
+  ClearCompras = '[Compra] Clear Compras',
+  SetPeriodo = '[Compra] Set Periodo de compras',
+  SetSearchTerm = '[Compra] Set Search term de compras'
 }
 
 export class LoadCompras implements Action {
   readonly type = CompraActionTypes.LoadCompras;
+}
+export class LoadComprasFail implements Action {
+  readonly type = CompraActionTypes.LoadComprasFail;
+  constructor(public payload: any) {}
+}
+export class LoadComprasSuccess implements Action {
+  readonly type = CompraActionTypes.LoadComprasSuccess;
 
-  constructor(public payload: { compras: Compra[] }) {}
+  constructor(public payload: Compra[]) {}
 }
 
 export class AddCompra implements Action {
   readonly type = CompraActionTypes.AddCompra;
+  constructor(public payload: Compra) {}
+}
+export class AddCompraFail implements Action {
+  readonly type = CompraActionTypes.AddCompraFail;
 
-  constructor(public payload: { compra: Compra }) {}
+  constructor(public payload: any) {}
+}
+export class AddCompraSuccess implements Action {
+  readonly type = CompraActionTypes.AddCompraSuccess;
+
+  constructor(public payload: Compra) {}
 }
 
 export class UpsertCompra implements Action {
@@ -33,28 +53,10 @@ export class UpsertCompra implements Action {
   constructor(public payload: { compra: Compra }) {}
 }
 
-export class AddCompras implements Action {
-  readonly type = CompraActionTypes.AddCompras;
-
-  constructor(public payload: { compras: Compra[] }) {}
-}
-
-export class UpsertCompras implements Action {
-  readonly type = CompraActionTypes.UpsertCompras;
-
-  constructor(public payload: { compras: Compra[] }) {}
-}
-
 export class UpdateCompra implements Action {
   readonly type = CompraActionTypes.UpdateCompra;
 
   constructor(public payload: { compra: Update<Compra> }) {}
-}
-
-export class UpdateCompras implements Action {
-  readonly type = CompraActionTypes.UpdateCompras;
-
-  constructor(public payload: { compras: Update<Compra>[] }) {}
 }
 
 export class DeleteCompra implements Action {
@@ -63,24 +65,29 @@ export class DeleteCompra implements Action {
   constructor(public payload: { id: string }) {}
 }
 
-export class DeleteCompras implements Action {
-  readonly type = CompraActionTypes.DeleteCompras;
-
-  constructor(public payload: { ids: string[] }) {}
-}
-
 export class ClearCompras implements Action {
   readonly type = CompraActionTypes.ClearCompras;
 }
 
+export class SetPeriodo implements Action {
+  readonly type = CompraActionTypes.SetPeriodo;
+  constructor(public payload: Periodo) {}
+}
+export class SetSearchTerm implements Action {
+  readonly type = CompraActionTypes.SetSearchTerm;
+  constructor(public payload: string) {}
+}
+
 export type CompraActions =
   | LoadCompras
+  | LoadComprasFail
+  | LoadComprasSuccess
   | AddCompra
+  | AddCompraFail
+  | AddCompraSuccess
   | UpsertCompra
-  | AddCompras
-  | UpsertCompras
   | UpdateCompra
-  | UpdateCompras
   | DeleteCompra
-  | DeleteCompras
-  | ClearCompras;
+  | ClearCompras
+  | SetPeriodo
+  | SetSearchTerm;

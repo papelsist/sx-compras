@@ -11,7 +11,13 @@
       <mat-icon>arrow_back</mat-icon>
     </button>
     <span>Ordenes de compra</span>
+    <ng-container *ngIf="periodo$ | async as periodo">
+      <span class="pad-left">Periodo: </span>
+      <span class="pad-left">{{periodo}}</span>
+      <sx-periodo-picker [periodo]="periodo" (change)="cambiarPeriodo($event)"></sx-periodo-picker>
+    </ng-container>
     <span flex></span>
+    <sx-logout-button></sx-logout-button>
   </div>
   <mat-nav-list td-sidenav-content [tdLayoutNavListClose]="!media.query('gt-sm')">
     <ng-template let-item let-last="last" ngFor [ngForOf]="navmenu">
@@ -27,8 +33,11 @@
   </mat-nav-list>
 
   <div tdMediaToggle="gt-xs" [mediaClasses]="['push-sm']">
-    <router-outlet></router-outlet>
+    <ng-template tdLoading [tdLoadingUntil]="!(loading$ | async)" tdLoadingStrategy="overlay">
+      <router-outlet></router-outlet>
+    </ng-template>
   </div>
+
 
   <td-layout-footer>
     <sx-footer></sx-footer>

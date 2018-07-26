@@ -11,8 +11,6 @@ import sx.core.Proveedor
 @EqualsAndHashCode(includes='id,sucursal,folio')
 class Compra {
 
-    static auditable = false
-    static stampable = true
 
     String id
 
@@ -42,7 +40,7 @@ class Compra {
 
     BigDecimal total = 0.0
 
-    Currency moneda = Currency.getInstance('MXN')
+    String moneda = 'MXN'
 
     BigDecimal tipoDeCambio = 1.0
 
@@ -68,8 +66,8 @@ class Compra {
 
     String lastUpdatedBy
 
+    String status
 
-    static embedded = ['log']
 
     static constraints = {
         comentario nullable:true
@@ -85,6 +83,8 @@ class Compra {
 
     static hasMany =[partidas:CompraDet]
 
+    static transients = ['status']
+
     static mapping = {
         id generator:'uuid'
         partidas cascade: "all-delete-orphan"
@@ -94,19 +94,25 @@ class Compra {
         cerrada type: 'date'
     }
 
+    def beforeUpdate() {
+        actualizarStatus()
+    }
+
     def actualizarStatus() {
         this.pendiente = this.partidas.find{it.getPorRecibir() > 0.0 } == null ? true: false
-        // this.pendiente = this.isPendiente()
     }
 
     def pendientes() {
         return this.partidas.findAll{ CompraDet det -> det.getPorRecibir() > 0}
     }
-    /*
-    def isPendiente() {
-        return this.partidas.find {it.getPorRecibir() > 0 } ?: false
+
+    def getStatus() {
+        if(pendiente && cerrada) return 'T'
+        else if(pendiente)
+            return 'P'
+        else
+            return 'A'
     }
-    */
 
 }
 

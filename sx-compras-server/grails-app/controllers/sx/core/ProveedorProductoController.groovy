@@ -26,8 +26,11 @@ class ProveedorProductoController extends RestfulController<ProveedorProducto> {
 
     @Override
     protected List<ProveedorProducto> listAllResources(Map params) {
+        params.sort = 'lastUpdated'
+        params.order = 'desc'
+        params.max = 30
         String proveedorId = params.proveedorId
-        return ProveedorProducto.where{ proveedor.id == proveedorId}.list()
+        return ProveedorProducto.where{ proveedor.id == proveedorId}.list(params)
     }
 
     def disponibles() {
