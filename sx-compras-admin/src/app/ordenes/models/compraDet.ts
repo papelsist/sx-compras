@@ -1,6 +1,7 @@
 import { Compra } from './compra';
 import { Producto } from '../../productos/models/producto';
 import { ProveedorProducto } from '../../proveedores/models/proveedorProducto';
+import { aplicarDescuentosEnCascada } from 'app/utils/money-utils';
 
 export interface CompraDet {
   id?: string;
@@ -39,4 +40,27 @@ export function buildCompraDet(
     importeBruto: 0,
     importeNeto: 0
   };
+}
+
+export function actualizarPartida(row: CompraDet) {
+  // console.log('Actualizando: ', row);
+  const {
+    producto,
+    solicitado,
+    precio,
+    descuento1,
+    descuento2,
+    descuento3,
+    descuento4
+  } = row;
+  const factor = producto.unidad === 'MIL' ? 1000 : 1;
+  const importeBruto = precio * (solicitado / factor);
+  const importeNeto = aplicarDescuentosEnCascada(importeBruto, [
+    descuento1,
+    descuento2,
+    descuento3,
+    descuento4
+  ]);
+  row.importeBruto = importeBruto;
+  row.importeNeto = importeNeto;
 }

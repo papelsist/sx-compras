@@ -33,6 +33,7 @@ export class ProveedorListaFormComponent implements OnInit, OnChanges {
   @Output() save = new EventEmitter<ListaDePreciosProveedor>();
   @Output() aplicar = new EventEmitter<number>();
   @Output() cancel = new EventEmitter();
+  @Output() delete = new EventEmitter<ListaDePreciosProveedor>();
 
   constructor(private fb: FormBuilder) {}
 

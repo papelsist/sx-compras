@@ -13,6 +13,8 @@ export enum CompraActionTypes {
   AddCompraSuccess = '[Compra] Add Compra Success',
   UpsertCompra = '[Compra] Upsert Compra',
   UpdateCompra = '[Compra] Update Compra',
+  UpdateCompraFail = '[Compra] Update Compra Fail',
+  UpdateCompraSuccess = '[Compra] Update Compra Success',
   DeleteCompra = '[Compra] Delete Compra',
   DeleteCompraFail = '[Compra] Delete Compra Fail',
   DeleteCompraSuccess = '[Compra] Delete Compra Success',
@@ -49,16 +51,26 @@ export class AddCompraSuccess implements Action {
   constructor(public payload: Compra) {}
 }
 
-export class UpsertCompra implements Action {
-  readonly type = CompraActionTypes.UpsertCompra;
-
-  constructor(public payload: { compra: Compra }) {}
-}
-
 export class UpdateCompra implements Action {
   readonly type = CompraActionTypes.UpdateCompra;
 
   constructor(public payload: { compra: Update<Compra> }) {}
+}
+export class UpdateCompraFail implements Action {
+  readonly type = CompraActionTypes.UpdateCompraFail;
+
+  constructor(public payload: { compra: Update<Compra> }) {}
+}
+export class UpdateCompraSuccess implements Action {
+  readonly type = CompraActionTypes.UpdateCompraSuccess;
+
+  constructor(public payload: { compra: Update<Compra> }) {}
+}
+
+export class UpsertCompra implements Action {
+  readonly type = CompraActionTypes.UpsertCompra;
+
+  constructor(public payload: { compra: Compra }) {}
 }
 
 export class DeleteCompra implements Action {
@@ -97,8 +109,10 @@ export type CompraActions =
   | AddCompra
   | AddCompraFail
   | AddCompraSuccess
-  | UpsertCompra
   | UpdateCompra
+  | UpdateCompraFail
+  | UpdateCompraSuccess
+  | UpsertCompra
   | DeleteCompra
   | DeleteCompraFail
   | DeleteCompraSuccess

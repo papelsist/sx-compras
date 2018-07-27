@@ -27,6 +27,10 @@
     <button mat-button color="primary" type="button" (click)="aplicar.emit(listaDePrecios)" *ngIf="listaDePrecios?.id && !listaDePrecios?.aplicada">
       <mat-icon>check_circle</mat-icon> Aplicar
     </button>
+    <button mat-button color="warn" type="button" (click)="delete.emit(listaDePrecios)" *ngIf="listaDePrecios?.id">
+      <mat-icon>delete</mat-icon> Eliminar
+    </button>
+
   </mat-card-actions>
 
 </mat-card>

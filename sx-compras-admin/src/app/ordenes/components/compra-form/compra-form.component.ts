@@ -17,9 +17,9 @@ import {
 } from '@angular/forms';
 
 import { Compra } from '../../models/compra';
+import { CompraDet, actualizarPartida } from '../../models/compraDet';
 
 import { ProveedorProducto } from 'app/proveedores/models/proveedorProducto';
-import { CompraDet } from '../../models/compraDet';
 
 @Component({
   selector: 'sx-compra-form',
@@ -81,12 +81,14 @@ export class CompraFormComponent implements OnInit, OnChanges {
         ...this.form.value,
         fecha
       };
-      this.save.emit(res);
+      console.log('Salvando compra:', res);
+      // this.save.emit(res);
     }
   }
 
   onInsertPartida(event: CompraDet) {
     console.log('Agregando partida de compra: ', event);
+    actualizarPartida(event);
     this.partidas.push(new FormControl(event));
     this.form.markAsDirty();
   }

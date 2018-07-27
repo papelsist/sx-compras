@@ -25,7 +25,7 @@ class ProveedorLogListenerService {
 
     @Subscriber
     void afterInsert(PostInsertEvent event) {
-        log.debug('AfterInsert: event {}', event.entityObject.class.name);
+        // log.debug('AfterInsert: event {}', event.entityObject.class.name);
         String id = getId(event)
         if ( id ) {
             log.info 'After Proveedor save...'
@@ -36,7 +36,7 @@ class ProveedorLogListenerService {
     @Subscriber
     void afterUpdate(PostUpdateEvent event) {
         String id = getId(event)
-        log.debug('AfterUpdate: event {}', event.entityObject.class.name);
+        // log.debug('AfterUpdate: event {}', event.entityObject.class.name);
         if ( id ) {
             log.info "After Proveedor update..."
             proveedorLogDataService.save('UPDATE', id)

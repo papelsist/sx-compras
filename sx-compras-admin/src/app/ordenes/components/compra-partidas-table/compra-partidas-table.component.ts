@@ -11,8 +11,7 @@ import {
 import { FormGroup } from '@angular/forms';
 import { MatTable, MatTableDataSource } from '@angular/material';
 
-import { aplicarDescuentosEnCascada } from 'app/utils/money-utils';
-import { CompraDet } from '../../models/compraDet';
+import { CompraDet, actualizarPartida } from '../../models/compraDet';
 
 @Component({
   selector: 'sx-compra-partidas-table',
@@ -54,26 +53,8 @@ export class CompraPartidasTableComponent implements OnInit, OnChanges {
   }
 
   actualizar(row: CompraDet) {
-    console.log('Actualizando: ', row);
-    const {
-      producto,
-      solicitado,
-      precio,
-      descuento1,
-      descuento2,
-      descuento3,
-      descuento4
-    } = row;
-    const factor = producto.unidad === 'MIL' ? 1000 : 1;
-    const importeBruto = precio * (solicitado / factor);
-    const importeNeto = aplicarDescuentosEnCascada(precio, [
-      descuento1,
-      descuento2,
-      descuento3,
-      descuento4
-    ]);
-    row.importeBruto = importeBruto;
-    row.importeNeto = importeNeto;
+    actualizarPartida(row);
+    // console.log('Partida actualizada: ', row);
     this.update.emit(row);
   }
 }
