@@ -11,12 +11,9 @@ import sx.core.ProveedorProducto
 @Service(ListaDePreciosProveedor)
 abstract class ListaDePreciosProveedorService implements LogUser{
 
-    abstract ListaDePreciosProveedor save2(ListaDePreciosProveedor lo)
 
     ListaDePreciosProveedor save(ListaDePreciosProveedor lp) {
         logEntity(lp)
-        log.debug('Salvando entidad: {}', lp)
-        log.debug('Creado {} Updated: {}', lp.createUser, lp.updateUser)
         lp.save failOnError:true, flush:true
         return lp
     }
