@@ -119,9 +119,7 @@ export class ProductoProvFieldComponent
   }
 
   displayFn(provProd) {
-    return provProd
-      ? `(${provProd.producto.clave}) ${provProd.producto.descripcion}`
-      : '';
+    return provProd ? `(${provProd.clave}) ${provProd.descripcion}` : '';
   }
 
   writeValue(obj: any): void {

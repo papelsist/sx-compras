@@ -26,6 +26,7 @@ class ProveedorProductoController extends RestfulController<ProveedorProducto> {
 
     @Override
     protected List<ProveedorProducto> listAllResources(Map params) {
+        log.info('Buscando los productos: {} ', params)
         params.sort = 'lastUpdated'
         params.order = 'desc'
         params.max = 30

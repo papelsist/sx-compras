@@ -1,12 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+
 import * as _ from 'lodash';
 
 import { ConfigService } from '../../utils/config.service';
 import { Sucursal } from '../../models';
 import { Compra } from '../models/compra';
 import { Periodo } from 'app/_core/models/periodo';
+import { ProveedorProducto } from '../../proveedores/models/proveedorProducto';
 
 @Injectable()
 export class ComprasService {
@@ -29,8 +33,8 @@ export class ComprasService {
     return this.http.get<Compra>(url);
   }
 
-  save(compra: Compra) {
-    return this.http.post(this.apiUrl, compra);
+  save(compra: Compra): Observable<Compra> {
+    return this.http.post<Compra>(this.apiUrl, compra);
   }
 
   depurar(compra: Compra) {
@@ -39,8 +43,18 @@ export class ComprasService {
   }
 
   delete(id: string) {
-    const params = new HttpParams().set('id', id);
-    return this.http.delete(this.apiUrl, { params: params });
+    const url = `${this.apiUrl}/${id}`;
+    return this.http
+      .delete(url)
+      .pipe(catchError((error: any) => throwError(error)));
+  }
+
+  getProductosDisponibles(compra: Compra): Observable<ProveedorProducto[]> {
+    const params = new HttpParams().set('moneda', compra.moneda);
+    const url = `${this.configService.buildApiUrl('proveedores')}/${
+      compra.proveedor.id
+    }/productos`;
+    return this.http.get<ProveedorProducto[]>(url, { params: params });
   }
 
   print(compra: Compra) {

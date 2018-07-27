@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { Store, select } from '@ngrx/store';
+import * as fromRoot from 'app/store';
 import * as fromStore from '../../store';
 import * as fromActions from '../../store/actions/compra.actions';
 
@@ -21,7 +22,7 @@ import * as _ from 'lodash';
       <ng-container *ngIf="comprasPorSucursal$ | async as rows">
         <mat-tab-group >
           <mat-tab label="{{sucursal}}" *ngFor="let sucursal of getSucursales(rows)">
-            <sx-compras-table [compras]="rows[sucursal]" [filter]="search$ | async"></sx-compras-table>
+            <sx-compras-table [compras]="rows[sucursal]" [filter]="search$ | async" (edit)="onEdit($event)"></sx-compras-table>
           </mat-tab>
         </mat-tab-group>
       </ng-container>
@@ -56,5 +57,11 @@ export class ComprasComponent implements OnInit {
 
   getSucursales(object): string[] {
     return _.keys(object);
+  }
+
+  onEdit(event: Compra) {
+    this.store.dispatch(
+      new fromRoot.Go({ path: ['ordenes/compras', event.id] })
+    );
   }
 }

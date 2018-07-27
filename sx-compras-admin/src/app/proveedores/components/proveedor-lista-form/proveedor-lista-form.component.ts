@@ -108,14 +108,20 @@ export class ProveedorListaFormComponent implements OnInit, OnChanges {
 
   onSubmit() {
     if (this.form.valid) {
-      const partidas = this.partidas.value;
       const res = {
         ...this.listaDePrecios,
         ...this.form.value,
-        partidas
+        partidas: this.preparePartidas()
       };
       this.save.emit(res);
+      // console.log('Salvando: ', res);
       this.form.markAsPristine();
     }
+  }
+
+  preparePartidas() {
+    const partidas = [...this.partidas.value];
+    partidas.forEach(item => (item.producto = item.producto.id));
+    return partidas;
   }
 }

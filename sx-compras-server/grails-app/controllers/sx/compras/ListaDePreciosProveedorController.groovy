@@ -28,6 +28,7 @@ class ListaDePreciosProveedorController extends RestfulController<ListaDePrecios
 
     @Override
     protected ListaDePreciosProveedor saveResource(ListaDePreciosProveedor resource) {
+        log.info('Salvando lista de precios {}', resource.proveedor)
         return listaDePreciosProveedorService.save(resource)
     }
 

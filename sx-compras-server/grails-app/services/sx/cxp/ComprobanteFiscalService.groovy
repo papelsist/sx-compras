@@ -5,7 +5,7 @@ import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
 import groovy.util.slurpersupport.GPathResult
 import org.apache.commons.lang3.exception.ExceptionUtils
-
+import org.springframework.beans.factory.annotation.Value
 import sx.core.LogUser
 import sx.core.Proveedor
 
@@ -18,6 +18,9 @@ import grails.gorm.transactions.Transactional
 class ComprobanteFiscalService implements  LogUser{
 
     static String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss"
+
+    @Value('${siipapx.cxp.cfdisDir}')
+    String cfdiDir
 
     ImportadorCfdi32 importadorCfdi32
 
@@ -140,6 +143,12 @@ class ComprobanteFiscalService implements  LogUser{
         return cxp
     }
 
+    void importacionLocal(String tipo = "COMPRAS") {
+        File dir = new File(this.cfdiDir)
+        assert dir.exists(), "No existe el directorio: ${this.cfdiDir}"
+        importarDirectorio(dir, tipo)
+    }
+
     void importarDirectorio(File dir, String tipo = 'COMPRAS') {
         dir.eachFile { File it ->
             if(it.isDirectory())
@@ -160,6 +169,7 @@ class ComprobanteFiscalService implements  LogUser{
             }
         }
     }
+
 
     @Transactional
     void importar(File xmlFile, String tipo = 'COMPRAS') {

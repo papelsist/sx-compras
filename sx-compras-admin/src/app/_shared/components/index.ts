@@ -17,6 +17,8 @@ import { DireccionFormComponent } from './direccion-form/direccion-form.componen
 import { EjercicioFieldComponent } from './ejercicio-field/ejercicio-field.component';
 import { MesFieldComponent } from './mes-field/mes-field.component';
 import { MonedaFieldComponent } from './moneda-field/moneda-field.component';
+import { TipoCambioFieldComponent } from './tipo-cambio-field/tipo-cambio-field.component';
+import { ProveedorProductoFieldComponent } from './proveedor-productos-field/proveedor-productos-field.component';
 
 export const components = [
   DireccionComponent,
@@ -37,7 +39,9 @@ export const components = [
   DireccionFormComponent,
   EjercicioFieldComponent,
   MesFieldComponent,
-  MonedaFieldComponent
+  MonedaFieldComponent,
+  TipoCambioFieldComponent,
+  ProveedorProductoFieldComponent
 ];
 
 export const entyComponents: any[] = [
@@ -62,3 +66,5 @@ export * from './direccion-form/direccion-form.component';
 export * from './ejercicio-field/ejercicio-field.component';
 export * from './mes-field/mes-field.component';
 export * from './moneda-field/moneda-field.component';
+export * from './tipo-cambio-field/tipo-cambio-field.component';
+export * from './proveedor-productos-field/proveedor-productos-field.component';

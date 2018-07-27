@@ -3,9 +3,13 @@ package sx.compras
 import grails.compiler.GrailsCompileStatic
 import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.*
+
 import groovy.transform.CompileDynamic
+import sx.core.Sucursal
 import sx.reports.ReportService
 import sx.utils.Periodo
+
+
 
 @Secured("ROLE_COMPRAS")
 @GrailsCompileStatic
@@ -18,6 +22,14 @@ class CompraController extends RestfulController<Compra> {
         super(Compra)
     }
 
+    @Override
+    protected Compra createResource() {
+        def instance = new Compra()
+        bindData instance, getObjectToBind()
+        instance.folio = 0L
+        instance.sucursal = Sucursal.where { clave == 1}.find()
+        return instance
+    }
 
     @Override
     protected Compra saveResource(Compra resource) {

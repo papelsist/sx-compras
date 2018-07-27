@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 
 import { Store, select } from '@ngrx/store';
+import * as fromRoot from 'app/store';
 import * as fromStore from '../../store';
 import { getPeriodoDeCompras } from '../selectors/compra.selectors';
 
@@ -45,6 +46,47 @@ export class CompraEffects {
       Periodo.saveOnStorage('sx-compras.compras.periodo', periodo)
     ),
     map(() => new fromActions.LoadCompras())
+  );
+
+  @Effect()
+  addCompra$ = this.actions$.pipe(
+    ofType<fromActions.AddCompra>(CompraActionTypes.AddCompra),
+    map(action => action.payload),
+    switchMap(compra => {
+      return this.service
+        .save(compra)
+        .pipe(
+          map(res => new fromActions.AddCompraSuccess(res)),
+          catchError(error => of(new fromActions.LoadComprasFail(error)))
+        );
+    })
+  );
+
+  @Effect()
+  addCompraSuccess$ = this.actions$.pipe(
+    ofType<fromActions.AddCompra>(CompraActionTypes.AddCompraSuccess),
+    map(action => action.payload),
+    map(compra => new fromRoot.Go({ path: ['ordenes/compras', compra.id] }))
+  );
+
+  @Effect()
+  deleteCompra$ = this.actions$.pipe(
+    ofType<fromActions.DeleteCompra>(CompraActionTypes.DeleteCompra),
+    map(action => action.payload),
+    switchMap(compra => {
+      return this.service
+        .delete(compra.id)
+        .pipe(
+          map(res => new fromActions.DeleteCompraSuccess(compra)),
+          catchError(error => of(new fromActions.LoadComprasFail(error)))
+        );
+    })
+  );
+
+  @Effect()
+  deleteSuccess$ = this.actions$.pipe(
+    ofType(CompraActionTypes.DeleteCompraSuccess),
+    map(() => new fromRoot.Go({ path: ['ordenes/compras'] }))
   );
 
   /*

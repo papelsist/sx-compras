@@ -83,4 +83,9 @@ export class ComprasTableComponent implements OnInit, OnChanges {
     filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
     this.dataSource.filter = filterValue;
   }
+
+  onEdit($event: Event, row) {
+    $event.preventDefault();
+    this.edit.emit(row);
+  }
 }

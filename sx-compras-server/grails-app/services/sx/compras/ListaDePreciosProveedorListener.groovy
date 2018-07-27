@@ -18,6 +18,7 @@ class ListaDePreciosProveedorListener {
      */
     @Subscriber()
     void onAplicarListaDePrecios(ListaDePreciosProveedor lista) {
+        /*
         println 'Transfiriendo precios de la lista de precios....'
         log.debug('Transfiriendo precios de la lista: {}', lista.id)
         if(!lista.aplicada) {
@@ -34,5 +35,6 @@ class ListaDePreciosProveedorListener {
             lista.aplicada = new Date()
             lista.save flush: true
         }
+        */
     }
 }

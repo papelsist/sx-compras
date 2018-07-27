@@ -36,6 +36,8 @@ export function reducer(state = initialState, action: CompraActions): State {
         searchTerm
       };
     }
+
+    case CompraActionTypes.DeleteCompra:
     case CompraActionTypes.AddCompra:
     case CompraActionTypes.LoadCompras: {
       return {
@@ -43,11 +45,13 @@ export function reducer(state = initialState, action: CompraActions): State {
         loading: true
       };
     }
+
+    case CompraActionTypes.DeleteCompraFail:
     case CompraActionTypes.AddCompraFail:
     case CompraActionTypes.LoadComprasFail: {
       return {
         ...state,
-        loading: true
+        loading: false
       };
     }
     case CompraActionTypes.LoadComprasSuccess: {
@@ -73,8 +77,11 @@ export function reducer(state = initialState, action: CompraActions): State {
       return adapter.updateOne(action.payload.compra, state);
     }
 
-    case CompraActionTypes.DeleteCompra: {
-      return adapter.removeOne(action.payload.id, state);
+    case CompraActionTypes.DeleteCompraSuccess: {
+      return adapter.removeOne(action.payload.id, {
+        ...state,
+        loading: false
+      });
     }
 
     case CompraActionTypes.ClearCompras: {

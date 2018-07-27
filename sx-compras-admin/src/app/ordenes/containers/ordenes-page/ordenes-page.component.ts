@@ -15,22 +15,22 @@ import { Periodo } from '../../../_core/models/periodo';
 export class OrdenesPageComponent implements OnInit {
   navmenu: Object[] = [
     {
-      route: 'pendientes',
-      title: 'Pendientes',
-      description: 'Alta de ordenes',
-      icon: 'repeat'
+      route: 'compras',
+      title: 'Compras',
+      description: 'Ordenes de compra',
+      icon: 'add_shopping_cart'
     },
     {
-      route: 'transito',
-      title: 'Transito',
+      route: 'recepciones',
+      title: 'Recepciones',
       description: 'Ordenes en tránsito',
-      icon: 'swap_horiz'
+      icon: 'flight_land'
     },
     {
-      route: 'atendidas',
-      title: 'Atendidas',
-      descripcion: 'Ordenes atendidas',
-      icon: 'cancel'
+      route: 'alcance',
+      title: 'Alcances',
+      descripcion: 'Alcancees de inventario',
+      icon: 'data_usage'
     }
   ];
   periodo$: Observable<Periodo>;

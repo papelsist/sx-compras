@@ -5,6 +5,13 @@ model {
 }
 
 json g.render(compra, [excludes:['dateCreated','lastUpdated','version']]){
+    proveedor {
+        id compra.proveedor.id
+        nombre compra.proveedor.nombre
+        clave compra.proveedor.clave
+        tipo compra.proveedor.tipo
+        rfc compra.proveedor.rfc
+    }
     nombre compra.proveedor.nombre
     sucursalNombre compra.sucursal.nombre
     modificada compra.dateCreated

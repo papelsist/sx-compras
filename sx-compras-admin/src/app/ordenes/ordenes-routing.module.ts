@@ -8,13 +8,15 @@ const routes: Routes = [
   {
     path: '',
     component: containers.OrdenesPageComponent,
-    canActivate: [fromGuards.ComprasGuard],
     children: [
-      { path: 'pendientes', component: containers.ComprasComponent },
-      { path: 'pendientes/create', component: containers.CompraComponent },
       {
-        path: ':id',
-        component: containers.CompraComponent
+        path: 'compras',
+        canActivate: [fromGuards.ComprasGuard],
+        children: [
+          { path: '', component: containers.ComprasComponent },
+          { path: 'create', component: containers.CompraComponent },
+          { path: ':compraId', component: containers.CompraComponent }
+        ]
       }
     ]
   }

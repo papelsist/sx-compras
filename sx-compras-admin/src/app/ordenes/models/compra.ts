@@ -18,6 +18,7 @@ export interface Compra {
   impuestos?: number;
   total?: number;
   partidas: CompraDet[];
+  moneda: string;
   tipoDeCambio?: number;
   modificada?: string;
   selected?: boolean;

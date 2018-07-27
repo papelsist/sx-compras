@@ -1,0 +1,10 @@
+<ng-container [formGroup]="parent">
+  <mat-form-field [style.width.%]="100">
+    <input type="text" matInput [formControlName]="propertyName" [matAutocomplete]="auto">
+  </mat-form-field>
+</ng-container>
+<mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+  <mat-option *ngFor="let producto of filteredProducts$ | async" [value]="producto">
+    {{producto.clave}} {{ producto.descripcion }}
+  </mat-option>
+</mat-autocomplete>
