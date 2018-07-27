@@ -7,6 +7,9 @@ export interface CompraDet {
   id?: string;
   compra: { id: string };
   producto: Partial<Producto>;
+  clave: string;
+  descripcion: string;
+  unidad: string;
   sucursal?: { id: string; nombre: string };
   solicitado: number;
   precio: number;
@@ -30,6 +33,9 @@ export function buildCompraDet(
 ): Partial<CompraDet> {
   return {
     producto: provProd.producto,
+    clave: provProd.clave,
+    descripcion: provProd.descripcion,
+    unidad: provProd.unidad,
     solicitado: 0,
     precio: provProd.precioBruto,
     descuento1: provProd.desc1,

@@ -4,4 +4,10 @@ model {
 	Compra compra
 }
 
-json tmpl.compra(compra)
+json g.render(compra, [deep:false, excludes:['partidas','dateCreated','lastUpdated', 'version']]) {
+    sucursalNombre compra.sucursal.nombre
+    partidas g.render(compra.partidas)
+    modificada compra.dateCreated
+    creada compra.dateCreated
+    status compra.status
+}

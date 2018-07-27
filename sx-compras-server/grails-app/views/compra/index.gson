@@ -4,5 +4,6 @@ model {
 	Iterable<Compra> compraList
 }
 
-json tmpl.compra(compraList ?: [])
+json tmpl.compraRow(compraList ?: [])
+
 

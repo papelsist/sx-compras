@@ -37,6 +37,13 @@ export class ComprasService {
     return this.http.post<Compra>(this.apiUrl, compra);
   }
 
+  update(compra: Compra): Observable<Compra> {
+    const url = `${this.apiUrl}/${compra.id}`;
+    return this.http
+      .put<Compra>(url, compra)
+      .pipe(catchError((error: any) => throwError(error)));
+  }
+
   depurar(compra: Compra) {
     const url = this.configService.buildApiUrl('compras/depurar/' + compra.id);
     return this.http.put(url, {});

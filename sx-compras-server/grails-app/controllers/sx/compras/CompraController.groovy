@@ -22,11 +22,13 @@ class CompraController extends RestfulController<Compra> {
         super(Compra)
     }
 
+
     @Override
     protected Compra createResource() {
         def instance = new Compra()
         bindData instance, getObjectToBind()
         instance.folio = 0L
+        instance.centralizada = true
         instance.sucursal = Sucursal.where { clave == 1}.find()
         return instance
     }

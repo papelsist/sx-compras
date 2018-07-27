@@ -15,7 +15,11 @@ const routes: Routes = [
         children: [
           { path: '', component: containers.ComprasComponent },
           { path: 'create', component: containers.CompraComponent },
-          { path: ':compraId', component: containers.CompraComponent }
+          {
+            path: ':compraId',
+            canActivate: [fromGuards.CompraExistsGuard],
+            component: containers.CompraComponent
+          }
         ]
       }
     ]

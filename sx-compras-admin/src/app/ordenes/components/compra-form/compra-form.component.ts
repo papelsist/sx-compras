@@ -43,9 +43,11 @@ export class CompraFormComponent implements OnInit, OnChanges {
       this.buildForm();
     }
     if (changes.compra && changes.compra.currentValue) {
-      console.log('Editando compra:', changes.compra.currentValue);
+      // console.log('Editando compra:', changes.compra.currentValue);
       const comp = changes.compra.currentValue;
+      this.clarPartidas();
       this.form.patchValue(comp);
+
       comp.partidas.forEach(item => this.partidas.push(new FormControl(item)));
       if (comp.id) {
         this.form.get('proveedor').disable();
@@ -54,6 +56,12 @@ export class CompraFormComponent implements OnInit, OnChanges {
     // if (changes.productos && changes.productos.currentValue) {
     //   console.log('Productos disponibles: ', changes.productos.currentValue);
     // }
+  }
+
+  private clarPartidas() {
+    while (this.partidas.length !== 0) {
+      this.partidas.removeAt(0);
+    }
   }
 
   buildForm() {
@@ -76,18 +84,30 @@ export class CompraFormComponent implements OnInit, OnChanges {
       if (fecha instanceof Date) {
         fecha = fecha.toISOString();
       }
+      const proveedor = { id: this.proveedor.id };
       const res = {
         ...this.compra,
         ...this.form.value,
-        fecha
+        proveedor,
+        fecha,
+        ...this.prepararPartidas()
       };
-      console.log('Salvando compra:', res);
-      // this.save.emit(res);
+      this.save.emit(res);
+      this.form.markAsPristine();
     }
   }
 
+  prepararPartidas(): CompraDet[] {
+    const partidas = [...this.partidas.value];
+    partidas.forEach(item => {
+      if (!item.sucursal) {
+        item.sucursal = this.sucursal;
+      }
+    });
+    return partidas;
+  }
+
   onInsertPartida(event: CompraDet) {
-    console.log('Agregando partida de compra: ', event);
     actualizarPartida(event);
     this.partidas.push(new FormControl(event));
     this.form.markAsDirty();
@@ -98,10 +118,13 @@ export class CompraFormComponent implements OnInit, OnChanges {
   }
 
   get proveedor() {
-    return this.form.value.proveedor;
+    return this.form.get('proveedor').value;
   }
   get moneda() {
-    return this.form.value.moneda;
+    return this.form.get('moneda').value;
+  }
+  get sucursal() {
+    return this.compra ? this.compra.sucursal : null;
   }
   get status() {
     if (this.compra) {

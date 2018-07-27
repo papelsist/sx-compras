@@ -191,7 +191,6 @@ class ComprobanteFiscalService implements  LogUser{
         } else {
             // log.info('CFDI Ya importado {} {}', found.uuid, found.fileName)
         }
-
     }
 
     /**
@@ -204,6 +203,15 @@ class ComprobanteFiscalService implements  LogUser{
         def pdf = new File(xmlFile.path.replace('.xml','.pdf'))
         if(pdf.exists()) pdf.delete()
     }
+
+    /*
+    void importarDeImpap(Byte[] data) {
+        File dir = new File(this.cfdiDir)
+        assert dir.exists(), "No existe el directorio: ${this.cfdiDir}"
+        File target = new File(dir, 'test')
+        target.write(new String[data], 'UTF-8')
+    }
+    */
 }
 
 

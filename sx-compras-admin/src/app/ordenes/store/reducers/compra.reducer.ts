@@ -69,12 +69,22 @@ export function reducer(state = initialState, action: CompraActions): State {
       });
     }
 
-    case CompraActionTypes.UpsertCompra: {
-      return adapter.upsertOne(action.payload.compra, state);
+    case CompraActionTypes.UpdateCompraSuccess: {
+      const compra = action.payload;
+      return adapter.updateOne(
+        {
+          id: compra.id,
+          changes: compra
+        },
+        {
+          ...state,
+          loading: false
+        }
+      );
     }
 
-    case CompraActionTypes.UpdateCompra: {
-      return adapter.updateOne(action.payload.compra, state);
+    case CompraActionTypes.UpsertCompra: {
+      return adapter.upsertOne(action.payload.compra, state);
     }
 
     case CompraActionTypes.DeleteCompraSuccess: {

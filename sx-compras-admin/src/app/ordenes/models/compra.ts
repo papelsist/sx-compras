@@ -25,4 +25,5 @@ export interface Compra {
   createUser?: string;
   updateUser?: string;
   status?: string;
+  cerrada?: string;
 }

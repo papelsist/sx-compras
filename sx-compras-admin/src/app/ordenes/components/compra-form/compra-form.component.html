@@ -18,7 +18,13 @@
     <mat-card-content>
 
       <div layout>
-        <sx-proveedor-field formControlName="proveedor" flex></sx-proveedor-field>
+        <sx-proveedor-field formControlName="proveedor" flex *ngIf="!compra?.id; else proveedorLabel"></sx-proveedor-field>
+        <ng-template #proveedorLabel>
+          <mat-form-field flex>
+            <input matInput [value]="compra.nombre" [disabled]="true">
+          </mat-form-field>
+        </ng-template>
+
         <mat-form-field class="pad-left">
           <input matInput [matDatepicker]="myDatepicker" formControlName="fecha" placeholder="Fecha">
           <mat-datepicker-toggle matSuffix [for]="myDatepicker"></mat-datepicker-toggle>
@@ -40,7 +46,7 @@
     </div>
 
     <mat-divider></mat-divider>
-    <sx-compra-form-buttons [parent]="form" [status]="status" (save)="onSave()" (delete)="delete.emit(compra)">
+    <sx-compra-form-buttons [parent]="form" [compra]="compra" [status]="status" (save)="onSave()" (delete)="delete.emit(compra)">
     </sx-compra-form-buttons>
 
 

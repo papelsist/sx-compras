@@ -1,7 +1,10 @@
 package sx.utils
 
+import groovy.transform.CompileStatic
+
 import java.math.RoundingMode
 
+@CompileStatic
 class MonedaUtils {
 	
 	public final static Currency PESOS;
@@ -34,11 +37,11 @@ class MonedaUtils {
 	
 	
 	static final BigDecimal aplicarDescuentosEnCascada(final BigDecimal importe,BigDecimal... descuentos){
-		BigDecimal neto=importe;
-		for(BigDecimal dd:descuentos){
-			if(dd==null)continue;
+		BigDecimal neto = importe
+		for(BigDecimal dd: descuentos){
+			if(dd == null)continue;
 			if(dd.doubleValue()>0){
-				BigDecimal d=BigDecimal.valueOf(dd);
+				BigDecimal d = BigDecimal.valueOf(dd.doubleValue());
 				BigDecimal descuento=neto.multiply(d);
 				descuento=descuento.divide(BigDecimal.valueOf(100d));
 				neto=neto.subtract(descuento).setScale(2, RoundingMode.HALF_EVEN);

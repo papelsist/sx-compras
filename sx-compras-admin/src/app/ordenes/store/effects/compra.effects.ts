@@ -14,12 +14,15 @@ import * as fromActions from '../actions/compra.actions';
 import { ComprasService } from '../../services';
 import { Periodo } from '../../../_core/models/periodo';
 
+import { MatSnackBar } from '@angular/material';
+
 @Injectable()
 export class CompraEffects {
   constructor(
     private actions$: Actions,
     private service: ComprasService,
-    private store: Store<fromStore.State>
+    private store: Store<fromStore.State>,
+    private snackBar: MatSnackBar
   ) {}
 
   @Effect()
@@ -57,16 +60,33 @@ export class CompraEffects {
         .save(compra)
         .pipe(
           map(res => new fromActions.AddCompraSuccess(res)),
-          catchError(error => of(new fromActions.LoadComprasFail(error)))
+          catchError(error => of(new fromActions.AddCompraFail(error)))
         );
     })
   );
 
   @Effect()
   addCompraSuccess$ = this.actions$.pipe(
-    ofType<fromActions.AddCompra>(CompraActionTypes.AddCompraSuccess),
-    map(action => action.payload),
+    ofType(
+      CompraActionTypes.AddCompraSuccess,
+      CompraActionTypes.UpdateCompraSuccess
+    ),
+    map((action: any) => action.payload),
     map(compra => new fromRoot.Go({ path: ['ordenes/compras', compra.id] }))
+  );
+
+  @Effect()
+  updateCompra$ = this.actions$.pipe(
+    ofType<fromActions.UpdateCompra>(CompraActionTypes.UpdateCompra),
+    map(action => action.payload),
+    switchMap(compra => {
+      return this.service
+        .update(compra)
+        .pipe(
+          map(res => new fromActions.UpdateCompraSuccess(res)),
+          catchError(error => of(new fromActions.UpdateCompraFail(error)))
+        );
+    })
   );
 
   @Effect()
@@ -87,6 +107,19 @@ export class CompraEffects {
   deleteSuccess$ = this.actions$.pipe(
     ofType(CompraActionTypes.DeleteCompraSuccess),
     map(() => new fromRoot.Go({ path: ['ordenes/compras'] }))
+  );
+
+  @Effect({ dispatch: false })
+  updateSuccess$ = this.actions$.pipe(
+    ofType<fromActions.UpdateCompraSuccess>(
+      CompraActionTypes.UpdateCompraSuccess
+    ),
+    map(action => action.payload),
+    tap(compra =>
+      this.snackBar.open(`Compra ${compra.folio} actualizada `, 'Cerrar', {
+        duration: 5000
+      })
+    )
   );
 
   /*

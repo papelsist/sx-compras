@@ -20,7 +20,10 @@ export enum CompraActionTypes {
   DeleteCompraSuccess = '[Compra] Delete Compra Success',
   ClearCompras = '[Compra] Clear Compras',
   SetPeriodo = '[Compra] Set Periodo de compras',
-  SetSearchTerm = '[Compra] Set Search term de compras'
+  SetSearchTerm = '[Compra] Set Search term de compras',
+  Load = '[Compra] Load One Compra',
+  LoadFail = '[Compra] Load One Compra fail',
+  LoadSuccess = '[Compra] Load One Compra Success'
 }
 
 export class LoadCompras implements Action {
@@ -54,17 +57,17 @@ export class AddCompraSuccess implements Action {
 export class UpdateCompra implements Action {
   readonly type = CompraActionTypes.UpdateCompra;
 
-  constructor(public payload: { compra: Update<Compra> }) {}
+  constructor(public payload: Compra) {}
 }
 export class UpdateCompraFail implements Action {
   readonly type = CompraActionTypes.UpdateCompraFail;
 
-  constructor(public payload: { compra: Update<Compra> }) {}
+  constructor(public payload: any) {}
 }
 export class UpdateCompraSuccess implements Action {
   readonly type = CompraActionTypes.UpdateCompraSuccess;
 
-  constructor(public payload: { compra: Update<Compra> }) {}
+  constructor(public payload: Compra) {}
 }
 
 export class UpsertCompra implements Action {

@@ -16,6 +16,12 @@ class Compra {
 
     Proveedor proveedor
 
+    String nombre
+
+    String rfc
+
+    String clave
+
     Sucursal sucursal
 
     Long folio
@@ -54,7 +60,7 @@ class Compra {
 
     Boolean nacional = true
 
-    List partidas  = []
+    List<CompraDet> partidas  = []
 
     String sw2
 
@@ -71,12 +77,15 @@ class Compra {
 
     static constraints = {
         comentario nullable:true
-        ultimaDepuracion nullable:true
+        nombre nullable:true
+        clave nullable:true, maxSize: 15
+        rfc nullable:true, maxSize: 14
         entrega nullable:true
         folio unique:'sucursal'
         sw2 nullable:true
         createdBy nullable: true
         lastUpdatedBy nullable: true
+        ultimaDepuracion nullable:true
         cerrada nullable: true
 
     }

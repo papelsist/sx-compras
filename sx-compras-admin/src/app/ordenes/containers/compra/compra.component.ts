@@ -47,7 +47,7 @@ export class CompraComponent implements OnInit, OnDestroy {
     if (!event.id) {
       this.store.dispatch(new fromActions.AddCompra(event));
     } else {
-      // this.store.dispatch(new fromActions.UdateCompra({compra:event}));
+      this.store.dispatch(new fromActions.UpdateCompra(event));
     }
   }
 

@@ -18,7 +18,7 @@ import { CompraDet, buildCompraDet } from '../../models/compraDet';
   selector: 'sx-compra-add-partida',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <button mat-icon-button type="button"  (click)="buildPartida()">
+    <button mat-icon-button type="button"  (click)="buildPartida()" [disabled]="parent.disabled || productos.length === 0">
       <mat-icon>add</mat-icon>
     </button>
   `
