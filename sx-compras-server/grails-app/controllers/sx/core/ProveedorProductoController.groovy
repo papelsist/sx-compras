@@ -29,9 +29,10 @@ class ProveedorProductoController extends RestfulController<ProveedorProducto> {
         log.info('Buscando los productos: {} ', params)
         params.sort = 'lastUpdated'
         params.order = 'desc'
-        params.max = 30
         String proveedorId = params.proveedorId
-        return ProveedorProducto.where{ proveedor.id == proveedorId}.list(params)
+        String moneda = params.moneda;
+        // return proveedorProductoService.findProductos(proveedorId, moneda)
+        return ProveedorProducto.where{ proveedor.id == proveedorId && moneda == moneda}.list(params)
     }
 
     def disponibles() {

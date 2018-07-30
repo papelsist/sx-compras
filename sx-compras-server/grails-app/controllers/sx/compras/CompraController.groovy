@@ -53,6 +53,22 @@ class CompraController extends RestfulController<Compra> {
         return  query.list(params)
     }
 
+    def cerrar(Compra compra) {
+        if(compra == null) {
+            notFound()
+            return
+        }
+        respond compraService.cerrarCompra(compra)
+    }
+
+    def depurar(Compra compra) {
+        if(compra == null) {
+            notFound()
+            return
+        }
+        respond compraService.depurarCompra(compra)
+    }
+
     def print( ) {
         Map repParams = [ID: params.long('id')]
         def pdf =  reportService.run('ListaDePrecios.jrxml', repParams)

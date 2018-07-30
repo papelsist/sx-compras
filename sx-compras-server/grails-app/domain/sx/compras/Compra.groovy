@@ -1,14 +1,18 @@
 package sx.compras
 
+import grails.compiler.GrailsCompileStatic
+
 import groovy.transform.ToString
 import groovy.transform.EqualsAndHashCode
+
 import sx.core.Sucursal
 import sx.core.Proveedor
 
 
 
-@ToString(excludes = 'dateCreated,lastUpdated,version,partidas',includeNames=true,includePackage=false)
+@ToString(excludes = 'dateCreated,lastUpdated, partidas',includeNames=true,includePackage=false)
 @EqualsAndHashCode(includes='id,sucursal,folio')
+@GrailsCompileStatic
 class Compra {
 
 
@@ -103,17 +107,17 @@ class Compra {
         cerrada type: 'date'
     }
 
+    /*
     def beforeUpdate() {
         actualizarStatus()
     }
 
-    def actualizarStatus() {
-        this.pendiente = this.partidas.find{it.getPorRecibir() > 0.0 } == null ? true: false
-    }
+
 
     def pendientes() {
         return this.partidas.findAll{ CompraDet det -> det.getPorRecibir() > 0}
     }
+    */
 
     def getStatus() {
         if(pendiente && cerrada) return 'T'

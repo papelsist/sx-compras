@@ -5,6 +5,6 @@
 </ng-container>
 <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
   <mat-option *ngFor="let producto of filteredProducts$ | async" [value]="producto">
-    {{producto.clave}} {{ producto.descripcion }}
+    {{producto.clave}} {{ producto.descripcion }} ({{producto.precioBruto | currency }})
   </mat-option>
 </mat-autocomplete>

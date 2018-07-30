@@ -26,4 +26,6 @@ export interface Compra {
   updateUser?: string;
   status?: string;
   cerrada?: string;
+  email?: string;
+  ultimaDepuracion?: string;
 }

@@ -21,8 +21,8 @@ export interface CompraDet {
   importeBruto: number;
   importeNeto: number;
   depuracion?: string;
-  depurado: number;
   recibido: number;
+  depurado: number;
   porRecibir: number;
   comentario: string;
   selected?: boolean;

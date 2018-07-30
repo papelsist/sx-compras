@@ -109,7 +109,7 @@ export class CompraEffects {
     map(() => new fromRoot.Go({ path: ['ordenes/compras'] }))
   );
 
-  @Effect({ dispatch: false })
+  @Effect()
   updateSuccess$ = this.actions$.pipe(
     ofType<fromActions.UpdateCompraSuccess>(
       CompraActionTypes.UpdateCompraSuccess
@@ -119,7 +119,35 @@ export class CompraEffects {
       this.snackBar.open(`Compra ${compra.folio} actualizada `, 'Cerrar', {
         duration: 5000
       })
-    )
+    ),
+    map(compra => new fromRoot.Go({ path: ['ordenes/compras', compra.id] }))
+  );
+
+  @Effect()
+  cerrarCompra$ = this.actions$.pipe(
+    ofType<fromActions.CerrarCompra>(CompraActionTypes.CerrarCompra),
+    map(action => action.payload),
+    switchMap(compra => {
+      return this.service
+        .cerrar(compra)
+        .pipe(
+          map(res => new fromActions.UpdateCompraSuccess(res)),
+          catchError(error => of(new fromActions.UpdateCompraFail(error)))
+        );
+    })
+  );
+  @Effect()
+  depurarCompra$ = this.actions$.pipe(
+    ofType<fromActions.DepurarCompra>(CompraActionTypes.DepurarCompra),
+    map(action => action.payload),
+    switchMap(compra => {
+      return this.service
+        .depurar(compra)
+        .pipe(
+          map(res => new fromActions.UpdateCompraSuccess(compra)),
+          catchError(error => of(new fromActions.UpdateCompraFail(error)))
+        );
+    })
   );
 
   /*

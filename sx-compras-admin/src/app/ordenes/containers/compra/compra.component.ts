@@ -12,6 +12,7 @@ import { Compra } from '../../models/compra';
 import { TdDialogService } from '@covalent/core';
 
 import { ProveedorProducto } from '../../../proveedores/models/proveedorProducto';
+import { CompraUiService } from './compra-ui.service';
 
 @Component({
   selector: 'sx-compra',
@@ -20,9 +21,14 @@ import { ProveedorProducto } from '../../../proveedores/models/proveedorProducto
       <sx-compra-form [compra]="compra$ | async" [productos]="productos$ | async"
         (save)="onSave($event)"
         (delete)="onDelete($event)">
+        <ng-container *ngIf="compra$ | async as compra">
+          <sx-cerrar-compra [compra]="compra" (cerrar)="onCerrar($event)"></sx-cerrar-compra>
+          <sx-depurar-compra [compra]="compra" (deuprar)="onDepurar($event)"></sx-depurar-compra>
+        </ng-container>
       </sx-compra-form>
     </div>
-  `
+  `,
+  providers: [CompraUiService]
 })
 export class CompraComponent implements OnInit, OnDestroy {
   compra$: Observable<Compra>;
@@ -39,6 +45,7 @@ export class CompraComponent implements OnInit, OnDestroy {
     );
     this.store.dispatch(new fromStore.LoadProductosDisponibles());
   }
+
   ngOnDestroy() {
     this.store.dispatch(new fromStore.ClearProductosDisponibles());
   }
@@ -52,18 +59,13 @@ export class CompraComponent implements OnInit, OnDestroy {
   }
 
   onDelete(event: Compra) {
-    this.dialogService
-      .openConfirm({
-        title: 'Eliminar compra',
-        message: 'Folio: ' + event.folio,
-        acceptButton: 'Eliminar',
-        cancelButton: 'Cancelar'
-      })
-      .afterClosed()
-      .subscribe(res => {
-        if (res) {
-          this.store.dispatch(new fromActions.DeleteCompra(event));
-        }
-      });
+    this.store.dispatch(new fromActions.DeleteCompra(event));
+  }
+  onCerrar(event: Compra) {
+    console.log('Cerrar: ', event);
+  }
+
+  onDepurar(event: Compra) {
+    this.store.dispatch(new fromActions.DepurarCompra(event));
   }
 }

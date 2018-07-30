@@ -2,17 +2,25 @@ package sx.compras
 
 import grails.compiler.GrailsCompileStatic
 import grails.gorm.services.Service
+import grails.plugin.springsecurity.SpringSecurityService
 import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
 import sx.core.Folio
-import sx.core.LogUser
+
+import sx.security.User
 import sx.utils.MonedaUtils
 
 
-@GrailsCompileStatic
-@Service(ListaDePreciosProveedor)
 @Slf4j
-abstract class CompraService implements LogUser{
+@GrailsCompileStatic
+@Service(Compra)
+abstract class CompraService {
+
+    @Autowired
+    @Qualifier('springSecurityService')
+    SpringSecurityService springSecurityService
 
     abstract Compra save(Compra compra)
 
@@ -38,10 +46,33 @@ abstract class CompraService implements LogUser{
             it.sucursal?: compra.sucursal
             actualizarPartida(it)
         }
+        if(compra.proveedor.plazo)
+            compra.entrega = compra.fecha + compra.proveedor.plazo
         compra.importeNeto = compra.partidas.sum 0.0, { it.importeNeto }
         compra.importeBruto = compra.partidas.sum 0.0, { it.importeBruto }
         compra.impuestos = MonedaUtils.calcularImpuesto(compra.importeNeto)
+        def pendiente = compra.partidas.find{it.getPorRecibir()> 0.0 }
+        compra.pendiente = pendiente != null
         compra.total = compra.importeNeto + compra.impuestos
+    }
+
+    Compra cerrarCompra(Compra compra){
+        compra.cerrada =  new Date()
+        logEntity(compra)
+        return save(compra)
+    }
+
+    Compra depurarCompra(Compra compra) {
+        Date depuracion = new Date()
+        compra.partidas.each {
+            it.depurado = it.getPorRecibir()
+            it.depuracion = depuracion
+        }
+        compra.ultimaDepuracion = depuracion
+        compra.pendiente = false
+        logEntity(compra)
+        log.debug("Compra depurada: {}", compra)
+        return save(compra)
     }
 
 
@@ -76,6 +107,18 @@ abstract class CompraService implements LogUser{
         folio.folio = res
         folio.save flush: true
         return res
+    }
+
+    void logEntity(Compra compra) {
+
+        User user = (User)springSecurityService.getCurrentUser()
+        if(user) {
+            String username = user.username
+            if(compra.id == null || compra.createdBy == null)
+                compra.createdBy = username
+            compra.lastUpdatedBy = username
+        }
+
     }
 
 }

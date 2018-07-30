@@ -28,7 +28,7 @@ import { ProveedorProducto } from 'app/proveedores/models/proveedorProducto';
   styleUrls: ['./compra-form.component.scss']
 })
 export class CompraFormComponent implements OnInit, OnChanges {
-  @Input() compra: Compra;
+  @Input() compra: Partial<Compra>;
   @Input() productos: ProveedorProducto[];
   @Output() save = new EventEmitter<Partial<Compra>>();
   @Output() delete = new EventEmitter<Compra>();
@@ -51,6 +51,10 @@ export class CompraFormComponent implements OnInit, OnChanges {
       comp.partidas.forEach(item => this.partidas.push(new FormControl(item)));
       if (comp.id) {
         this.form.get('proveedor').disable();
+        this.form.get('moneda').disable();
+        if (this.compra.cerrada) {
+          this.form.disable();
+        }
       }
     }
     // if (changes.productos && changes.productos.currentValue) {

@@ -1,19 +1,26 @@
 <mat-card>
   <form [formGroup]="form">
-    <div layout layout-align="center center">
-      <span class="mat-title pad-left pad-top">
-        <span *ngIf="compra; else alta">
-          <span>Compra: {{compra.folio}} ({{compra.sucursalNombre}})</span>
-          <span class="pad-left pad-right">Status: {{compra.status}}</span>
-          <span class="pad-left">({{compra.fecha | date: 'dd/MM/yyyy'}})</span>
-        </span>
-        <ng-template #alta>
-          Alta de orden de compra
-        </ng-template>
-      </span>
+    <div layout layout-align="start center" class="mat-title pad-left pad-top" *ngIf="compra; else alta">
+
+      <span>Compra: {{compra.folio}} ({{compra.sucursalNombre}})</span>
+      <span class="pad-left pad-right">Status: {{compra.status}}</span>
+      <span class="pad-left">({{compra.fecha | date: 'dd/MM/yyyy'}})</span>
+      <ng-container *ngIf="compra.ultimaDepuracion">
+        <span class="pad-left pad-right">U. Depuración: </span>
+        <span class="pad-right tc-pink-600">{{compra.ultimaDepuracion | date: 'dd/MM/yyyy'}}</span>
+      </ng-container>
       <span flex></span>
-      <sx-compra-add-partida [parent]="form" [productos]="productos" (addPartida)="onInsertPartida($event)"></sx-compra-add-partida>
+      <ng-container *ngIf="compra.cerrada">
+        <span class="pad-left pad-right">Cerrada: </span>
+        <span class="pad-right tc-pink-600">{{compra.cerrada | date: 'dd/MM/yyyy'}}</span>
+      </ng-container>
+
+      <sx-compra-add-partida [parent]="form" [productos]="productos" (addPartida)="onInsertPartida($event)" *ngIf="!compra.cerrada"></sx-compra-add-partida>
     </div>
+    <ng-template #alta>
+      <span class="mat-title pad-left pad-top">Alta de orden de compra</span>
+    </ng-template>
+
     <mat-divider></mat-divider>
     <mat-card-content>
 
@@ -44,10 +51,26 @@
     <div class="partidas-panel">
       <sx-compra-partidas-table [parent]="form" [partidas]="partidas.value"></sx-compra-partidas-table>
     </div>
-
     <mat-divider></mat-divider>
-    <sx-compra-form-buttons [parent]="form" [compra]="compra" [status]="status" (save)="onSave()" (delete)="delete.emit(compra)">
-    </sx-compra-form-buttons>
+    <mat-card-actions align="end">
+      <button type="button" mat-button [routerLink]="['../']">
+        <mat-icon>arrow_back</mat-icon> Compras
+      </button>
+      <button type="button" mat-button color="primary" (click)="onSave()" *ngIf="!compra?.cerrada" [disabled]="form.invalid || form.pristine">
+        <mat-icon>save</mat-icon> Salvar
+      </button>
+      <ng-container *ngIf="compra">
+        <sx-eliminar-compra [compra]="compra"></sx-eliminar-compra>
+        <sx-email-compra [compra]="compra"></sx-email-compra>
+        <sx-report-button url="compras/compra.id" *ngIf="!compra"></sx-report-button>
+
+      </ng-container>
+      <ng-content></ng-content>
+      <span flex></span>
+      <span class="pad-left pad-right">Total</span>
+      <span class="pad-left pad-right">{{compra?.total | currency}}</span>
+    </mat-card-actions>
+
 
 
   </form>

@@ -44,9 +44,14 @@ export class ComprasService {
       .pipe(catchError((error: any) => throwError(error)));
   }
 
-  depurar(compra: Compra) {
+  cerrar(compra: Compra): Observable<Compra> {
+    const url = this.configService.buildApiUrl('compras/cerrar/' + compra.id);
+    return this.http.put<Compra>(url, {});
+  }
+
+  depurar(compra: Compra): Observable<Compra> {
     const url = this.configService.buildApiUrl('compras/depurar/' + compra.id);
-    return this.http.put(url, {});
+    return this.http.put<Compra>(url, {});
   }
 
   delete(id: string) {

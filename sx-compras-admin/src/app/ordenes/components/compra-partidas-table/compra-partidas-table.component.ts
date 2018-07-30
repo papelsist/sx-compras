@@ -22,14 +22,14 @@ import { CompraDet, actualizarPartida } from '../../models/compraDet';
 export class CompraPartidasTableComponent implements OnInit, OnChanges {
   @Input() partidas: CompraDet[] = [];
   @Input() parent: FormGroup;
-  @Input() readOnly = false;
+
   @Output() update = new EventEmitter();
   @Output() delete = new EventEmitter();
 
   displayColumns = [
     'clave',
     'descripcion',
-    'unidad',
+    // 'unidad',
     'solicitado',
     'precio',
     'descuento1',
@@ -37,6 +37,9 @@ export class CompraPartidasTableComponent implements OnInit, OnChanges {
     'descuento3',
     'descuento4',
     'importeNeto',
+    'recibido',
+    'depurado',
+    'porRecibir',
     'operaciones'
   ];
 
@@ -53,8 +56,11 @@ export class CompraPartidasTableComponent implements OnInit, OnChanges {
   }
 
   actualizar(row: CompraDet) {
-    actualizarPartida(row);
-    // console.log('Partida actualizada: ', row);
+    actualizarPartida(row); // Should change to be used from parent only dispatch an event
     this.update.emit(row);
+  }
+
+  get readOnly() {
+    return this.parent.disabled;
   }
 }

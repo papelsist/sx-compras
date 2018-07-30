@@ -23,7 +23,10 @@ class UrlMappings {
         "/api/compras"(resources: 'compra'){
             "/partidas"(resources: 'compraDet', excludes:['create', 'edit','patch'])
         }
-        "/api/compra/print/$id"(controller: 'compra', action: 'print', method: 'GET')
+        "/api/compras/cerrar/$id"(controller: 'compra', action: 'cerrar', method: 'PUT')
+        "/api/compras/depurar/$id"(controller: 'compra', action: 'depurar', method: 'PUT')
+        "/api/compras/print/$id"(controller: 'compra', action: 'print', method: 'GET')
+
 
         "/api/comprobanteFiscal"(resources: 'comprobanteFiscal')
         "/api/comprobanteFiscal/xml/$id"(controller: 'comprobanteFiscal', action: 'xml')
