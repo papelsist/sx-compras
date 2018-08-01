@@ -1254,7 +1254,7 @@ $F{SUC_CLAVE}.equals("9")?"LOCAL" :
 						width="59"
 						height="11"
 						key="textField-10">
-							<printWhenExpression><![CDATA[new Boolean($F{IMPRIMIR_COSTO}.equals( "SI" ))]]></printWhenExpression>
+							<printWhenExpression><![CDATA[new Boolean($P{IMPRIMIR_COSTO}.equals( "SI" ))]]></printWhenExpression>
 						</reportElement>
 					<box></box>
 					<textElement textAlignment="Right">
@@ -1269,7 +1269,7 @@ $F{SUC_CLAVE}.equals("9")?"LOCAL" :
 						width="59"
 						height="11"
 						key="textField-11">
-							<printWhenExpression><![CDATA[new Boolean($F{IMPRIMIR_COSTO}.equals( "SI" ))]]></printWhenExpression>
+							<printWhenExpression><![CDATA[new Boolean($P{IMPRIMIR_COSTO}.equals( "SI" ))]]></printWhenExpression>
 						</reportElement>
 					<box></box>
 					<textElement textAlignment="Right">
@@ -1284,7 +1284,7 @@ $F{SUC_CLAVE}.equals("9")?"LOCAL" :
 						width="59"
 						height="11"
 						key="textField-12">
-							<printWhenExpression><![CDATA[new Boolean($F{IMPRIMIR_COSTO}.equals( "SI" ))]]></printWhenExpression>
+							<printWhenExpression><![CDATA[new Boolean($P{IMPRIMIR_COSTO}.equals( "SI" ))]]></printWhenExpression>
 						</reportElement>
 					<box></box>
 					<textElement textAlignment="Right">
