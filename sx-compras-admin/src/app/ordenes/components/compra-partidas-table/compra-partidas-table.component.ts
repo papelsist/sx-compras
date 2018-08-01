@@ -25,6 +25,7 @@ export class CompraPartidasTableComponent implements OnInit, OnChanges {
 
   @Output() update = new EventEmitter();
   @Output() delete = new EventEmitter();
+  @Output() depurar = new EventEmitter();
 
   displayColumns = [
     'clave',

@@ -12,7 +12,7 @@ import sx.core.Proveedor
 
 @Slf4j
 @CompileStatic
-class ProveedorLogListenerService {
+class ProveedorListenerService {
 
     ProveedorLogDataService proveedorLogDataService
 

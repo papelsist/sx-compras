@@ -3,7 +3,7 @@
     <div layout layout-align="start center" class="mat-title pad-left pad-top" *ngIf="compra; else alta">
 
       <span>Compra: {{compra.folio}} ({{compra.sucursalNombre}})</span>
-      <span class="pad-left pad-right">Status: {{compra.status}}</span>
+      <span class="pad-left pad-right">Estado: {{compra.status}}</span>
       <span class="pad-left">({{compra.fecha | date: 'dd/MM/yyyy'}})</span>
       <ng-container *ngIf="compra.ultimaDepuracion">
         <span class="pad-left pad-right">U. Depuración: </span>
@@ -42,27 +42,27 @@
       </div>
 
       <div layout>
-        <sx-upper-case-field formControlName="comentario" flex></sx-upper-case-field>
+        <sx-sucursal-field [parent]="form" class="pad-right"></sx-sucursal-field>
+        <sx-upper-case-field formControlName="comentario" placeholder="Comentario" flex></sx-upper-case-field>
+        <mat-checkbox formControlName="especial" flex="10">Especial</mat-checkbox>
       </div>
 
     </mat-card-content>
     <mat-divider></mat-divider>
 
     <div class="partidas-panel">
-      <sx-compra-partidas-table [parent]="form" [partidas]="partidas.value"></sx-compra-partidas-table>
+      <sx-compra-partidas-table [parent]="form" [partidas]="partidas.value" (delete)="onDeletePartida($event)" (depurar)="onDepurar($event)">
+      </sx-compra-partidas-table>
     </div>
     <mat-divider></mat-divider>
     <mat-card-actions align="end">
       <button type="button" mat-button [routerLink]="['../']">
         <mat-icon>arrow_back</mat-icon> Compras
       </button>
-      <button type="button" mat-button color="primary" (click)="onSave()" *ngIf="!compra?.cerrada" [disabled]="form.invalid || form.pristine">
+      <button type="button" mat-button color="primary" (click)="onSave()" *ngIf="compra?.status !== 'A'" [disabled]="form.invalid || form.pristine">
         <mat-icon>save</mat-icon> Salvar
       </button>
       <ng-container *ngIf="compra">
-        <sx-eliminar-compra [compra]="compra"></sx-eliminar-compra>
-        <sx-email-compra [compra]="compra"></sx-email-compra>
-        <sx-report-button url="compras/compra.id" *ngIf="!compra"></sx-report-button>
 
       </ng-container>
       <ng-content></ng-content>

@@ -30,9 +30,10 @@ export class ProveedorListaPartidasComponent implements OnInit {
     'clave',
     'descripcion',
     'unidad',
-    'moneda',
+    // 'moneda',
     'precioAnterior',
     'precioBruto',
+    'diferencia',
     'desc1',
     'desc2',
     'desc3',
@@ -66,5 +67,13 @@ export class ProveedorListaPartidasComponent implements OnInit {
     ]);
     row.precioNeto = importeNeto;
     this.update.emit(row);
+  }
+
+  getDirerencia(row: ListaDePreciosProveedorDet) {
+    if (row.precioBruto <= 0) {
+      return 0;
+    }
+    const dif = row.precioBruto - row.precioAnterior;
+    return dif / row.precioBruto;
   }
 }

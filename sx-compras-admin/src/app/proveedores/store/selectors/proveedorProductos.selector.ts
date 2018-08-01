@@ -46,7 +46,7 @@ export const getAltaDeListaProductos = createSelector(
   getAllProveedorProductos,
   getCreateListMoneda,
   (productos, mon) => {
-    return productos.filter(item => item.moneda === mon);
+    return productos.filter(item => item.moneda === mon && !item.suspendido);
   }
 );
 

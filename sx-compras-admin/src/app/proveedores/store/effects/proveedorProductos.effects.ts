@@ -101,7 +101,8 @@ export class ProveedorProductosEffects {
         this.dialog
           .open(ProductosDisponiblesComponent, {
             data: { productos: disponibles, moneda: params.moneda },
-            width: '750px'
+            width: '850px',
+            height: '700'
           })
           .afterClosed()
           .subscribe(productos => {
@@ -141,16 +142,18 @@ export class ProveedorProductosEffects {
     ),
     map(action => action.payload),
     concatMap(provProd => {
-      return this.service
-        .delete(provProd)
-        .pipe(
-          map(
-            res => new productosActions.DeleteProveedorProductoSuccess(provProd)
-          ),
-          catchError(error =>
-            of(new productosActions.DeleteProveedorProductoFail(error))
-          )
-        );
+      return this.service.delete(provProd).pipe(
+        map(res => {
+          if (res.suspendido) {
+            return new productosActions.UpdateProveedorProductoSuccess(res);
+          } else {
+            return new productosActions.DeleteProveedorProductoSuccess(res);
+          }
+        }),
+        catchError(error =>
+          of(new productosActions.DeleteProveedorProductoFail(error))
+        )
+      );
     })
   );
 }

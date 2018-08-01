@@ -29,7 +29,8 @@ class CompraController extends RestfulController<Compra> {
         bindData instance, getObjectToBind()
         instance.folio = 0L
         instance.centralizada = true
-        instance.sucursal = Sucursal.where { clave == 1}.find()
+        if(instance.sucursal == null)
+            instance.sucursal = Sucursal.where { clave == 1}.find()
         return instance
     }
 
@@ -69,9 +70,12 @@ class CompraController extends RestfulController<Compra> {
         respond compraService.depurarCompra(compra)
     }
 
+    // @CompileDynamic
     def print( ) {
-        Map repParams = [ID: params.long('id')]
-        def pdf =  reportService.run('ListaDePrecios.jrxml', repParams)
+        Map repParams = [ID: params.id]
+        repParams.CLAVEPROV = params.getBoolean('clavesProveedor', false)? 'SI' : 'NO'
+        repParams.IMPRIMIR_COSTO = 'SI'
+        def pdf =  reportService.run('Compra.jrxml', repParams)
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'ListaDePrecios.pdf')
     }
 }

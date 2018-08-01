@@ -53,6 +53,14 @@ mat-nav-list {
   }
 }
 
+.mat-row.suspendido {
+  // background-color: mat-color($accent);
+  .mat-cell {
+    color: mat-color($accent);
+
+  }
+}
+
 .mat-row {
   position: relative; // For matRipple
   &:hover:not(.active) {

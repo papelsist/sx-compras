@@ -28,7 +28,7 @@ abstract class CompraService {
 
     Compra saveCompra(Compra compra) {
         if(!compra.id) {
-            compra.folio = nextFolio()
+            compra.folio = nextFolio(compra)
             compra.nombre = compra.proveedor.nombre
             compra.clave = compra.proveedor.rfc
             compra.rfc = compra.proveedor.rfc
@@ -51,8 +51,13 @@ abstract class CompraService {
         compra.importeNeto = compra.partidas.sum 0.0, { it.importeNeto }
         compra.importeBruto = compra.partidas.sum 0.0, { it.importeBruto }
         compra.impuestos = MonedaUtils.calcularImpuesto(compra.importeNeto)
-        def pendiente = compra.partidas.find{it.getPorRecibir()> 0.0 }
-        compra.pendiente = pendiente != null
+        if(compra.partidas) {
+            def pendiente = compra.partidas.find{it.getPorRecibir()> 0.0 }
+            compra.pendiente = pendiente != null
+        } else {
+            compra.pendiente = true
+        }
+
         compra.total = compra.importeNeto + compra.impuestos
     }
 
@@ -100,8 +105,11 @@ abstract class CompraService {
         partida.importeNeto = importeNeto
     }
 
-    Long  nextFolio(){
-        Folio folio = Folio.findOrCreateWhere(entidad: 'COMPRAS', serie: 'OFICINAS')
+    Long  nextFolio(Compra compra){
+        String serie = compra.sucursal.clave == '1' ? 'OFICINAS' : 'SUC_'+ compra.sucursal.nombre.replaceAll(' ', '_')
+        compra.serie = serie
+        println 'Serie: ' + serie
+        Folio folio = Folio.findOrCreateWhere(entidad: 'COMPRAS', serie: serie)
         Long res = folio.folio + 1
         log.info('Asignando folio de compra: {}', res)
         folio.folio = res

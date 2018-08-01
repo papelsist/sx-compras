@@ -51,15 +51,14 @@ export class CompraFormComponent implements OnInit, OnChanges {
       comp.partidas.forEach(item => this.partidas.push(new FormControl(item)));
       if (comp.id) {
         this.form.get('proveedor').disable();
+        this.form.get('sucursal').disable();
+        this.form.get('especial').disable();
         this.form.get('moneda').disable();
-        if (this.compra.cerrada) {
+        if (this.compra.status === 'A') {
           this.form.disable();
         }
       }
     }
-    // if (changes.productos && changes.productos.currentValue) {
-    //   console.log('Productos disponibles: ', changes.productos.currentValue);
-    // }
   }
 
   private clarPartidas() {
@@ -72,11 +71,13 @@ export class CompraFormComponent implements OnInit, OnChanges {
     this.form = this.fb.group({
       fecha: [new Date(), [Validators.required]],
       proveedor: [null, [Validators.required]],
+      sucursal: [null],
       moneda: [
         'MXN',
         [Validators.required, Validators.minLength(3), Validators.maxLength(5)]
       ],
       tipoDeCambio: [1.0, [Validators.required, Validators.min(1)]],
+      especial: [false, [Validators.required]],
       comentario: [],
       partidas: this.fb.array([])
     });
@@ -115,6 +116,24 @@ export class CompraFormComponent implements OnInit, OnChanges {
     actualizarPartida(event);
     this.partidas.push(new FormControl(event));
     this.form.markAsDirty();
+  }
+
+  onDeletePartida(index: number) {
+    this.partidas.removeAt(index);
+    this.form.markAsDirty();
+  }
+
+  onDepurar(index: number) {
+    if (this.compra && this.compra.status !== 'A') {
+      const control = this.partidas.at(index);
+      const partida: CompraDet = { ...control.value };
+
+      partida.depurado = partida.porRecibir;
+      partida.depuracion = new Date().toISOString();
+
+      this.partidas.setControl(index, new FormControl(partida));
+      this.form.markAsDirty();
+    }
   }
 
   get partidas() {

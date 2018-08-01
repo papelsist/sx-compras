@@ -42,7 +42,9 @@ export class ProveedorProductosTableComponent implements OnInit, OnChanges {
   @Output() select = new EventEmitter<ProveedorProducto[]>();
   @Output() delete = new EventEmitter<ProveedorProducto>();
   @Output() edit = new EventEmitter<ProveedorProducto>();
+  @Output() activar = new EventEmitter<ProveedorProducto>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
+
   constructor() {}
 
   ngOnInit() {
@@ -72,5 +74,10 @@ export class ProveedorProductosTableComponent implements OnInit, OnChanges {
   deleteProducto(event: Event, index: number, prod: ProveedorProducto) {
     event.stopPropagation();
     this.delete.emit(prod);
+  }
+
+  activarProducto(event: Event, index: number, prod: ProveedorProducto) {
+    event.stopPropagation();
+    this.activar.emit(prod);
   }
 }

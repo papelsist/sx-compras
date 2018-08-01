@@ -22,8 +22,8 @@ export interface Compra {
   tipoDeCambio?: number;
   modificada?: string;
   selected?: boolean;
-  createUser?: string;
-  updateUser?: string;
+  createdBy?: string;
+  lastUpdatedBy?: string;
   status?: string;
   cerrada?: string;
   email?: string;

@@ -48,6 +48,10 @@ export class CerrarCompraComponent implements OnInit {
   }
 
   isDisabled() {
-    return this.compra && this.compra.cerrada;
+    if (this.compra) {
+      return this.compra.status === 'A' || this.compra.cerrada;
+    } else {
+      return true;
+    }
   }
 }

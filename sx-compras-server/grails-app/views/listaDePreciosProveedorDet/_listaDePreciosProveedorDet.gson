@@ -4,4 +4,6 @@ model {
 	ListaDePreciosProveedorDet listaDePreciosProveedorDet
 }
 
-json g.render(listaDePreciosProveedorDet, [resolveTemplate: false])
+json g.render(listaDePreciosProveedorDet, [resolveTemplate: false]) {
+	diferencia  listaDePreciosProveedorDet.diferencia
+}

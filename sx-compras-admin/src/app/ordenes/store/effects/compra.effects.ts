@@ -144,7 +144,7 @@ export class CompraEffects {
       return this.service
         .depurar(compra)
         .pipe(
-          map(res => new fromActions.UpdateCompraSuccess(compra)),
+          map(res => new fromActions.UpdateCompraSuccess(res)),
           catchError(error => of(new fromActions.UpdateCompraFail(error)))
         );
     })

@@ -45,6 +45,8 @@ class RecepcionDeCompra {
 
     BigDecimal pendienteDeAnalisis = 0
 
+    Date cancelado
+
 
     static hasMany =[partidas:RecepcionDeCompraDet]
 
@@ -59,6 +61,7 @@ class RecepcionDeCompra {
         updateUser nullable: true
         fechaInventario nullable: true
         pendienteDeAnalisis nullable: true
+        cancelado nullable: true
     }
 
 
@@ -66,6 +69,7 @@ class RecepcionDeCompra {
         id generator:'uuid'
         partidas cascade: "all-delete-orphan"
         fecha type:'date', index: 'RECOMPRA_IDX1'
+        cancelado type: 'date'
         // pendienteDeAnalisis formula: '(select COALESCE(sum(x.cantidad - x.analizado), 0) from recepcion_de_compra_det x where x.recepcion_id = id )'
     }
 

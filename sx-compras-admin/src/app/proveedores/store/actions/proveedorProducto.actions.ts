@@ -16,7 +16,7 @@ export const UPDATE_PROVEEDOR_PRODUCTO_ACTION =
 export const UPDATE_PROVEEDOR_PRODUCTO_ACTION_FAIL =
   '[ProveedorProductos] Update proveedor producto fail';
 export const UPDATE_PROVEEDOR_PRODUCTO_ACTION_SUCCESS =
-  '[Proveedor] Update proveedor success';
+  '[ProveedorProductos] Update proveedor producto success';
 
 export const EDIT_PROVEEDOR_PRODUCTO_ACTION =
   '[ProveedorProductos] Edit proveedor producto';

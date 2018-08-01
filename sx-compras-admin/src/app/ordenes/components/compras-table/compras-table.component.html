@@ -18,7 +18,7 @@
     <td mat-cell *matCellDef="let compra">{{compra.fecha | date: 'dd/MM/yyyy'}}</td>
   </ng-container>
   <ng-container matColumnDef="moneda">
-    <th mat-header-cell *matHeaderCellDef>Moneda</th>
+    <th mat-header-cell *matHeaderCellDef>M</th>
     <td mat-cell *matCellDef="let compra">{{compra.moneda}}</td>
   </ng-container>
   <ng-container matColumnDef="tipoDeCambio">
@@ -34,14 +34,14 @@
     <td mat-cell *matCellDef="let compra">{{compra.comentario}}</td>
   </ng-container>
 
-  <ng-container matColumnDef="createUser">
+  <ng-container matColumnDef="createdBy">
     <th mat-header-cell *matHeaderCellDef>Creada</th>
-    <td mat-cell *matCellDef="let compra">{{compra.createUser}}</td>
+    <td mat-cell *matCellDef="let compra">{{compra.createdBy}}</td>
   </ng-container>
 
-  <ng-container matColumnDef="updateUser">
-    <th mat-header-cell *matHeaderCellDef>Modificada</th>
-    <td mat-cell *matCellDef="let compra">{{compra.updateUser}}</td>
+  <ng-container matColumnDef="lastUpdatedBy">
+    <th mat-header-cell *matHeaderCellDef>Usuario</th>
+    <td mat-cell *matCellDef="let compra">{{compra.lastUpdatedBy}}</td>
   </ng-container>
 
   <ng-container matColumnDef="modificada">
@@ -54,17 +54,26 @@
     <td mat-cell *matCellDef="let compra">{{compra.status}}</td>
   </ng-container>
 
+  <ng-container matColumnDef="cerrada">
+    <th mat-header-cell *matHeaderCellDef>Cerrada</th>
+    <td mat-cell *matCellDef="let compra">{{compra.cerrada | date: 'dd/MM/yyyy'}}</td>
+  </ng-container>
+  <ng-container matColumnDef="ultimaDepuracion">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>U. Dep</th>
+    <td mat-cell *matCellDef="let compra">{{compra.ultimaDepuracion | date: 'dd/MM/yyyy'}}</td>
+  </ng-container>
   <ng-container matColumnDef="operaciones">
     <th mat-header-cell *matHeaderCellDef></th>
     <td mat-cell *matCellDef="let req">
       <!-- <mat-icon (click)="edit.emit(req)" class="cursor-pointer pad-right">edit</mat-icon> -->
       <mat-icon (click)="onEdit($event, req)" class="pad-right">edit</mat-icon>
-      <sx-report-button url="compras/print" [smallIcon]="true"></sx-report-button>
-      <!-- <sx-print-requisicion [requisicion]="req" smallIcon="true"></sx-print-requisicion> -->
+      <sx-report-button [url]="getPrintUrl(req)" [smallIcon]="true "></sx-report-button>
+      <!-- <sx-print-requisicion [requisicion]="req " smallIcon="true "></sx-print-requisicion> -->
     </td>
   </ng-container>
 
-  <tr mat-header-row *matHeaderRowDef="displayColumns"></tr>
-  <tr mat-row *matRowDef="let compra; columns: displayColumns" class="cursor-pointer" (click)="toogleSelect(compra)" [ngClass]="{'active': compra.selected}"></tr>
+  <tr mat-header-row *matHeaderRowDef="displayColumns "></tr>
+  <tr mat-row *matRowDef="let compra; columns: displayColumns " class="cursor-pointer " (click)="toogleSelect(compra)
+        " [ngClass]="{ 'active': compra.selected} "></tr>
 </table>
-<mat-paginator [pageSizeOptions]="[20, 50, 100, 200]" showFirstLastButtons></mat-paginator>
+<mat-paginator [pageSizeOptions]="[20, 50, 100, 200] " showFirstLastButtons></mat-paginator>

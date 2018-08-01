@@ -1,11 +1,9 @@
 package sx.compras
 
 import grails.buildtestdata.BuildDataTest
-import grails.buildtestdata.mixin.Build
-import grails.testing.gorm.DataTest
 import grails.testing.services.ServiceUnitTest
-import org.grails.datastore.mapping.engine.event.PostInsertEvent
 import spock.lang.Specification
+import sx.audit.CompraListenerService
 import sx.core.Proveedor
 import sx.core.Sucursal
 

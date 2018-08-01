@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { HttpParams } from '@angular/common/http';
 
 import { Store, select } from '@ngrx/store';
 import * as fromRoot from 'app/store';
@@ -10,6 +11,7 @@ import { Observable } from 'rxjs';
 import { ListaDePreciosProveedor } from '../../models/listaDePreciosProveedor';
 
 import { TdDialogService } from '@covalent/core';
+import { ReportService } from '../../../reportes/services/report.service';
 
 @Component({
   selector: 'sx-proveedor-lista-edit',
@@ -17,7 +19,8 @@ import { TdDialogService } from '@covalent/core';
     <div>
       <sx-proveedor-lista-form [listaDePrecios]="lista$ | async" (save)="onSave($event)"
         (cancel)="onCancel()"
-        (aplicar)="onAplicar($event)">
+        (aplicar)="onAplicar($event)"
+        (print)="onPrint($event)">
         </sx-proveedor-lista-form>
     </div>
   `
@@ -26,7 +29,8 @@ export class ProveedorListaEditComponent implements OnInit {
   lista$: Observable<ListaDePreciosProveedor>;
   constructor(
     private store: Store<fromStore.ProveedoresState>,
-    private dialogService: TdDialogService
+    private dialogService: TdDialogService,
+    private reportService: ReportService
   ) {}
 
   ngOnInit() {
@@ -55,5 +59,26 @@ export class ProveedorListaEditComponent implements OnInit {
 
   onCancel() {
     this.store.dispatch(new fromRoot.Back());
+  }
+
+  onPrint(event: ListaDePreciosProveedor) {
+    const url = `listaDePreciosProveedor/print/${event.id}`;
+    this.dialogService
+      .openConfirm({
+        message: 'Con descuentos ?',
+        title: 'Imprmir lista de precios',
+        acceptButton: 'SI',
+        cancelButton: 'NO'
+      })
+      .afterClosed()
+      .subscribe(res => {
+        console.log('Imprimir: ', event);
+        if (res) {
+          const params = { descuentos: true };
+          this.reportService.runReport(url, params);
+        } else {
+          this.reportService.runReport(url);
+        }
+      });
   }
 }

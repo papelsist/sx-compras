@@ -26,7 +26,7 @@ export class ComprasTableComponent implements OnInit, OnChanges {
   dataSource = new MatTableDataSource<Compra>([]);
 
   displayColumns = [
-    'sucursalNombre',
+    // 'sucursalNombre',
     'folio',
     'fecha',
     'proveedor',
@@ -34,10 +34,11 @@ export class ComprasTableComponent implements OnInit, OnChanges {
     'moneda',
     'tipoDeCambio',
     'total',
-    'createUser',
-    'updateUser',
     'modificada',
+    'lastUpdatedBy',
     'pendiente',
+    'cerrada',
+    'ultimaDepuracion',
     'operaciones'
   ];
 
@@ -87,5 +88,9 @@ export class ComprasTableComponent implements OnInit, OnChanges {
   onEdit($event: Event, row) {
     $event.preventDefault();
     this.edit.emit(row);
+  }
+
+  getPrintUrl(event: Compra) {
+    return `compras/print/${event.id}`;
   }
 }

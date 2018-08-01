@@ -36,7 +36,7 @@ export class ProveedoresComponent implements OnInit {
     this.searchForm = this.fb.group({
       term: '',
       activos: true,
-      suspendidos: true
+      suspendidos: false
     });
     this.searchForm.valueChanges.pipe(debounceTime(600)).subscribe(value => {
       this.store.dispatch(new fromStore.SetSearchFilter(value));

@@ -386,8 +386,8 @@ Tel. 53 42 71 66   Fax 24 65 03 88
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="288"
-						y="112"
+							y="112"
+							x="288"
 						width="129"
 						height="11"
 						key="textField-13"/>

@@ -23,7 +23,7 @@ import { Producto } from '../../../productos/models/producto';
 export class ProductosDisponiblesComponent implements OnInit {
   productos: Producto[] = [];
   selected: Producto[];
-  displayColumns = ['clave', 'descripcion', 'linea'];
+  displayColumns = ['clave', 'descripcion', 'linea', 'clase', 'marca'];
   moneda = 'MXN';
   dataSource = new MatTableDataSource<Producto>([]);
   @ViewChild(MatSort) sort: MatSort;

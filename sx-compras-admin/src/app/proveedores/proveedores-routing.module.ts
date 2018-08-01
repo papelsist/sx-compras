@@ -44,7 +44,11 @@ const routes: Routes = [
       },
       {
         path: 'listas/:id',
-        canActivate: [ProveedorProductosGuard, ProveedorListaExistsGuard],
+        canActivate: [
+          ProveedorListasGuard,
+          ProveedorProductosGuard,
+          ProveedorListaExistsGuard
+        ],
         component: fromContainers.ProveedorListaEditComponent
       }
     ]

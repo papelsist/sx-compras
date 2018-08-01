@@ -47,8 +47,9 @@ if (Environment.isDevelopmentMode() && targetDir != null) {
 
     // Log Listeners
     logger("sx.audit", DEBUG, ['STDOUT'], false)
+    logger("sx.reports", DEBUG, ['STDOUT'], false)
 }
 root(ERROR, ['STDOUT'])
-logger("sx.reports", DEBUG, ['STDOUT'], false)
+
 
 

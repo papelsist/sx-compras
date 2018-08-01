@@ -34,6 +34,7 @@ class RecepcionDeCompraController extends RestfulController<RecepcionDeCompra> {
                 "select distinct(d.recepcion) from RecepcionDeCompraDet d " +
                         " where d.recepcion.proveedor =? " +
                         " and d.cantidad - d.analizado > 0 " +
+                        " and d.recepcion.cancelado is null" +
                         " order by d.recepcion.fecha asc",
                 [proveedor])
         list*.actualizarPendiente()

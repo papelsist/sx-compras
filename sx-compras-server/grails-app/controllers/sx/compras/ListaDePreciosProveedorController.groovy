@@ -62,8 +62,16 @@ class ListaDePreciosProveedorController extends RestfulController<ListaDePrecios
     }
 
     def print( ) {
-        Map repParams = [ID: params.long('id')]
-        def pdf =  reportService.run('ListaDePrecios.jrxml', repParams)
-        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'ListaDePrecios.pdf')
+
+        Map repParams = [ID: params.id]
+        boolean descuentos = params.getBoolean('descuentos', false)
+        if(descuentos) {
+            def pdf =  reportService.run('ListaDePreciosDesc.jrxml', repParams)
+            render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'ListaDePrecios.pdf')
+        } else {
+            def pdf =  reportService.run('ListaDePrecios.jrxml', repParams)
+            render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'ListaDePrecios.pdf')
+        }
+
     }
 }

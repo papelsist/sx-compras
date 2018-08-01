@@ -14,6 +14,7 @@ export interface ListaDePreciosProveedorDet {
   desc4?: number;
   precioNeto?: number;
   precioAnterior?: number;
+  direrencia?: number;
 }
 
 export function buildPartida(

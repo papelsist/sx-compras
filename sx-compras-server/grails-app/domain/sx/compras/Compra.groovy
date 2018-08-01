@@ -30,6 +30,8 @@ class Compra {
 
     Long folio
 
+    String serie
+
     Date fecha
 
     Date cerrada
@@ -85,7 +87,8 @@ class Compra {
         clave nullable:true, maxSize: 15
         rfc nullable:true, maxSize: 14
         entrega nullable:true
-        folio unique:'sucursal'
+        serie nullable: true
+        folio unique:['sucursal', 'serie']
         sw2 nullable:true
         createdBy nullable: true
         lastUpdatedBy nullable: true
@@ -120,11 +123,12 @@ class Compra {
     */
 
     def getStatus() {
-        if(pendiente && cerrada) return 'T'
-        else if(pendiente)
-            return 'P'
-        else
+        if(!pendiente)
             return 'A'
+        else if(pendiente && cerrada )
+            return 'T'
+        else
+            return 'P'
     }
 
 }
