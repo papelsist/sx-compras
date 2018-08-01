@@ -2,7 +2,7 @@
 <!-- Created with iReport - A designer for JasperReports -->
 <!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
 <jasperReport
-		 name="OrdenDeCompraSuc"
+		 name="Compra"
 		 columnCount="1"
 		 printOrder="Vertical"
 		 orientation="Portrait"
@@ -32,6 +32,9 @@
 	<parameter name="ID" isForPrompting="true" class="java.lang.String"/>
 	<parameter name="CLAVEPROV" isForPrompting="true" class="java.lang.String">
 		<defaultValueExpression ><![CDATA["NO"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="IMPRIMIR_COSTO" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[$F{IMPRIMIR_COSTO}]]></defaultValueExpression>
 	</parameter>
 	<queryString><![CDATA[select (CASE WHEN c.especial IS true THEN 'ESPECIAL' ELSE '' END) AS ESPECIAL,c.FOLIO ,(case when c.nacional is true then 'NACIONAL' else 'IMPORTADO' end) as TIPO,c.ultima_depuracion as FECHA_DEPU
 ,(CASE WHEN c.ultima_depuracion IS NOT NULL and c.pendiente is false  THEN 'DEPURADO' ELSE ' ' END) AS ESTADO,c.FECHA,s.clave as SUC_CLAVE,s.nombre as SUC_NOMBRE,p.clave as PROV_CLAVE,p.nombre as PROV_NOMBRE
@@ -748,7 +751,7 @@ Tel. 53 42 71 66   Fax 24 65 03 88
 						width="36"
 						height="11"
 						key="textField">
-							<printWhenExpression><![CDATA[new Boolean($F{IMPRIMIR_COSTO}.equals( "SI" ))]]></printWhenExpression>
+							<printWhenExpression><![CDATA[new Boolean($P{IMPRIMIR_COSTO}.equals( "SI" ))]]></printWhenExpression>
 						</reportElement>
 					<box></box>
 					<textElement textAlignment="Right">
@@ -763,7 +766,7 @@ Tel. 53 42 71 66   Fax 24 65 03 88
 						width="59"
 						height="11"
 						key="textField">
-							<printWhenExpression><![CDATA[new Boolean($F{IMPRIMIR_COSTO}.equals( "SI" ))]]></printWhenExpression>
+							<printWhenExpression><![CDATA[new Boolean($P{IMPRIMIR_COSTO}.equals( "SI" ))]]></printWhenExpression>
 						</reportElement>
 					<box></box>
 					<textElement textAlignment="Right">

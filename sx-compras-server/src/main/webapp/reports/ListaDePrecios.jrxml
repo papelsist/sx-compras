@@ -27,22 +27,24 @@
 	<parameter name="COMPANY" isForPrompting="false" class="java.lang.String">
 		<defaultValueExpression ><![CDATA["PAPEL S.A. DE C.V."]]></defaultValueExpression>
 	</parameter>
-	<queryString><![CDATA[SELECT R.CLAVE AS CLAVPROV,R.NOMBRE,DATE(P.DATE_CREATED) AS APLICADO,(CASE WHEN 1=1 THEN 'LISTA ACTIVA' ELSE 'LISTA INACTIVA' END) AS ACTIVA
+	<queryString><![CDATA[select R.CLAVE AS CLAVPROV,R.NOMBRE,P.APLICADA 
 ,P.EJERCICIO,P.MES,P.DESCRIPCION,P.ID,P.FECHA_INICIAL,P.FECHA_FINAL
-,X.CLAVE,X.DESCRIPCION AS PRODUCTO,X.UNIDAD,P.MONEDA,L.PRECIO_BRUTO,L.PRECIO_NETO,L.DESC1,L.DESC2,L.DESC3,L.DESC4
-from lista_de_precios_por_proveedor P JOIN lista_de_precios_por_proveedor_det L ON(L.LISTA_ID=P.ID) 
-JOIN proveedor R ON(R.ID=P.PROVEEDOR_ID)  JOIN producto X on(L.producto_id=X.ID)
+,Y.CLAVE,Y.DESCRIPCION AS PRODUCTO,Y.UNIDAD ,P.MONEDA,L.PRECIO_BRUTO,L.PRECIO_NETO,L.DESC1,L.DESC2,L.DESC3,L.DESC4
+from lista_de_precios_proveedor P 
+JOIN lista_de_precios_proveedor_det L ON(L.LISTA_ID=P.ID) 
+JOIN proveedor R ON(R.ID=P.PROVEEDOR_ID)  
+JOIN proveedor_producto x ON(l.producto_id=x.id)
+JOIN producto Y on(X.producto_id=Y.ID)
 WHERE P.ID=$P{ID}
 ORDER BY L.DESCRIPCION]]></queryString>
 
 	<field name="CLAVPROV" class="java.lang.String"/>
 	<field name="NOMBRE" class="java.lang.String"/>
-	<field name="APLICADO" class="java.sql.Date"/>
-	<field name="ACTIVA" class="java.lang.String"/>
+	<field name="APLICADA" class="java.sql.Date"/>
 	<field name="EJERCICIO" class="java.lang.Integer"/>
 	<field name="MES" class="java.lang.Integer"/>
 	<field name="DESCRIPCION" class="java.lang.String"/>
-	<field name="ID" class="java.lang.String"/>
+	<field name="ID" class="java.lang.Long"/>
 	<field name="FECHA_INICIAL" class="java.sql.Date"/>
 	<field name="FECHA_FINAL" class="java.sql.Date"/>
 	<field name="CLAVE" class="java.lang.String"/>
@@ -270,19 +272,6 @@ ORDER BY L.DESCRIPCION]]></queryString>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{DESCRIPCION}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="120"
-						y="70"
-						width="90"
-						height="14"
-						key="textField"/>
-					<box></box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Bold" size="8" isBold="true" isUnderline="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{ACTIVA}]]></textFieldExpression>
-				</textField>
 				<textField isStretchWithOverflow="false" pattern="dd-MMM-yy" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="265"
@@ -294,7 +283,7 @@ ORDER BY L.DESCRIPCION]]></queryString>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="8" isBold="true" isUnderline="true"/>
 					</textElement>
-				<textFieldExpression   class="java.util.Date"><![CDATA[$F{APLICADO}]]></textFieldExpression>
+				<textFieldExpression   class="java.util.Date"><![CDATA[$F{APLICADA}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
