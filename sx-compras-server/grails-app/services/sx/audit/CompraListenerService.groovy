@@ -2,19 +2,19 @@ package sx.audit
 
 import grails.events.annotation.Subscriber
 import grails.gorm.transactions.Transactional
+import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
 
 import org.grails.datastore.mapping.engine.event.AbstractPersistenceEvent
 import org.grails.datastore.mapping.engine.event.PostDeleteEvent
-import org.grails.datastore.mapping.engine.event.PostInsertEvent
 import org.grails.datastore.mapping.engine.event.PostUpdateEvent
 
 import org.springframework.beans.factory.annotation.Autowired
 
-import sx.audit.AuditLog
-import sx.audit.AuditLogDataService
 import sx.compras.Compra
 
-
+@Slf4j
+@CompileStatic
 @Transactional
 class CompraListenerService {
 
@@ -34,34 +34,25 @@ class CompraListenerService {
         null
     }
 
-    // @Subscriber
-    void afterInsert(PostInsertEvent event) {
-        String id = getId(event)
-        if ( id ) {
-
-
-        }
-    }
-
     @Subscriber
     void afterUpdate(PostUpdateEvent event) {
         String id = getId(event)
         if ( id ) {
             log.debug('{} {} Id: {}', event.eventType.name(), event.entity.name, id)
             Compra compra = getCompra(event)
-            log(compra, 'UDATE')
+            logEntity(compra, 'UDATE')
         }
     }
 
     @Subscriber
     void afterDelete(PostDeleteEvent event) {
-        String compra = getCompra(event)
+        Compra compra = getCompra(event)
         if ( compra ) {
-            log(compra, 'DELETE')
+            logEntity(compra, 'DELETE')
         }
     }
 
-    AuditLog log(Compra compra, String type) {
+    AuditLog logEntity(Compra compra, String type) {
         // log.debug('Compra cerrada: {}', compra.cerrada ? 'SI' : 'NO')
         if(compra.cerrada != null) {
             String destino = compra.sucursal.clave.trim() == '1' ? 'CENTRAL' : compra.sucursal.nombre

@@ -14,7 +14,7 @@ import sx.core.Proveedor
 @CompileStatic
 class ProveedorListenerService {
 
-    ProveedorLogDataService proveedorLogDataService
+
 
     String getId(AbstractPersistenceEvent event) {
         if ( event.entityObject instanceof Proveedor ) {
@@ -29,7 +29,6 @@ class ProveedorListenerService {
         String id = getId(event)
         if ( id ) {
             log.info 'After Proveedor save...'
-            proveedorLogDataService.save('SAVE', id)
         }
     }
 
@@ -39,7 +38,6 @@ class ProveedorListenerService {
         // log.debug('AfterUpdate: event {}', event.entityObject.class.name);
         if ( id ) {
             log.info "After Proveedor update..."
-            proveedorLogDataService.save('UPDATE', id)
         }
     }
 

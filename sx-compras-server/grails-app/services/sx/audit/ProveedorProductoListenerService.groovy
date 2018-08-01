@@ -15,7 +15,7 @@ import sx.core.ProveedorProducto
 
 
 @Slf4j
-// @CompileStatic
+@CompileStatic
 @Transactional
 class ProveedorProductoListenerService {
 
