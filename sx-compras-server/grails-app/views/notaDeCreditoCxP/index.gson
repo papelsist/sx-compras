@@ -1,0 +1,8 @@
+import sx.cxp.NotaDeCreditoCxP
+
+model {
+	Iterable<NotaDeCreditoCxP> notaDeCreditoCxPList
+}
+
+json tmpl.notaDeCreditoCxP(notaDeCreditoCxPList ?: [])
+

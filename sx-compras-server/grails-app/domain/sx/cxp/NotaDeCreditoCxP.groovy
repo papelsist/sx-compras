@@ -13,7 +13,9 @@ import sx.utils.MonedaUtils
 @ToString(excludes =  ['version','lastUpdated', 'dateCreated'], includeNames=true,includePackage=false)
 @EqualsAndHashCode(includeFields = true,includes = ['id', 'nombre', 'folio', 'serie'])
 @GrailsCompileStatic
-class NotaCxP {
+class NotaDeCreditoCxP {
+
+    String id
 
     Date fecha = new Date()
 
@@ -24,6 +26,8 @@ class NotaCxP {
     String folio
 
     String serie
+
+    String uuid
 
     String moneda = MonedaUtils.PESOS.currencyCode
 
@@ -43,13 +47,17 @@ class NotaCxP {
 
     Long sw2
 
+    List<NotaDeCreditoCxPDet> conceptos = []
+
     Date dateCreated
 
     Date lastUpdated
 
     Tipo concepto = Tipo.DESCUENTO
 
-    ComprobanteFiscal comprobante
+    ComprobanteFiscal comprobanteFiscal
+
+
 
     static constraints = {
         folio nullable: true, maxSize: 30
@@ -61,8 +69,18 @@ class NotaCxP {
         impuestoTrasladado(scale:4)
         impuestoRetenido(sacle:4)
         total(scale:4)
-        comprobante nullable:true, unique:true
+        uuid nullable:true, unique:true, maxSize: 50
+        sw2 nullable:true
+        comprobanteFiscal nullable: true
+        comentario nullable: true
     }
+
+    static mapping = {
+        id generator:'uuid'
+        fecha type:'date' ,index: 'CXP_APLICACION_IDX1'
+    }
+
+    static hasMany =[conceptos: NotaDeCreditoCxPDet]
 
 }
 
