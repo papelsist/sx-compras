@@ -5,6 +5,7 @@ import { TdMediaService } from '@covalent/core';
 
 import { RepPeriodoSucursalComponent } from 'app/reportes/components';
 import { ReportService } from '../../../reportes/services/report.service';
+import { ReportComsSinAnalizarComponent } from '../../components';
 
 @Component({
   selector: 'sx-cxp-page',
@@ -29,6 +30,12 @@ export class CxpPageComponent implements OnInit {
       title: 'Requisiciones',
       description: 'Requisiciones',
       icon: 'gradient'
+    },
+    {
+      route: 'notas',
+      title: 'Notas ',
+      description: 'Notas de crédito',
+      icon: 'description'
     }
   ];
   constructor(
@@ -50,6 +57,23 @@ export class CxpPageComponent implements OnInit {
         if (params) {
           this.reportService.runReport(
             'analisisDeFactura/entradasAnalizadas',
+            params
+          );
+        }
+      });
+  }
+
+  comsSinAnalizar() {
+    this.dialog
+      .open(ReportComsSinAnalizarComponent, {
+        data: {},
+        width: '500px'
+      })
+      .afterClosed()
+      .subscribe(params => {
+        if (params) {
+          this.reportService.runReport(
+            'analisisDeFactura/comsSinAnalizar',
             params
           );
         }

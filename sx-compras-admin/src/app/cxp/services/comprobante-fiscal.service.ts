@@ -37,6 +37,15 @@ export class ComprobanteFiscalService {
     });
   }
 
+  mostrarXml2(cfdiId: string): Observable<any> {
+    const url = `${this.apiUrl}/xml/${cfdiId}`;
+    const headers = new HttpHeaders().set('Content-type', 'text/xml');
+    return this.http.get(url, {
+      headers: headers,
+      responseType: 'blob'
+    });
+  }
+
   imprimirCfdi(cfdiId: string) {
     const url = `${this.apiUrl}/pdf/${cfdiId}`;
     const headers = new HttpHeaders().set('Content-type', 'application/pdf');

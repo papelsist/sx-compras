@@ -43,6 +43,8 @@ class NotaDeCreditoCxP {
 
     BigDecimal total = 0.0
 
+    BigDecimal aplicado = 0.0
+
     String comentario
 
     Long sw2
@@ -79,9 +81,16 @@ class NotaDeCreditoCxP {
         id generator:'uuid'
         fecha type:'date' ,index: 'CXP_APLICACION_IDX1'
         concepto inList: ['DEVOLUCION','DESCUENTO','DESCUENTO_FINANCIERO', 'DESCUENTO_ANTICIPO', 'BONIFICACION']
+        aplicado formula:'(select COALESCE(sum(x.importe),0) from aplicacion_de_pago x where x.nota.id=id)'
     }
 
+    static transients = ['aplicado', 'disponible']
+
     static hasMany =[conceptos: NotaDeCreditoCxPDet]
+
+    BigDecimal getDisponible() {
+        return total - aplicado
+    }
 
 
 

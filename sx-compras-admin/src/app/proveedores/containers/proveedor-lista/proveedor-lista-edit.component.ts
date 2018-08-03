@@ -21,7 +21,8 @@ import { ReportService } from '../../../reportes/services/report.service';
         (cancel)="onCancel()"
         (aplicar)="onAplicar($event)"
         (actualizar)="onActualizar($event)"
-        (print)="onPrint($event)">
+        (print)="onPrint($event)"
+        (delete)="onDelete($event)">
         </sx-proveedor-lista-form>
     </div>
   `
@@ -71,6 +72,24 @@ export class ProveedorListaEditComponent implements OnInit {
         if (res) {
           this.store.dispatch(
             new fromActions.ActualizarProductosDeLista(event)
+          );
+        }
+      });
+  }
+
+  onDelete(event: ListaDePreciosProveedor) {
+    this.dialogService
+      .openConfirm({
+        title: `Eliminar lista de precios ${event.id}`,
+        message: 'Folio:  ' + event.id,
+        acceptButton: 'Elimiar',
+        cancelButton: 'Cancelar'
+      })
+      .afterClosed()
+      .subscribe(res => {
+        if (res) {
+          this.store.dispatch(
+            new fromActions.DeleteListaDePreciosProveedor(event)
           );
         }
       });

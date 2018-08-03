@@ -13,10 +13,13 @@
         <sx-ejercicio-field [parent]="form"></sx-ejercicio-field>
         <sx-mes-field [parent]="form" class="pad-left"></sx-mes-field>
         <sx-moneda-field [parent]="form" class="pad-left"></sx-moneda-field>
-        <sx-upper-case-field formControlName="descripcion" flex placeholder="Comentario" class="pad-left"></sx-upper-case-field>
-
+        <sx-upper-case-field formControlName="descripcion" flex="40" placeholder="Comentario" class="pad-left"></sx-upper-case-field>
+        <mat-form-field class="pad-left">
+          <input placeholder="Filtrar" matInput (input)="onFilter(search.value)" #search autocomplete="off">
+        </mat-form-field>
       </div>
-      <sx-proveedor-lista-partidas [parent]="form" [partidas]="partidas.value" (update)="onUpdateRow($event)" (delete)="onDeleteRow($event)">
+      <sx-proveedor-lista-partidas [parent]="form" [partidas]="partidas.value" (update)="onUpdateRow($event)" (delete)="onDeleteRow($event)"
+        [filter]="filter$ | async">
       </sx-proveedor-lista-partidas>
     </form>
   </mat-card-content>

@@ -37,6 +37,18 @@ const routes: Routes = [
             component: fromContainers.RequisicionComponent
           }
         ]
+      },
+      {
+        path: 'notas',
+        canActivate: [fromGuards.NotasGuard],
+        children: [
+          { path: '', component: fromContainers.NotasComponent },
+          {
+            path: ':notaId',
+            canActivate: [fromGuards.NotaExistsGuard],
+            component: fromContainers.NotaComponent
+          }
+        ]
       }
     ]
   }

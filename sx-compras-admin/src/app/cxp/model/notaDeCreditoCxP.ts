@@ -12,15 +12,19 @@ export interface NotaDeCreditoCxP {
   uuid?: string;
   moneda: string;
   tipoDeCambio: number;
+  tcContable?: number;
   subTotal: number;
   descuento: number;
   impuestoTrasladado: number;
   impuestoRetenido: number;
   total: number;
+  aplicado?: number;
+  disponible: number;
   comentario?: string;
   conceptos?: NotaDeCreditoCxPDet[];
   creado: string;
   modificado: string;
   concepto: string;
   comprobanteFiscal: Partial<ComprobanteFiscal>;
+  selected?: boolean;
 }

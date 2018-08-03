@@ -96,4 +96,8 @@ abstract class NotaDeCreditoCxPService {
         }
         return res
     }
+
+    NotaDeCreditoCxP aplicar(NotaDeCreditoCxP nota) {
+        return nota
+    }
 }

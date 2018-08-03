@@ -27,7 +27,7 @@ export const getNotasLoading = createSelector(
   fromNotas.getNotasLoading
 );
 
-export const getSelectedCompra = createSelector(
+export const getSelectedNota = createSelector(
   getNotasEntities,
   fromRoot.getRouterState,
   (entities, router): NotaDeCreditoCxP => {

@@ -19,8 +19,8 @@ export enum NotaActionTypes {
   DeleteNotaFail = '[Notas CXP] Delete Nota Fail',
   DeleteNotaSuccess = '[Notas CXP] Delete Nota Success',
   ClearNotas = '[Notas CXP] Clear Notas',
-  SetPeriodo = '[Notas CXP] Set Periodo de compras',
-  SetSearchTerm = '[Notas CXP] Set Search term de compras',
+  SetPeriodo = '[Notas CXP] Set Periodo de notas',
+  SetSearchTerm = '[Notas CXP] Set Search term de notas',
   Load = '[Notas CXP] Load One Nota',
   LoadFail = '[Notas CXP] Load One Nota fail',
   LoadSuccess = '[Notas CXP] Load One Nota Success',
@@ -74,7 +74,7 @@ export class UpdateNotaSuccess implements Action {
 export class UpsertNota implements Action {
   readonly type = NotaActionTypes.UpsertNota;
 
-  constructor(public payload: { compra: NotaDeCreditoCxP }) {}
+  constructor(public payload: { nota: NotaDeCreditoCxP }) {}
 }
 
 export class DeleteNota implements Action {

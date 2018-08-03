@@ -57,7 +57,7 @@ export class CompraPartidasTableComponent implements OnInit, OnChanges {
   }
 
   actualizar(row: CompraDet) {
-    actualizarPartida(row); // Should change to be used from parent only dispatch an event
+    // actualizarPartida(row); // Should change to be used from parent only dispatch an event
     this.update.emit(row);
   }
 

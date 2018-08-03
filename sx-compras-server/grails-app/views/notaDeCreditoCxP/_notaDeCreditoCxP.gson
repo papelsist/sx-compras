@@ -4,4 +4,6 @@ model {
 	NotaDeCreditoCxP notaDeCreditoCxP
 }
 
-json g.render(notaDeCreditoCxP, [resolveTemplate: false])
+json g.render(notaDeCreditoCxP, [resolveTemplate: false]) {
+	disponible notaDeCreditoCxP.disponible
+}

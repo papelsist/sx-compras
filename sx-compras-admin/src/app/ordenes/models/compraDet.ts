@@ -49,8 +49,8 @@ export function buildCompraDet(
 }
 
 export function actualizarPartida(row: CompraDet) {
-  // console.log('Actualizando: ', row);
   const {
+    unidad,
     producto,
     solicitado,
     precio,
@@ -59,7 +59,8 @@ export function actualizarPartida(row: CompraDet) {
     descuento3,
     descuento4
   } = row;
-  const factor = producto.unidad === 'MIL' ? 1000 : 1;
+  const factor = unidad === 'MIL' ? 1000 : 1;
+  console.log('Unidad/Factor: ', factor);
   const importeBruto = precio * (solicitado / factor);
   const importeNeto = aplicarDescuentosEnCascada(importeBruto, [
     descuento1,

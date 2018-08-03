@@ -2,6 +2,10 @@ package sx.cxp
 
 import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.RestfulController
+import groovy.transform.ToString
+import sx.core.Producto
+import sx.core.Proveedor
+import sx.core.Sucursal
 import sx.reports.ReportService
 
 import sx.reports.SucursalPeriodoCommand
@@ -88,4 +92,38 @@ class AnalisisDeFacturaController extends RestfulController<AnalisisDeFactura> {
         def pdf =  reportService.run('EntradasAnalizadas.jrxml', command.toReportMap())
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'EntradasAnalizadas.pdf')
     }
+
+    def comsSinAnalizar(ComsSinAnalizarCommand command) {
+
+        Map repParams = [:]
+        repParams.FECHA_INI = command.fechaIni
+        repParams.FECHA_FIN = command.fechaFin
+        repParams.PROVEEDOR = command.proveedor ? command.proveedor.id : '%'
+        repParams.ARTICULOS = command.producto ? command.producto.id : '%'
+        repParams.SUCURSAL = command.sucursal ? command.sucursal.id : '%'
+
+        def pdf =  reportService.run('Com_SinAnalizar_General.jrxml', repParams)
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'Com_SinAnalizar_General.pdf')
+
+    }
+}
+
+// @ToString(includeNames=true,includePackage=false)
+class ComsSinAnalizarCommand {
+
+    Date fechaIni
+    Date fechaFin
+    Producto producto
+    Proveedor proveedor
+    Sucursal sucursal
+
+    static constraints = {
+        proveedor nullable: true
+        sucursal nullable: true
+        producto nullable: true
+
+    }
+
+
+
 }

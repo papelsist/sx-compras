@@ -21,6 +21,8 @@ import { Proveedor } from '../../models/proveedor';
 import { ProveedorProducto } from '../../models/proveedorProducto';
 import { ListaDePreciosProveedorDet } from '../../models/listaDePreciosProveedorDet';
 
+import { Subject } from 'rxjs';
+
 @Component({
   selector: 'sx-proveedor-lista-form',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -36,6 +38,8 @@ export class ProveedorListaFormComponent implements OnInit, OnChanges {
   @Output() cancel = new EventEmitter();
   @Output() delete = new EventEmitter<ListaDePreciosProveedor>();
   @Output() print = new EventEmitter<ListaDePreciosProveedor>();
+
+  filter$ = new Subject();
 
   constructor(private fb: FormBuilder) {}
 
@@ -126,5 +130,9 @@ export class ProveedorListaFormComponent implements OnInit, OnChanges {
     const partidas = [...this.partidas.value];
     partidas.forEach(item => (item.producto = item.producto.id));
     return partidas;
+  }
+
+  onFilter(event: string) {
+    this.filter$.next(event.toLowerCase());
   }
 }
