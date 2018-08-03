@@ -32,6 +32,7 @@ export class ProveedorListaFormComponent implements OnInit, OnChanges {
   @Input() productos: ProveedorProducto[];
   @Output() save = new EventEmitter<ListaDePreciosProveedor>();
   @Output() aplicar = new EventEmitter<ListaDePreciosProveedor>();
+  @Output() actualizar = new EventEmitter<ListaDePreciosProveedor>();
   @Output() cancel = new EventEmitter();
   @Output() delete = new EventEmitter<ListaDePreciosProveedor>();
   @Output() print = new EventEmitter<ListaDePreciosProveedor>();

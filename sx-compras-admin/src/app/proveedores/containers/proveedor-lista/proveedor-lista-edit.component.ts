@@ -20,6 +20,7 @@ import { ReportService } from '../../../reportes/services/report.service';
       <sx-proveedor-lista-form [listaDePrecios]="lista$ | async" (save)="onSave($event)"
         (cancel)="onCancel()"
         (aplicar)="onAplicar($event)"
+        (actualizar)="onActualizar($event)"
         (print)="onPrint($event)">
         </sx-proveedor-lista-form>
     </div>
@@ -53,6 +54,24 @@ export class ProveedorListaEditComponent implements OnInit {
       .subscribe(res => {
         if (res) {
           this.store.dispatch(new fromActions.AplicarListaProveedor(event));
+        }
+      });
+  }
+
+  onActualizar(event: ListaDePreciosProveedor) {
+    this.dialogService
+      .openConfirm({
+        title: `Actualizar lista de precios ${event.id}`,
+        message: 'Agregar productos faltantes',
+        acceptButton: 'Actualizar',
+        cancelButton: 'Cancelar'
+      })
+      .afterClosed()
+      .subscribe(res => {
+        if (res) {
+          this.store.dispatch(
+            new fromActions.ActualizarProductosDeLista(event)
+          );
         }
       });
   }

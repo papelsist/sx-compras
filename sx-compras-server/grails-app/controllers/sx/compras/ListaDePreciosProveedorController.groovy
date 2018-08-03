@@ -61,6 +61,14 @@ class ListaDePreciosProveedorController extends RestfulController<ListaDePrecios
         respond listaDePreciosProveedorService.aplicarListaDePrecios(lista)
     }
 
+    def actualizar(ListaDePreciosProveedor lista) {
+        if(lista == null ){
+            notFound()
+            return
+        }
+        respond listaDePreciosProveedorService.actualizarProductos(lista)
+    }
+
     def print( ) {
 
         Map repParams = [ID: params.id]

@@ -1,9 +1,9 @@
 <mat-card>
   <mat-card-title-group>
     <mat-card-title>{{title}}</mat-card-title>
-    <mat-card-subtitle *ngIf="listaDePrecios.aplicada">
+    <mat-card-subtitle *ngIf="listaDePrecios?.aplicada">
       Aplicada:
-      <span class="tc-indigo-600">{{listaDePrecios.aplicada | date: 'dd/MM/yyyy'}}</span>
+      <span class="tc-indigo-600">{{listaDePrecios?.aplicada | date: 'dd/MM/yyyy'}}</span>
     </mat-card-subtitle>
   </mat-card-title-group>
   <mat-divider></mat-divider>
@@ -13,7 +13,7 @@
         <sx-ejercicio-field [parent]="form"></sx-ejercicio-field>
         <sx-mes-field [parent]="form" class="pad-left"></sx-mes-field>
         <sx-moneda-field [parent]="form" class="pad-left"></sx-moneda-field>
-        <sx-upper-case-field formControlName="descripcion" flex></sx-upper-case-field>
+        <sx-upper-case-field formControlName="descripcion" flex placeholder="Comentario" class="pad-left"></sx-upper-case-field>
 
       </div>
       <sx-proveedor-lista-partidas [parent]="form" [partidas]="partidas.value" (update)="onUpdateRow($event)" (delete)="onDeleteRow($event)">
@@ -28,9 +28,14 @@
     <button mat-button (click)="onSubmit()" [disabled]="form.invalid || form.pristine">
       <mat-icon>save</mat-icon>Salvar
     </button>
-    <button mat-button color="primary" type="button" (click)="aplicar.emit(listaDePrecios)">
+    <button mat-button color="primary" type="button" (click)="aplicar.emit(listaDePrecios)" [disabled]="listaDePrecios?.aplicada">
       <mat-icon>check_circle</mat-icon> Aplicar
     </button>
+
+    <button mat-button color="primary" type="button" (click)="actualizar.emit(listaDePrecios)" [disabled]="listaDePrecios?.aplicada">
+      <mat-icon>autorenew</mat-icon> Actualizar
+    </button>
+
     <button mat-button color="warn" type="button" (click)="delete.emit(listaDePrecios)" *ngIf="listaDePrecios?.id">
       <mat-icon>delete</mat-icon> Eliminar
     </button>

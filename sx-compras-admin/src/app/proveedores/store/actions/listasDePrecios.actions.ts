@@ -31,6 +31,9 @@ export const APLICAR_LISTA_PROVEEDOR_FAIL =
 export const APLICAR_LISTA_PROVEEDOR_SUCCESS =
   '[ListaDePreciosProveedor] Aplicar Lista Success Success';
 
+export const ACTUALIZAR_PRODUCTOS_DE_LISTA_PROVEEDOR =
+  '[ListaDePreciosProveedor] Actualiar productos de Lista proveedor ';
+
 export class LoadListasDePreciosProveedor implements Action {
   readonly type = LOAD_LISTAS_PROVEEDOR;
   constructor(public payload: string) {}
@@ -95,6 +98,11 @@ export class AplicarListaProveedorFail implements Action {
 }
 export class AplicarListaProveedorSuccess implements Action {
   readonly type = APLICAR_LISTA_PROVEEDOR_SUCCESS;
+  constructor(public payload: ListaDePreciosProveedor) {}
+}
+
+export class ActualizarProductosDeLista implements Action {
+  readonly type = ACTUALIZAR_PRODUCTOS_DE_LISTA_PROVEEDOR;
   constructor(public payload: ListaDePreciosProveedor) {}
 }
 

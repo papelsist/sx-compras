@@ -4,16 +4,16 @@ import grails.compiler.GrailsCompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 
-@ToString(excludes =  ['version','lastUpdated', 'dateCreated'], includeNames=true,includePackage=false)
+@ToString(includes =  ['uuid'], includeNames=true,includePackage=false)
 @EqualsAndHashCode(includeFields = true,includes = ['id', 'cxp', 'foexitlio', 'serie'])
 @GrailsCompileStatic
 class NotaDeCreditoCxPDet {
 
     String id
 
-    CuentaPorPagar	cxp
-
     String uuid
+
+    CuentaPorPagar	cxp
 
     String folio
 
@@ -21,9 +21,9 @@ class NotaDeCreditoCxPDet {
 
     Date fechaDocumento
 
-    BigDecimal totalDocumento = 0.0
+    BigDecimal totalDocumento
 
-    BigDecimal saldoDocumento = 0.0
+    BigDecimal saldoDocumento
 
     BigDecimal importe
 
@@ -32,7 +32,13 @@ class NotaDeCreditoCxPDet {
     static constraints = {
         comentario nullable:true
         cxp nullable: true
+        folio nullable: true
+        serie nullable: true
         fechaDocumento nullable: true
+        totalDocumento nullable: true
+        saldoDocumento nullable: true
+        importe nullable: true
+        comentario nullable: true
     }
 
     static mapping={

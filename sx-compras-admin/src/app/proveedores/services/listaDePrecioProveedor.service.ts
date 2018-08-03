@@ -58,6 +58,13 @@ export class ListaDePreciosProveedorService {
       .pipe(catchError((error: any) => throwError(error)));
   }
 
+  actualizar(lp: ListaDePreciosProveedor): Observable<ListaDePreciosProveedor> {
+    const url = `${this.apiUrl}/actualizar/${lp.id}`;
+    return this.http
+      .put<ListaDePreciosProveedor>(url, {})
+      .pipe(catchError((error: any) => throwError(error)));
+  }
+
   delete(id: number) {
     const url = `${this.apiUrl}/${id}`;
     return this.http

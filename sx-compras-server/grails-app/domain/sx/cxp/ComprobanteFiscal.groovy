@@ -2,6 +2,7 @@ package sx.cxp
 
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
+import groovy.util.slurpersupport.GPathResult
 import sx.core.Proveedor
 
 @ToString(includes ='emisorRfc, serie, folio, fileName',includeNames=true,includePackage=false)
@@ -84,6 +85,17 @@ class ComprobanteFiscal {
         fecha index: 'CF_IDX1'
         uuid index: 'CF_IDX2'
         emisorRfc index: 'CF_IDX_3'
+    }
+
+    static transients = ['xmlNode']
+
+    private GPathResult xmlNode
+
+    GPathResult getXmlNode(){
+        if(xmlNode == null) {
+            xmlNode = new XmlSlurper().parse(new ByteArrayInputStream(xml))
+        }
+        return xmlNode
     }
 
 }

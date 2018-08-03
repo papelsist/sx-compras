@@ -4,6 +4,7 @@ import grails.compiler.GrailsCompileStatic
 import grails.events.annotation.Publisher
 import grails.gorm.services.Service
 import sx.core.LogUser
+import sx.core.Proveedor
 import sx.core.ProveedorProducto
 
 
@@ -35,6 +36,38 @@ abstract class ListaDePreciosProveedorService implements LogUser{
         return this.save(lista)
 
     }
+
+    ListaDePreciosProveedor actualizarProductos(ListaDePreciosProveedor lista) {
+
+        List<ProveedorProducto> prods = ProveedorProducto.where{proveedor == lista.proveedor && suspendido == false && moneda == lista.moneda}.list()
+        // log.info('Productos activos del proveedor: {} ', prods.collect{it.producto.clave}.join(','))
+        List<String> existentes = lista.partidas.collect {it.clave.trim()}
+        //log.info('En lista {}', existentes)
+
+        List<ProveedorProducto> faltantes = prods.findAll{ item ->
+            def good = existentes.contains(item.producto.clave.trim())
+            return !good
+        }
+        // log.debug('Faltantes: {}', faltantes.size())
+        faltantes.each {
+            ListaDePreciosProveedorDet det = new ListaDePreciosProveedorDet()
+            det.producto = it
+            det.clave = it.producto.clave
+            det.descripcion = it.producto.descripcion
+            det.unidad = it.producto.unidad
+            det.precioAnterior = it.precio
+            det.precioBruto = it.precio
+            det.desc1 = it.desc1
+            det.desc3 = it.desc2
+            det.desc3 = it.desc3
+            det.desc4 = it.desc4
+            det.precioNeto = it.precio
+            lista.addToPartidas(det)
+        }
+        return save(lista)
+    }
+
+
 
     abstract void delete(Serializable id)
 }

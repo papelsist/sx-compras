@@ -104,7 +104,7 @@ export class ListaDePreciosEffects {
       })
     );
 
-  @Effect({ dispatch: false })
+  @Effect()
   updateSuccess$ = this.actions$.pipe(
     ofType<listasActions.UpdateListaDePreciosProveedorSuccess>(
       listasActions.UPDATE_LISTA_PROVEEDOR_SUCCESS
@@ -118,6 +118,10 @@ export class ListaDePreciosEffects {
           duration: 2000
         }
       )
+    ),
+    map(
+      lista =>
+        new fromRoot.Go({ path: [`proveedores/${lista.proveedor.id}/listas`] })
     )
   );
 
@@ -186,6 +190,27 @@ export class ListaDePreciosEffects {
         );
     })
   );
+
+  @Effect()
+  actualiarLista$ = this.actions$
+    .ofType<listasActions.ActualizarProductosDeLista>(
+      listasActions.ACTUALIZAR_PRODUCTOS_DE_LISTA_PROVEEDOR
+    )
+    .pipe(
+      map(action => action.payload),
+      switchMap(lista => {
+        return this.service
+          .actualizar(lista)
+          .pipe(
+            map(
+              res => new listasActions.UpdateListaDePreciosProveedorSuccess(res)
+            ),
+            catchError(error =>
+              of(new listasActions.UpdateListaDePreciosProveedorFail(error))
+            )
+          );
+      })
+    );
 
   /*
   @Effect()

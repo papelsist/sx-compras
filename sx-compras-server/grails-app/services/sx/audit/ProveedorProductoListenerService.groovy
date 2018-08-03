@@ -1,5 +1,6 @@
 package sx.audit
 
+import grails.compiler.GrailsCompileStatic
 import grails.events.annotation.Subscriber
 import grails.gorm.transactions.Transactional
 import groovy.transform.CompileStatic
@@ -12,14 +13,23 @@ import org.grails.datastore.mapping.engine.event.PostUpdateEvent
 import org.springframework.beans.factory.annotation.Autowired
 
 import sx.core.ProveedorProducto
+import sx.core.Sucursal
 
 
 @Slf4j
-@CompileStatic
+@GrailsCompileStatic
 @Transactional
 class ProveedorProductoListenerService {
 
     @Autowired AuditLogDataService auditLogDataService
+
+    List targets = ['SOLIS',
+                    'TACUBA',
+                    'ANDRADE',
+                    'CALLE 4',
+                    'CF5FEBRERO',
+                    'VERTIZ 176',
+                    'BOLIVAR']
 
     String getId(AbstractPersistenceEvent event) {
         if ( event.entityObject instanceof ProveedorProducto ) {
@@ -42,19 +52,30 @@ class ProveedorProductoListenerService {
         String id = getId(event)
         if ( id ) {
             log.debug('UDATE {} {}', event.entity.name, event.eventType.name())
-            log(event, 'UDATE', id)
+            log(event, 'UPDATE', id)
         }
     }
 
-    AuditLog log(AbstractPersistenceEvent event, String type, String id, String source = 'CENTRAL', String target = 'CENTRAL') {
-        AuditLog log = new AuditLog(
-                name: event.entityObject.getClass().getSimpleName(),
-                persistedObjectId: id,
-                source: source,
-                target: target,
-                tableName: 'PROVEEDOR_PRODUCTO',
-                eventName: type
+    def log(AbstractPersistenceEvent event, String type, String id) {
+        ['SOLIS',
+         'TACUBA',
+         'ANDRADE',
+         'CALLE 4',
+         'CF5FEBRERO',
+         'VERTIZ 176',
+         'BOLIVAR'].each { target ->
+            AuditLog log = new AuditLog(
+                    name: event.entityObject.getClass().getSimpleName(),
+                    persistedObjectId: id,
+                    source: 'CENTRAL',
+                    target: target,
+                    tableName: 'proveedor_producto',
+                    eventName: type
             )
-        auditLogDataService.save(log)
+            auditLogDataService.save(log)
+        }
+
     }
+
+
 }

@@ -52,20 +52,37 @@ class CompraListenerService {
         }
     }
 
-    AuditLog logEntity(Compra compra, String type) {
+    def logEntity(Compra compra, String type) {
         // log.debug('Compra cerrada: {}', compra.cerrada ? 'SI' : 'NO')
         if(compra.cerrada != null) {
-            String destino = compra.sucursal.clave.trim() == '1' ? 'CENTRAL' : compra.sucursal.nombre
-            AuditLog log = new AuditLog(
-                    name: 'Compra',
-                    persistedObjectId: compra.id,
-                    source: 'CENTRAL',
-                    target: destino,
-                    tableName: 'compra',
-                    eventName: type
-            )
-            auditLogDataService.save(log)
+            Boolean central = compra.sucursal.clave.trim() == '1' ? true : false
+            if(central) {
+                ['SOLIS',
+                 'TACUBA',
+                 'ANDRADE',
+                 'CALLE 4',
+                 'CF5FEBRERO',
+                 'VERTIZ 176',
+                 'BOLIVAR'].each {
+                    buildLog(compra, it, type)
+                }
+            } else {
+                buildLog(compra, compra.sucursal.nombre, type)
+            }
+
         }
 
+    }
+
+    def buildLog(Compra compra, String destino, String type) {
+        AuditLog log = new AuditLog(
+                name: 'Compra',
+                persistedObjectId: compra.id,
+                source: 'CENTRAL',
+                target: destino,
+                tableName: 'compra',
+                eventName: type
+        )
+        auditLogDataService.save(log)
     }
 }

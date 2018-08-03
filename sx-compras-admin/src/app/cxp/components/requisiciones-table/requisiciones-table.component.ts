@@ -27,6 +27,7 @@ export class RequisicionesTableComponent implements OnInit, OnChanges {
     'folio',
     'nombre',
     'fecha',
+    'fechaDePago',
     'moneda',
     'tipoDeCambio',
     'total',

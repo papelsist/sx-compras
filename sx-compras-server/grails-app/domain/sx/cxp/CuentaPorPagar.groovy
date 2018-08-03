@@ -56,6 +56,8 @@ class CuentaPorPagar {
 
     ComprobanteFiscal comprobanteFiscal
 
+    BigDecimal pagos = 0.0
+
     static constraints = {
         tipo inList:['COMPRAS', 'GASTOS']
         folio nullable: true, maxSize: 30
@@ -88,14 +90,19 @@ class CuentaPorPagar {
         fecha type:'date' , index: 'CXP_IDX2'
         vencimiento type:'date', index: 'CXP_IDX2'
         descuentoFinancieroVto type:'date'
+        pagos formula:'(select COALESCE(sum(x.importe),0) from aplicacion_de_pago x where x.cxp=id)'
     }
 
 
-    // static transients = ['pendienteRequisitar',]
+    static transients = ['pagos', 'saldo',]
 
     BigDecimal toPesos(String property){
         return "${property}" * tipoDeCambio
 
+    }
+
+    BigDecimal getSaldo() {
+        return this.total - this.pagos
     }
 
 

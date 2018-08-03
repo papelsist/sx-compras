@@ -5,6 +5,7 @@ import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
 import groovy.util.slurpersupport.GPathResult
 import org.apache.commons.lang3.exception.ExceptionUtils
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import sx.core.LogUser
 import sx.core.Proveedor
@@ -23,6 +24,8 @@ class ComprobanteFiscalService implements  LogUser{
     String cfdiDir
 
     ImportadorCfdi32 importadorCfdi32
+
+    @Autowired NotaDeCreditoCxPService notaDeCreditoCxPService
 
     ComprobanteFiscal save(ComprobanteFiscal comprobanteFiscal) {
         comprobanteFiscal.save failOnError: true, flush: true
@@ -186,6 +189,8 @@ class ComprobanteFiscalService implements  LogUser{
                 CuentaPorPagar cxp = this.generarCuentaPorPagar(cf, tipo)
                 cxp.comprobanteFiscal = cf
                 cxp.save failOnError: true, flush: true
+            } else {
+                NotaDeCreditoCxP nota = this.notaDeCreditoCxPService.generarNota(cf)
             }
 
         } else {

@@ -1,4 +1,11 @@
 <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+  <ng-container matColumnDef="clave">
+    <mat-header-cell *matHeaderCellDef>Clave</mat-header-cell>
+    <mat-cell *matCellDef="let proveedor">{{proveedor.clave}}
+    </mat-cell>
+  </ng-container>
+
   <ng-container matColumnDef="nombre">
     <mat-header-cell *matHeaderCellDef>Nombre</mat-header-cell>
     <mat-cell *matCellDef="let proveedor">{{proveedor.nombre}}

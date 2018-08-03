@@ -53,7 +53,7 @@ class NotaDeCreditoCxP {
 
     Date lastUpdated
 
-    Tipo concepto = Tipo.DESCUENTO
+    String concepto
 
     ComprobanteFiscal comprobanteFiscal
 
@@ -78,16 +78,14 @@ class NotaDeCreditoCxP {
     static mapping = {
         id generator:'uuid'
         fecha type:'date' ,index: 'CXP_APLICACION_IDX1'
+        concepto inList: ['DEVOLUCION','DESCUENTO','DESCUENTO_FINANCIERO', 'DESCUENTO_ANTICIPO', 'BONIFICACION']
     }
 
     static hasMany =[conceptos: NotaDeCreditoCxPDet]
 
+
+
 }
 
-enum Tipo {
-    DEVLUCION
-    ,DESCUENTO_FINANCIERO
-    ,DESCUENTO
-    ,DESCUENTO_ANTICIPO
-    ,BONIFICACION
-}
+
+
