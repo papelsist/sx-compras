@@ -14,11 +14,11 @@ class AplicacionDePago {
 
     Date fecha
 
-    String tipo
+    String formaDePago
 
     NotaDeCreditoCxP nota
 
-    String cxp
+    CuentaPorPagar cxp
 
     BigDecimal importe
 
@@ -36,5 +36,6 @@ class AplicacionDePago {
     static  mapping = {
         id generator:'uuid'
         fecha type: 'date'
+        formaDePago size: 5..15
     }
 }

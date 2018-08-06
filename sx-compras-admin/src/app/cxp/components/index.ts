@@ -20,6 +20,7 @@ import { PrintRequisicionComponent } from './print-requisicion/print-requisicion
 import { NotasTableComponent } from './notas-table/notas-table.component';
 import { ReportComsSinAnalizarComponent } from './report-coms-sin-analizar/report-coms-sin-analizar.component';
 import { NotaFormComponent } from './nota-form/nota-form.component';
+import { NotaConceptosComponent } from './nota-conceptos/nota-conceptos.component';
 
 export const components: any[] = [
   CfdisTableComponent,
@@ -41,7 +42,8 @@ export const components: any[] = [
   AgregarFacturasComponent,
   NotasTableComponent,
   ReportComsSinAnalizarComponent,
-  NotaFormComponent
+  NotaFormComponent,
+  NotaConceptosComponent
 ];
 
 export const entryComponents = [
@@ -74,3 +76,4 @@ export * from './print-requisicion/print-requisicion.component';
 // Notas de credito
 export * from './notas-table/notas-table.component';
 export * from './nota-form/nota-form.component';
+export * from './nota-conceptos/nota-conceptos.component';

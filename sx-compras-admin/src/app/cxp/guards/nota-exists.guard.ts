@@ -28,15 +28,6 @@ export class NotaExistsGuard implements CanActivate {
     );
   }
 
-  hasCompra(id: string): Observable<boolean> {
-    return this.store
-      .select(fromStore.getNotasEntities)
-      .pipe(
-        map((entities: { [key: string]: NotaDeCreditoCxP }) => !!entities[id]),
-        take(1)
-      );
-  }
-
   checkStore(): Observable<boolean> {
     return this.store.select(fromStore.getNotasLoaded).pipe(
       tap(loaded => {

@@ -24,7 +24,7 @@ class NotaDeCreditoCxPController extends RestfulController<NotaDeCreditoCxP>{
     @Override
     protected List<NotaDeCreditoCxP> listAllResources(Map params) {
         params.max = 300
-        log.debug('List {}', params)
+        // log.debug('List {}', params)
         def query = NotaDeCreditoCxP.where {}
         if(params.periodo) {
             Periodo periodo = (Periodo)params.periodo
@@ -39,4 +39,15 @@ class NotaDeCreditoCxPController extends RestfulController<NotaDeCreditoCxP>{
     protected NotaDeCreditoCxP updateResource(NotaDeCreditoCxP resource) {
         return super.updateResource(resource)
     }
+
+    def aplicar(NotaDeCreditoCxP nota) {
+        if(nota == null) {
+            notFound()
+            return
+        }
+        nota = notaDeCreditoCxPService.aplicar(nota)
+        respond nota
+    }
+
+
 }

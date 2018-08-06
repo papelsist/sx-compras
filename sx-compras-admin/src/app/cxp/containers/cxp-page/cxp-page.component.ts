@@ -3,6 +3,11 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { TdMediaService } from '@covalent/core';
 
+import { Store, select } from '@ngrx/store';
+import * as fromStore from '../../store';
+
+import { Observable } from 'rxjs';
+
 import { RepPeriodoSucursalComponent } from 'app/reportes/components';
 import { ReportService } from '../../../reportes/services/report.service';
 import { ReportComsSinAnalizarComponent } from '../../components';
@@ -38,13 +43,19 @@ export class CxpPageComponent implements OnInit {
       icon: 'description'
     }
   ];
+
+  loading$: Observable<boolean>;
+
   constructor(
     public media: TdMediaService,
     private dialog: MatDialog,
-    private reportService: ReportService
+    private reportService: ReportService,
+    private store: Store<fromStore.CxpState>
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.loading$ = this.store.pipe(select(fromStore.getNotasLoading));
+  }
 
   entradasAnalizadas() {
     this.dialog

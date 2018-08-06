@@ -55,9 +55,9 @@ export class NotasEffects {
   addNota$ = this.actions$.pipe(
     ofType<fromActions.AddNota>(NotaActionTypes.AddNota),
     map(action => action.payload),
-    switchMap(compra => {
+    switchMap(nota => {
       return this.service
-        .save(compra)
+        .save(nota)
         .pipe(
           map(res => new fromActions.AddNotaSuccess(res)),
           catchError(error => of(new fromActions.AddNotaFail(error)))
@@ -69,16 +69,16 @@ export class NotasEffects {
   addNotaSuccess$ = this.actions$.pipe(
     ofType(NotaActionTypes.AddNotaSuccess, NotaActionTypes.UpdateNotaSuccess),
     map((action: any) => action.payload),
-    map(compra => new fromRoot.Go({ path: ['ordenes/compras', compra.id] }))
+    map(nota => new fromRoot.Go({ path: ['cxp/notas', nota.id] }))
   );
 
   @Effect()
   updateNota$ = this.actions$.pipe(
     ofType<fromActions.UpdateNota>(NotaActionTypes.UpdateNota),
     map(action => action.payload),
-    switchMap(compra => {
+    switchMap(nota => {
       return this.service
-        .update(compra)
+        .update(nota)
         .pipe(
           map(res => new fromActions.UpdateNotaSuccess(res)),
           catchError(error => of(new fromActions.UpdateNotaFail(error)))
@@ -90,11 +90,11 @@ export class NotasEffects {
   deleteNota$ = this.actions$.pipe(
     ofType<fromActions.DeleteNota>(NotaActionTypes.DeleteNota),
     map(action => action.payload),
-    switchMap(compra => {
+    switchMap(nota => {
       return this.service
-        .delete(compra.id)
+        .delete(nota.id)
         .pipe(
-          map(res => new fromActions.DeleteNotaSuccess(compra)),
+          map(res => new fromActions.DeleteNotaSuccess(nota)),
           catchError(error => of(new fromActions.LoadNotasFail(error)))
         );
     })
@@ -103,27 +103,40 @@ export class NotasEffects {
   @Effect()
   deleteSuccess$ = this.actions$.pipe(
     ofType(NotaActionTypes.DeleteNotaSuccess),
-    map(() => new fromRoot.Go({ path: ['ordenes/compras'] }))
+    map(() => new fromRoot.Go({ path: ['cxp/notas'] }))
   );
 
   @Effect()
   updateSuccess$ = this.actions$.pipe(
     ofType<fromActions.UpdateNotaSuccess>(NotaActionTypes.UpdateNotaSuccess),
     map(action => action.payload),
-    tap(compra =>
-      this.snackBar.open(`Nota ${compra.folio} actualizada `, 'Cerrar', {
+    tap(nota =>
+      this.snackBar.open(`Nota ${nota.folio} actualizada `, 'Cerrar', {
         duration: 5000
       })
     ),
-    map(compra => new fromRoot.Go({ path: ['ordenes/compras', compra.id] }))
+    map(nota => new fromRoot.Go({ path: ['cxp/notas', nota.id] }))
   );
 
+  @Effect()
+  aplicarNota$ = this.actions$.pipe(
+    ofType<fromActions.AplicarNota>(NotaActionTypes.AplicarNota),
+    map(action => action.payload),
+    switchMap(nota => {
+      return this.service
+        .aplicar(nota)
+        .pipe(
+          map(res => new fromActions.UpdateNotaSuccess(res)),
+          catchError(error => of(new fromActions.UpdateNotaFail(error)))
+        );
+    })
+  );
   /*
   @Effect({ dispatch: false })
   setSearchterm$ = this.actions$.pipe(
     ofType<fromActions.SetSearchTerm>(NotaActionTypes.SetSearchTerm),
     map(action => action.payload),
-    tap(term => localStorage.setItem('sx-compras.compras.searchTerm', term))
+    tap(term => localStorage.setItem('sx-notas.notas.searchTerm', term))
   );
   */
 }

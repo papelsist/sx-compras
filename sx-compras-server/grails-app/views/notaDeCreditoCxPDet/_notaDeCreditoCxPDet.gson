@@ -1,0 +1,9 @@
+import sx.cxp.NotaDeCreditoCxPDet
+
+model {
+	NotaDeCreditoCxPDet notaDeCreditoCxPDet
+}
+
+json g.render(notaDeCreditoCxPDet, [excludes: ['cxp'], resolveTemplate: false]) {
+    cxp g.render(notaDeCreditoCxPDet.cxp)
+}

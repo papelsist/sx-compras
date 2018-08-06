@@ -4,5 +4,7 @@ model {
 	CuentaPorPagar cuentaPorPagar
 }
 
-json g.render(cuentaPorPagar, [resolveTemplate: false])
+json g.render(cuentaPorPagar, [resolveTemplate: false]) {
+    saldo  cuentaPorPagar.saldo
+}
 

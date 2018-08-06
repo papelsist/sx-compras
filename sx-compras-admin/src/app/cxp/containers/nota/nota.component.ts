@@ -14,10 +14,11 @@ import { NotaDeCreditoCxP } from '../../model/notaDeCreditoCxP';
 @Component({
   selector: 'sx-nota',
   template: `
-    <div>
-      <sx-nota-form [nota]="nota$ | async"
+    <div *ngIf="nota$ | async as nota">
+      <sx-nota-form [nota]="nota"
         (save)="onSave($event)"
-        (delete)="onDelete($event)">
+        (delete)="onDelete($event)"
+        (aplicar)="onAplicar($event)">
       </sx-nota-form>
     </div>
   `
@@ -48,6 +49,18 @@ export class NotaComponent implements OnInit, OnDestroy {
   }
 
   onAplicar(event: NotaDeCreditoCxP) {
-    this.store.dispatch(new fromActions.AplicarNota(event));
+    this.dialogService
+      .openConfirm({
+        message: `Disponible $ ${event.disponible} `,
+        title: 'Aplicar nota de crédito?',
+        acceptButton: 'Aceptar',
+        cancelButton: 'Cancelar'
+      })
+      .afterClosed()
+      .subscribe(res => {
+        if (res) {
+          this.store.dispatch(new fromActions.AplicarNota(event));
+        }
+      });
   }
 }

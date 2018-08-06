@@ -4,6 +4,6 @@ model {
 	NotaDeCreditoCxP notaDeCreditoCxP
 }
 
-json g.render(notaDeCreditoCxP, [resolveTemplate: false]) {
+json g.render(notaDeCreditoCxP, [excludes: ['conceptos', 'dateCreated', 'lastUpdated'],resolveTemplate: false]) {
 	disponible notaDeCreditoCxP.disponible
 }

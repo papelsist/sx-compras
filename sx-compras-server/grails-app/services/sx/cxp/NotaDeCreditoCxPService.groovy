@@ -43,30 +43,33 @@ abstract class NotaDeCreditoCxPService {
             uuid: cfdi.uuid,
             concepto: 'DESCUENTO'
         ])
-        nota.concepto = getTipoDeNota(cfdi)
         buildPartidas(cfdi).each {
             nota.addToConceptos(it)
         }
+        setTipoDeRelacion(nota)
         nota = save(nota)
         return nota
     }
 
     @CompileDynamic
-    String getTipoDeNota(ComprobanteFiscal cfdi) {
+    void setTipoDeRelacion(NotaDeCreditoCxP nota ) {
+        ComprobanteFiscal cfdi = nota.comprobanteFiscal
         GPathResult xml = cfdi.getXmlNode()
         def node = xml.breadthFirst().find { it.name() == 'CfdiRelacionados'}
         if(node) {
             def tipoDeRelacion = node.attributes()['TipoRelacion']
+            nota.tipoDeRelacion = tipoDeRelacion
             switch (tipoDeRelacion) {
                 case '01':
-                    return 'DESCUENTO'
+                    nota.concepto = 'DESCUENTO'
+                    break
                 case '03':
-                    return 'DEVOLUCION'
+                    nota.concepto = 'DEVOLUCION'
+                    break
                 default:
-                    return 'DESCUENTO'
+                    nota.concepto = 'DESCUENTO'
             }
         }
-        return 'DESCUENTO'
     }
 
     @CompileDynamic
@@ -82,13 +85,7 @@ abstract class NotaDeCreditoCxPService {
                 NotaDeCreditoCxPDet det = new NotaDeCreditoCxPDet()
                 det.uuid = uuid
                 if(cxp) {
-                    println "UUID: ${uuid} Cfdi: ${cxp.serie} ${cxp.folio}"
-                    det.fechaDocumento = cxp.fecha
-                    det.totalDocumento = cxp.total
                     det.cxp = cxp
-                    det.folio = cxp.folio
-                    det.serie = cxp.serie
-                    det.saldoDocumento = cxp.saldo
                 }
                 res << det
             }
@@ -98,6 +95,28 @@ abstract class NotaDeCreditoCxPService {
     }
 
     NotaDeCreditoCxP aplicar(NotaDeCreditoCxP nota) {
+        BigDecimal disponible = nota.disponible
+        if(disponible) {
+            nota.conceptos.each {
+                CuentaPorPagar cxp = it.cxp
+                BigDecimal saldo = cxp.saldo
+                if(saldo) {
+                    BigDecimal importe = saldo <= disponible ? saldo : disponible
+                    disponible = disponible - importe
+                    AplicacionDePago aplicacion = new AplicacionDePago()
+                    aplicacion.fecha = nota.fecha
+                    aplicacion.comentario = nota.concepto
+                    aplicacion.cxp = cxp
+                    aplicacion.nota = nota
+                    aplicacion.importe = importe
+                    aplicacion.formaDePago = 'COMPENSACION'
+                    aplicacion.save failOnError: true, flush: true
+                }
+            }
+            nota.refresh()
+            log.debug("Nota aplicado:{}  ", nota.aplicado)
+            return nota
+        }
         return nota
     }
 }

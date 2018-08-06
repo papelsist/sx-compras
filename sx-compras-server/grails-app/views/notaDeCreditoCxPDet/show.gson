@@ -1,0 +1,7 @@
+import sx.cxp.NotaDeCreditoCxPDet
+
+model {
+	NotaDeCreditoCxPDet notaDeCreditoCxPDet
+}
+
+json tmpl.notaDeCreditoCxPDet(notaDeCreditoCxPDet)

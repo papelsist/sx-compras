@@ -25,6 +25,7 @@ export interface NotaDeCreditoCxP {
   creado: string;
   modificado: string;
   concepto: string;
+  tipoDeRelacion?: string;
   comprobanteFiscal: Partial<ComprobanteFiscal>;
   selected?: boolean;
 }

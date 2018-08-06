@@ -25,8 +25,9 @@ import { NotaDeCreditoCxP, NotaDeCreditoCxPDet } from '../../model';
   styleUrls: ['./nota-form.component.scss']
 })
 export class NotaFormComponent implements OnInit, OnChanges {
-  @Input() nota: Partial<NotaDeCreditoCxP>;
+  @Input() nota: NotaDeCreditoCxP;
   @Output() save = new EventEmitter<NotaDeCreditoCxP>();
+  @Output() aplicar = new EventEmitter<NotaDeCreditoCxP>();
 
   form: FormGroup;
   constructor(private fb: FormBuilder) {}
@@ -38,25 +39,16 @@ export class NotaFormComponent implements OnInit, OnChanges {
       this.buildForm();
     }
     if (changes.nota && changes.nota.currentValue) {
-      // console.log('Editando compra:', changes.compra.currentValue);
+      console.log('Nota: ', changes.nota.currentValue);
       const not = changes.nota.currentValue;
-      this.clarPartidas();
       this.form.patchValue(not);
-      // comp.partidas.forEach(item => this.partidas.push(new FormControl(item)));
-    }
-  }
-
-  private clarPartidas() {
-    while (this.partidas.length !== 0) {
-      this.partidas.removeAt(0);
     }
   }
 
   buildForm() {
     this.form = this.fb.group({
       concepto: [null, [Validators.required]],
-      comentario: [],
-      partidas: this.fb.array([])
+      comentario: []
     });
   }
 
@@ -64,21 +56,10 @@ export class NotaFormComponent implements OnInit, OnChanges {
     if (this.form.valid) {
       const res = {
         ...this.nota,
-        ...this.form.value,
-        ...this.prepararPartidas()
+        ...this.form.value
       };
       this.save.emit(res);
       this.form.markAsPristine();
     }
-  }
-
-  prepararPartidas(): NotaDeCreditoCxPDet[] {
-    const partidas = [...this.partidas.value];
-    partidas.forEach(item => {});
-    return partidas;
-  }
-
-  get partidas() {
-    return this.form.get('partidas') as FormArray;
   }
 }

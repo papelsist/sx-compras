@@ -27,6 +27,7 @@ export class NotasTableComponent implements OnInit, OnChanges {
   displayColumns = [
     'serie',
     'folio',
+    'concepto',
     'nombre',
     'fecha',
     'moneda',
@@ -34,6 +35,7 @@ export class NotasTableComponent implements OnInit, OnChanges {
     'tcContable',
     'total',
     'disponible',
+    'tipoDeRelacion',
     'comentario',
     'operaciones'
   ];

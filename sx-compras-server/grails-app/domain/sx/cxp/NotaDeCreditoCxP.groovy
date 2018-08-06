@@ -59,6 +59,8 @@ class NotaDeCreditoCxP {
 
     ComprobanteFiscal comprobanteFiscal
 
+    String tipoDeRelacion
+
 
 
     static constraints = {
@@ -75,16 +77,17 @@ class NotaDeCreditoCxP {
         sw2 nullable:true
         comprobanteFiscal nullable: true
         comentario nullable: true
+        tipoDeRelacion nullable: true ,maxSize: 10
     }
 
     static mapping = {
         id generator:'uuid'
         fecha type:'date' ,index: 'CXP_APLICACION_IDX1'
         concepto inList: ['DEVOLUCION','DESCUENTO','DESCUENTO_FINANCIERO', 'DESCUENTO_ANTICIPO', 'BONIFICACION']
-        aplicado formula:'(select COALESCE(sum(x.importe),0) from aplicacion_de_pago x where x.nota.id=id)'
+        aplicado formula:'(select COALESCE(sum(x.importe),0) from aplicacion_de_pago x where x.nota_id=id)'
     }
 
-    static transients = ['aplicado', 'disponible']
+    static transients = ['disponible']
 
     static hasMany =[conceptos: NotaDeCreditoCxPDet]
 

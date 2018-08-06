@@ -4,7 +4,6 @@ model {
 	NotaDeCreditoCxP notaDeCreditoCxP
 }
 
-json tmpl.notaDeCreditoCxP(notaDeCreditoCxP) {
-	conceptos g.render(notaDeCreditoCxP.conceptos)
-    data 'DATA TEST'
+json g.render(notaDeCreditoCxP, [excludes: ['conceptos']]) {
+    conceptos g.render(notaDeCreditoCxP.conceptos)
 }
