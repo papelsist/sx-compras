@@ -60,7 +60,7 @@ class Compra {
 
     Boolean consolidada = false
 
-    Boolean centralizada = false
+    Boolean centralizada = true
 
     Boolean especial= false
 

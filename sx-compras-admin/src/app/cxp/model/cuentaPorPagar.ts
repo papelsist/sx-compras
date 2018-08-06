@@ -18,4 +18,6 @@ export interface CuentaPorPagar {
   vencimiento: string;
   selected?: boolean;
   comprobanteFiscal: { id: string };
+  analizada?: boolean;
+  analisis?: string;
 }

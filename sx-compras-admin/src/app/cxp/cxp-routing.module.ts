@@ -11,6 +11,11 @@ const routes: Routes = [
     children: [
       { path: 'cfdis', component: fromContainers.CfdisComponent, children: [] },
       {
+        path: 'facturas',
+        canActivate: [fromGuards.FacturasGuard],
+        component: fromContainers.FacturasComponent
+      },
+      {
         path: 'analisis',
         canActivate: [fromGuards.AnalisisGuard],
         children: [

@@ -29,21 +29,13 @@ class AnalisisDeFacturaController extends RestfulController<AnalisisDeFactura> {
     protected List<AnalisisDeFactura> listAllResources(Map params) {
         log.info('List: {}', params)
         params.max = 1000
-        params.sort = 'folio'
+        params.sort = 'lastUpdated'
         params.order = 'desc'
         def query = AnalisisDeFactura.where {}
         if(params.periodo) {
             Periodo periodo = params.periodo
             query = query.where { fechaEntrada >= periodo.fechaInicial && fechaEntrada <= periodo.fechaFinal}
         }
-        /*
-        if(params.fechaInicial) {
-            Periodo periodo = new Periodo()
-            bindData(periodo, params)
-            log.info('Periodo: {}',periodo)
-            query = query.where { fecha >= periodo.fechaInicial && fecha <= periodo.fechaFinal}
-        }
-        */
         return query.list(params)
     }
 

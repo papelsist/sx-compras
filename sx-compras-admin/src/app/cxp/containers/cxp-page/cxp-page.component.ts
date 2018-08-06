@@ -25,6 +25,12 @@ export class CxpPageComponent implements OnInit {
       icon: 'account_balance_wallet'
     },
     {
+      route: 'facturas',
+      title: 'Facturas',
+      description: 'Facturas (CFDIs)',
+      icon: 'receipt'
+    },
+    {
       route: 'analisis',
       title: 'Análisis',
       description: 'Análisis de facturas',

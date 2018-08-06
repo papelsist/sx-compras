@@ -27,7 +27,8 @@ class CuentaPorPagar {
     Date vencimiento
 
     String moneda = Currency.getInstance('MXN').currencyCode
-    BigDecimal tipoDeCambio=1.0
+    BigDecimal tipoDeCambio = 1.0
+    BigDecimal tcContable = 0.0
 
     //Importes
     BigDecimal subTotal = 0.0
@@ -53,6 +54,8 @@ class CuentaPorPagar {
     String updateUser
 
     String sw2
+
+    String analisis
 
     ComprobanteFiscal comprobanteFiscal
 
@@ -80,6 +83,7 @@ class CuentaPorPagar {
         uuid nullable:true, unique:true
         sw2 nullable:true
         comprobanteFiscal nullable: true
+        tcContable nullable: true
     }
 
     static mapping ={
@@ -94,7 +98,7 @@ class CuentaPorPagar {
     }
 
 
-    static transients = [ 'saldo',]
+    static transients = [ 'saldo','analisis']
 
     BigDecimal toPesos(String property){
         return "${property}" * tipoDeCambio
@@ -103,6 +107,10 @@ class CuentaPorPagar {
 
     BigDecimal getSaldo() {
         return this.total - this.pagos
+    }
+
+    String getAnalisis() {
+        return AnalisisDeFactura.where{ factura == this}.find()?.id
     }
 
 

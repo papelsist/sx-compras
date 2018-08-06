@@ -76,7 +76,6 @@ abstract class CompraService {
         compra.ultimaDepuracion = depuracion
         compra.pendiente = false
         logEntity(compra)
-        log.debug("Compra depurada: {}", compra)
         return save(compra)
     }
 
@@ -108,10 +107,8 @@ abstract class CompraService {
     Long  nextFolio(Compra compra){
         String serie = compra.sucursal.clave == '1' ? 'OFICINAS' : 'SUC_'+ compra.sucursal.nombre.replaceAll(' ', '_')
         compra.serie = serie
-        println 'Serie: ' + serie
         Folio folio = Folio.findOrCreateWhere(entidad: 'COMPRAS', serie: serie)
         Long res = folio.folio + 1
-        log.info('Asignando folio de compra: {}', res)
         folio.folio = res
         folio.save flush: true
         return res

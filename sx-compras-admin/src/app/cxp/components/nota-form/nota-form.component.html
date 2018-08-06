@@ -41,8 +41,8 @@
       <mat-tab label="Referenciados">
         <sx-nota-conceptos [conceptos]="nota.conceptos"></sx-nota-conceptos>
       </mat-tab>
-      <mat-tab label="Aplicaciones">
-        <ng-content select="aplicaciones"></ng-content>
+      <mat-tab label="Aplicaciones" #aplicacionesTab>
+
       </mat-tab>
     </mat-tab-group>
 
@@ -51,13 +51,14 @@
       <button type="button" mat-button [routerLink]="['../']">
         <mat-icon>arrow_back</mat-icon> Notas
       </button>
-      <button type="button" mat-button (click)="aplicar.emit(nota)" color="accent">
+      <button type="button" mat-button (click)="aplicar.emit(nota)" color="accent" [disabled]="nota.disponible <= 0">
         <mat-icon>check_circle</mat-icon> Aplicar
       </button>
 
       <button type="button" mat-button color="primary" (click)="onSave()" [disabled]="form.invalid || form.pristine">
         <mat-icon>save</mat-icon> Salvar
       </button>
+      <sx-selector-cxp [disabled]="!aplicacionesTab.isActive || nota.disponible <= 0" label="Seleccionar factura"></sx-selector-cxp>
       <ng-content></ng-content>
     </mat-card-actions>
   </form>

@@ -19,7 +19,7 @@ class ComprobanteFiscalController extends RestfulController<ComprobanteFiscal> {
 
     @Override
     protected List<ComprobanteFiscal> listAllResources(Map params) {
-        params.max = 1000
+        params.max = 250
         params.sort = 'fecha'
         params.order = 'asc'
         // log.debug('List {}', params)
@@ -58,6 +58,7 @@ class ComprobanteFiscalController extends RestfulController<ComprobanteFiscal> {
             return
         }
         render (file: pdf, contentType: 'application/pdf', filename: comprobanteFiscal.fileName)
+
 
     }
 

@@ -43,7 +43,7 @@ class CompraController extends RestfulController<Compra> {
     @CompileDynamic
     protected List<Compra> listAllResources(Map params) {
         params.max = 500
-        params.sort = 'folio'
+        params.sort = 'lastUpdated'
         params.order = 'desc'
         def query = Compra.where{}
 

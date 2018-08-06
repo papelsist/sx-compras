@@ -16,7 +16,7 @@ export const adapter: EntityAdapter<Compra> = createEntityAdapter<Compra>();
 export const initialState: State = adapter.getInitialState({
   loading: false,
   loaded: false,
-  periodo: Periodo.fromStorage('sx-compras.compras.periodo'),
+  periodo: Periodo.fromNow(30),
   searchTerm: undefined
 });
 

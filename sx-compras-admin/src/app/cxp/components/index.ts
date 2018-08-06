@@ -21,10 +21,13 @@ import { NotasTableComponent } from './notas-table/notas-table.component';
 import { ReportComsSinAnalizarComponent } from './report-coms-sin-analizar/report-coms-sin-analizar.component';
 import { NotaFormComponent } from './nota-form/nota-form.component';
 import { NotaConceptosComponent } from './nota-conceptos/nota-conceptos.component';
+import { FacturasTableComponent } from './facturas-table/facturas-table.component';
+import { SelectorCxPComponent } from './selector-cxp/selector-cxp.component';
 
 export const components: any[] = [
   CfdisTableComponent,
   CfdisTotalesPanelComponent,
+  FacturasTableComponent,
   AnalisisTableComponent,
   AnalisisFormComponent,
   AnalisisEditFormComponent,
@@ -43,7 +46,8 @@ export const components: any[] = [
   NotasTableComponent,
   ReportComsSinAnalizarComponent,
   NotaFormComponent,
-  NotaConceptosComponent
+  NotaConceptosComponent,
+  SelectorCxPComponent
 ];
 
 export const entryComponents = [
@@ -54,6 +58,7 @@ export const entryComponents = [
 
 export * from './cfdis-table/cfdis-table.component';
 export * from './cfdis-totales-panel/cfdis-totales-panel.component';
+export * from './facturas-table/facturas-table.component';
 export * from './analisis-table/analisis-table.component';
 export * from './analisis-form/analisis-form.component';
 export * from './analisis-edit-form/analisis-edit-form.component';
@@ -77,3 +82,6 @@ export * from './print-requisicion/print-requisicion.component';
 export * from './notas-table/notas-table.component';
 export * from './nota-form/nota-form.component';
 export * from './nota-conceptos/nota-conceptos.component';
+
+// Cuentas Por Pagar
+export * from './selector-cxp/selector-cxp.component';

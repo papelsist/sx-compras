@@ -41,6 +41,7 @@ export function reducer(
   action: fromAnalisis.AnalisisActions
 ): AnalisisDeFacturaState {
   switch (action.type) {
+    
     case fromAnalisis.AnalisisActionTypes.LOAD: {
       return {
         ...state,
@@ -172,6 +173,18 @@ export function reducer(
       return {
         ...state,
         periodo
+      };
+    }
+
+    case AnalisisActionTypes.LOAD_ANALISIS: {
+      const analisis = action.payload;
+      const entities = {
+        ...state.entities,
+        [analisis.id]: analisis
+      };
+      return {
+        ...state,
+        entities
       };
     }
   }
