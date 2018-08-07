@@ -1,11 +1,20 @@
 package sx.cxp
 
-import grails.gorm.transactions.Transactional
+import grails.compiler.GrailsCompileStatic
+import grails.gorm.services.Service
+import sx.core.LogUser
 
-@Transactional
-class ContrareciboService {
 
-    def serviceMethod() {
+@GrailsCompileStatic
+@Service(Contrarecibo)
+abstract class ContrareciboService implements LogUser {
 
+    abstract Contrarecibo save( Contrarecibo recivo)
+
+    Contrarecibo saveRecibo(Contrarecibo  recibo) {
+        logEntity(recibo)
+        return save(recibo)
     }
+
+
 }

@@ -154,7 +154,7 @@ grails:
 siipapx:
   cxp:
     cfdisDir: /Users/rubencancino/Documents/cfdis-carga
-  enviroments:
+  environments:
     produccion:
       cxp:
         cfdisDir: /home/cfdProv

@@ -55,7 +55,7 @@ abstract class CompraService {
             def pendiente = compra.partidas.find{it.getPorRecibir()> 0.0 }
             compra.pendiente = pendiente != null
         } else {
-            compra.pendiente = true
+            compra.pendiente = false
         }
 
         compra.total = compra.importeNeto + compra.impuestos
