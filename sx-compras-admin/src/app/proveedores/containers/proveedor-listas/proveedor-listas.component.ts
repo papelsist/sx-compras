@@ -69,7 +69,6 @@ export class ProveedorListasComponent implements OnInit {
   }
 
   onEdit(event: ListaDePreciosProveedor) {
-    console.log('Eidt: ', event);
     this.store.dispatch(
       new fromRoot.Go({
         path: [`proveedores/${event.proveedor.id}/listas/${event.id}`]

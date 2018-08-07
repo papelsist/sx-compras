@@ -31,12 +31,16 @@
     <button mat-button (click)="onSubmit()" [disabled]="form.invalid || form.pristine">
       <mat-icon>save</mat-icon>Salvar
     </button>
-    <button mat-button color="primary" type="button" (click)="aplicar.emit(listaDePrecios)" [disabled]="listaDePrecios?.aplicada">
+    <button mat-button color="primary" type="button" (click)="aplicar.emit(listaDePrecios)">
       <mat-icon>check_circle</mat-icon> Aplicar
     </button>
 
     <button mat-button color="primary" type="button" (click)="actualizar.emit(listaDePrecios)" [disabled]="listaDePrecios?.aplicada">
       <mat-icon>autorenew</mat-icon> Actualizar
+    </button>
+
+    <button mat-button type="button" (click)="actualizarCompras.emit(listaDePrecios)" [disabled]="!listaDePrecios?.aplicada">
+      <mat-icon>transform</mat-icon> Actualizar Compras
     </button>
 
     <button mat-button color="warn" type="button" (click)="delete.emit(listaDePrecios)" *ngIf="listaDePrecios?.id">

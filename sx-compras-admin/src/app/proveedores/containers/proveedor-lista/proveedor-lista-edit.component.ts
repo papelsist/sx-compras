@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpParams } from '@angular/common/http';
+import { MatDialog } from '@angular/material';
 
 import { Store, select } from '@ngrx/store';
 import * as fromRoot from 'app/store';
@@ -12,6 +12,7 @@ import { ListaDePreciosProveedor } from '../../models/listaDePreciosProveedor';
 
 import { TdDialogService } from '@covalent/core';
 import { ReportService } from '../../../reportes/services/report.service';
+import { FechaDialogComponent } from '../../../_shared/components';
 
 @Component({
   selector: 'sx-proveedor-lista-edit',
@@ -21,6 +22,7 @@ import { ReportService } from '../../../reportes/services/report.service';
         (cancel)="onCancel()"
         (aplicar)="onAplicar($event)"
         (actualizar)="onActualizar($event)"
+        (actualizarCompras)="onActualizarCompras($event)"
         (print)="onPrint($event)"
         (delete)="onDelete($event)">
         </sx-proveedor-lista-form>
@@ -32,7 +34,8 @@ export class ProveedorListaEditComponent implements OnInit {
   constructor(
     private store: Store<fromStore.ProveedoresState>,
     private dialogService: TdDialogService,
-    private reportService: ReportService
+    private reportService: ReportService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit() {
@@ -72,6 +75,27 @@ export class ProveedorListaEditComponent implements OnInit {
         if (res) {
           this.store.dispatch(
             new fromActions.ActualizarProductosDeLista(event)
+          );
+        }
+      });
+  }
+
+  onActualizarCompras(event: ListaDePreciosProveedor) {
+    this.dialog
+      .open(FechaDialogComponent, {
+        data: {
+          fecha: event.fechaInicial,
+          title: 'Actualizar compras a partir de: '
+        }
+      })
+      .afterClosed()
+      .subscribe(fecha => {
+        if (fecha) {
+          this.store.dispatch(
+            new fromActions.ActualizarComprasConLista({
+              lista: event,
+              fecha: fecha
+            })
           );
         }
       });

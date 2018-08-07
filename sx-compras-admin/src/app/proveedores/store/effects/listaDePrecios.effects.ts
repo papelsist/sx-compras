@@ -225,4 +225,23 @@ export class ListaDePreciosEffects {
         new fromRoot.Go({ path: [`proveedores/${lista.proveedor.id}/listas`] })
     )
   );
+
+  @Effect()
+  actualizarCompras$ = this.actions$
+    .ofType<listasActions.ActualizarComprasConLista>(
+      listasActions.ACTUALIZAR_COMPRAS_CONLISTA
+    )
+    .pipe(
+      map(action => action.payload),
+      switchMap(data => {
+        return this.service
+          .actualizarCompras(data.lista, data.fecha)
+          .pipe(
+            map(res => new listasActions.ActualizarComprasConListaSuccess(res)),
+            catchError(error =>
+              of(new listasActions.ActualizarComprasConListaFail(error))
+            )
+          );
+      })
+    );
 }

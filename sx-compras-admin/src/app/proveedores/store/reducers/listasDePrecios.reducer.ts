@@ -65,6 +65,21 @@ export function reducer(
       return adapter.removeOne(action.payload.id, state);
     }
 
+    // Actualizar compras
+    case fromListas.ACTUALIZAR_COMPRAS_CONLISTA: {
+      return {
+        ...state,
+        loading: true
+      };
+    }
+    case fromListas.ACTUALIZAR_COMPRAS_CONLISTA_SUCCESS:
+    case fromListas.ACTUALIZAR_COMPRAS_CONLISTA_FAIL: {
+      return {
+        ...state,
+        loading: false
+      };
+    }
+
     default:
       return state;
   }

@@ -92,6 +92,12 @@ export function reducer(state = initialState, action: CompraActions): State {
         loading: false
       });
     }
+    case CompraActionTypes.UpsertCompras: {
+      return adapter.upsertMany(action.payload, {
+        ...state,
+        loading: false
+      });
+    }
 
     case CompraActionTypes.DeleteCompraSuccess: {
       return adapter.removeOne(action.payload.id, {

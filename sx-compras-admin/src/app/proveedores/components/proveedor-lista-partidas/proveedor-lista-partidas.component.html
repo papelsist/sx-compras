@@ -37,7 +37,8 @@
     <ng-container matColumnDef="desc1">
       <th mat-header-cell *matHeaderCellDef>Desc 1</th>
       <td mat-cell *matCellDef="let row">
-        <input type="number" [disabled]="readOnly" [(ngModel)]="row.desc1" [ngModelOptions]="{standalone: true}" (input)="actualizar(row)">
+        <input type="number" [disabled]="readOnly" [(ngModel)]="row.desc1" [ngModelOptions]="{standalone: true, updateOn: 'blur'}"
+          (input)="actualizar(row)">
       </td>
     </ng-container>
     <ng-container matColumnDef="desc2">

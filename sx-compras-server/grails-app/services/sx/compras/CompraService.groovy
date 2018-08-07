@@ -114,6 +114,38 @@ abstract class CompraService {
         return res
     }
 
+    Compra actualizarPrecios(Compra compra, ListaDePreciosProveedor lista) {
+        log.debug("Actualizando compra ${compra.folio} con lista ${lista.id}")
+        Map<String, ListaDePreciosProveedorDet> map = lista.partidas.collectEntries {
+            [it.clave, it]
+        }
+        compra.partidas.each {
+            ListaDePreciosProveedorDet det = map.get(it.producto.clave)
+            if(det) {
+                it.precio = det.precioBruto
+                it.descuento1 = det.desc1
+                it.descuento2 = det.desc2
+                it.descuento3 = det.desc3
+                it.descuento4 = det.desc4
+                it.costo = det.precioNeto
+                actualizarPartida(it)
+            }
+
+        }
+        actualizarTotales(compra)
+        logEntity(compra)
+        return save(compra)
+    }
+
+    @CompileDynamic
+    Compra actualizarTotales(Compra compra) {
+        compra.importeNeto = compra.partidas.sum 0.0, { it.importeNeto }
+        compra.importeBruto = compra.partidas.sum 0.0, { it.importeBruto }
+        compra.impuestos = MonedaUtils.calcularImpuesto(compra.importeNeto)
+        compra.total = compra.importeNeto + compra.impuestos
+        return compra
+    }
+
     void logEntity(Compra compra) {
 
         User user = (User)springSecurityService.getCurrentUser()

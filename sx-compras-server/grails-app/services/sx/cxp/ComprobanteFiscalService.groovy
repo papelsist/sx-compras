@@ -146,21 +146,26 @@ class ComprobanteFiscalService implements  LogUser{
         return cxp
     }
 
-    void importacionLocal(String tipo = "COMPRAS") {
+    int importacionLocal(String tipo = "COMPRAS") {
         File dir = new File(this.cfdiDir)
         assert dir.exists(), "No existe el directorio: ${this.cfdiDir}"
-        importarDirectorio(dir, tipo)
+        return importarDirectorio(dir, tipo)
     }
 
-    void importarDirectorio(File dir, String tipo = 'COMPRAS') {
+    int importarDirectorio(File dir, String tipo = 'COMPRAS') {
+        int rows = 0
         dir.eachFile { File it ->
             if(it.isDirectory())
                 importarDirectorio(it)
             else {
                 if(it.name.toLowerCase().endsWith('xml')) {
                     try{
-                        importar(it, tipo)
-                        cleanFile(it);
+                        ComprobanteFiscal cf = importar(it, tipo)
+                        cleanFile(it)
+                        if(cf) {
+
+                            rows++
+                        }
                     }catch (Exception ex) {
                         String m = ExceptionUtils.getRootCauseMessage(ex)
                         log.error("Error importando ${it.name}: ${m}")
@@ -171,11 +176,12 @@ class ComprobanteFiscalService implements  LogUser{
 
             }
         }
+        return rows
     }
 
 
     @Transactional
-    void importar(File xmlFile, String tipo = 'COMPRAS') {
+    ComprobanteFiscal importar(File xmlFile, String tipo = 'COMPRAS') {
         ComprobanteFiscal cf = buildFromXml(xmlFile.bytes, xmlFile.name)
         ComprobanteFiscal found = ComprobanteFiscal.where {uuid == cf.uuid}.find()
         if(!found) {
@@ -189,12 +195,15 @@ class ComprobanteFiscalService implements  LogUser{
                 CuentaPorPagar cxp = this.generarCuentaPorPagar(cf, tipo)
                 cxp.comprobanteFiscal = cf
                 cxp.save failOnError: true, flush: true
+
             } else {
                 NotaDeCreditoCxP nota = this.notaDeCreditoCxPService.generarNota(cf)
+
             }
+            return cf
 
         } else {
-            // log.info('CFDI Ya importado {} {}', found.uuid, found.fileName)
+            return null
         }
     }
 
