@@ -1,8 +1,13 @@
+import sx.cxp.AnalisisDeFactura
 import sx.cxp.CuentaPorPagar
 
 model {
 	CuentaPorPagar cuentaPorPagar
 }
 
-json g.render(cuentaPorPagar, [resolveTemplate: false])
+json g.render(cuentaPorPagar, [excludes: ['comprobanteFiscal', 'dateCreated'], resolveTemplate: false]) {
+    saldo  cuentaPorPagar.saldo
+    comprobanteFiscal g.render(cuentaPorPagar.comprobanteFiscal, [excludes: ['xml', 'pdf', 'acuse']])
+    analisis cuentaPorPagar.analisis
+}
 

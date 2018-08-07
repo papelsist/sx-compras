@@ -5,10 +5,12 @@ import {
   Output,
   EventEmitter,
   ViewChild,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  OnChanges,
+  SimpleChanges
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { MatTable } from '@angular/material';
+import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 
 import { ListaDePreciosProveedorDet } from '../../models/listaDePreciosProveedorDet';
 import { aplicarDescuentosEnCascada } from 'app/utils/money-utils';
@@ -19,7 +21,8 @@ import { aplicarDescuentosEnCascada } from 'app/utils/money-utils';
   templateUrl: './proveedor-lista-partidas.component.html',
   styleUrls: ['./proveedor-lista-partidas.component.scss']
 })
-export class ProveedorListaPartidasComponent implements OnInit {
+export class ProveedorListaPartidasComponent implements OnInit, OnChanges {
+  dataSource = new MatTableDataSource<ListaDePreciosProveedorDet>([]);
   @Input() partidas: ListaDePreciosProveedorDet[] = [];
   @Input() parent: FormGroup;
   @Input() readOnly = false;
@@ -30,9 +33,10 @@ export class ProveedorListaPartidasComponent implements OnInit {
     'clave',
     'descripcion',
     'unidad',
-    'moneda',
+    // 'moneda',
     'precioAnterior',
     'precioBruto',
+    'diferencia',
     'desc1',
     'desc2',
     'desc3',
@@ -41,14 +45,24 @@ export class ProveedorListaPartidasComponent implements OnInit {
     'operaciones'
   ];
 
-  @ViewChild('table') table: MatTable<any>;
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @Input() filter;
 
   constructor() {}
 
-  ngOnInit() {}
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.partidas && changes.partidas.currentValue) {
+      this.dataSource.data = changes.partidas.currentValue;
+    }
+    if (changes.filter) {
+      this.dataSource.filter = changes.filter.currentValue;
+    }
+  }
 
-  refresh() {
-    this.table.renderRows();
+  ngOnInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
 
   asignarPrecio(precio, row: ListaDePreciosProveedorDet) {
@@ -66,5 +80,13 @@ export class ProveedorListaPartidasComponent implements OnInit {
     ]);
     row.precioNeto = importeNeto;
     this.update.emit(row);
+  }
+
+  getDirerencia(row: ListaDePreciosProveedorDet) {
+    if (row.precioBruto <= 0) {
+      return 0;
+    }
+    const dif = row.precioBruto - row.precioAnterior;
+    return dif / row.precioBruto;
   }
 }

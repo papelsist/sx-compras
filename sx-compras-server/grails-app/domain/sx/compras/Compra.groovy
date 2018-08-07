@@ -1,26 +1,36 @@
 package sx.compras
 
+import grails.compiler.GrailsCompileStatic
+
 import groovy.transform.ToString
 import groovy.transform.EqualsAndHashCode
+
 import sx.core.Sucursal
 import sx.core.Proveedor
 
 
 
-@ToString(excludes = 'dateCreated,lastUpdated,version,partidas',includeNames=true,includePackage=false)
+@ToString(excludes = 'dateCreated,lastUpdated, partidas',includeNames=true,includePackage=false)
 @EqualsAndHashCode(includes='id,sucursal,folio')
+@GrailsCompileStatic
 class Compra {
 
-    static auditable = false
-    static stampable = true
 
     String id
 
     Proveedor proveedor
 
+    String nombre
+
+    String rfc
+
+    String clave
+
     Sucursal sucursal
 
     Long folio
+
+    String serie
 
     Date fecha
 
@@ -42,7 +52,7 @@ class Compra {
 
     BigDecimal total = 0.0
 
-    Currency moneda = Currency.getInstance('MXN')
+    String moneda = 'MXN'
 
     BigDecimal tipoDeCambio = 1.0
 
@@ -50,13 +60,13 @@ class Compra {
 
     Boolean consolidada = false
 
-    Boolean centralizada = false
+    Boolean centralizada = true
 
     Boolean especial= false
 
     Boolean nacional = true
 
-    List partidas  = []
+    List<CompraDet> partidas  = []
 
     String sw2
 
@@ -68,22 +78,28 @@ class Compra {
 
     String lastUpdatedBy
 
+    String status
 
-    static embedded = ['log']
 
     static constraints = {
         comentario nullable:true
-        ultimaDepuracion nullable:true
+        nombre nullable:true
+        clave nullable:true, maxSize: 15
+        rfc nullable:true, maxSize: 14
         entrega nullable:true
-        folio unique:'sucursal'
+        serie nullable: true
+        folio unique:['sucursal', 'serie']
         sw2 nullable:true
         createdBy nullable: true
         lastUpdatedBy nullable: true
+        ultimaDepuracion nullable:true
         cerrada nullable: true
 
     }
 
     static hasMany =[partidas:CompraDet]
+
+    static transients = ['status']
 
     static mapping = {
         id generator:'uuid'
@@ -94,19 +110,26 @@ class Compra {
         cerrada type: 'date'
     }
 
-    def actualizarStatus() {
-        this.pendiente = this.partidas.find{it.getPorRecibir() > 0.0 } == null ? true: false
-        // this.pendiente = this.isPendiente()
+    /*
+    def beforeUpdate() {
+        actualizarStatus()
     }
+
+
 
     def pendientes() {
         return this.partidas.findAll{ CompraDet det -> det.getPorRecibir() > 0}
     }
-    /*
-    def isPendiente() {
-        return this.partidas.find {it.getPorRecibir() > 0 } ?: false
-    }
     */
+
+    def getStatus() {
+        if(!pendiente)
+            return 'A'
+        else if(pendiente && cerrada )
+            return 'T'
+        else
+            return 'P'
+    }
 
 }
 

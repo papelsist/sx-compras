@@ -1,0 +1,8 @@
+import sx.cxp.AplicacionDePago
+
+model {
+	Iterable<AplicacionDePago> aplicacionDePagoList
+}
+
+json tmpl.aplicacionDePago(aplicacionDePagoList ?: [])
+

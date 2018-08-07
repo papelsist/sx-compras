@@ -18,7 +18,7 @@ class PeriodoInterceptor {
         if(params.fechaInicial) {
             Periodo periodo = new Periodo()
             bindData(periodo, params)
-            log.debug('Periodo: {}',periodo)
+            // log.debug('Periodo: {}',periodo)
             params.periodo = periodo
             params.remove('fechaInicial')
             params.remove('fechaFinal')

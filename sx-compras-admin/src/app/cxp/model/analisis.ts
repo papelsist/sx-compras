@@ -17,5 +17,6 @@ export interface Analisis {
   updateUser?: string;
   createUser?: string;
   facturaInfo?: string;
+  modificado?: string;
   uuid?: string;
 }

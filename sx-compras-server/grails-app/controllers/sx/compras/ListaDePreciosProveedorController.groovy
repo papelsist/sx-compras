@@ -13,6 +13,7 @@ class ListaDePreciosProveedorController extends RestfulController<ListaDePrecios
     static responseFormats = ['json']
 
     ListaDePreciosProveedorService listaDePreciosProveedorService
+    CompraService compraService
     ReportService reportService
 
     ListaDePreciosProveedorController() {
@@ -28,6 +29,7 @@ class ListaDePreciosProveedorController extends RestfulController<ListaDePrecios
 
     @Override
     protected ListaDePreciosProveedor saveResource(ListaDePreciosProveedor resource) {
+        log.info('Salvando lista de precios {}', resource.proveedor)
         return listaDePreciosProveedorService.save(resource)
     }
 
@@ -60,9 +62,46 @@ class ListaDePreciosProveedorController extends RestfulController<ListaDePrecios
         respond listaDePreciosProveedorService.aplicarListaDePrecios(lista)
     }
 
+    def actualizar(ListaDePreciosProveedor lista) {
+        if(lista == null ){
+            notFound()
+            return
+        }
+        respond listaDePreciosProveedorService.actualizarProductos(lista)
+    }
+
+    def actualizarCompras(ListaDePreciosProveedor lista) {
+        if(lista == null ){
+            notFound()
+            return
+        }
+        Date fecha = params.getDate('fecha', 'dd/MM/yyyy')
+
+        if(fecha) {
+            List<Compra> compras = Compra.where {proveedor == lista.proveedor && fecha >= fecha }.list()
+            List<Compra> selected = compras.findAll { it.getStatus() != 'T'}
+            List<Compra> updated = []
+            selected.each { c ->
+                updated << compraService.actualizarPrecios(c, lista)
+            }
+            respond updated
+            return
+        }
+        respond lista
+    }
+
+
     def print( ) {
-        Map repParams = [ID: params.long('id')]
-        def pdf =  reportService.run('ListaDePrecios.jrxml', repParams)
-        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'ListaDePrecios.pdf')
+
+        Map repParams = [ID: params.id]
+        boolean descuentos = params.getBoolean('descuentos', false)
+        if(descuentos) {
+            def pdf =  reportService.run('ListaDePreciosDesc.jrxml', repParams)
+            render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'ListaDePrecios.pdf')
+        } else {
+            def pdf =  reportService.run('ListaDePrecios.jrxml', repParams)
+            render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'ListaDePrecios.pdf')
+        }
+
     }
 }

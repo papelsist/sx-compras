@@ -10,7 +10,7 @@
     <button mat-icon-button tdLayoutNavListOpen [hideWhenOpened]="true">
       <mat-icon>arrow_back</mat-icon>
     </button>
-    <span>Cuentas por pagar</span>
+    <span tdLayoutNavListToggle class="cursor-pointer">Cuentas por pagar</span>
     <span flex></span>
   </div>
   <mat-nav-list dense td-sidenav-content [tdLayoutNavListClose]="!media.query('gt-sm')">
@@ -31,11 +31,19 @@
     </a>
     <mat-divider></mat-divider>
 
+    <a mat-list-item (click)="comsSinAnalizar()">
+      <mat-icon matListAvatar>picture_as_pdf</mat-icon>
+      <h3 matLine> COMS sin analizadar </h3>
+    </a>
+    <mat-divider></mat-divider>
+
   </mat-nav-list>
 
+  <ng-template tdLoading [tdLoadingUntil]="!(loading$ | async)" tdLoadingStrategy="overlay">
+    <router-outlet></router-outlet>
+  </ng-template>
 
 
-  <router-outlet></router-outlet>
 
   <td-layout-footer>
     <sx-footer></sx-footer>

@@ -1,10 +1,11 @@
 package sx.core
 
-
+import grails.compiler.GrailsCompileStatic
 import groovy.transform.EqualsAndHashCode
 
 
 @EqualsAndHashCode(includes='id, proveedor, producto')
+@GrailsCompileStatic
 class ProveedorProducto {
 
     String id
@@ -49,6 +50,8 @@ class ProveedorProducto {
 
     String updateUser
 
+    Boolean suspendido
+
     static constraints = {
         claveProveedor nullable:true
         codigoProveedor nullable:true
@@ -60,6 +63,7 @@ class ProveedorProducto {
         createUser nullable: true
         updateUser nullable: true
         moneda maxSize: 5
+        suspendido nullable: true
     }
 
     static mapping = {

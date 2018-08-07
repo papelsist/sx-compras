@@ -20,7 +20,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
         <ng-content select=".actions"></ng-content>
       </mat-menu>
     </span>
-</div>
+  </div>
   `
 })
 export class SearchTitleComponent implements OnInit {

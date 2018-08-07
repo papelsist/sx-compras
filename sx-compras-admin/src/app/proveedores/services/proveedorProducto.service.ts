@@ -45,10 +45,10 @@ export class ProveedorProductoService {
       .pipe(catchError((error: any) => throwError(error)));
   }
 
-  delete(prodProv: ProveedorProducto) {
+  delete(prodProv: ProveedorProducto): Observable<ProveedorProducto> {
     const url = `${this.getUrl(prodProv.proveedor.id)}/${prodProv.id}`;
     return this.http
-      .delete(url)
+      .delete<ProveedorProducto>(url)
       .pipe(catchError((error: any) => throwError(error)));
   }
 

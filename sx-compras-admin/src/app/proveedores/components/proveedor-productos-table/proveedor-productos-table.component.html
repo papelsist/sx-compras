@@ -7,22 +7,24 @@
     </ng-container>
 
     <ng-container matColumnDef="clave">
-      <th mat-header-cell *matHeaderCellDef>Producto</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Producto</th>
       <td mat-cell *matCellDef="let prod">{{prod.clave}}</td>
     </ng-container>
 
     <ng-container matColumnDef="claveProveedor">
-      <th mat-header-cell *matHeaderCellDef>Desc Proveedor</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Desc Proveedor</th>
       <td mat-cell *matCellDef="let prod">
         ({{prod.claveProveedor}}) - {{prod.descripcionProveedor}}
       </td>
     </ng-container>
 
     <ng-container matColumnDef="descripcion">
-      <th mat-header-cell *matHeaderCellDef>Descripción</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Descripción</th>
       <td mat-cell *matCellDef="let prod">
-        <span>
-          {{prod.descripcion}}
+        <span layout>
+          <span>{{prod.descripcion}}</span>
+          <span flex></span>
+          <span *ngIf="prod.suspendido" class="pad-right">(SUSP)</span>
         </span>
       </td>
     </ng-container>
@@ -71,7 +73,8 @@
       <th mat-header-cell *matHeaderCellDef></th>
       <td mat-cell *matCellDef="let row, let i = index">
         <mat-icon class="cursor-pointer" (click)="editProducto($event, row)">edit</mat-icon>
-        <mat-icon color="warn" class="cursor-pointer" (click)="deleteProducto($event, i, row)">delete</mat-icon>
+        <mat-icon color="warn" class="cursor-pointer" (click)="deleteProducto($event, i, row)" *ngIf="!row.suspendido">delete</mat-icon>
+        <mat-icon color="primary" class="cursor-pointer" (click)="activarProducto($event, i, row)" *ngIf="row.suspendido">check</mat-icon>
       </td>
     </ng-container>
 
@@ -79,7 +82,7 @@
     <tr mat-row *matRowDef="let prod; columns: columnsToDisplay" (click)="select.emit(prod)"></tr> -->
 
     <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
-    <tr mat-row *matRowDef="let prod; columns: columnsToDisplay" class="cursor-pointer" (click)="toogleSelect(prod)" [ngClass]="{'active': prod.selected}"></tr>
+    <tr mat-row *matRowDef="let prod; columns: columnsToDisplay" class="cursor-pointer" (click)="toogleSelect(prod)" [ngClass]="{'active': prod.selected, 'suspendido': prod.suspendido}"></tr>
 
   </table>
 </div>

@@ -24,14 +24,14 @@ class RequisicionDeComprasController extends RestfulController<RequisicionDeComp
     @Override
     @CompileDynamic
     protected List<RequisicionDeCompras> listAllResources(Map params) {
-        params.max = 200
-        params.sort = 'fecha'
-        params.order = 'asc'
+        log.debug('List: {}', params)
+        params.max = 500
+        params.sort = 'lastUpdated'
+        params.order = 'desc'
         def query = RequisicionDeCompras.where{}
 
-        if(params.fechaInicial) {
-            def periodo = new Periodo()
-            periodo.properties = params
+        if(params.periodo) {
+            def periodo = params.periodo
             query = query.where{fecha >= periodo.fechaInicial && fecha<= periodo.fechaFinal}
         }
         def nombre = params.nombre
@@ -39,8 +39,7 @@ class RequisicionDeComprasController extends RestfulController<RequisicionDeComp
             String search = nombre + '%'
             query = query.where { nombre =~ search  }
         }
-
-        respond query.list(params);
+        return query.list(params);
     }
 
     @Override

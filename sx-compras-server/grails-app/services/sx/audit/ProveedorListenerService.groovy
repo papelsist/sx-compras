@@ -12,9 +12,9 @@ import sx.core.Proveedor
 
 @Slf4j
 @CompileStatic
-class ProveedorLogListenerService {
+class ProveedorListenerService {
 
-    ProveedorLogDataService proveedorLogDataService
+
 
     String getId(AbstractPersistenceEvent event) {
         if ( event.entityObject instanceof Proveedor ) {
@@ -25,19 +25,21 @@ class ProveedorLogListenerService {
 
     @Subscriber
     void afterInsert(PostInsertEvent event) {
+        // log.debug('AfterInsert: event {}', event.entityObject.class.name);
         String id = getId(event)
         if ( id ) {
             log.info 'After Proveedor save...'
-            proveedorLogDataService.save('SAVE', id)
         }
     }
 
     @Subscriber
     void afterUpdate(PostUpdateEvent event) {
         String id = getId(event)
+        // log.debug('AfterUpdate: event {}', event.entityObject.class.name);
         if ( id ) {
             log.info "After Proveedor update..."
-            proveedorLogDataService.save('UPDATE', id)
         }
     }
+
+
 }

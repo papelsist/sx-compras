@@ -22,7 +22,7 @@ import { Proveedor } from '../../models/proveedor';
 export class ProveedoresTableComponent implements OnInit, OnChanges {
   dataSource = new MatTableDataSource<Proveedor>([]);
   @Input() proveedores: Proveedor[];
-  @Input() columnsToDisplay = ['nombre', 'tipo', 'estado', 'rfc'];
+  @Input() columnsToDisplay = ['clave', 'nombre', 'tipo', 'estado', 'rfc'];
   @Output() select = new EventEmitter<Proveedor>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   constructor() {}

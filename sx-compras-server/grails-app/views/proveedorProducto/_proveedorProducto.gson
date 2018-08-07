@@ -10,6 +10,12 @@ json g.render(proveedorProducto, [excludes: ['proveedor'], resolveTemplate: fals
         nombre proveedorProducto.proveedor.nombre
         clave proveedorProducto.proveedor.clave
     }
+    producto {
+        id proveedorProducto.producto.id
+        clave proveedorProducto.producto.clave
+        descripcion proveedorProducto.producto.descripcion
+        unidad proveedorProducto.producto.unidad
+    }
     clave proveedorProducto.producto.clave
     descripcion proveedorProducto.producto.descripcion
     unidad proveedorProducto.producto.unidad

@@ -6,6 +6,7 @@ import { catchError } from 'rxjs/operators';
 
 import { ConfigService } from '../../utils/config.service';
 import { Proveedor } from '../models/proveedor';
+import { ProveedorProducto } from '../models/proveedorProducto';
 
 @Injectable()
 export class ProveedoresService {
@@ -19,9 +20,9 @@ export class ProveedoresService {
     return this.http.get<Proveedor[]>(this.apiUrl);
   }
 
-  getProductos(proveedor: Proveedor): Observable<Array<any>> {
+  getProductos(proveedor: Proveedor): Observable<ProveedorProducto[]> {
     const url = `${this.apiUrl}/${proveedor.id}/productos`;
-    return this.http.get<Array<any>>(url);
+    return this.http.get<ProveedorProducto[]>(url);
   }
 
   get(id: string): Observable<Proveedor> {

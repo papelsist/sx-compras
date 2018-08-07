@@ -37,7 +37,15 @@
 
     <ng-container matColumnDef="linea">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Línea</th>
-      <td mat-cell *matCellDef="let com">{{com.linea.linea}}</td>
+      <td mat-cell *matCellDef="let com">{{com.linea}}</td>
+    </ng-container>
+    <ng-container matColumnDef="clase">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Clase</th>
+      <td mat-cell *matCellDef="let com">{{com.clase}}</td>
+    </ng-container>
+    <ng-container matColumnDef="marca">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Marca</th>
+      <td mat-cell *matCellDef="let com">{{com.marca}}</td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayColumns"></tr>

@@ -8,6 +8,6 @@
 
 <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
   <mat-option *ngFor="let producto of productos$ | async " [value]="producto" [ngClass]="{'tc-red-800': !producto.producto.activo}">
-    ({{producto.producto.clave}}) {{producto.producto.descripcion}}
+    ({{producto.clave}}) {{producto.descripcion}}
   </mat-option>
 </mat-autocomplete>

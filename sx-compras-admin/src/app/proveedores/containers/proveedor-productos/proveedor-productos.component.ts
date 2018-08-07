@@ -35,6 +35,7 @@ import { TdDialogService } from '@covalent/core';
           [search]="search$ | async"
           (edit)="onEdit($event)"
           (delete)="onDeleteRow($event)"
+          (activar)="onActivarRow($event)"
           (select)="onSelect($event)">
         </sx-proveedor-productos-table>
       </mat-card>
@@ -80,7 +81,7 @@ export class ProveedoProductosComponent implements OnInit {
     this.dialogService
       .openConfirm({
         message: `${event.length} productos seleccionados`,
-        title: 'Eliminar/Quitar producto(s)',
+        title: 'Eliminar/Suspender producto(s)',
         cancelButton: 'Cancelar',
         acceptButton: 'Eliminar'
       })
@@ -101,5 +102,9 @@ export class ProveedoProductosComponent implements OnInit {
   onAgregar(proveedor, moneda) {
     const params = { proveedorId: proveedor.id, moneda };
     this.store.dispatch(new fromStore.SelectProductosToAdd(params));
+  }
+
+  onActivarRow(event: ProveedorProducto) {
+    console.log('Acivar producto: ', event);
   }
 }

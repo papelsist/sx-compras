@@ -9,7 +9,7 @@ import {
   SimpleChanges,
   ViewChild
 } from '@angular/core';
-import { MatTableDataSource, MatPaginator } from '@angular/material';
+import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 
 import { ProveedorProducto } from '../../models/proveedorProducto';
 
@@ -42,11 +42,15 @@ export class ProveedorProductosTableComponent implements OnInit, OnChanges {
   @Output() select = new EventEmitter<ProveedorProducto[]>();
   @Output() delete = new EventEmitter<ProveedorProducto>();
   @Output() edit = new EventEmitter<ProveedorProducto>();
+  @Output() activar = new EventEmitter<ProveedorProducto>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
+
   constructor() {}
 
   ngOnInit() {
     this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -72,5 +76,10 @@ export class ProveedorProductosTableComponent implements OnInit, OnChanges {
   deleteProducto(event: Event, index: number, prod: ProveedorProducto) {
     event.stopPropagation();
     this.delete.emit(prod);
+  }
+
+  activarProducto(event: Event, index: number, prod: ProveedorProducto) {
+    event.stopPropagation();
+    this.activar.emit(prod);
   }
 }

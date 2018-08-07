@@ -68,7 +68,8 @@ export const getFilteredProveedores = createSelector(
       filtered = _.filter(
         proveedores,
         item =>
-          item.nombre.toLowerCase().indexOf(filter.term.toLowerCase()) !== -1
+          item.nombre.toLowerCase().indexOf(filter.term.toLowerCase()) !== -1 ||
+          item.clave.toLowerCase().indexOf(filter.term.toLowerCase()) !== -1
       );
     }
     if (filter.activos) {

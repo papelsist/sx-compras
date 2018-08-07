@@ -29,7 +29,7 @@
 	<parameter name="FECHA_INI" isForPrompting="true" class="java.util.Date"/>
 	<parameter name="FECHA_FIN" isForPrompting="true" class="java.util.Date"/>
 	<parameter name="SUCURSAL" isForPrompting="true" class="java.lang.String"/>
-	<queryString><![CDATA[SELECT B.ID,B.FOLIO,B.FECHA AS FECHA_ANA,CONCAT(SERIE,'-',C.FOLIO) AS DOCUMENTO,C.FECHA,(SELECT X.CLAVE FROM proveedor X WHERE C.PROVEEDOR_ID=X.ID) AS CLAVPROV,B.NOMBRE
+	<queryString><![CDATA[SELECT B.ID,B.FOLIO,CONCAT(IFNULL(C.SERIE,''),'-',IFNULL(C.FOLIO,'')) AS DOCUMENTO,C.FECHA,(SELECT X.CLAVE FROM proveedor X WHERE C.PROVEEDOR_ID=X.ID) AS CLAVPROV,B.NOMBRE
 ,S.CLAVE AS SUC,S.NOMBRE AS SUCURSAL,I.DOCUMENTO AS DOCTO_ENT,I.FECHA AS FECHA_ENTRADA
 ,C.TOTAL*C.TIPO_DE_CAMBIO AS TOTAL,ROUND((B.IMPORTE_FLETE + B.IMPUESTO_FLETE-B.RETENCION_FLETE)*C.TIPO_DE_CAMBIO,2) AS FLETE,ROUND((C.TOTAL - (B.IMPORTE_FLETE + B.IMPUESTO_FLETE-B.RETENCION_FLETE))*C.TIPO_DE_CAMBIO,2) AS "TOT-FLETE"
 ,(SELECT IFNULL(SUM(X.IMPORTE),0) FROM  analisis_de_factura X WHERE X.DATE_CREATED<=B.DATE_CREATED AND X.FACTURA_ID=B.FACTURA_ID)*1.16 AS TOT_ANALISIS
@@ -42,7 +42,6 @@ GROUP BY C.ID,S.CLAVE,date(I.FECHA)]]></queryString>
 
 	<field name="ID" class="java.lang.String"/>
 	<field name="FOLIO" class="java.lang.Long"/>
-	<field name="FECHA_ANA" class="java.sql.Date"/>
 	<field name="DOCUMENTO" class="java.lang.String"/>
 	<field name="FECHA" class="java.sql.Date"/>
 	<field name="CLAVPROV" class="java.lang.String"/>
@@ -510,7 +509,7 @@ TOTAL]]></text>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{DOCUMENTO}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" pattern="dd-MMMyy" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" pattern="dd-MMM-yy" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="317"
 						y="3"

@@ -25,6 +25,7 @@ export interface ProveedorProducto {
   updateUser: string;
   creado?: string;
   modificado?: string;
+  suspendido?: boolean;
   selected?: boolean;
 }
 

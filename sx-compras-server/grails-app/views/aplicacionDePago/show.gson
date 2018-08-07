@@ -1,0 +1,7 @@
+import sx.cxp.AplicacionDePago
+
+model {
+	AplicacionDePago aplicacionDePago
+}
+
+json tmpl.aplicacionDePago(aplicacionDePago)

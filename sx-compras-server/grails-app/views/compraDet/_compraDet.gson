@@ -1,0 +1,9 @@
+import sx.compras.CompraDet
+
+model {
+	CompraDet compraDet
+}
+
+json g.render(compraDet, [resolveTemplate: false]) {
+    porRecibir compraDet.getPorRecibir()
+}

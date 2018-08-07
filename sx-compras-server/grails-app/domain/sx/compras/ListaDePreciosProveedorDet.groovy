@@ -31,6 +31,8 @@ class ListaDePreciosProveedorDet {
 
     BigDecimal precioAnterior = 0.0
 
+    BigDecimal diferencia
+
     Date dateCreated
 
     Date lastUpdated
@@ -44,6 +46,12 @@ class ListaDePreciosProveedorDet {
     }
 
     static belongsTo =[lista:ListaDePreciosProveedor]
+
+    static transients = ['diferencia']
+
+    def getDiferencia() {
+        return precioAnterior - precioBruto
+    }
 
 
 

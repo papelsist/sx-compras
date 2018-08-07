@@ -6,3 +6,6 @@ export * from './recepcionDeCompra';
 export * from './recepcionDeCompraDet';
 export * from './requisicion';
 export * from './requisicionDet';
+export * from './notaDeCreditoCxP';
+export * from './notaDeCreditoCxPDet';
+export * from './aplicacionDePago';

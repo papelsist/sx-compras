@@ -5,7 +5,8 @@ import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
 import groovy.util.slurpersupport.GPathResult
 import org.apache.commons.lang3.exception.ExceptionUtils
-
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import sx.core.LogUser
 import sx.core.Proveedor
 
@@ -19,7 +20,12 @@ class ComprobanteFiscalService implements  LogUser{
 
     static String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss"
 
+    @Value('${siipapx.cxp.cfdisDir}')
+    String cfdiDir
+
     ImportadorCfdi32 importadorCfdi32
+
+    @Autowired NotaDeCreditoCxPService notaDeCreditoCxPService
 
     ComprobanteFiscal save(ComprobanteFiscal comprobanteFiscal) {
         comprobanteFiscal.save failOnError: true, flush: true
@@ -140,15 +146,26 @@ class ComprobanteFiscalService implements  LogUser{
         return cxp
     }
 
-    void importarDirectorio(File dir, String tipo = 'COMPRAS') {
+    int importacionLocal(String tipo = "COMPRAS") {
+        File dir = new File(this.cfdiDir)
+        assert dir.exists(), "No existe el directorio: ${this.cfdiDir}"
+        return importarDirectorio(dir, tipo)
+    }
+
+    int importarDirectorio(File dir, String tipo = 'COMPRAS') {
+        int rows = 0
         dir.eachFile { File it ->
             if(it.isDirectory())
                 importarDirectorio(it)
             else {
                 if(it.name.toLowerCase().endsWith('xml')) {
                     try{
-                        importar(it, tipo)
-                        cleanFile(it);
+                        ComprobanteFiscal cf = importar(it, tipo)
+                        cleanFile(it)
+                        if(cf) {
+
+                            rows++
+                        }
                     }catch (Exception ex) {
                         String m = ExceptionUtils.getRootCauseMessage(ex)
                         log.error("Error importando ${it.name}: ${m}")
@@ -159,10 +176,12 @@ class ComprobanteFiscalService implements  LogUser{
 
             }
         }
+        return rows
     }
 
+
     @Transactional
-    void importar(File xmlFile, String tipo = 'COMPRAS') {
+    ComprobanteFiscal importar(File xmlFile, String tipo = 'COMPRAS') {
         ComprobanteFiscal cf = buildFromXml(xmlFile.bytes, xmlFile.name)
         ComprobanteFiscal found = ComprobanteFiscal.where {uuid == cf.uuid}.find()
         if(!found) {
@@ -176,12 +195,16 @@ class ComprobanteFiscalService implements  LogUser{
                 CuentaPorPagar cxp = this.generarCuentaPorPagar(cf, tipo)
                 cxp.comprobanteFiscal = cf
                 cxp.save failOnError: true, flush: true
+
+            } else {
+                NotaDeCreditoCxP nota = this.notaDeCreditoCxPService.generarNota(cf)
+
             }
+            return cf
 
         } else {
-            // log.info('CFDI Ya importado {} {}', found.uuid, found.fileName)
+            return null
         }
-
     }
 
     /**
@@ -194,6 +217,15 @@ class ComprobanteFiscalService implements  LogUser{
         def pdf = new File(xmlFile.path.replace('.xml','.pdf'))
         if(pdf.exists()) pdf.delete()
     }
+
+    /*
+    void importarDeImpap(Byte[] data) {
+        File dir = new File(this.cfdiDir)
+        assert dir.exists(), "No existe el directorio: ${this.cfdiDir}"
+        File target = new File(dir, 'test')
+        target.write(new String[data], 'UTF-8')
+    }
+    */
 }
 
 

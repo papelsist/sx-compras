@@ -21,6 +21,8 @@ import { Proveedor } from '../../models/proveedor';
 import { ProveedorProducto } from '../../models/proveedorProducto';
 import { ListaDePreciosProveedorDet } from '../../models/listaDePreciosProveedorDet';
 
+import { Subject } from 'rxjs';
+
 @Component({
   selector: 'sx-proveedor-lista-form',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -31,8 +33,13 @@ export class ProveedorListaFormComponent implements OnInit, OnChanges {
   @Input() listaDePrecios: ListaDePreciosProveedor;
   @Input() productos: ProveedorProducto[];
   @Output() save = new EventEmitter<ListaDePreciosProveedor>();
-  @Output() aplicar = new EventEmitter<number>();
+  @Output() aplicar = new EventEmitter<ListaDePreciosProveedor>();
+  @Output() actualizar = new EventEmitter<ListaDePreciosProveedor>();
   @Output() cancel = new EventEmitter();
+  @Output() delete = new EventEmitter<ListaDePreciosProveedor>();
+  @Output() print = new EventEmitter<ListaDePreciosProveedor>();
+  @Output() actualizarCompras = new EventEmitter<ListaDePreciosProveedor>();
+  filter$ = new Subject();
 
   constructor(private fb: FormBuilder) {}
 
@@ -108,14 +115,24 @@ export class ProveedorListaFormComponent implements OnInit, OnChanges {
 
   onSubmit() {
     if (this.form.valid) {
-      const partidas = this.partidas.value;
       const res = {
         ...this.listaDePrecios,
         ...this.form.value,
-        partidas
+        partidas: this.preparePartidas()
       };
       this.save.emit(res);
+      // console.log('Salvando: ', res);
       this.form.markAsPristine();
     }
+  }
+
+  preparePartidas() {
+    const partidas = [...this.partidas.value];
+    partidas.forEach(item => (item.producto = item.producto.id));
+    return partidas;
+  }
+
+  onFilter(event: string) {
+    this.filter$.next(event.toLowerCase());
   }
 }

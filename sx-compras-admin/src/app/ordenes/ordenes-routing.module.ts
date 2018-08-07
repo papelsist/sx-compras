@@ -1,23 +1,26 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import {
-  OrdenesComponent,
-  OrdenDeCompraComponent,
-  OrdenesPendientesComponent
-} from './containers';
-import { OrdenResolver } from './containers/orden-de-compra/orden.resolver';
+
+import * as containers from './containers';
+import * as fromGuards from './guards';
 
 const routes: Routes = [
   {
     path: '',
-    component: OrdenesComponent,
+    component: containers.OrdenesPageComponent,
     children: [
-      { path: 'pendientes', component: OrdenesPendientesComponent },
-      { path: 'pendientes/create', component: OrdenDeCompraComponent },
       {
-        path: ':id',
-        component: OrdenDeCompraComponent,
-        resolve: { orden: OrdenResolver }
+        path: 'compras',
+        canActivate: [fromGuards.ComprasGuard],
+        children: [
+          { path: '', component: containers.ComprasComponent },
+          { path: 'create', component: containers.CompraComponent },
+          {
+            path: ':compraId',
+            canActivate: [fromGuards.CompraExistsGuard],
+            component: containers.CompraComponent
+          }
+        ]
       }
     ]
   }
@@ -25,7 +28,6 @@ const routes: Routes = [
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule],
-  providers: [OrdenResolver]
+  exports: [RouterModule]
 })
 export class OrdenesRoutingModule {}

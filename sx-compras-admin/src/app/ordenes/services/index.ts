@@ -1,5 +1,5 @@
-import { OrdenesService } from './ordenes.service';
+import { ComprasService } from './compras.service';
 
-export const services: any[] = [OrdenesService];
+export const services: any[] = [ComprasService];
 
-export * from './ordenes.service';
+export * from './compras.service';

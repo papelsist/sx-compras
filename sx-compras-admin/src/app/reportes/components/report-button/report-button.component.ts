@@ -1,4 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { HttpParams } from '@angular/common/http';
+
 import { ReportService } from '../../services/report.service';
 
 @Component({
@@ -22,7 +24,7 @@ export class ReportButtonComponent implements OnInit {
   @Input() title = 'Imprimir';
   @Input() smallIcon = false;
   @Input() url: string;
-  @Input() params: any;
+  @Input() params: HttpParams;
   constructor(private service: ReportService) {}
 
   ngOnInit() {}
