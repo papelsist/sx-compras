@@ -45,4 +45,10 @@ class ContrareciboController extends RestfulController<Contrarecibo> {
         def res = CuentaPorPagar.where{proveedor.id == proveedorId && contrarecibo == null }.list(params)
         respond res
     }
+
+    def print( ) {
+        Map repParams = [ID: params.id]
+        def pdf =  reportService.run('Contrarecibo.jrxml', repParams)
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'Contrarecibo.pdf')
+    }
 }
