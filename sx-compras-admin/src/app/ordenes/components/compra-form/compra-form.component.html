@@ -51,7 +51,8 @@
     <mat-divider></mat-divider>
 
     <div class="partidas-panel">
-      <sx-compra-partidas-table [parent]="form" [partidas]="partidas.value" (delete)="onDeletePartida($event)" (depurar)="onDepurar($event)">
+      <sx-compra-partidas-table [parent]="form" [partidas]="partidas.value" (delete)="onDeletePartida($event)" (depurar)="onDepurar($event)"
+        (update)="onEditPartida($event)">
       </sx-compra-partidas-table>
     </div>
     <mat-divider></mat-divider>

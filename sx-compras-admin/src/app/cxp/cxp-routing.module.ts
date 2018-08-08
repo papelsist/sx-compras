@@ -11,6 +11,11 @@ const routes: Routes = [
     children: [
       { path: 'cfdis', component: fromContainers.CfdisComponent, children: [] },
       {
+        path: 'facturas',
+        canActivate: [fromGuards.FacturasGuard],
+        component: fromContainers.FacturasComponent
+      },
+      {
         path: 'analisis',
         canActivate: [fromGuards.AnalisisGuard],
         children: [
@@ -35,6 +40,18 @@ const routes: Routes = [
             path: ':requisicionId',
             canActivate: [fromGuards.RequisicionExistsGuard],
             component: fromContainers.RequisicionComponent
+          }
+        ]
+      },
+      {
+        path: 'notas',
+        canActivate: [fromGuards.NotasGuard],
+        children: [
+          { path: '', component: fromContainers.NotasComponent },
+          {
+            path: ':notaId',
+            canActivate: [fromGuards.NotaExistsGuard],
+            component: fromContainers.NotaComponent
           }
         ]
       }

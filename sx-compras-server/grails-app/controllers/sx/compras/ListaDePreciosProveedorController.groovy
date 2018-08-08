@@ -13,6 +13,7 @@ class ListaDePreciosProveedorController extends RestfulController<ListaDePrecios
     static responseFormats = ['json']
 
     ListaDePreciosProveedorService listaDePreciosProveedorService
+    CompraService compraService
     ReportService reportService
 
     ListaDePreciosProveedorController() {
@@ -68,6 +69,27 @@ class ListaDePreciosProveedorController extends RestfulController<ListaDePrecios
         }
         respond listaDePreciosProveedorService.actualizarProductos(lista)
     }
+
+    def actualizarCompras(ListaDePreciosProveedor lista) {
+        if(lista == null ){
+            notFound()
+            return
+        }
+        Date fecha = params.getDate('fecha', 'dd/MM/yyyy')
+
+        if(fecha) {
+            List<Compra> compras = Compra.where {proveedor == lista.proveedor && fecha >= fecha }.list()
+            List<Compra> selected = compras.findAll { it.getStatus() != 'T'}
+            List<Compra> updated = []
+            selected.each { c ->
+                updated << compraService.actualizarPrecios(c, lista)
+            }
+            respond updated
+            return
+        }
+        respond lista
+    }
+
 
     def print( ) {
 

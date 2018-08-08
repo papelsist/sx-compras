@@ -153,7 +153,7 @@ grails:
 
 siipapx:
   cxp:
-    cfdisDir: /Volumes/cfdis
+    cfdisDir: /Users/rubencancino/Documents/cfdis-carga
   enviroments:
     produccion:
       cxp:

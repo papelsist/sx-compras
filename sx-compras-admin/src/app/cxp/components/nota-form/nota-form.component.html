@@ -1,0 +1,65 @@
+<mat-card>
+  <form [formGroup]="form">
+    <div layout layout-align="start center" class="mat-title pad-left pad-top">
+      <span>Nota: {{nota.serie}} - {{nota.folio}}</span>
+      <span class="pad-left pad-right"> {{nota.nombre}}</span>
+      <span class="pad-left">({{nota.fecha | date: 'dd/MM/yyyy'}})</span>
+      <span flex></span>
+      <span>Disponible:</span>
+      <span class="pad-left pad-right tc-pink-600">{{nota.disponible | currency}}</span>
+    </div>
+    <mat-divider></mat-divider>
+    <mat-card-content>
+      <div layout>
+        <mat-form-field>
+          <input matInput [value]="nota.total | currency" [disabled]="true" placeholder="Total">
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput [value]="nota.aplicado | currency" [disabled]="true" placeholder="Aplicado">
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput [value]="nota.moneda" [disabled]="true" placeholder="Moneda">
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput [value]="nota.tipoDeCambio" [disabled]="true" placeholder="T.C">
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput [value]="nota.tcContable" [disabled]="true" placeholder="T.C (Contable)">
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput [value]="nota.concepto" [disabled]="true" placeholder="Concepto">
+        </mat-form-field>
+      </div>
+
+      <div layout>
+        <sx-upper-case-field formControlName="comentario" placeholder="Comentario" flex></sx-upper-case-field>
+      </div>
+
+    </mat-card-content>
+    <mat-divider></mat-divider>
+    <mat-tab-group class="partidas-panel">
+      <mat-tab label="Referenciados">
+        <sx-nota-conceptos [conceptos]="nota.conceptos"></sx-nota-conceptos>
+      </mat-tab>
+      <mat-tab label="Aplicaciones" #aplicacionesTab>
+
+      </mat-tab>
+    </mat-tab-group>
+
+    <mat-divider></mat-divider>
+    <mat-card-actions>
+      <button type="button" mat-button [routerLink]="['../']">
+        <mat-icon>arrow_back</mat-icon> Notas
+      </button>
+      <button type="button" mat-button (click)="aplicar.emit(nota)" color="accent" [disabled]="nota.disponible <= 0">
+        <mat-icon>check_circle</mat-icon> Aplicar
+      </button>
+
+      <button type="button" mat-button color="primary" (click)="onSave()" [disabled]="form.invalid || form.pristine">
+        <mat-icon>save</mat-icon> Salvar
+      </button>
+      <sx-selector-cxp [disabled]="!aplicacionesTab.isActive || nota.disponible <= 0" label="Seleccionar factura"></sx-selector-cxp>
+      <ng-content></ng-content>
+    </mat-card-actions>
+  </form>
+</mat-card>

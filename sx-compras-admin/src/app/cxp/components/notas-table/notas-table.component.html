@@ -1,0 +1,64 @@
+<table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+  <ng-container matColumnDef="nombre">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Proveedor</th>
+    <td mat-cell *matCellDef="let req" class="cursor-pointer" (click)="toogleSelect(req)">{{req.nombre}}</td>
+  </ng-container>
+  <ng-container matColumnDef="serie">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Serie</th>
+    <td mat-cell *matCellDef="let req" class="cursor-pointer" (click)="toogleSelect(req)">{{req.serie}}</td>
+  </ng-container>
+  <ng-container matColumnDef="concepto">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Concepto</th>
+    <td mat-cell *matCellDef="let req" class="cursor-pointer" (click)="toogleSelect(req)">{{req.concepto}}</td>
+  </ng-container>
+  <ng-container matColumnDef="folio">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Folio</th>
+    <td mat-cell *matCellDef="let req" class="cursor-pointer" (click)="toogleSelect(req)">{{req.folio}}</td>
+  </ng-container>
+  <ng-container matColumnDef="fecha">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
+    <td mat-cell *matCellDef="let req">{{req.fecha | date: 'dd/MM/yyyy'}}</td>
+  </ng-container>
+  <ng-container matColumnDef="moneda">
+    <th mat-header-cell *matHeaderCellDef>Moneda</th>
+    <td mat-cell *matCellDef="let req">{{req.moneda}}</td>
+  </ng-container>
+  <ng-container matColumnDef="tipoDeCambio">
+    <th mat-header-cell *matHeaderCellDef>TC</th>
+    <td mat-cell *matCellDef="let req">{{req.tipoDeCambio}}</td>
+  </ng-container>
+  <ng-container matColumnDef="tcContable">
+    <th mat-header-cell *matHeaderCellDef>TC (Cont)</th>
+    <td mat-cell *matCellDef="let req">{{req.tcContable}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="total">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Total</th>
+    <td mat-cell *matCellDef="let req">{{req.total | currency:'USD'}}</td>
+  </ng-container>
+  <ng-container matColumnDef="disponible">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Disponible</th>
+    <td mat-cell *matCellDef="let req">{{req.disponible | currency:'USD'}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="tipoDeRelacion">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo R.</th>
+    <td mat-cell *matCellDef="let req" class="cursor-pointer" (click)="toogleSelect(req)">{{req.tipoDeRelacion}}</td>
+  </ng-container>
+  <ng-container matColumnDef="comentario">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Comentario</th>
+    <td mat-cell *matCellDef="let req" class="cursor-pointer">{{req.comentario}}</td>
+  </ng-container>
+  <ng-container matColumnDef="operaciones">
+    <th mat-header-cell *matHeaderCellDef></th>
+    <td mat-cell *matCellDef="let req">
+      <mat-icon [routerLink]="[ req.id]" class="cursor-pointer pad-right">edit</mat-icon>
+      <span class="pad-right cursor-pointer" (click)="pdf.emit(req)">PDF</span>
+      <span class="cursor-pointer" (click)="xml.emit(req)">XML</span>
+    </td>
+
+  </ng-container>
+  <tr mat-header-row *matHeaderRowDef="displayColumns"></tr>
+  <tr mat-row *matRowDef="let req; columns: displayColumns" [ngClass]="{'active': req.selected}"></tr>
+</table>
+<mat-paginator [pageSizeOptions]="[20, 50, 100, 200]" showFirstLastButtons></mat-paginator>

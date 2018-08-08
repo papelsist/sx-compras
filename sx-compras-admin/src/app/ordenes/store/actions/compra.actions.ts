@@ -12,6 +12,7 @@ export enum CompraActionTypes {
   AddCompraFail = '[Compra] Add Compra Fail',
   AddCompraSuccess = '[Compra] Add Compra Success',
   UpsertCompra = '[Compra] Upsert Compra',
+  UpsertCompras = '[Compra] Upsert many Compras',
   UpdateCompra = '[Compra] Update Compra',
   UpdateCompraFail = '[Compra] Update Compra Fail',
   UpdateCompraSuccess = '[Compra] Update Compra Success',
@@ -77,6 +78,11 @@ export class UpsertCompra implements Action {
 
   constructor(public payload: { compra: Compra }) {}
 }
+export class UpsertCompras implements Action {
+  readonly type = CompraActionTypes.UpsertCompras;
+
+  constructor(public payload: Compra[]) {}
+}
 
 export class DeleteCompra implements Action {
   readonly type = CompraActionTypes.DeleteCompra;
@@ -129,6 +135,7 @@ export type CompraActions =
   | UpdateCompraFail
   | UpdateCompraSuccess
   | UpsertCompra
+  | UpsertCompras
   | DeleteCompra
   | DeleteCompraFail
   | DeleteCompraSuccess

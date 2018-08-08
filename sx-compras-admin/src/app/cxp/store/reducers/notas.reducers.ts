@@ -88,7 +88,7 @@ export function reducer(state = initialState, action: NotaActions): State {
     }
 
     case NotaActionTypes.UpsertNota: {
-      return adapter.upsertOne(action.payload.compra, {
+      return adapter.upsertOne(action.payload.nota, {
         ...state,
         loading: false
       });

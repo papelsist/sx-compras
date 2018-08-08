@@ -16,7 +16,7 @@ export const adapter: EntityAdapter<Compra> = createEntityAdapter<Compra>();
 export const initialState: State = adapter.getInitialState({
   loading: false,
   loaded: false,
-  periodo: Periodo.fromStorage('sx-compras.compras.periodo'),
+  periodo: Periodo.fromNow(30),
   searchTerm: undefined
 });
 
@@ -88,6 +88,12 @@ export function reducer(state = initialState, action: CompraActions): State {
 
     case CompraActionTypes.UpsertCompra: {
       return adapter.upsertOne(action.payload.compra, {
+        ...state,
+        loading: false
+      });
+    }
+    case CompraActionTypes.UpsertCompras: {
+      return adapter.upsertMany(action.payload, {
         ...state,
         loading: false
       });

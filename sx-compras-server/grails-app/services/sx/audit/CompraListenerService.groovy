@@ -40,7 +40,7 @@ class CompraListenerService {
         if ( id ) {
             log.debug('{} {} Id: {}', event.eventType.name(), event.entity.name, id)
             Compra compra = getCompra(event)
-            logEntity(compra, 'UDATE')
+            logEntity(compra, 'UPDATE')
         }
     }
 
@@ -84,5 +84,16 @@ class CompraListenerService {
                 eventName: type
         )
         auditLogDataService.save(log)
+        compra.partidas.each {
+            AuditLog logDet = new AuditLog(
+                    name: 'CompraDet',
+                    persistedObjectId: it.id,
+                    source: 'CENTRAL',
+                    target: destino,
+                    tableName: 'compra_det',
+                    eventName: type
+            )
+            auditLogDataService.save(logDet)
+        }
     }
 }

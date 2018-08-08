@@ -10,6 +10,9 @@ export enum AnalisisActionTypes {
   LOAD = '[Analisis de factura] Load',
   LOAD_FAIL = '[Analisis de factura] Load Fail',
   LOAD_SUCCESS = '[Analisis de factura] Load Success',
+
+  LOAD_ANALISIS = '[Analisis de factura] Load one analisis ',
+
   // CRUD Actions
   SET_CURRENT_PROVEEDOR = '[Analisis de factura] Set current Proveedor',
   LOAD_FACTURAS_PENDIENTES = '[Analisis de factura] Load facturas pendientes',
@@ -18,6 +21,7 @@ export enum AnalisisActionTypes {
   LOAD_COMS_PENDIENTES = '[Analisis de factura] Load Coms pendientes',
   LOAD_COMS_PENDIENTES_FAIL = '[Analisis de factura] Load Coms pendientes fail',
   LOAD_COMS_PENDIENTES_SUCCESS = '[Analisis de factura] Load Coms pendientes success',
+
   // CRUD
   SAVE_ANALISIS = '[Analisis de factura] Save',
   SAVE_ANALISIS_FAIL = '[Analisis de factura] Save fail',
@@ -166,6 +170,11 @@ export class SetSearchFilter implements Action {
   constructor(public payload: any) {}
 }
 
+export class LoadAnalisis implements Action {
+  readonly type = AnalisisActionTypes.LOAD_ANALISIS;
+  constructor(public payload: Analisis) {}
+}
+
 export type AnalisisActions =
   | Load
   | LoadFail
@@ -193,4 +202,5 @@ export type AnalisisActions =
   | SearchError
   | SearComplete
   | SetAnalisisPeriodo
-  | SetSearchFilter;
+  | SetSearchFilter
+  | LoadAnalisis;

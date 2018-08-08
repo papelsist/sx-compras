@@ -33,6 +33,8 @@ class NotaDeCreditoCxP {
 
     BigDecimal tipoDeCambio = 1.0
 
+    BigDecimal tcContable = 0.0
+
     BigDecimal subTotal = 0.0
 
     BigDecimal descuento = 0.0
@@ -43,11 +45,15 @@ class NotaDeCreditoCxP {
 
     BigDecimal total = 0.0
 
+    BigDecimal aplicado = 0.0
+
     String comentario
 
     Long sw2
 
     List<NotaDeCreditoCxPDet> conceptos = []
+
+    List<AplicacionDePago> aplicaciones = []
 
     Date dateCreated
 
@@ -56,6 +62,8 @@ class NotaDeCreditoCxP {
     String concepto
 
     ComprobanteFiscal comprobanteFiscal
+
+    String tipoDeRelacion
 
 
 
@@ -73,15 +81,29 @@ class NotaDeCreditoCxP {
         sw2 nullable:true
         comprobanteFiscal nullable: true
         comentario nullable: true
+        tipoDeRelacion nullable: true ,maxSize: 10
+        tcContable nullable: true
     }
 
     static mapping = {
         id generator:'uuid'
+        conceptos cascade: "all-delete-orphan"
         fecha type:'date' ,index: 'CXP_APLICACION_IDX1'
         concepto inList: ['DEVOLUCION','DESCUENTO','DESCUENTO_FINANCIERO', 'DESCUENTO_ANTICIPO', 'BONIFICACION']
+        aplicado formula:'(select COALESCE(sum(x.importe),0) from aplicacion_de_pago x where x.nota_id=id)'
     }
 
+    static transients = ['disponible', 'aplicaciones']
+
     static hasMany =[conceptos: NotaDeCreditoCxPDet]
+
+    BigDecimal getDisponible() {
+        return total - aplicado
+    }
+
+    List<AplicacionDePago> getAplicaciones() {
+        return AplicacionDePago.where{nota == this}.list()
+    }
 
 
 

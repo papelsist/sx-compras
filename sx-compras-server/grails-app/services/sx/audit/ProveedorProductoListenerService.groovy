@@ -3,7 +3,7 @@ package sx.audit
 import grails.compiler.GrailsCompileStatic
 import grails.events.annotation.Subscriber
 import grails.gorm.transactions.Transactional
-import groovy.transform.CompileStatic
+
 import groovy.util.logging.Slf4j
 
 import org.grails.datastore.mapping.engine.event.AbstractPersistenceEvent
@@ -13,7 +13,7 @@ import org.grails.datastore.mapping.engine.event.PostUpdateEvent
 import org.springframework.beans.factory.annotation.Autowired
 
 import sx.core.ProveedorProducto
-import sx.core.Sucursal
+
 
 
 @Slf4j
@@ -57,20 +57,15 @@ class ProveedorProductoListenerService {
     }
 
     def log(AbstractPersistenceEvent event, String type, String id) {
-        ['SOLIS',
-         'TACUBA',
-         'ANDRADE',
-         'CALLE 4',
-         'CF5FEBRERO',
-         'VERTIZ 176',
-         'BOLIVAR'].each { target ->
+        this.targets.each { target ->
             AuditLog log = new AuditLog(
                     name: event.entityObject.getClass().getSimpleName(),
                     persistedObjectId: id,
                     source: 'CENTRAL',
                     target: target,
                     tableName: 'proveedor_producto',
-                    eventName: type
+                    eventName: type,
+                    message: 'SX-COMPRAS'
             )
             auditLogDataService.save(log)
         }

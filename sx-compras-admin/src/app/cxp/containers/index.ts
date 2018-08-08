@@ -5,6 +5,9 @@ import { AnalisisDeFacturaComponent } from './analisis-de-factura/analisis-de-fa
 import { AnalisisEditComponent } from './analisis-edit/analisis-edit.component';
 import { RequisicionesComponent } from './requisiciones/requisiciones.component';
 import { RequisicionComponent } from './requisicion/requisicion.component';
+import { NotasComponent } from './notas/notas.component';
+import { NotaComponent } from './nota/nota.component';
+import { FacturasComponent } from './facturas/facturas.component';
 
 export const containers: any[] = [
   CxpPageComponent,
@@ -13,7 +16,10 @@ export const containers: any[] = [
   AnalisisDeFacturaComponent,
   AnalisisEditComponent,
   RequisicionesComponent,
-  RequisicionComponent
+  RequisicionComponent,
+  NotasComponent,
+  NotaComponent,
+  FacturasComponent
 ];
 
 export * from './cxp-page/cxp-page.component';
@@ -23,3 +29,6 @@ export * from './analisis-de-factura/analisis-de-facturta.component';
 export * from './analisis-edit/analisis-edit.component';
 export * from './requisiciones/requisiciones.component';
 export * from './requisicion/requisicion.component';
+export * from './notas/notas.component';
+export * from './nota/nota.component';
+export * from './facturas/facturas.component';

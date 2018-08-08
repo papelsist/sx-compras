@@ -34,6 +34,13 @@ export const APLICAR_LISTA_PROVEEDOR_SUCCESS =
 export const ACTUALIZAR_PRODUCTOS_DE_LISTA_PROVEEDOR =
   '[ListaDePreciosProveedor] Actualiar productos de Lista proveedor ';
 
+export const ACTUALIZAR_COMPRAS_CONLISTA =
+  '[ListaDePreciosProveedor] Actualiar compras cont  Lista proveedor ';
+export const ACTUALIZAR_COMPRAS_CONLISTA_FAIL =
+  '[ListaDePreciosProveedor] Actualiar compras cont  Lista proveedor fail ';
+export const ACTUALIZAR_COMPRAS_CONLISTA_SUCCESS =
+  '[ListaDePreciosProveedor] Actualiar compras cont  Lista proveedor Success';
+
 export class LoadListasDePreciosProveedor implements Action {
   readonly type = LOAD_LISTAS_PROVEEDOR;
   constructor(public payload: string) {}
@@ -106,6 +113,23 @@ export class ActualizarProductosDeLista implements Action {
   constructor(public payload: ListaDePreciosProveedor) {}
 }
 
+// Actualizar compras
+
+export class ActualizarComprasConLista implements Action {
+  readonly type = ACTUALIZAR_COMPRAS_CONLISTA;
+  constructor(
+    public payload: { lista: ListaDePreciosProveedor; fecha: Date }
+  ) {}
+}
+export class ActualizarComprasConListaFail implements Action {
+  readonly type = ACTUALIZAR_COMPRAS_CONLISTA_FAIL;
+  constructor(public payload: any) {}
+}
+export class ActualizarComprasConListaSuccess implements Action {
+  readonly type = ACTUALIZAR_COMPRAS_CONLISTA_SUCCESS;
+  constructor(public payload: ListaDePreciosProveedor) {}
+}
+
 export type ListasDePreciosActions =
   | LoadListasDePreciosProveedor
   | LoadListasDePreciosProveedorFail
@@ -121,4 +145,7 @@ export type ListasDePreciosActions =
   | DeleteListaDePreciosProveedorSuccess
   | AplicarListaProveedor
   | AplicarListaProveedorFail
-  | AplicarListaProveedorSuccess;
+  | AplicarListaProveedorSuccess
+  | ActualizarComprasConLista
+  | ActualizarComprasConListaFail
+  | ActualizarComprasConListaSuccess;

@@ -76,7 +76,6 @@ abstract class CompraService {
         compra.ultimaDepuracion = depuracion
         compra.pendiente = false
         logEntity(compra)
-        log.debug("Compra depurada: {}", compra)
         return save(compra)
     }
 
@@ -108,13 +107,43 @@ abstract class CompraService {
     Long  nextFolio(Compra compra){
         String serie = compra.sucursal.clave == '1' ? 'OFICINAS' : 'SUC_'+ compra.sucursal.nombre.replaceAll(' ', '_')
         compra.serie = serie
-        println 'Serie: ' + serie
         Folio folio = Folio.findOrCreateWhere(entidad: 'COMPRAS', serie: serie)
         Long res = folio.folio + 1
-        log.info('Asignando folio de compra: {}', res)
         folio.folio = res
         folio.save flush: true
         return res
+    }
+
+    Compra actualizarPrecios(Compra compra, ListaDePreciosProveedor lista) {
+        log.debug("Actualizando compra ${compra.folio} con lista ${lista.id}")
+        Map<String, ListaDePreciosProveedorDet> map = lista.partidas.collectEntries {
+            [it.clave, it]
+        }
+        compra.partidas.each {
+            ListaDePreciosProveedorDet det = map.get(it.producto.clave)
+            if(det) {
+                it.precio = det.precioBruto
+                it.descuento1 = det.desc1
+                it.descuento2 = det.desc2
+                it.descuento3 = det.desc3
+                it.descuento4 = det.desc4
+                it.costo = det.precioNeto
+                actualizarPartida(it)
+            }
+
+        }
+        actualizarTotales(compra)
+        logEntity(compra)
+        return save(compra)
+    }
+
+    @CompileDynamic
+    Compra actualizarTotales(Compra compra) {
+        compra.importeNeto = compra.partidas.sum 0.0, { it.importeNeto }
+        compra.importeBruto = compra.partidas.sum 0.0, { it.importeBruto }
+        compra.impuestos = MonedaUtils.calcularImpuesto(compra.importeNeto)
+        compra.total = compra.importeNeto + compra.impuestos
+        return compra
     }
 
     void logEntity(Compra compra) {

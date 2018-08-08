@@ -2,6 +2,7 @@ import grails.util.BuildSettings
 import grails.util.Environment
 import org.springframework.boot.logging.logback.ColorConverter
 import org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter
+import ch.qos.logback.core.util.FileSize
 
 import java.nio.charset.Charset
 
@@ -23,6 +24,25 @@ appender('STDOUT', ConsoleAppender) {
 }
 
 def targetDir = BuildSettings.TARGET_DIR
+def USER_HOME = System.getProperty("user.home")
+def HOME_DIR = Environment.isDevelopmentMode() ? targetDir : './logs'
+appender('TASKJOBS', RollingFileAppender) {
+    append = false
+    encoder(PatternLayoutEncoder) {
+        pattern =
+                '%d{HH:mm} ' + // Date
+                '%5p ' + // Log level
+                '%logger{0} ' + // Logger
+                '%msg%n' // Message
+    }
+    rollingPolicy(TimeBasedRollingPolicy) {
+        fileNamePattern = "${HOME_DIR}/logs/taskjobs-%d{yyyy-MM-dd}.log"
+        maxHistory = 5
+        totalSizeCap = FileSize.valueOf("1GB")
+    }
+}
+
+
 if (Environment.isDevelopmentMode() && targetDir != null) {
     appender("FULL_STACKTRACE", FileAppender) {
         file = "${targetDir}/stacktrace.log"
@@ -48,8 +68,14 @@ if (Environment.isDevelopmentMode() && targetDir != null) {
     // Log Listeners
     logger("sx.audit", DEBUG, ['STDOUT'], false)
     logger("sx.reports", DEBUG, ['STDOUT'], false)
+    logger("sx.tasks", DEBUG, ['STDOUT', 'TASKJOBS'], false)
+} else {
+    root(ERROR, ['STDOUT'])
+    logger("sx.tasks", INFO, ['TASKJOBS'], false)
+    logger("sx.cxp.ComprobanteFiscalService", INFO,['TASKJOBS'], false)
 }
-root(ERROR, ['STDOUT'])
+
+
 
 
 

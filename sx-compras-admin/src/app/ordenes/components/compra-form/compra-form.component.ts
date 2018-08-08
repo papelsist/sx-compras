@@ -112,6 +112,14 @@ export class CompraFormComponent implements OnInit, OnChanges {
     return partidas;
   }
 
+  onEditPartida(index: number) {
+    const control = this.partidas.at(index);
+    const det: CompraDet = control.value;
+    actualizarPartida(det);
+    this.partidas.setControl(index, new FormControl(det));
+    this.form.markAsDirty();
+  }
+
   onInsertPartida(event: CompraDet) {
     actualizarPartida(event);
     this.partidas.push(new FormControl(event));

@@ -174,24 +174,6 @@ export class ListaDePreciosEffects {
   );
 
   @Effect()
-  deleteLista$ = this.actions$.pipe(
-    ofType<listasActions.DeleteListaDePreciosProveedor>(
-      listasActions.DELETE_LISTA_PROVEEDOR
-    ),
-    map(action => action.payload),
-    concatMap(lista => {
-      return this.service
-        .delete(lista.id)
-        .pipe(
-          map(res => new listasActions.DeleteListaDePreciosProveedor(lista)),
-          catchError(error =>
-            of(new listasActions.DeleteListaDePreciosProveedorFail(error))
-          )
-        );
-    })
-  );
-
-  @Effect()
   actualiarLista$ = this.actions$
     .ofType<listasActions.ActualizarProductosDeLista>(
       listasActions.ACTUALIZAR_PRODUCTOS_DE_LISTA_PROVEEDOR
@@ -212,7 +194,26 @@ export class ListaDePreciosEffects {
       })
     );
 
-  /*
+  @Effect()
+  deleteLista$ = this.actions$.pipe(
+    ofType<listasActions.DeleteListaDePreciosProveedor>(
+      listasActions.DELETE_LISTA_PROVEEDOR
+    ),
+    map(action => action.payload),
+    concatMap(lista => {
+      return this.service
+        .delete(lista.id)
+        .pipe(
+          map(
+            res => new listasActions.DeleteListaDePreciosProveedorSuccess(lista)
+          ),
+          catchError(error =>
+            of(new listasActions.DeleteListaDePreciosProveedorFail(error))
+          )
+        );
+    })
+  );
+
   @Effect()
   deleteListaSuccess$ = this.actions$.pipe(
     ofType<listasActions.DeleteListaDePreciosProveedorSuccess>(
@@ -224,5 +225,23 @@ export class ListaDePreciosEffects {
         new fromRoot.Go({ path: [`proveedores/${lista.proveedor.id}/listas`] })
     )
   );
-  */
+
+  @Effect()
+  actualizarCompras$ = this.actions$
+    .ofType<listasActions.ActualizarComprasConLista>(
+      listasActions.ACTUALIZAR_COMPRAS_CONLISTA
+    )
+    .pipe(
+      map(action => action.payload),
+      switchMap(data => {
+        return this.service
+          .actualizarCompras(data.lista, data.fecha)
+          .pipe(
+            map(res => new listasActions.ActualizarComprasConListaSuccess(res)),
+            catchError(error =>
+              of(new listasActions.ActualizarComprasConListaFail(error))
+            )
+          );
+      })
+    );
 }

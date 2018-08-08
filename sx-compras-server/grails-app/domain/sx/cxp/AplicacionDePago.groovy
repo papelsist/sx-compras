@@ -14,15 +14,15 @@ class AplicacionDePago {
 
     Date fecha
 
-    String tipo
+    String formaDePago
 
-    String cxp
+    NotaDeCreditoCxP nota
+
+    CuentaPorPagar cxp
 
     BigDecimal importe
 
     String comentario
-
-    String sw2
 
     Date dateCreated
 
@@ -30,10 +30,12 @@ class AplicacionDePago {
 
     static constraints = {
         comentario nullable:true
-        sw2 nullable: true
+        nota nullable: true
     }
 
-    static  mapping={
+    static  mapping = {
         id generator:'uuid'
+        fecha type: 'date'
+        formaDePago size: 5..15
     }
 }

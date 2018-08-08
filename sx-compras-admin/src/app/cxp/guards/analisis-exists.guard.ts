@@ -2,15 +2,39 @@ import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot } from '@angular/router';
 
 import { Store } from '@ngrx/store';
-
-import { Observable } from 'rxjs';
-import { tap, map, filter, take, switchMap } from 'rxjs/operators';
+import * as fromRoot from '../../store';
 import * as fromStore from '../store';
+import * as fromActions from '../store/actions/analisis.actions';
+
 import { Analisis } from '../model/analisis';
+import { AnalisisService } from '../services';
+
+import { Observable, of } from 'rxjs';
+import { tap, map, filter, take, switchMap, catchError } from 'rxjs/operators';
 
 @Injectable()
 export class AnalisisExistsGuard implements CanActivate {
-  constructor(private store: Store<fromStore.CxpState>) {}
+  constructor(
+    private store: Store<fromStore.CxpState>,
+    private service: AnalisisService
+  ) {}
+
+  /**
+   * `hasAnalisis` composes `hasAnalaisisInStore` and `hasAnalisisInApi`. It first checks
+   * if the analisis is in store, and if not it then checks if it is in the
+   * API.
+   */
+  hasAnalisis(id: string): Observable<boolean> {
+    return this.hasAnalisisInStore(id).pipe(
+      switchMap(inStore => {
+        if (inStore) {
+          return of(inStore);
+        }
+
+        return this.hasAnalisisInApi(id);
+      })
+    );
+  }
 
   canActivate(route: ActivatedRouteSnapshot): Observable<boolean> {
     return this.checkStore().pipe(
@@ -21,7 +45,7 @@ export class AnalisisExistsGuard implements CanActivate {
     );
   }
 
-  hasAnalisis(id: string): Observable<boolean> {
+  hasAnalisisInStore(id: string): Observable<boolean> {
     return this.store
       .select(fromStore.getAnalisisEntities)
       .pipe(
@@ -39,6 +63,18 @@ export class AnalisisExistsGuard implements CanActivate {
       }),
       filter(loaded => loaded), // Waiting for loaded
       take(1) // End the stream
+    );
+  }
+
+  hasAnalisisInApi(id: string): Observable<boolean> {
+    return this.service.get(id).pipe(
+      map(analisis => new fromActions.LoadAnalisis(analisis)),
+      tap(action => this.store.dispatch(action)),
+      map(action => !!action.payload),
+      catchError(() => {
+        this.store.dispatch(new fromRoot.Go({ path: ['cxp/analisis'] }));
+        return of(false);
+      })
     );
   }
 }

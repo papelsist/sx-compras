@@ -12,9 +12,12 @@ export interface CuentaPorPagar {
   impuestoRetenido: number;
   moneda: string;
   tipoDeCambio: number;
+  tcContable?: number;
   total: number;
   importePorPagar?: number;
   vencimiento: string;
   selected?: boolean;
   comprobanteFiscal: { id: string };
+  analizada?: boolean;
+  analisis?: string;
 }

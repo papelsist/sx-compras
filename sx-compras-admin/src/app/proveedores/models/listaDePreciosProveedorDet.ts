@@ -27,11 +27,11 @@ export function buildPartida(
     unidad: prodProv.unidad,
     moneda: prodProv.moneda,
     precioAnterior: prodProv.precio,
-    precioBruto: prodProv.precio,
-    desc1: 0.0,
-    desc2: 0.0,
-    desc3: 0.0,
-    desc4: 0.0,
-    precioNeto: 0.0
+    precioBruto: prodProv.precioBruto,
+    desc1: prodProv.desc1,
+    desc2: prodProv.desc2,
+    desc3: prodProv.desc3,
+    desc4: prodProv.desc4,
+    precioNeto: prodProv.precio
   };
 }

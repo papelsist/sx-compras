@@ -8,6 +8,8 @@ import { ConfigService } from '../../utils/config.service';
 
 import { ListaDePreciosProveedor } from '../models/listaDePreciosProveedor';
 
+import * as moment from 'moment';
+
 @Injectable()
 export class ListaDePreciosProveedorService {
   private _apiUrl: string;
@@ -62,6 +64,20 @@ export class ListaDePreciosProveedorService {
     const url = `${this.apiUrl}/actualizar/${lp.id}`;
     return this.http
       .put<ListaDePreciosProveedor>(url, {})
+      .pipe(catchError((error: any) => throwError(error)));
+  }
+
+  actualizarCompras(
+    lp: ListaDePreciosProveedor,
+    fecha: Date
+  ): Observable<ListaDePreciosProveedor> {
+    const params = new HttpParams().set(
+      'fecha',
+      moment(fecha).format('DD/MM/YYYY')
+    );
+    const url = `${this.apiUrl}/actualizarCompras/${lp.id}`;
+    return this.http
+      .put<ListaDePreciosProveedor>(url, {}, { params: params })
       .pipe(catchError((error: any) => throwError(error)));
   }
 

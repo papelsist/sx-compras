@@ -4,7 +4,8 @@ import {
   Input,
   Output,
   EventEmitter,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  HostListener
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 
@@ -55,5 +56,16 @@ export class CompraAddPartidaComponent implements OnInit {
 
   get proveedor() {
     return this.parent.get('proveedor').value;
+  }
+
+  @HostListener('window:keyup', ['$event'])
+  keyEvent(event: KeyboardEvent) {
+    // console.log(event);
+    if (event.ctrlKey && event.code === 'KeyI') {
+      this.buildPartida();
+    }
+    if (event.code === 'Insert') {
+      this.buildPartida();
+    }
   }
 }

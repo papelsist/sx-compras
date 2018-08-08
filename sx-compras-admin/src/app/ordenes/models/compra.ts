@@ -8,6 +8,7 @@ export interface Compra {
   proveedor: { id: string; nombre: string };
   nombre?: string;
   folio: number;
+  serie?: string;
   fecha: string;
   entrega?: string;
   comentario?: string;

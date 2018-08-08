@@ -11,6 +11,7 @@ import * as _ from 'lodash';
 import { NotaDeCreditoCxP } from '../model/notaDeCreditoCxP';
 
 import { Periodo } from 'app/_core/models/periodo';
+import { AplicacionDePago } from '../model';
 
 @Injectable()
 export class NotasService {
@@ -54,6 +55,13 @@ export class NotasService {
     const url = `${this.apiUrl}/aplicar/${requisicion.id}`;
     return this.http
       .put<NotaDeCreditoCxP>(url, requisicion)
+      .pipe(catchError((error: any) => throwError(error)));
+  }
+
+  aplicaciones(nota: NotaDeCreditoCxP): Observable<AplicacionDePago[]> {
+    const url = `${this.apiUrl}/${nota.id}/aplicaciones`;
+    return this.http
+      .get<AplicacionDePago[]>(url)
       .pipe(catchError((error: any) => throwError(error)));
   }
 

@@ -4,7 +4,7 @@ export function aplicarDescuentosEnCascada(
 ) {
   let importeNeto = importe;
   descuentos.forEach(desc => {
-    const descuento = importe * (desc / 100);
+    const descuento = importeNeto * (desc / 100);
     importeNeto = importeNeto - descuento;
   });
   return importeNeto;

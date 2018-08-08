@@ -7,19 +7,19 @@
     </ng-container>
 
     <ng-container matColumnDef="clave">
-      <th mat-header-cell *matHeaderCellDef>Producto</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Producto</th>
       <td mat-cell *matCellDef="let prod">{{prod.clave}}</td>
     </ng-container>
 
     <ng-container matColumnDef="claveProveedor">
-      <th mat-header-cell *matHeaderCellDef>Desc Proveedor</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Desc Proveedor</th>
       <td mat-cell *matCellDef="let prod">
         ({{prod.claveProveedor}}) - {{prod.descripcionProveedor}}
       </td>
     </ng-container>
 
     <ng-container matColumnDef="descripcion">
-      <th mat-header-cell *matHeaderCellDef>Descripción</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Descripción</th>
       <td mat-cell *matCellDef="let prod">
         <span layout>
           <span>{{prod.descripcion}}</span>
