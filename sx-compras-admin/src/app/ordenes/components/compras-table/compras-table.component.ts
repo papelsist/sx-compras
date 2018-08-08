@@ -7,9 +7,12 @@ import {
   SimpleChanges,
   ViewChild,
   Output,
-  EventEmitter
+  EventEmitter,
+  OnDestroy
 } from '@angular/core';
 import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
+
+import { Subscription } from 'rxjs';
 
 import { Compra } from '../../models/compra';
 
@@ -19,7 +22,7 @@ import { Compra } from '../../models/compra';
   templateUrl: './compras-table.component.html',
   styleUrls: ['./compras-table.component.scss']
 })
-export class ComprasTableComponent implements OnInit, OnChanges {
+export class ComprasTableComponent implements OnInit, OnChanges, OnDestroy {
   @Input() compras: Compra[] = [];
   @Input() multipleSelection = true;
   @Input() filter;
@@ -46,12 +49,29 @@ export class ComprasTableComponent implements OnInit, OnChanges {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @Output() select = new EventEmitter();
   @Output() edit = new EventEmitter();
-
+  subscription: Subscription;
   constructor() {}
 
   ngOnInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+
+    this.subscription = this.sort.sortChange.subscribe(e =>
+      localStorage.setItem('sx-compras.compras-table.sort', JSON.stringify(e))
+    );
+
+    const sdata: string = localStorage.getItem('sx-compras.compras-table.sort');
+    if (sdata) {
+      const data: {
+        active: string;
+        direction: 'asc' | 'desc' | '';
+      } = JSON.parse(sdata);
+      this.sort.active = data.active;
+      this.sort.direction = data.direction;
+    } else {
+      this.sort.active = 'folio';
+      this.sort.direction = 'desc';
+    }
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -60,6 +80,12 @@ export class ComprasTableComponent implements OnInit, OnChanges {
     }
     if (changes.filter) {
       this.dataSource.filter = changes.filter.currentValue;
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
     }
   }
 

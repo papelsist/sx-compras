@@ -6,13 +6,9 @@ import groovy.transform.ToString
 import sx.core.Proveedor
 
 @ToString(excludes = ['id,version,sw2,dateCreated,lastUpdated'],includeNames=true,includePackage=false)
-@EqualsAndHashCode(includeFields = true,includes = ['id'])
+@EqualsAndHashCode(includeFields = true,includes = ['id', 'folio'])
 @GrailsCompileStatic
 class Contrarecibo {
-
-    String id
-
-    Long folio
 
     Date fecha = new Date()
 
@@ -25,27 +21,33 @@ class Contrarecibo {
     String moneda = 'MXN'
 
     Date dateCreated
-
     Date lastUpdated
+
+    Date atendido
+
+    String updateUser
+    String createUser
 
     Long sw2
 
-    List<CuentaPorPagar> cuentasPorPagar = []
+    List<CuentaPorPagar> partidas = []
 
-    static  hasMany =[cuentasPorPagar: CuentaPorPagar]
+    static  hasMany =[partidas: CuentaPorPagar]
 
 
     static constraints = {
         comentario nullable:true
         sw2 nullable:true
         moneda maxSize: 3
+        updateUser nullable: true
+        createUser nullable: true
+        atendido nullable: true
     }
 
     static mapping = {
-        id generator:'uuid'
         fecha type:'date' ,index: 'CRIBO_IDX1'
+        atendido type: 'date'
         proveedor index: 'CRIBO_IDX1'
-
     }
 
 

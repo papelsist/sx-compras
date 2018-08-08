@@ -54,6 +54,19 @@ const routes: Routes = [
             component: fromContainers.NotaComponent
           }
         ]
+      },
+      {
+        path: 'contrarecibos',
+        canActivate: [fromGuards.ContrarecibosGuard],
+        children: [
+          { path: '', component: fromContainers.RecibosComponent },
+          { path: 'create', component: fromContainers.ReciboComponent },
+          {
+            path: ':reciboId',
+            canActivate: [fromGuards.ContrareciboExistsGuard],
+            component: fromContainers.ReciboComponent
+          }
+        ]
       }
     ]
   }

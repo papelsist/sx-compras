@@ -3,6 +3,7 @@ import { CfdisTotalesPanelComponent } from './cfdis-totales-panel/cfdis-totales-
 import { AnalisisTableComponent } from './analisis-table/analisis-table.component';
 import { AnalisisFormComponent } from './analisis-form/analisis-form.component';
 import { FacturaSelectorComponent } from './factura-selector/factura-selector.component';
+import { FacturasSelectorBtnComponent } from './factura-selector/factura-selector-btn.component';
 import { CxpFacturasTableComponent } from './cxp-facturas-table/cxp-facturas-table.component';
 import { FacturaHeaderComponent } from './factura-header/factura-header.component';
 import { ComsSelectorComponent } from './coms-selector/coms-selector.component';
@@ -23,6 +24,9 @@ import { NotaFormComponent } from './nota-form/nota-form.component';
 import { NotaConceptosComponent } from './nota-conceptos/nota-conceptos.component';
 import { FacturasTableComponent } from './facturas-table/facturas-table.component';
 import { SelectorCxPComponent } from './selector-cxp/selector-cxp.component';
+import { RecibosTableComponent } from './recibos-table/recibos-table.component';
+import { ReciboFormComponent } from './recibo-form/recibo-form.component';
+import { ReciboPartidasComponent } from './recibo-partidas/recibo-partidas.component';
 
 export const components: any[] = [
   CfdisTableComponent,
@@ -34,6 +38,7 @@ export const components: any[] = [
   AnalisisPartidasTableComponent,
   PrintAnalisisComponent,
   FacturaSelectorComponent,
+  FacturasSelectorBtnComponent,
   CxpFacturasTableComponent,
   FacturaHeaderComponent,
   ComsSelectorComponent,
@@ -47,7 +52,10 @@ export const components: any[] = [
   ReportComsSinAnalizarComponent,
   NotaFormComponent,
   NotaConceptosComponent,
-  SelectorCxPComponent
+  SelectorCxPComponent,
+  RecibosTableComponent,
+  ReciboFormComponent,
+  ReciboPartidasComponent
 ];
 
 export const entryComponents = [
@@ -65,6 +73,7 @@ export * from './analisis-edit-form/analisis-edit-form.component';
 export * from './analisis-edit-form/analisis-partidas-table.component';
 export * from './print-analisis/print-analisis.component';
 export * from './factura-selector/factura-selector.component';
+export * from './factura-selector/factura-selector-btn.component';
 export * from './cxp-facturas-table/cxp-facturas-table.component';
 export * from './factura-header/factura-header.component';
 export * from './coms-selector/coms-selector.component';
@@ -85,3 +94,8 @@ export * from './nota-conceptos/nota-conceptos.component';
 
 // Cuentas Por Pagar
 export * from './selector-cxp/selector-cxp.component';
+
+// Contrarecibos
+export * from './recibos-table/recibos-table.component';
+export * from './recibo-form/recibo-form.component';
+export * from './recibo-partidas/recibo-partidas.component';

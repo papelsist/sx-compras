@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 
 import { Store, select } from '@ngrx/store';
 import * as fromRoot from 'app/store';
@@ -20,7 +20,7 @@ import * as _ from 'lodash';
       </sx-search-title>
       <mat-divider></mat-divider>
       <ng-container *ngIf="comprasPorSucursal$ | async as rows">
-        <mat-tab-group >
+        <mat-tab-group [(selectedIndex)]="tabIndex">
           <mat-tab label="{{sucursal}}" *ngFor="let sucursal of getSucursales(rows)">
             <sx-compras-table [compras]="rows[sucursal]" [filter]="search$ | async" (edit)="onEdit($event)"></sx-compras-table>
           </mat-tab>
@@ -33,20 +33,31 @@ import * as _ from 'lodash';
     </a>
   `
 })
-export class ComprasComponent implements OnInit {
+export class ComprasComponent implements OnInit, OnDestroy {
   comprasPorSucursal$: Observable<any>;
   sucursales$: Observable<string[]>;
 
   search$: Observable<string>;
-
+  tabIndex = 2;
+  private _storageKey = 'sx-compras.ordenes';
   constructor(private store: Store<fromStore.State>) {}
 
   ngOnInit() {
     this.comprasPorSucursal$ = this.store.pipe(
-      select(fromStore.getComprasPorSucursal)
+      select(fromStore.getComprasPorSucursalPendientes)
     );
     this.sucursales$ = this.comprasPorSucursal$.pipe(map(res => _.keys(res)));
     this.search$ = this.store.pipe(select(fromStore.getComprasSearchTerm));
+
+    // Tab Idx
+    const _tabIdx = localStorage.getItem(this._storageKey + '.tabIndex');
+    this.tabIndex = parseFloat(_tabIdx);
+  }
+  ngOnDestroy() {
+    localStorage.setItem(
+      this._storageKey + '.tabIndex',
+      this.tabIndex.toString()
+    );
   }
 
   onSelect() {}

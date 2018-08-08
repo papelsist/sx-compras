@@ -47,7 +47,9 @@ export class UpperCaseFieldComponent implements OnInit, ControlValueAccessor {
 
   constructor(
     private renderer: Renderer2,
-    @Optional() @Self() public controlDir: NgControl
+    @Optional()
+    @Self()
+    public controlDir: NgControl
   ) {
     controlDir.valueAccessor = this;
   }
@@ -55,7 +57,6 @@ export class UpperCaseFieldComponent implements OnInit, ControlValueAccessor {
   ngOnInit() {
     const control = this.controlDir.control;
     if (this.required === true) {
-      console.log('Campo requreido....', this.required);
       const validators = control.validator
         ? [control.validator, Validators.required]
         : Validators.required;

@@ -22,6 +22,10 @@ export const getAllCompras = createSelector(
   fromCompras.selectAll
 );
 
+export const getAllComprasPendientes = createSelector(getAllCompras, compras =>
+  compras.filter(item => item.status !== 'A')
+);
+
 export const getComprasLoaded = createSelector(
   getComprasState,
   fromCompras.getComprasLoaded
@@ -42,6 +46,11 @@ export const getSelectedCompra = createSelector(
 
 export const getComprasPorSucursal = createSelector(getAllCompras, compras =>
   _.groupBy(compras, 'sucursalNombre')
+);
+
+export const getComprasPorSucursalPendientes = createSelector(
+  getAllComprasPendientes,
+  compras => _.groupBy(compras, 'sucursalNombre')
 );
 
 export const getPeriodoDeCompras = createSelector(
