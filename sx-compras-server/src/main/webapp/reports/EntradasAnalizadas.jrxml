@@ -397,7 +397,7 @@ GROUP BY C.ID,S.CLAVE,date(I.FECHA)]]></queryString>
 					<textElement textAlignment="Center" verticalAlignment="Bottom">
 						<font pdfFontName="Helvetica" size="8" isBold="false"/>
 					</textElement>
-				<text><![CDATA[TOTAL-FLETE]]></text>
+				<text><![CDATA[TOTAL S/FLETE]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
