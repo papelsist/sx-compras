@@ -17,7 +17,8 @@ class ImportarComprobantesJobService {
 
     @Scheduled(fixedDelay = 120000L, initialDelay = 120000L)
     void importarComprobantesDeCompras() {
-        if(Environment.DEVELOPMENT)  return
+        if(Environment.current == Environment.DEVELOPMENT)
+            return
         log.info('Importando CFDIS de COMPRAS  desde {} , {}', comprobanteFiscalService.cfdiDir, new Date().format("dd/MM/yyyy hh:mm:ss"))
         try{
             int rows = comprobanteFiscalService.importacionLocal('COMPRAS')

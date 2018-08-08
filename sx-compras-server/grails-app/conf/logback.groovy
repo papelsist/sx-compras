@@ -25,7 +25,7 @@ appender('STDOUT', ConsoleAppender) {
 
 def targetDir = BuildSettings.TARGET_DIR
 def USER_HOME = System.getProperty("user.home")
-def HOME_DIR = Environment.isDevelopmentMode() ? targetDir : './logs'
+def HOME_DIR = Environment.isDevelopmentMode() ? targetDir : '.'
 appender('TASKJOBS', RollingFileAppender) {
     append = false
     encoder(PatternLayoutEncoder) {
@@ -72,9 +72,9 @@ if (Environment.isDevelopmentMode() && targetDir != null) {
 } else {
     root(ERROR, ['STDOUT'])
     logger("sx.tasks", INFO, ['TASKJOBS'], false)
-    logger("sx.cxp.ComprobanteFiscalService", INFO,['TASKJOBS'], false)
-}
 
+}
+root(ERROR, ['STDOUT'])
 
 
 

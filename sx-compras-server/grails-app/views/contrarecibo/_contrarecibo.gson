@@ -4,4 +4,9 @@ model {
 	Contrarecibo contrarecibo
 }
 
-json g.render(contrarecibo, [resolveTemplate: false])
+json g.render(contrarecibo, [exlcudes: ['partidas', 'version', 'dateCreated', 'lastUpdated'], resolveTemplate: false]) {
+	nombre contrarecibo.proveedor.nombre
+	partidas g.render(contrarecibo.partidas)
+    creado contrarecibo.dateCreated
+    modificado contrarecibo.lastUpdated
+}

@@ -150,11 +150,12 @@ grails:
     cors:
         enabled: true
 ---
-
-siipapx:
-  cxp:
-    cfdisDir: /Users/rubencancino/Documents/cfdis-carga
-  environments:
-    produccion:
+environments:
+  development:
+    siipapx:
+      cxp:
+        cfdisDir: /Users/rubencancino/Documents/cfdis-carga
+  production:
+    siipapx:
       cxp:
         cfdisDir: /home/cfdProv

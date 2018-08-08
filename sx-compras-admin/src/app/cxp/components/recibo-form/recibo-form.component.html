@@ -1,0 +1,69 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <mat-card>
+    <mat-card-title *ngIf="recibo?.id">
+      <div layout>
+        <span class="pad-right"> Contrarecibo: {{recibo.id}}</span>
+        <span class="pad-left"> {{recibo.nombre}}</span>
+        <span flex></span>
+      </div>
+    </mat-card-title>
+
+    <mat-card-title *ngIf="!recibo">Alta de Contrarecibo</mat-card-title>
+
+    <mat-divider></mat-divider>
+    <div layout="column" class="pad">
+      <div layout>
+        <sx-proveedor-field formControlName="proveedor" flex *ngIf="!recibo?.id">
+        </sx-proveedor-field>
+        <mat-form-field class="pad-left">
+          <input matInput [matDatepicker]="myDatepicker" formControlName="fecha" placeholder="Fecha">
+          <mat-datepicker-toggle matSuffix [for]="myDatepicker"></mat-datepicker-toggle>
+          <mat-datepicker #myDatepicker></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field class="pad-left" [style.width.px]="60">
+          <mat-select placeholder="Moneda" formControlName="moneda">
+            <mat-option *ngFor="let tipo of ['MXN','USD', 'EUR']" [value]="tipo">{{tipo}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+
+        <sx-upper-case-field formControlName="comentario" placeholder="Comentario" flex class="pad-left"></sx-upper-case-field>
+        <mat-form-field class="pad-left" flex="20">
+          <input matInput placeholder="Filtrar facturas" (input)="filtro = search.value" #search>
+        </mat-form-field>
+      </div>
+
+    </div>
+
+    <div class="partidas-panel">
+
+      <sx-recibo-partidas [parent]="form" [partidas]="partidas.value" (delete)="onDeleteRow($event)" [filter]="filtro" [readOnly]="form.disabled">
+      </sx-recibo-partidas>
+
+    </div>
+    <div class="totales-panel" layout layout-padding>
+      <span flex></span>
+      <mat-form-field>
+        <input matInput value="{{total | currency}}" placeholder="Total" [disabled]="true">
+      </mat-form-field>
+    </div>
+    <mat-divider></mat-divider>
+    <mat-card-actions>
+      <button mat-button type="button" [routerLink]="['../']">Cancelar</button>
+      <button mat-button [disabled]="form.invalid || form.pristine" *ngIf="!form.disabled">
+        <mat-icon>save</mat-icon> Salvar
+      </button>
+      <sx-facturas-selector-btn (selected)="agregarFacturas($event)" [facturas]="facturas"></sx-facturas-selector-btn>
+      <ng-container *ngIf="recibo?.id">
+        <button mat-button color="warn" type="button" (click)="delete.emit(recibo)">
+          <mat-icon>delete</mat-icon> Eliminar
+        </button>
+
+      </ng-container>
+      <sx-report-button url="cxp/contrarecibos/print/{{recibo.id}}" *ngIf="recibo?.id"> </sx-report-button>
+
+
+
+    </mat-card-actions>
+  </mat-card>
+</form>

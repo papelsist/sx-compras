@@ -1,0 +1,43 @@
+<table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+  <ng-container matColumnDef="folio">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Folio</th>
+    <td mat-cell *matCellDef="let recibo" class="cursor-pointer" (click)="toogleSelect(recibo)">{{recibo.id}}</td>
+  </ng-container>
+  <ng-container matColumnDef="nombre">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Proveedor</th>
+    <td mat-cell *matCellDef="let recibo" class="cursor-pointer" (click)="toogleSelect(recibo)">{{recibo.nombre}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="fecha">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
+    <td mat-cell *matCellDef="let recibo">{{recibo.fecha | date: 'dd/MM/yyyy'}}</td>
+  </ng-container>
+  <ng-container matColumnDef="moneda">
+    <th mat-header-cell *matHeaderCellDef>Moneda</th>
+    <td mat-cell *matCellDef="let recibo">{{recibo.moneda}}</td>
+  </ng-container>
+  <ng-container matColumnDef="total">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Total</th>
+    <td mat-cell *matCellDef="let recibo">{{recibo.total | currency:'USD'}}</td>
+  </ng-container>
+  <ng-container matColumnDef="comentario">
+    <th mat-header-cell *matHeaderCellDef>Comentario</th>
+    <td mat-cell *matCellDef="let recibo">{{recibo.comentario}}</td>
+  </ng-container>
+  <ng-container matColumnDef="modificado">
+    <th mat-header-cell *matHeaderCellDef>Modificado</th>
+    <td mat-cell *matCellDef="let recibo">{{recibo.updateUser}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="operaciones">
+    <th mat-header-cell *matHeaderCellDef></th>
+    <td mat-cell *matCellDef="let recibo">
+      <mat-icon [routerLink]="[recibo.id]" class="cursor-pointer pad-right">edit</mat-icon>
+      <sx-report-button [smallIcon]="true" url="contrarecibos/{{recibo.id}}"></sx-report-button>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayColumns"></tr>
+  <tr mat-row *matRowDef="let recibo; columns: displayColumns"></tr>
+</table>
+<mat-paginator [pageSizeOptions]="[ 20, 50, 100, 200]" showFirstLastButtons></mat-paginator>

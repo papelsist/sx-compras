@@ -59,6 +59,10 @@ class UrlMappings {
         "/api/cxp/notas/aplicar/$id"(controller:'notaDeCreditoCxP', action: 'aplicar', method: 'PUT')
         "/api/cxp/notas/print/$id"(controller: 'notaDeCreditoCxP', action: 'print', method: 'GET')
 
+        "/api/cxp/contrarecibos"(resources: 'contrarecibo')
+        "/api/cxp/contrarecibos/print/$id"(controller: 'contrarecibo', action: 'print', method: 'GET')
+        "/api/cxp/contrarecibos/pendientes/$proveedorId"(controller: 'contrarecibo', action: 'pendientes', method: 'GET')
+
 
         "/api/coms"(resources: 'recepcionDeCompra'){
             "/partidas"(resources: 'recepcionDeCompraDet', excludes:['create', 'edit','patch'])

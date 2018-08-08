@@ -7,6 +7,7 @@ import grails.gorm.transactions.Transactional
 import groovy.util.logging.Slf4j
 
 import org.grails.datastore.mapping.engine.event.AbstractPersistenceEvent
+import org.grails.datastore.mapping.engine.event.PostDeleteEvent
 import org.grails.datastore.mapping.engine.event.PostInsertEvent
 import org.grails.datastore.mapping.engine.event.PostUpdateEvent
 
@@ -53,6 +54,15 @@ class ProveedorProductoListenerService {
         if ( id ) {
             log.debug('UDATE {} {}', event.entity.name, event.eventType.name())
             log(event, 'UPDATE', id)
+        }
+    }
+
+    @Subscriber
+    void afterDelete(PostDeleteEvent event) {
+        String id = getId(event)
+        if ( id ) {
+            log.debug('DELETE {} {}', event.entity.name, event.eventType.name())
+            log(event, 'DELETE', id)
         }
     }
 

@@ -10,10 +10,6 @@ import sx.core.Proveedor
 @GrailsCompileStatic
 class Contrarecibo {
 
-    String id
-
-    Long folio
-
     Date fecha = new Date()
 
     Proveedor proveedor
@@ -25,17 +21,18 @@ class Contrarecibo {
     String moneda = 'MXN'
 
     Date dateCreated
-
     Date lastUpdated
+
+    Date atendido
 
     String updateUser
     String createUser
 
     Long sw2
 
-    List<CuentaPorPagar> cuentasPorPagar = []
+    List<CuentaPorPagar> partidas = []
 
-    static  hasMany =[cuentasPorPagar: CuentaPorPagar]
+    static  hasMany =[partidas: CuentaPorPagar]
 
 
     static constraints = {
@@ -44,13 +41,13 @@ class Contrarecibo {
         moneda maxSize: 3
         updateUser nullable: true
         createUser nullable: true
+        atendido nullable: true
     }
 
     static mapping = {
-        id generator:'uuid'
         fecha type:'date' ,index: 'CRIBO_IDX1'
+        atendido type: 'date'
         proveedor index: 'CRIBO_IDX1'
-
     }
 
 

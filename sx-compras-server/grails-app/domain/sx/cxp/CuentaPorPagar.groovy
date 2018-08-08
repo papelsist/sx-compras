@@ -61,6 +61,8 @@ class CuentaPorPagar {
 
     BigDecimal pagos = 0.0
 
+    Long contrarecibo
+
     static constraints = {
         tipo inList:['COMPRAS', 'GASTOS']
         folio nullable: true, maxSize: 30
@@ -84,6 +86,7 @@ class CuentaPorPagar {
         sw2 nullable:true
         comprobanteFiscal nullable: true
         tcContable nullable: true
+        contrarecibo nullable: true
     }
 
     static mapping ={

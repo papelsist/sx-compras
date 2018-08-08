@@ -47,6 +47,12 @@ export class CxpPageComponent implements OnInit {
       title: 'Notas ',
       description: 'Notas de crédito',
       icon: 'description'
+    },
+    {
+      route: 'contrarecibos',
+      title: 'Contrarecibos ',
+      description: 'Contrarecibos',
+      icon: 'rate_review'
     }
   ];
 

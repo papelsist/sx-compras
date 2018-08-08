@@ -5,6 +5,7 @@ import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.*
 
 import groovy.util.logging.Slf4j
+
 import sx.reports.ReportService
 
 @Slf4j()
@@ -22,7 +23,8 @@ class ContrareciboController extends RestfulController<Contrarecibo> {
 
     @Override
     protected List<Contrarecibo> listAllResources(Map params) {
-        return super.listAllResources(params)
+        def query = Contrarecibo.where{ atendido == null}
+        return query.list(params)
     }
 
     @Override
@@ -32,13 +34,15 @@ class ContrareciboController extends RestfulController<Contrarecibo> {
 
     @Override
     protected Contrarecibo updateResource(Contrarecibo resource) {
-        return contrareciboService.saveRecibo(resource)
+        return contrareciboService.update(resource)
     }
 
-    def buscarFactura(String serie, String folio) {
-        params.max = 100
-        params.sort = 'fecha'
+    def pendientes() {
+        params.max = 300
+        params.sort = 'lastUpdated'
         params.order = 'desc'
-        respond CuentaPorPagar.where{serie == serie && folio == folio}.list(params)
+        String proveedorId = params['proveedorId']
+        def res = CuentaPorPagar.where{proveedor.id == proveedorId && contrarecibo == null }.list(params)
+        respond res
     }
 }
