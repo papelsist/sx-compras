@@ -64,7 +64,6 @@ class ProveedorProductoController extends RestfulController<ProveedorProducto> {
 
         def rows = Producto.findAll("from Producto p " +
                 " where p.activo = true " +
-                " and p.deLinea = true " +
                 " and p.id not in(" +
                 "       select pp.producto.id from ProveedorProducto pp " +
                 "       where pp.proveedor.id = ? and pp.moneda = ?) " +

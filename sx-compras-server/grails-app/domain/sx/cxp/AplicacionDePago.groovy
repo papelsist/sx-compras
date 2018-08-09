@@ -18,6 +18,8 @@ class AplicacionDePago {
 
     NotaDeCreditoCxP nota
 
+    Pago pago
+
     CuentaPorPagar cxp
 
     BigDecimal importe
@@ -31,6 +33,7 @@ class AplicacionDePago {
     static constraints = {
         comentario nullable:true
         nota nullable: true
+        pago nullable: true
     }
 
     static  mapping = {

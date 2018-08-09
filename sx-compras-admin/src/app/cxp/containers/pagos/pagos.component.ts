@@ -1,0 +1,62 @@
+import { Component, OnInit } from '@angular/core';
+
+import { Store, select } from '@ngrx/store';
+import * as fromRoot from 'app/store';
+import * as fromStore from '../../store';
+import * as fromActions from '../../store/actions/pagos.actions';
+
+import { Observable, Subject } from 'rxjs';
+
+import { Pago } from '../../model';
+
+import { ComprobanteFiscalService } from '../../services';
+
+@Component({
+  selector: 'sx-pagos',
+  template: `
+    <mat-card>
+      <sx-search-title title="Pagos de facturas" (search)="onSearch($event)">
+      </sx-search-title>
+      <mat-divider></mat-divider>
+      <pre>
+        {{pagos$ | async}}
+      </pre>
+      <!--
+      <sx-notas-table [notas]="notas$ | async" (xml)="onXml($event)" (pdf)="onPdf($event)"></sx-notas-table>
+      -->
+    </mat-card>
+  `
+})
+export class PagosComponent implements OnInit {
+  pagos$: Observable<Pago[]>;
+  search$ = new Subject<string>();
+
+  constructor(
+    private store: Store<fromStore.CxpState>,
+    private service: ComprobanteFiscalService
+  ) {}
+
+  ngOnInit() {
+    this.pagos$ = this.store.pipe(select(fromStore.getAllPagos));
+  }
+
+  onSelect() {}
+
+  onSearch(event: string) {
+    this.search$.next(event);
+  }
+
+  onPdf(event: Pago) {
+    this.service.imprimirCfdi(event.comprobanteFiscal.id);
+  }
+
+  onXml(event: Pago) {
+    this.service.mostrarXml2(event.comprobanteFiscal.id).subscribe(res => {
+      const blob = new Blob([res], {
+        type: 'text/xml'
+      });
+      const fileURL = window.URL.createObjectURL(blob);
+      window.open(fileURL, '_blank');
+    });
+  }
+}

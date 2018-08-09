@@ -1,0 +1,8 @@
+import sx.cxp.Pago
+
+model {
+	Iterable<Pago> pagoList
+}
+
+json tmpl.pago(pagoList ?: [])
+

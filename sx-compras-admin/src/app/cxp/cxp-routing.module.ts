@@ -44,6 +44,18 @@ const routes: Routes = [
         ]
       },
       {
+        path: 'pagos',
+        canActivate: [fromGuards.PagosGuard],
+        children: [
+          { path: '', component: fromContainers.PagosComponent },
+          {
+            path: ':pagoId',
+            canActivate: [fromGuards.PagoExistsGuard],
+            component: fromContainers.PagoComponent
+          }
+        ]
+      },
+      {
         path: 'notas',
         canActivate: [fromGuards.NotasGuard],
         children: [

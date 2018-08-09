@@ -1,0 +1,7 @@
+import sx.cxp.ProveedorSaldo
+
+model {
+	ProveedorSaldo proveedorSaldo
+}
+
+json tmpl.proveedorSaldo(proveedorSaldo)

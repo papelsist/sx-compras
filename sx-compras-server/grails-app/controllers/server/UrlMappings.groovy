@@ -10,9 +10,10 @@ class UrlMappings {
         "/api/marcas"(resources: 'marca')
         "/api/productos"(resources: 'producto')
         "/api/proveedores"(resources: 'proveedor'){
-            "/productos"(resources: 'proveedorProducto', excludes:['create', 'edit','patch'])
+            "/productos"(resources: 'proveedorProducto', excludes:['create', 'save', 'edit','patch'])
             "/productos/disponibles"(controller: 'proveedorProducto', action: 'disponibles')
             "/productos/agregarProductos"(controller: 'proveedorProducto', action: 'agregarProductos', method: 'PUT')
+            "/saldo"(resources: 'proveedorSaldo', excludes:['create', 'edit','patch'])
         }
 
         "/api/listaDePreciosProveedor"(resources: 'listaDePreciosProveedor')
@@ -62,6 +63,9 @@ class UrlMappings {
         "/api/cxp/contrarecibos"(resources: 'contrarecibo')
         "/api/cxp/contrarecibos/print/$id"(controller: 'contrarecibo', action: 'print', method: 'GET')
         "/api/cxp/contrarecibos/pendientes/$proveedorId"(controller: 'contrarecibo', action: 'pendientes', method: 'GET')
+
+        "/api/cxp/pagos"(resources: 'pago', excludes:['create', 'edit','patch'])
+        "/api/cxp/pagos/search"(controller: 'pago', action: 'search')
 
 
         "/api/coms"(resources: 'recepcionDeCompra'){
