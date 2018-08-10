@@ -65,6 +65,7 @@ class UrlMappings {
         "/api/cxp/contrarecibos/pendientes/$proveedorId"(controller: 'contrarecibo', action: 'pendientes', method: 'GET')
 
         "/api/cxp/pagos"(resources: 'pago', excludes:['create', 'edit','patch'])
+        "/api/cxp/pagos/aplicar/$id"(controller:'pago', action: 'aplicar', method: 'PUT')
         "/api/cxp/pagos/search"(controller: 'pago', action: 'search')
 
 

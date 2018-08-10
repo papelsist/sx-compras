@@ -10,7 +10,7 @@ import sx.utils.MonedaUtils
 /**
  * Created by rcancino on 19/04/17.
  */
-@ToString(excludes =  ['version','lastUpdated', 'dateCreated'], includeNames=true,includePackage=false)
+@ToString(includes =   ['folio','nombre', 'total', 'aplicado'], includeNames=true,includePackage=false)
 @EqualsAndHashCode(includeFields = true,includes = ['id', 'nombre', 'folio', 'serie'])
 @GrailsCompileStatic
 class Pago {

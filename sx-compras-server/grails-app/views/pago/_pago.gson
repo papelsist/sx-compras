@@ -4,4 +4,11 @@ model {
 	Pago pago
 }
 
-json g.render(pago, [resolveTemplate: false])
+json g.render(pago, [exlcludes: ['lastUpdated', 'dateCreated', 'version', 'requisicion'], resolveTemplate: false]) {
+	disponible pago.disponible
+	requisicion {
+		id pago.requisicion.id
+		folio pago.requisicion.folio
+	}
+	modificado pago.lastUpdated
+}

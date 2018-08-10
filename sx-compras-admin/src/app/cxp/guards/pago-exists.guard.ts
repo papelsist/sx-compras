@@ -41,7 +41,7 @@ export class PagoExistsGuard implements CanActivate {
 
   hasPagoInApi(id: string): Observable<boolean> {
     return this.service.get(id).pipe(
-      map(pago => new fromActions.UpsertPago({ pago })),
+      map(pago => new fromActions.UpsertPago({ pago: pago })),
       tap(action => this.store.dispatch(action)),
       map(action => !!action.payload.pago),
       catchError(() => {

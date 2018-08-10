@@ -24,6 +24,8 @@ class AplicacionDePago {
 
     BigDecimal importe
 
+    BigDecimal apagar = 0.0
+
     String comentario
 
     Date dateCreated

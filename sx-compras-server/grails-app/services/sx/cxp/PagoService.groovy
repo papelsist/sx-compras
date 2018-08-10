@@ -33,7 +33,7 @@ abstract class PagoService implements  LogUser{
         pago.formaDePago = requisicion.formaDePago
         pago.egreso = requisicion.egreso
         pago.moneda = requisicion.moneda
-        pago.total = requisicion.total
+        pago.total = requisicion.apagar
         pago.tipoDeCambio = requisicion.tipoDeCambio
         pago.folio = requisicion.folio
         pago.serie = serie
@@ -69,25 +69,18 @@ abstract class PagoService implements  LogUser{
         Pago pago = Pago.get(pagoId)
         Requisicion requisicion = pago.requisicion
         if(requisicion) {
-            BigDecimal disponible = pago.getDisponible()
             List<AplicacionDePago> aplicaciones = []
-            List<CuentaPorPagar> facturas = requisicion.partidas
-                    .collect { RequisicionDet det -> det.cxp}
-                    .findAll {CuentaPorPagar cxp -> cxp.getSaldo() > 0.0}
 
-            facturas.each { CuentaPorPagar cxp ->
-                BigDecimal saldo = cxp.getSaldo()
-                BigDecimal importe = saldo <= disponible ? saldo : disponible
-                disponible = disponible - importe
+            requisicion.partidas.each { RequisicionDet det ->
+                BigDecimal importe = det.apagar
                 AplicacionDePago apl = new AplicacionDePago(
                         pago: pago,
                         fecha: requisicion.fechaDePago,
-                        cxp: cxp,
+                        cxp: det.cxp,
                         importe: importe,
                         comentario: "Pago de Requisicion ${requisicion.folio}",
                         formaDePago: requisicion.formaDePago
                 )
-                // aplicaciones << aplicacionDePagoService.save(apl)
                 apl.save flush: true
                 aplicaciones << apl
             }

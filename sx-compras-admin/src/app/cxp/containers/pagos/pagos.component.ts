@@ -16,14 +16,10 @@ import { ComprobanteFiscalService } from '../../services';
   template: `
     <mat-card>
       <sx-search-title title="Pagos de facturas" (search)="onSearch($event)">
+      <mat-checkbox class="options">Pendientes</mat-checkbox>
       </sx-search-title>
       <mat-divider></mat-divider>
-      <pre>
-        {{pagos$ | async}}
-      </pre>
-      <!--
-      <sx-notas-table [notas]="notas$ | async" (xml)="onXml($event)" (pdf)="onPdf($event)"></sx-notas-table>
-      -->
+      <sx-pagos-table [pagos]="pagos$ | async" (xml)="onXml($event)" (pdf)="onPdf($event)" [filter]="search$ | async"></sx-pagos-table>
     </mat-card>
   `
 })

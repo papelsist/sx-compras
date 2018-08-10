@@ -13,19 +13,20 @@ import { Pago } from '../../model';
 @Component({
   selector: 'sx-pago',
   template: `
-    <div>
-      <!--
-      <sx-nota-form [nota]="nota"
-        (save)="onSave($event)"
-        (delete)="onDelete($event)"
-        (aplicar)="onAplicar($event)">
-      </sx-nota-form>
-      -->
-    </div>
+    <ng-template tdLoading [tdLoadingUntil]="!(loading$ | async)" tdLoadingStrategy="overlay">
+      <div>
+        <sx-pago-form [pago]="pago$ | async"
+          (save)="onSave($event)"
+          (delete)="onDelete($event)"
+          (aplicar)="onAplicar($event)">
+        </sx-pago-form>
+      </div>
+    </ng-template>
   `
 })
 export class PagoComponent implements OnInit, OnDestroy {
   pago$: Observable<Pago>;
+  loading$: Observable<boolean>;
 
   constructor(
     private store: Store<fromStore.CxpState>,
@@ -34,6 +35,7 @@ export class PagoComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.pago$ = this.store.pipe(select(fromStore.getSelectedPago));
+    this.loading$ = this.store.pipe(select(fromStore.getPagosLoading));
   }
 
   ngOnDestroy() {}
@@ -45,15 +47,12 @@ export class PagoComponent implements OnInit, OnDestroy {
   onDelete(event: Pago) {
     this.store.dispatch(new fromActions.DeletePago(event));
   }
-  onCerrar(event: Pago) {
-    console.log('Cerrar: ', event);
-  }
 
   onAplicar(event: Pago) {
     this.dialogService
       .openConfirm({
-        message: `Disponible $ ${event.disponible} `,
-        title: 'Aplicar pago',
+        message: `Disponible $ ${event.disponible} ${event.moneda}`,
+        title: `Aplicar pagos de la requisición: ${event.folio}`,
         acceptButton: 'Aceptar',
         cancelButton: 'Cancelar'
       })

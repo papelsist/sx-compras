@@ -17,6 +17,7 @@ export const initialState: State = adapter.getInitialState({
 
 export function reducer(state = initialState, action: PagoActions): State {
   switch (action.type) {
+    case PagoActionTypes.AplicarPago:
     case PagoActionTypes.DeletePago:
     case PagoActionTypes.LoadPagos: {
       return {

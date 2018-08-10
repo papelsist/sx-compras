@@ -80,7 +80,7 @@ export class PagosEffects {
         duration: 5000
       })
     ),
-    map(pago => new fromRoot.Go({ path: ['ordenes/pagos', pago.id] }))
+    map(pago => new fromRoot.Go({ path: ['cxp/pagos', pago.id] }))
   );
 
   @Effect()
