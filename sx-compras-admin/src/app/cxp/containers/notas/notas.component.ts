@@ -26,7 +26,7 @@ import { ComprobanteFiscalService } from '../../services';
       </div>
       </sx-search-title>
       <mat-divider></mat-divider>
-      <sx-notas-table [notas]="notas$ | async" (xml)="onXml($event)" (pdf)="onPdf($event)"></sx-notas-table>
+      <sx-notas-table [notas]="notas$ | async" (xml)="onXml($event)" (pdf)="onPdf($event)" [filter]="search$ | async"></sx-notas-table>
     </mat-card>
   `
 })

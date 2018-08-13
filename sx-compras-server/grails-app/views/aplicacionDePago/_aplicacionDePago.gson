@@ -21,4 +21,5 @@ json g.render(aplicacionDePago, [excludes: ['cxp', 'dateCreated'], resolveTempla
     documentoUUID aplicacionDePago.cxp.uuid
     documentoMoneda aplicacionDePago.cxp.moneda
     modificado aplicacionDePago.lastUpdated
+    tipo aplicacionDePago.tipo
 }

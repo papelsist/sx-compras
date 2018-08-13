@@ -9,9 +9,11 @@ import {
   SimpleChanges,
   ViewChild
 } from '@angular/core';
-import { FormGroup } from '@angular/forms';
-import { MatTable, MatTableDataSource, MatPaginator } from '@angular/material';
-import { NotaDeCreditoCxPDet, NotaDeCreditoCxP } from '../../model';
+import { MatTableDataSource, MatPaginator } from '@angular/material';
+
+import { NotaDeCreditoCxPDet } from '../../model';
+
+import * as _ from 'lodash';
 
 @Component({
   selector: 'sx-nota-conceptos',
@@ -32,7 +34,11 @@ export class NotaConceptosComponent implements OnInit, OnChanges {
     'moneda',
     'tipoDeCambio',
     'total',
+    'pagos',
     'saldo',
+    'analizado',
+    'pagado',
+    'aplicable',
     'operaciones'
   ];
 
@@ -50,5 +56,9 @@ export class NotaConceptosComponent implements OnInit, OnChanges {
     if (changes.conceptos && changes.conceptos.currentValue) {
       this.dataSource.data = changes.conceptos.currentValue;
     }
+  }
+
+  getTotal(property: string) {
+    return _.sumBy(this.conceptos, property);
   }
 }

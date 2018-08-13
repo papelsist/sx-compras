@@ -15,4 +15,5 @@ export interface AplicacionDePago {
   cxp?: Partial<CuentaPorPagar>;
   importe: number;
   comentario?: string;
+  tipo: string;
 }

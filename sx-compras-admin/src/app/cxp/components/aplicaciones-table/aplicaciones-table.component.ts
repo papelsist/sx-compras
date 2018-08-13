@@ -21,7 +21,7 @@ import { AplicacionDePago } from '../../model';
 export class AplicacionesComponent implements OnInit, OnChanges {
   @Input() aplicaciones: AplicacionDePago[] = [];
 
-  @Output() info = new EventEmitter();
+  @Output() delete = new EventEmitter();
   @Input() filtro;
 
   displayColumns = [
@@ -33,8 +33,8 @@ export class AplicacionesComponent implements OnInit, OnChanges {
     'fecha',
     'documentoTotal',
     'importe',
-    'comentario'
-    // 'operaciones'
+    'comentario',
+    'operaciones'
   ];
 
   dataSource = new MatTableDataSource<AplicacionDePago>([]);

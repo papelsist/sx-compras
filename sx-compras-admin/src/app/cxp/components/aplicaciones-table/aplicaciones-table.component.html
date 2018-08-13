@@ -45,7 +45,7 @@
   <ng-container matColumnDef="operaciones">
     <th mat-header-cell *matHeaderCellDef></th>
     <td mat-cell *matCellDef="let req">
-      <mat-icon (click)="info.emit(req)" class="cursor-pointer pad-right">info</mat-icon>
+      <mat-icon (click)="delete.emit(req)" class="cursor-pointer pad-right" color="warn">delete</mat-icon>
     </td>
   </ng-container>
   <tr mat-header-row *matHeaderRowDef="displayColumns"></tr>

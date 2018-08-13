@@ -14,6 +14,8 @@ export interface CuentaPorPagar {
   tipoDeCambio: number;
   tcContable?: number;
   total: number;
+  pagos?: number;
+  saldo?: number;
   importePorPagar?: number;
   vencimiento: string;
   selected?: boolean;
