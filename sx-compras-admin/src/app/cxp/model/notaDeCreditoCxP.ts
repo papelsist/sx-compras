@@ -1,6 +1,7 @@
 import { Proveedor } from '../../proveedores/models/proveedor';
 import { ComprobanteFiscal } from './comprobanteFiscal';
 import { NotaDeCreditoCxPDet } from './notaDeCreditoCxPDet';
+import { AplicacionDePago } from './aplicacionDePago';
 
 export interface NotaDeCreditoCxP {
   id: string;
@@ -27,5 +28,6 @@ export interface NotaDeCreditoCxP {
   concepto: string;
   tipoDeRelacion?: string;
   comprobanteFiscal: Partial<ComprobanteFiscal>;
+  aplicaciones: Partial<AplicacionDePago>[];
   selected?: boolean;
 }

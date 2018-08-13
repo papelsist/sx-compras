@@ -23,21 +23,22 @@ class NotaDeCreditoCxPController extends RestfulController<NotaDeCreditoCxP>{
 
     @Override
     protected List<NotaDeCreditoCxP> listAllResources(Map params) {
-        params.max = 300
+        params.max = 200
         // log.debug('List {}', params)
+        params.sort = 'lastUpdated'
+        params.order = 'desc'
         def query = NotaDeCreditoCxP.where {}
         if(params.periodo) {
             Periodo periodo = (Periodo)params.periodo
             query = query.where{fecha >= periodo.fechaInicial && fecha <= periodo.fechaFinal}
         }
-
         return query.list(params)
     }
 
 
     @Override
     protected NotaDeCreditoCxP updateResource(NotaDeCreditoCxP resource) {
-        return super.updateResource(resource)
+        return notaDeCreditoCxPService.actualizarNota(resource)
     }
 
     def aplicar(NotaDeCreditoCxP nota) {

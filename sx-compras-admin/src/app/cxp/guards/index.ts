@@ -7,6 +7,8 @@ import { FacturasGuard } from './facturas.guard';
 import { FacturaExistsGuard } from './factura-exist.guard';
 import { ContrarecibosGuard } from './contrarecibos.guard';
 import { ContrareciboExistsGuard } from './contrarecibo-exists.guard';
+import { PagosGuard } from './pagos.guard';
+import { PagoExistsGuard } from './pago-exists.guard';
 
 export const guards: any[] = [
   AnalisisGuard,
@@ -17,7 +19,9 @@ export const guards: any[] = [
   FacturasGuard,
   FacturaExistsGuard,
   ContrarecibosGuard,
-  ContrareciboExistsGuard
+  ContrareciboExistsGuard,
+  PagosGuard,
+  PagoExistsGuard
 ];
 
 export * from './analisis.guard';
@@ -29,3 +33,5 @@ export * from './facturas.guard';
 export * from './factura-exist.guard';
 export * from './contrarecibos.guard';
 export * from './contrarecibo-exists.guard';
+export * from './pagos.guard';
+export * from './pago-exists.guard';

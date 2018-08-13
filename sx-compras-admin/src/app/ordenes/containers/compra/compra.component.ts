@@ -26,7 +26,7 @@ import { CompraUiService } from './compra-ui.service';
           <sx-email-compra [compra]="compra"></sx-email-compra>
           <sx-cerrar-compra [compra]="compra" (cerrar)="onCerrar($event)"></sx-cerrar-compra>
           <sx-depurar-compra [compra]="compra" (deuprar)="onDepurar($event)"></sx-depurar-compra>
-          <sx-report-button [url]="getPrintUrl(compra)" *ngIf="compra.id"></sx-report-button>
+          <sx-compra-print [compra]="compra"></sx-compra-print>
         </ng-container>
       </sx-compra-form>
     </div>

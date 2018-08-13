@@ -44,6 +44,13 @@ class Requisicion {
 
     Date pagada
 
+
+    String egreso
+
+    Date aplicada
+
+
+
     String createUser
     String updateUser
 
@@ -58,6 +65,8 @@ class Requisicion {
         sw2 nullable:true
         cerrada nullable: true
         pagada nullable: true
+        aplicada nullable: true
+        egreso nullable: true
     }
 
     static mapping = {
@@ -68,6 +77,7 @@ class Requisicion {
         fecha type:'date', index: 'REQ_IDX3'
         cerrada type: 'date'
         pagada type: 'date'
+        aplicada type: 'date'
     }
 
 

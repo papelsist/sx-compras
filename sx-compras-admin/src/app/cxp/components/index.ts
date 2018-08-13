@@ -27,6 +27,9 @@ import { SelectorCxPComponent } from './selector-cxp/selector-cxp.component';
 import { RecibosTableComponent } from './recibos-table/recibos-table.component';
 import { ReciboFormComponent } from './recibo-form/recibo-form.component';
 import { ReciboPartidasComponent } from './recibo-partidas/recibo-partidas.component';
+import { PagosTableComponent } from './pagos-table/pagos-table.component';
+import { PagoFormComponent } from './pago-form/pago-form.component';
+import { AplicacionesComponent } from './aplicaciones-table/aplicaciones-table.component';
 
 export const components: any[] = [
   CfdisTableComponent,
@@ -55,7 +58,10 @@ export const components: any[] = [
   SelectorCxPComponent,
   RecibosTableComponent,
   ReciboFormComponent,
-  ReciboPartidasComponent
+  ReciboPartidasComponent,
+  PagosTableComponent,
+  PagoFormComponent,
+  AplicacionesComponent
 ];
 
 export const entryComponents = [
@@ -99,3 +105,7 @@ export * from './selector-cxp/selector-cxp.component';
 export * from './recibos-table/recibos-table.component';
 export * from './recibo-form/recibo-form.component';
 export * from './recibo-partidas/recibo-partidas.component';
+
+export * from './pagos-table/pagos-table.component';
+export * from './pago-form/pago-form.component';
+export * from './aplicaciones-table/aplicaciones-table.component';

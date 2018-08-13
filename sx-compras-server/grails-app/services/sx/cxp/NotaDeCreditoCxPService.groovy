@@ -5,11 +5,12 @@ import grails.gorm.services.Service
 import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
 import groovy.util.slurpersupport.GPathResult
+import sx.core.LogUser
 
 @Slf4j
 @Service(NotaDeCreditoCxP)
 @GrailsCompileStatic
-abstract class NotaDeCreditoCxPService {
+abstract class NotaDeCreditoCxPService implements  LogUser{
 
     abstract NotaDeCreditoCxP save(NotaDeCreditoCxP nota)
 
@@ -47,6 +48,7 @@ abstract class NotaDeCreditoCxPService {
             nota.addToConceptos(it)
         }
         setTipoDeRelacion(nota)
+        logEntity(nota)
         nota = save(nota)
         return nota
     }
@@ -84,14 +86,31 @@ abstract class NotaDeCreditoCxPService {
                 CuentaPorPagar cxp = CuentaPorPagar.where{uuid == uuid}.find()
                 NotaDeCreditoCxPDet det = new NotaDeCreditoCxPDet()
                 det.uuid = uuid
-                if(cxp) {
-                    det.cxp = cxp
-                }
+                actualizarConcepto(det)
                 res << det
             }
 
         }
         return res
+    }
+
+    void actualizarConcepto(NotaDeCreditoCxPDet det) {
+        CuentaPorPagar cxp = CuentaPorPagar.where{uuid == det.uuid}.find()
+        if(cxp) {
+
+            det.cxp = cxp
+            det.analizado = cxp.importePorPagar
+            det.aplicable = 0.0
+
+            RequisicionDet requisicionDet = RequisicionDet.where {cxp == cxp}.find()
+            if(requisicionDet) {
+                det.analizado = requisicionDet.total
+                det.pagado = requisicionDet.apagar
+            }
+        } else {
+            log.debug("No se han encontrado facuras referenciadas")
+        }
+
     }
 
     NotaDeCreditoCxP aplicar(NotaDeCreditoCxP nota) {
@@ -101,14 +120,12 @@ abstract class NotaDeCreditoCxPService {
                 CuentaPorPagar cxp = it.cxp
                 BigDecimal saldo = cxp.saldo
                 if(saldo) {
-                    BigDecimal importe = saldo <= disponible ? saldo : disponible
-                    disponible = disponible - importe
                     AplicacionDePago aplicacion = new AplicacionDePago()
                     aplicacion.fecha = nota.fecha
                     aplicacion.comentario = nota.concepto
                     aplicacion.cxp = cxp
                     aplicacion.nota = nota
-                    aplicacion.importe = importe
+                    aplicacion.importe = it.aplicable
                     aplicacion.formaDePago = 'COMPENSACION'
                     aplicacion.save failOnError: true, flush: true
                 }
@@ -118,5 +135,35 @@ abstract class NotaDeCreditoCxPService {
             return nota
         }
         return nota
+    }
+
+    @CompileDynamic
+    NotaDeCreditoCxP actualizarNota(NotaDeCreditoCxP nota) {
+        nota.conceptos.each { NotaDeCreditoCxPDet det ->
+            actualizarConcepto(det)
+            CuentaPorPagar cxp = det.cxp
+            if(cxp) {
+                switch (nota.concepto) {
+
+                    case 'DESCUENTO_FINANCIERO':
+                        det.aplicable = det.analizado - det.pagado
+                        break
+
+                    case 'DEVOLUCION':
+                        det.aplicable = cxp.total - det.analizado
+                        break
+
+                    case 'DESCUENTO':
+                        det.aplicable = cxp.total - det.pagado
+                        break
+
+                    default:
+                        break
+
+                }
+            }
+        }
+        logEntity(nota)
+        return save(nota)
     }
 }

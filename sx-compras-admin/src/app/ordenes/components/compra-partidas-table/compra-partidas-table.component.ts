@@ -64,4 +64,7 @@ export class CompraPartidasTableComponent implements OnInit, OnChanges {
   get readOnly() {
     return this.parent.disabled;
   }
+  get especial() {
+    return this.parent.get('especial').value;
+  }
 }

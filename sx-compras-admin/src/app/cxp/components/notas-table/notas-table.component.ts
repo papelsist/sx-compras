@@ -57,7 +57,7 @@ export class NotasTableComponent implements OnInit, OnChanges {
     if (changes.notas && changes.notas.currentValue) {
       this.dataSource.data = changes.notas.currentValue;
     }
-    if (changes.filter) {
+    if (changes.filter && changes.filter.currentValue) {
       this.dataSource.filter = changes.filter.currentValue.toLowerCase();
     }
   }

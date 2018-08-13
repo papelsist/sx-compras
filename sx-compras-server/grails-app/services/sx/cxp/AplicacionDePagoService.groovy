@@ -1,11 +1,21 @@
 package sx.cxp
 
-import grails.gorm.transactions.Transactional
+import grails.compiler.GrailsCompileStatic
+import grails.gorm.services.Service
+import groovy.util.logging.Slf4j
 
-@Transactional
-class AplicacionDePagoService {
 
-    def serviceMethod() {
 
-    }
+@Slf4j
+@GrailsCompileStatic
+@Service(AplicacionDePago)
+abstract class AplicacionDePagoService {
+
+    abstract AplicacionDePago save(AplicacionDePago aplicacionDePago)
+
+    abstract void delete(Serializable id)
+
+
+
+
 }

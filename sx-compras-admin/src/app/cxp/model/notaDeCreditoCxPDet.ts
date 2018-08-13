@@ -11,4 +11,7 @@ export interface NotaDeCreditoCxPDet {
   saldoDocumento?: number;
   importe?: number;
   comentario?: string;
+  analizado?: number;
+  pagado?: number;
+  alicable: number;
 }

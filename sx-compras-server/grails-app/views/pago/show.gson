@@ -1,0 +1,16 @@
+import sx.cxp.AplicacionDePago
+import sx.cxp.Pago
+
+model {
+	Pago pago
+
+}
+
+json g.render(pago, [exlcludes: ['aplicaciones', 'lastUpdated', 'dateCreated', 'version', 'requisicion'], resolveTemplate: false]) {
+	disponible pago.disponible
+	requisicion {
+		id pago.requisicion.id
+		folio pago.requisicion.folio
+	}
+	aplicaciones g.render(pago.aplicaciones)
+}

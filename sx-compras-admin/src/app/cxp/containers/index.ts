@@ -10,6 +10,8 @@ import { NotaComponent } from './nota/nota.component';
 import { FacturasComponent } from './facturas/facturas.component';
 import { RecibosComponent } from './recibos/recibos.component';
 import { ReciboComponent } from './recibo/recibo.component';
+import { PagosComponent } from './pagos/pagos.component';
+import { PagoComponent } from './pago/pago.component';
 
 export const containers: any[] = [
   CxpPageComponent,
@@ -23,7 +25,9 @@ export const containers: any[] = [
   NotaComponent,
   FacturasComponent,
   RecibosComponent,
-  ReciboComponent
+  ReciboComponent,
+  PagosComponent,
+  PagoComponent
 ];
 
 export * from './cxp-page/cxp-page.component';
@@ -38,3 +42,5 @@ export * from './nota/nota.component';
 export * from './facturas/facturas.component';
 export * from './recibos/recibos.component';
 export * from './recibo/recibo.component';
+export * from './pagos/pagos.component';
+export * from './pago/pago.component';

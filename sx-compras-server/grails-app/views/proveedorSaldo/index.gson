@@ -1,0 +1,8 @@
+import sx.cxp.ProveedorSaldo
+
+model {
+	Iterable<ProveedorSaldo> proveedorSaldoList
+}
+
+json tmpl.proveedorSaldo(proveedorSaldoList ?: [])
+

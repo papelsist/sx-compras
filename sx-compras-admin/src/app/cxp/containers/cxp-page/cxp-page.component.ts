@@ -43,6 +43,12 @@ export class CxpPageComponent implements OnInit {
       icon: 'gradient'
     },
     {
+      route: 'pagos',
+      title: 'Pagos ',
+      description: 'Pagos registrados',
+      icon: 'money_off'
+    },
+    {
       route: 'notas',
       title: 'Notas ',
       description: 'Notas de crédito',

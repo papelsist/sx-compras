@@ -7,6 +7,7 @@ import { CerrarCompraComponent } from './compra-form-actions/cerrar-compra.compo
 import { EliminarCompraComponent } from './compra-form-actions/eliminar-compra.component';
 import { EmailCompraComponent } from './compra-form-actions/email-compra.component';
 import { DepurarCompraComponent } from './compra-form-actions/depurar-compra.component';
+import { CompraPrintComponent } from './compra-print/compra-print.component';
 
 export const components: any[] = [
   ComprasTableComponent,
@@ -17,7 +18,8 @@ export const components: any[] = [
   CerrarCompraComponent,
   EliminarCompraComponent,
   EmailCompraComponent,
-  DepurarCompraComponent
+  DepurarCompraComponent,
+  CompraPrintComponent
 ];
 export const entryComponents: any[] = [CompraPartidaFormComponent];
 
@@ -30,3 +32,4 @@ export * from './compra-form-actions/cerrar-compra.component';
 export * from './compra-form-actions/eliminar-compra.component';
 export * from './compra-form-actions/email-compra.component';
 export * from './compra-form-actions/depurar-compra.component';
+export * from './compra-print/compra-print.component';

@@ -6,8 +6,8 @@ import groovy.transform.ToString
 
 
 @GrailsCompileStatic
-@ToString(excludes = ['version','lastUpdated', 'dateCreated'],includeNames=true,includePackage=false)
-@EqualsAndHashCode(includeFields = true,includes = ['id', 'tipo','cxp'])
+@ToString(includes =  ['tipo', 'formaDePago', 'importe', 'comentario'],includeNames=true,includePackage=false)
+@EqualsAndHashCode(includeFields = true,includes = ['id', 'cxp', 'tipo'])
 class AplicacionDePago {
 
     String id
@@ -17,6 +17,8 @@ class AplicacionDePago {
     String formaDePago
 
     NotaDeCreditoCxP nota
+
+    Pago pago
 
     CuentaPorPagar cxp
 
@@ -28,14 +30,23 @@ class AplicacionDePago {
 
     Date lastUpdated
 
+    String tipo
+
     static constraints = {
         comentario nullable:true
         nota nullable: true
+        pago nullable: true
     }
 
     static  mapping = {
         id generator:'uuid'
         fecha type: 'date'
         formaDePago size: 5..15
+    }
+
+    static transients = ['tipo']
+
+    String getTipo() {
+        return this.nota ? 'NOTA' : 'PAGO'
     }
 }

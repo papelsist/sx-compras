@@ -4,6 +4,8 @@ import { RequisicionFormEffects } from './requisicion-form.effects';
 import { NotasEffects } from './notas.effects';
 import { FacturasEffects } from './facturas.effects';
 import { ContrarecibosEffects } from './contrarecibos.effects';
+import { PagosEffects } from './pagos.effects';
+import { AplicacionesEffects } from './aplicaciones.effects';
 
 export const effects: any[] = [
   AnalisisEffects,
@@ -11,7 +13,9 @@ export const effects: any[] = [
   RequisicionFormEffects,
   NotasEffects,
   FacturasEffects,
-  ContrarecibosEffects
+  ContrarecibosEffects,
+  PagosEffects,
+  AplicacionesEffects
 ];
 
 export * from './analisis.efects';
@@ -20,3 +24,5 @@ export * from './requisicion-form.effects';
 export * from './notas.effects';
 export * from './facturas.effects';
 export * from './contrarecibos.effects';
+export * from './pagos.effects';
+export * from './aplicaciones.effects';

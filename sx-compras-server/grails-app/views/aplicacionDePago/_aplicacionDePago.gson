@@ -4,4 +4,22 @@ model {
 	AplicacionDePago aplicacionDePago
 }
 
-json g.render(aplicacionDePago, [resolveTemplate: false])
+json g.render(aplicacionDePago, [excludes: ['cxp', 'dateCreated'], resolveTemplate: false]) {
+	cxp {
+        id aplicacionDePago.cxp.id
+        folio aplicacionDePago.cxp.folio
+        serie aplicacionDePago.cxp.serie
+        fecha aplicacionDePago.cxp.fecha
+        total aplicacionDePago.cxp.total
+        uuid aplicacionDePago.cxp.uuid
+        moneda aplicacionDePago.cxp.moneda
+    }
+    documentoFecha aplicacionDePago.cxp.fecha
+    documentoTotal aplicacionDePago.cxp.total
+    documentoFolio aplicacionDePago.cxp.folio
+    documentoSerie aplicacionDePago.cxp.serie
+    documentoUUID aplicacionDePago.cxp.uuid
+    documentoMoneda aplicacionDePago.cxp.moneda
+    modificado aplicacionDePago.lastUpdated
+    tipo aplicacionDePago.tipo
+}

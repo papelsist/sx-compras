@@ -10,9 +10,10 @@ class UrlMappings {
         "/api/marcas"(resources: 'marca')
         "/api/productos"(resources: 'producto')
         "/api/proveedores"(resources: 'proveedor'){
-            "/productos"(resources: 'proveedorProducto', excludes:['create', 'edit','patch'])
+            "/productos"(resources: 'proveedorProducto', excludes:['create', 'save', 'edit','patch'])
             "/productos/disponibles"(controller: 'proveedorProducto', action: 'disponibles')
             "/productos/agregarProductos"(controller: 'proveedorProducto', action: 'agregarProductos', method: 'PUT')
+            "/saldo"(resources: 'proveedorSaldo', excludes:['create', 'edit','patch'])
         }
 
         "/api/listaDePreciosProveedor"(resources: 'listaDePreciosProveedor')
@@ -53,15 +54,21 @@ class UrlMappings {
         "/api/requisicionesDeCompras/print/$id"(controller: 'requisicionDeCompras', action: 'print', method: 'GET')
         "/api/requisicionesDeCompras/pendientes/$proveedorId"(controller: 'requisicionDeCompras', action: 'pendientes', method: 'GET')
 
-        "/api/cxp/notas"(resources: 'notaDeCreditoCxP', excludes:['create', 'edit','patch']) {
-            "/aplicaciones"(resources: 'aplicacionDePago', excludes:['create', 'edit','patch'])
-        }
-        "/api/cxp/notas/aplicar/$id"(controller:'notaDeCreditoCxP', action: 'aplicar', method: 'PUT')
-        "/api/cxp/notas/print/$id"(controller: 'notaDeCreditoCxP', action: 'print', method: 'GET')
 
         "/api/cxp/contrarecibos"(resources: 'contrarecibo')
         "/api/cxp/contrarecibos/print/$id"(controller: 'contrarecibo', action: 'print', method: 'GET')
         "/api/cxp/contrarecibos/pendientes/$proveedorId"(controller: 'contrarecibo', action: 'pendientes', method: 'GET')
+
+        "/api/cxp/notas"(resources: 'notaDeCreditoCxP', excludes:['create', 'edit','patch'])
+        "/api/cxp/notas/aplicar/$id"(controller:'notaDeCreditoCxP', action: 'aplicar', method: 'PUT')
+        "/api/cxp/notas/print/$id"(controller: 'notaDeCreditoCxP', action: 'print', method: 'GET')
+
+
+        "/api/cxp/pagos"(resources: 'pago', excludes:['create', 'edit','patch'])
+        "/api/cxp/pagos/aplicar/$id"(controller:'pago', action: 'aplicar', method: 'PUT')
+        "/api/cxp/pagos/search"(controller: 'pago', action: 'search')
+
+        "/api/cxp/aplicaciones"(resources: 'aplicacionDePago', excludes:['create', 'edit','patch'])
 
 
         "/api/coms"(resources: 'recepcionDeCompra'){

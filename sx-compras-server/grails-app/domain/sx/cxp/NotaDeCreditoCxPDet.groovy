@@ -17,6 +17,12 @@ class NotaDeCreditoCxPDet {
 
     String comentario
 
+    BigDecimal aplicable = 0.0
+
+    BigDecimal analizado = 0.0
+
+    BigDecimal pagado = 0.0
+
     static constraints = {
         comentario nullable:true
         cxp nullable: true

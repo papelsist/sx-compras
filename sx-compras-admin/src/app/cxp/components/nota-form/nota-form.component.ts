@@ -28,6 +28,10 @@ export class NotaFormComponent implements OnInit, OnChanges {
   @Input() nota: NotaDeCreditoCxP;
   @Output() save = new EventEmitter<NotaDeCreditoCxP>();
   @Output() aplicar = new EventEmitter<NotaDeCreditoCxP>();
+  @Output() quitarAplicacion = new EventEmitter<any>();
+  @Output() pdf = new EventEmitter<NotaDeCreditoCxP>();
+
+  tipos = ['DEVOLUCION', 'DESCUENTO', 'DESCUENTO_FINANCIERO', 'BONIFICACION'];
 
   form: FormGroup;
   constructor(private fb: FormBuilder) {}
@@ -42,14 +46,23 @@ export class NotaFormComponent implements OnInit, OnChanges {
       console.log('Nota: ', changes.nota.currentValue);
       const not = changes.nota.currentValue;
       this.form.patchValue(not);
+      this.clarPartidas();
+      not.conceptos.forEach(item => this.conceptos.push(new FormControl(item)));
     }
   }
 
   buildForm() {
     this.form = this.fb.group({
       concepto: [null, [Validators.required]],
-      comentario: []
+      comentario: [],
+      conceptos: this.fb.array([])
     });
+  }
+
+  private clarPartidas() {
+    while (this.conceptos.length !== 0) {
+      this.conceptos.removeAt(0);
+    }
   }
 
   onSave() {
@@ -61,5 +74,9 @@ export class NotaFormComponent implements OnInit, OnChanges {
       this.save.emit(res);
       this.form.markAsPristine();
     }
+  }
+
+  get conceptos() {
+    return this.form.get('conceptos') as FormArray;
   }
 }

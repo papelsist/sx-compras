@@ -40,36 +40,61 @@
 
     <ng-container matColumnDef="precio">
       <th mat-header-cell *matHeaderCellDef>Precio</th>
-      <td mat-cell *matCellDef="let row">
-        {{row.precio | currency}}
+      <td mat-cell *matCellDef="let row, let i = index">
+        <span *ngIf="especial; else normal">
+          <input type="number" [(ngModel)]="row.precio" [ngModelOptions]="{standalone: true}" (input)="actualizar(i)" [disabled]="readOnly">
+        </span>
+        <ng-template #normal>
+          {{row.precio | currency}}
+        </ng-template>
       </td>
     </ng-container>
 
     <ng-container matColumnDef="descuento1">
       <th mat-header-cell *matHeaderCellDef>Desc 1</th>
-      <td mat-cell *matCellDef="let row">
-        {{row.descuento1}}
+      <td mat-cell *matCellDef="let row, let i = index">
+        <span *ngIf="especial; else normal">
+          <input type="number" [(ngModel)]="row.descuento1" [ngModelOptions]="{standalone: true}" (input)="actualizar(i)" [disabled]="readOnly">
+        </span>
+        <ng-template #normal>
+          {{row.descuento1 | currency}}
+        </ng-template>
       </td>
     </ng-container>
 
     <ng-container matColumnDef="descuento2">
       <th mat-header-cell *matHeaderCellDef>Desc 2</th>
-      <td mat-cell *matCellDef="let row">
-        {{row.descuento2}}
+      <td mat-cell *matCellDef="let row, let i = index">
+        <span *ngIf="especial; else normal">
+          <input type="number" [(ngModel)]="row.descuento2" [ngModelOptions]="{standalone: true}" (input)="actualizar(i)" [disabled]="readOnly">
+        </span>
+        <ng-template #normal>
+          {{row.descuento2 | currency}}
+        </ng-template>
       </td>
     </ng-container>
 
     <ng-container matColumnDef="descuento3">
       <th mat-header-cell *matHeaderCellDef>Desc 3</th>
-      <td mat-cell *matCellDef="let row">
-        {{row.descuento3}}
+      <td mat-cell *matCellDef="let row, let i = index">
+        <span *ngIf="especial; else normal">
+          <input type="number" [(ngModel)]="row.descuento3" [ngModelOptions]="{standalone: true}" (input)="actualizar(i)" [disabled]="readOnly">
+        </span>
+        <ng-template #normal>
+          {{row.descuento3 | currency}}
+        </ng-template>
       </td>
     </ng-container>
 
     <ng-container matColumnDef="descuento4">
       <th mat-header-cell *matHeaderCellDef>Desc 4</th>
-      <td mat-cell *matCellDef="let row">
-        {{row.descuento4}}
+      <td mat-cell *matCellDef="let row, let i = index">
+        <span *ngIf="especial; else normal">
+          <input type="number" [(ngModel)]="row.descuento4" [ngModelOptions]="{standalone: true}" (input)="actualizar(i)" [disabled]="readOnly">
+        </span>
+        <ng-template #normal>
+          {{row.descuento4 | currency}}
+        </ng-template>
       </td>
     </ng-container>
 
