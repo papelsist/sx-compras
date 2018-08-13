@@ -85,7 +85,7 @@ FROM DUAL]]></queryString>
 FROM recepcion_de_compra_det I JOIN recepcion_de_compra R ON(I.RECEPCION_ID=R.ID) JOIN proveedor P ON(P.ID=R.PROVEEDOR_ID) 
 JOIN sucursal S ON (S.ID=R.SUCURSAL_ID) JOIN producto X ON(I.producto_id=X.id) JOIN inventario Z ON(I.inventario_id=Z.ID)
 WHERE R.FECHA>'2017/12/28' AND DATE(R.FECHA) BETWEEN $P{FECHA_INI} AND $P{FECHA_FIN}  AND P.ID LIKE  $P{PROVEEDOR}
- AND X.ID LIKE $P{ARTICULOS} AND S.ID LIKE $P{SUCURSAL} 
+ AND X.ID LIKE $P{ARTICULOS} AND S.ID LIKE $P{SUCURSAL}  AND R.CANCELADO IS NULL
  AND  (ROUND(I.CANTIDAD)-ROUND(IFNULL((SELECT SUM(A.CANTIDAD) FROM analisis_de_factura_det A WHERE A.com_id=I.ID),0),0))<>0
 ORDER BY P.CLAVE,S.CLAVE,R.DOCUMENTO]]></queryString>
 
@@ -869,7 +869,7 @@ PROMEDIO]]></text>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
-						<font fontName="Arial" pdfFontName="Times-Roman" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
+						<font fontName="Times-Roman" pdfFontName="Times-Roman" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
 					</textElement>
 				<textFieldExpression   class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
 				</textField>
@@ -981,7 +981,7 @@ PROMEDIO]]></text>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
-						<font fontName="Arial" pdfFontName="Times-Roman" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
+						<font fontName="Times-Roman" pdfFontName="Times-Roman" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
 					</textElement>
 				<textFieldExpression   class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
 				</textField>
