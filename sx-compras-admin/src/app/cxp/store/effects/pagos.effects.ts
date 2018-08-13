@@ -27,14 +27,14 @@ export class PagosEffects {
   @Effect()
   loadPagos$ = this.actions$.pipe(
     ofType(PagoActionTypes.LoadPagos),
-    switchMap(() => {
-      return this.service
+    switchMap(() =>
+      this.service
         .list()
         .pipe(
           map(res => new fromActions.LoadPagosSuccess(res)),
           catchError(error => of(new fromActions.LoadPagosFail(error)))
-        );
-    })
+        )
+    )
   );
 
   @Effect()
