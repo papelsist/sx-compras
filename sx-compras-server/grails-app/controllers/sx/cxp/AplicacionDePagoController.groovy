@@ -28,15 +28,13 @@ class AplicacionDePagoController extends RestfulController<AplicacionDePago> {
         }
         log.debug('Eliminando aplicacion de pago: {}', aplicacionDePago)
         aplicacionDePagoService.delete(aplicacionDePago.id)
+
         if(aplicacionDePago.nota) {
             NotaDeCreditoCxP nota = aplicacionDePago.nota
-            nota.refresh()
-            nota.comentario = 'APLIC'
-            respond nota
+            forward controller: 'notaDeCreditoCxP', action: 'show', id: nota.id
             return
         } else {
             Pago pago = aplicacionDePago.pago
-            pago.refresh()
             respond pago
             return
 

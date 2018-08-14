@@ -57,7 +57,10 @@
       <button type="button" mat-button color="primary" (click)="onSave()" [disabled]="form.invalid || form.pristine">
         <mat-icon>save</mat-icon> Salvar
       </button>
-      <sx-selector-cxp [disabled]="!aplicacionesTab.isActive || nota.disponible <= 0" label="Seleccionar factura"></sx-selector-cxp>
+      <sx-selector-cxp [disabled]="!aplicacionesTab.isActive || nota.disponible <= 0" label="Seleccionar factura" [proveedor]="nota?.proveedor">
+
+      </sx-selector-cxp>
+
       <ng-content></ng-content>
     </mat-card-actions>
   </form>

@@ -4,8 +4,11 @@ import grails.compiler.GrailsCompileStatic
 import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.*
 import groovy.util.logging.Slf4j
+import org.apache.commons.lang3.exception.ExceptionUtils
 import sx.reports.ReportService
 import sx.utils.Periodo
+
+import java.sql.SQLException
 
 
 @Slf4j()
@@ -14,7 +17,11 @@ import sx.utils.Periodo
 class NotaDeCreditoCxPController extends RestfulController<NotaDeCreditoCxP>{
 
     static responseFormats = ['json']
+
     NotaDeCreditoCxPService notaDeCreditoCxPService
+
+    AplicacionDePagoService aplicacionDePagoService
+
     ReportService reportService
 
     NotaDeCreditoCxPController() {
@@ -47,7 +54,21 @@ class NotaDeCreditoCxPController extends RestfulController<NotaDeCreditoCxP>{
             return
         }
         nota = notaDeCreditoCxPService.aplicar(nota)
+        forward( action: 'show', id: nota.id)
+        return
+    }
+
+    def deleteAplicacion(AplicacionDePago aplicacionDePago) {
+        NotaDeCreditoCxP nota = aplicacionDePago.nota
         respond nota
+
+    }
+
+    def handleSQLException(Exception e) {
+        String message = ExceptionUtils.getRootCauseMessage(e)
+        log.error(message, e)
+        // render 'A SQLException Was Handled'
+        respond([message: message], status: 500)
     }
 
 

@@ -40,7 +40,7 @@ export class AplicacionesEffects {
               new fromActions.DeleteAplicacionDeNotaSuccess(res)
           ),
           catchError(error =>
-            of(new fromActions.DeleteAplicacionDePagoFail(error))
+            of(new fromActions.DeleteAplicacionDeNotaFail(error))
           )
         );
     })
@@ -51,6 +51,22 @@ export class AplicacionesEffects {
     ofType<fromActions.DeleteAplicacionDeNotaSuccess>(
       AplicacionesActionTypes.DeleteAplicacionDeNotaSuccess
     ),
-    map(action => new fromNotas.UpdateNotaSuccess(action.payload))
+    map( action => action.payload),
+    tap(res => console.log('Nota after effect: ', res)),
+    map(res => new fromNotas.UpsertNota({nota: res}))
+  );
+
+  @Effect({ dispatch: false })
+  $deleteAplicacionFail = this.actions$.pipe(
+    ofType<fromActions.DeleteAplicacionDeNotaFail>(
+      AplicacionesActionTypes.DeleteAplicacionDeNotaFail
+    ),
+    map(action => action.payload),
+    tap(error => console.log('Error: ', error)),
+    tap(error =>
+      this.snackBar.open(`Error en el servidor `, 'Cerrar', {
+        duration: 5000
+      })
+    )
   );
 }

@@ -79,4 +79,8 @@ export class NotaFormComponent implements OnInit, OnChanges {
   get conceptos() {
     return this.form.get('conceptos') as FormArray;
   }
+
+  get proveedor() {
+    return this.form.get('proveedor').value;
+  }
 }

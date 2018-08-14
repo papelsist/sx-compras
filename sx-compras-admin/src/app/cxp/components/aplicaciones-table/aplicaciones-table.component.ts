@@ -12,6 +12,8 @@ import {
 import { MatTableDataSource, MatPaginator } from '@angular/material';
 import { AplicacionDePago } from '../../model';
 
+import * as _ from 'lodash';
+
 @Component({
   selector: 'sx-aplicaciones-table',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -54,5 +56,9 @@ export class AplicacionesComponent implements OnInit, OnChanges {
     if (changes.filtro && changes.filtro.currentValue) {
       this.dataSource.filter = changes.filtro.currentValue;
     }
+  }
+
+  getTotal(property: string) {
+    return _.sumBy(this.aplicaciones, property);
   }
 }

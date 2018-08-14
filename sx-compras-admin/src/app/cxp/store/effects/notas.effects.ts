@@ -131,6 +131,27 @@ export class NotasEffects {
         );
     })
   );
+
+  // Fail effects
+  @Effect({ dispatch: false })
+  updateFail$ = this.actions$.pipe(
+    ofType<fromActions.UpdateNotaFail>(NotaActionTypes.UpdateNotaFail),
+    map(action => action.payload),
+    tap(response => {
+      console.error('UpdateNota error: ', response.error);
+      const msg =
+        response.status === 500
+          ? 'Error en el servidor (500)'
+          : response.status;
+      this.snackBar.open(`${msg} `, 'Cerrar', {
+        duration: 10000,
+        verticalPosition: 'top',
+        politeness: 'assertive'
+      });
+    }),
+    map(nota => new fromRoot.Go({ path: ['cxp/notas', nota.id] }))
+  );
+
   /*
   @Effect({ dispatch: false })
   setSearchterm$ = this.actions$.pipe(

@@ -119,19 +119,21 @@ abstract class NotaDeCreditoCxPService implements  LogUser{
             nota.conceptos.each {
                 CuentaPorPagar cxp = it.cxp
                 BigDecimal saldo = cxp.saldo
-                if(saldo) {
+                if(saldo && disponible ) {
+                    BigDecimal porAplicar = disponible >= it.aplicable ? it.aplicable : disponible
                     AplicacionDePago aplicacion = new AplicacionDePago()
                     aplicacion.fecha = nota.fecha
                     aplicacion.comentario = nota.concepto
                     aplicacion.cxp = cxp
                     aplicacion.nota = nota
-                    aplicacion.importe = it.aplicable
+                    aplicacion.importe = porAplicar
                     aplicacion.formaDePago = 'COMPENSACION'
                     aplicacion.save failOnError: true, flush: true
+                    disponible = disponible - porAplicar
                 }
             }
             nota.refresh()
-            log.debug("Nota aplicado:{}  ", nota.aplicado)
+            log.debug("Total aplicado  a referenciados: {}  ", nota.aplicado)
             return nota
         }
         return nota

@@ -2,44 +2,53 @@
   <ng-container matColumnDef="uuid">
     <th mat-header-cell *matHeaderCellDef>UUID</th>
     <td mat-cell *matCellDef="let row" class="cursor-pointer">{{row.documentoUUID}}</td>
+    <td mat-footer-cell *matFooterCellDef> </td>
   </ng-container>
   <ng-container matColumnDef="serie">
     <th mat-header-cell *matHeaderCellDef>Serie (Dcto)</th>
     <td mat-cell *matCellDef="let row" class="cursor-pointer">{{row.documentoSerie}}</td>
+    <td mat-footer-cell *matFooterCellDef>Totales </td>
   </ng-container>
   <ng-container matColumnDef="folio">
     <th mat-header-cell *matHeaderCellDef>Folio (Docto)</th>
     <td mat-cell *matCellDef="let row" class="cursor-pointer">{{row?.documentoFolio}}</td>
+    <td mat-footer-cell *matFooterCellDef> </td>
   </ng-container>
 
   <ng-container matColumnDef="fechaDocto">
     <th mat-header-cell *matHeaderCellDef>Fecha (Docto)</th>
     <td mat-cell *matCellDef="let row">{{row.documentoFecha | date: 'dd/MM/yyyy'}}</td>
+    <td mat-footer-cell *matFooterCellDef> </td>
   </ng-container>
 
   <ng-container matColumnDef="fecha">
     <th mat-header-cell *matHeaderCellDef>Aplicación</th>
     <td mat-cell *matCellDef="let row">{{row.fecha | date: 'dd/MM/yyyy'}}</td>
+    <td mat-footer-cell *matFooterCellDef> </td>
   </ng-container>
 
   <ng-container matColumnDef="moneda">
     <th mat-header-cell *matHeaderCellDef>Moneda</th>
     <td mat-cell *matCellDef="let row">{{row.documentoMoneda}}</td>
+    <td mat-footer-cell *matFooterCellDef> </td>
   </ng-container>
 
   <ng-container matColumnDef="documentoTotal">
     <th mat-header-cell *matHeaderCellDef>Total (Docto)</th>
     <td mat-cell *matCellDef="let req">{{req.documentoTotal | currency:'USD'}}</td>
+    <td mat-footer-cell *matFooterCellDef> </td>
   </ng-container>
 
   <ng-container matColumnDef="importe">
     <th mat-header-cell *matHeaderCellDef>Aplicado</th>
     <td mat-cell *matCellDef="let req">{{req.importe | currency:'USD'}}</td>
+    <td mat-footer-cell *matFooterCellDef>{{getTotal('importe') | currency}} </td>
   </ng-container>
 
   <ng-container matColumnDef="comentario">
     <th mat-header-cell *matHeaderCellDef>Comentario</th>
     <td mat-cell *matCellDef="let row" class="cursor-pointer">{{row.comentario}}</td>
+    <td mat-footer-cell *matFooterCellDef> </td>
   </ng-container>
 
   <ng-container matColumnDef="operaciones">
@@ -47,8 +56,10 @@
     <td mat-cell *matCellDef="let req">
       <mat-icon (click)="delete.emit(req)" class="cursor-pointer pad-right" color="warn">delete</mat-icon>
     </td>
+    <td mat-footer-cell *matFooterCellDef> </td>
   </ng-container>
   <tr mat-header-row *matHeaderRowDef="displayColumns"></tr>
   <tr mat-row *matRowDef="let req; columns: displayColumns"></tr>
+  <tr mat-footer-row *matFooterRowDef="displayColumns"></tr>
 </table>
 <mat-paginator [pageSizeOptions]="[10, 50, 100, 200]" showFirstLastButtons></mat-paginator>
