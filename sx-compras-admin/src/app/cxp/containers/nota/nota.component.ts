@@ -82,7 +82,7 @@ export class NotaComponent implements OnInit, OnDestroy {
       .subscribe(res => {
         if (res) {
           this.store.dispatch(
-            new fromAplicaciones.DeleteAplicacionDePago(event)
+            new fromAplicaciones.DeleteAplicacionDeNota(event)
           );
         }
       });

@@ -47,10 +47,10 @@ export class AplicacionDePagoService {
       .pipe(catchError((error: any) => throwError(error)));
   }
 
-  delete(aplicacionId: string): Observable<NotaDeCreditoCxP | Pago> {
+  delete(aplicacionId: string) {
     const url = `${this.apiUrl}/${aplicacionId}`;
     return this.http
-      .delete<NotaDeCreditoCxP | Pago>(url)
+      .delete(url)
       .pipe(catchError((error: any) => throwError(error)));
   }
 }

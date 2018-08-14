@@ -5,7 +5,8 @@ import { Store, select } from '@ngrx/store';
 import * as fromRoot from 'app/store';
 import * as fromStore from '../../store';
 import * as fromActions from '../actions/aplicaciones.actions';
-import { AplicacionDePagoActionTypes } from '../actions/aplicaciones.actions';
+import * as fromNotas from '../actions/notas.actions';
+import { AplicacionesActionTypes } from '../actions/aplicaciones.actions';
 
 import { of } from 'rxjs';
 import { map, switchMap, tap, catchError, take } from 'rxjs/operators';
@@ -13,6 +14,7 @@ import { map, switchMap, tap, catchError, take } from 'rxjs/operators';
 import { ContrareciboService, AplicacionDePagoService } from '../../services';
 
 import { MatSnackBar } from '@angular/material';
+import { NotaDeCreditoCxP } from '../../model';
 
 @Injectable()
 export class AplicacionesEffects {
@@ -25,15 +27,18 @@ export class AplicacionesEffects {
 
   @Effect()
   deleteAplicacionDeNota$ = this.actions$.pipe(
-    ofType<fromActions.DeleteAplicacionDePago>(
-      AplicacionDePagoActionTypes.DeleteAplicacionDePago
+    ofType<fromActions.DeleteAplicacionDeNota>(
+      AplicacionesActionTypes.DeleteAplicacionDeNota
     ),
     map(action => action.payload),
     switchMap(aplicacion => {
       return this.service
         .delete(aplicacion.id.toString())
         .pipe(
-          map(res => new fromActions.DeleteAplicacionDePagoSuccess(res)),
+          map(
+            (res: NotaDeCreditoCxP) =>
+              new fromActions.DeleteAplicacionDeNotaSuccess(res)
+          ),
           catchError(error =>
             of(new fromActions.DeleteAplicacionDePagoFail(error))
           )
@@ -41,20 +46,11 @@ export class AplicacionesEffects {
     })
   );
 
-  @Effect({ dispatch: false })
+  @Effect()
   deleteSuccess$ = this.actions$.pipe(
-    ofType<fromActions.DeleteAplicacionDePagoSuccess>(
-      AplicacionDePagoActionTypes.DeleteAplicacionDePagoSuccess
+    ofType<fromActions.DeleteAplicacionDeNotaSuccess>(
+      AplicacionesActionTypes.DeleteAplicacionDeNotaSuccess
     ),
-    tap(action => console.log('Res de aplicacion: ', action.payload)),
-    map((action: any) => {
-      if (action.payload.tipo === 'NOTA') {
-        console.log('Letsgo to nota ', action.payload);
-        // return new fromRoot.Go({ path: ['cxp/notas', action.payload.id] });
-      } else {
-        console.log('Letsgo to PAGO ', action.payload);
-        // return new fromRoot.Go({ path: ['cxp/pagos', action.payload.id] });
-      }
-    })
+    map(action => new fromNotas.UpdateNotaSuccess(action.payload))
   );
 }
