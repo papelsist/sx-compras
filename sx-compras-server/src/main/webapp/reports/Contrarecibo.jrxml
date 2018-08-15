@@ -32,25 +32,25 @@
 	<parameter name="ID" isForPrompting="true" class="java.lang.Long">
 		<defaultValueExpression ><![CDATA[new Long(74722)]]></defaultValueExpression>
 	</parameter>
-	<queryString><![CDATA[SELECT A.ID,A.FECHA AS FCRECIBO,A.COMENTARIO AS OBSERVACIONES
+	<queryString><![CDATA[SELECT B.FOLIO AS FACTURA,B.FECHA,B.MONEDA,B.TOTAL AS IMPORTE,B.VENCIMIENTO
+,A.ID,A.FECHA AS FCRECIBO,A.COMENTARIO AS OBSERVACIONES
 ,(SELECT X.CLAVE FROM proveedor X WHERE B.PROVEEDOR_ID=X.ID ) AS CLAVE
 ,(SELECT X.NOMBRE FROM proveedor X WHERE B.PROVEEDOR_ID=X.ID ) AS PROVEEDOR
-,B.FOLIO AS FACTURA,B.FECHA,B.MONEDA,B.TOTAL AS IMPORTE,B.VENCIMIENTO
 FROM  contrarecibo A JOIN cuenta_por_pagar B ON (A.ID=B.contrarecibo)
 WHERE A.ID=$P{ID} AND 
 B.TIPO='COMPRAS'
 ORDER BY B.FOLIO,B.FECHA]]></queryString>
 
-	<field name="ID" class="java.lang.Long"/>
-	<field name="FCRECIBO" class="java.sql.Date"/>
-	<field name="OBSERVACIONES" class="java.lang.String"/>
-	<field name="CLAVE" class="java.lang.String"/>
-	<field name="PROVEEDOR" class="java.lang.String"/>
 	<field name="FACTURA" class="java.lang.String"/>
 	<field name="FECHA" class="java.sql.Date"/>
 	<field name="MONEDA" class="java.lang.String"/>
 	<field name="IMPORTE" class="java.math.BigDecimal"/>
 	<field name="VENCIMIENTO" class="java.sql.Date"/>
+	<field name="ID" class="java.lang.Long"/>
+	<field name="FCRECIBO" class="java.sql.Date"/>
+	<field name="OBSERVACIONES" class="java.lang.String"/>
+	<field name="CLAVE" class="java.lang.String"/>
+	<field name="PROVEEDOR" class="java.lang.String"/>
 
 	<variable name="FACTURAS" class="java.lang.Integer" resetType="Report" calculation="Count">
 		<variableExpression><![CDATA[$F{FACTURA}]]></variableExpression>
