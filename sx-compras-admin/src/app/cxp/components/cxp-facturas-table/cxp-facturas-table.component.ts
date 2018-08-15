@@ -32,6 +32,7 @@ export class CxpFacturasTableComponent implements OnInit, OnChanges {
     'moneda',
     'tipoDeCambio',
     'total',
+    'saldo',
     'uuid'
   ];
   @ViewChild(MatSort) sort: MatSort;

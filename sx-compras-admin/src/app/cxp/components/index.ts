@@ -30,6 +30,7 @@ import { ReciboPartidasComponent } from './recibo-partidas/recibo-partidas.compo
 import { PagosTableComponent } from './pagos-table/pagos-table.component';
 import { PagoFormComponent } from './pago-form/pago-form.component';
 import { AplicacionesComponent } from './aplicaciones-table/aplicaciones-table.component';
+import { AplicacionFormComponent } from './aplicacion-form/aplicacion-form.component';
 
 export const components: any[] = [
   CfdisTableComponent,
@@ -61,13 +62,15 @@ export const components: any[] = [
   ReciboPartidasComponent,
   PagosTableComponent,
   PagoFormComponent,
-  AplicacionesComponent
+  AplicacionesComponent,
+  AplicacionFormComponent
 ];
 
 export const entryComponents = [
   FacturaSelectorComponent,
   ComsSelectorComponent,
-  ReportComsSinAnalizarComponent
+  ReportComsSinAnalizarComponent,
+  AplicacionFormComponent
 ];
 
 export * from './cfdis-table/cfdis-table.component';
@@ -109,3 +112,4 @@ export * from './recibo-partidas/recibo-partidas.component';
 export * from './pagos-table/pagos-table.component';
 export * from './pago-form/pago-form.component';
 export * from './aplicaciones-table/aplicaciones-table.component';
+export * from './aplicacion-form/aplicacion-form.component';

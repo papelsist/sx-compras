@@ -47,7 +47,7 @@ class ContrareciboController extends RestfulController<Contrarecibo> {
     }
 
     def print( ) {
-        Map repParams = [ID: params.id]
+        Map repParams = [ID: params.long('id')]
         def pdf =  reportService.run('Contrarecibo.jrxml', repParams)
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'Contrarecibo.pdf')
     }

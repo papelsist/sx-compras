@@ -16,7 +16,11 @@ import {
   FormControl
 } from '@angular/forms';
 
-import { NotaDeCreditoCxP, NotaDeCreditoCxPDet } from '../../model';
+import {
+  NotaDeCreditoCxP,
+  NotaDeCreditoCxPDet,
+  CuentaPorPagar
+} from '../../model';
 
 @Component({
   selector: 'sx-nota-form',
@@ -29,7 +33,10 @@ export class NotaFormComponent implements OnInit, OnChanges {
   @Output() save = new EventEmitter<NotaDeCreditoCxP>();
   @Output() aplicar = new EventEmitter<NotaDeCreditoCxP>();
   @Output() quitarAplicacion = new EventEmitter<any>();
+  @Output() agregarAplicaciones = new EventEmitter<any>();
   @Output() pdf = new EventEmitter<NotaDeCreditoCxP>();
+
+  @Input() cuentasPorPagar: CuentaPorPagar[] = [];
 
   tipos = ['DEVOLUCION', 'DESCUENTO', 'DESCUENTO_FINANCIERO', 'BONIFICACION'];
 

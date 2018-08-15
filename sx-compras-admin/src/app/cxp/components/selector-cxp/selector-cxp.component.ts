@@ -1,6 +1,9 @@
 import { Component, OnInit, Input } from '@angular/core';
 
+import { MatDialog } from '@angular/material';
+
 import { Proveedor } from 'app/proveedores/models/proveedor';
+import { CuentaPorPagarService } from '../../services';
 
 @Component({
   selector: 'sx-selector-cxp',
@@ -9,10 +12,14 @@ import { Proveedor } from 'app/proveedores/models/proveedor';
   `
 })
 export class SelectorCxPComponent implements OnInit {
-  @Input() label = 'Seleccionar CxP';
+  @Input() label = 'Seleccionar facturas';
   @Input() disabled = false;
   @Input() proveedor: Proveedor;
-  constructor() {}
+
+  constructor(
+    private service: CuentaPorPagarService,
+    private dialog: MatDialog
+  ) {}
 
   ngOnInit() {}
 

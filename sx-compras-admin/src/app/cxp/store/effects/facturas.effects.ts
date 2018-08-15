@@ -99,4 +99,22 @@ export class FacturasEffects {
         );
     })
   );
+
+  @Effect()
+  buscarPendientes$ = this.actions$.pipe(
+    ofType<fromActions.BuscarPendientesPorProveedor>(
+      FacturaActionTypes.BuscarPendientesPorProveedor
+    ),
+    map(action => action.payload),
+    switchMap(filtro => {
+      return this.service
+        .pendientes(filtro.proveedorId)
+        .pipe(
+          map(res => new fromActions.BuscarPendientesPorProveedorSuccess(res)),
+          catchError(error =>
+            of(new fromActions.BuscarPendientesPorProveedorFail(error))
+          )
+        );
+    })
+  );
 }

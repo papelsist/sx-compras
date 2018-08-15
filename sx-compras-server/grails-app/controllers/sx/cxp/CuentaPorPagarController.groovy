@@ -33,4 +33,12 @@ class CuentaPorPagarController extends RestfulController<CuentaPorPagar> {
         List<CuentaPorPagar> res = CuentaPorPagar.where{proveedor.id == id && analizada == false}.list()
         respond res
     }
+
+    def pendientes() {
+        String id = params.proveedorId
+        List<CuentaPorPagar> res = CuentaPorPagar
+                .findAll("from CuentaPorPagar c where c.proveedor.id = ? and c.total - c.pagos > 0",
+                [id])
+        respond res
+    }
 }

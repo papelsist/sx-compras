@@ -52,7 +52,7 @@
   <ng-container matColumnDef="operaciones">
     <th mat-header-cell *matHeaderCellDef></th>
     <td mat-cell *matCellDef="let req">
-      <mat-icon [routerLink]="[ req.id]" class="cursor-pointer pad-right">edit</mat-icon>
+      <mat-icon (click)="edit.emit(req)" class="cursor-pointer pad-right">edit</mat-icon>
       <span class="pad-right cursor-pointer" (click)="pdf.emit(req)">PDF</span>
       <span class="cursor-pointer" (click)="xml.emit(req)">XML</span>
     </td>

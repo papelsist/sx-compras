@@ -9,7 +9,6 @@ import * as fromActions from '../store/actions/notas.actions';
 import { Observable, of } from 'rxjs';
 import { tap, map, filter, take, switchMap, catchError } from 'rxjs/operators';
 
-import { NotaDeCreditoCxP } from '../model/notaDeCreditoCxP';
 import { NotasService } from '../services';
 
 @Injectable()
@@ -46,6 +45,7 @@ export class NotaExistsGuard implements CanActivate {
       tap(action => this.store.dispatch(action)),
       map(action => !!action.payload.nota),
       catchError(() => {
+        console.error('Not in AIP Guard error');
         this.store.dispatch(new fromRoot.Go({ path: ['cxp/notas'] }));
         return of(false);
       })

@@ -17,7 +17,10 @@ export enum FacturaActionTypes {
   LoadFactura = '[Facturas CXP] LoadFactura One Factura',
   LoadFacturaFail = '[Facturas CXP] LoadFactura One Factura fail',
   LoadFacturaSuccess = '[Facturas CXP] LoadFactura One Factura Success',
-  SaldarCuentaPorPagar = '[Facturas CXP] Saldar cuenta por pagar'
+  SaldarCuentaPorPagar = '[Facturas CXP] Saldar cuenta por pagar',
+  BuscarPendientesPorProveedor = '[Facturas CXP] Buscar cuentas por pagar por proveedor',
+  BuscarPendientesPorProveedorSuccess = '[Facturas CXP] Buscar cuentas por pagar por proveedor success',
+  BuscarPendientesPorProveedorFail = '[Facturas CXP] Buscar cuentas por pagar por proveedor fail'
 }
 
 export class LoadFacturas implements Action {
@@ -70,6 +73,19 @@ export class SaldarCuentaPorPagar implements Action {
   constructor(public payload: CuentaPorPagar) {}
 }
 
+export class BuscarPendientesPorProveedor implements Action {
+  readonly type = FacturaActionTypes.BuscarPendientesPorProveedor;
+  constructor(public payload: { proveedorId: string }) {}
+}
+export class BuscarPendientesPorProveedorFail implements Action {
+  readonly type = FacturaActionTypes.BuscarPendientesPorProveedorFail;
+  constructor(public payload: any) {}
+}
+export class BuscarPendientesPorProveedorSuccess implements Action {
+  readonly type = FacturaActionTypes.BuscarPendientesPorProveedorSuccess;
+  constructor(public payload: CuentaPorPagar[]) {}
+}
+
 export type FacturaActions =
   | LoadFacturas
   | LoadFacturasFail
@@ -80,4 +96,7 @@ export type FacturaActions =
   | UpsertFactura
   | ClearFacturas
   | SaldarCuentaPorPagar
-  | SetFacturasPeriodo;
+  | SetFacturasPeriodo
+  | BuscarPendientesPorProveedor
+  | BuscarPendientesPorProveedorFail
+  | BuscarPendientesPorProveedorSuccess;

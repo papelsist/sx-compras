@@ -26,7 +26,8 @@ import { ComprobanteFiscalService } from '../../services';
       </div>
       </sx-search-title>
       <mat-divider></mat-divider>
-      <sx-notas-table [notas]="notas$ | async" (xml)="onXml($event)" (pdf)="onPdf($event)" [filter]="search$ | async"></sx-notas-table>
+      <sx-notas-table [notas]="notas$ | async" (xml)="onXml($event)" (pdf)="onPdf($event)" [filter]="search$ | async"
+      (edit)="onEdit($event)"></sx-notas-table>
     </mat-card>
   `
 })
@@ -53,6 +54,10 @@ export class NotasComponent implements OnInit {
 
   getSucursales(object): string[] {
     return _.keys(object);
+  }
+
+  onEdit(event: NotaDeCreditoCxP) {
+    this.store.dispatch(new fromRoot.Go({ path: ['cxp/notas', event.id] }));
   }
 
   cambiarPeriodo(event: Periodo) {

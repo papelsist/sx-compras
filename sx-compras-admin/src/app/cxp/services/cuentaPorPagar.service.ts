@@ -55,4 +55,29 @@ export class CuentaPorPagarService {
       .get<CuentaPorPagar>(url)
       .pipe(catchError((error: any) => throwError(error)));
   }
+
+  pendientes(proveedorId: string) {
+    const url = `${this.apiUrl}/pendientes/${proveedorId}`;
+    return this.http
+      .get<CuentaPorPagar[]>(url)
+      .pipe(catchError((error: any) => throwError(error)));
+  }
+
+  buscar(filtro: CxPFilter): Observable<CuentaPorPagar[]> {
+    let params = new HttpParams();
+    _.forIn(filtro, (value, key) => {
+      params = params.set(key, value);
+    });
+    return this.http
+      .get<CuentaPorPagar[]>(this.apiUrl, { params: params })
+      .pipe(catchError((error: any) => throwError(error)));
+  }
+}
+
+export interface CxPFilter {
+  proveedorId: string;
+  serie?: string;
+  folio?: string;
+  uuid?: string;
+  total?: string;
 }

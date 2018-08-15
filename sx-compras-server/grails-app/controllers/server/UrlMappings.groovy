@@ -38,6 +38,7 @@ class UrlMappings {
 
         "/api/cuentaPorPagar"(resources: 'cuentaPorPagar')
         "/api/cuentaPorPagar/pendientesDeAnalisis/$proveedorId"(controller: 'cuentaPorPagar', action: 'pendientesDeAnalisis')
+        "/api/cuentaPorPagar/pendientes/$proveedorId"(controller: 'cuentaPorPagar', action: 'pendientes')
 
         "/api/analisisDeFactura"(resources: 'analisisDeFactura', excludes:['create', 'edit','patch']) {
             "/partidas"(resources: 'analisisDeFacturaDet', excludes:['create', 'edit','patch'])
