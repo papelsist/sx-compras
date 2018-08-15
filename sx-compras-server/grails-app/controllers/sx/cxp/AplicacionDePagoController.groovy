@@ -26,7 +26,7 @@ class AplicacionDePagoController extends RestfulController<AplicacionDePago> {
             notFound()
             return
         }
-        log.debug('Eliminando aplicacion de pago: {}', aplicacionDePago)
+        // log.debug('Eliminando aplicacion de pago: {}', aplicacionDePago)
         aplicacionDePagoService.delete(aplicacionDePago.id)
 
         if(aplicacionDePago.nota) {
@@ -39,5 +39,30 @@ class AplicacionDePagoController extends RestfulController<AplicacionDePago> {
             return
 
         }
+    }
+
+    def save(AplicacionDePago aplicacionDePago) {
+        if(handleReadOnly()) {
+            return
+        }
+
+        if (aplicacionDePago == null) {
+            notFound()
+            return
+        }
+        // log.debug('Agregando aplicacion de pago: {}', aplicacionDePago)
+        if(aplicacionDePago.nota) {
+            aplicacionDePagoService.saveAplicacionDeNota(aplicacionDePago)
+            NotaDeCreditoCxP nota = aplicacionDePago.nota
+            nota.refresh()
+            forward controller: 'notaDeCreditoCxP', action: 'show', id: nota.id
+            return
+        } else {
+            Pago pago = aplicacionDePago.pago
+            respond pago
+            return
+
+        }
+
     }
 }

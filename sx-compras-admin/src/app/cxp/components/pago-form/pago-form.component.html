@@ -5,7 +5,8 @@
       <span class="pad-left pad-right"> {{pago.nombre}}</span>
       <span class="pad-left">({{pago.fecha | date: 'dd/MM/yyyy'}})</span>
       <span flex></span>
-      <a [routerLink]="['/cxp/requisiciones', pago?.requisicion?.id]" mat-button class="pad-right">Requisición {{pago?.requisicion?.folio}}</a>
+      <span>Aplicado:</span>
+      <span class="pad-left pad-right tc-blue-600">{{pago.aplicado | currency}}</span>
       <span>Disponible:</span>
       <span class="pad-left pad-right tc-pink-600">{{pago.disponible | currency}} ({{pago.moneda}})</span>
     </div>
@@ -13,9 +14,6 @@
     <div layout class="pad-left pad-right">
       <mat-form-field>
         <input matInput [value]="pago.formaDePago" [disabled]="true" placeholder="Forma de pago">
-      </mat-form-field>
-      <mat-form-field class="pad-left pad-right">
-        <input matInput [value]="pago.aplicado | currency" [disabled]="true" placeholder="Aplicado">
       </mat-form-field>
       <sx-upper-case-field formControlName="comentario" placeholder="Comentario" flex>
       </sx-upper-case-field>
@@ -38,7 +36,8 @@
       <button type="button" mat-button color="primary" (click)="onSave()" [disabled]="form.invalid || form.pristine">
         <mat-icon>save</mat-icon> Salvar
       </button>
-      <sx-selector-cxp [disabled]="pago.disponible <= 0" label="Seleccionar factura"></sx-selector-cxp>
+      <!-- <sx-selector-cxp [disabled]="pago.disponible <= 0" label="Seleccionar factura"></sx-selector-cxp> -->
+      <a [routerLink]="['/cxp/requisiciones', pago?.requisicion?.id]" mat-button class="pad-right">Requisición {{pago?.requisicion?.folio}}</a>
       <ng-content></ng-content>
     </mat-card-actions>
   </form>

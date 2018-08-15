@@ -46,10 +46,11 @@ export class ReciboFormComponent implements OnInit, OnDestroy, OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     this.buildForm();
     if (changes.recibo && changes.recibo.currentValue) {
-      console.log('Editando recibo: ', this.recibo);
+      // console.log('Editando recibo: ', this.recibo);
       this.setRecibo();
     }
     if (changes.facturas && changes.facturas.currentValue) {
+      // console.log('Facturas: ', changes.facturas.currentValue);
     }
   }
 
@@ -89,6 +90,7 @@ export class ReciboFormComponent implements OnInit, OnDestroy, OnChanges {
       let entity = {};
       if (this.recibo) {
         entity = {
+          ...this.form.value,
           id: this.recibo.id,
           partidas: this.prepararPartidas()
         };

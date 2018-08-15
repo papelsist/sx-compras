@@ -53,7 +53,7 @@ class NotaDeCreditoCxP {
 
     List<NotaDeCreditoCxPDet> conceptos = []
 
-        List<AplicacionDePago> aplicaciones = []
+    List<AplicacionDePago> aplicaciones = []
 
     Date dateCreated
 

@@ -3,7 +3,6 @@ import { Actions, Effect, ofType } from '@ngrx/effects';
 
 import { Store, select } from '@ngrx/store';
 import * as fromRoot from 'app/store';
-import * as fromStore from '../../store';
 import * as fromActions from '../actions/aplicaciones.actions';
 import * as fromNotas from '../actions/notas.actions';
 import { AplicacionesActionTypes } from '../actions/aplicaciones.actions';
@@ -11,7 +10,7 @@ import { AplicacionesActionTypes } from '../actions/aplicaciones.actions';
 import { of } from 'rxjs';
 import { map, switchMap, tap, catchError, take } from 'rxjs/operators';
 
-import { ContrareciboService, AplicacionDePagoService } from '../../services';
+import { AplicacionDePagoService } from '../../services';
 
 import { MatSnackBar } from '@angular/material';
 import { NotaDeCreditoCxP } from '../../model';
@@ -21,9 +20,36 @@ export class AplicacionesEffects {
   constructor(
     private actions$: Actions,
     private service: AplicacionDePagoService,
-    private store: Store<fromStore.CxpState>,
     private snackBar: MatSnackBar
   ) {}
+
+  @Effect()
+  addAplicacionNota$ = this.actions$.pipe(
+    ofType<fromActions.AddAplicacionNota>(
+      AplicacionesActionTypes.AddAplicacionNota
+    ),
+    map(action => action.payload),
+    switchMap(aplicacion =>
+      this.service.save(aplicacion).pipe(
+        // tap(nota => console.log('Aplicacion actualizada en API: ', nota)),
+        map(
+          (res: NotaDeCreditoCxP) =>
+            new fromActions.AddAplicacionNotaSuccess(res)
+        ),
+        catchError(error => of(new fromActions.AddAplicacionNotaFail(error)))
+      )
+    )
+  );
+
+  @Effect()
+  addAplicacionSuccess$ = this.actions$.pipe(
+    ofType<fromActions.AddAplicacionNotaSuccess>(
+      AplicacionesActionTypes.AddAplicacionNotaSuccess
+    ),
+    map(action => action.payload),
+    // tap(nota => console.log('Nota after effect: ', nota)),
+    map(nota => new fromNotas.UpsertNota({ nota }))
+  );
 
   @Effect()
   deleteAplicacionDeNota$ = this.actions$.pipe(
@@ -51,22 +77,31 @@ export class AplicacionesEffects {
     ofType<fromActions.DeleteAplicacionDeNotaSuccess>(
       AplicacionesActionTypes.DeleteAplicacionDeNotaSuccess
     ),
-    map( action => action.payload),
-    tap(res => console.log('Nota after effect: ', res)),
-    map(res => new fromNotas.UpsertNota({nota: res}))
+    map(action => action.payload),
+    // tap(res => console.log('Nota after effect: ', res)),
+    map(res => new fromNotas.UpsertNota({ nota: res }))
   );
 
   @Effect({ dispatch: false })
   $deleteAplicacionFail = this.actions$.pipe(
-    ofType<fromActions.DeleteAplicacionDeNotaFail>(
-      AplicacionesActionTypes.DeleteAplicacionDeNotaFail
+    ofType<
+      fromActions.DeleteAplicacionDeNotaFail | fromActions.AddAplicacionNotaFail
+    >(
+      AplicacionesActionTypes.DeleteAplicacionDeNotaFail,
+      AplicacionesActionTypes.AddAplicacionNotaFail
     ),
     map(action => action.payload),
-    tap(error => console.log('Error: ', error)),
-    tap(error =>
-      this.snackBar.open(`Error en el servidor `, 'Cerrar', {
-        duration: 5000
-      })
-    )
+    tap(response => {
+      console.error('AplicacionDeNota error: ', response.error);
+      const msg =
+        response.status === 500
+          ? 'Error en el servidor (500)'
+          : response.status;
+      this.snackBar.open(`${msg} `, 'Cerrar', {
+        duration: 10000,
+        verticalPosition: 'top',
+        politeness: 'assertive'
+      });
+    })
   );
 }

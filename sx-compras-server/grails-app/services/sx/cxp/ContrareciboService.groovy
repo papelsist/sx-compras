@@ -23,8 +23,28 @@ abstract class ContrareciboService implements LogUser {
         recibo.partidas.each {
             it.contrarecibo = recibo.id
         }
-        return save(recibo)
+        recibo.partidas.each { CuentaPorPagar cxp ->
+            if(cxp.proveedor.fechaRevision) {
+                def plazo = cxp.proveedor.plazo ?: 0
+                cxp.vencimiento = recibo.fecha + plazo
+                cxp.save flush: true
+            }
+        }
+        Contrarecibo res = save(recibo)
+        cleanFaltantes(res)
+        return res
     }
+
+    void cleanFaltantes(Contrarecibo recibo) {
+        def facturas = CuentaPorPagar.where{contrarecibo == recibo.id}.list()
+        def faltantes = facturas.findAll{ !recibo.partidas.contains(it)}
+        faltantes.each {
+            it.contrarecibo = null
+            it.save flush: true
+        }
+    }
+
+
 
 
 

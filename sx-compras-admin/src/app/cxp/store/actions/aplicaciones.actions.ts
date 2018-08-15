@@ -3,9 +3,9 @@ import { Action } from '@ngrx/store';
 import { AplicacionDePago, NotaDeCreditoCxP, Pago } from '../../model';
 
 export enum AplicacionesActionTypes {
-  AddAplicacion = '[Aplicacion CXP] Add Aplicacion',
-  AddAplicacionFail = '[Aplicacion CXP] Add Aplicacion Fail',
-  AddAplicacionSuccess = '[Aplicacion CXP] Add Aplicacion Success',
+  AddAplicacionNota = '[Aplicacion CXP] Add Aplicacion nota',
+  AddAplicacionNotaFail = '[Aplicacion CXP] Add Aplicacion nota Fail',
+  AddAplicacionNotaSuccess = '[Aplicacion CXP] Add Aplicacion nota Success',
   DeleteAplicacionDePago = '[AplicacionDePago CXP] Delete AplicacionDePago',
   DeleteAplicacionDePagoFail = '[AplicacionDePago CXP] Delete AplicacionDePago Fail',
   DeleteAplicacionDePagoSuccess = '[AplicacionDePago CXP] Delete AplicacionDePago Success',
@@ -30,20 +30,20 @@ export class DeleteAplicacionDePagoSuccess implements Action {
   constructor(public payload: Pago) {}
 }
 
-export class AddAplicacion implements Action {
-  readonly type = AplicacionesActionTypes.AddAplicacion;
+export class AddAplicacionNota implements Action {
+  readonly type = AplicacionesActionTypes.AddAplicacionNota;
 
   constructor(public payload: AplicacionDePago) {}
 }
-export class AddAplicacionFail implements Action {
-  readonly type = AplicacionesActionTypes.AddAplicacionFail;
+export class AddAplicacionNotaFail implements Action {
+  readonly type = AplicacionesActionTypes.AddAplicacionNotaFail;
 
   constructor(public payload: any) {}
 }
-export class AddAplicacionSuccess implements Action {
-  readonly type = AplicacionesActionTypes.AddAplicacionSuccess;
+export class AddAplicacionNotaSuccess implements Action {
+  readonly type = AplicacionesActionTypes.AddAplicacionNotaSuccess;
 
-  constructor(public payload: NotaDeCreditoCxP | Pago) {}
+  constructor(public payload: NotaDeCreditoCxP) {}
 }
 
 export class DeleteAplicacionDeNota implements Action {
@@ -63,9 +63,9 @@ export class DeleteAplicacionDeNotaSuccess implements Action {
 }
 
 export type AplicacionDePagoActions =
-  | AddAplicacion
-  | AddAplicacionFail
-  | AddAplicacionSuccess
+  | AddAplicacionNota
+  | AddAplicacionNotaFail
+  | AddAplicacionNotaSuccess
   | DeleteAplicacionDePago
   | DeleteAplicacionDePagoFail
   | DeleteAplicacionDePagoSuccess;

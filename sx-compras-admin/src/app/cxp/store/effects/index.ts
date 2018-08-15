@@ -6,8 +6,10 @@ import { FacturasEffects } from './facturas.effects';
 import { ContrarecibosEffects } from './contrarecibos.effects';
 import { PagosEffects } from './pagos.effects';
 import { AplicacionesEffects } from './aplicaciones.effects';
+import { CfdiEffects } from './cfdi.effects';
 
 export const effects: any[] = [
+  CfdiEffects,
   AnalisisEffects,
   RequisicionesEffects,
   RequisicionFormEffects,

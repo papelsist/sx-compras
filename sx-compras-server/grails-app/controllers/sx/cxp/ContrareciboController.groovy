@@ -37,6 +37,11 @@ class ContrareciboController extends RestfulController<Contrarecibo> {
         return contrareciboService.update(resource)
     }
 
+    @Override
+    protected void deleteResource(Contrarecibo resource) {
+        super.deleteResource(resource)
+    }
+
     def pendientes() {
         params.max = 300
         params.sort = 'lastUpdated'

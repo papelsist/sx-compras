@@ -1,3 +1,4 @@
+export * from './comprobanteFiscal';
 export * from './analisis';
 export * from './analisisDet';
 export * from './comprobanteFiscal';

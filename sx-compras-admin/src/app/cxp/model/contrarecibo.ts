@@ -1,8 +1,9 @@
 import { CuentaPorPagar } from './cuentaPorPagar';
+import { Proveedor } from '../../proveedores/models/proveedor';
 
 export interface Contrarecibo {
   id?: number;
-  proveedor: { id: string };
+  proveedor: Partial<Proveedor>;
   nombre: string;
   partidas?: Partial<CuentaPorPagar>[];
   fecha: string;

@@ -3,8 +3,10 @@
     <mat-card-title *ngIf="recibo?.id">
       <div layout>
         <span class="pad-right"> Contrarecibo: {{recibo.id}}</span>
-        <span class="pad-left"> {{recibo.nombre}}</span>
+        <span class="pad-left"> {{recibo.nombre}} ({{recibo.proveedor.clave}})</span>
         <span flex></span>
+        <span>Plazo: {{recibo.proveedor.plazo}} Días</span>
+        <span class="pad-left">Vto: {{recibo.proveedor.fechaRevision ? 'REV': 'FAC'}}</span>
       </div>
     </mat-card-title>
 

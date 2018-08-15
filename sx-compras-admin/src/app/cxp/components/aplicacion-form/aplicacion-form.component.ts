@@ -29,13 +29,14 @@ export class AplicacionFormComponent implements OnInit {
     this.disponible = data.disponible;
     this.form = fb.group({
       importe: [null, [Validators.required, this.validarImporte.bind(this)]],
+      fecha: [new Date(), [Validators.required]],
       comentario: [null]
     });
   }
 
   validarImporte(control: AbstractControl) {
     const importe: number = control.value;
-    if(importe <= 0) {
+    if (importe <= 0) {
       return { importeInvalido: true };
     }
     return importe <= this.disponible ? null : { importeInvalido: true };

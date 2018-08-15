@@ -27,9 +27,9 @@ export class AplicacionDePagoService {
       .pipe(catchError((error: any) => throwError(error)));
   }
 
-  save(aplicacion: AplicacionDePago): Observable<AplicacionDePago> {
+  save(aplicacion: AplicacionDePago): Observable<NotaDeCreditoCxP | Pago> {
     return this.http
-      .post<AplicacionDePago>(this.apiUrl, aplicacion)
+      .post<NotaDeCreditoCxP | Pago>(this.apiUrl, aplicacion)
       .pipe(catchError((error: any) => throwError(error)));
   }
 

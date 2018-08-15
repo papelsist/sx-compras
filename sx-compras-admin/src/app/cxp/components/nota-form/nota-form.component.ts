@@ -50,7 +50,7 @@ export class NotaFormComponent implements OnInit, OnChanges {
       this.buildForm();
     }
     if (changes.nota && changes.nota.currentValue) {
-      console.log('Nota: ', changes.nota.currentValue);
+      // console.log('Nota: ', changes.nota.currentValue);
       const not = changes.nota.currentValue;
       this.form.patchValue(not);
       this.clarPartidas();

@@ -11,10 +11,7 @@ import { switchMap, map, filter, pluck, tap } from 'rxjs/operators';
 import { TdDialogService } from '@covalent/core';
 
 import { NotaDeCreditoCxP } from '../../model/notaDeCreditoCxP';
-import {
-  ComprobanteFiscalService,
-  CuentaPorPagarService
-} from '../../services';
+import { CuentaPorPagarService } from '../../services';
 import { AplicacionDePago, CuentaPorPagar } from '../../model';
 import { MatDialog } from '@angular/material';
 import { AplicacionFormComponent } from '../../components';
@@ -28,10 +25,10 @@ import { AplicacionFormComponent } from '../../components';
         (delete)="onDelete($event)"
         (aplicar)="onAplicar($event)"
         (pdf)="onPdf($event)"
+        (xml)="onXml($event)"
         [cuentasPorPagar]="facturasPendientes$ | async"
         (agregarAplicaciones)="onAgregarAplicacion(nota, $event)"
         (quitarAplicacion)="onQuitarAplicacion($event)">
-
       </sx-nota-form>
     </div>
   `
@@ -42,7 +39,6 @@ export class NotaComponent implements OnInit, OnDestroy {
   constructor(
     private store: Store<fromStore.CxpState>,
     private dialogService: TdDialogService,
-    private service: ComprobanteFiscalService,
     private facturasService: CuentaPorPagarService,
     private dialog: MatDialog
   ) {}
@@ -84,21 +80,22 @@ export class NotaComponent implements OnInit, OnDestroy {
   }
 
   onAgregarAplicacion(nota: NotaDeCreditoCxP, event: CuentaPorPagar[]) {
-    console.log('Generando aplicaciones para: ', event);
     this.dialog
       .open(AplicacionFormComponent, {
         data: { cxp: event[0], disponible: nota.disponible },
-        width: '550px'
+        width: '650px'
       })
       .afterClosed()
       .subscribe(res => {
         const cxp = event[0];
+        const fecha: Date = res.fecha;
         const aplicacion: AplicacionDePago = {
           cxp: { id: cxp.id },
           nota: { id: nota.id },
-          ...res
+          ...res,
+          fecha: fecha.toISOString()
         };
-        this.store.dispatch(new fromAplicaciones.AddAplicacion(aplicacion));
+        this.store.dispatch(new fromAplicaciones.AddAplicacionNota(aplicacion));
       });
   }
 
@@ -121,6 +118,17 @@ export class NotaComponent implements OnInit, OnDestroy {
   }
 
   onPdf(event: NotaDeCreditoCxP) {
-    this.service.imprimirCfdi(event.comprobanteFiscal.id);
+    if (event.comprobanteFiscal) {
+      this.store.dispatch(
+        new fromStore.ImprimirComprobante(event.comprobanteFiscal.id)
+      );
+    }
+  }
+  onXml(event: NotaDeCreditoCxP) {
+    if (event.comprobanteFiscal) {
+      this.store.dispatch(
+        new fromStore.MostrarXmlComprobante(event.comprobanteFiscal.id)
+      );
+    }
   }
 }

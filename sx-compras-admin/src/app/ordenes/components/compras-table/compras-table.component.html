@@ -65,10 +65,8 @@
   <ng-container matColumnDef="operaciones">
     <th mat-header-cell *matHeaderCellDef></th>
     <td mat-cell *matCellDef="let req">
-      <!-- <mat-icon (click)="edit.emit(req)" class="cursor-pointer pad-right">edit</mat-icon> -->
-      <mat-icon (click)="onEdit($event, req)" class="pad-right">edit</mat-icon>
-      <sx-report-button [url]="getPrintUrl(req)" [smallIcon]="true "></sx-report-button>
-      <!-- <sx-print-requisicion [requisicion]="req " smallIcon="true "></sx-print-requisicion> -->
+      <mat-icon (click)="onEdit($event, req)" class="pad-right">edit</mat-icon>Z
+      <sx-compra-print [compra]="req" [smallIcon]="true"></sx-compra-print>
     </td>
   </ng-container>
 

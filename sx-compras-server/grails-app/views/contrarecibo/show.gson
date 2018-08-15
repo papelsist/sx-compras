@@ -4,4 +4,16 @@ model {
 	Contrarecibo contrarecibo
 }
 
-json tmpl.contrarecibo(contrarecibo)
+json g.render(contrarecibo, [excludes: ['proveedor', 'partidas']]) {
+	proveedor {
+		id contrarecibo.proveedor.id
+		nombre contrarecibo.proveedor.nombre
+		clave contrarecibo.proveedor.clave
+		plazo contrarecibo.proveedor.plazo
+		fechaRevision contrarecibo.proveedor.fechaRevision
+	}
+	nombre contrarecibo.proveedor.nombre
+	partidas g.render(contrarecibo.partidas)
+	creado contrarecibo.dateCreated
+	modificado contrarecibo.lastUpdated
+}

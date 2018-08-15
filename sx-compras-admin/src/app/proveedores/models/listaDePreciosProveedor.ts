@@ -43,7 +43,7 @@ export function buildLista(
   return {
     proveedor: proveedor,
     ejercicio: periodo.fechaFinal.getFullYear(),
-    mes: periodo.fechaInicial.getMonth(),
+    mes: null,
     fechaInicial: periodo.fechaInicial.toISOString(),
     fechaFinal: periodo.fechaFinal.toISOString(),
     moneda: moneda,

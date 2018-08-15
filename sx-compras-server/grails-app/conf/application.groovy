@@ -51,3 +51,4 @@ grails.plugin.springsecurity.filterChain.chainMap = [
  //[pattern: '/**/favicon.ico', access: ['permitAll']]
 //]
 
+grails.plugin.console.enabled = true

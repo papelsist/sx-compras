@@ -35,6 +35,11 @@
       <mat-error *ngIf="form.get('importe').hasError('importeInvalido')">Importe invalido (Max: {{disponible | currency}})</mat-error>
       <mat-hint align="end">Disponible: {{disponible | currency}}</mat-hint>
     </mat-form-field>
+    <mat-form-field class="pad-left">
+      <input matInput [matDatepicker]="myDatepicker" formControlName="fecha">
+      <mat-datepicker-toggle matSuffix [for]="myDatepicker"></mat-datepicker-toggle>
+      <mat-datepicker #myDatepicker></mat-datepicker>
+    </mat-form-field>
   </div>
 
   <mat-dialog-actions>

@@ -17,6 +17,19 @@ export class ComprobanteFiscalService {
   constructor(private http: HttpClient, private configService: ConfigService) {
     this.apiUrl = configService.buildApiUrl('comprobanteFiscal');
   }
+  get(id: string): Observable<ComprobanteFiscal> {
+    const url = `${this.apiUrl}/${id}`;
+    return this.http
+      .get<ComprobanteFiscal>(url)
+      .pipe(catchError((error: any) => throwError(error)));
+  }
+
+  update(cfdi: ComprobanteFiscal): Observable<ComprobanteFiscal> {
+    const url = `${this.apiUrl}/${cfdi.id}`;
+    return this.http
+      .put<ComprobanteFiscal>(url, cfdi)
+      .pipe(catchError((error: any) => throwError(error)));
+  }
 
   list(filtro: any = {}): Observable<ComprobanteFiscal[]> {
     let params = new HttpParams();

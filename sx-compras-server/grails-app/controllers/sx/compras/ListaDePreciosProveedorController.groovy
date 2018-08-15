@@ -78,8 +78,8 @@ class ListaDePreciosProveedorController extends RestfulController<ListaDePrecios
         Date fecha = params.getDate('fecha', 'dd/MM/yyyy')
 
         if(fecha) {
-            List<Compra> compras = Compra.where {proveedor == lista.proveedor && fecha >= fecha }.list()
-            List<Compra> selected = compras.findAll { it.getStatus() != 'T'}
+            List<Compra> selected = Compra.where {proveedor == lista.proveedor && fecha >= fecha }.list()
+            // List<Compra> selected = compras.findAll { it.getStatus() != 'T'}
             List<Compra> updated = []
             selected.each { c ->
                 updated << compraService.actualizarPrecios(c, lista)
