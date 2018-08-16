@@ -27,7 +27,7 @@ class AnalisisDeFacturaController extends RestfulController<AnalisisDeFactura> {
 
     @Override
     protected List<AnalisisDeFactura> listAllResources(Map params) {
-        log.info('List: {}', params)
+        // log.info('List: {}', params)
         params.max = 1000
         params.sort = 'lastUpdated'
         params.order = 'desc'

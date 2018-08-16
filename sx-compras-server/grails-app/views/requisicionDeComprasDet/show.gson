@@ -4,4 +4,6 @@ model {
 	RequisicionDeComprasDet requisicionDeComprasDet
 }
 
-json tmpl.requisicionDeComprasDet(requisicionDeComprasDet)
+json g.render(requisicionDeComprasDet, [excludes: ['dateCreated','lastUpdated', 'cxp'], resolveTemplate: false]) {
+
+}

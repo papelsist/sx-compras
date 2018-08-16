@@ -36,6 +36,7 @@ class CompraListenerService {
 
     @Subscriber
     void afterUpdate(PostUpdateEvent event) {
+        // log.debug('{} {} ', event.eventType.name(), event.entity.name)
         String id = getId(event)
         if ( id ) {
             log.debug('{} {} Id: {}', event.eventType.name(), event.entity.name, id)

@@ -6,4 +6,7 @@ model {
 
 json g.render(notaDeCreditoCxPDet, [excludes: ['cxp'], resolveTemplate: false]) {
     cxp g.render(notaDeCreditoCxPDet.cxp)
+    folio notaDeCreditoCxPDet.cxp?.folio
+    serie notaDeCreditoCxPDet.cxp?.serie
+    uuid notaDeCreditoCxPDet.uuid
 }

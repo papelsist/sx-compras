@@ -22,6 +22,8 @@ import {
   CuentaPorPagar
 } from '../../model';
 
+import { Subject } from 'rxjs';
+
 @Component({
   selector: 'sx-nota-form',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -38,7 +40,9 @@ export class NotaFormComponent implements OnInit, OnChanges {
 
   @Input() cuentasPorPagar: CuentaPorPagar[] = [];
 
-  tipos = ['DEVOLUCION', 'DESCUENTO', 'DESCUENTO_FINANCIERO', 'BONIFICACION'];
+  tipos = ['DESCUENTO', 'DESCUENTO_FINANCIERO', 'BONIFICACION'];
+
+  search$ = new Subject();
 
   form: FormGroup;
   constructor(private fb: FormBuilder) {}
@@ -85,5 +89,10 @@ export class NotaFormComponent implements OnInit, OnChanges {
 
   get conceptos() {
     return this.form.get('conceptos') as FormArray;
+  }
+
+  onSearch(event: string) {
+    const search = event !== '' ? event : ' ';
+    this.search$.next(search.toLowerCase());
   }
 }

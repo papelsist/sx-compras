@@ -106,7 +106,7 @@ export class NotasEffects {
     map(() => new fromRoot.Go({ path: ['cxp/notas'] }))
   );
 
-  @Effect()
+  @Effect({ dispatch: false })
   updateSuccess$ = this.actions$.pipe(
     ofType<fromActions.UpdateNotaSuccess>(NotaActionTypes.UpdateNotaSuccess),
     map(action => action.payload),
@@ -114,8 +114,8 @@ export class NotasEffects {
       this.snackBar.open(`Nota ${nota.folio} actualizada `, 'Cerrar', {
         duration: 5000
       })
-    ),
-    map(nota => new fromRoot.Go({ path: ['cxp/notas', nota.id] }))
+    )
+    // map(nota => new fromRoot.Go({ path: ['cxp/notas', nota.id] }))
   );
 
   @Effect()

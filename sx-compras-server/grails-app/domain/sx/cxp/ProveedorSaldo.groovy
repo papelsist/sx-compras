@@ -18,10 +18,10 @@ class ProveedorSaldo {
 
     Integer mes
 
-    BigDecimal saldoInicial
-    BigDecimal cargos
-    BigDecimal abonos
-    BigDecimal saldoFinal
+    BigDecimal saldoInicial = 0.0
+    BigDecimal cargos = 0.0
+    BigDecimal abonos = 0.0
+    BigDecimal saldoFinal = 0.0
 
     Date lastUpdated
     Date dateCreated
@@ -29,9 +29,14 @@ class ProveedorSaldo {
 
     static constraints = {
         mes min: 1, max: 13
+        nombre nullable: true
     }
 
     static mapping = {
         proveedor unique: ['ejercicio','mes']
+    }
+
+    def beforeInsert() {
+        nombre = proveedor.nombre
     }
 }

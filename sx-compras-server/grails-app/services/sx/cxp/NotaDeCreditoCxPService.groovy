@@ -133,7 +133,7 @@ abstract class NotaDeCreditoCxPService implements  LogUser{
                 }
             }
             nota.refresh()
-            log.debug("Total aplicado  a referenciados: {}  ", nota.aplicado)
+            // log.debug("Total aplicado  a referenciados: {}  ", nota.aplicado)
             return nota
         }
         return nota
@@ -150,16 +150,12 @@ abstract class NotaDeCreditoCxPService implements  LogUser{
                     case 'DESCUENTO_FINANCIERO':
                         det.aplicable = det.analizado - det.pagado
                         break
-
-                    case 'DEVOLUCION':
+                    case 'DESCUENTO':
                         det.aplicable = cxp.total - det.analizado
                         break
 
-                    case 'DESCUENTO':
-                        det.aplicable = cxp.total - det.pagado
-                        break
-
                     default:
+                        det.aplicable = 0.0
                         break
 
                 }

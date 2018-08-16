@@ -16,6 +16,18 @@
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Total (Docto)</th>
       <td mat-cell *matCellDef="let row">{{row.documentoTotal | currency}}</td>
     </ng-container>
+    <ng-container matColumnDef="documentoPagos">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Pagos </th>
+      <td mat-cell *matCellDef="let row">{{row.documentoPagos | currency}}</td>
+    </ng-container>
+    <ng-container matColumnDef="documentoCompensaciones">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Notas</th>
+      <td mat-cell *matCellDef="let row">{{row.documentoCompensaciones | currency}}</td>
+    </ng-container>
+    <ng-container matColumnDef="documentoSaldo">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Saldo</th>
+      <td mat-cell *matCellDef="let row">{{row.documentoSaldo | currency}}</td>
+    </ng-container>
     <ng-container matColumnDef="descuentof">
       <th mat-header-cell *matHeaderCellDef>Dscto F</th>
       <td mat-cell *matCellDef="let row">{{row.descuentofImporte | currency}}</td>

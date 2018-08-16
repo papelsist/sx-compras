@@ -15,6 +15,7 @@ export interface CuentaPorPagar {
   tcContable?: number;
   total: number;
   pagos?: number;
+  compensaciones?: number;
   saldo?: number;
   importePorPagar?: number;
   vencimiento: string;

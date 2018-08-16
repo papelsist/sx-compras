@@ -60,6 +60,7 @@ class CuentaPorPagar {
     ComprobanteFiscal comprobanteFiscal
 
     BigDecimal pagos = 0.0
+    BigDecimal compensaciones = 0.0
 
     Long contrarecibo
 
@@ -91,13 +92,12 @@ class CuentaPorPagar {
 
     static mapping ={
         id generator:'uuid'
-        // gastos cascade: "all-delete-orphan"
-        //requisitado formula:'(select ifnull(sum(x.requisitado),0) from requisicion_det x where x.cuenta_por_pagar_id=id)'
-        //pagosAplicados formula:'(select ifnull(sum(x.importe),0) from aplicacion_de_pago x where x.cuenta_por_pagar_id=id)'
         fecha type:'date' , index: 'CXP_IDX2'
         vencimiento type:'date', index: 'CXP_IDX2'
         descuentoFinancieroVto type:'date'
-        pagos formula:'(select COALESCE(sum(x.importe),0) from aplicacion_de_pago x where x.cxp_id=id)'
+        pagos formula:'(select COALESCE(sum(x.importe),0) from aplicacion_de_pago x where x.cxp_id=id and x.pago_id is not null)'
+        compensaciones formula:'(select COALESCE(sum(x.importe),0) from aplicacion_de_pago x where x.cxp_id=id and x.nota_id is not null)'
+
     }
 
 
@@ -109,7 +109,7 @@ class CuentaPorPagar {
     }
 
     BigDecimal getSaldo() {
-        return this.total - this.pagos
+        return this.total - this.pagos - this.compensaciones
     }
 
     String getAnalisis() {

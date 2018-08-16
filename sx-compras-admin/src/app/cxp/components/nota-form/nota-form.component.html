@@ -30,6 +30,8 @@
           </mat-select>
         </mat-form-field>
         <sx-upper-case-field formControlName="comentario" placeholder="Comentario" class="pad-left" flex></sx-upper-case-field>
+        <!-- <td-search-input (onSearchDebounce)="onSearch($event)" debounce="500" class="pad-left"></td-search-input> -->
+        <td-search-box (searchDebounce)="onSearch($event)" class="pad-left push-right-sm" placeholder="Filtrar facturas"></td-search-box>
       </div>
 
 
@@ -38,10 +40,12 @@
     <mat-divider></mat-divider>
     <mat-tab-group class="partidas-panel">
       <mat-tab label="Referenciados">
-        <sx-nota-conceptos [conceptos]="conceptos.value"></sx-nota-conceptos>
+        <sx-nota-conceptos [conceptos]="conceptos.value" [filter]="search$ | async"></sx-nota-conceptos>
       </mat-tab>
       <mat-tab label="Aplicaciones" #aplicacionesTab>
-        <sx-aplicaciones-table [aplicaciones]="nota.aplicaciones" (delete)="quitarAplicacion.emit($event)"></sx-aplicaciones-table>
+        <sx-aplicaciones-table [aplicaciones]="nota.aplicaciones" (delete)="quitarAplicacion.emit($event)" [filtro]="search$ | async">
+
+        </sx-aplicaciones-table>
       </mat-tab>
     </mat-tab-group>
 

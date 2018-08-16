@@ -4,7 +4,6 @@ model {
 	RequisicionDeCompras requisicionDeCompras
 }
 
-// json tmpl.requisicionDeCompras(requisicionDeCompras)
 json g.render(requisicionDeCompras, [excludes: ['dateCreated','lastUpdated','createUser', 'partidas', 'proveedor']]) {
     partidas g.render(requisicionDeCompras.partidas)
     proveedor {

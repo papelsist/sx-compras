@@ -22,6 +22,7 @@ abstract class ContrareciboService implements LogUser {
     Contrarecibo update(Contrarecibo recibo) {
         recibo.partidas.each {
             it.contrarecibo = recibo.id
+            recibo.total = recibo.total + it.total
         }
         recibo.partidas.each { CuentaPorPagar cxp ->
             if(cxp.proveedor.fechaRevision) {

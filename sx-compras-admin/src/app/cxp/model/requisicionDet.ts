@@ -7,6 +7,9 @@ export interface RequisicionDet {
   documentoSerie?: string;
   documentoFecha?: string;
   documentoTotal?: number;
+  documentoSaldo?: number;
+  documentoPagos?: number;
+  documentoCompensaciones?: number;
   uuid?: string;
   acuse?: string;
   impuestos?: number;

@@ -32,6 +32,8 @@ export class CxpFacturasTableComponent implements OnInit, OnChanges {
     'moneda',
     'tipoDeCambio',
     'total',
+    'pagos',
+    'compensaciones',
     'saldo',
     'uuid'
   ];

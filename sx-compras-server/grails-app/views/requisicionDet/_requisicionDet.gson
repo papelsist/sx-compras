@@ -1,0 +1,12 @@
+import sx.cxp.RequisicionDet
+
+model {
+	RequisicionDet requisicionDet
+}
+
+json g.render(requisicionDet, [excludes: ['dateCreated','lastUpdated'], resolveTemplate: false]) {
+    // cxp g.render(requisicionDet.cxp, [includes: ['id', 'total', 'saldo','pagos','compensaciones', 'fecha']])
+    documentoSaldo requisicionDet.cxp.saldo
+    documentoPagos requisicionDet.cxp.pagos
+    documentoCompensaciones requisicionDet.cxp.compensaciones
+}

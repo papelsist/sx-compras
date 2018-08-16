@@ -1,0 +1,9 @@
+import sx.cxp.RequisicionDet
+
+model {
+    RequisicionDet requisicionDeComprasDet
+}
+
+json g.render(requisicionDeComprasDet, [excludes: ['dateCreated','lastUpdated', 'cxp']]) {
+    cxp g.render(requisicionDeComprasDet.cxp, [includes: ['id', 'saldo', 'pagos', 'compensaciones', 'total']])
+}

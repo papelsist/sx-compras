@@ -59,6 +59,6 @@ export class AplicacionesComponent implements OnInit, OnChanges {
   }
 
   getTotal(property: string) {
-    return _.sumBy(this.aplicaciones, property);
+    return _.sumBy(this.dataSource.filteredData, property);
   }
 }
