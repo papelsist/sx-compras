@@ -33,6 +33,7 @@ export class RecibosTableComponent implements OnInit, OnChanges {
     'total',
     'comentario',
     'modificado',
+    'entregado',
     'operaciones'
   ];
   @ViewChild(MatSort) sort: MatSort;
@@ -52,7 +53,7 @@ export class RecibosTableComponent implements OnInit, OnChanges {
     if (changes.recibos && changes.recibos.currentValue) {
       this.dataSource.data = changes.recibos.currentValue;
     }
-    if (changes.filter) {
+    if (changes.filter && changes.filter.currentValue) {
       this.dataSource.filter = changes.filter.currentValue.toLowerCase();
     }
   }

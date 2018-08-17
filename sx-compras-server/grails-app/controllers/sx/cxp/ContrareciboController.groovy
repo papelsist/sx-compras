@@ -23,6 +23,9 @@ class ContrareciboController extends RestfulController<Contrarecibo> {
 
     @Override
     protected List<Contrarecibo> listAllResources(Map params) {
+        params.max = 100
+        params.sort = 'lastUpdated'
+        params.order = 'desc'
         def query = Contrarecibo.where{ atendido == null}
         return query.list(params)
     }

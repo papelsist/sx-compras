@@ -5,16 +5,19 @@ import {
   ContrareciboActions,
   ContrareciboActionTypes
 } from '../actions/contrarecibos.actions';
-import { Periodo } from 'app/_core/models/periodo';
 
 export interface State extends EntityState<Contrarecibo> {
   loading: boolean;
   loaded: boolean;
 }
 
+export function sortByModificado(a: Contrarecibo, b: Contrarecibo): number {
+  return b.id > a.id ? 1 : -1;
+}
+
 export const adapter: EntityAdapter<Contrarecibo> = createEntityAdapter<
   Contrarecibo
->();
+>({ sortComparer: sortByModificado });
 
 export const initialState: State = adapter.getInitialState({
   loading: false,

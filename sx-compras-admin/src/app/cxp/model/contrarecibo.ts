@@ -13,5 +13,6 @@ export interface Contrarecibo {
   updateUser?: string;
   creado?: string;
   modificado?: string;
+  entregado?: string;
   selected?: boolean;
 }
