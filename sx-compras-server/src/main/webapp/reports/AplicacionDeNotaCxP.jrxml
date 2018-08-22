@@ -2,7 +2,7 @@
 <!-- Created with iReport - A designer for JasperReports -->
 <!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
 <jasperReport
-		 name="AplicacionDeAbonos"
+		 name="AplicacionDeNotaCxP"
 		 columnCount="1"
 		 printOrder="Vertical"
 		 orientation="Portrait"
@@ -33,14 +33,7 @@
 	<parameter name="FORMA_DE_PAGO" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="IMP_TOT" isForPrompting="false" class="java.math.BigDecimal"/>
 	<parameter name="MONEDA" isForPrompting="true" class="java.lang.String"/>
-	<parameter name="TIPO_CAMBIO" isForPrompting="false" class="java.math.BigDecimal"/>
-	<parameter name="AUTORIZO" isForPrompting="false" class="java.lang.String"/>
-	<parameter name="COMPRAS" isForPrompting="false" class="java.lang.String"/>
-	<parameter name="HECHO" isForPrompting="false" class="java.lang.String"/>
-	<parameter name="REVISADO" isForPrompting="false" class="java.lang.String"/>
-	<parameter name="TESORERIA" isForPrompting="false" class="java.lang.String"/>
-	<parameter name="AUTORIZADO" isForPrompting="false" class="java.lang.String"/>
-	<parameter name="ID" isForPrompting="true" class="java.lang.Long"/>
+	<parameter name="ID" isForPrompting="true" class="java.lang.String"/>
 	<queryString><![CDATA[SELECT C.ID,1 AS CLAVESUC,'OFICINAS' AS NOM_SUC 
 ,P.CLAVE,P.NOMBRE,C.FOLIO,A.IMPORTE,C.TOTAL,C.MONEDA,C.TIPO_DE_CAMBIO AS TC,C.FECHA 
 ,B.FOLIO AS DOCUMENTO_FAC, B.FECHA AS FECHAD,B.TOTAL AS TOTAL_FAC,C.CONCEPTO,C.COMENTARIO
@@ -48,7 +41,7 @@ FROM nota_de_credito_cxp C
 LEFT JOIN aplicacion_de_pago A ON(C.ID=A.NOTA_ID) 
 JOIN proveedor P ON(C.PROVEEDOR_ID=P.ID)
 LEFT JOIN cuenta_por_pagar B ON (B.ID=A.cxp_id)
-WHERE C.ID='8a8a81656548b90501654928f2f4000d']]></queryString>
+WHERE C.ID=$P{ID}]]></queryString>
 
 	<field name="ID" class="java.lang.String"/>
 	<field name="CLAVESUC" class="java.lang.Long"/>
