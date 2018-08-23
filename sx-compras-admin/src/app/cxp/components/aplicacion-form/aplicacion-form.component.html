@@ -31,7 +31,7 @@
       <input matInput placeholder="Saldo" value="{{cxp.saldo | currency}}" [disabled]="true">
     </mat-form-field>
     <mat-form-field flex>
-      <input matInput formControlName="importe" placeholder="Importe" required autocomplete="off">
+      <input matInput formControlName="importe" placeholder="Importe" required autocomplete="off" type="number">
       <mat-error *ngIf="form.get('importe').hasError('importeInvalido')">Importe invalido (Max: {{disponible | currency}})</mat-error>
       <mat-hint align="end">Disponible: {{disponible | currency}}</mat-hint>
     </mat-form-field>

@@ -31,6 +31,7 @@ import { PagosTableComponent } from './pagos-table/pagos-table.component';
 import { PagoFormComponent } from './pago-form/pago-form.component';
 import { AplicacionesComponent } from './aplicaciones-table/aplicaciones-table.component';
 import { AplicacionFormComponent } from './aplicacion-form/aplicacion-form.component';
+import { NotaPrintComponent } from './nota-print/nota-print.component';
 
 export const components: any[] = [
   CfdisTableComponent,
@@ -63,7 +64,8 @@ export const components: any[] = [
   PagosTableComponent,
   PagoFormComponent,
   AplicacionesComponent,
-  AplicacionFormComponent
+  AplicacionFormComponent,
+  NotaPrintComponent
 ];
 
 export const entryComponents = [
@@ -100,6 +102,7 @@ export * from './print-requisicion/print-requisicion.component';
 export * from './notas-table/notas-table.component';
 export * from './nota-form/nota-form.component';
 export * from './nota-conceptos/nota-conceptos.component';
+export * from './nota-print/nota-print.component';
 
 // Cuentas Por Pagar
 export * from './selector-cxp/selector-cxp.component';

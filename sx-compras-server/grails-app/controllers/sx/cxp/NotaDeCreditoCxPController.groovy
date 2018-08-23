@@ -67,8 +67,13 @@ class NotaDeCreditoCxPController extends RestfulController<NotaDeCreditoCxP>{
     def handleSQLException(Exception e) {
         String message = ExceptionUtils.getRootCauseMessage(e)
         log.error(message, e)
-        // render 'A SQLException Was Handled'
         respond([message: message], status: 500)
+    }
+
+    def print( ) {
+        Map repParams = [ID: params.id, MONEDA: params.moneda]
+        def pdf =  reportService.run('AplicacionDeNotaCxP.jrxml', repParams)
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'AplicacionDeNotaCxP.pdf')
     }
 
 
