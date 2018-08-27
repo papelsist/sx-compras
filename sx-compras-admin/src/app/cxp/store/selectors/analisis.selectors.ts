@@ -79,7 +79,7 @@ export const getFilteredAnalisis = createSelector(
       if (filter.tipo === 'Pendientes') {
         filtered = _.filter(filtered, item => !item.cerrado);
       } else if (filter.tipo === 'Cerradas') {
-        filtered = _.filter(filtered, item => item.cerrado);
+        // filtered = _.filter(filtered, item => item.cerrado);
       }
     }
     return filtered;

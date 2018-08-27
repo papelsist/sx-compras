@@ -63,7 +63,7 @@
       </button>
       <sx-facturas-selector-btn [facturas]="cuentasPorPagar" label="Agregar" (selected)="agregarAplicaciones.emit($event)" *ngIf="aplicacionesTab.isActive || nota.disponible <= 0">
       </sx-facturas-selector-btn>
-
+      <sx-nota-print [nota]="nota"></sx-nota-print>
 
       <ng-content></ng-content>
     </mat-card-actions>
