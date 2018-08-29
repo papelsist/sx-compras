@@ -1,7 +1,7 @@
 buildscript {
     repositories {
         mavenLocal()
-        maven { url "https://repo.grails.org/grails/core" }
+        maven { url "http://repo.grails.org/grails/core" }
     }
     dependencies {
         classpath "org.grails:grails-gradle-plugin:$grailsVersion"
@@ -22,7 +22,7 @@ apply plugin:"org.grails.grails-gsp"
 
 repositories {
     mavenLocal()
-    maven { url "https://repo.grails.org/grails/core" }
+    maven { url "http://repo.grails.org/grails/core" }
 }
 
 dependencies {
@@ -67,7 +67,7 @@ dependencies {
     runtime 'mysql:mysql-connector-java:5.1.29'
 
     // compile "lx.siipapx:sx-core-plugin:1.0.0"
-    compile 'com.google.firebase:firebase-admin:6.1.0'
+    // compile 'com.google.firebase:firebase-admin:6.1.0'
     compile 'com.github.groovy-wslite:groovy-wslite:1.1.2'
 
     // Grails console
@@ -78,6 +78,7 @@ dependencies {
     compile 'org.eclipse.jdt.core.compiler:ecj:4.4'
     /****/
     compile 'org.grails.plugins:spring-security-core:3.2.1'
+    // compile "org.grails.plugins:spring-security-rest:2.0.0.M2"
     compile 'org.grails.plugins:spring-security-rest:2.0.0.RC1'
 
 }
