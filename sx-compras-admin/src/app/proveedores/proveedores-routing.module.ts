@@ -18,6 +18,10 @@ const routes: Routes = [
     children: [{ path: '', component: fromContainers.ProveedoresComponent }]
   },
   {
+    path: 'create',
+    component: fromContainers.ProveedorCreateComponent
+  },
+  {
     path: ':proveedorId',
     canActivate: [ProveedoresGuard, ProveedorExistsGuard],
     component: fromContainers.ProveedorPageComponent,

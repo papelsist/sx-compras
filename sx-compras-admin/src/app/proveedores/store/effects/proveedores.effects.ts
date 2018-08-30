@@ -20,17 +20,13 @@ export class ProveedoresEffects {
   @Effect()
   loadEntites$ = this.actions$.ofType(proveedorActions.LOAD_PROVEEDORES).pipe(
     switchMap(() => {
-      return this.service
-        .list()
-        .pipe(
-          map(
-            proveedores =>
-              new proveedorActions.LoadProveedoresSuccess(proveedores)
-          ),
-          catchError(error =>
-            of(new proveedorActions.LoadProveedoresFail(error))
-          )
-        );
+      return this.service.list().pipe(
+        map(
+          proveedores =>
+            new proveedorActions.LoadProveedoresSuccess(proveedores)
+        ),
+        catchError(error => of(new proveedorActions.LoadProveedoresFail(error)))
+      );
     })
   );
 
@@ -40,14 +36,12 @@ export class ProveedoresEffects {
     .pipe(
       map((action: proveedorActions.UpdateProveedor) => action.payload),
       switchMap(proveedor => {
-        return this.service
-          .update(proveedor)
-          .pipe(
-            map(res => new proveedorActions.UpdateProveedorSuccess(res)),
-            catchError(error =>
-              of(new proveedorActions.UpdateProveedorFail(error))
-            )
-          );
+        return this.service.update(proveedor).pipe(
+          map(res => new proveedorActions.UpdateProveedorSuccess(res)),
+          catchError(error =>
+            of(new proveedorActions.UpdateProveedorFail(error))
+          )
+        );
       })
     );
 
@@ -66,10 +60,31 @@ export class ProveedoresEffects {
         }
       )
     )
-    /*
+  );
+
+  @Effect()
+  createProveedor$ = this.actions$
+    .ofType(proveedorActions.CREATE_PROVEEDOR_ACTION)
+    .pipe(
+      map((action: proveedorActions.CreateProveedor) => action.payload),
+      switchMap(proveedor => {
+        return this.service.save(proveedor).pipe(
+          map(res => new proveedorActions.CreateProveedorSuccess(res)),
+          catchError(error =>
+            of(new proveedorActions.CreateProveedorFail(error))
+          )
+        );
+      })
+    );
+
+  @Effect()
+  createSuccess$ = this.actions$.pipe(
+    ofType<proveedorActions.CreateProveedorSuccess>(
+      proveedorActions.CREATE_PROVEEDOR_ACTION_SUCCESS
+    ),
+    map(action => action.payload),
     map(
-      proveedores =>
-        new fromRoot.Go({ path: ['cxp/proveedores', proveedores.id] })
-    )*/
+      proveedores => new fromRoot.Go({ path: ['proveedores', proveedores.id] })
+    )
   );
 }

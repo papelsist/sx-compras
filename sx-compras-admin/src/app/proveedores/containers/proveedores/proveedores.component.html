@@ -8,9 +8,20 @@
     <mat-checkbox formControlName="suspendidos">Suspendidos</mat-checkbox>
     <td-search-box class="push-right-sm" placeholder="Proveedor" flex formControlName="term">
     </td-search-box>
+    <span>
+      <button mat-icon-button [matMenuTriggerFor]="toolbarMenu" [routerLink]="['create']">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #toolbarMenu="matMenu">
+        <a mat-menu-item><mat-icon>add</mat-icon> Nuevo</a>
+      </mat-menu>
+    </span>
   </div>
   <mat-divider></mat-divider>
   <div class="proveedores-container">
     <sx-proveedores-table [proveedores]="proveedores$ | async" (select)="onSelect($event)"></sx-proveedores-table>
   </div>
 </mat-card>
+<a mat-fab matTooltip="Nuevo proveedor" matTooltipPosition="before" color="accent" class="mat-fab-position-bottom-left" [routerLink]="['create']">
+  <mat-icon>add</mat-icon>
+</a>

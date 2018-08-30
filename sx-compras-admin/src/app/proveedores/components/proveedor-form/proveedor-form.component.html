@@ -3,17 +3,12 @@
     <form [formGroup]="form" layout>
       <div layout="column" flex="50">
 
-        <mat-form-field>
-          <input matInput placeholder="Nombre" formControlName="nombre">
-        </mat-form-field>
+        <sx-upper-case-field placeholder="Nombre" formControlName="nombre"></sx-upper-case-field>
         <div layout>
-          <mat-form-field>
-            <input matInput placeholder="RFC" formControlName="rfc">
-          </mat-form-field>
+          <sx-upper-case-field placeholder="RFC" formControlName="rfc"></sx-upper-case-field>
           <span flex></span>
-          <mat-form-field>
-            <input matInput placeholder="Clave" formControlName="clave">
-          </mat-form-field>
+          <sx-upper-case-field placeholder="Clave" formControlName="clave"></sx-upper-case-field>
+
         </div>
         <div layout>
           <mat-form-field>
@@ -27,13 +22,15 @@
           <mat-checkbox formControlName="nacional" flex>Nacional</mat-checkbox>
         </div>
         <div layout>
-          <mat-form-field class="pad-right" flex>
+          <mat-form-field class="pad-right">
             <input matInput placeholder="Teléfono 1" formControlName="telefono1" />
           </mat-form-field>
-          <mat-form-field class="pad-right" flex>
+          <mat-form-field class="pad-right">
             <input matInput placeholder="Teléfono 2" formControlName="telefono2" />
           </mat-form-field>
-          <mat-form-field class="pad-right" flex>
+        </div>
+        <div layout>
+          <mat-form-field class="pad-right">
             <input matInput placeholder="Teléfono 3" formControlName="telefono3" />
           </mat-form-field>
         </div>

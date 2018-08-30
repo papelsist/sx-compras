@@ -66,13 +66,14 @@ export function reducer(
       };
     }
 
+    case fromProveedor.CREATE_PROVEEDOR_ACTION:
     case fromProveedor.UPDATE_PROVEEDOR_ACTION: {
       return {
         ...state,
         loading: true
       };
     }
-
+    case fromProveedor.CREATE_PROVEEDOR_ACTION_FAIL:
     case fromProveedor.UPDATE_PROVEEDOR_ACTION_FAIL: {
       return {
         ...state,
@@ -80,6 +81,7 @@ export function reducer(
       };
     }
 
+    case fromProveedor.CREATE_PROVEEDOR_ACTION_SUCCESS:
     case fromProveedor.UPDATE_PROVEEDOR_ACTION_SUCCESS: {
       const proveedor = action.payload;
       const entities = {
