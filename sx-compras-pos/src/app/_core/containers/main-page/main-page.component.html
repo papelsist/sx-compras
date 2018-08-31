@@ -1,0 +1,41 @@
+<td-layout #layout mode="over" opened="false" [sidenavWidth]="sidenavWidth">
+
+  <div td-sidenav-content>
+    SideNac (Pendiente)
+  </div>
+
+  <td-navigation-drawer sidenavTitle="Compras" color="accent" navigationRoute="/" name="Operaciones" email="admin@gmail.com"
+    flex>
+
+    <div td-navigation-drawer-menu>
+      <mat-nav-list>
+        <a *ngFor="let item of usermenu" mat-list-item [routerLink]="[item.route]">
+          <mat-icon>{{item.icon}}</mat-icon>{{item.title}}
+        </a>
+      </mat-nav-list>
+    </div>
+
+    <mat-nav-list>
+      <a *ngFor="let item of navigation" mat-list-item [routerLink]="[item.route]" (click)="layout.close()">
+        <mat-icon>{{item.icon}}</mat-icon>{{item.title}}
+      </a>
+    </mat-nav-list>
+
+  </td-navigation-drawer>
+
+  <td-layout-nav navigationRoute="/" color="primary">
+    <button mat-icon-button td-menu-button tdLayoutToggle>
+      <mat-icon>menu</mat-icon>
+    </button>
+    <div td-toolbar-content layout="row" layout-align="start center" flex>
+      <span [routerLink]="['/']" class="cursor-pointer">SX Compras</span>
+      <span flex></span>
+      <sx-logout-button></sx-logout-button>
+    </div>
+    <router-outlet></router-outlet>
+  </td-layout-nav>
+
+
+
+
+</td-layout>

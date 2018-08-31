@@ -1,0 +1,8 @@
+import sx.compras.CompraDet
+
+model {
+	Iterable<CompraDet> compraDetList
+}
+
+json tmpl.compraDet(compraDetList ?: [])
+

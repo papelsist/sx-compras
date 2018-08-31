@@ -97,7 +97,6 @@ class CuentaPorPagar {
         descuentoFinancieroVto type:'date'
         pagos formula:'(select COALESCE(sum(x.importe),0) from aplicacion_de_pago x where x.cxp_id=id and x.pago_id is not null)'
         compensaciones formula:'(select COALESCE(sum(x.importe),0) from aplicacion_de_pago x where x.cxp_id=id and x.nota_id is not null)'
-
     }
 
 

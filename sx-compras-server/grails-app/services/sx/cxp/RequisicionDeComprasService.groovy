@@ -37,7 +37,8 @@ class RequisicionDeComprasService implements LogUser, FolioLog{
         log.debug('Actualizando importes de la requisicion {}', requisicion)
         requisicion.partidas.each {RequisicionDet det ->
             CuentaPorPagar cxp = det.cxp
-            det.total = cxp.importePorPagar - cxp.compensaciones
+            def compensaciones = AplicacionDePago.where{cxp == cxp && (nota.concepto != 'DESCUENTO') }.list().sum 0.0, { it.importe}
+            det.total = cxp.importePorPagar - compensaciones
             log.info("Fac {} Total docto: {} Analizado: {}", cxp.folio, cxp.total, cxp.importePorPagar)
             det.descuentof = requisicion.descuentof
             if(requisicion.descuentof){

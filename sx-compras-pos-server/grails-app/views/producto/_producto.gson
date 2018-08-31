@@ -1,0 +1,12 @@
+import sx.core.Producto
+
+model {
+	Producto producto
+}
+
+json g.render(producto, [resolveTemplate: false]) {
+	linea {
+		id producto?.linea?.id
+		linea producto.linea?.linea
+	}
+}

@@ -1,0 +1,9 @@
+import sx.core.Producto
+
+model {
+    Iterable<Producto> productoList
+}
+
+json tmpl.productoRow(productoList ?: [])
+
+
