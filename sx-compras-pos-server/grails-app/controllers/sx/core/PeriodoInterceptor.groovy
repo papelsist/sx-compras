@@ -9,6 +9,8 @@ import sx.utils.Periodo
  @GrailsCompileStatic
 class PeriodoInterceptor {
 
+
+
     public PeriodoInterceptor() {
         matchAll()
         match action: ~/(index)/

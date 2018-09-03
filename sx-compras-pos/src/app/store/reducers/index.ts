@@ -40,6 +40,10 @@ export const getSucursal = createSelector(
   getApplicationState,
   fromApplication.getSucursal
 );
+export const getGlobalLoading = createSelector(
+  getApplicationState,
+  fromApplication.getGlobalLoading
+);
 
 export class CustomSerializer
   implements fromRouter.RouterStateSerializer<RouterStateUrl> {
@@ -54,7 +58,6 @@ export class CustomSerializer
     const { params } = state;
     let parentParams;
     if (state.parent) {
-      // console.log('Adding parrent params: ', state);
       parentParams = state.parent.params;
     }
 

@@ -6,10 +6,12 @@ import { Sucursal } from '../../models';
 
 export interface State {
   sucursal: Sucursal;
+  globalLoading: boolean;
 }
 
 export const initialState: State = {
-  sucursal: undefined
+  sucursal: undefined,
+  globalLoading: false
 };
 
 export function reducer(
@@ -17,11 +19,19 @@ export function reducer(
   action: ApplicationActions
 ): State {
   switch (action.type) {
-    case ApplicationActionTypes.LoadSucursal: {
+    case ApplicationActionTypes.LoadSucursalSuccess: {
       const sucursal = action.payload.sucursal;
       return {
         ...state,
         sucursal
+      };
+    }
+
+    case ApplicationActionTypes.SetGlobalLoading: {
+      const globalLoading = action.payload.loading;
+      return {
+        ...state,
+        globalLoading
       };
     }
 
@@ -32,3 +42,4 @@ export function reducer(
 }
 
 export const getSucursal = (state: State) => state.sucursal;
+export const getGlobalLoading = (state: State) => state.globalLoading;

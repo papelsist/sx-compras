@@ -4,6 +4,8 @@ class UrlMappings {
 
     static mappings = {
 
+        "/api/config"(resource: 'appConfig', includes:['index', 'show'])
+
         "/api/sucursales"(resources: 'sucursal', includes:['index', 'show'])
         "/api/productos"(resources: 'producto', includes:['index', 'show'])
         "/api/proveedores"(resources: 'proveedor', includes:['index', 'show']){

@@ -1,6 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 
+import { Store, select } from '@ngrx/store';
+import * as fromRoot from 'app/store';
+import * as fromAuth from 'app/auth/store';
+
 import { of as observableOf, Observable } from 'rxjs';
+import { AuthSession } from 'app/auth/models/authSession';
+import { Sucursal } from '../../../models';
 
 @Component({
   selector: 'sx-main-page',
@@ -50,10 +56,17 @@ export class MainPageComponent implements OnInit {
   ];
 
   modulo$: Observable<string>;
+  loading$: Observable<boolean>;
+  sucursal$: Observable<Sucursal>;
 
   sidenavWidth = 300;
+  session$: Observable<AuthSession>;
 
-  constructor() {}
+  constructor(private store: Store<fromAuth.AuthState>) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.session$ = this.store.pipe(select(fromAuth.getSession));
+    this.loading$ = this.store.pipe(select(fromRoot.getGlobalLoading));
+    this.sucursal$ = this.store.pipe(select(fromRoot.getSucursal));
+  }
 }

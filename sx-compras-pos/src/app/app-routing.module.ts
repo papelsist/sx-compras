@@ -25,8 +25,8 @@ const routes: Routes = [
         loadChildren: './ordenes/ordenes.module#OrdenesModule'
       }
     ]
-  },
-  { path: '**', component: HomePageComponent } // Cambiar a: PageNotFoundComponent  cuando este listo
+  }
+  // { path: '**', component: HomePageComponent } // Cambiar a: PageNotFoundComponent  cuando este listo
 ];
 
 @NgModule({

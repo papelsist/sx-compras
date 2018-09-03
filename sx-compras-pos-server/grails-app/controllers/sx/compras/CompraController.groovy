@@ -22,18 +22,6 @@ class CompraController extends RestfulController<Compra> {
         super(Compra)
     }
 
-
-    @Override
-    protected Compra createResource() {
-        def instance = new Compra()
-        bindData instance, getObjectToBind()
-        instance.folio = 0L
-        instance.centralizada = true
-        if(instance.sucursal == null)
-            instance.sucursal = Sucursal.where { clave == 1}.find()
-        return instance
-    }
-
     @Override
     protected Compra saveResource(Compra resource) {
         return compraService.saveCompra(resource)
@@ -44,7 +32,7 @@ class CompraController extends RestfulController<Compra> {
     protected List<Compra> listAllResources(Map params) {
 
         params.max = 100
-        params.sort = 'lastUpdated'
+        params.sort = 'folio'
         params.order = 'desc'
 
         def query = Compra.where{}
@@ -55,18 +43,13 @@ class CompraController extends RestfulController<Compra> {
             query = query.where{ pendiente == true}
         }
 
-        if(params.periodo) {
+        if(params.periodo && !pendientes) {
             Periodo periodo = params.periodo
             query = query.where{fecha >= periodo.fechaInicial && fecha <= periodo.fechaFinal}
         }
         return  query.list(params)
     }
 
-    def pendientes() {
-        params.sort = 'lastUpdatred'
-        params.order = 'desc'
-        respond Compra.where{pendiente == true}.list(params)
-    }
 
     def cerrar(Compra compra) {
         if(compra == null) {

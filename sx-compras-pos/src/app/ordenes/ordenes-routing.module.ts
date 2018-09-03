@@ -9,6 +9,11 @@ const routes: Routes = [
     path: '',
     canActivate: [fromGuards.ComprasGuard],
     component: containers.ComprasComponent
+  },
+  {
+    path: ':compraId',
+    canActivate: [fromGuards.CompraExistsGuard],
+    component: containers.CompraComponent
   }
 ];
 

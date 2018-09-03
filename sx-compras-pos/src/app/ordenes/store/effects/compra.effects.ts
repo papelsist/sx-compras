@@ -7,7 +7,7 @@ import * as fromStore from '../../store';
 import { getPeriodoDeCompras } from '../selectors/compra.selectors';
 
 import { of } from 'rxjs';
-import { map, switchMap, tap, catchError, take } from 'rxjs/operators';
+import { map, switchMap, tap, catchError, take, delay } from 'rxjs/operators';
 
 import { CompraActionTypes, CompraActions } from '../actions/compra.actions';
 import * as fromActions from '../actions/compra.actions';
@@ -35,6 +35,7 @@ export class CompraEffects {
       return this.service
         .list(periodo)
         .pipe(
+          delay(3000),
           map(res => new fromActions.LoadComprasSuccess(res)),
           catchError(error => of(new fromActions.LoadComprasFail(error)))
         );

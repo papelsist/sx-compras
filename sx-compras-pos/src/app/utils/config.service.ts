@@ -5,7 +5,7 @@ import { Store } from '@ngrx/store';
 import * as fromRoot from '../store';
 import * as fromApplication from '../store/actions/application.actions';
 
-import { withLatestFrom, tap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 
 import { environment } from '../../environments/environment';
 import { Sucursal } from '../models/sucursal';
@@ -39,22 +39,21 @@ export class ConfigService {
   load(): Promise<any> {
     const promise = this.http
       .get(this.configurationUrl)
-      .pipe(tap(config => console.log('Config: ', config)))
+      .pipe(
+        tap(config => console.log('Config: ', config)),
+        tap((config: any) =>
+          this.store.dispatch(
+            new fromApplication.LoadSucursalSuccess({
+              sucursal: config.sucursal
+            })
+          )
+        )
+      )
       .toPromise();
     promise.then(config => {
       this.config = config; // <--- THIS RESOLVES AFTER
-      // this.store.dispatch(new fromApplication.LoadSucursal(this.config.apiUrl));
-      // console.log('AppConfig inicializada: ', this.config);
     });
     return promise;
-
-    /*
-   return new Promise(resolve => {
-      this.http.get(this.configurationUrl).pipe(
-        withLatestFrom( config => )
-      )
-   });
-   */
   }
 
   private getProperty(property: string): any {

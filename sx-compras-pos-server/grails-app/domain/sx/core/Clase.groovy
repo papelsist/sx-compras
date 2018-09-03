@@ -3,7 +3,7 @@ package sx.core
 
 import grails.rest.*
 
-@Resource(uri = "/api/clases", formats = ['json'])
+@Resource(readOnly = true, uri = "/api/clases", formats = ['json'])
 class Clase {
 
     String id

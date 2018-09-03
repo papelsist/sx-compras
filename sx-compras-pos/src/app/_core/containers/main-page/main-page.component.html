@@ -30,12 +30,19 @@
     <div td-toolbar-content layout="row" layout-align="start center" flex>
       <span [routerLink]="['/']" class="cursor-pointer">SX Compras</span>
       <span flex></span>
+      <span>{{(sucursal$ | async).nombre}}</span>
+      <span flex></span>
       <sx-logout-button></sx-logout-button>
     </div>
-    <router-outlet></router-outlet>
+
+    <ng-template tdLoading [tdLoadingUntil]="!(loading$ | async)" tdLoadingStrategy="overlay">
+      <router-outlet></router-outlet>
+    </ng-template>
   </td-layout-nav>
 
-
+  <td-layout-footer>
+    <sx-footer [session]="session$ | async"></sx-footer>
+  </td-layout-footer>
 
 
 </td-layout>
