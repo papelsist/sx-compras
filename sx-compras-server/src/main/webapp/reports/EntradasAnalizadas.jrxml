@@ -29,7 +29,7 @@
 	<parameter name="FECHA_INI" isForPrompting="true" class="java.util.Date"/>
 	<parameter name="FECHA_FIN" isForPrompting="true" class="java.util.Date"/>
 	<parameter name="SUCURSAL" isForPrompting="true" class="java.lang.String"/>
-	<queryString><![CDATA[SELECT B.ID,B.FOLIO,CONCAT(IFNULL(C.SERIE,''),'-',IFNULL(C.FOLIO,'')) AS DOCUMENTO,C.FECHA,(SELECT X.CLAVE FROM proveedor X WHERE C.PROVEEDOR_ID=X.ID) AS CLAVPROV,B.NOMBRE
+	<queryString><![CDATA[SELECT B.ID,B.FOLIO,CONCAT(IFNULL(C.SERIE,''),'-',IFNULL((case when LENGTH(c.folio)>6 then  SUBSTR(c.folio,LENGTH(c.folio)-5,LENGTH(c.folio)) else c.folio end),'')) AS DOCUMENTO,C.FECHA,(SELECT X.CLAVE FROM proveedor X WHERE C.PROVEEDOR_ID=X.ID) AS CLAVPROV,B.NOMBRE
 ,S.CLAVE AS SUC,S.NOMBRE AS SUCURSAL,I.DOCUMENTO AS DOCTO_ENT,I.FECHA AS FECHA_ENTRADA
 ,C.TOTAL*C.TIPO_DE_CAMBIO AS TOTAL,ROUND((B.IMPORTE_FLETE + B.IMPUESTO_FLETE-B.RETENCION_FLETE)*C.TIPO_DE_CAMBIO,2) AS FLETE,ROUND((C.TOTAL - (B.IMPORTE_FLETE + B.IMPUESTO_FLETE-B.RETENCION_FLETE))*C.TIPO_DE_CAMBIO,2) AS "TOT-FLETE"
 ,(SELECT IFNULL(SUM(X.IMPORTE),0) FROM  analisis_de_factura X WHERE X.DATE_CREATED<=B.DATE_CREATED AND X.FACTURA_ID=B.FACTURA_ID)*1.16 AS TOT_ANALISIS
@@ -303,7 +303,7 @@ GROUP BY C.ID,S.CLAVE,date(I.FECHA)]]></queryString>
 					<reportElement
 						x="245"
 						y="5"
-						width="226"
+						width="235"
 						height="11"
 						forecolor="#000000"
 						backcolor="#CCCCCC"
@@ -321,7 +321,7 @@ GROUP BY C.ID,S.CLAVE,date(I.FECHA)]]></queryString>
 				</staticText>
 				<staticText>
 					<reportElement
-						x="317"
+						x="331"
 						y="16"
 						width="45"
 						height="11"
@@ -343,7 +343,7 @@ GROUP BY C.ID,S.CLAVE,date(I.FECHA)]]></queryString>
 					<reportElement
 						x="245"
 						y="16"
-						width="72"
+						width="86"
 						height="11"
 						forecolor="#000000"
 						backcolor="#CCCCCC"
@@ -361,9 +361,9 @@ GROUP BY C.ID,S.CLAVE,date(I.FECHA)]]></queryString>
 				</staticText>
 				<staticText>
 					<reportElement
-						x="362"
+						x="376"
 						y="16"
-						width="48"
+						width="42"
 						height="11"
 						forecolor="#000000"
 						backcolor="#CCCCCC"
@@ -381,9 +381,9 @@ GROUP BY C.ID,S.CLAVE,date(I.FECHA)]]></queryString>
 				</staticText>
 				<staticText>
 					<reportElement
-						x="410"
+						x="418"
 						y="16"
-						width="61"
+						width="62"
 						height="11"
 						forecolor="#000000"
 						backcolor="#CCCCCC"
@@ -397,13 +397,13 @@ GROUP BY C.ID,S.CLAVE,date(I.FECHA)]]></queryString>
 					<textElement textAlignment="Center" verticalAlignment="Bottom">
 						<font pdfFontName="Helvetica" size="8" isBold="false"/>
 					</textElement>
-				<text><![CDATA[TOTAL S/FLETE]]></text>
+				<text><![CDATA[TOT.S/FLETE]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
-						x="533"
+						x="540"
 						y="5"
-						width="49"
+						width="42"
 						height="22"
 						forecolor="#000000"
 						backcolor="#CCCCCC"
@@ -421,9 +421,9 @@ GROUP BY C.ID,S.CLAVE,date(I.FECHA)]]></queryString>
 				</staticText>
 				<staticText>
 					<reportElement
-						x="471"
+						x="480"
 						y="5"
-						width="62"
+						width="60"
 						height="22"
 						forecolor="#000000"
 						backcolor="#CCCCCC"
@@ -498,7 +498,7 @@ TOTAL]]></text>
 					<reportElement
 						x="245"
 						y="3"
-						width="72"
+						width="86"
 						height="11"
 						key="textField-6"/>
 					<box>					<leftPen lineWidth="0.25" lineColor="#CCCCCC"/>
@@ -511,7 +511,7 @@ TOTAL]]></text>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="dd-MMM-yy" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="317"
+						x="331"
 						y="3"
 						width="45"
 						height="11"
@@ -526,9 +526,9 @@ TOTAL]]></text>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="471"
+						x="480"
 						y="3"
-						width="62"
+						width="60"
 						height="11"
 						key="textField"/>
 					<box>					<pen lineWidth="0.25" lineStyle="Solid" lineColor="#CCCCCC"/>
@@ -544,9 +544,9 @@ TOTAL]]></text>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="362"
+						x="376"
 						y="3"
-						width="48"
+						width="42"
 						height="11"
 						key="textField-13"/>
 					<box>					<pen lineWidth="0.25" lineStyle="Solid" lineColor="#CCCCCC"/>
@@ -562,9 +562,9 @@ TOTAL]]></text>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="410"
+						x="418"
 						y="3"
-						width="61"
+						width="62"
 						height="11"
 						key="textField-14"/>
 					<box>					<pen lineWidth="0.25" lineStyle="Solid" lineColor="#CCCCCC"/>
@@ -580,9 +580,9 @@ TOTAL]]></text>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="533"
+						x="540"
 						y="3"
-						width="49"
+						width="42"
 						height="11"
 						key="textField-15"/>
 					<box>					<pen lineWidth="0.25" lineStyle="Solid" lineColor="#CCCCCC"/>
@@ -860,9 +860,9 @@ TOTAL]]></text>
 			<band height="82"  isSplitAllowed="true" >
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="356"
+						x="376"
 						y="6"
-						width="54"
+						width="42"
 						height="14"
 						key="textField"/>
 					<box></box>
@@ -873,9 +873,9 @@ TOTAL]]></text>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="410"
+						x="418"
 						y="6"
-						width="61"
+						width="62"
 						height="14"
 						key="textField"/>
 					<box></box>
@@ -886,9 +886,9 @@ TOTAL]]></text>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="471"
+						x="480"
 						y="6"
-						width="62"
+						width="60"
 						height="14"
 						key="textField"/>
 					<box></box>
@@ -899,9 +899,9 @@ TOTAL]]></text>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="533"
+						x="540"
 						y="6"
-						width="48"
+						width="41"
 						height="14"
 						key="textField"/>
 					<box></box>
@@ -912,9 +912,9 @@ TOTAL]]></text>
 				</textField>
 				<staticText>
 					<reportElement
-						x="227"
+						x="313"
 						y="6"
-						width="128"
+						width="63"
 						height="14"
 						key="staticText-31"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
