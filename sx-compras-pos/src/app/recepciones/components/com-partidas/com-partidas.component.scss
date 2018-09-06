@@ -1,0 +1,17 @@
+table {
+  width: 100%;
+  overflow: auto;
+}
+
+.mat-column-solicitado, .mat-column-precio, .mat-column-importeNeto{
+  width: 100px;
+}
+
+.mat-column-unidad {
+  width: 100px;
+}
+
+table td input {
+  // width: 90%;
+  // height:100%;
+}

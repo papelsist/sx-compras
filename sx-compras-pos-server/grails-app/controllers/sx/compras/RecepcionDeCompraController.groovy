@@ -4,6 +4,7 @@ import grails.compiler.GrailsCompileStatic
 import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.RestfulController
 import groovy.transform.CompileDynamic
+import org.apache.commons.lang3.exception.ExceptionUtils
 import sx.core.Proveedor
 
 @GrailsCompileStatic
@@ -19,6 +20,9 @@ class RecepcionDeCompraController extends RestfulController<RecepcionDeCompra> {
 
     @Override
     protected List<RecepcionDeCompra> listAllResources(Map params) {
+        log.debug('List {}', params)
+        params.sort = 'lastUpdated'
+        params.order = 'desc'
         return super.listAllResources(params)
     }
 
@@ -39,5 +43,11 @@ class RecepcionDeCompraController extends RestfulController<RecepcionDeCompra> {
                 [proveedor])
         list*.actualizarPendiente()
         respond list
+    }
+
+    def handleException(Exception e) {
+        String message = ExceptionUtils.getRootCauseMessage(e)
+        log.error(message, ExceptionUtils.getRootCause(e))
+        respond([message: message], status: 500)
     }
 }

@@ -9,6 +9,7 @@ export interface State extends EntityState<Compra> {
   loaded: boolean;
   periodo: Periodo;
   searchTerm: string;
+  selected: string[];
 }
 
 export const adapter: EntityAdapter<Compra> = createEntityAdapter<Compra>();
@@ -17,7 +18,8 @@ export const initialState: State = adapter.getInitialState({
   loading: false,
   loaded: false,
   periodo: Periodo.fromNow(30),
-  searchTerm: undefined
+  searchTerm: undefined,
+  selected: []
 });
 
 export function reducer(state = initialState, action: CompraActions): State {
@@ -40,6 +42,7 @@ export function reducer(state = initialState, action: CompraActions): State {
     case CompraActionTypes.DepurarCompra:
     case CompraActionTypes.CerrarCompra:
     case CompraActionTypes.DeleteCompra:
+    case CompraActionTypes.UpdateCompra:
     case CompraActionTypes.AddCompra:
     case CompraActionTypes.LoadCompras: {
       return {
@@ -110,6 +113,14 @@ export function reducer(state = initialState, action: CompraActions): State {
       return adapter.removeAll(state);
     }
 
+    case CompraActionTypes.SetSelectedCompras: {
+      const selected = action.payload.selected;
+      return {
+        ...state,
+        selected
+      };
+    }
+
     default: {
       return state;
     }
@@ -127,3 +138,4 @@ export const getComprasLoading = (state: State) => state.loading;
 export const getComprasLoaded = (state: State) => state.loaded;
 export const getPeriodo = (state: State) => state.periodo;
 export const getSearchTerm = (state: State) => state.searchTerm;
+export const getSelected = (state: State) => state.selected;

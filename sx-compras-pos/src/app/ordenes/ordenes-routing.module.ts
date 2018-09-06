@@ -11,6 +11,10 @@ const routes: Routes = [
     component: containers.ComprasComponent
   },
   {
+    path: 'create',
+    component: containers.CompraComponent
+  },
+  {
     path: ':compraId',
     canActivate: [fromGuards.CompraExistsGuard],
     component: containers.CompraComponent

@@ -6,4 +6,5 @@ model {
 
 json g.render(compraDet, [resolveTemplate: false]) {
     porRecibir compraDet.getPorRecibir()
+    folio compraDet.compra.folio
 }

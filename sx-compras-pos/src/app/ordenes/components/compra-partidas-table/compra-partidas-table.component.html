@@ -17,7 +17,7 @@
       <th mat-header-cell *matHeaderCellDef>Solicitado</th>
       <td mat-cell *matCellDef="let row , let i = index">
         <input type="number" [(ngModel)]="row.solicitado" [ngModelOptions]="{standalone: true}" (input)="actualizar(i)" [disabled]="readOnly"
-          *ngIf="!readOnly && row.depurado === 0 else solicitado;">
+          *ngIf="!readOnly && !cerrada && row.depurado === 0 else solicitado;">
         <ng-template #solicitado>
           <span>{{row.solicitado}}</span>
         </ng-template>
@@ -110,8 +110,8 @@
     <ng-container matColumnDef="operaciones">
       <th mat-header-cell *matHeaderCellDef></th>
       <td mat-cell *matCellDef="let row, let i = index">
-        <mat-icon color="warn" class="cursor-pointer" *ngIf="!readOnly" (click)="delete.emit(i)">delete</mat-icon>
-        <mat-icon class="cursor-pointer" *ngIf="!readOnly && row.porRecibir != 0" (click)="depurar.emit(i)">layers_clear</mat-icon>
+        <mat-icon color="warn" class="cursor-pointer" *ngIf="canDelete(row)" (click)="delete.emit(i)">delete</mat-icon>
+        <mat-icon class="cursor-pointer" *ngIf="!readOnly && row.porRecibir !== 0" (click)="depurar.emit(i)">layers_clear</mat-icon>
       </td>
 
     </ng-container>

@@ -116,7 +116,10 @@
       "styleext": "scss"
     },
     "@schematics/angular:directive": {
-      "prefix": "sx"
+      "prefix": "sx",
+      "@ngrx/schematics:component": {
+        "styleext": "scss"
+      }
     }
   },
   "cli": {

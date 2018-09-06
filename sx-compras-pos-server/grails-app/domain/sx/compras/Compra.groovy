@@ -88,7 +88,7 @@ class Compra {
         rfc nullable:true, maxSize: 14
         entrega nullable:true
         serie nullable: true
-        folio unique:['sucursal', 'serie']
+        folio unique:['sucursal']
         sw2 nullable:true
         createdBy nullable: true
         lastUpdatedBy nullable: true

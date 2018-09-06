@@ -20,6 +20,7 @@ class UrlMappings {
         "/api/compras/cerrar/$id"(controller: 'compra', action: 'cerrar', method: 'PUT')
         "/api/compras/depurar/$id"(controller: 'compra', action: 'depurar', method: 'PUT')
         "/api/compras/print/$id"(controller: 'compra', action: 'print', method: 'GET')
+        "/api/compras/pendientes/${proveedorId}"(controller: 'compra', action: 'pendientes', method: 'GET')
 
 
 

@@ -46,7 +46,7 @@ class RecepcionDeCompraDet {
     static mapping = {
         id generator:'uuid'
         // devuelto formula:'(select COALESCE(sum(x.cantidad),0) from devolucion_de_compra_det x where x.recepcion_de_compra_det_id=id)'
-        analizado formula:'(select COALESCE(sum(x.cantidad),0) from analisis_de_factura_det x where x.com_id=id)'
+        // analizado formula:'(select COALESCE(sum(x.cantidad),0) from analisis_de_factura_det x where x.com_id=id)'
 
     }
 

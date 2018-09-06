@@ -22,11 +22,12 @@ export enum CompraActionTypes {
   ClearCompras = '[Compra] Clear Compras',
   SetPeriodo = '[Compra] Set Periodo de compras',
   SetSearchTerm = '[Compra] Set Search term de compras',
-  Load = '[Compra] Load One Compra',
-  LoadFail = '[Compra] Load One Compra fail',
-  LoadSuccess = '[Compra] Load One Compra Success',
+  GetCompra = '[Compra] Get One Compra',
+  GetCompraFail = '[Compra] Get One Compra fail',
+  GetCompraSuccess = '[Compra] Get One Compra Success',
   CerrarCompra = '[Compra] Cerrar  Compra ',
-  DepurarCompra = '[Compra] Depurar  Compra '
+  DepurarCompra = '[Compra] Depurar  Compra ',
+  SetSelectedCompras = '[Compra] Set Selected  Compras '
 }
 
 export class LoadCompras implements Action {
@@ -124,6 +125,25 @@ export class DepurarCompra implements Action {
   constructor(public payload: Compra) {}
 }
 
+export class SetSelectedCompras implements Action {
+  readonly type = CompraActionTypes.SetSelectedCompras;
+  constructor(public payload: { selected: string[] }) {}
+}
+
+export class GetCompra implements Action {
+  readonly type = CompraActionTypes.GetCompra;
+  constructor(public payload: { id: string }) {}
+}
+export class GetCompraFail implements Action {
+  readonly type = CompraActionTypes.GetCompraFail;
+  constructor(public payload: any) {}
+}
+
+export class GetCompraSuccess implements Action {
+  readonly type = CompraActionTypes.GetCompraSuccess;
+  constructor(public payload: { compra: Compra }) {}
+}
+
 export type CompraActions =
   | LoadCompras
   | LoadComprasFail
@@ -143,4 +163,8 @@ export type CompraActions =
   | SetPeriodo
   | SetSearchTerm
   | CerrarCompra
-  | DepurarCompra;
+  | DepurarCompra
+  | SetSelectedCompras
+  | GetCompra
+  | GetCompraFail
+  | GetCompraSuccess;

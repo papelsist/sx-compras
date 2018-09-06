@@ -43,7 +43,7 @@ export class CompraFormComponent implements OnInit, OnChanges {
       this.buildForm();
     }
     if (changes.compra && changes.compra.currentValue) {
-      // console.log('Editando compra:', changes.compra.currentValue);
+      console.log('Editando compra:', changes.compra.currentValue);
       const comp = changes.compra.currentValue;
       this.clarPartidas();
       this.form.patchValue(comp);
@@ -69,7 +69,7 @@ export class CompraFormComponent implements OnInit, OnChanges {
 
   buildForm() {
     this.form = this.fb.group({
-      fecha: [new Date(), [Validators.required]],
+      fecha: [{ value: new Date(), disabled: true }, [Validators.required]],
       proveedor: [null, [Validators.required]],
       sucursal: [null],
       moneda: [
@@ -163,5 +163,9 @@ export class CompraFormComponent implements OnInit, OnChanges {
     } else {
       return undefined;
     }
+  }
+
+  get cerrada() {
+    return this.compra ? this.compra.cerrada : null;
   }
 }

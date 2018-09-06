@@ -7,11 +7,13 @@
 
   <ng-container matColumnDef="proveedor">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Proveedor</th>
-    <td mat-cell *matCellDef="let compra">{{compra.nombre}}</td>
+    <td mat-cell *matCellDef="let compra" (click)="toogleSelect(compra)
+    ">{{compra.nombre}}</td>
   </ng-container>
   <ng-container matColumnDef="folio">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Folio</th>
-    <td mat-cell *matCellDef="let compra">{{compra.folio}}</td>
+    <td mat-cell *matCellDef="let compra" (click)="toogleSelect(compra)
+    ">{{compra.folio}}</td>
   </ng-container>
   <ng-container matColumnDef="fecha">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
@@ -27,7 +29,8 @@
   </ng-container>
   <ng-container matColumnDef="total">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Total</th>
-    <td mat-cell *matCellDef="let compra">{{compra.total | currency:'USD'}}</td>
+    <td mat-cell *matCellDef="let compra" (click)="toogleSelect(compra)
+    ">{{compra.total | currency:'USD'}}</td>
   </ng-container>
   <ng-container matColumnDef="comentario">
     <th mat-header-cell *matHeaderCellDef>Comentario</th>
@@ -65,13 +68,13 @@
   <ng-container matColumnDef="operaciones">
     <th mat-header-cell *matHeaderCellDef></th>
     <td mat-cell *matCellDef="let req">
-      <mat-icon (click)="onEdit($event, req)" class="pad-right">edit</mat-icon>
+      <!-- <mat-icon (click)="onEdit($event, req)" class="pad-right">edit</mat-icon> -->
+      <mat-icon [routerLink]="req.id" class="pad-right">edit</mat-icon>
       <sx-compra-print [compra]="req" [smallIcon]="true"></sx-compra-print>
     </td>
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="displayColumns "></tr>
-  <tr mat-row *matRowDef="let compra; columns: displayColumns " class="cursor-pointer " (click)="toogleSelect(compra)
-        " [ngClass]="{ 'active': compra.selected} "></tr>
+  <tr mat-row *matRowDef="let compra; columns: displayColumns " class="cursor-pointer " [ngClass]="{ 'active': compra.selected} "></tr>
 </table>
-<mat-paginator [pageSizeOptions]="[20, 50, 100, 200] " showFirstLastButtons></mat-paginator>
+<mat-paginator [pageSizeOptions]="[10, 20, 50, 100, 200] " showFirstLastButtons></mat-paginator>

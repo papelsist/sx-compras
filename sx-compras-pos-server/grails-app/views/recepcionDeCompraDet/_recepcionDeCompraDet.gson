@@ -4,14 +4,13 @@ model {
 	RecepcionDeCompraDet recepcionDeCompraDet
 }
 
-json g.render(recepcionDeCompraDet, [resolveTemplate: false, excludes: ['producto']]) {
-    producto {
-        id recepcionDeCompraDet.producto.id
-        clave recepcionDeCompraDet.producto.clave
-        descripcion recepcionDeCompraDet.producto.descripcion
-        unidad recepcionDeCompraDet.producto.unidad
-    }
+json g.render(recepcionDeCompraDet, [resolveTemplate: false]) {
+
+    clave recepcionDeCompraDet.producto.clave
+    descripcion recepcionDeCompraDet.producto.descripcion
+    unidad recepcionDeCompraDet.producto.unidad
     com recepcionDeCompraDet.recepcion.documento
+    solicitado recepcionDeCompraDet.compraDet.solicitado
     remision recepcionDeCompraDet.recepcion.remision
     sucursal recepcionDeCompraDet.recepcion.sucursal.nombre
 }

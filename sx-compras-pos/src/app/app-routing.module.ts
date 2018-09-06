@@ -13,6 +13,14 @@ const routes: Routes = [
     children: [
       { path: '', component: HomePageComponent },
       {
+        path: 'ordenes',
+        loadChildren: './ordenes/ordenes.module#OrdenesModule'
+      },
+      {
+        path: 'recepciones',
+        loadChildren: './recepciones/recepciones.module#RecepcionesModule'
+      },
+      {
         path: 'productos',
         loadChildren: './productos/productos.module#ProductosModule'
       },
@@ -20,10 +28,6 @@ const routes: Routes = [
         path: 'proveedores',
         loadChildren: './proveedores/proveedores.module#ProveedoresModule'
       },
-      {
-        path: 'ordenes',
-        loadChildren: './ordenes/ordenes.module#OrdenesModule'
-      }
     ]
   }
   // { path: '**', component: HomePageComponent } // Cambiar a: PageNotFoundComponent  cuando este listo

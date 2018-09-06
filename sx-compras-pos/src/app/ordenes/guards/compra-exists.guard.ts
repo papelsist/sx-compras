@@ -28,15 +28,6 @@ export class CompraExistsGuard implements CanActivate {
     );
   }
 
-  hasCompra(id: string): Observable<boolean> {
-    return this.store
-      .select(fromStore.getComprasEntities)
-      .pipe(
-        map((entities: { [key: string]: Compra }) => !!entities[id]),
-        take(1)
-      );
-  }
-
   checkStore(): Observable<boolean> {
     return this.store.select(fromStore.getComprasLoaded).pipe(
       tap(loaded => {
@@ -55,7 +46,7 @@ export class CompraExistsGuard implements CanActivate {
       tap(action => this.store.dispatch(action)),
       map(action => !!action.payload.compra),
       catchError(() => {
-        this.store.dispatch(new fromRoot.Go({ path: ['ordenes/compras'] }));
+        this.store.dispatch(new fromRoot.Go({ path: ['ordenes'] }));
         return of(false);
       })
     );

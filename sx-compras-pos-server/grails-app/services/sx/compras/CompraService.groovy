@@ -29,9 +29,7 @@ abstract class CompraService {
     Compra saveCompra(Compra compra) {
         if(!compra.id) {
             compra.folio = nextFolio(compra)
-            compra.nombre = compra.proveedor.nombre
-            compra.clave = compra.proveedor.rfc
-            compra.rfc = compra.proveedor.rfc
+            log.info('Compra nueva Serie: {}, Folio: {}', compra.serie, compra.folio)
         }
         actualizar(compra)
         logEntity(compra)
@@ -42,8 +40,10 @@ abstract class CompraService {
 
     @CompileDynamic
     void actualizar(Compra compra) {
+        compra.nombre = compra.proveedor.nombre
+        compra.clave = compra.proveedor.rfc
+        compra.rfc = compra.proveedor.rfc
         compra.partidas.each {
-            it.sucursal?: compra.sucursal
             actualizarPartida(it)
         }
         if(compra.proveedor.plazo)
@@ -81,6 +81,9 @@ abstract class CompraService {
 
 
     void actualizarPartida(CompraDet partida) {
+        partida.clave = partida.producto.clave
+        partida.descripcion = partida.producto.descripcion
+        partida.unidad = partida.producto.unidad
         BigDecimal factor = partida.producto.unidad == 'MIL' ? 1000 : 1
         BigDecimal cantidad = partida.solicitado / factor
         BigDecimal importeBruto = MonedaUtils.round(cantidad * partida.precio) as BigDecimal
@@ -104,13 +107,14 @@ abstract class CompraService {
         partida.importeNeto = importeNeto
     }
 
+
     Long  nextFolio(Compra compra){
-        String serie = compra.sucursal.clave == '1' ? 'OFICINAS' : 'SUC_'+ compra.sucursal.nombre.replaceAll(' ', '_')
+        String serie = compra.sucursal.nombre
         compra.serie = serie
-        Folio folio = Folio.findOrCreateWhere(entidad: 'COMPRAS', serie: serie)
+        Folio folio = Folio.findOrCreateWhere(entidad: 'COMPRA', serie: 'OFICINAS')
         Long res = folio.folio + 1
         folio.folio = res
-        folio.save flush: true
+        // folio.save flush: true
         return res
     }
 

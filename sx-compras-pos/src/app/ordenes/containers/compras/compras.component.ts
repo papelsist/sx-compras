@@ -11,31 +11,16 @@ import { map } from 'rxjs/operators';
 import { Compra } from '../../models/compra';
 
 import * as _ from 'lodash';
+import { CompraDet } from '../../models/compraDet';
 
 @Component({
   selector: 'sx-compras',
-  template: `
-    <mat-card>
-      <sx-search-title title="Compras" (search)="onSearch($event)">
-      </sx-search-title>
-      <mat-divider></mat-divider>
-      <ng-container *ngIf="comprasPorSucursal$ | async as rows">
-        <mat-tab-group [(selectedIndex)]="tabIndex">
-          <mat-tab label="{{sucursal}}" *ngFor="let sucursal of getSucursales(rows)">
-            <sx-compras-table [compras]="rows[sucursal]" [filter]="search$ | async" (edit)="onEdit($event)"></sx-compras-table>
-          </mat-tab>
-        </mat-tab-group>
-      </ng-container>
-    </mat-card>
-    <a mat-fab matTooltip="Nueva compra" matTooltipPosition="before" color="accent" class="mat-fab-position-bottom-right z-3"
-      [routerLink]="['create']">
-	    <mat-icon>add</mat-icon>
-    </a>
-  `
+  templateUrl: './compras.component.html'
 })
 export class ComprasComponent implements OnInit, OnDestroy {
   comprasPorSucursal$: Observable<any>;
   sucursales$: Observable<string[]>;
+  partidas$: Observable<CompraDet[]>;
 
   search$: Observable<string>;
   tabIndex = 2;
@@ -52,7 +37,10 @@ export class ComprasComponent implements OnInit, OnDestroy {
     // Tab Idx
     const _tabIdx = localStorage.getItem(this._storageKey + '.tabIndex');
     this.tabIndex = parseFloat(_tabIdx);
+
+    this.partidas$ = this.store.pipe(select(fromStore.getSelectedPartidas));
   }
+
   ngOnDestroy() {
     localStorage.setItem(
       this._storageKey + '.tabIndex',
@@ -60,7 +48,16 @@ export class ComprasComponent implements OnInit, OnDestroy {
     );
   }
 
-  onSelect() {}
+  onSelect(event: Compra[]) {
+    const selected = event.map(item => item.id);
+    this.store.dispatch(new fromActions.SetSelectedCompras({ selected }));
+
+    event.map(item => {
+      if (!item.partidas) {
+        this.store.dispatch(new fromActions.GetCompra({ id: item.id }));
+      }
+    });
+  }
 
   onSearch(event: string) {
     this.store.dispatch(new fromActions.SetSearchTerm(event));
@@ -71,6 +68,6 @@ export class ComprasComponent implements OnInit, OnDestroy {
   }
 
   onEdit(event: Compra) {
-    this.store.dispatch(new fromRoot.Go({ path: ['ordenes', event.id] }));
+    this.store.dispatch(new fromRoot.Go({ path: [event.id] }));
   }
 }

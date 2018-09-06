@@ -5,6 +5,9 @@ import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.*
 
 import groovy.transform.CompileDynamic
+import org.apache.commons.lang3.exception.ExceptionUtils
+import sx.core.AppConfig
+import sx.core.Proveedor
 import sx.core.Sucursal
 import sx.reports.ReportService
 import sx.utils.Periodo
@@ -25,6 +28,16 @@ class CompraController extends RestfulController<Compra> {
     @Override
     protected Compra saveResource(Compra resource) {
         return compraService.saveCompra(resource)
+    }
+
+    @Override
+    protected Compra createResource() {
+        Compra compra = new Compra()
+        bindData compra, getObjectToBind()
+        compra.sucursal = AppConfig.first().sucursal
+        compra.folio = -1l
+        compra.fecha = new Date()
+        return compra
     }
 
     @Override
@@ -59,6 +72,15 @@ class CompraController extends RestfulController<Compra> {
         respond compraService.cerrarCompra(compra)
     }
 
+    def pendientes() {
+        log.info('Pendientes: {} Prov:{}', params)
+        String id = params.proveedorId
+        def query = Compra.where{ proveedor.id == id && pendiente == true}
+        params.sort = 'lastUpdated'
+        params.order = 'desc'
+        respond query.list(params)
+    }
+
     def depurar(Compra compra) {
         if(compra == null) {
             notFound()
@@ -74,5 +96,11 @@ class CompraController extends RestfulController<Compra> {
         repParams.IMPRIMIR_COSTO = 'SI'
         def pdf =  reportService.run('Compra.jrxml', repParams)
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'ListaDePrecios.pdf')
+    }
+
+    def handleException(Exception e) {
+        String message = ExceptionUtils.getRootCauseMessage(e)
+        log.error(message, ExceptionUtils.getRootCause(e))
+        respond([message: message], status: 500)
     }
 }

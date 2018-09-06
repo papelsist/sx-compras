@@ -9,9 +9,9 @@ import {
   SimpleChanges
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { MatTable, MatTableDataSource } from '@angular/material';
+import { MatTableDataSource } from '@angular/material';
 
-import { CompraDet, actualizarPartida } from '../../models/compraDet';
+import { CompraDet } from '../../models/compraDet';
 
 @Component({
   selector: 'sx-compra-partidas-table',
@@ -22,6 +22,7 @@ import { CompraDet, actualizarPartida } from '../../models/compraDet';
 export class CompraPartidasTableComponent implements OnInit, OnChanges {
   @Input() partidas: CompraDet[] = [];
   @Input() parent: FormGroup;
+  @Input() cerrada;
 
   @Output() update = new EventEmitter();
   @Output() delete = new EventEmitter();
@@ -32,12 +33,12 @@ export class CompraPartidasTableComponent implements OnInit, OnChanges {
     'descripcion',
     // 'unidad',
     'solicitado',
-    'precio',
-    'descuento1',
-    'descuento2',
-    'descuento3',
-    'descuento4',
-    'importeNeto',
+    // 'precio',
+    // 'descuento1',
+    // 'descuento2',
+    // 'descuento3',
+    // 'descuento4',
+    // 'importeNeto',
     'recibido',
     'depurado',
     'porRecibir',
@@ -66,5 +67,9 @@ export class CompraPartidasTableComponent implements OnInit, OnChanges {
   }
   get especial() {
     return this.parent.get('especial').value;
+  }
+
+  canDelete(det: CompraDet) {
+    return !this.readOnly && this.cerrada === null && det.recibido > 0;
   }
 }
