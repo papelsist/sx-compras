@@ -54,7 +54,6 @@ class CompraListenerService {
     }
 
     def logEntity(Compra compra, String type) {
-        // log.debug('Compra cerrada: {}', compra.cerrada ? 'SI' : 'NO')
         if(compra.cerrada != null) {
             Boolean central = compra.sucursal.clave.trim() == '1' ? true : false
             if(central) {
@@ -70,12 +69,11 @@ class CompraListenerService {
             } else {
                 buildLog(compra, compra.sucursal.nombre, type)
             }
-
         }
-
     }
 
     def buildLog(Compra compra, String destino, String type) {
+        /*
         AuditLog log = new AuditLog(
                 name: 'Compra',
                 persistedObjectId: compra.id,
@@ -96,5 +94,6 @@ class CompraListenerService {
             )
             auditLogDataService.save(logDet)
         }
+        */
     }
 }

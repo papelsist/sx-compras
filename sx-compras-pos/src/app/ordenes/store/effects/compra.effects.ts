@@ -4,7 +4,7 @@ import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Store, select } from '@ngrx/store';
 import * as fromRoot from 'app/store';
 import * as fromStore from '../../store';
-import { getPeriodoDeCompras } from '../selectors/compra.selectors';
+import * as fromCompras from '../../store/selectors/compra.selectors';
 
 import { of } from 'rxjs';
 import {
@@ -39,11 +39,11 @@ export class CompraEffects {
   loadCompras$ = this.actions$.pipe(
     ofType(CompraActionTypes.LoadCompras),
     switchMap(() => {
-      return this.store.pipe(select(getPeriodoDeCompras), take(1));
+      return this.store.pipe(select(fromCompras.getComprasFilter), take(1));
     }),
-    switchMap(periodo => {
+    switchMap(filter => {
       return this.service
-        .list(periodo)
+        .list(filter)
         .pipe(
           map(res => new fromActions.LoadComprasSuccess(res)),
           catchError(error => of(new fromActions.LoadComprasFail(error)))
@@ -52,12 +52,9 @@ export class CompraEffects {
   );
 
   @Effect()
-  setPeriodo$ = this.actions$.pipe(
-    ofType<fromActions.SetPeriodo>(CompraActionTypes.SetPeriodo),
-    map(action => action.payload),
-    tap(periodo =>
-      Periodo.saveOnStorage('sx-compras.compras.periodo', periodo)
-    ),
+  setFilter$ = this.actions$.pipe(
+    ofType<fromActions.SetComprasFilter>(CompraActionTypes.SetComprasFilter),
+    map(action => action.payload.filter),
     map(() => new fromActions.LoadCompras())
   );
 

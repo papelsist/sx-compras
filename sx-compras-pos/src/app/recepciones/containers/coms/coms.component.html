@@ -1,10 +1,14 @@
 <mat-card flex>
   <sx-search-title title="Recepción de compras" (search)="onSearch($event)">
+    <sx-coms-filter (change)="onFilter($event)" [filter]="comsFilter$ | async" class="options"></sx-coms-filter>
   </sx-search-title>
   <mat-divider></mat-divider>
   <sx-coms-table [coms]="coms$ | async" (select)="onSelect($event)"></sx-coms-table>
+  <mat-card-footer *ngIf="comsFilter$ | async as comsFilter">
+    <sx-coms-filter-label [filter]="comsFilter"></sx-coms-filter-label>
+  </mat-card-footer>
 </mat-card>
-<a mat-fab matTooltip="Nueva recepción" matTooltipPosition="before" color="accent" class="mat-fab-position-bottom-right z-3"
+<a mat-fab matTooltip="Nueva recepción" matTooltipPosition="before" color="accent" class="mat-fab-position-bottom-left "
   [routerLink]="['/recepciones/create']">
   <mat-icon>add</mat-icon>
 </a>

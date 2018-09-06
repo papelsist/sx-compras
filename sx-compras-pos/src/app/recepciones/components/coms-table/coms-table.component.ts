@@ -31,6 +31,7 @@ export class ComsTableComponent implements OnInit, OnChanges, OnDestroy {
   displayColumns = [
     'sucursalNombre',
     'documento',
+    'compraFolio',
     'fecha',
     'nombre',
     'remision',

@@ -27,6 +27,7 @@ class UrlMappings {
         "/api/coms"(resources: 'recepcionDeCompra',  excludes:['create', 'edit','patch']){
             "/partidas"(resources: 'recepcionDeCompraDet', excludes:['create', 'edit','patch'])
         }
+        "/api/coms/print/$id"(controller: 'recepcionDeCompra', action: 'print', method: 'GET')
 
         "/"(controller: 'application', action:'index')
         "500"(view: '/error')

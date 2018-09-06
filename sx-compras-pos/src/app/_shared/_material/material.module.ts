@@ -26,7 +26,8 @@ import {
   MatPaginatorModule,
   MatSortModule,
   MatProgressBarModule,
-  MatGridListModule
+  MatGridListModule,
+  MatSliderModule,
 } from '@angular/material';
 
 const MATERIAL_MODULES: any[] = [
@@ -55,7 +56,8 @@ const MATERIAL_MODULES: any[] = [
   MatPaginatorModule,
   MatSortModule,
   MatProgressBarModule,
-  MatGridListModule
+  MatGridListModule,
+  MatSliderModule
 ];
 /**
  * Special module to controll Material desing modules

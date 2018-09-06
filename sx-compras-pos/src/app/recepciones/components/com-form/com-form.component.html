@@ -2,8 +2,8 @@
   <form [formGroup]="form">
 
     <div layout layout-align="start center" class="mat-title pad-left pad-top">
-      <span>Com: {{com.documento}} ({{com.sucursalNombre}})</span>
-      <span class="pad-left">({{com.fecha | date: 'dd/MM/yyyy'}})</span>
+      <span>Com: {{com.documento}} {{com.nombre}}</span>
+      <span class="pad-left"> ({{com.fecha | date: 'dd/MM/yyyy'}})</span>
       <span flex></span>
 
       <ng-container *ngIf="com.fechaInventario">
@@ -11,16 +11,21 @@
         <span class="pad-right tc-pink-600">{{com.fechaInventario | date: 'dd/MM/yyyy'}}</span>
       </ng-container>
     </div>
-
+    <mat-divider></mat-divider>
     <div layout class="pad-left pad-right pad-top">
-      <mat-form-field flex>
-        <input matInput [value]="com.nombre" [disabled]="true" placeholder="Proveedor">
-      </mat-form-field>
+
       <mat-form-field class="pad-left">
         <input matInput [value]="com.compraFolio" [disabled]="true" placeholder="Compra">
       </mat-form-field>
       <mat-form-field class="pad-left">
         <input matInput value="{{com.compraFecha | date: 'dd/MM/yyyy'}}" [disabled]="true" placeholder="F. Compra">
+      </mat-form-field>
+      <mat-form-field class="pad-left">
+        <input matInput [value]="com.remision" [disabled]="true" placeholder="Remisión">
+      </mat-form-field>
+
+      <mat-form-field class="pad-left">
+        <input matInput value="{{com.compraFecha | date: 'dd/MM/yyyy'}}" [disabled]="true" placeholder="Fecha Remisión ">
       </mat-form-field>
       <sx-upper-case-field formControlName="comentario" placeholder="Comentario" flex class="pad-left pad-right"></sx-upper-case-field>
     </div>
@@ -36,9 +41,6 @@
     <mat-card-actions>
       <button type="button" mat-button [routerLink]="['../']">
         <mat-icon>arrow_back</mat-icon> Coms
-      </button>
-      <button type="button" mat-button color="primary" (click)="onSave()" [disabled]="form.invalid || form.pristine">
-        <mat-icon>save</mat-icon> Salvar
       </button>
       <ng-content></ng-content>
     </mat-card-actions>

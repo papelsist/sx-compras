@@ -57,10 +57,7 @@ export class ComCreateFormComponent implements OnInit {
 
   buildForm() {
     this.form = this.fb.group({
-      fechaRemision: [
-        { value: new Date(), disabled: false },
-        [Validators.required]
-      ],
+      fechaRemision: [{ value: null, disabled: false }, [Validators.required]],
       proveedor: [null, [Validators.required]],
       compra: [null, [Validators.required]],
       comentario: [],
@@ -74,13 +71,14 @@ export class ComCreateFormComponent implements OnInit {
     if (this.form.valid) {
       const fechaRemision = this.form.get('fechaRemision').value.toISOString();
       const partidas = [...this.partidas.value];
+      const compra = this.form.get('compra').value.id;
       const res = {
         ...this.form.value,
         fechaRemision,
-        partidas
+        partidas,
+        compra
       };
       this.save.emit(res);
-      this.form.markAsPristine();
     }
   }
 

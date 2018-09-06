@@ -43,15 +43,18 @@ class CompraController extends RestfulController<Compra> {
     @Override
     @CompileDynamic
     protected List<Compra> listAllResources(Map params) {
-
-        params.max = 100
         params.sort = 'folio'
         params.order = 'desc'
+        params.max = params.registros?: 50
+        // log.debug('List {}', params)
 
         def query = Compra.where{}
         def pendientes = this.params.getBoolean('pendientes') ?: true
+        if(params.proveedorId) {
+            String proveedorId = params.proveedorId
+            query = query.where{ proveedor.id == proveedorId}
+        }
 
-        log.info('List: {} Pendientes: {} ', params, pendientes)
         if(pendientes){
             query = query.where{ pendiente == true}
         }
@@ -73,7 +76,6 @@ class CompraController extends RestfulController<Compra> {
     }
 
     def pendientes() {
-        log.info('Pendientes: {} Prov:{}', params)
         String id = params.proveedorId
         def query = Compra.where{ proveedor.id == id && pendiente == true}
         params.sort = 'lastUpdated'

@@ -7,7 +7,7 @@ import * as fromActions from '../../store/actions/recepcion.actions';
 import { Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { RecepcionDeCompra } from '../../models/recepcionDeCompra';
+import { RecepcionDeCompra, ComsFilter } from '../../models/recepcionDeCompra';
 import { RecepcionDeCompraDet } from '../../models/recepcionDeCompraDet';
 
 import * as _ from 'lodash';
@@ -21,12 +21,14 @@ export class ComsComponent implements OnInit, OnDestroy {
   coms$: Observable<RecepcionDeCompra[]>;
   partidas$: Observable<Partial<RecepcionDeCompraDet>[]>;
   search$ = new Subject<string>();
+  comsFilter$: Observable<ComsFilter>;
 
   constructor(private store: Store<fromStore.State>) {}
 
   ngOnInit() {
     this.coms$ = this.store.pipe(select(fromStore.getAllRecepcionesDeCompra));
     this.partidas$ = this.store.pipe(select(fromStore.getSelectedPartidas));
+    this.comsFilter$ = this.store.pipe(select(fromStore.getComsFilter));
   }
 
   ngOnDestroy() {}
@@ -45,5 +47,9 @@ export class ComsComponent implements OnInit, OnDestroy {
 
   onSearch(event: string) {
     this.search$.next(event);
+  }
+
+  onFilter(event: ComsFilter) {
+    this.store.dispatch(new fromActions.SetComsFilter({ filter: event }));
   }
 }

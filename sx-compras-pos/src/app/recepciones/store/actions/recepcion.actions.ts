@@ -1,6 +1,6 @@
 import { Action } from '@ngrx/store';
 
-import { RecepcionDeCompra } from '../../models/recepcionDeCompra';
+import { RecepcionDeCompra, ComsFilter } from '../../models/recepcionDeCompra';
 
 export enum RecepcionDeCompraActionTypes {
   LoadComs = '[RecepcionDeCompra] Load Coms',
@@ -24,7 +24,8 @@ export enum RecepcionDeCompraActionTypes {
   GetRecepcionDeCompra = '[RecepcionDeCompra] Get One RecepcionDeCompra',
   GetRecepcionDeCompraFail = '[RecepcionDeCompra] Get One RecepcionDeCompra fail',
   GetRecepcionDeCompraSuccess = '[RecepcionDeCompra] Get One RecepcionDeCompra Success',
-  SetSelectedComs = '[RecepcionDeCompra] Set Selected  Coms '
+  SetSelectedComs = '[RecepcionDeCompra] Set Selected  Coms ',
+  SetComsFilter = '[RecepcionDeCompra] Set COMS filter'
 }
 
 export class LoadComs implements Action {
@@ -116,6 +117,11 @@ export class GetRecepcionDeCompraSuccess implements Action {
   constructor(public payload: { RecepcionDeCompra: RecepcionDeCompra }) {}
 }
 
+export class SetComsFilter implements Action {
+  readonly type = RecepcionDeCompraActionTypes.SetComsFilter;
+  constructor(public payload: { filter: ComsFilter }) {}
+}
+
 export type RecepcionDeCompraActions =
   | LoadComs
   | LoadComsFail
@@ -134,4 +140,5 @@ export type RecepcionDeCompraActions =
   | SetSelectedComs
   | GetRecepcionDeCompra
   | GetRecepcionDeCompraFail
-  | GetRecepcionDeCompraSuccess;
+  | GetRecepcionDeCompraSuccess
+  | SetComsFilter;

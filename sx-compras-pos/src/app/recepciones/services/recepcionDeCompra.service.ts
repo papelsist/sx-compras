@@ -8,7 +8,7 @@ import * as _ from 'lodash';
 
 import { ConfigService } from '../../utils/config.service';
 
-import { RecepcionDeCompra } from '../models/recepcionDeCompra';
+import { RecepcionDeCompra, ComsFilter } from '../models/recepcionDeCompra';
 import { Periodo } from 'app/_core/models/periodo';
 import { Compra } from '../../ordenes/models/compra';
 
@@ -20,13 +20,19 @@ export class RecepcionDeCompraService {
     this.apiUrl = configService.buildApiUrl('coms');
   }
 
-  list(
-    periodo: Periodo = Periodo.fromNow(10)
-  ): Observable<RecepcionDeCompra[]> {
-    const { fechaInicial, fechaFinal } = periodo.toApiJSON();
-    const params = new HttpParams()
-      .set('fechaInicial', fechaInicial)
-      .set('fechaFinal', fechaFinal);
+  list(filter?: ComsFilter): Observable<RecepcionDeCompra[]> {
+    let params = new HttpParams();
+    _.forIn(filter, (value: any, key) => {
+      if (value instanceof Date) {
+        const fecha: Date = value;
+        params = params.set(key, fecha.toISOString());
+      } else {
+        params = params.set(key, value);
+      }
+      if (filter.proveedor) {
+        params = params.set('proveedorId', filter.proveedor.id);
+      }
+    });
     return this.http
       .get<RecepcionDeCompra[]>(this.apiUrl, { params: params })
       .pipe(catchError((error: any) => throwError(error)));

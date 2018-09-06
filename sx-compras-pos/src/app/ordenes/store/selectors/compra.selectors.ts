@@ -53,15 +53,6 @@ export const getComprasPorSucursalPendientes = createSelector(
   compras => _.groupBy(compras, 'sucursalNombre')
 );
 
-export const getPeriodoDeCompras = createSelector(
-  getComprasState,
-  fromCompras.getPeriodo
-);
-export const getComprasSearchTerm = createSelector(
-  getComprasState,
-  fromCompras.getSearchTerm
-);
-
 export const getSelectedComprasIds = createSelector(
   getComprasState,
   fromCompras.getSelected
@@ -79,4 +70,9 @@ export const getSelectedPartidas = createSelector(getSelectedCompras, compras =>
   compras
     .map(item => item.partidas)
     .reduce((acu, partidas) => [...acu, ...partidas], [])
+);
+
+export const getComprasFilter = createSelector(
+  getComprasState,
+  fromCompras.getFilter
 );

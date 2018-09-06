@@ -8,7 +8,7 @@ import * as _ from 'lodash';
 
 import { ConfigService } from '../../utils/config.service';
 import { Sucursal } from '../../models';
-import { Compra } from '../models/compra';
+import { Compra, ComprasFilter } from '../models/compra';
 import { Periodo } from 'app/_core/models/periodo';
 import { ProveedorProducto } from '../../proveedores/models/proveedorProducto';
 
@@ -20,11 +20,19 @@ export class ComprasService {
     this.apiUrl = configService.buildApiUrl('compras');
   }
 
-  list(periodo: Periodo): Observable<Compra[]> {
-    const { fechaInicial, fechaFinal } = periodo.toApiJSON();
-    const params = new HttpParams()
-      .set('fechaInicial', fechaInicial)
-      .set('fechaFinal', fechaFinal);
+  list(filter: ComprasFilter): Observable<Compra[]> {
+    let params = new HttpParams();
+    _.forIn(filter, (value: any, key) => {
+      if (value instanceof Date) {
+        const fecha: Date = value;
+        params = params.set(key, fecha.toISOString());
+      } else {
+        params = params.set(key, value);
+      }
+      if (filter.proveedor) {
+        params = params.set('proveedorId', filter.proveedor.id);
+      }
+    });
     return this.http.get<Compra[]>(this.apiUrl, { params: params });
   }
 

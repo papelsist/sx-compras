@@ -65,7 +65,7 @@ if (Environment.isDevelopmentMode() && targetDir != null) {
 
     // Log Listeners
     logger("sx.audit", DEBUG, ['STDOUT'], false)
-    logger("sx.reports", DEBUG, ['STDOUT'], false)
+    logger("sx.reports", OFF, ['STDOUT'], false)
     logger("sx.tasks", DEBUG, ['STDOUT', 'TASKJOBS'], false)
 } else {
     root(ERROR, ['STDOUT'])

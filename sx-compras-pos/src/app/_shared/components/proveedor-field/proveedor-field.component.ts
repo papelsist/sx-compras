@@ -64,12 +64,16 @@ export class ProveedorFieldComponent implements OnInit, ControlValueAccessor {
         skip(1),
         tap(() => this.onTouch()),
         debounceTime(500),
-        distinctUntilChanged(),
-        filter(value => _.isObject(value)),
-        distinctUntilChanged((p: Proveedor, q: Proveedor) => p.id === q.id)
+        distinctUntilChanged()
+        // filter(value => _.isObject(value)),
+        // distinctUntilChanged((p: Proveedor, q: Proveedor) => p.id === q.id)
       )
       .subscribe(val => {
-        this.onChange(val);
+        if (_.isObject(val)) {
+          this.onChange(val);
+        } else {
+          this.onChange(null);
+        }
       });
   }
 

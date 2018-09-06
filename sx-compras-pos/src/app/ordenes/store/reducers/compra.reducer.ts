@@ -1,14 +1,13 @@
 import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 
-import { Compra } from '../../models/compra';
+import { Compra, ComprasFilter, buildFilter } from '../../models/compra';
 import { CompraActions, CompraActionTypes } from '../actions/compra.actions';
 import { Periodo } from 'app/_core/models/periodo';
 
 export interface State extends EntityState<Compra> {
   loading: boolean;
   loaded: boolean;
-  periodo: Periodo;
-  searchTerm: string;
+  filter: ComprasFilter;
   selected: string[];
 }
 
@@ -17,28 +16,14 @@ export const adapter: EntityAdapter<Compra> = createEntityAdapter<Compra>();
 export const initialState: State = adapter.getInitialState({
   loading: false,
   loaded: false,
-  periodo: Periodo.fromNow(30),
+  filter: buildFilter(45),
+  periodo: Periodo.fromNow(100),
   searchTerm: undefined,
   selected: []
 });
 
 export function reducer(state = initialState, action: CompraActions): State {
   switch (action.type) {
-    case CompraActionTypes.SetPeriodo: {
-      const periodo = action.payload;
-      return {
-        ...state,
-        periodo
-      };
-    }
-    case CompraActionTypes.SetSearchTerm: {
-      const searchTerm = action.payload;
-      return {
-        ...state,
-        searchTerm
-      };
-    }
-
     case CompraActionTypes.DepurarCompra:
     case CompraActionTypes.CerrarCompra:
     case CompraActionTypes.DeleteCompra:
@@ -121,6 +106,13 @@ export function reducer(state = initialState, action: CompraActions): State {
       };
     }
 
+    case CompraActionTypes.SetComprasFilter: {
+      return {
+        ...state,
+        filter: action.payload.filter
+      };
+    }
+
     default: {
       return state;
     }
@@ -136,6 +128,5 @@ export const {
 
 export const getComprasLoading = (state: State) => state.loading;
 export const getComprasLoaded = (state: State) => state.loaded;
-export const getPeriodo = (state: State) => state.periodo;
-export const getSearchTerm = (state: State) => state.searchTerm;
 export const getSelected = (state: State) => state.selected;
+export const getFilter = (state: State) => state.filter;

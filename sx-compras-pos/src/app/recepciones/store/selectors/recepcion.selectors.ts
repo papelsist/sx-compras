@@ -58,3 +58,8 @@ export const getSelectedPartidas = createSelector(getSelectedComs, compras =>
     .map(item => item.partidas)
     .reduce((acu, partidas) => [...acu, ...partidas], [])
 );
+
+export const getComsFilter = createSelector(
+  getComsState,
+  fromComs.getComsFilter
+);

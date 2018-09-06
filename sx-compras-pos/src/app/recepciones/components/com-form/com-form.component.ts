@@ -27,7 +27,6 @@ import { RecepcionDeCompraDet } from '../../models/recepcionDeCompraDet';
 })
 export class ComFormComponent implements OnInit, OnChanges {
   @Input() com: Partial<RecepcionDeCompra>;
-  @Output() save = new EventEmitter<Partial<RecepcionDeCompra>>();
 
   form: FormGroup;
   constructor(private fb: FormBuilder) {}
@@ -39,11 +38,11 @@ export class ComFormComponent implements OnInit, OnChanges {
       this.buildForm();
     }
     if (changes.com && changes.com.currentValue) {
-      console.log('Editando com:', changes.com.currentValue);
       const com = changes.com.currentValue;
       this.clarPartidas();
       this.form.patchValue(com);
       com.partidas.forEach(item => this.partidas.push(new FormControl(item)));
+      this.form.disable();
     }
   }
 
@@ -60,24 +59,6 @@ export class ComFormComponent implements OnInit, OnChanges {
       comentario: [],
       partidas: this.fb.array([])
     });
-  }
-
-  onSave() {
-    if (this.form.valid) {
-      let fecha = this.form.value.fecha;
-      if (fecha instanceof Date) {
-        fecha = fecha.toISOString();
-      }
-      const partidas = [...this.partidas.value];
-      const res = {
-        ...this.form.value,
-        fecha,
-        partidas
-      };
-
-      this.save.emit(res);
-      this.form.markAsPristine();
-    }
   }
 
   onEditPartida(index: number, cantidad: number) {

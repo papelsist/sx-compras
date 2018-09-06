@@ -4,11 +4,12 @@ import { Store, select } from '@ngrx/store';
 import * as fromRoot from 'app/store';
 import * as fromStore from '../../store';
 import * as fromActions from '../../store/actions/compra.actions';
+import * as fromCompras from '../../store/selectors/compra.selectors';
 
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { Compra } from '../../models/compra';
+import { Compra, ComprasFilter } from '../../models/compra';
 
 import * as _ from 'lodash';
 import { CompraDet } from '../../models/compraDet';
@@ -21,18 +22,20 @@ export class ComprasComponent implements OnInit, OnDestroy {
   comprasPorSucursal$: Observable<any>;
   sucursales$: Observable<string[]>;
   partidas$: Observable<CompraDet[]>;
+  comprasFilter$: Observable<ComprasFilter>;
 
-  search$: Observable<string>;
+  search$ = new Subject();
   tabIndex = 2;
   private _storageKey = 'sx-compras.ordenes';
   constructor(private store: Store<fromStore.State>) {}
 
   ngOnInit() {
+    this.comprasFilter$ = this.store.pipe(select(fromStore.getComprasFilter));
+
     this.comprasPorSucursal$ = this.store.pipe(
       select(fromStore.getComprasPorSucursalPendientes)
     );
     this.sucursales$ = this.comprasPorSucursal$.pipe(map(res => _.keys(res)));
-    this.search$ = this.store.pipe(select(fromStore.getComprasSearchTerm));
 
     // Tab Idx
     const _tabIdx = localStorage.getItem(this._storageKey + '.tabIndex');
@@ -60,7 +63,7 @@ export class ComprasComponent implements OnInit, OnDestroy {
   }
 
   onSearch(event: string) {
-    this.store.dispatch(new fromActions.SetSearchTerm(event));
+    this.search$.next(event);
   }
 
   getSucursales(object): string[] {
@@ -69,5 +72,9 @@ export class ComprasComponent implements OnInit, OnDestroy {
 
   onEdit(event: Compra) {
     this.store.dispatch(new fromRoot.Go({ path: [event.id] }));
+  }
+
+  onFilter(event: ComprasFilter) {
+    this.store.dispatch(new fromActions.SetComprasFilter({ filter: event }));
   }
 }

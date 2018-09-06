@@ -29,7 +29,7 @@ class RecepcionDeCompra {
 
     String comentario
 
-    List partidas = []
+    List<RecepcionDeCompraDet> partidas = []
 
     Date dateCreated
 

@@ -1,8 +1,6 @@
 import { Action } from '@ngrx/store';
-import { Update } from '@ngrx/entity';
 
-import { Compra } from '../../models/compra';
-import { Periodo } from 'app/_core/models/periodo';
+import { Compra, ComprasFilter } from '../../models/compra';
 
 export enum CompraActionTypes {
   LoadCompras = '[Compra] Load Compras',
@@ -20,14 +18,13 @@ export enum CompraActionTypes {
   DeleteCompraFail = '[Compra] Delete Compra Fail',
   DeleteCompraSuccess = '[Compra] Delete Compra Success',
   ClearCompras = '[Compra] Clear Compras',
-  SetPeriodo = '[Compra] Set Periodo de compras',
-  SetSearchTerm = '[Compra] Set Search term de compras',
   GetCompra = '[Compra] Get One Compra',
   GetCompraFail = '[Compra] Get One Compra fail',
   GetCompraSuccess = '[Compra] Get One Compra Success',
   CerrarCompra = '[Compra] Cerrar  Compra ',
   DepurarCompra = '[Compra] Depurar  Compra ',
-  SetSelectedCompras = '[Compra] Set Selected  Compras '
+  SetSelectedCompras = '[Compra] Set Selected  Compras ',
+  SetComprasFilter = '[Compra] Set Compra filter'
 }
 
 export class LoadCompras implements Action {
@@ -105,15 +102,6 @@ export class ClearCompras implements Action {
   readonly type = CompraActionTypes.ClearCompras;
 }
 
-export class SetPeriodo implements Action {
-  readonly type = CompraActionTypes.SetPeriodo;
-  constructor(public payload: Periodo) {}
-}
-export class SetSearchTerm implements Action {
-  readonly type = CompraActionTypes.SetSearchTerm;
-  constructor(public payload: string) {}
-}
-
 export class CerrarCompra implements Action {
   readonly type = CompraActionTypes.CerrarCompra;
 
@@ -144,6 +132,11 @@ export class GetCompraSuccess implements Action {
   constructor(public payload: { compra: Compra }) {}
 }
 
+export class SetComprasFilter implements Action {
+  readonly type = CompraActionTypes.SetComprasFilter;
+  constructor(public payload: { filter: ComprasFilter }) {}
+}
+
 export type CompraActions =
   | LoadCompras
   | LoadComprasFail
@@ -160,11 +153,10 @@ export type CompraActions =
   | DeleteCompraFail
   | DeleteCompraSuccess
   | ClearCompras
-  | SetPeriodo
-  | SetSearchTerm
   | CerrarCompra
   | DepurarCompra
   | SetSelectedCompras
   | GetCompra
   | GetCompraFail
-  | GetCompraSuccess;
+  | GetCompraSuccess
+  | SetComprasFilter;

@@ -1,6 +1,10 @@
 import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 
-import { RecepcionDeCompra } from '../../models/recepcionDeCompra';
+import {
+  RecepcionDeCompra,
+  ComsFilter,
+  buildFilter
+} from '../../models/recepcionDeCompra';
 import {
   RecepcionDeCompraActions,
   RecepcionDeCompraActionTypes
@@ -10,6 +14,7 @@ export interface State extends EntityState<RecepcionDeCompra> {
   loading: boolean;
   loaded: boolean;
   selected: string[];
+  filter: ComsFilter;
 }
 
 export const adapter: EntityAdapter<RecepcionDeCompra> = createEntityAdapter<
@@ -19,7 +24,8 @@ export const adapter: EntityAdapter<RecepcionDeCompra> = createEntityAdapter<
 export const initialState: State = adapter.getInitialState({
   loading: false,
   loaded: false,
-  selected: []
+  selected: [],
+  filter: buildFilter(100)
 });
 
 export function reducer(
@@ -94,6 +100,13 @@ export function reducer(
       };
     }
 
+    case RecepcionDeCompraActionTypes.SetComsFilter: {
+      return {
+        ...state,
+        filter: action.payload.filter
+      };
+    }
+
     default: {
       return state;
     }
@@ -110,3 +123,4 @@ export const {
 export const getComsLoading = (state: State) => state.loading;
 export const getComsLoaded = (state: State) => state.loaded;
 export const getSelected = (state: State) => state.selected;
+export const getComsFilter = (state: State) => state.filter;

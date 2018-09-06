@@ -15,20 +15,12 @@ import { TdDialogService } from '@covalent/core';
   template: `
     <div>
       <ng-template tdLoading [tdLoadingUntil]="!(loading$ | async)" tdLoadingStrategy="overlay">
-        
         <sx-com-form [com]="com$ | async"
           (save)="onSave($event)">
           <ng-container *ngIf="com$ | async as com">
-          <!--
-            <sx-eliminar-compra [compra]="compra" (delete)="onDelete($event)"></sx-eliminar-compra>
-            <sx-email-compra [compra]="compra"></sx-email-compra>
-            <sx-cerrar-compra [compra]="compra" (cerrar)="onCerrar($event)"></sx-cerrar-compra>
-            <sx-depurar-compra [compra]="compra" (deuprar)="onDepurar($event)"></sx-depurar-compra>
-            <sx-compra-print [compra]="compra"></sx-compra-print>
-          -->
+            <sx-report-button [url]="getPrintUrl(com)"></sx-report-button>
           </ng-container>
         </sx-com-form>
-       
       </ng-template>
     </div>
   `
