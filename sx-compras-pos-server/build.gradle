@@ -73,12 +73,13 @@ dependencies {
     // Grails console
     compile "org.grails.plugins:gsp"
     runtime 'org.grails.plugins:grails-console:2.1.1'
+
     /** Jasper plugin **/
     compile 'org.grails.plugins:jasper:2.1.0.RC1'
     compile 'org.eclipse.jdt.core.compiler:ecj:4.4'
     /****/
+
     compile 'org.grails.plugins:spring-security-core:3.2.1'
-    // compile "org.grails.plugins:spring-security-rest:2.0.0.M2"
     compile 'org.grails.plugins:spring-security-rest:2.0.0.RC1'
 
 }
@@ -115,7 +116,7 @@ task buildConf() {
         String fileName = war.archiveName.replaceAll(".war", ".conf")
         File file = file("build/libs/${fileName}")
         file.append("JAVA_OPTS=-Xmx2048M")
-        file.append("\nRUN_ARGS=\"--JDBC_CONNECTION_STRING=localhost/siipapx_oficinas --server.port=9195\"")
+        file.append("\nRUN_ARGS=\"--JDBC_CONNECTION_STRING=localhost/siipapx_oficinas --server.port=9197\"")
 
     }
 }

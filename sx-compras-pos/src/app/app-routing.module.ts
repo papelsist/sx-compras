@@ -25,9 +25,9 @@ const routes: Routes = [
         loadChildren: './productos/productos.module#ProductosModule'
       },
       {
-        path: 'proveedores',
-        loadChildren: './proveedores/proveedores.module#ProveedoresModule'
-      },
+        path: 'alcances',
+        loadChildren: './alcances/alcances.module#AlcancesModule'
+      }
     ]
   }
   // { path: '**', component: HomePageComponent } // Cambiar a: PageNotFoundComponent  cuando este listo

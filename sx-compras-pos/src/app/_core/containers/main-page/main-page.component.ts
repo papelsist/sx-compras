@@ -31,7 +31,7 @@ export class MainPageComponent implements OnInit {
       title: 'Recepciones'
     },
     {
-      route: 'alcance',
+      route: '/alcances',
       title: 'Alcances',
       icon: 'data_usage'
     }

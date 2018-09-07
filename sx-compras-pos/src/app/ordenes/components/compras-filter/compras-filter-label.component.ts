@@ -16,7 +16,5 @@ export class ComprasFilterLabelComponent implements OnInit {
   @Input() filter: ComprasFilter;
   constructor() {}
 
-  ngOnInit() {
-    console.log('Filter: ', this.filter);
-  }
+  ngOnInit() {}
 }
