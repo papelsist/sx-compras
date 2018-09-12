@@ -110,7 +110,7 @@ export class CompraEffects {
   @Effect()
   deleteSuccess$ = this.actions$.pipe(
     ofType(CompraActionTypes.DeleteCompraSuccess),
-    map(() => new fromRoot.Go({ path: ['compras'] }))
+    map(() => new fromRoot.Go({ path: ['/ordenes'] }))
   );
 
   /*

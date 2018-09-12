@@ -79,8 +79,9 @@ class AlcancesController extends RestfulController<Compra>{
 
     def print( ) {
         //params.ID = params.id;
-        Periodo periodo = new Periodo()
-        periodo.properties = params
+        Periodo periodo = params.periodo
+        // periodo.properties = params
+        log.info('Reporte: {}', params)
         params.SUCURSAL = AppConfig.first().sucursal.id
         params.FECHA_INI = periodo.fechaInicial
         params.FECHA_FIN = periodo.fechaFinal
@@ -100,7 +101,7 @@ class GenerarAlcanceCommand {
 
 class GenerarOrdenCommand {
 
-    Proveedor proveedor
+    String proveedor
 
     List<Alcance> partidas
 

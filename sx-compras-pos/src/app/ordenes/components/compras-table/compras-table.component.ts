@@ -55,7 +55,7 @@ export class ComprasTableComponent implements OnInit, OnChanges, OnDestroy {
   ngOnInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-
+    /*
     this.subscription = this.sort.sortChange.subscribe(e =>
       localStorage.setItem('sx-compras.compras-table.sort', JSON.stringify(e))
     );
@@ -72,6 +72,7 @@ export class ComprasTableComponent implements OnInit, OnChanges, OnDestroy {
       this.sort.active = 'folio';
       this.sort.direction = 'desc';
     }
+    */
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -107,7 +108,7 @@ export class ComprasTableComponent implements OnInit, OnChanges, OnDestroy {
 
   applyFilter(filterValue: string) {
     filterValue = filterValue.trim();
-    filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
+    filterValue = filterValue.toLowerCase();
     this.dataSource.filter = filterValue;
   }
 

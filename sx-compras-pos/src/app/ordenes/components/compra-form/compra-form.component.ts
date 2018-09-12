@@ -43,7 +43,7 @@ export class CompraFormComponent implements OnInit, OnChanges {
       this.buildForm();
     }
     if (changes.compra && changes.compra.currentValue) {
-      console.log('Editando compra:', changes.compra.currentValue);
+      // console.log('Editando compra:', changes.compra.currentValue);
       const comp = changes.compra.currentValue;
       this.clarPartidas();
       this.form.patchValue(comp);

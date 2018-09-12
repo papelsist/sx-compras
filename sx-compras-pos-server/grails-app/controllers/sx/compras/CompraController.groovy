@@ -43,7 +43,7 @@ class CompraController extends RestfulController<Compra> {
     @Override
     @CompileDynamic
     protected List<Compra> listAllResources(Map params) {
-        params.sort = 'folio'
+        params.sort = 'lastUpdated'
         params.order = 'desc'
         params.max = params.registros?: 50
         // log.debug('List {}', params)

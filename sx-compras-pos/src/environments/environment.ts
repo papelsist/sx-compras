@@ -5,13 +5,5 @@
 
 export const environment = {
   production: false,
-  apiConfiguartionFile: 'assets/api-config.json',
-  firebase: {
-    apiKey: 'AIzaSyC-wT1wBAkHsOxzqDvBqsSVevCleEmnimM',
-    authDomain: 'sx-tesoreria.firebaseapp.com',
-    databaseURL: 'https://sx-tesoreria.firebaseio.com',
-    projectId: 'sx-tesoreria',
-    storageBucket: '',
-    messagingSenderId: '28808179409'
-  }
+  apiConfiguartionFile: 'assets/api-config.json'
 };

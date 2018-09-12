@@ -3,7 +3,7 @@ package sx.core
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 
-@ToString( includes = "sucursal,documento,fecha,cantidad",includeNames=true,includePackage=false)
+@ToString( includes = "documento,fecha,cantidad, tipo, clave",includeNames=true,includePackage=false)
 @EqualsAndHashCode(includes = 'id')
 class Inventario {
 

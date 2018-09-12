@@ -1,0 +1,8 @@
+import sx.costos.CostoPromedio
+
+model {
+	Iterable<CostoPromedio> costoPromedioList
+}
+
+json tmpl.costoPromedio(costoPromedioList ?: [])
+

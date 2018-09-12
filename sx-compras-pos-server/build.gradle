@@ -116,7 +116,7 @@ task buildConf() {
         String fileName = war.archiveName.replaceAll(".war", ".conf")
         File file = file("build/libs/${fileName}")
         file.append("JAVA_OPTS=-Xmx2048M")
-        file.append("\nRUN_ARGS=\"--JDBC_CONNECTION_STRING=localhost/siipapx_oficinas --server.port=9197\"")
+        file.append("\nRUN_ARGS=\"--JDBC_CONNECTION_STRING=10.10.1.229/siipapx_tacuba --server.port=9198\"")
 
     }
 }

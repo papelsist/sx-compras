@@ -32,8 +32,7 @@
 
 
     <div class="partidas-panel ">
-      <sx-com-partidas [parent]="form" [partidas]="partidas.value" (delete)="onDeletePartida($event)" (update)="onEditPartida($event)"
-        [readOnly]="com.id">
+      <sx-com-partidas [parent]="form" [partidas]="partidas.value" (delete)="onDeletePartida($event)" [readOnly]="com.id">
       </sx-com-partidas>
     </div>
 

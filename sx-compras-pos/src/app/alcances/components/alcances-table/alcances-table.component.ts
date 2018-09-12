@@ -20,7 +20,7 @@ import { Subscription } from 'rxjs';
 @Component({
   selector: 'sx-alcances-table',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './alcances-table.component.html',
+  templateUrl: './alcacnes-table.component.html',
   styleUrls: ['./alcances-table.component.scss']
 })
 export class AlcancesTableComponent implements OnInit, OnChanges, OnDestroy {
@@ -29,6 +29,7 @@ export class AlcancesTableComponent implements OnInit, OnChanges, OnDestroy {
   dataSource = new MatTableDataSource<any>([]);
 
   displayColumns = [
+    'select',
     'clave',
     'descripcion',
     'existencia',
@@ -65,6 +66,7 @@ export class AlcancesTableComponent implements OnInit, OnChanges, OnDestroy {
   ngOnChanges(changes: SimpleChanges) {
     if (changes.rows && changes.rows.currentValue) {
       this.dataSource.data = changes.rows.currentValue;
+      this.selection.clear();
     }
     if (changes.filter) {
       const text = changes.filter.currentValue
@@ -87,12 +89,12 @@ export class AlcancesTableComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   getTotal(property: string) {
-    return _.sumBy(this.dataSource.filteredData, property);
+    return _.sumBy(this.dataSource.data, property);
   }
 
   isAllSelected() {
     const numSelected = this.selection.selected.length;
-    const numRows = this.dataSource.filteredData.length;
+    const numRows = this.dataSource.data.length;
     return numSelected === numRows;
   }
 
@@ -100,6 +102,6 @@ export class AlcancesTableComponent implements OnInit, OnChanges, OnDestroy {
   masterToggle() {
     this.isAllSelected()
       ? this.selection.clear()
-      : this.dataSource.filteredData.forEach(row => this.selection.select(row));
+      : this.dataSource.data.forEach(row => this.selection.select(row));
   }
 }

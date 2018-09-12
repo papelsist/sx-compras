@@ -70,6 +70,7 @@ export class CompraPartidasTableComponent implements OnInit, OnChanges {
   }
 
   canDelete(det: CompraDet) {
-    return !this.readOnly && this.cerrada === null && det.recibido > 0;
+    // return !this.readOnly && this.cerrada === null && det.recibido > 0;
+    return !this.readOnly && det.recibido <= 0 && !this.cerrada;
   }
 }

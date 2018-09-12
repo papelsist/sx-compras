@@ -102,10 +102,9 @@ export class ComCreateFormComponent implements OnInit {
       });
   }
 
-  onEditPartida(index: number, cantidad: number) {
+  onEditPartida(index: number) {
     const control = this.partidas.at(index);
     const det: RecepcionDeCompraDet = control.value;
-    det.cantidad = cantidad;
     this.partidas.setControl(index, new FormControl(det));
     this.form.markAsDirty();
   }

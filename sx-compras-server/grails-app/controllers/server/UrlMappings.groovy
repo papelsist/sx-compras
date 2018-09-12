@@ -77,6 +77,12 @@ class UrlMappings {
         }
         "/api/coms/pendientesDeAnalisis/$id"(controller: 'recepcionDeCompra', action: 'pendientesDeAnalisis')
 
+        "/api/costos"(resources: 'costoPromedio', excludes:['create', 'edit','patch', 'update', 'save'])
+        "/api/costos/generar/$ejercicio/$mes"(controller: 'costoPromedio', action: 'generar', method: 'POST')
+        "/api/costos/calcular/$ejercicio/$mes"(controller: 'costoPromedio', action: 'calcular', method: 'POST')
+        "/api/costos/aplicar/$ejercicio/$mes"(controller: 'costoPromedio', action: 'aplicar', method: 'POST')
+        "/api/costos/generarReporte/$ejercicio/$mes"(controller: 'costoPromedio', action: 'generarReporte')
+
 
         "/"(controller: 'application', action:'index')
         "500"(view: '/error')

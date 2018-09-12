@@ -7,4 +7,5 @@ json g.render(alcance) {
     porPedir alcance.getPorPedir()
     alcanceMasPedido alcance.getAlcanceMasPedido()
     porPedirKilos alcance.getPorPedirKilos()
+    porPedirToneladas alcance.getPorPedirKilos() / 1000
 }

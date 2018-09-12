@@ -10,6 +10,7 @@ import { AuthModule } from '../auth/auth.module';
 import { ReportesModule } from '../reportes/reportes.module';
 import { AlcancesService } from './services/alcances.service';
 import { AlcancesComponent } from './containers/alcances.component';
+import { components, entryComponents } from './components';
 
 @NgModule({
   imports: [
@@ -20,8 +21,8 @@ import { AlcancesComponent } from './containers/alcances.component';
     StoreModule.forFeature('alcances', {}),
     EffectsModule.forFeature([])
   ],
-  declarations: [AlcancesComponent],
-  entryComponents: [],
+  declarations: [AlcancesComponent, ...components],
+  entryComponents: [...entryComponents],
   providers: [AlcancesService]
 })
 export class AlcancesModule {}

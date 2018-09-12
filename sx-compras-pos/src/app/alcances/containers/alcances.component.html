@@ -1,11 +1,14 @@
-<mat-card>
+<mat-card *tdLoading="'procesando'; mode:'indeterminate'; type:'circle'; strategy:'overlay'; color:'accent'">
   <div layout layout-align="start center" class="pad-left-sm pad-right-sm">
     <span class="push-left-sm">
       <span class="mat-title">Reporte general de alcances</span>
     </span>
     <span flex></span>
-    <td-search-box class="push-right-sm" placeholder="Filtrar" flex (searchDebounce)="onSearch($event)">
-    </td-search-box>
+    <span class="pad-right">
+      Periodo: {{ultimaEjecucion?.fechaInicial | date: 'dd/MM/yyyy'}} - {{ultimaEjecucion?.fechaFinal | date: 'dd/MM/yyyy'}}
+    </span>
+    <span class="pad-right cursor-pointer" (click)="actualizarMeses()">Meses: {{ultimaEjecucion?.meses}}</span>
+    <span flex></span>
     <span>
       <button mat-icon-button [matMenuTriggerFor]="toolbarMenu">
         <mat-icon>more_vert</mat-icon>
@@ -26,6 +29,32 @@
       </mat-menu>
     </span>
   </div>
+  <div layout>
+    <form [formGroup]="searchForm" class="pad-left" layout flex autocomplete="off">
+      <mat-form-field>
+        <input matInput placeholder="Proveedor" formControlName="proveedor">
+      </mat-form-field>
+      <mat-form-field class="pad-left">
+        <input matInput placeholder="Producto" formControlName="producto">
+      </mat-form-field>
+      <mat-form-field class="pad-left">
+        <input matInput placeholder="Linea" formControlName="linea">
+      </mat-form-field>
+      <mat-form-field class="pad-left">
+        <input matInput placeholder="Marca" formControlName="marca">
+      </mat-form-field>
+      <mat-form-field class="pad-left">
+        <input matInput placeholder="Clase" formControlName="clase">
+      </mat-form-field>
+      <mat-form-field class="pad-left-sm">
+        <input matInput placeholder="A. Menor" formControlName="alcanceMenor">
+      </mat-form-field>
+      <mat-form-field class="pad-left-sm">
+        <input matInput placeholder="A. Mayor" formControlName="alcanceMayor">
+      </mat-form-field>
+    </form>
+    <span flex></span>
+  </div>
   <mat-divider></mat-divider>
-
+  <sx-alcances-table [rows]="filteredData" (select)="onSelect($event)"></sx-alcances-table>
 </mat-card>

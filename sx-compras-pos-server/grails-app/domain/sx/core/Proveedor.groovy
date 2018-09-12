@@ -71,6 +71,11 @@ class Proveedor {
         updateUser nullable: true
         createUser nullable: true
         comentario nullable: true
+
+        descuentoF nullable: true
+        diasDF nullable: true
+        fechaRevision nullable: true
+        limiteDeCredito nullable: true
     }
 
     static embedded = ['direccion']

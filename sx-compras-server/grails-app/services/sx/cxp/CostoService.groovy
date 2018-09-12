@@ -27,12 +27,36 @@ class CostoService {
 
         Inventario.withNewSession {
             List<AnalisisDeFacturaDet> partidas = AnalisisDeFacturaDet.where {analisis.id == analisis.id}.list()
-            partidas.each {
-                Inventario inventario = it.com.inventario
-                inventario.costo = it.costoUnitario
-                log.debug("Costo de : {} = {} ", it.clave, it.costoUnitario)
-                inventario.save flush: true
+
+            if(analisis.importeFlete > 0) {
+                BigDecimal importeFlete = analisis.importeFlete
+                BigDecimal importeTotal = analisis.importe
+                partidas.each {
+
+                    BigDecimal importe = it.importe
+                    BigDecimal part = importe / importeTotal
+                    BigDecimal factor = it.unidad == 'MIL'? 1000.00 : 1.0
+                    BigDecimal fleteUnitario = (part * importeFlete) / (it.cantidad / factor)
+                    BigDecimal costoBruto = it.costoUnitario
+
+                    BigDecimal costo = (fleteUnitario + costoBruto) * analisis.factura.tipoDeCambio
+
+                    Inventario inventario = it.com.inventario
+                    inventario.costo = costo
+                    log.debug("Costo de : {} = {} ", it.clave, costo)
+                    inventario.save flush: true
+                }
+
+            } else {
+                partidas.each {
+                    BigDecimal costo = it.costoUnitario * analisis.factura.tipoDeCambio
+                    Inventario inventario = it.com.inventario
+                    inventario.costo = costo
+                    log.debug("Costo de : {} = {} ", it.clave, costo)
+                    inventario.save flush: true
+                }
             }
+
         }
 
 

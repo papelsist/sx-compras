@@ -13,6 +13,9 @@ import {
 import { Title } from '@angular/platform-browser';
 import { FormGroup, FormControl } from '@angular/forms';
 
+import { Store } from '@ngrx/store';
+import * as fromRoot from 'app/store';
+
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
@@ -21,6 +24,10 @@ import { MatDialog } from '@angular/material';
 import * as _ from 'lodash';
 import { AlcancesService } from '../services/alcances.service';
 import { Periodo } from '../../_core/models/periodo';
+import {
+  AlcanceRunDialogComponent,
+  AlcanceReportDialogComponent
+} from '../components';
 
 // import { AlcanceRunDialogComponent } from 'app/compras/_pages/alcances/alcance-run-dialog/alcance-run-dialog.component';
 // import { AlcanceReportDialogComponent } from 'app/compras/_pages/alcances/alcance-report-dialog/alcance-report-dialog.component';
@@ -33,8 +40,8 @@ export class AlcancesComponent implements OnInit, AfterViewInit {
   rows: any[] = [];
   filteredData: any[] = [];
   selectedRows: any[] = [];
+  loading = false;
 
-  sideNavWidth = '250px';
   filtros = [
     { nombre: 'proveedor', descripcion: 'Proveedor' },
     { nombre: 'producto', descripcion: 'Producto' },
@@ -56,7 +63,8 @@ export class AlcancesComponent implements OnInit, AfterViewInit {
     public media: TdMediaService,
     private titleService: Title,
     private dialogService: TdDialogService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private store: Store<fromRoot.State>
   ) {
     this.searchForm = new FormGroup({
       producto: new FormControl(''),
@@ -86,6 +94,11 @@ export class AlcancesComponent implements OnInit, AfterViewInit {
     console.log('Filtrando: ', event);
   }
 
+  onSelect(event: any[]) {
+    // console.log('Selecionadas: ', event.length);
+    this.selectedRows = event;
+  }
+
   load() {
     this.loadingService.register('procesando');
     this.service
@@ -106,7 +119,6 @@ export class AlcancesComponent implements OnInit, AfterViewInit {
   }
 
   ejecutar() {
-    /*
     const dialogRef = this.dialog
       .open(AlcanceRunDialogComponent, {
         data: { periodo: Periodo.fromNow(60) }
@@ -116,20 +128,19 @@ export class AlcancesComponent implements OnInit, AfterViewInit {
         this.ultimaEjecucion = res;
         this.doEjecutar(res);
       });
-      */
   }
-  /*
+
   private doEjecutar(command) {
     this.loadingService.register('procesando');
     this.service
       .generar(command)
-      .finally(() => this.loadingService.resolve('procesando'))
-      .catch(err => Observable.of(err))
+      .pipe(finalize(() => this.loadingService.resolve('procesando')))
       .subscribe(data => {
         this.rows = data;
         this.filteredData = [...this.rows];
       });
-  }*/
+  }
+
   generarOrden() {
     const found = _.find(this.selectedRows, item => item.proveedor);
     if (found) {
@@ -148,13 +159,13 @@ export class AlcancesComponent implements OnInit, AfterViewInit {
         .afterClosed()
         .subscribe(res => {
           if (res) {
-            console.log('Proveedor: ', found.nombre);
-            console.log('Partidas ', partidas.length);
             this.service
               .generarOrden(found.proveedor, partidas)
               .subscribe(oc => {
-                console.log('Orden generada: ', oc);
-                this.load();
+                // this.load();
+                this.store.dispatch(
+                  new fromRoot.Go({ path: ['ordenes', oc.id] })
+                );
               });
           }
         });
@@ -175,7 +186,8 @@ export class AlcancesComponent implements OnInit, AfterViewInit {
           this.loadingService.register('procesando');
           this.service
             .actualizarMeses(res)
-            // .finally(() => this.loadingService.resolve('procesando'))
+            .pipe(finalize(() => this.loadingService.resolve('procesando')))
+
             .subscribe(data => this.load());
         }
       });
@@ -203,7 +215,6 @@ export class AlcancesComponent implements OnInit, AfterViewInit {
   }
 
   generarReporte() {
-    /*
     const dialogRef = this.dialog
       .open(AlcanceReportDialogComponent, {
         data: { periodo: Periodo.monthsAgo(2) }
@@ -214,14 +225,13 @@ export class AlcancesComponent implements OnInit, AfterViewInit {
           this.doRunReport(res);
         }
       });
-      */
   }
 
   doRunReport(params) {
     this.loadingService.register('procesando');
     this.service
       .reporte(params)
-      // .finally(() => this.loadingService.resolve('procesando'))
+      .pipe(finalize(() => this.loadingService.resolve('procesando')))
       .subscribe(
         res => {
           const blob = new Blob([res], {
