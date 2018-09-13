@@ -1,0 +1,1323 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="SugerenciaDeTrasladosSuc"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Landscape"
+		 pageWidth="1008"
+		 pageHeight="612"
+		 columnWidth="980"
+		 columnSpacing="0"
+		 leftMargin="14"
+		 rightMargin="14"
+		 topMargin="20"
+		 bottomMargin="20"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="FECHA_INI" isForPrompting="true" class="java.util.Date"/>
+	<parameter name="FECHA_FIN" isForPrompting="true" class="java.util.Date"/>
+	<parameter name="SUCURSAL" isForPrompting="true" class="java.lang.String"/>
+	<parameter name="MESES" isForPrompting="true" class="java.lang.Double"/>
+	<parameter name="ORDEN" isForPrompting="true" class="java.lang.String"/>
+	<parameter name="FORMA" isForPrompting="true" class="java.lang.String"/>
+	<parameter name="MESESF" isForPrompting="true" class="java.lang.Double">
+		<defaultValueExpression ><![CDATA[$P{MESES}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LINEA" isForPrompting="true" class="java.lang.String"/>
+	<queryString><![CDATA[SELECT P.CLAVE,P.DESCRIPCION,P.KILOS
+,SUM(EXI) AS EXI_TOT
+,(SUM(VTA+DEV)/(ROUND((ROUND(TO_DAYS($P{FECHA_FIN})-TO_DAYS($P{FECHA_INI}),0)),0)/30.4166)) AS PVTA_TOT
+,IFNULL(IFNULL(SUM(EXI),0)/IFNULL(SUM(VTA-DEV)/(ROUND((ROUND(TO_DAYS($P{FECHA_FIN})-TO_DAYS($P{FECHA_INI}),0)),0)/30.4166),0),0) AS ALC_TOT
+,IFNULL((select SUM(((X.SOLICITADO-X.DEPURADO)/X.FACTOR)-IFNULL((SELECT SUM(I.CANTIDAD/I.FACTORU) FROM sx_inventario_com I WHERE I.COMPRADET_ID=X.COMPRADET_ID),0)) AS PENDTE
+from sx_compras2 C JOIN sx_compras2_det X  ON(C.COMPRA_ID=X.COMPRA_ID) WHERE X.CLAVE=P.CLAVE AND X.SUCURSAL_ID=(SELECT S.SUCURSAL_ID FROM SW_SUCURSALES S WHERE S.SUCURSAL_ID=X.SUCURSAL_ID AND S.NOMBRE=$P{SUCURSAL})
+AND ((X.SOLICITADO-X.DEPURADO))-IFNULL((SELECT SUM(I.CANTIDAD) FROM sx_inventario_com I WHERE I.COMPRADET_ID=X.COMPRADET_ID),0)>0),0) AS PENDTE
+,SUM(CASE WHEN A.SUCURSAL_ID=6 THEN EXI ELSE 0 END) AS EXI_AND
+,SUM(CASE WHEN A.SUCURSAL_ID=6 THEN ((VTA+DEV)) ELSE 0 END)/(ROUND((ROUND(TO_DAYS($P{FECHA_FIN})-TO_DAYS($P{FECHA_INI}),0)),0)/30.4166) AS PVTA_AND
+,IFNULL(SUM(CASE WHEN A.SUCURSAL_ID=6 THEN EXI ELSE 0 END)/(SUM(CASE WHEN A.SUCURSAL_ID=6 THEN ((VTA+DEV)) ELSE 0 END)/(ROUND((ROUND(TO_DAYS($P{FECHA_FIN})-TO_DAYS($P{FECHA_INI}),0)),0)/30.4166)),0) AS ALC_AND
+,SUM(CASE WHEN A.SUCURSAL_ID=5 THEN EXI ELSE 0 END) AS EXI_BOL
+,SUM(CASE WHEN A.SUCURSAL_ID=5 THEN ((VTA+DEV)) ELSE 0 END)/(ROUND((ROUND(TO_DAYS($P{FECHA_FIN})-TO_DAYS($P{FECHA_INI}),0)),0)/30.4166) AS PVTA_BOL
+,IFNULL(SUM(CASE WHEN A.SUCURSAL_ID=5 THEN EXI ELSE 0 END)/(SUM(CASE WHEN A.SUCURSAL_ID=5 THEN ((VTA+DEV)) ELSE 0 END)/(ROUND((ROUND(TO_DAYS($P{FECHA_FIN})-TO_DAYS($P{FECHA_INI}),0)),0)/30.4166)),0) AS ALC_BOL
+,SUM(CASE WHEN A.SUCURSAL_ID=2 THEN EXI ELSE 0 END) AS EXI_CA4
+,SUM(CASE WHEN A.SUCURSAL_ID=2 THEN ((VTA+DEV)) ELSE 0 END)/(ROUND((ROUND(TO_DAYS($P{FECHA_FIN})-TO_DAYS($P{FECHA_INI}),0)),0)/30.4166) AS PVTA_CA4
+,IFNULL(SUM(CASE WHEN A.SUCURSAL_ID=2 THEN EXI ELSE 0 END)/(SUM(CASE WHEN A.SUCURSAL_ID=2 THEN ((VTA+DEV)) ELSE 0 END)/(ROUND((ROUND(TO_DAYS($P{FECHA_FIN})-TO_DAYS($P{FECHA_INI}),0)),0)/30.4166)),0) AS ALC_CA4
+,SUM(CASE WHEN A.SUCURSAL_ID=3 THEN EXI ELSE 0 END) AS EXI_TAC
+,SUM(CASE WHEN A.SUCURSAL_ID=3 THEN ((VTA+DEV)) ELSE 0 END)/(ROUND((ROUND(TO_DAYS($P{FECHA_FIN})-TO_DAYS($P{FECHA_INI}),0)),0)/30.4166) AS PVTA_TAC
+,IFNULL(SUM(CASE WHEN A.SUCURSAL_ID=3 THEN EXI ELSE 0 END)/(SUM(CASE WHEN A.SUCURSAL_ID=3 THEN ((VTA+DEV)) ELSE 0 END)/(ROUND((ROUND(TO_DAYS($P{FECHA_FIN})-TO_DAYS($P{FECHA_INI}),0)),0)/30.4166)),0) AS ALC_TAC
+,SUM(CASE WHEN A.SUCURSAL_ID=9 THEN EXI ELSE 0 END) AS EXI_5FE
+,SUM(CASE WHEN A.SUCURSAL_ID=9 THEN ((VTA+DEV)) ELSE 0 END)/(ROUND((ROUND(TO_DAYS($P{FECHA_FIN})-TO_DAYS($P{FECHA_INI}),0)),0)/30.4166) AS PVTA_5FE
+,IFNULL(SUM(CASE WHEN A.SUCURSAL_ID=9 THEN EXI ELSE 0 END)/(SUM(CASE WHEN A.SUCURSAL_ID=9 THEN ((VTA+DEV)) ELSE 0 END)/(ROUND((ROUND(TO_DAYS($P{FECHA_FIN})-TO_DAYS($P{FECHA_INI}),0)),0)/30.4166)),0) AS ALC_5FE
+,SUM(CASE WHEN A.SUCURSAL_ID=11 THEN EXI ELSE 0 END) AS EXI_VRT
+,SUM(CASE WHEN A.SUCURSAL_ID=11 THEN ((1)) ELSE 0 END) AS PVTA_VRT
+,IFNULL(SUM(CASE WHEN A.SUCURSAL_ID=11 THEN EXI ELSE 0 END)/(SUM(CASE WHEN A.SUCURSAL_ID=11 THEN ((1)) ELSE 0 END)),0) AS ALC_VRT
+FROM (
+SELECT X.SUCURSAL_ID,X.PRODUCTO_ID,X.CLAVE,SUM(X.CANTIDAD/X.FACTORU) AS EXI,0 AS VTA,0 AS DEV FROM SX_EXISTENCIAS X WHERE X.YEAR=YEAR($P{FECHA_FIN}) AND  X.MES=MONTH($P{FECHA_FIN}) AND  X.SUCURSAL_ID LIKE '%' GROUP BY X.CLAVE,X.PRODUCTO_ID,X.SUCURSAL_ID
+UNION
+SELECT X.SUCURSAL_ID,X.PRODUCTO_ID,X.CLAVE,0,SUM(-X.CANTIDAD/X.FACTORU),0 FROM SX_VENTASDET X WHERE X.FECHA BETWEEN $P{FECHA_INI} AND  $P{FECHA_FIN} AND X.SUCURSAL_ID LIKE '%' GROUP BY X.CLAVE,X.PRODUCTO_ID,X.SUCURSAL_ID
+UNION
+SELECT X.SUCURSAL_ID,X.PRODUCTO_ID,X.CLAVE,0,0,SUM(-X.CANTIDAD/X.FACTORU) FROM sx_inventario_dev X WHERE X.FECHA BETWEEN $P{FECHA_INI} AND  $P{FECHA_FIN} AND X.SUCURSAL_ID LIKE '%' GROUP BY X.CLAVE,X.PRODUCTO_ID,X.SUCURSAL_ID
+) AS A
+JOIN sx_productos P ON(A.PRODUCTO_ID=P.PRODUCTO_ID) JOIN SX_LINEAS L ON (L.LINEA_ID=P.LINEA_ID)
+WHERE P.ACTIVO IS TRUE AND P.DELINEA IS TRUE AND P.INVENTARIABLE IS TRUE AND A.SUCURSAL_ID IN(2,3,5,6,9,11)
+AND L.NOMBRE LIKE $P{LINEA}
+GROUP BY A.CLAVE,A.PRODUCTO_ID
+ORDER BY $P!{ORDEN} $P!{FORMA}]]></queryString>
+
+	<field name="CLAVE" class="java.lang.String"/>
+	<field name="DESCRIPCION" class="java.lang.String"/>
+	<field name="KILOS" class="java.lang.Double"/>
+	<field name="EXI_TOT" class="java.lang.Double"/>
+	<field name="PVTA_TOT" class="java.lang.Double"/>
+	<field name="ALC_TOT" class="java.lang.Double"/>
+	<field name="PENDTE" class="java.lang.Double"/>
+	<field name="EXI_AND" class="java.lang.Double"/>
+	<field name="PVTA_AND" class="java.lang.Double"/>
+	<field name="ALC_AND" class="java.lang.Double"/>
+	<field name="EXI_BOL" class="java.lang.Double"/>
+	<field name="PVTA_BOL" class="java.lang.Double"/>
+	<field name="ALC_BOL" class="java.lang.Double"/>
+	<field name="EXI_CA4" class="java.lang.Double"/>
+	<field name="PVTA_CA4" class="java.lang.Double"/>
+	<field name="ALC_CA4" class="java.lang.Double"/>
+	<field name="EXI_TAC" class="java.lang.Double"/>
+	<field name="PVTA_TAC" class="java.lang.Double"/>
+	<field name="ALC_TAC" class="java.lang.Double"/>
+	<field name="EXI_5FE" class="java.lang.Double"/>
+	<field name="PVTA_5FE" class="java.lang.Double"/>
+	<field name="ALC_5FE" class="java.lang.Double"/>
+	<field name="EXI_VRT" class="java.lang.Double"/>
+	<field name="PVTA_VRT" class="java.math.BigDecimal"/>
+	<field name="ALC_VRT" class="java.lang.Double"/>
+
+	<variable name="ALC_MAX" class="java.lang.Double" resetType="Report" calculation="Nothing">
+		<variableExpression><![CDATA[$F{ALC_BOL}.doubleValue()>$F{ALC_CA4}.doubleValue() ? 
+$F{ALC_BOL}.doubleValue()>$F{ALC_TAC}.doubleValue() ? $F{ALC_BOL} : $F{ALC_TAC} :
+$F{ALC_CA4}.doubleValue()>$F{ALC_TAC}.doubleValue() ? $F{ALC_CA4} : $F{ALC_TAC}]]></variableExpression>
+	</variable>
+	<filterExpression><![CDATA[new Boolean(
+$P{SUCURSAL}.equals( "ANDRADE" ) ?
+$F{ALC_AND}.doubleValue()<=$P{MESESF}.doubleValue() & $V{ALC_MAX}.doubleValue()>$P{MESES}.doubleValue()  & $F{PVTA_AND}.doubleValue()>0
+:
+$P{SUCURSAL}.equals( "BOLIVAR" ) ?
+$F{ALC_BOL}.doubleValue()<=$P{MESESF}.doubleValue() & $V{ALC_MAX}.doubleValue()>$P{MESES}.doubleValue()  & $F{PVTA_BOL}.doubleValue()>0
+:
+$P{SUCURSAL}.equals( "CALLE 4" ) ?
+$F{ALC_CA4}.doubleValue()<=$P{MESESF}.doubleValue() & $V{ALC_MAX}.doubleValue()>$P{MESES}.doubleValue()  & $F{PVTA_CA4}.doubleValue()>0
+:
+$P{SUCURSAL}.equals( "TACUBA" ) ?
+$F{ALC_TAC}.doubleValue()<=$P{MESESF}.doubleValue() & $V{ALC_MAX}.doubleValue()>$P{MESES}.doubleValue()  & $F{PVTA_TAC}.doubleValue()>0
+:
+$F{ALC_5FE}.doubleValue()<=$P{MESESF}.doubleValue() & $V{ALC_MAX}.doubleValue()>$P{MESES}.doubleValue()  & $F{PVTA_5FE}.doubleValue()>0
+)]]></filterExpression>
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="2"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="49"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						x="49"
+						y="20"
+						width="154"
+						height="13"
+						key="staticText-10"/>
+					<box></box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+				<text><![CDATA[ALCANCE LOCAL MENOR A : ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="774"
+						y="33"
+						width="63"
+						height="13"
+						key="staticText-11"/>
+					<box></box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+				<text><![CDATA[PERIODO :  DEL]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="781"
+						y="0"
+						width="173"
+						height="14"
+						key="staticText-15"/>
+					<box></box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[PAPEL S.A. DE C.V.]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="dd-MMM-yy" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="837"
+						y="33"
+						width="51"
+						height="13"
+						key="textField"/>
+					<box></box>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.util.Date"><![CDATA[$P{FECHA_INI}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="dd-MMM-yy" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="903"
+						y="33"
+						width="51"
+						height="13"
+						key="textField-8"/>
+					<box></box>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.util.Date"><![CDATA[$P{FECHA_FIN}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="888"
+						y="33"
+						width="15"
+						height="13"
+						key="staticText-23"/>
+					<box></box>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+				<text><![CDATA[AL]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="555"
+						y="14"
+						width="399"
+						height="14"
+						key="textField"/>
+					<box></box>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[new String ("SUGERENCIA DE SOLICITUD DE TRASLADO (").concat($P{SUCURSAL}).concat(")")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="385"
+						y="33"
+						width="121"
+						height="12"
+						key="textField-25"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($P{ORDEN}.equals(new String("1"))? "CLAVE  " :
+"ALCANCE INVENT.  " ).concat($P{FORMA})]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						mode="Opaque"
+						x="310"
+						y="33"
+						width="75"
+						height="12"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="staticText-39"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
+						<font fontName="Arial" pdfFontName="Helvetica-Oblique" size="8" isBold="false" isItalic="true" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+					</textElement>
+				<text><![CDATA[ORDENADO POR : ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						mode="Opaque"
+						x="49"
+						y="33"
+						width="154"
+						height="12"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="staticText-40"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
+						<font fontName="Arial" pdfFontName="Helvetica-Oblique" size="8" isBold="false" isItalic="true" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+					</textElement>
+				<text><![CDATA[ALCANCE DE SUCURSALES MAYOR A :]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="203"
+						y="33"
+						width="65"
+						height="12"
+						key="textField-27"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[new String(" ").concat($P{MESES}.toString())
+.concat(" MESES")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="203"
+						y="20"
+						width="65"
+						height="13"
+						key="textField-47"/>
+					<box></box>
+					<textElement verticalAlignment="Top">
+						<font size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[new String(" ").concat($P{MESESF}.toString())
+.concat(" MESES")]]></textFieldExpression>
+				</textField>
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="31"  isSplitAllowed="true" >
+				<line direction="TopDown">
+					<reportElement
+						x="46"
+						y="29"
+						width="914"
+						height="0"
+						key="line-2"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="46"
+						y="2"
+						width="914"
+						height="0"
+						key="line-6"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						x="50"
+						y="16"
+						width="51"
+						height="11"
+						key="staticText-42"/>
+					<box></box>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<text><![CDATA[CLAVE]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="101"
+						y="16"
+						width="152"
+						height="11"
+						key="staticText-43"/>
+					<box></box>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<text><![CDATA[DESCRIPCION]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="50"
+						y="5"
+						width="203"
+						height="11"
+						key="staticText-50"/>
+					<box></box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<text><![CDATA[PRODUCTO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="253"
+						y="16"
+						width="42"
+						height="11"
+						key="staticText-56"/>
+					<box>					<leftPen lineWidth="0.75" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<text><![CDATA[INVENT.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="295"
+						y="16"
+						width="39"
+						height="11"
+						key="staticText-57"/>
+					<box></box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<text><![CDATA[VENTA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="334"
+						y="16"
+						width="27"
+						height="11"
+						key="staticText-58"/>
+					<box>					<rightPen lineWidth="0.75" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<text><![CDATA[ALC]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="421"
+						y="16"
+						width="42"
+						height="11"
+						key="staticText-61"/>
+					<box>					<leftPen lineWidth="0.75" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<text><![CDATA[INVENT.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="463"
+						y="16"
+						width="39"
+						height="11"
+						key="staticText-62"/>
+					<box></box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<text><![CDATA[VENTA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="502"
+						y="16"
+						width="27"
+						height="11"
+						key="staticText-63"/>
+					<box>					<rightPen lineWidth="0.75" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<text><![CDATA[ALC]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="529"
+						y="16"
+						width="42"
+						height="11"
+						key="staticText-65"/>
+					<box>					<leftPen lineWidth="0.75" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<text><![CDATA[INVENT.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="571"
+						y="16"
+						width="39"
+						height="11"
+						key="staticText-66"/>
+					<box></box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<text><![CDATA[VENTA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="610"
+						y="16"
+						width="27"
+						height="11"
+						key="staticText-67"/>
+					<box>					<rightPen lineWidth="0.75" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<text><![CDATA[ALC]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="745"
+						y="16"
+						width="42"
+						height="11"
+						key="staticText-69"/>
+					<box>					<leftPen lineWidth="0.75" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<text><![CDATA[INVENT.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="787"
+						y="16"
+						width="39"
+						height="11"
+						key="staticText-70"/>
+					<box></box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<text><![CDATA[VENTA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="826"
+						y="16"
+						width="27"
+						height="11"
+						key="staticText-71"/>
+					<box>					<rightPen lineWidth="0.0" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<text><![CDATA[ALC]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="253"
+						y="5"
+						width="150"
+						height="11"
+						key="textField-41"/>
+					<box>					<leftPen lineWidth="0.75" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="0.75" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{SUCURSAL}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="421"
+						y="5"
+						width="108"
+						height="11"
+						key="textField-42"/>
+					<box>					<leftPen lineWidth="0.75" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="0.75" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{SUCURSAL}.equals( "ANDRADE" ) ? "BOLIVAR" : "ANDRADE"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="529"
+						y="5"
+						width="108"
+						height="11"
+						key="textField-43"/>
+					<box>					<leftPen lineWidth="0.75" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="0.75" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{SUCURSAL}.equals( "CF5FEBRERO" ) ? "BOLIVAR" :
+$P{SUCURSAL}.equals( "CALLE 4" ) ? "BOLIVAR" :
+$P{SUCURSAL}.equals( "TACUBA" ) ? "BOLIVAR" : "CALLE 4"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="745"
+						y="5"
+						width="108"
+						height="11"
+						key="textField-44"/>
+					<box>					<leftPen lineWidth="0.75" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="0.0" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{SUCURSAL}.equals( "CF5FEBRERO" ) ? "TACUBA" : "CF5FEBRERO"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="403"
+						y="16"
+						width="18"
+						height="11"
+						key="staticText-72"/>
+					<box>					<rightPen lineWidth="0.75" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<text><![CDATA[SUG]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="403"
+						y="5"
+						width="18"
+						height="11"
+						key="staticText-73"/>
+					<box>					<leftPen lineWidth="0.75" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="0.75" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<text><![CDATA[SUC]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="853"
+						y="5"
+						width="107"
+						height="11"
+						key="textField-48"/>
+					<box>					<leftPen lineWidth="0.75" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="0.0" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["VERTIZ"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="853"
+						y="16"
+						width="42"
+						height="11"
+						key="staticText-74"/>
+					<box>					<leftPen lineWidth="0.75" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<text><![CDATA[INVENT.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="895"
+						y="16"
+						width="39"
+						height="11"
+						key="staticText-75"/>
+					<box></box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<text><![CDATA[VENTA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="934"
+						y="16"
+						width="25"
+						height="11"
+						key="staticText-76"/>
+					<box>					<rightPen lineWidth="0.0" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<text><![CDATA[ALC]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="637"
+						y="16"
+						width="42"
+						height="11"
+						key="staticText-77"/>
+					<box>					<leftPen lineWidth="0.75" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<text><![CDATA[INVENT.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="679"
+						y="16"
+						width="39"
+						height="11"
+						key="staticText-78"/>
+					<box></box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<text><![CDATA[VENTA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="718"
+						y="16"
+						width="27"
+						height="11"
+						key="staticText-79"/>
+					<box>					<rightPen lineWidth="0.0" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<text><![CDATA[ALC]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="637"
+						y="5"
+						width="108"
+						height="11"
+						key="textField-52"/>
+					<box>					<leftPen lineWidth="0.75" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="0.0" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{SUCURSAL}.equals( "CF5FEBRERO" ) ? "CALLE 4" :
+$P{SUCURSAL}.equals( "TACUBA" ) ? "CALLE 4" : "TACUBA"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="361"
+						y="16"
+						width="42"
+						height="11"
+						key="staticText-80"/>
+					<box>					<leftPen lineWidth="0.75" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<text><![CDATA[PED.PEND]]></text>
+				</staticText>
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="12"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="50"
+						y="0"
+						width="51"
+						height="11"
+						key="textField"/>
+					<box></box>
+					<textElement>
+						<font fontName="Arial" size="7"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{CLAVE}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="101"
+						y="0"
+						width="152"
+						height="11"
+						key="textField"/>
+					<box></box>
+					<textElement>
+						<font fontName="Arial" size="7"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{DESCRIPCION}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="#,##0.000" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="253"
+						y="0"
+						width="42"
+						height="11"
+						key="textField-29"/>
+					<box>					<leftPen lineWidth="0.75" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$P{SUCURSAL}.equals( "ANDRADE" ) ? $F{EXI_AND} :
+$P{SUCURSAL}.equals( "BOLIVAR" ) ? $F{EXI_BOL} :
+$P{SUCURSAL}.equals( "CALLE 4" ) ? $F{EXI_CA4} :
+$P{SUCURSAL}.equals( "TACUBA" ) ? $F{EXI_TAC} :
+$P{SUCURSAL}.equals( "CF5FEBRERO" ) ? $F{EXI_5FE} : $F{EXI_TOT}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="#,##0.000" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="295"
+						y="0"
+						width="39"
+						height="11"
+						key="textField-30"/>
+					<box></box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$P{SUCURSAL}.equals( "ANDRADE" ) ? $F{PVTA_AND} :
+$P{SUCURSAL}.equals( "BOLIVAR" ) ? $F{PVTA_BOL} :
+$P{SUCURSAL}.equals( "CALLE 4" ) ? $F{PVTA_CA4} :
+$P{SUCURSAL}.equals( "TACUBA" ) ? $F{PVTA_TAC} :
+$P{SUCURSAL}.equals( "CF5FEBRERO" ) ? $F{PVTA_5FE} : $F{PVTA_TOT}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="#,##0.0" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="334"
+						y="0"
+						width="27"
+						height="11"
+						key="textField-31"/>
+					<box>					<rightPen lineWidth="0.75" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$P{SUCURSAL}.equals( "ANDRADE" ) ? $F{ALC_AND} :
+$P{SUCURSAL}.equals( "BOLIVAR" ) ? $F{ALC_BOL} :
+$P{SUCURSAL}.equals( "CALLE 4" ) ? $F{ALC_CA4} :
+$P{SUCURSAL}.equals( "TACUBA" ) ? $F{ALC_TAC} :
+$P{SUCURSAL}.equals( "CF5FEBRERO" ) ? $F{ALC_5FE} : $F{ALC_TOT}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="#,##0.000" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="421"
+						y="0"
+						width="42"
+						height="11"
+						key="textField-32"/>
+					<box>					<leftPen lineWidth="0.75" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$P{SUCURSAL}.equals( "ANDRADE" ) ? $F{EXI_BOL} : $F{EXI_AND}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="#,##0.0" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="463"
+						y="0"
+						width="39"
+						height="11"
+						key="textField-33"/>
+					<box></box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$P{SUCURSAL}.equals( "ANDRADE" ) ? $F{PVTA_BOL} : $F{PVTA_AND}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="#,##0.0" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="502"
+						y="0"
+						width="27"
+						height="11"
+						key="textField-34"/>
+					<box>					<rightPen lineWidth="0.75" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$P{SUCURSAL}.equals( "ANDRADE" ) ? $F{ALC_BOL} : $F{ALC_AND}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="#,##0.000" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="529"
+						y="0"
+						width="42"
+						height="11"
+						key="textField-35"/>
+					<box>					<leftPen lineWidth="0.75" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$P{SUCURSAL}.equals( "CF5FEBRERO" ) ? $F{EXI_BOL} :
+$P{SUCURSAL}.equals( "CALLE 4" ) ? $F{EXI_BOL} :
+$P{SUCURSAL}.equals( "TACUBA" ) ? $F{EXI_BOL} : $F{EXI_CA4}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="#,##0.0" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="571"
+						y="0"
+						width="39"
+						height="11"
+						key="textField-36"/>
+					<box></box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$P{SUCURSAL}.equals( "CF5FEBRERO" ) ? $F{PVTA_BOL} :
+$P{SUCURSAL}.equals( "CALLE 4" ) ? $F{PVTA_BOL} :
+$P{SUCURSAL}.equals( "TACUBA" ) ? $F{PVTA_BOL} : $F{PVTA_CA4}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="#,##0.0" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Opaque"
+						x="610"
+						y="0"
+						width="27"
+						height="11"
+						backcolor="#FFFFFF"
+						key="textField-37"/>
+					<box>					<rightPen lineWidth="0.75" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$P{SUCURSAL}.equals( "CF5FEBRERO" ) ? $F{ALC_BOL} :
+$P{SUCURSAL}.equals( "CALLE 4" ) ? $F{ALC_BOL} :
+$P{SUCURSAL}.equals( "TACUBA" ) ? $F{ALC_BOL} : $F{ALC_CA4}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="#,##0.000" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="745"
+						y="0"
+						width="42"
+						height="11"
+						key="textField-38"/>
+					<box>					<leftPen lineWidth="0.75" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$P{SUCURSAL}.equals( "CF5FEBRERO" ) ? $F{EXI_TAC} : $F{EXI_5FE}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="#,##0.0" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="787"
+						y="0"
+						width="39"
+						height="11"
+						key="textField-39"/>
+					<box></box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$P{SUCURSAL}.equals( "CF5FEBRERO" ) ? $F{PVTA_TAC} : $F{PVTA_5FE}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="#,##0.0" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="826"
+						y="0"
+						width="27"
+						height="11"
+						key="textField-40"/>
+					<box>					<rightPen lineWidth="0.0" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$P{SUCURSAL}.equals( "CF5FEBRERO" ) ? $F{ALC_TAC} : $F{ALC_5FE}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="403"
+						y="0"
+						width="18"
+						height="11"
+						key="textField-46"/>
+					<box>					<rightPen lineWidth="0.75" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{SUCURSAL}.equals( "ANDRADE" ) ?
+(
+($F{ALC_BOL}.doubleValue()+$F{ALC_CA4}.doubleValue())>($F{ALC_VRT}.doubleValue()+$F{ALC_TAC}.doubleValue()+$F{ALC_5FE}.doubleValue()) ?
+($F{ALC_BOL}.doubleValue()>$F{ALC_CA4}.doubleValue() ? "BOL" : "CA4") :
+$F{ALC_TAC}.doubleValue()>($F{ALC_VRT}.doubleValue()+$F{ALC_5FE}.doubleValue()) ? "TAC" :
+($F{ALC_VRT}.doubleValue()>$F{ALC_5FE}.doubleValue() ? "VRT" : "5FE")  
+)
+:
+$P{SUCURSAL}.equals( "BOLIVAR" ) ?
+(
+($F{ALC_AND}.doubleValue()+$F{ALC_CA4}.doubleValue())>($F{ALC_VRT}.doubleValue()+$F{ALC_TAC}.doubleValue()+$F{ALC_5FE}.doubleValue()) ?
+($F{ALC_AND}.doubleValue()>$F{ALC_CA4}.doubleValue() ? "AND" : "CA4") :
+$F{ALC_TAC}.doubleValue()>($F{ALC_VRT}.doubleValue()+$F{ALC_5FE}.doubleValue()) ? "TAC" :
+($F{ALC_VRT}.doubleValue()>$F{ALC_5FE}.doubleValue() ? "VRT" : "5FE")  
+)
+:
+$P{SUCURSAL}.equals( "CALLE 4" ) ?
+(
+($F{ALC_AND}.doubleValue()+$F{ALC_BOL}.doubleValue())>($F{ALC_VRT}.doubleValue()+$F{ALC_TAC}.doubleValue()+$F{ALC_5FE}.doubleValue()) ?
+($F{ALC_AND}.doubleValue()>$F{ALC_BOL}.doubleValue() ? "AND" : "BOL") :
+$F{ALC_TAC}.doubleValue()>($F{ALC_VRT}.doubleValue()+$F{ALC_5FE}.doubleValue()) ? "TAC" :
+($F{ALC_VRT}.doubleValue()>$F{ALC_5FE}.doubleValue() ? "VRT" : "5FE")  
+)
+:
+$P{SUCURSAL}.equals( "CF5FEBRERO" ) ?
+(
+($F{ALC_AND}.doubleValue()+$F{ALC_CA4}.doubleValue())>($F{ALC_VRT}.doubleValue()+$F{ALC_TAC}.doubleValue()+$F{ALC_BOL}.doubleValue()) ?
+($F{ALC_AND}.doubleValue()>$F{ALC_CA4}.doubleValue() ? "AND" : "CA4") :
+$F{ALC_TAC}.doubleValue()>($F{ALC_VRT}.doubleValue()+$F{ALC_BOL}.doubleValue()) ? "TAC" :
+($F{ALC_VRT}.doubleValue()>$F{ALC_BOL}.doubleValue() ? "VRT" : "BOL")  
+)
+:
+$P{SUCURSAL}.equals( "TACUBA" ) ?
+(
+($F{ALC_AND}.doubleValue()+$F{ALC_BOL}.doubleValue())>($F{ALC_VRT}.doubleValue()+$F{ALC_CA4}.doubleValue()+$F{ALC_5FE}.doubleValue()) ?
+($F{ALC_AND}.doubleValue()>$F{ALC_BOL}.doubleValue() ? "AND" : "BOL") :
+$F{ALC_CA4}.doubleValue()>($F{ALC_VRT}.doubleValue()+$F{ALC_5FE}.doubleValue()) ? "CA4" :
+($F{ALC_VRT}.doubleValue()>$F{ALC_5FE}.doubleValue() ? "VRT" : "5FE")  
+)
+:
+"SNA"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="#,##0.0" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="934"
+						y="0"
+						width="25"
+						height="11"
+						key="textField-49"/>
+					<box>					<rightPen lineWidth="0.0" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$F{ALC_VRT}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="#,##0.0" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="895"
+						y="0"
+						width="39"
+						height="11"
+						key="textField-50"/>
+					<box></box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[new Double($F{PVTA_VRT}.doubleValue()>0.00 ? 0.00 : $F{PVTA_VRT}.doubleValue())]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="#,##0.000" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="853"
+						y="0"
+						width="42"
+						height="11"
+						key="textField-51"/>
+					<box>					<leftPen lineWidth="0.75" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$F{EXI_VRT}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="#,##0.000" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="637"
+						y="0"
+						width="42"
+						height="11"
+						key="textField-53"/>
+					<box>					<leftPen lineWidth="0.75" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$P{SUCURSAL}.equals( "CF5FEBRERO" ) ? $F{EXI_CA4} :
+$P{SUCURSAL}.equals( "TACUBA" ) ? $F{EXI_CA4} : $F{EXI_TAC}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="#,##0.0" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="679"
+						y="0"
+						width="39"
+						height="11"
+						key="textField-54"/>
+					<box></box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$P{SUCURSAL}.equals( "CF5FEBRERO" ) ? $F{PVTA_CA4} :
+$P{SUCURSAL}.equals( "TACUBA" ) ? $F{PVTA_CA4} : $F{PVTA_TAC}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="#,##0.0" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="718"
+						y="0"
+						width="27"
+						height="11"
+						key="textField-55"/>
+					<box>					<rightPen lineWidth="0.0" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$P{SUCURSAL}.equals( "CF5FEBRERO" ) ? $F{ALC_CA4} :
+$P{SUCURSAL}.equals( "TACUBA" ) ? $F{ALC_CA4} : $F{ALC_TAC}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="#,##0.000" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="361"
+						y="0"
+						width="42"
+						height="11"
+						key="textField-56"/>
+					<box>					<leftPen lineWidth="0.75" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$F{PENDTE}]]></textFieldExpression>
+				</textField>
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="16"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Opaque"
+						x="496"
+						y="3"
+						width="48"
+						height="11"
+						forecolor="#999999"
+						backcolor="#FFFFFF"
+						key="textField-5"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+						<font fontName="Arial" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Página " + $V{PAGE_NUMBER} + " de "]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						mode="Opaque"
+						x="791"
+						y="3"
+						width="76"
+						height="11"
+						forecolor="#999999"
+						backcolor="#FFFFFF"
+						key="staticText-18"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+						<font fontName="Arial" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+					</textElement>
+				<text><![CDATA[Fecha de impresión:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Transparent"
+						x="867"
+						y="3"
+						width="83"
+						height="11"
+						forecolor="#999999"
+						backcolor="#FFFFFF"
+						key="textField-6"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+						<font fontName="Arial" pdfFontName="Times-Roman" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
+					</textElement>
+				<textFieldExpression   class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Report" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Transparent"
+						x="545"
+						y="3"
+						width="31"
+						height="11"
+						forecolor="#999999"
+						backcolor="#FFFFFF"
+						key="textField-7"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+						<font fontName="Arial" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+				<line direction="TopDown">
+					<reportElement
+						x="46"
+						y="3"
+						width="914"
+						height="0"
+						forecolor="#CCCCCC"
+						key="line-5"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+			</band>
+		</pageFooter>
+		<lastPageFooter>
+			<band height="17"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Opaque"
+						x="496"
+						y="4"
+						width="48"
+						height="11"
+						forecolor="#999999"
+						backcolor="#FFFFFF"
+						key="textField-2"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+						<font fontName="Arial" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Página " + $V{PAGE_NUMBER} + " de "]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						mode="Opaque"
+						x="791"
+						y="4"
+						width="76"
+						height="11"
+						forecolor="#999999"
+						backcolor="#FFFFFF"
+						key="staticText-17"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+						<font fontName="Arial" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+					</textElement>
+				<text><![CDATA[Fecha de impresión:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Transparent"
+						x="867"
+						y="4"
+						width="83"
+						height="11"
+						forecolor="#999999"
+						backcolor="#FFFFFF"
+						key="textField-3"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+						<font fontName="Arial" pdfFontName="Times-Roman" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
+					</textElement>
+				<textFieldExpression   class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Report" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Transparent"
+						x="545"
+						y="4"
+						width="31"
+						height="11"
+						forecolor="#999999"
+						backcolor="#FFFFFF"
+						key="textField-4"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+						<font fontName="Arial" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+				<line direction="TopDown">
+					<reportElement
+						mode="Opaque"
+						x="949"
+						y="-2"
+						width="0"
+						height="19"
+						forecolor="#CCCCCC"
+						backcolor="#FFFFFF"
+						key="line-4"/>
+					<graphicElement stretchType="NoStretch" fill="Solid" />
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="46"
+						y="3"
+						width="914"
+						height="0"
+						forecolor="#CCCCCC"
+						key="line-7"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+			</band>
+		</lastPageFooter>
+		<summary>
+			<band height="7"  isSplitAllowed="true" >
+			</band>
+		</summary>
+</jasperReport>
