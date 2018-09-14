@@ -105,5 +105,9 @@ class Inventario {
         this.kilos = (this.cantidad / factor) * this.producto.kilos
     }
 
+    def calcularImporte() {
+        return (this.cantidad/(this.producto.unidad == 'MIL' ? 1000 : 1)) * this.costo
+    }
+
 
 }

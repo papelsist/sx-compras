@@ -119,6 +119,8 @@ class Existencia {
         recorteComentario nullable: true
         recorteFecha nullable: true
         fecha nullable: true
+        costo nullbale: true
+        costoPromedio nullable: true
     }
 
     static mapping={

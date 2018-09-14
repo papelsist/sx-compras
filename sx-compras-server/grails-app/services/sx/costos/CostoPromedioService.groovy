@@ -9,6 +9,7 @@ import org.apache.commons.lang.exception.ExceptionUtils
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
+import sx.core.Existencia
 import sx.core.Inventario
 import sx.core.Producto
 import sx.inventario.Transformacion
@@ -171,6 +172,17 @@ class CostoPromedioService {
         executeUdate(sql, [ejercicio, mes, ejercicio, mes])
     }
 
+    def analisisDeCosto(CostoPromedio cp) {
+        def movimientos = Inventario.findAll("""
+                from Inventario i 
+                where i.producto = ? and year(fecha)= ? and month(fecha) = ? and tipo in('COM', 'TRS', 'REC')
+                """, [cp.producto, cp.ejercicio, cp.mes])
+        def existencias =  Existencia.findAll("from Existencia e where e.producto = ? and e.anio = ? and e.mes = ?",
+                [cp.producto, cp.ejercicio, cp.mes])
+
+        return rows
+    }
+
 
 
     def executeUdate(String sql, List params) {
@@ -234,5 +246,47 @@ class PeriodoDeCosteo {
     String toString() {
         return "${ejercicio} - ${mes}"
     }
+
+}
+
+class AnalisisDeCosto {
+
+    Integer ejercicio
+    Integer mes
+    String clave
+    String descripcion
+    BigDecimal inventarioInicial
+    BigDecimal costoInicial
+
+    List<Inventario> movimientos
+    BigDecimal inventarioFinal
+    BigDecimal costoFinal
+
+    AnalisisDeCosto(CostoPromedio cp, List<Inventario> movimientos, List<Existencia> existencias ) {
+        this.ejercicio = cp.ejercicio
+        this.mes = cp.mes
+        this.clave = cp.clave
+        this.descripcion = cp.descripcion
+        this.movimientos = movimientos
+        calcularInentarioInicial(existencias)
+    }
+
+
+    void calcularInentarioInicial(List<Existencia> existencias) {
+        this.costoInicial =  existencias.sum 0.0, { Existencia it ->
+            def factor = it.producto.unidad == 'MIL' ? 1000 : 1
+            return it.cantidad/factor * it.costo
+        }
+        this.inventarioInicial = existencias.sum 0.0, { it -> it.cantidad}
+    }
+
+    void calcilarCosto() {
+        this.inventarioFinal =  this.movimientos.sum 0.0, { Inventario it ->
+            def factor = it.producto.unidad == 'MIL' ? 1000 : 1
+            return it.cantidad/factor * it.costo
+        }
+    }
+
+
 
 }

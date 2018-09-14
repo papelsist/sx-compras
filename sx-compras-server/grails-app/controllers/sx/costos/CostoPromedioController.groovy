@@ -68,7 +68,7 @@ class CostoPromedioController extends RestfulController<CostoPromedio> {
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'InventarioCosteado.pdf')
     }
 
-    def movimientosCosteado(Integer ejercicio, Integer mes) {
+    def movimientosCosteados(Integer ejercicio, Integer mes) {
         Map repParams = [:]
         repParams.EJERCICIO = ejercicio.toLong()
         repParams.MES = mes.toLong()
