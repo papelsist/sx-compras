@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import sx.core.Inventario
 import sx.core.Producto
+import sx.inventario.Transformacion
 import sx.utils.Periodo
 
 import javax.sql.DataSource
@@ -27,10 +28,12 @@ class CostoPromedioService {
 
     def generar(Integer ejercicio , Integer mes) {
         PeriodoDeCosteo per = new PeriodoDeCosteo(ejercicio, mes)
-        log.info('Generando registros de costo promedio  para {} ', per)
         PeriodoDeCosteo anterior = per.getPeriodoAnterior()
         List<CostoPromedio> costos = []
-        CostoPromedio.where {ejercicio == anterior.ejercicio && mes == anterior.mes}.list().each {
+        List<CostoPromedio> anteriores = CostoPromedio.where {ejercicio == anterior.ejercicio && mes == anterior.mes}.list()
+        log.info('Trasladando  {} registros de costo promedio del period anterior: {} al {}', anteriores.size(), anterior, per)
+
+        anteriores.each {
             CostoPromedio cp = CostoPromedio.findOrSaveWhere(ejercicio: per.ejercicio, mes: per.mes, producto: it.producto)
             cp.costo = it.costo
             cp.costoAnterior = it.costo
@@ -42,10 +45,65 @@ class CostoPromedioService {
         return costos
     }
 
+    def costearExistenciaInicial(Integer ejercicio, Integer mes) {
+        Integer ejercicioAnterior = ejercicio
+        Integer mesAnterior = mes
+        if(mes == 1) {
+            ejercicioAnterior = ejercicio - 1
+            mesAnterior = 12
+        }
+        String sql = """ 
+                UPDATE EXISTENCIA E 
+                SET COSTO = IFNULL((SELECT C.COSTO FROM COSTO_PROMEDIO C WHERE C.EJERCICIO = ? AND C.MES = ? AND C.PRODUCTO_ID = E.PRODUCTO_ID ), 0)
+                WHERE E.ANIO = ? AND E.MES = ? 
+                """
+        executeUdate(sql, [ejercicioAnterior, mesAnterior, ejercicio, mes])
+    }
+
+
+    def costearTransformaciones(Integer ejercicio , Integer mes) {
+        PeriodoDeCosteo per = new PeriodoDeCosteo(ejercicio, mes)
+        PeriodoDeCosteo anterior = per.getPeriodoAnterior()
+        Periodo periodo = Periodo.getPeriodoEnUnMes(mes - 1, ejercicio)
+
+        def trs = Transformacion.where{ fecha >= periodo.fechaInicial && fecha <= periodo.fechaFinal }
+        log.debug("Costeando {} registros de transformaciones para el periodo {} ", trs.size(), periodo)
+        trs.each {
+            def costo = null
+            it.partidas.each { tr ->
+                if(tr.cantidad < 0) {
+                    CostoPromedio cp = CostoPromedio.where{ejercicio == anterior.ejercicio && mes == anterior.mes && producto == tr.producto}.find()
+                    if(cp){
+                        costo = cp.costo
+                        // log "Salida  ${tr.producto.clave} Cantidad: ${tr.cantidad} CostoU: ${costo} (sw2:${tr.sw2})"
+                    } else {
+                        log.error("Error no se enctontro Costo promedio en el periodo anterior...")
+                        costo = null
+                    }
+
+                } else {
+                    if(costo) {
+                        try {
+                            Inventario iv = tr.inventario
+                            iv.costo = costo
+                            iv.save flush: true
+                            // println " Entrada costeada ${tr.producto.clave}  Cantidad:${tr.cantidad}  CostoU: ${costo}(sw2:${tr.sw2})"
+                        }catch(Exception ex) {
+                            log.error("Error costeando  ${it.tipo} ${it.documento} {}", ex.message)
+                        }
+                    }
+
+                }
+
+            }
+        }
+
+    }
+
     @NotTransactional
     def calcular(Integer ejercicio , Integer mes) {
         List<CostoPromedio> costos = CostoPromedio.where {ejercicio == ejercicio && mes == mes}.list()
-        log.info('Registros de costo promedio generados: {}', costos.size())
+        log.info('Actualizando costo a {} registros de costo promedio para el periodo {} - {}', costos.size(), mes, ejercicio)
 
         String sql ="""
             SELECT A.clave ,round(ifnull(SUM(a.IMP_COSTO)/SUM(A.CANT),0),2) AS costop
@@ -63,9 +121,8 @@ class CostoPromedioService {
              ) AS A
              GROUP BY A.CLAVE
         """
-        List<CostoPromedio> res = []
+        List<CostoPromedio> actualizados = []
         getLocalRows(sql, [ejercicio, mes, ejercicio, mes]).each { row ->
-            log.info('Procesando: {}', row)
             CostoPromedio cp = costos.find { it.clave == row.clave}
             if(!cp) {
                 Producto producto = Producto.findByClave(row.clave)
@@ -73,31 +130,21 @@ class CostoPromedioService {
                 cp.clave = producto.clave
                 cp.descripcion = producto.descripcion
                 cp.costoAnterior = 0.0
+                costos << cp
             }
             cp.costo = row.costop
             cp.save flush: true
-            res << cp
+            actualizados << cp
         }
-        return res
+        log.debug("{} Registros actualizados ", actualizados.size())
+        return costos
     }
 
-
-
-
-    def aplicar(Integer ejercicio , Integer mes) {
-        Periodo periodo = Periodo.getPeriodoEnUnMes(mes - 1, ejercicio)
-        List<CostoPromedio> costos = CostoPromedio.where{ejercicio == ejercicio && mes == mes}.list()
-        costos.each {
-            aplicarCosto(it, periodo)
-        }
-
+    def aplicar(Integer ejercicio, Integer mes) {
+        costearExistencias(ejercicio, mes)
+        costearInventario(ejercicio, mes)
     }
 
-    def aplicarCosto(CostoPromedio costoPromedio, Periodo periodo) {
-        Inventario.executeUpdate(
-                "update Inventario set costoPromedio = ? where producto = ? and fecha between ? and ? ",
-                [periodo.fechaInicial, periodo.fechaFinal, costoPromedio.producto])
-    }
 
     /**
      * Traslada el costo promedio a la tabla de existencias
@@ -106,13 +153,13 @@ class CostoPromedioService {
      * @param mes
      * @return
      */
-    int trasladarCostoExistencias(Integer ejercicio, Integer mes) {
+    def costearExistencias(Integer ejercicio, Integer mes) {
         String sql = """ 
                 UPDATE EXISTENCIA E 
                 SET COSTO_PROMEDIO = IFNULL((SELECT C.COSTO FROM COSTO_PROMEDIO C WHERE C.EJERCICIO = E.ANIO AND C.MES = E.MES AND C.PRODUCTO_ID = E.PRODUCTO_ID ), 0)
                 WHERE E.ANIO = ? AND E.MES = ? 
                 """
-        return executeUdate(sql, [ejercicio, mes])
+        executeUdate(sql, [ejercicio, mes])
     }
 
     def costearInventario(Integer ejercicio, Integer mes) {
@@ -121,37 +168,15 @@ class CostoPromedioService {
                 SET COSTO_PROMEDIO = IFNULL((SELECT C.COSTO FROM COSTO_PROMEDIO C WHERE C.EJERCICIO = ? AND C.MES = ? AND C.PRODUCTO_ID = E.PRODUCTO_ID ), 0)
                 WHERE year(E.FECHA) = ? AND month(E.FECHA) = ? 
                 """
-        return executeUdate(sql, [ejercicio, mes, ejercicio, mes])
-    }
-
-    /**
-     * Asigna el costo unitario de la existencia, tomandolo del costo promedio del mes anterior
-     *
-     * @param ejercicio
-     * @param mes
-     * @return
-     */
-    int asignarCostoInicialExistencias(Integer ejercicio, Integer mes) {
-        Integer ejercicioAnterior = ejercicio
-        Integer mesAnterior = mes
-        if(mes == 1) {
-            ejercicioAnterior = ejercicio - 1
-            mesAnterior = 12
-        }
-        String sql = """ 
-                UPDATE EXISTENCIA E 
-                SET COSTO = IFNULL((SELECT C.COSTO FROM COSTO_PROMEDIO C WHERE C.EJERCICIO = ? AND C.MES = ? AND C.PRODUCTO_ID = E.PRODUCTO_ID ), 0)
-                WHERE E.ANIO = ? AND E.MES = ? 
-                """
-        return executeUdate(sql, [ejercicioAnterior, mesAnterior, ejercicio, mes])
+        executeUdate(sql, [ejercicio, mes, ejercicio, mes])
     }
 
 
 
-    int executeUdate(String sql, List params) {
+    def executeUdate(String sql, List params) {
         Sql db = getLocalSql()
         try {
-            return db.executeUpdate(sql, params)
+            db.executeUpdate(sql, params)
         }catch (SQLException e){
             e.printStackTrace()
             def c = ExceptionUtils.getRootCause(e)
@@ -197,16 +222,13 @@ class PeriodoDeCosteo {
     }
 
     PeriodoDeCosteo getPeriodoAnterior() {
-        if(anterior == null) {
-            Integer ejercicioAnterior = ejercicio
-            Integer mesAnterior = mes
-            if(mes == 1) {
-                ejercicioAnterior = ejercicio - 1
-                mesAnterior = 12
-            }
-            anterior = new PeriodoDeCosteo(ejercicioAnterior, mesAnterior)
+        Integer ejercicioAnterior = ejercicio
+        Integer mesAnterior = mes - 1
+        if(mes == 1) {
+            ejercicioAnterior = ejercicio - 1
+            mesAnterior = 12
         }
-        return anterior
+        return new PeriodoDeCosteo(ejercicioAnterior, mesAnterior)
     }
 
     String toString() {

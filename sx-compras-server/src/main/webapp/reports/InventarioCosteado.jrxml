@@ -32,7 +32,7 @@
 	<parameter name="SUC" isForPrompting="true" class="java.lang.String">
 		<defaultValueExpression ><![CDATA["%"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="AÑO" isForPrompting="true" class="java.lang.Long"/>
+	<parameter name="EJERCICIO" isForPrompting="true" class="java.lang.Long"/>
 	<parameter name="MES" isForPrompting="true" class="java.lang.Long"/>
 	<queryString><![CDATA[SELECT S.CLAVE AS SUCURSAL,S.NOMBRE,P.CLAVE,P.DESCRIPCION AS DESCRIPCION1,P.KILOS,I.NACIONAL AS TIPO 
 ,SUM(I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end)) AS SALDO,I.COSTO_PROMEDIO
@@ -43,7 +43,7 @@
 ,SUM((I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end))*P.KILOS) as KILOSMOV
 FROM existencia I JOIN sucursal S ON(S.ID=I.SUCURSAL_ID) 
 join producto p on(p.id=i.producto_id) 
-where p.inventariable is true AND CANTIDAD<>0 and  i.anio=$P{AÑO} and i.mes=$P{MES} AND S.id LIKE $P{SUC} 
+where p.inventariable is true AND CANTIDAD<>0 and  i.anio=$P{EJERCICIO} and i.mes=$P{MES} AND S.id LIKE $P{SUC}
 GROUP BY I.CLAVE,I.NACIONAL]]></queryString>
 
 	<field name="SUCURSAL" class="java.lang.String"/>
@@ -360,7 +360,7 @@ GROUP BY I.CLAVE,I.NACIONAL]]></queryString>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Arial" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{MES}+"/"+$P{AÑO}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{MES}+"/"+$P{EJERCICIO}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -635,7 +635,7 @@ GROUP BY I.CLAVE,I.NACIONAL]]></queryString>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
 					<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font fontName="Times-Roman" pdfFontName="Times-Roman" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
+						<font fontName="Arial" pdfFontName="Times-Roman" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
 					</textElement>
 				<textFieldExpression   class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
 				</textField>
@@ -713,7 +713,7 @@ GROUP BY I.CLAVE,I.NACIONAL]]></queryString>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
 					<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font fontName="Times-Roman" pdfFontName="Times-Roman" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
+						<font fontName="Arial" pdfFontName="Times-Roman" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
 					</textElement>
 				<textFieldExpression   class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
 				</textField>

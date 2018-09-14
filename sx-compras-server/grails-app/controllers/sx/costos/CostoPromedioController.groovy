@@ -31,13 +31,51 @@ class CostoPromedioController extends RestfulController<CostoPromedio> {
         return CostoPromedio.where {ejercicio == ejercicio && mes == mes}.list(params)
     }
 
+    def costos(Integer ejercicio, Integer mes) {
+        respond CostoPromedio.where{ejercicio == ejercicio && mes == mes}.list([sort: 'producto.linea'])
+    }
+
     def calcular(Integer ejercicio, Integer mes) {
+        def found = CostoPromedio.where{ejercicio == ejercicio && mes == mes}.count()
+        if(!found) {
+            costoPromedioService.generar(ejercicio, mes)
+        }
+        costoPromedioService.costearExistenciaInicial(ejercicio, mes)
+        costoPromedioService.costearTransformaciones(ejercicio, mes)
         respond costoPromedioService.calcular(ejercicio, mes)
     }
 
     def aplicar(Integer ejercicio, Integer mes) {
-        respond costoPromedioService.aplicar(ejercicio, mes)
+       costoPromedioService.costearExistencias(ejercicio, mes)
+        respond status: 200
     }
 
-    def generarReporte(Integer ejercicio, Integer mes) {}
+    def calculoDeCostoPromedio(Integer ejercicio, Integer mes) {
+        Map repParams = [:]
+        repParams.EJERCICIO = ejercicio.toLong()
+        repParams.MES = mes.toLong()
+        repParams.ARTICULOS = params.producto
+        def pdf =  reportService.run('CalculoDeCostoPromedio.jrxml', repParams)
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'CalculoDeCostoPromedio.pdf')
+    }
+
+    def inventarioCosteado(Integer ejercicio, Integer mes) {
+        Map repParams = [:]
+        repParams.EJERCICIO = ejercicio.toLong()
+        repParams.MES = mes.toLong()
+        repParams.SUC = params.sucursal?: '%'
+        def pdf =  reportService.run('InventarioCosteado.jrxml', repParams)
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'InventarioCosteado.pdf')
+    }
+
+    def movimientosCosteado(Integer ejercicio, Integer mes) {
+        Map repParams = [:]
+        repParams.EJERCICIO = ejercicio.toLong()
+        repParams.MES = mes.toLong()
+        repParams.ARTICULOS = params.producto ?: '%'
+        def pdf =  reportService.run('MovimientosCosteados.jrxml', repParams)
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'MovimientosCosteados.pdf')
+    }
+
+
 }
