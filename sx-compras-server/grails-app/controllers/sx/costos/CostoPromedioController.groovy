@@ -5,6 +5,7 @@ import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.*
 
 import groovy.util.logging.Slf4j
+import org.grails.datastore.mapping.query.Query.In
 import sx.reports.ReportService
 import sx.utils.Periodo
 
@@ -16,6 +17,8 @@ class CostoPromedioController extends RestfulController<CostoPromedio> {
     static responseFormats = ['json']
 
     CostoPromedioService costoPromedioService
+
+    MovimientosCosteadosService movimientosCosteadosService
 
     ReportService reportService
 
@@ -31,6 +34,7 @@ class CostoPromedioController extends RestfulController<CostoPromedio> {
         return CostoPromedio.where {ejercicio == ejercicio && mes == mes}.list(params)
     }
 
+    @Secured("ROLE_USER")
     def costos(Integer ejercicio, Integer mes) {
         respond CostoPromedio.where{ejercicio == ejercicio && mes == mes}.list([sort: 'producto.linea'])
     }
@@ -46,7 +50,8 @@ class CostoPromedioController extends RestfulController<CostoPromedio> {
     }
 
     def aplicar(Integer ejercicio, Integer mes) {
-       costoPromedioService.costearExistencias(ejercicio, mes)
+        costoPromedioService.costearExistenciaFinal(ejercicio, mes)
+        costoPromedioService.costearMovimientosDeInventario(ejercicio, mes)
         respond status: 200
     }
 
@@ -57,6 +62,11 @@ class CostoPromedioController extends RestfulController<CostoPromedio> {
         repParams.ARTICULOS = params.producto
         def pdf =  reportService.run('CalculoDeCostoPromedio.jrxml', repParams)
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'CalculoDeCostoPromedio.pdf')
+    }
+
+    @Secured("ROLE_USER")
+    def movimientos(Integer ejercicio, Integer mes) {
+        respond movimientosCosteadosService.movimientos(ejercicio, mes)
     }
 
     def inventarioCosteado(Integer ejercicio, Integer mes) {

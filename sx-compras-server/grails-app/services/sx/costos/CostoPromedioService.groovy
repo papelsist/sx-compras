@@ -154,7 +154,8 @@ class CostoPromedioService {
      * @param mes
      * @return
      */
-    def costearExistencias(Integer ejercicio, Integer mes) {
+    def costearExistenciaFinal(Integer ejercicio, Integer mes) {
+        log.debug("Costaeand el inventario final para {} - {}", mes, ejercicio)
         String sql = """ 
                 UPDATE EXISTENCIA E 
                 SET COSTO_PROMEDIO = IFNULL((SELECT C.COSTO FROM COSTO_PROMEDIO C WHERE C.EJERCICIO = E.ANIO AND C.MES = E.MES AND C.PRODUCTO_ID = E.PRODUCTO_ID ), 0)
@@ -163,7 +164,8 @@ class CostoPromedioService {
         executeUdate(sql, [ejercicio, mes])
     }
 
-    def costearInventario(Integer ejercicio, Integer mes) {
+    def costearMovimientosDeInventario(Integer ejercicio, Integer mes) {
+        log.debug("Costeando los movimientos de  inventario  {} - {}", mes, ejercicio)
         String sql = """ 
                 UPDATE INVENTARIO E 
                 SET COSTO_PROMEDIO = IFNULL((SELECT C.COSTO FROM COSTO_PROMEDIO C WHERE C.EJERCICIO = ? AND C.MES = ? AND C.PRODUCTO_ID = E.PRODUCTO_ID ), 0)

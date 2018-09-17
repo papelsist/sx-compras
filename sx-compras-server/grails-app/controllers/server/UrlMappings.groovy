@@ -81,6 +81,7 @@ class UrlMappings {
         "/api/costos/$ejercicio/$mes"(controller: 'costoPromedio', action: 'costos', method: 'GET')
         "/api/costos/calcular/$ejercicio/$mes"(controller: 'costoPromedio', action: 'calcular', method: 'POST')
         "/api/costos/aplicar/$ejercicio/$mes"(controller: 'costoPromedio', action: 'aplicar', method: 'POST')
+        "/api/costos/movimientos/$ejercicio/$mes"(controller: 'costoPromedio', action: 'movimientos', method: 'GET')
         "/api/costos/calculoDeCostoPromedio"(controller: 'costoPromedio', action: 'calculoDeCostoPromedio')
         "/api/costos/inventarioCosteado"(controller: 'costoPromedio', action: 'inventarioCosteado')
         "/api/costos/movimientosCosteados"(controller: 'costoPromedio', action: 'movimientosCosteados')
