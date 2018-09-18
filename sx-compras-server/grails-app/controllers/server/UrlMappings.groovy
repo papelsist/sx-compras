@@ -86,6 +86,9 @@ class UrlMappings {
         "/api/costos/inventarioCosteado"(controller: 'costoPromedio', action: 'inventarioCosteado')
         "/api/costos/movimientosCosteados"(controller: 'costoPromedio', action: 'movimientosCosteados')
 
+        "/api/inventario"(resources: 'inventario', excludes:['create', 'update', 'save', 'edit','patch'])
+        "/api/inventario/$producto/$ejercicio/$mes"(controller: 'inventario', action: 'movimientos', method: 'GET')
+
 
         "/"(controller: 'application', action:'index')
         "500"(view: '/error')

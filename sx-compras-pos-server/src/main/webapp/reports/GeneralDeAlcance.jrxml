@@ -53,7 +53,7 @@ UNION
 SELECT X.PRODUCTO_ID,P.CLAVE,0,SUM((X.CANTIDAD*-1)/(case when p.unidad ='MIL' then 1000 else 1 end)) AS VTA,0 AS PEND FROM INVENTARIO X JOIN producto p ON(X.producto_id=p.ID) WHERE DATE(X.FECHA) BETWEEN $P{FECHA_INI} AND $P{FECHA_FIN} AND X.TIPO IN('FAC','DEV') AND   X.sucursal_id LIKE $P{SUCURSAL} GROUP BY P.CLAVE,X.PRODUCTO_ID
 UNION
 SELECT X.PRODUCTO_ID,P.CLAVE,0,0,SUM(((X.SOLICITADO-X.DEPURADO)/(case when P.unidad ='MIL' then 1000 else 1 end))-IFNULL((SELECT SUM(I.CANTIDAD/(case when Y.unidad ='MIL' then 1000 else 1 end)) FROM recepcion_de_compra_det I JOIN producto Y ON(I.producto_id=Y.ID) WHERE I.compra_det_id=X.ID AND I.inventario_id IS NOT NULL),0)) AS PENDTE
-from compra_det X JOIN producto P ON(X.producto_id=P.ID) WHERE X.SUCURSAL_ID LIKE $P{SUCURSAL} GROUP BY X.PRODUCTO_ID
+from compra_det X join compra cc on (x.compra_id = cc.id) JOIN producto P ON(X.producto_id=P.ID) WHERE cc.fecha > '2018-01-01' and X.SUCURSAL_ID LIKE $P{SUCURSAL} GROUP BY X.PRODUCTO_ID
 ) AS A
 JOIN producto P ON(A.PRODUCTO_ID=P.ID)
 join LINEA L on(L.ID=p.LINEA_ID)

@@ -59,6 +59,7 @@ class MovimientosCosteadosService {
     LEFT JOIN CLASE C ON(X.CLASE_ID=C.ID)
     LEFT JOIN MARCA M ON(X.MARCA_ID=M.ID)
     where x.inventariable=true and x.de_linea = true 
+    and ( (case when saldo<0 then abs(saldo) else 0 end) + (case when saldo>0 then saldo else 0 end) ) > 0
     GROUP BY 1 ORDER BY 1 
     """
     def movimientos(Integer ejercicio, Integer mes) {
