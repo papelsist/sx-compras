@@ -5,7 +5,7 @@ import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.*
 
 import groovy.util.logging.Slf4j
-
+import sx.core.Sucursal
 import sx.reports.ReportService
 import sx.utils.Periodo
 
@@ -73,7 +73,7 @@ class CostoPromedioController extends RestfulController<CostoPromedio> {
         Map repParams = [:]
         repParams.EJERCICIO = ejercicio.toLong()
         repParams.MES = mes.toLong()
-        repParams.SUC = params.sucursal?: '%'
+        repParams.SUC = params.sucursal
         def pdf =  reportService.run('InventarioCosteado.jrxml', repParams)
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'InventarioCosteado.pdf')
     }
