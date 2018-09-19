@@ -1,0 +1,8 @@
+{
+  "apiUrl": "http://localhost:9197/siipapx/api",
+  "sucursal": {
+    "id": "402880fc5e4ec411015e4ec64e70012e",
+    "clave": "12",
+    "nombre": "TACUBA"
+  }
+}

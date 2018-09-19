@@ -1,0 +1,27 @@
+<div layout>
+
+  <mat-card>
+    <mat-card-title-group>
+      <mat-card-title>Catálogo de líneas</mat-card-title>
+    </mat-card-title-group>
+    <mat-card-content class="mat-elevation-z6 lineas-container">
+      <mat-nav-list *ngIf="lineas$ | async as lineas">
+        <mat-list-item *ngFor="let linea of lineas; last as last">
+          <mat-icon matListAvatar>library_books</mat-icon>
+          <a matLine>{{ linea.linea}}</a>
+          <button mat-icon-button (click)="onEdit(linea)">
+            <mat-icon color="primary">edit</mat-icon>
+          </button>
+          <button mat-icon-button (click)="onDelete(linea)">
+            <mat-icon color="warn">delete</mat-icon>
+          </button>
+          <mat-divider [inset]="true" *ngIf="!last"></mat-divider>
+        </mat-list-item>
+      </mat-nav-list>
+    </mat-card-content>
+  </mat-card>
+  <a mat-fab matTooltip="Alta de ´linea" matTooltipPosition="before" color="accent" class="mat-fab-position-bottom-right z-3"
+    (click)="onCreate()">
+    <mat-icon>add</mat-icon>
+  </a>
+</div>

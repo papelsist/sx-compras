@@ -1,0 +1,18 @@
+<div mat-dialog-title>
+  Compras pendientes de {{proveedor.nombre}}
+</div>
+<div layout>
+  <mat-form-field flex>
+    <input matInput placeholder="Filtrar" autocomplete="off" (input)="onSearch(searchField.value)" #searchField>
+  </mat-form-field>
+</div>
+
+<mat-divider></mat-divider>
+
+<div class="compras-table-panel">
+  <sx-compras-selector-table [compras]="compras$ | async" [filter]="search$ | async" (select)="onSelection($event)"></sx-compras-selector-table>
+</div>
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close type="button">Cancelar</button>
+  <button mat-button [mat-dialog-close]="selected" [disabled]="!selected" type="button">Seleccionar</button>
+</mat-dialog-actions>

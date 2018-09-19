@@ -1,0 +1,7 @@
+import sx.compras.RecepcionDeCompraDet
+
+model {
+	RecepcionDeCompraDet recepcionDeCompraDet
+}
+
+json tmpl.recepcionDeCompraDet(recepcionDeCompraDet)

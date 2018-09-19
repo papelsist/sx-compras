@@ -1,0 +1,7 @@
+import sx.costos.CostoPromedio
+
+model {
+	CostoPromedio costoPromedio
+}
+
+json tmpl.costoPromedio(costoPromedio)

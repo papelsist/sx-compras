@@ -1,0 +1,38 @@
+<mat-card>
+  <form [formGroup]="form">
+    <div layout layout-align="start center" class="mat-title pad-left pad-top">
+      <span>Alta de Recepción de compra</span>
+    </div>
+
+    <div layout class="pad-left pad-right pad-top">
+      <sx-proveedor-field formControlName="proveedor" flex></sx-proveedor-field>
+      <mat-form-field class="pad-left">
+        <input matInput formControlName="remision" placeholder="Remisión">
+      </mat-form-field>
+      <mat-form-field class="pad-left">
+        <input matInput [matDatepicker]="myDatepicker" formControlName="fechaRemision" placeholder="Fecha Remision">
+        <mat-datepicker-toggle matSuffix [for]="myDatepicker"></mat-datepicker-toggle>
+        <mat-datepicker #myDatepicker></mat-datepicker>
+      </mat-form-field>
+      <sx-upper-case-field formControlName="comentario" placeholder="Comentario" flex class="pad-left pad-right"></sx-upper-case-field>
+    </div>
+
+    <div class="partidas-panel ">
+      <sx-com-partidas [parent]="form" [partidas]="partidas.value" (delete)="onDeletePartida($event)" (update)="onEditPartida($event)">
+      </sx-com-partidas>
+    </div>
+    <mat-divider></mat-divider>
+
+    <mat-card-actions>
+      <button type="button" mat-button [routerLink]="['../']">
+        <mat-icon>arrow_back</mat-icon> Coms
+      </button>
+      <button type="button" mat-button color="primary" (click)="onSave()" [disabled]="form.invalid || form.pristine">
+        <mat-icon>save</mat-icon> Salvar
+      </button>
+      <button type="button" mat-button color="accent" (click)="seleccionarCompra()" [disabled]="!proveedor">Seleccionar compra</button>
+      <ng-content></ng-content>
+    </mat-card-actions>
+
+  </form>
+</mat-card>

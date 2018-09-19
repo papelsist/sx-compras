@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "sx-pos-compras": {
+    "sx-compras-admin": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -16,10 +16,7 @@
             "main": "src/main.ts",
             "tsConfig": "src/tsconfig.app.json",
             "polyfills": "src/polyfills.ts",
-            "assets": [
-              "src/assets",
-              "src/favicon.ico"
-            ],
+            "assets": ["src/assets", "src/favicon.ico"],
             "styles": [
               "src/styles.scss",
               "src/theme.scss",
@@ -50,18 +47,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "sx-pos-compras:build"
+            "browserTarget": "sx-compras-admin:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "sx-pos-compras:build:production"
+              "browserTarget": "sx-compras-admin:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "sx-pos-compras:build"
+            "browserTarget": "sx-compras-admin:build"
           }
         },
         "test": {
@@ -77,27 +74,19 @@
               "src/theme.scss",
               "node_modules/@covalent/core/common/platform.scss"
             ],
-            "assets": [
-              "src/assets",
-              "src/favicon.ico"
-            ]
+            "assets": ["src/assets", "src/favicon.ico"]
           }
         },
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
-            "tsConfig": [
-              "src/tsconfig.app.json",
-              "src/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "tsConfig": ["src/tsconfig.app.json", "src/tsconfig.spec.json"],
+            "exclude": ["**/node_modules/**"]
           }
         }
       }
     },
-    "sx-pos-compras-e2e": {
+    "sx-compras-admin-e2e": {
       "root": "",
       "sourceRoot": "",
       "projectType": "application",
@@ -106,24 +95,20 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "./protractor.conf.js",
-            "devServerTarget": "sx-pos-compras:serve"
+            "devServerTarget": "sx-compras-admin:serve"
           }
         },
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
-            "tsConfig": [
-              "e2e/tsconfig.e2e.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "tsConfig": ["e2e/tsconfig.e2e.json"],
+            "exclude": ["**/node_modules/**"]
           }
         }
       }
     }
   },
-  "defaultProject": "sx-pos-compras",
+  "defaultProject": "sx-compras-admin",
   "schematics": {
     "@schematics/angular:component": {
       "inlineStyle": true,

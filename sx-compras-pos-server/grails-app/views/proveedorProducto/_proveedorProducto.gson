@@ -1,0 +1,22 @@
+import sx.core.ProveedorProducto
+
+model {
+	ProveedorProducto proveedorProducto
+}
+
+json g.render(proveedorProducto, [excludes: ['proveedor'], resolveTemplate: false]) {
+	proveedor {
+        id proveedorProducto.proveedor.id
+        nombre proveedorProducto.proveedor.nombre
+        clave proveedorProducto.proveedor.clave
+    }
+    producto {
+        id proveedorProducto.producto.id
+        clave proveedorProducto.producto.clave
+        descripcion proveedorProducto.producto.descripcion
+        unidad proveedorProducto.producto.unidad
+    }
+    clave proveedorProducto.producto.clave
+    descripcion proveedorProducto.producto.descripcion
+    unidad proveedorProducto.producto.unidad
+}

@@ -1,0 +1,27 @@
+table {
+  width: 100%;
+  overflow: auto;
+}
+.mat-cell {
+  // font-size: 11px;
+}
+.mat-row {
+  // height: 30px;
+}
+
+.mat-column-solicitado, .mat-column-precio, .mat-column-importeNeto{
+  width: 100px;
+}
+
+.mat-column-unidad {
+  width: 30px;
+}
+
+.mat-column-descuento1, .mat-column-descuento2, .mat-column-descuento3, .mat-column-descuento4 {
+  width: 80px;
+  padding: 0px;
+}
+table td input {
+  width: 90%;
+  height:100%;
+}

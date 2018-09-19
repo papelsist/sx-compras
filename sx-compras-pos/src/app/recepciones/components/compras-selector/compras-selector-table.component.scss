@@ -1,0 +1,30 @@
+
+.mat-table {
+  // width: 100%;
+  width: 800px;
+  overflow: auto;
+}
+
+.mat-column-folio{
+  width: 70px;
+}
+.mat-column-fecha{
+  width: 80px;
+}
+
+.mat-column-comentario{
+  width: 200px;
+}
+
+.mat-column-pendiente{
+  width: 50px;
+}
+
+.mat-cell {
+  font-size: 11px;
+}
+.mat-row {
+  //cursor: pointer;
+  height: 30px;
+
+}

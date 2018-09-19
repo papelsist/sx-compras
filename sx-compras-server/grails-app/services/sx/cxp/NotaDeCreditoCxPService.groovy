@@ -160,6 +160,7 @@ abstract class NotaDeCreditoCxPService implements  LogUser{
 
                 }
             }
+            det.comentario = nota.concepto
         }
         logEntity(nota)
         return save(nota)

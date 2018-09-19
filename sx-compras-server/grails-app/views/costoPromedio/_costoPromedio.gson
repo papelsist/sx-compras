@@ -1,0 +1,15 @@
+import sx.costos.CostoPromedio
+
+model {
+    CostoPromedio costoPromedio
+}
+
+json g.render(costoPromedio, [resolveTemplate: false]) {
+    linea costoPromedio.producto?.linea?.linea
+    marca costoPromedio.producto?.marca?.marca
+    clase costoPromedio.producto?.clase?.clase
+    unidad costoPromedio.producto.unidad
+    diferencia costoPromedio.diferencia
+    diferenciaImporte costoPromedio.diferenciaImporte
+
+}

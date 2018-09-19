@@ -63,7 +63,6 @@ class CompraController extends RestfulController<Compra> {
     }
 
     def pendientes() {
-        params.max = 400
         params.sort = 'lastUpdatred'
         params.order = 'desc'
         respond Compra.where{pendiente == true}.list(params)

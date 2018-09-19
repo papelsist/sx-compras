@@ -13,6 +13,8 @@ class BootStrap {
             Role userRole=Role.findOrSaveWhere(authority:'ROLE_USER')
             Role adminRole=Role.findOrSaveWhere(authority:'ROLE_ADMIN')
 
+
+
             User admin=User.findByUsername('admin')
             if(!admin){
                 admin=new User(username:'admin'
@@ -30,6 +32,11 @@ class BootStrap {
             Role comprasRole=Role.findOrSaveWhere(authority:'ROLE_COMPRAS')
             if(!UserRole.exists(admin.id, comprasRole.id)) {
                 UserRole.create(admin, comprasRole)
+            }
+
+            Role costosRole = Role.findOrSaveWhere(authority:'ROLE_COSTOS_MANAGER')
+            if(!UserRole.exists(admin.id, costosRole.id)) {
+                UserRole.create(admin, costosRole)
             }
 
         }

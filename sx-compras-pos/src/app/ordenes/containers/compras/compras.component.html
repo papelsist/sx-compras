@@ -1,0 +1,26 @@
+<mat-card flex>
+  <sx-search-title title="Compras" (search)="onSearch($event)">
+    <sx-compras-filter (change)="onFilter($event)" [filter]="comprasFilter$ | async" class="options"></sx-compras-filter>
+  </sx-search-title>
+  <mat-divider></mat-divider>
+  <ng-container *ngIf="comprasPorSucursal$ | async as rows">
+    <mat-tab-group [(selectedIndex)]="tabIndex">
+      <mat-tab label="{{sucursal}}" *ngFor="let sucursal of getSucursales(rows)">
+        <div class="compras-table-panel">
+          <sx-compras-table [compras]="rows[sucursal]" [filter]="search$ | async" (edit)="onEdit($event)" (select)="onSelect($event)"></sx-compras-table>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </ng-container>
+  <mat-card-footer *ngIf="comprasFilter$ | async as comprasFilter">
+    <sx-compras-filter-label [filter]="comprasFilter"></sx-compras-filter-label>
+
+  </mat-card-footer>
+</mat-card>
+<a mat-fab matTooltip="Nueva compra" matTooltipPosition="before" color="accent" class="mat-fab-position-bottom-left z-3"
+  [routerLink]="['create']">
+  <mat-icon>add</mat-icon>
+</a>
+<mat-card *ngIf="partidas$ | async as partidas">
+  <sx-compradet-table [partidas]="partidas" *ngIf="partidas.length > 0"></sx-compradet-table>
+</mat-card>

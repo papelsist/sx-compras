@@ -1,0 +1,16 @@
+import sx.compras.RecepcionDeCompraDet
+
+model {
+	RecepcionDeCompraDet recepcionDeCompraDet
+}
+
+json g.render(recepcionDeCompraDet, [resolveTemplate: false]) {
+
+    clave recepcionDeCompraDet.producto.clave
+    descripcion recepcionDeCompraDet.producto.descripcion
+    unidad recepcionDeCompraDet.producto.unidad
+    com recepcionDeCompraDet.recepcion.documento
+    solicitado recepcionDeCompraDet.compraDet.solicitado
+    remision recepcionDeCompraDet.recepcion.remision
+    sucursal recepcionDeCompraDet.recepcion.sucursal.nombre
+}

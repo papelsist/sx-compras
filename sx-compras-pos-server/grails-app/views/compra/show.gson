@@ -1,0 +1,18 @@
+import sx.compras.Compra
+
+model {
+	Compra compra
+}
+
+json g.render(compra, [deep:false, excludes:['partidas','dateCreated','lastUpdated', 'version']]) {
+    sucursal {
+        id compra.sucursal.id
+        nombre compra.sucursal.nombre
+    }
+    nombre compra.proveedor.nombre
+    sucursalNombre compra.sucursal.nombre
+    partidas g.render(compra.partidas)
+    modificada compra.dateCreated
+    creada compra.dateCreated
+    status compra.status
+}

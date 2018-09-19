@@ -77,6 +77,18 @@ class UrlMappings {
         }
         "/api/coms/pendientesDeAnalisis/$id"(controller: 'recepcionDeCompra', action: 'pendientesDeAnalisis')
 
+        "/api/costos"(resources: 'costoPromedio', excludes:['create', 'edit','patch', 'update', 'save'])
+        "/api/costos/$ejercicio/$mes"(controller: 'costoPromedio', action: 'costos', method: 'GET')
+        "/api/costos/calcular/$ejercicio/$mes"(controller: 'costoPromedio', action: 'calcular', method: 'POST')
+        "/api/costos/aplicar/$ejercicio/$mes"(controller: 'costoPromedio', action: 'aplicar', method: 'POST')
+        "/api/costos/movimientos/$ejercicio/$mes"(controller: 'costoPromedio', action: 'movimientos', method: 'GET')
+        "/api/costos/calculoDeCostoPromedio"(controller: 'costoPromedio', action: 'calculoDeCostoPromedio')
+        "/api/costos/inventarioCosteado"(controller: 'costoPromedio', action: 'inventarioCosteado')
+        "/api/costos/movimientosCosteados"(controller: 'costoPromedio', action: 'movimientosCosteados')
+
+        "/api/inventario"(resources: 'inventario', excludes:['create', 'update', 'save', 'edit','patch'])
+        "/api/inventario/$producto/$ejercicio/$mes"(controller: 'inventario', action: 'movimientos', method: 'GET')
+
 
         "/"(controller: 'application', action:'index')
         "500"(view: '/error')

@@ -1,0 +1,72 @@
+<form novalidate (ngSubmit)="onSubmit()" [formGroup]="form" class="alcance-run-form">
+  <h4 mat-dialog-title>Reporte general de Alcance</h4>
+  <mat-dialog-content>
+    <div layout>
+      <mat-form-field class="pad-right">
+        <input matInput [matDatepicker]="myDatepicker" placeholder="Fecha inicial" formControlName="fechaInicial">
+        <mat-datepicker-toggle matSuffix [for]="myDatepicker"></mat-datepicker-toggle>
+        <mat-datepicker #myDatepicker></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput [matDatepicker]="myDatepicker2" placeholder="Fecha final" formControlName="fechaFinal">
+        <mat-datepicker-toggle matSuffix [for]="myDatepicker2"></mat-datepicker-toggle>
+        <mat-datepicker #myDatepicker2></mat-datepicker>
+      </mat-form-field>
+    </div>
+    <div layout>
+      <mat-form-field>
+        <mat-select placeholder="Línea" formControlName="LINEA">
+          <mat-option *ngFor="let linea of lineas" [value]="linea">{{ linea }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field class="pad-left">
+        <mat-select placeholder="Orden" formControlName="ORDEN" flex>
+          <mat-option *ngFor="let orden of ordenes" [value]="orden.clave">{{ orden.descripcion }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div layout>
+      <mat-form-field>
+        <mat-select placeholder="Forma" formControlName="FORMA" flex>
+          <mat-option *ngFor="let tipoOrden of ['ASC', 'DESC']" [value]="tipoOrden">{{ tipoOrden }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field>
+        <input type="number" placeholder="Meses alcance" matInput formControlName="MESES">
+      </mat-form-field>
+    </div>
+
+    <div layout="row">
+      <mat-form-field>
+        <mat-select placeholder="Filtro" formControlName="FILTRADO">
+          <mat-option *ngFor="let filtro of filtros" [value]="filtro">{{ filtro }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field class="pad-left">
+        <input type="number" placeholder="Meses a filtrar" matInput formControlName="MESESF">
+      </mat-form-field>
+    </div>
+
+    <div layout>
+      <mat-form-field>
+
+        <mat-select placeholder="De Linea" formControlName="DELINEA" flex>
+          <mat-option *ngFor="let tipo of tipos" [value]="tipo.value">{{ tipo.clave }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+  </mat-dialog-content>
+
+  <mat-dialog-actions>
+    <button mat-button type="button" (click)="cancelar()">Cancelar</button>
+    <button mat-button type="submit" [disabled]="form.invalid">Ejecutar</button>
+  </mat-dialog-actions>
+</form>
