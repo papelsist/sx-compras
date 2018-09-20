@@ -43,20 +43,23 @@ class CompraController extends RestfulController<Compra> {
     @Override
     @CompileDynamic
     protected List<Compra> listAllResources(Map params) {
+
         params.sort = 'lastUpdated'
         params.order = 'desc'
         params.max = params.registros?: 50
-        // log.debug('List {}', params)
+
 
         def query = Compra.where{}
-        def pendientes = this.params.getBoolean('pendientes') ?: true
-        if(params.proveedorId) {
-            String proveedorId = params.proveedorId
-            query = query.where{ proveedor.id == proveedorId}
-        }
+        def pendientes = params.getBoolean('pendientes')
+
 
         if(pendientes){
             query = query.where{ pendiente == true}
+        }
+
+        if(params.proveedorId) {
+            String proveedorId = params.proveedorId
+            query = query.where{ proveedor.id == proveedorId}
         }
 
         if(params.periodo && !pendientes) {
@@ -76,11 +79,24 @@ class CompraController extends RestfulController<Compra> {
     }
 
     def pendientes() {
+        log.info('Buscando compras pendientes {}', params)
         String id = params.proveedorId
         def query = Compra.where{ proveedor.id == id && pendiente == true}
         params.sort = 'lastUpdated'
         params.order = 'desc'
-        respond query.list(params)
+        /*
+        List<Compra> compras =  query.list(params)
+        List<Compra> res = compras.findAll{ Compra compra ->
+            def pendiente = compra.partidas.find{it.getPorRecibir()> 0.0 }
+            return pendiente != null
+        }
+        respond res
+        */
+        def res = CompraDet.findAll(
+                'select distinct d.compra from CompraDet d where d.compra.proveedor.id = ? and d.solicitado - d.depurado - d.recibido > 0',
+                [id], params)
+        respond res
+
     }
 
     def depurar(Compra compra) {

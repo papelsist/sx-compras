@@ -38,13 +38,14 @@ export class AlcancesTableComponent implements OnInit, OnChanges, OnDestroy {
     'comprasPendientes',
     'alcanceMesPedido',
     'porPedir',
+    'deLinea',
     'nombre',
     'linea',
     'marca',
     'clase'
   ];
   @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  // @ViewChild(MatPaginator) paginator: MatPaginator;
   @Output() print = new EventEmitter();
   @Output() select = new EventEmitter<any[]>();
   @Output() edit = new EventEmitter<any>();
@@ -56,7 +57,7 @@ export class AlcancesTableComponent implements OnInit, OnChanges, OnDestroy {
   constructor() {}
 
   ngOnInit() {
-    this.dataSource.paginator = this.paginator;
+    // this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
     this.subscription = this.selection.onChange.subscribe(res =>
       this.select.next(this.selection.selected)

@@ -11,6 +11,7 @@ export interface RecepcionDeCompraDet {
   producto: Partial<Producto>;
   cantidad: number;
   solicitado: number;
+  recibido?: number;
   devuelto: number;
   analizado: number;
   kilos: number;
@@ -26,7 +27,8 @@ export function buildRecepcionDet(
     unidad: compraDet.unidad,
     compraDet: { id: compraDet.id },
     producto: compraDet.producto,
-    cantidad: compraDet.solicitado,
-    solicitado: compraDet.solicitado
+    cantidad: compraDet.porRecibir,
+    solicitado: compraDet.solicitado,
+    recibido: compraDet.recibido
   };
 }

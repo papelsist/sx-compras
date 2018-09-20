@@ -26,6 +26,7 @@ class AlcancesService implements DataBinder{
         ,C.clase
         ,M.marca
         ,P.clave
+        ,P.de_linea as deLinea
         ,P.descripcion
         ,P.kilos
         ,SUM(EXI) AS existencia
@@ -42,7 +43,7 @@ class AlcancesService implements DataBinder{
         SELECT X.PRODUCTO_ID,P.CLAVE,0,SUM((X.CANTIDAD*-1)/(case when p.unidad ='MIL' then 1000 else 1 end)) AS VTA,0 AS PEND FROM INVENTARIO X JOIN producto p ON(X.producto_id=p.ID) WHERE DATE(X.FECHA) BETWEEN '@FECHA_INI' AND '@FECHA_FIN' AND X.TIPO IN('FAC','DEV') AND   X.sucursal_id LIKE @SUCURSAL GROUP BY P.CLAVE,X.PRODUCTO_ID,X.SUCURSAL_ID
         UNION
         SELECT X.PRODUCTO_ID,P.CLAVE,0,0,SUM(((X.SOLICITADO-X.DEPURADO)/(case when P.unidad ='MIL' then 1000 else 1 end))-IFNULL((SELECT SUM(I.CANTIDAD/(case when Y.unidad ='MIL' then 1000 else 1 end)) FROM recepcion_de_compra_det I JOIN producto Y ON(I.producto_id=Y.ID) WHERE I.compra_det_id=X.ID AND I.inventario_id IS NOT NULL),0)) AS PENDTE
-        from compra_det X join compra cc on (x.compra_id == cc.id) JOIN producto P ON(X.producto_id=P.ID) WHERE cc.fecha>'2018-01-01' and X.SUCURSAL_ID LIKE @SUCURSAL GROUP BY X.PRODUCTO_ID,X.SUCURSAL_ID
+        from compra_det X join compra cc on (x.compra_id = cc.id) JOIN producto P ON(X.producto_id=P.ID) WHERE cc.fecha>'2018-01-01' and X.SUCURSAL_ID LIKE @SUCURSAL GROUP BY X.PRODUCTO_ID,X.SUCURSAL_ID
         ) AS A
         JOIN producto P ON(A.PRODUCTO_ID=P.ID)
         join LINEA L on(L.ID=p.LINEA_ID)
@@ -90,6 +91,7 @@ class AlcancesService implements DataBinder{
             alcance.alcance = row.alcance
             alcance.comprasPendientes = row.comprasPendientes
             alcance.promVtaEnToneladas = row.promVtaEnTonelada
+            alcance.deLinea = row.deLinea
 
             alcance.save failOnError: true, flush: true
             res << alcance
@@ -107,12 +109,13 @@ class AlcancesService implements DataBinder{
         alcances.each {
             if(it.porPedir > 0) {
                 Producto producto = Producto.findByClave(it.clave)
+                BigDecimal factor = producto.unidad == 'MIL' ? 1000 : 1
                 // log.info('Producto: {}', producto)
                 CompraDet det = new CompraDet()
                 det.producto = producto
                 det.comentario = compra.comentario
                 det.sucursal = compra.sucursal
-                det.solicitado = it.porPedir
+                det.solicitado = Math.round(it.porPedir) * factor
                 det.sw2 = ""
                 compra.addToPartidas(det)
                 it.comentario = "COMPRA ${compra.folio}"

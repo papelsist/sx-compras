@@ -4,7 +4,7 @@ import { Store, select } from '@ngrx/store';
 import * as fromStore from '../../store';
 import * as fromActions from '../../store/actions/recepcion.actions';
 
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { RecepcionDeCompra, ComsFilter } from '../../models/recepcionDeCompra';
@@ -17,11 +17,13 @@ import { MatDialog } from '@angular/material';
   selector: 'sx-coms',
   templateUrl: './coms.component.html'
 })
-export class ComsComponent implements OnInit, OnDestroy {
+export class ComsComponent implements OnInit {
   coms$: Observable<RecepcionDeCompra[]>;
   partidas$: Observable<Partial<RecepcionDeCompraDet>[]>;
-  search$ = new Subject<string>();
+  search$ = new BehaviorSubject<string>('');
   comsFilter$: Observable<ComsFilter>;
+
+  private _storageKey = 'sx-compras.coms';
 
   constructor(private store: Store<fromStore.State>) {}
 
@@ -29,9 +31,14 @@ export class ComsComponent implements OnInit, OnDestroy {
     this.coms$ = this.store.pipe(select(fromStore.getAllRecepcionesDeCompra));
     this.partidas$ = this.store.pipe(select(fromStore.getSelectedPartidas));
     this.comsFilter$ = this.store.pipe(select(fromStore.getComsFilter));
-  }
 
-  ngOnDestroy() {}
+    const lastSearch = localStorage.getItem(this._storageKey + '.filter');
+
+    if (lastSearch) {
+      console.log('Last search: ', lastSearch);
+      this.search$.next(lastSearch);
+    }
+  }
 
   onSelect(event: RecepcionDeCompra[]) {
     const selected = event.map(item => item.id);
@@ -47,6 +54,7 @@ export class ComsComponent implements OnInit, OnDestroy {
 
   onSearch(event: string) {
     this.search$.next(event);
+    localStorage.setItem(this._storageKey + '.filter', event);
   }
 
   onFilter(event: ComsFilter) {

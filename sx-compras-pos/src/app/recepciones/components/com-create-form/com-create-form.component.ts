@@ -91,11 +91,12 @@ export class ComCreateFormComponent implements OnInit {
       .subscribe(selected => {
         if (selected) {
           const compra = selected[0];
-          console.log('Compra asignada: ', compra);
           this.form.get('compra').setValue(compra);
           compra.partidas.forEach(element => {
-            const det = buildRecepcionDet(element);
-            this.partidas.push(new FormControl(det));
+            if (element.porRecibir > 0) {
+              const det = buildRecepcionDet(element);
+              this.partidas.push(new FormControl(det));
+            }
           });
           this.cd.detectChanges();
         }
@@ -110,7 +111,9 @@ export class ComCreateFormComponent implements OnInit {
   }
 
   onInsertPartida(event: RecepcionDeCompraDet) {
-    this.partidas.push(new FormControl(event));
+    if (event.cantidad > 0) {
+      this.partidas.push(new FormControl(event));
+    }
     this.form.markAsDirty();
   }
 
@@ -125,5 +128,9 @@ export class ComCreateFormComponent implements OnInit {
 
   get proveedor() {
     return this.form.get('proveedor').value;
+  }
+
+  get compra() {
+    return this.form.get('compra').value;
   }
 }

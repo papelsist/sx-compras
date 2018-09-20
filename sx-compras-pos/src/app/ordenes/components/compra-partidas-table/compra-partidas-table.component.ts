@@ -6,10 +6,11 @@ import {
   EventEmitter,
   OnChanges,
   ChangeDetectionStrategy,
-  SimpleChanges
+  SimpleChanges,
+  ViewChild
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { MatTableDataSource } from '@angular/material';
+import { MatTableDataSource, MatSort } from '@angular/material';
 
 import { CompraDet } from '../../models/compraDet';
 
@@ -31,7 +32,7 @@ export class CompraPartidasTableComponent implements OnInit, OnChanges {
   displayColumns = [
     'clave',
     'descripcion',
-    // 'unidad',
+    'unidad',
     'solicitado',
     // 'precio',
     // 'descuento1',
@@ -47,9 +48,13 @@ export class CompraPartidasTableComponent implements OnInit, OnChanges {
 
   dataSource = new MatTableDataSource<CompraDet>([]);
 
+  @ViewChild(MatSort) sort: MatSort;
+
   constructor() {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.dataSource.sort = this.sort;
+  }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.partidas && changes.partidas.currentValue) {
@@ -58,19 +63,18 @@ export class CompraPartidasTableComponent implements OnInit, OnChanges {
   }
 
   actualizar(row: CompraDet) {
-    // actualizarPartida(row); // Should change to be used from parent only dispatch an event
     this.update.emit(row);
   }
 
   get readOnly() {
     return this.parent.disabled;
   }
+
   get especial() {
     return this.parent.get('especial').value;
   }
 
   canDelete(det: CompraDet) {
-    // return !this.readOnly && this.cerrada === null && det.recibido > 0;
     return !this.readOnly && det.recibido <= 0 && !this.cerrada;
   }
 }

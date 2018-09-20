@@ -34,7 +34,8 @@ import {
 
 @Component({
   selector: 'sx-alcances',
-  templateUrl: './alcances.component.html'
+  templateUrl: './alcances.component.html',
+  styleUrls: ['./alcances.component.scss']
 })
 export class AlcancesComponent implements OnInit, AfterViewInit {
   rows: any[] = [];
@@ -73,7 +74,8 @@ export class AlcancesComponent implements OnInit, AfterViewInit {
       marca: new FormControl(''),
       clase: new FormControl(''),
       alcanceMenor: new FormControl(''),
-      alcanceMayor: new FormControl('')
+      alcanceMayor: new FormControl(''),
+      deLinea: new FormControl(true)
     });
     this.searchForm.valueChanges.subscribe(filtro => {
       this.load();
@@ -125,8 +127,10 @@ export class AlcancesComponent implements OnInit, AfterViewInit {
       })
       .afterClosed()
       .subscribe(res => {
-        this.ultimaEjecucion = res;
-        this.doEjecutar(res);
+        if (res) {
+          this.ultimaEjecucion = res;
+          this.doEjecutar(res);
+        }
       });
   }
 

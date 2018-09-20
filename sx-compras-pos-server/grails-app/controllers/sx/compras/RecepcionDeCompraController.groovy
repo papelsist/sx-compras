@@ -51,6 +51,13 @@ class RecepcionDeCompraController extends RestfulController<RecepcionDeCompra> {
 
     @Override
     protected RecepcionDeCompra saveResource(RecepcionDeCompra resource) {
+        /*
+        log.info('Salvando COM: {}', resource)
+        resource.partidas.each {
+           log.info('PROD {} cantidad: {}', it.clave, it.cantidad)
+        }
+        return resource
+        */
         return recepcionDeCompraService.saveRecepcion(resource)
     }
 

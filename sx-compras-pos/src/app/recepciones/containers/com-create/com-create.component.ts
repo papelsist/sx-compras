@@ -35,6 +35,7 @@ export class ComCreateComponent implements OnInit, OnDestroy {
   ngOnDestroy() {}
 
   onSave(event: RecepcionDeCompra) {
+    // console.log('Salvando: ', event);
     this.store.dispatch(new fromActions.AddRecepcionDeCompra(event));
   }
 

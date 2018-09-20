@@ -28,6 +28,7 @@ import {
   MatProgressBarModule,
   MatGridListModule,
   MatSliderModule,
+  MatRadioModule
 } from '@angular/material';
 
 const MATERIAL_MODULES: any[] = [
@@ -57,7 +58,8 @@ const MATERIAL_MODULES: any[] = [
   MatSortModule,
   MatProgressBarModule,
   MatGridListModule,
-  MatSliderModule
+  MatSliderModule,
+  MatRadioModule
 ];
 /**
  * Special module to controll Material desing modules

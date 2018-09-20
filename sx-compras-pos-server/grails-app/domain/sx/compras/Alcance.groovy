@@ -25,6 +25,7 @@ class Alcance {
     String clase
     String unidad
     BigDecimal kilos
+    Boolean deLinea
 
 
     String proveedor
@@ -69,6 +70,7 @@ class Alcance {
         clase nullable: true
         proveedor nullable: true
         nombre  nullable: true
+        deLinea nullable: true
         comentario nullable: true
         createUser nullable: true
         updateUser nullable: true

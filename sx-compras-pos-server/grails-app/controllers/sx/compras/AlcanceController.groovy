@@ -23,8 +23,10 @@ class AlcancesController extends RestfulController<Compra>{
     }
 
     def list() {
-        log.debug('List: {}', params)
         def query = Alcance.where{fecha == new Date()&& comentario == null}
+        if(params.getBoolean('deLinea')) {
+            query = query.where { deLinea == true }
+        }
         if(params.proveedor) {
             def search = '%' + params.proveedor + '%'
             query = query.where { nombre =~ search }

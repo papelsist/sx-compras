@@ -15,6 +15,7 @@ import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 import { Subscription } from 'rxjs';
 
 import { Compra } from '../../models/compra';
+import { SelectionModel } from '@angular/cdk/collections';
 
 @Component({
   selector: 'sx-compras-table',
@@ -28,8 +29,18 @@ export class ComprasTableComponent implements OnInit, OnChanges, OnDestroy {
   @Input() filter;
   dataSource = new MatTableDataSource<Compra>([]);
 
+  @Input() selected = [];
+
+  @Input() initialSelection = [];
+
+  selection = new SelectionModel<Compra>(
+    this.multipleSelection,
+    this.initialSelection
+  );
+
   displayColumns = [
     // 'sucursalNombre',
+    // 'select',
     'folio',
     'fecha',
     'proveedor',
@@ -55,24 +66,6 @@ export class ComprasTableComponent implements OnInit, OnChanges, OnDestroy {
   ngOnInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-    /*
-    this.subscription = this.sort.sortChange.subscribe(e =>
-      localStorage.setItem('sx-compras.compras-table.sort', JSON.stringify(e))
-    );
-
-    const sdata: string = localStorage.getItem('sx-compras.compras-table.sort');
-    if (sdata) {
-      const data: {
-        active: string;
-        direction: 'asc' | 'desc' | '';
-      } = JSON.parse(sdata);
-      this.sort.active = data.active;
-      this.sort.direction = data.direction;
-    } else {
-      this.sort.active = 'folio';
-      this.sort.direction = 'desc';
-    }
-    */
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -119,5 +112,21 @@ export class ComprasTableComponent implements OnInit, OnChanges, OnDestroy {
 
   getPrintUrl(event: Compra) {
     return `compras/print/${event.id}`;
+  }
+
+  isSelected(id: string) {
+    return this.selected.find(item => item === id);
+  }
+
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.dataSource.data.length;
+    return numSelected === numRows;
+  }
+
+  masterToggle() {
+    this.isAllSelected()
+      ? this.selection.clear()
+      : this.dataSource.data.forEach(row => this.selection.select(row));
   }
 }

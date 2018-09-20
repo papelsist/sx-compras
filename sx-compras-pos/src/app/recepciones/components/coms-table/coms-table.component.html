@@ -74,7 +74,7 @@
     <th mat-header-cell *matHeaderCellDef></th>
     <td mat-cell *matCellDef="let com">
       <mat-icon [routerLink]="com.id" class="pad-right">edit</mat-icon>
-      <sx-report-button [url]="printUrl" [smallIcon]="true"></sx-report-button>
+      <sx-report-button [url]="getPrintUrl(com)" [smallIcon]="true"></sx-report-button>
     </td>
   </ng-container>
 

@@ -2,6 +2,12 @@
   <form [formGroup]="form">
     <div layout layout-align="start center" class="mat-title pad-left pad-top">
       <span>Alta de Recepción de compra</span>
+      <span flex></span>
+      <span *ngIf="compra"> Compra:
+        <span> {{compra.folio}}</span>
+        <span class="pad-left"> {{compra.fecha | date: 'dd/MM/yyyy'}}</span>
+      </span>
+      <span flex></span>
     </div>
 
     <div layout class="pad-left pad-right pad-top">
@@ -30,7 +36,8 @@
       <button type="button" mat-button color="primary" (click)="onSave()" [disabled]="form.invalid || form.pristine">
         <mat-icon>save</mat-icon> Salvar
       </button>
-      <button type="button" mat-button color="accent" (click)="seleccionarCompra()" [disabled]="!proveedor">Seleccionar compra</button>
+      <button type="button" mat-button color="accent" (click)="seleccionarCompra()" [disabled]="!proveedor">Seleccionar
+        compra</button>
       <ng-content></ng-content>
     </mat-card-actions>
 

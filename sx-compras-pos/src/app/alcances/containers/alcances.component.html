@@ -5,7 +5,8 @@
     </span>
     <span flex></span>
     <span class="pad-right">
-      Periodo: {{ultimaEjecucion?.fechaInicial | date: 'dd/MM/yyyy'}} - {{ultimaEjecucion?.fechaFinal | date: 'dd/MM/yyyy'}}
+      Periodo: {{ultimaEjecucion?.fechaInicial | date: 'dd/MM/yyyy'}} - {{ultimaEjecucion?.fechaFinal | date:
+      'dd/MM/yyyy'}}
     </span>
     <span class="pad-right cursor-pointer" (click)="actualizarMeses()">Meses: {{ultimaEjecucion?.meses}}</span>
     <span flex></span>
@@ -31,7 +32,7 @@
   </div>
   <div layout>
     <form [formGroup]="searchForm" class="pad-left" layout flex autocomplete="off">
-      <mat-form-field>
+      <mat-form-field class="filtro-field">
         <input matInput placeholder="Proveedor" formControlName="proveedor">
       </mat-form-field>
       <mat-form-field class="pad-left">
@@ -52,6 +53,8 @@
       <mat-form-field class="pad-left-sm">
         <input matInput placeholder="A. Mayor" formControlName="alcanceMayor">
       </mat-form-field>
+      <mat-checkbox formControlName="deLinea">De Línea</mat-checkbox>
+
     </form>
     <span flex></span>
   </div>

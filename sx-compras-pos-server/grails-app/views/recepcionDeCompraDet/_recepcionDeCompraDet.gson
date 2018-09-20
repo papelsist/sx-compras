@@ -13,4 +13,5 @@ json g.render(recepcionDeCompraDet, [resolveTemplate: false]) {
     solicitado recepcionDeCompraDet.compraDet.solicitado
     remision recepcionDeCompraDet.recepcion.remision
     sucursal recepcionDeCompraDet.recepcion.sucursal.nombre
+    costo recepcionDeCompraDet.compraDet.costo
 }

@@ -41,17 +41,17 @@ class MovimientosCosteadosService {
     ,IFNULL((SELECT CP.COSTO FROM costo_promedio CP WHERE CP.producto_id=X.ID and CP.EJERCICIO = ? AND CP.MES = ?),0) AS costop
     FROM ( 
     select (CASE WHEN i.TIPO IN('TRS','REC') AND I.CANTIDAD>0 THEN concat('E',SUBSTR(i.tipo,1,2)) WHEN i.TIPO IN('TRS','REC') AND I.CANTIDAD<0 THEN concat('S',SUBSTR(i.tipo,1,2)) ELSE TIPO END) AS TIPO
-    ,P.CLAVE,P.DESCRIPCION,S.SW2,ROUND(SUM(I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end)*P.KILOS),0) as KILOS,ROUND(SUM(I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end)),2) as SALDO
+    ,P.CLAVE,P.DESCRIPCION,S.SW2,ROUND(SUM(I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end)*P.KILOS),0) as KILOS,ROUND(SUM(I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end)),3) as SALDO
     ,ROUND(SUM(I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end) * (case when i.TIPO IN('TRS','REC','COM') AND I.CANTIDAD>0 then i.costo else I.COSTO_promedio end)),2) as COSTO
     from inventario I  join producto p on(p.id=i.producto_id) JOIN sucursal s on(i.sucursal_id=s.id)
     where p.inventariable is true and YEAR(I.FECHA)= ? AND MONTH(I.FECHA) = ? group by 2
     UNION
     SELECT 'INI' AS TIPO,P.CLAVE,P.DESCRIPCION,s.sw2,ROUND(SUM(I.EXISTENCIA_INICIAL/(case when p.unidad ='MIL' then 1000 else 1 end)*P.KILOS),0) as KILOS
-    ,ROUND(SUM(I.EXISTENCIA_INICIAL/(case when p.unidad ='MIL' then 1000 else 1 end)),2) as SALDO,ROUND(SUM(I.EXISTENCIA_INICIAL/(case when p.unidad ='MIL' then 1000 else 1 end) * I.COSTO ),2) as COSTO
+    ,ROUND(SUM(I.EXISTENCIA_INICIAL/(case when p.unidad ='MIL' then 1000 else 1 end)),3) as SALDO,ROUND(SUM(I.EXISTENCIA_INICIAL/(case when p.unidad ='MIL' then 1000 else 1 end) * I.COSTO ),2) as COSTO
     FROM existencia i join producto p on(p.id=i.producto_id) JOIN sucursal s on(i.sucursal_id=s.id) where p.inventariable is true and I.ANIO= ? AND I.MES = ?  group by 2
     UNION
     SELECT 'FIN' AS TIPO,P.CLAVE,P.DESCRIPCION,s.sw2,ROUND(SUM(I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end)*P.KILOS),0) as KILOS
-    ,ROUND(SUM(I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end)),2) as SALDO,ROUND(SUM(I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end) * I.costo_promedio ),2) as COSTO
+    ,ROUND(SUM(I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end)),3) as SALDO,ROUND(SUM(I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end) * I.costo_promedio ),2) as COSTO
     FROM existencia i join producto p on(p.id=i.producto_id) JOIN sucursal s on(i.sucursal_id=s.id) where p.inventariable is true and I.ANIO= ? AND I.MES = ?  group by 2
     ) AS A 
     JOIN PRODUCTO X ON(X.CLAVE=A.CLAVE)
