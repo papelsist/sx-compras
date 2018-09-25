@@ -1,0 +1,82 @@
+<div class="table-container" class="mat-elevation-z8">
+  <table mat-table [dataSource]="dataSource" matSort>
+
+    <ng-container matColumnDef="proveedor">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Prov</th>
+      <td mat-cell *matCellDef="let lista">{{lista.proveedor.nombre}}</td>
+    </ng-container>
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Folio</th>
+      <td mat-cell *matCellDef="let lista">{{lista.id}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="ejercicio">
+      <th mat-header-cell *matHeaderCellDef>Año</th>
+      <td mat-cell *matCellDef="let lista">{{lista.ejercicio}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="mes">
+      <th mat-header-cell *matHeaderCellDef>Mes</th>
+      <td mat-cell *matCellDef="let lista">{{lista.mes}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="fechaInicial">
+      <th mat-header-cell *matHeaderCellDef>Fecha Ini</th>
+      <td mat-cell *matCellDef="let lista">{{lista.fechaInicial | date: 'dd/MM/yyyy'}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="fechaFinal">
+      <th mat-header-cell *matHeaderCellDef>Fecha Fin</th>
+      <td mat-cell *matCellDef="let lista">{{lista.fechaFinal | date: 'dd/MM/yyyy'}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="descripcion">
+      <th mat-header-cell *matHeaderCellDef>Descripción</th>
+      <td mat-cell *matCellDef="let lista">
+        <span>
+          {{lista.descripcion}}
+        </span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="moneda">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>MOM</th>
+      <td mat-cell *matCellDef="let lista">{{lista.moneda}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="aplicada">
+      <th mat-header-cell *matHeaderCellDef>Aplicada</th>
+      <td mat-cell *matCellDef="let lista" class="tc-indigo-600">{{lista.aplicada | date: 'dd/MM/yyyy'}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="createUser">
+      <th mat-header-cell *matHeaderCellDef>Creada</th>
+      <td mat-cell *matCellDef="let lista">{{lista.createUser}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="updateUser">
+      <th mat-header-cell *matHeaderCellDef>Modificada</th>
+      <td mat-cell *matCellDef="let lista">{{lista.updateUser}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="modificada">
+      <th mat-header-cell *matHeaderCellDef>Ult. Modificación</th>
+      <td mat-cell *matCellDef="let lista">{{lista.modificada | date: 'dd/MM/yyyy: HH:mm'}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="operaciones">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let row, let i = index">
+        <mat-icon class="cursor-pointer" (click)="editLista($event, row)">edit</mat-icon>
+        <sx-report-button [smallIcon]="true" url="listaDePreciosProveedor/print/{{row.id}}">
+        </sx-report-button>
+        <!-- <mat-icon color="warn" class="cursor-pointer" (click)="deleteLista($event, i, row)">delete</mat-icon> -->
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+    <tr mat-row *matRowDef="let lista; columns: columnsToDisplay" class="cursor-pointer" (click)="toogleSelect(lista)" [ngClass]="{'active': lista.selected}"></tr>
+
+  </table>
+</div>
+<mat-paginator [pageSizeOptions]="[20, 50, 100, 200]" showFirstLastButtons></mat-paginator>

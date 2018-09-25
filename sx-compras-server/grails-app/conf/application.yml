@@ -155,8 +155,10 @@ environments:
   development:
     siipapx:
       cxp:
-        cfdisDir: /Users/rubencancino/Documents/cfdis-carga
+        cfdisDir: /Users/rubencancino/Documents/cfdis-carga/compras
+        gastosDir: /Users/rubencancino/Documents/cfdis-carga/gastos
   production:
     siipapx:
       cxp:
         cfdisDir: /home/cfdProv
+        gastosDir: /home/cfdis/gastos

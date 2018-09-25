@@ -1,0 +1,89 @@
+<table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+  <ng-container matColumnDef="emisorNombre">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Emisor</th>
+    <td mat-cell *matCellDef="let cfdi">{{cfdi.emisorNombre}}</td>
+    <td mat-footer-cell *matFooterCellDef>Totales</td>
+  </ng-container>
+  <ng-container matColumnDef="tipo">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo</th>
+    <td mat-cell *matCellDef="let cfdi">{{cfdi.tipo}}</td>
+    <td mat-footer-cell *matFooterCellDef> </td>
+  </ng-container>
+  <ng-container matColumnDef="serie">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Serie</th>
+    <td mat-cell *matCellDef="let cfdi">{{cfdi.serie}}</td>
+    <td mat-footer-cell *matFooterCellDef> </td>
+  </ng-container>
+  <ng-container matColumnDef="folio">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Folio</th>
+    <td mat-cell *matCellDef="let cfdi">{{cfdi.folio}}</td>
+    <td mat-footer-cell *matFooterCellDef> </td>
+  </ng-container>
+  <ng-container matColumnDef="metodoDePago">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>MP</th>
+    <td mat-cell *matCellDef="let cfdi" class="cursor-pointer">{{cfdi.metodoDePago}}</td>
+    <td mat-footer-cell *matFooterCellDef> </td>
+  </ng-container>
+  <ng-container matColumnDef="usoCfdi">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Uso</th>
+    <td mat-cell *matCellDef="let cfdi" class="cursor-pointer">{{cfdi.usoCfdi}}</td>
+    <td mat-footer-cell *matFooterCellDef> </td>
+  </ng-container>
+  <ng-container matColumnDef="formaDePago">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>FP</th>
+    <td mat-cell *matCellDef="let cfdi" class="cursor-pointer">{{cfdi.formaDePago}}</td>
+    <td mat-footer-cell *matFooterCellDef> </td>
+  </ng-container>
+  <ng-container matColumnDef="fecha">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
+    <td mat-cell *matCellDef="let cfdi">{{cfdi.fecha | date: 'dd/MM/yyyy'}}</td>
+    <td mat-footer-cell *matFooterCellDef> </td>
+  </ng-container>
+  <ng-container matColumnDef="moneda">
+    <th mat-header-cell *matHeaderCellDef>Moneda</th>
+    <td mat-cell *matCellDef="let cfdi">{{cfdi.moneda}}</td>
+    <td mat-footer-cell *matFooterCellDef> </td>
+  </ng-container>
+  <ng-container matColumnDef="tipoDeCambio">
+    <th mat-header-cell *matHeaderCellDef>TC</th>
+    <td mat-cell *matCellDef="let cfdi">{{cfdi.tipoDeCambio}}</td>
+    <td mat-footer-cell *matFooterCellDef></td>
+  </ng-container>
+  <ng-container matColumnDef="total">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Total</th>
+    <td mat-cell *matCellDef="let cfdi">{{cfdi.total | currency:'USD'}}</td>
+    <td mat-footer-cell *matFooterCellDef> {{ getTotal('total') | currency }}</td>
+  </ng-container>
+  <ng-container matColumnDef="uuid">
+    <th mat-header-cell *matHeaderCellDef>UUID</th>
+    <td mat-cell *matCellDef="let cfdi" class="cursor-pointer">
+      {{cfdi.uuid.substr(-12, 12)}}
+    </td>
+    <td mat-footer-cell *matFooterCellDef> </td>
+  </ng-container>
+  <ng-container matColumnDef="tipoDeComprobante">
+    <th mat-header-cell *matHeaderCellDef>Tipo</th>
+    <td mat-cell *matCellDef="let cfdi">{{cfdi.tipoDeComprobante}}</td>
+    <td mat-footer-cell *matFooterCellDef> </td>
+  </ng-container>
+  <ng-container matColumnDef="versionCfdi">
+    <th mat-header-cell *matHeaderCellDef>Versión</th>
+    <td mat-cell *matCellDef="let cfdi">{{cfdi.versionCfdi}}</td>
+    <td mat-footer-cell *matFooterCellDef> </td>
+  </ng-container>
+  <ng-container matColumnDef="operaciones">
+    <th mat-header-cell *matHeaderCellDef>
+      <!-- <mat-icon>more_vert</mat-icon> -->
+    </th>
+    <td mat-cell *matCellDef="let cfdi">
+      <span class="pad-right" (click)="onPdf($event, cfdi)" *ngIf="cfdi.pdf">PDF</span>
+      <span (click)="onXml($event, cfdi)">XML</span>
+    </td>
+    <td mat-footer-cell *matFooterCellDef> </td>
+  </ng-container>
+  <tr mat-header-row *matHeaderRowDef="displayColumns"></tr>
+  <tr mat-row *matRowDef="let cfdi; columns: displayColumns" [ngClass]="{'active': isSelected(cfdi)}" class="cursor-pointer"
+    (click)="toogleSelect(cfdi)"></tr>
+  <tr mat-footer-row *matFooterRowDef="displayColumns"></tr>
+</table>
+<mat-paginator [pageSizeOptions]="[ 10, 20, 50, 100, 200]" showFirstLastButtons></mat-paginator>

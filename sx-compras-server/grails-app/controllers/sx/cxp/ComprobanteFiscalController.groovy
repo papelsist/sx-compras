@@ -19,23 +19,26 @@ class ComprobanteFiscalController extends RestfulController<ComprobanteFiscal> {
 
     @Override
     protected List<ComprobanteFiscal> listAllResources(Map params) {
-        params.max = 250
+        params.max = 20
         params.sort = 'fecha'
-        params.order = 'asc'
-        // log.debug('List {}', params)
-        def query = ComprobanteFiscal.where{}
+        params.order = 'desc'
+        log.debug('List {}', params)
+        def tipo = params.tipo ?: 'COMPRAS'
+        def query = ComprobanteFiscal.where{ tipo == tipo}
 
         if(params.periodo) {
             def periodo = params.periodo
             query = query.where{fecha >= periodo.fechaInicial && fecha<= periodo.fechaFinal}
         }
+
+        // Si se tiene emisor
         def emisor = params.emisor
         if(emisor) {
             String search = '%' + emisor + '%'
             query = query.where { emisorNombre =~ search  }
         }
 
-        respond query.list(params);
+        respond query.list(params)
     }
 
     def xml(ComprobanteFiscal comprobanteFiscal) {

@@ -23,6 +23,9 @@ class ComprobanteFiscalService implements  LogUser{
     @Value('${siipapx.cxp.cfdisDir}')
     String cfdiDir
 
+    @Value('${siipapx.cxp.gastosDir}')
+    String gastosDir
+
     ImportadorCfdi32 importadorCfdi32
 
     @Autowired NotaDeCreditoCxPService notaDeCreditoCxPService
@@ -32,23 +35,26 @@ class ComprobanteFiscalService implements  LogUser{
     }
 
     @CompileDynamic
-    ComprobanteFiscal buildFromXml(byte[] xmlData, String fileName){
+    ComprobanteFiscal buildFromXml(byte[] xmlData, String fileName, String tipo){
 
         GPathResult xml = new XmlSlurper().parse(new ByteArrayInputStream(xmlData))
 
         def data = xml.attributes()
+
         if(xml.name()!='Comprobante')
             throw new ComprobanteFiscalException(message:"${fileName} no es un CFDI valido")
-        def version = data.Version
+        def version = data.Version ?: data.version
 
+        log.info('CFDI version {}', version)
 
-        if(version == null || version != '3.3'){
-            log.debug('Tratando de importar con ver 3.2')
+        if(version == '3.2'){
+            return null
+            /*
+            log.debug('Tratando de importar con ver 3.2 para compras')
             return importadorCfdi32.buildFromXml32(xml, xmlData ,fileName)
-           // throw new ComprobanteFiscalException(message:"${fileName} no es un CFDI version 3.3")
+            */
         }
-        
-
+        log.info('XML Data: {}', data)
 
         def receptorNode = xml.breadthFirst().find { it.name() == 'Receptor'}
         def receptorNombre = receptorNode.attributes()['Nombre']
@@ -57,14 +63,26 @@ class ComprobanteFiscalService implements  LogUser{
 
         def emisorNode = xml.breadthFirst().find { it.name() == 'Emisor'}
         def emisorNombre = emisorNode.attributes()['Nombre']
-        def emisorRfc = emisorNode.attributes()['Rfc']
+        String emisorRfc = emisorNode.attributes()['Rfc'] ?: 'XAXX010101000'
 
 
 
         def proveedor = Proveedor.findByRfc(emisorRfc)
-        if(!proveedor)
-            throw new ComprobanteFiscalException(
-                    message:"El proveedor de RFC: ${emisorRfc} / ${emisorNombre} no esta dado de alta en el sistema")
+        if(!proveedor) {
+            log.info('Proveedor {} not found ', emisorRfc)
+            if(tipo == 'GASTOS') {
+                proveedor = new Proveedor(nombre: emisorNombre, rfc: emisorRfc, tipo: tipo)
+                proveedor.clave = "GS${emisorRfc[0..-4]}"
+                proveedor.validate
+                log.info('Errores: {} ', proveedor.errors)
+                proveedor.save
+            } else {
+                throw new ComprobanteFiscalException(
+                        message:"El proveedor de RFC: ${emisorRfc} / ${emisorNombre} no esta dado de alta en el sistema")
+
+            }
+
+        }
 
         def serie = xml.attributes()['Serie']
         def folio = xml.attributes()['Folio']
@@ -79,7 +97,7 @@ class ComprobanteFiscalService implements  LogUser{
 
         def formaDePago = data['FormaPago']
         def metodoDePago = data['MetodoPago']
-        def tipo =  data['TipoDeComprobante']
+        def tipoDeComprobante =  data['TipoDeComprobante']
         def moneda = data['Moneda']
         def tipoDeCamio = data['TipoCambio'] as BigDecimal
 
@@ -107,7 +125,7 @@ class ComprobanteFiscalService implements  LogUser{
                 fecha: fecha,
                 formaDePago: formaDePago,
                 metodoDePago: metodoDePago,
-                tipoDeComprobante: tipo,
+                tipoDeComprobante: tipoDeComprobante,
                 moneda: moneda,
                 tipoDeCambio: tipoDeCamio?: 1.0,
                 usoCfdi: usoCfdi,
@@ -146,27 +164,28 @@ class ComprobanteFiscalService implements  LogUser{
         return cxp
     }
 
-    int importacionLocal(String tipo = "COMPRAS") {
-        File dir = new File(this.cfdiDir)
-        assert dir.exists(), "No existe el directorio: ${this.cfdiDir}"
+    int importacionLocal(String tipo) {
+        def path = tipo == 'COMPRAS' ? this.cfdiDir : this.gastosDir
+        File dir = new File(path)
+        assert dir.exists(), "No existe el directorio: ${path}"
         return importarDirectorio(dir, tipo)
     }
 
-    int importarDirectorio(File dir, String tipo = 'COMPRAS') {
+    int importarDirectorio(File dir, String tipo) {
         int rows = 0
         dir.eachFile { File it ->
             if(it.isDirectory())
-                importarDirectorio(it)
+                importarDirectorio(it, tipo)
             else {
                 if(it.name.toLowerCase().endsWith('xml')) {
                     try{
                         ComprobanteFiscal cf = importar(it, tipo)
                         cleanFile(it)
                         if(cf) {
-
                             rows++
                         }
                     }catch (Exception ex) {
+                        ex.printStackTrace()
                         String m = ExceptionUtils.getRootCauseMessage(ex)
                         log.error("Error importando ${it.name}: ${m}")
                     }
@@ -181,8 +200,15 @@ class ComprobanteFiscalService implements  LogUser{
 
 
     @Transactional
-    ComprobanteFiscal importar(File xmlFile, String tipo = 'COMPRAS') {
-        ComprobanteFiscal cf = buildFromXml(xmlFile.bytes, xmlFile.name)
+    ComprobanteFiscal importar(File xmlFile, String tipo) {
+        ComprobanteFiscal cf = buildFromXml(xmlFile.bytes, xmlFile.name, tipo)
+        if(cf == null){
+            cleanFile(xmlFile)
+            return null
+        }
+
+
+        cf.tipo = tipo
         ComprobanteFiscal found = ComprobanteFiscal.where {uuid == cf.uuid}.find()
         if(!found) {
             def pdf = new File(xmlFile.path.replace('.xml','.pdf'))

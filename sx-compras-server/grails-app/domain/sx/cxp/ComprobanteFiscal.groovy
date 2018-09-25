@@ -16,6 +16,7 @@ class ComprobanteFiscal {
     String serie
     String folio
     Date fecha
+    String tipo
 
     Proveedor proveedor
     String emisorNombre
@@ -77,6 +78,8 @@ class ComprobanteFiscal {
         impuestoTrasladado nullable: true, scale: 4
         impuestoRetenido nullable: true, scale: 4
         versionCfdi nullable:true
+
+        tipo inList: ['COMPRAS', 'GASTOS']
 
     }
 
