@@ -38,7 +38,7 @@ export const getSelectedFactura = createSelector(
   }
 );
 
-export const getPeriodoDeFacturas = createSelector(
+export const getFacturasFilter = createSelector(
   getFacturasState,
-  fromFacturas.getFacturasPeriodo
+  fromFacturas.getFacturasFilter
 );

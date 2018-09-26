@@ -33,9 +33,11 @@ import { ComPartidasComponent } from '../com-partidas/com-partidas.component';
   templateUrl: './com-create-form.component.html'
 })
 export class ComCreateFormComponent implements OnInit {
-  @Output() save = new EventEmitter<Partial<RecepcionDeCompra>>();
+  @Output()
+  save = new EventEmitter<Partial<RecepcionDeCompra>>();
 
-  @ViewChild(ComPartidasComponent) partidasTable: ComPartidasComponent;
+  @ViewChild(ComPartidasComponent)
+  partidasTable: ComPartidasComponent;
 
   form: FormGroup;
 

@@ -12,6 +12,8 @@ import { RecepcionDeCompraDet } from '../../models/recepcionDeCompraDet';
 
 import * as _ from 'lodash';
 import { MatDialog } from '@angular/material';
+import { ReportService } from '../../../reportes/services/report.service';
+import { FechaDialogComponent } from '../../../_shared/components';
 
 @Component({
   selector: 'sx-coms',
@@ -25,7 +27,11 @@ export class ComsComponent implements OnInit {
 
   private _storageKey = 'sx-compras.coms';
 
-  constructor(private store: Store<fromStore.State>) {}
+  constructor(
+    private store: Store<fromStore.State>,
+    private reportService: ReportService,
+    private dialog: MatDialog
+  ) {}
 
   ngOnInit() {
     this.coms$ = this.store.pipe(select(fromStore.getAllRecepcionesDeCompra));
@@ -59,5 +65,17 @@ export class ComsComponent implements OnInit {
 
   onFilter(event: ComsFilter) {
     this.store.dispatch(new fromActions.SetComsFilter({ filter: event }));
+  }
+
+  recepcionesReport() {
+    this.dialog
+      .open(FechaDialogComponent, { data: {} })
+      .afterClosed()
+      .subscribe((res: Date) => {
+        if (res) {
+          const url = `coms/recepcionesPorDia`;
+          this.reportService.runReport(url, { fecha: res.toISOString() });
+        }
+      });
   }
 }

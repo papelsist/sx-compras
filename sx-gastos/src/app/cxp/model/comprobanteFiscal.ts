@@ -1,5 +1,6 @@
 import { Proveedor } from '../../proveedores/models/proveedor';
 import { Periodo } from '../../_core/models/periodo';
+import { ComprobanteFiscalConcepto } from './comprobanteFiscalConcepto';
 
 export interface ComprobanteFiscal {
   id: string;
@@ -26,6 +27,7 @@ export interface ComprobanteFiscal {
   xml: boolean;
   selected?: boolean;
   versionCfdi: string;
+  conceptos?: ComprobanteFiscalConcepto[];
 }
 
 export class CfdisFilter {

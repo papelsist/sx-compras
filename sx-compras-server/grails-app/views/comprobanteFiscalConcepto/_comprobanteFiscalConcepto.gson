@@ -1,0 +1,7 @@
+import sx.cxp.ComprobanteFiscalConcepto
+
+model {
+	ComprobanteFiscalConcepto comprobanteFiscalConcepto
+}
+
+json g.render(comprobanteFiscalConcepto, [resolveTemplate: false])

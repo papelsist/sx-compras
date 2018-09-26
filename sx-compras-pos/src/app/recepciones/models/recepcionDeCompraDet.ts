@@ -27,8 +27,8 @@ export function buildRecepcionDet(
     unidad: compraDet.unidad,
     compraDet: { id: compraDet.id },
     producto: compraDet.producto,
-    cantidad: compraDet.porRecibir,
-    solicitado: 0,
+    cantidad: 0,
+    solicitado: compraDet.porRecibir,
     recibido: compraDet.recibido
   };
 }

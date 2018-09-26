@@ -9,7 +9,6 @@ import * as fromActions from '../store/actions/facturas.actions';
 import { Observable, of } from 'rxjs';
 import { tap, map, filter, take, switchMap, catchError } from 'rxjs/operators';
 
-import { CuentaPorPagar } from '../model';
 import { CuentaPorPagarService } from '../services';
 
 @Injectable()

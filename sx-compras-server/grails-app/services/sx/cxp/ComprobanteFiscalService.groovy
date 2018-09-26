@@ -7,6 +7,7 @@ import groovy.util.slurpersupport.GPathResult
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import sx.cfdi.CfdiReader
 import sx.core.LogUser
 import sx.core.Proveedor
 
@@ -36,6 +37,8 @@ class ComprobanteFiscalService implements  LogUser{
 
     @CompileDynamic
     ComprobanteFiscal buildFromXml(byte[] xmlData, String fileName, String tipo){
+
+        CfdiReader reader = new CfdiReader()
 
         GPathResult xml = new XmlSlurper().parse(new ByteArrayInputStream(xmlData))
 
@@ -132,6 +135,9 @@ class ComprobanteFiscalService implements  LogUser{
                 versionCfdi: '3.3'
         )
         // comprobanteFiscal.save failOnError: true, flush: true
+        if(tipo == 'GASTOS') {
+            reader.addConceptos(comprobanteFiscal, xml)
+        }
         return comprobanteFiscal
     }
 
@@ -202,13 +208,12 @@ class ComprobanteFiscalService implements  LogUser{
     @Transactional
     ComprobanteFiscal importar(File xmlFile, String tipo) {
         ComprobanteFiscal cf = buildFromXml(xmlFile.bytes, xmlFile.name, tipo)
+        cf.tipo = tipo
         if(cf == null){
             cleanFile(xmlFile)
             return null
         }
 
-
-        cf.tipo = tipo
         ComprobanteFiscal found = ComprobanteFiscal.where {uuid == cf.uuid}.find()
         if(!found) {
             def pdf = new File(xmlFile.path.replace('.xml','.pdf'))

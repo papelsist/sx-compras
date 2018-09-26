@@ -6,6 +6,7 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
 import org.grails.datastore.mapping.engine.event.AbstractPersistenceEvent
+import org.grails.datastore.mapping.engine.event.PostInsertEvent
 import org.grails.datastore.mapping.engine.event.PostUpdateEvent
 
 import org.springframework.beans.factory.annotation.Autowired
@@ -44,10 +45,22 @@ class ExistenciaListenerService {
         }
     }
 
+    @Subscriber
+    void afterInsert(PostInsertEvent event) {
+        // log.debug('{} {} ', event.eventType.name(), event.entity.name)
+        String id = getId(event)
+        if ( id ) {
+            log.debug('{} {} Id: {}', event.eventType.name(), event.entity.name, id)
+            Existencia exis = getExistencia(event)
+            logEntity(exis, 'INSERT')
+        }
+    }
+
 
 
     def logEntity(Existencia exis, String type) {
-        AuditLog log = new AuditLog(
+
+        AuditLog audit = new AuditLog(
                 name: 'Existencia',
                 persistedObjectId: exis.id,
                 source: exis.sucursal.nombre,
@@ -55,7 +68,8 @@ class ExistenciaListenerService {
                 tableName: 'Existencia',
                 eventName: type
         )
-        auditLogDataService.save(log)
+        AuditLog res = auditLogDataService.save(audit)
+        // this.log.info('AuditLog generado {}', res)
     }
 
 }

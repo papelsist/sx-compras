@@ -1,8 +1,6 @@
 import { Action } from '@ngrx/store';
-import { Update } from '@ngrx/entity';
 
-import { CuentaPorPagar } from '../../model';
-import { Periodo } from 'app/_core/models/periodo';
+import { CuentaPorPagar, CxPFilter } from '../../model';
 
 export enum FacturaActionTypes {
   LoadFacturas = '[Facturas CXP] Load Facturas ',
@@ -13,7 +11,7 @@ export enum FacturaActionTypes {
   UpdateFacturaFail = '[Facturas CXP] Update Factura Fail',
   UpdateFacturaSuccess = '[Facturas CXP] Update Factura Success',
   ClearFacturas = '[Facturas CXP] Clear Facturas',
-  SetFacturasPeriodo = '[Facturas CXP] Set Periodo de facturas',
+  SetFacturasFilter = '[Facturas CXP] Set Filtro de facturas',
   LoadFactura = '[Facturas CXP] LoadFactura One Factura',
   LoadFacturaFail = '[Facturas CXP] LoadFactura One Factura fail',
   LoadFacturaSuccess = '[Facturas CXP] LoadFactura One Factura Success',
@@ -26,6 +24,7 @@ export enum FacturaActionTypes {
 export class LoadFacturas implements Action {
   readonly type = FacturaActionTypes.LoadFacturas;
 }
+
 export class LoadFacturasFail implements Action {
   readonly type = FacturaActionTypes.LoadFacturasFail;
   constructor(public payload: any) {}
@@ -62,9 +61,9 @@ export class ClearFacturas implements Action {
   readonly type = FacturaActionTypes.ClearFacturas;
 }
 
-export class SetFacturasPeriodo implements Action {
-  readonly type = FacturaActionTypes.SetFacturasPeriodo;
-  constructor(public payload: Periodo) {}
+export class SetFacturasFilter implements Action {
+  readonly type = FacturaActionTypes.SetFacturasFilter;
+  constructor(public payload: { filter: CxPFilter }) {}
 }
 
 export class SaldarCuentaPorPagar implements Action {
@@ -96,7 +95,7 @@ export type FacturaActions =
   | UpsertFactura
   | ClearFacturas
   | SaldarCuentaPorPagar
-  | SetFacturasPeriodo
+  | SetFacturasFilter
   | BuscarPendientesPorProveedor
   | BuscarPendientesPorProveedorFail
   | BuscarPendientesPorProveedorSuccess;

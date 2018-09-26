@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { of as observableOf, Observable } from 'rxjs';
+import { of, Observable } from 'rxjs';
 
 @Component({
   selector: 'sx-main-page',
@@ -51,6 +51,6 @@ export class MainPageComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {
-    this.modulo$ = observableOf('PENDIENTE');
+    this.modulo$ = of('PENDIENTE');
   }
 }

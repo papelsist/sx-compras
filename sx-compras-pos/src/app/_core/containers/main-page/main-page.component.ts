@@ -4,7 +4,7 @@ import { Store, select } from '@ngrx/store';
 import * as fromRoot from 'app/store';
 import * as fromAuth from 'app/auth/store';
 
-import { of as observableOf, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { AuthSession } from 'app/auth/models/authSession';
 import { Sucursal } from '../../../models';
 
@@ -62,7 +62,7 @@ export class MainPageComponent implements OnInit {
   sidenavWidth = 300;
   session$: Observable<AuthSession>;
 
-  constructor(private store: Store<fromAuth.AuthState>) {}
+  constructor(private store: Store<fromRoot.State>) {}
 
   ngOnInit() {
     this.session$ = this.store.pipe(select(fromAuth.getSession));

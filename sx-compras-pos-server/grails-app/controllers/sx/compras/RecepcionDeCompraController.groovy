@@ -51,17 +51,14 @@ class RecepcionDeCompraController extends RestfulController<RecepcionDeCompra> {
 
     @Override
     protected RecepcionDeCompra saveResource(RecepcionDeCompra resource) {
-        /*
-        log.info('Salvando COM: {}', resource)
-        resource.partidas.each {
-           log.info('PROD {} cantidad: {}', it.clave, it.cantidad)
-        }
-        return resource
-        */
         return recepcionDeCompraService.saveRecepcion(resource)
     }
 
-    /**
+    @Override
+    protected RecepcionDeCompra updateResource(RecepcionDeCompra resource) {
+        return recepcionDeCompraService.updateRecepcion(resource)
+    }
+/**
      * Regresa todos las entradas por compra inventariadas pendientes de
      * analizar
      *
@@ -93,4 +90,16 @@ class RecepcionDeCompraController extends RestfulController<RecepcionDeCompra> {
         def pdf =  reportService.run('EntradaPorCompra.jrxml', repParams)
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'EntradaPorCompra.pdf')
     }
+
+    def recepcionesPorDia(RecepcionesPorFecha command) {
+        params.FECHA_ENT = command.fecha
+        params.SUCURSAL = AppConfig.first().sucursal.id
+        def pdf = this.reportService.run('RecepDeMercancia', params)
+        def fileName = "RecepDeMercancia.pdf"
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: fileName)
+    }
+}
+
+class RecepcionesPorFecha {
+    Date fecha
 }

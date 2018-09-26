@@ -36,10 +36,12 @@ export const getRouterState = createFeatureSelector<
 export const getApplicationState = createSelector(
   (state: State) => state.application
 );
+
 export const getSucursal = createSelector(
   getApplicationState,
   fromApplication.getSucursal
 );
+
 export const getGlobalLoading = createSelector(
   getApplicationState,
   fromApplication.getGlobalLoading

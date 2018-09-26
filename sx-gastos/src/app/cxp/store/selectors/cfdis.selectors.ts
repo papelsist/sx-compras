@@ -59,3 +59,9 @@ export const getSelectedCfdis = createSelector(
   getComprobantesSelectedIds,
   (entities, ids) => ids.map(id => entities[id])
 );
+
+export const getSelectedConceptos = createSelector(getSelectedCfdis, cfdis => {
+  const res = [];
+  cfdis.forEach(item => res.push(...item.conceptos));
+  return res;
+});

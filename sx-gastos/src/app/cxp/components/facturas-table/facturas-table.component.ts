@@ -20,13 +20,16 @@ import { CuentaPorPagar } from '../../model';
   styleUrls: ['./facturas-table.component.scss']
 })
 export class FacturasTableComponent implements OnInit, OnChanges {
-  @Input() facturas: CuentaPorPagar[] = [];
-  @Input() filter: string;
+  @Input()
+  facturas: CuentaPorPagar[] = [];
+  @Input()
+  filter: string;
   dataSource = new MatTableDataSource<CuentaPorPagar>([]);
 
   @Input()
   displayColumns = [
     'nombre',
+    'tipo',
     'serie',
     'folio',
     'fecha',
@@ -43,14 +46,21 @@ export class FacturasTableComponent implements OnInit, OnChanges {
     'uuid',
     'operaciones'
   ];
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort)
+  sort: MatSort;
+  @ViewChild(MatPaginator)
+  paginator: MatPaginator;
 
-  @Output() select = new EventEmitter();
-  @Output() edit = new EventEmitter();
-  @Output() analisis = new EventEmitter();
-  @Output() pdf = new EventEmitter();
-  @Output() xml = new EventEmitter();
+  @Output()
+  select = new EventEmitter();
+  @Output()
+  edit = new EventEmitter();
+  @Output()
+  analisis = new EventEmitter();
+  @Output()
+  pdf = new EventEmitter();
+  @Output()
+  xml = new EventEmitter();
   constructor() {}
 
   ngOnInit() {

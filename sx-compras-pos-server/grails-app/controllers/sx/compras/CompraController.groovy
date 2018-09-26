@@ -79,7 +79,6 @@ class CompraController extends RestfulController<Compra> {
     }
 
     def pendientes() {
-        log.info('Buscando compras pendientes {}', params)
         String id = params.proveedorId
         def query = Compra.where{ proveedor.id == id && pendiente == true}
         params.sort = 'lastUpdated'
@@ -93,7 +92,11 @@ class CompraController extends RestfulController<Compra> {
         respond res
         */
         def res = CompraDet.findAll(
-                'select distinct d.compra from CompraDet d where d.compra.proveedor.id = ? and d.solicitado - d.depurado - d.recibido > 0',
+                """
+                select distinct d.compra from CompraDet d where d.compra.proveedor.id = ? 
+                    and d.solicitado - d.depurado - d.recibido > 0 
+                    order by d.compra.fecha desc
+                """,
                 [id], params)
         respond res
 

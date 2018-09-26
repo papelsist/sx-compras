@@ -1,15 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 
-import { MatDialog } from '@angular/material';
 import { TdMediaService } from '@covalent/core';
 
 import { Store, select } from '@ngrx/store';
 import * as fromStore from '../../store';
 
 import { Observable } from 'rxjs';
-
-import { RepPeriodoSucursalComponent } from 'app/reportes/components';
-import { ReportService } from '../../../reportes/services/report.service';
 
 @Component({
   selector: 'sx-cxp-page',
@@ -30,12 +26,6 @@ export class CxpPageComponent implements OnInit {
       icon: 'receipt'
     },
     {
-      route: 'analisis',
-      title: 'Análisis',
-      description: 'Análisis de facturas',
-      icon: 'rate_review'
-    },
-    {
       route: 'requisiciones',
       title: 'Requisiciones',
       description: 'Requisiciones',
@@ -52,12 +42,6 @@ export class CxpPageComponent implements OnInit {
       title: 'Notas ',
       description: 'Notas de crédito',
       icon: 'description'
-    },
-    {
-      route: 'contrarecibos',
-      title: 'Contrarecibos ',
-      description: 'Contrarecibos',
-      icon: 'rate_review'
     }
   ];
 
@@ -65,8 +49,6 @@ export class CxpPageComponent implements OnInit {
 
   constructor(
     public media: TdMediaService,
-    private dialog: MatDialog,
-    private reportService: ReportService,
     private store: Store<fromStore.State>
   ) {}
 

@@ -30,7 +30,7 @@
     <div td-toolbar-content layout="row" layout-align="start center" flex>
       <span [routerLink]="['/']" class="cursor-pointer">SX Compras</span>
       <span flex></span>
-      <span>{{(sucursal$ | async).nombre}}</span>
+      <span>{{(sucursal$ | async)?.nombre}}</span>
       <span flex></span>
       <sx-logout-button></sx-logout-button>
     </div>

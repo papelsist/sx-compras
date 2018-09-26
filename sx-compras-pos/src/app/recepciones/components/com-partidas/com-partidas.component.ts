@@ -21,12 +21,19 @@ import { RecepcionDeCompraDet } from '../../models/recepcionDeCompraDet';
   styleUrls: ['./com-partidas.component.scss']
 })
 export class ComPartidasComponent implements OnInit, OnChanges {
-  @Input() partidas: RecepcionDeCompraDet[] = [];
-  @Input() parent: FormGroup;
-  @Input() readOnly: false;
+  @Input()
+  partidas: RecepcionDeCompraDet[] = [];
+  @Input()
+  parent: FormGroup;
+  @Input()
+  readOnly: false;
+  @Input()
+  filter: string;
 
-  @Output() update = new EventEmitter();
-  @Output() delete = new EventEmitter();
+  @Output()
+  update = new EventEmitter();
+  @Output()
+  delete = new EventEmitter();
 
   displayColumns = [
     'clave',
@@ -46,7 +53,8 @@ export class ComPartidasComponent implements OnInit, OnChanges {
 
   dataSource = new MatTableDataSource<RecepcionDeCompraDet>([]);
 
-  @ViewChild(MatTable) table: MatTable<any>;
+  @ViewChild(MatTable)
+  table: MatTable<any>;
 
   constructor() {}
 
@@ -55,6 +63,10 @@ export class ComPartidasComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     if (changes.partidas && changes.partidas.currentValue) {
       this.dataSource.data = changes.partidas.currentValue;
+    }
+    if (changes.filter) {
+      const s: string = changes.filter.currentValue || '';
+      this.dataSource.filter = s.toLowerCase();
     }
   }
 

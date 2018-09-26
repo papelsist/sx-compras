@@ -1,16 +1,15 @@
 import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 
-import { CuentaPorPagar } from '../../model';
+import { CuentaPorPagar, CxPFilter, createCxPFilter } from '../../model';
 import {
   FacturaActions,
   FacturaActionTypes
 } from '../actions/facturas.actions';
-import { Periodo } from 'app/_core/models/periodo';
 
 export interface State extends EntityState<CuentaPorPagar> {
   loading: boolean;
   loaded: boolean;
-  periodo: Periodo;
+  filter: CxPFilter;
 }
 
 export const adapter: EntityAdapter<CuentaPorPagar> = createEntityAdapter<
@@ -20,16 +19,16 @@ export const adapter: EntityAdapter<CuentaPorPagar> = createEntityAdapter<
 export const initialState: State = adapter.getInitialState({
   loading: false,
   loaded: false,
-  periodo: Periodo.fromStorage('sx-compras.cxp.facturas.periodo')
+  filter: createCxPFilter()
 });
 
 export function reducer(state = initialState, action: FacturaActions): State {
   switch (action.type) {
-    case FacturaActionTypes.SetFacturasPeriodo: {
-      const periodo = action.payload;
+    case FacturaActionTypes.SetFacturasFilter: {
+      const filter = action.payload.filter;
       return {
         ...state,
-        periodo
+        filter
       };
     }
 
@@ -95,4 +94,4 @@ export const {
 
 export const getFacturasLoading = (state: State) => state.loading;
 export const getFacturasLoaded = (state: State) => state.loaded;
-export const getFacturasPeriodo = (state: State) => state.periodo;
+export const getFacturasFilter = (state: State) => state.filter;

@@ -50,6 +50,8 @@ class ComprobanteFiscal {
     byte[] pdf
     byte[] acuse
 
+    List<ComprobanteFiscalConcepto> conceptos = []
+
 
     Date dateCreated
     Date lastUpdated
@@ -88,7 +90,10 @@ class ComprobanteFiscal {
         fecha index: 'CF_IDX1'
         uuid index: 'CF_IDX2'
         emisorRfc index: 'CF_IDX_3'
+        conceptos cascade: "all-delete-orphan"
     }
+
+    static hasMany =[conceptos: ComprobanteFiscalConcepto]
 
     static transients = ['xmlNode']
 

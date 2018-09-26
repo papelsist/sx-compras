@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -7,8 +7,7 @@ import { catchError } from 'rxjs/operators';
 import { ConfigService } from 'app/utils/config.service';
 
 import * as _ from 'lodash';
-import { CuentaPorPagar } from '../model/cuentaPorPagar';
-import { Periodo } from '../../_core/models/periodo';
+import { CuentaPorPagar, CxPFilter } from '../model/cuentaPorPagar';
 
 @Injectable()
 export class CuentaPorPagarService {
@@ -18,11 +17,11 @@ export class CuentaPorPagarService {
     this.apiUrl = configService.buildApiUrl('cuentaPorPagar');
   }
 
-  list(periodo: Periodo): Observable<CuentaPorPagar[]> {
-    const data = periodo.toApiJSON();
-    const params = new HttpParams()
-      .set('fechaInicial', data.fechaInicial)
-      .set('fechaFinal', data.fechaFinal);
+  list(filtro?: CxPFilter): Observable<CuentaPorPagar[]> {
+    let params = new HttpParams().set('tipo', 'GASTOS');
+    _.forIn(filtro, (value, key) => {
+      params = params.set(key, value.toString());
+    });
     return this.http
       .get<CuentaPorPagar[]>(this.apiUrl, { params: params })
       .pipe(catchError((error: any) => throwError(error)));
@@ -62,22 +61,4 @@ export class CuentaPorPagarService {
       .get<CuentaPorPagar[]>(url)
       .pipe(catchError((error: any) => throwError(error)));
   }
-
-  buscar(filtro: CxPFilter): Observable<CuentaPorPagar[]> {
-    let params = new HttpParams();
-    _.forIn(filtro, (value, key) => {
-      params = params.set(key, value);
-    });
-    return this.http
-      .get<CuentaPorPagar[]>(this.apiUrl, { params: params })
-      .pipe(catchError((error: any) => throwError(error)));
-  }
-}
-
-export interface CxPFilter {
-  proveedorId: string;
-  serie?: string;
-  folio?: string;
-  uuid?: string;
-  total?: string;
 }

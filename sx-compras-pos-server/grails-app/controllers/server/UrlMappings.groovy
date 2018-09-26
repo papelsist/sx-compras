@@ -28,6 +28,7 @@ class UrlMappings {
             "/partidas"(resources: 'recepcionDeCompraDet', excludes:['create', 'edit','patch'])
         }
         "/api/coms/print/$id"(controller: 'recepcionDeCompra', action: 'print', method: 'GET')
+        "/api/coms/recepcionesPorDia"(controller: 'recepcionDeCompra', action: 'recepcionesPorDia', method: 'GET')
 
         /// Alcances
         "/api/alcances/list"(controller: 'alcances', action: 'list')

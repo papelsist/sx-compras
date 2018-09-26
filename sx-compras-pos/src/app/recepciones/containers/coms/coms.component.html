@@ -11,6 +11,17 @@
       [alwaysVisible]="(search$ | async)">
     </td-search-box>
     <sx-coms-filter (change)="onFilter($event)" [filter]="comsFilter$ | async" class="options"></sx-coms-filter>
+    <span>
+      <button mat-icon-button [matMenuTriggerFor]="toolbarMenu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #toolbarMenu="matMenu">
+        <button mat-menu-item (click)="recepcionesReport()">
+          <mat-icon>picture_as_pdf</mat-icon> Recepciones
+        </button>
+      </mat-menu>
+    </span>
+
   </div>
   <mat-divider></mat-divider>
   <sx-coms-table [coms]="coms$ | async" (select)="onSelect($event)" [filter]="search$ | async"></sx-coms-table>

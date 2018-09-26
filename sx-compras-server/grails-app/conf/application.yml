@@ -161,4 +161,4 @@ environments:
     siipapx:
       cxp:
         cfdisDir: /home/cfdProv
-        gastosDir: /home/cfdis/gastos
+        gastosDir: /home/cfdGastos

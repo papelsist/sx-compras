@@ -21,10 +21,14 @@
         <mat-datepicker #myDatepicker></mat-datepicker>
       </mat-form-field>
       <sx-upper-case-field formControlName="comentario" placeholder="Comentario" flex class="pad-left pad-right"></sx-upper-case-field>
+      <mat-form-field class="pad-left">
+        <input matInput placeholder="Filtrar partidas" #filter autocomplete="off">
+      </mat-form-field>
     </div>
 
     <div class="partidas-panel ">
-      <sx-com-partidas [parent]="form" [partidas]="partidas.value" (delete)="onDeletePartida($event)" (update)="onEditPartida($event)">
+      <sx-com-partidas [parent]="form" [partidas]="partidas.value" (delete)="onDeletePartida($event)" (update)="onEditPartida($event)"
+        [filter]="filter.value">
       </sx-com-partidas>
     </div>
     <mat-divider></mat-divider>

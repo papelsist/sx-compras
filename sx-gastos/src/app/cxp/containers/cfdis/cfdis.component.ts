@@ -25,6 +25,7 @@ import { ComprobanteFiscal, CfdisFilter } from '../../model/comprobanteFiscal';
       <mat-divider></mat-divider>
       <sx-cfdis-table [comprobantes]="cfdis$ | async" (pdf)="onPdf($event)" [selected]="selected$ | async"
         (xml)="onXml($event)" (select)="onSelect($event)" [filter]="search$ | async"></sx-cfdis-table>
+      <sx-cfdis-filter-label [filter]="filter$ | async"></sx-cfdis-filter-label>
     </mat-card>
     <sx-cfdis-conceptos></sx-cfdis-conceptos>
   `,

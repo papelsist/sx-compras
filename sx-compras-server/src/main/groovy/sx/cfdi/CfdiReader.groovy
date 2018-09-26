@@ -7,6 +7,7 @@ import groovy.util.slurpersupport.GPathResult
 
 import sx.core.Proveedor
 import sx.cxp.ComprobanteFiscal
+import sx.cxp.ComprobanteFiscalConcepto
 import sx.cxp.ComprobanteFiscalException
 
 @Slf4j
@@ -108,5 +109,23 @@ class CfdiReader {
         )
         // comprobanteFiscal.save failOnError: true, flush: true
         return comprobanteFiscal
+    }
+
+    @CompileDynamic
+    def addConceptos(ComprobanteFiscal cfdi,  GPathResult xml) {
+        cfdi.conceptos.clear()
+        def conceptos = xml.Conceptos
+        conceptos.childNodes().each{
+            Map map = it.attributes()
+            ComprobanteFiscalConcepto concepto = new ComprobanteFiscalConcepto()
+            concepto.claveProdServ = map.ClaveProdServ
+            concepto.claveUnidad = map.ClaveUnidad
+            concepto.unidad = map.Unidad
+            concepto.descripcion = map.Descripcion
+            concepto.cantidad = map.Cantidad.toBigDecimal()
+            concepto.valorUnitario = map.ValorUnitario.toBigDecimal()
+            concepto.importe = map.Importe.toBigDecimal()
+            cfdi.addToConceptos(concepto)
+        }
     }
 }

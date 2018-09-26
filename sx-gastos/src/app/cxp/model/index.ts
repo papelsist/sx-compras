@@ -1,5 +1,5 @@
 export * from './comprobanteFiscal';
-export * from './comprobanteFiscal';
+export * from './comprobanteFiscalConcepto';
 export * from './cuentaPorPagar';
 export * from './recepcionDeCompra';
 export * from './recepcionDeCompraDet';

@@ -8,4 +8,5 @@ json g.render(comprobanteFiscal, [resolveTemplate: false, excludes: ['xml', 'pdf
     pdf comprobanteFiscal.pdf ? true : false
     xml comprobanteFiscal.xml ? true : false
     xml comprobanteFiscal.acuse ? true: false
+    conceptos g.render(comprobanteFiscal.conceptos)
 }

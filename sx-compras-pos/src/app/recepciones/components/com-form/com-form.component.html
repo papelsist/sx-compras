@@ -28,11 +28,15 @@
         <input matInput value="{{com.compraFecha | date: 'dd/MM/yyyy'}}" [disabled]="true" placeholder="Fecha Remisión ">
       </mat-form-field>
       <sx-upper-case-field formControlName="comentario" placeholder="Comentario" flex class="pad-left pad-right"></sx-upper-case-field>
+      <mat-form-field class="pad-left">
+        <input matInput placeholder="Filtrar partidas" #filter autocomplete="off">
+      </mat-form-field>
     </div>
 
 
     <div class="partidas-panel ">
-      <sx-com-partidas [parent]="form" [partidas]="partidas.value" (delete)="onDeletePartida($event)" [readOnly]="com.id">
+      <sx-com-partidas [parent]="form" [partidas]="partidas.value" [filter]="filter.value" (delete)="onDeletePartida($event)"
+        [readOnly]="com.id">
       </sx-com-partidas>
     </div>
 

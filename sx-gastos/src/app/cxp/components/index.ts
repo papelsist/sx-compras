@@ -25,8 +25,12 @@ import { AplicacionFormComponent } from './aplicacion-form/aplicacion-form.compo
 import { NotaPrintComponent } from './nota-print/nota-print.component';
 import { CfdisFilterComponent } from './cfdis-filter/cfdis-filter.component';
 import { CfdisFilterLabelComponent } from './cfdis-filter/cfdis-filter-label.component';
-import { CfdisFilter } from '../model';
+
 import { CfdisFilterBtnComponent } from './cfdis-filter/cfdis-filter-btn.component';
+import { CfdisConceptosTableComponent } from './cfdi-conceptos-table/cfdi-conceptos-table.component';
+import { FacturasFilterComponent } from './facturas-filter/facturas-filter.component';
+import { FacturasFilterBtnComponent } from './facturas-filter/facturas-filter-btn.component';
+import { FacturasFilterLabelComponent } from './facturas-filter/facturas-filter-label.component';
 
 export const components: any[] = [
   CfdisTableComponent,
@@ -34,11 +38,15 @@ export const components: any[] = [
   CfdisFilterComponent,
   CfdisFilterLabelComponent,
   CfdisFilterBtnComponent,
+  CfdisConceptosTableComponent,
   FacturasTableComponent,
   FacturaSelectorComponent,
   FacturasSelectorBtnComponent,
   CxpFacturasTableComponent,
   FacturaHeaderComponent,
+  FacturasFilterComponent,
+  FacturasFilterBtnComponent,
+  FacturasFilterLabelComponent,
   ComsSelectorComponent,
   ComsTableComponent,
   RequisicionesTableComponent,
@@ -61,7 +69,8 @@ export const entryComponents = [
   FacturaSelectorComponent,
   ComsSelectorComponent,
   AplicacionFormComponent,
-  CfdisFilterComponent
+  CfdisFilterComponent,
+  FacturasFilterComponent
 ];
 
 export * from './cfdis-table/cfdis-table.component';
@@ -69,12 +78,18 @@ export * from './cfdis-totales-panel/cfdis-totales-panel.component';
 export * from './cfdis-filter/cfdis-filter.component';
 export * from './cfdis-filter/cfdis-filter-btn.component';
 export * from './cfdis-filter/cfdis-filter-label.component';
+export * from './cfdi-conceptos-table/cfdi-conceptos-table.component';
 
 export * from './facturas-table/facturas-table.component';
 export * from './factura-selector/factura-selector.component';
 export * from './factura-selector/factura-selector-btn.component';
 export * from './cxp-facturas-table/cxp-facturas-table.component';
 export * from './factura-header/factura-header.component';
+
+export * from './facturas-filter/facturas-filter.component';
+export * from './facturas-filter/facturas-filter-label.component';
+export * from './facturas-filter/facturas-filter-btn.component';
+
 export * from './coms-selector/coms-selector.component';
 export * from './coms-table/coms-table.component';
 
