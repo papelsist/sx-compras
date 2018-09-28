@@ -1,0 +1,7 @@
+import sx.cxp.RequisicionDeGastos
+
+model {
+	RequisicionDeGastos requisicionDeGastos
+}
+
+json tmpl.requisicionDeGastos(requisicionDeGastos)

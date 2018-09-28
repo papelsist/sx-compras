@@ -9,7 +9,7 @@ import * as fromPagos from './pagos.reducer';
 
 export interface State {
   cfdis: fromCfdis.State;
-  requisiciones: fromRequisicion.RequisicionState;
+  requisiciones: fromRequisicion.State;
   requisicionForm: fromRequisicionForm.FormState;
   notas: fromNotas.State;
   facturas: fromFacturas.State;

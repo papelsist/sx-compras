@@ -14,7 +14,7 @@ import { MatSnackBar } from '@angular/material';
 export class RequisicionFormEffects {
   constructor(
     private actions$: Actions,
-    private service: fromServices.RequisicionDeCompraService,
+    private service: fromServices.RequisicionesService,
     public snackBar: MatSnackBar
   ) {}
 
@@ -25,14 +25,12 @@ export class RequisicionFormEffects {
     ),
     map(action => action.payload),
     switchMap(proveedorId => {
-      return this.service
-        .pendientes(proveedorId)
-        .pipe(
-          map(res => new fromForm.LoadFacturasPorRequisitarSuccess(res)),
-          catchError(error =>
-            of(new fromForm.LoadFacturasPorRequisitarFail(error))
-          )
-        );
+      return this.service.pendientes(proveedorId).pipe(
+        map(res => new fromForm.LoadFacturasPorRequisitarSuccess(res)),
+        catchError(error =>
+          of(new fromForm.LoadFacturasPorRequisitarFail(error))
+        )
+      );
     })
   );
 

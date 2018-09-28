@@ -1,7 +1,11 @@
 import { Injectable } from '@angular/core';
 
+import { Store, select } from '@ngrx/store';
+import * as fromStore from '../../store';
+import { getRequisicionesFilter } from '../../store/selectors/requisiciones.selectors';
+
 import { Effect, Actions, ofType } from '@ngrx/effects';
-import { map, switchMap, catchError, tap, delay } from 'rxjs/operators';
+import { map, switchMap, catchError, tap, take } from 'rxjs/operators';
 import { of } from 'rxjs';
 
 import * as fromRequisicion from '../actions/requisicion.actions';
@@ -19,23 +23,42 @@ import { MatSnackBar } from '@angular/material';
 export class RequisicionesEffects {
   constructor(
     private actions$: Actions,
-    private service: fromServices.RequisicionDeCompraService,
+    private service: fromServices.RequisicionesService,
+    private store: Store<fromStore.State>,
     public snackBar: MatSnackBar
   ) {}
+
+  @Effect()
+  load$ = this.actions$.pipe(
+    ofType(RequisicionActionTypes.LoadRequisciones),
+    switchMap(() => {
+      return this.store.pipe(
+        select(getRequisicionesFilter),
+        take(1)
+      );
+    }),
+    switchMap(filter => {
+      return this.service.list(filter).pipe(
+        map(
+          requisiciones =>
+            new fromRequisicion.LoadRequisicionesSuccess({ requisiciones })
+        ),
+        catchError(response =>
+          of(new fromRequisicion.LoadRequisicionesFail({ response }))
+        )
+      );
+    })
+  );
 
   @Effect()
   save$ = this.actions$.pipe(
     ofType<SaveRequisicion>(RequisicionActionTypes.SAVE_REQUISICION),
     map(action => action.payload),
     switchMap(requisicion => {
-      return this.service
-        .save(requisicion)
-        .pipe(
-          map(res => new fromRequisicion.SaveRequisicionSuccess(res)),
-          catchError(error =>
-            of(new fromRequisicion.SaveRequisicionFail(error))
-          )
-        );
+      return this.service.save(requisicion).pipe(
+        map(res => new fromRequisicion.SaveRequisicionSuccess(res)),
+        catchError(error => of(new fromRequisicion.SaveRequisicionFail(error)))
+      );
     })
   );
 
@@ -55,14 +78,12 @@ export class RequisicionesEffects {
     ),
     map(action => action.payload),
     switchMap(requisicion => {
-      return this.service
-        .update(requisicion)
-        .pipe(
-          map(res => new fromRequisicion.UpdateRequisicionSuccess(res)),
-          catchError(error =>
-            of(new fromRequisicion.UpdateRequisicionFail(error))
-          )
-        );
+      return this.service.update(requisicion).pipe(
+        map(res => new fromRequisicion.UpdateRequisicionSuccess(res)),
+        catchError(error =>
+          of(new fromRequisicion.UpdateRequisicionFail(error))
+        )
+      );
     })
   );
 
@@ -92,14 +113,12 @@ export class RequisicionesEffects {
     ),
     map(action => action.payload),
     switchMap(requisicion => {
-      return this.service
-        .delete(requisicion.id)
-        .pipe(
-          map(res => new fromRequisicion.DeleteRequisicionSuccess(requisicion)),
-          catchError(error =>
-            of(new fromRequisicion.DeleteRequisicionFail(error))
-          )
-        );
+      return this.service.delete(requisicion.id).pipe(
+        map(res => new fromRequisicion.DeleteRequisicionSuccess(requisicion)),
+        catchError(error =>
+          of(new fromRequisicion.DeleteRequisicionFail(error))
+        )
+      );
     })
   );
 
@@ -116,14 +135,12 @@ export class RequisicionesEffects {
     ),
     map(action => action.payload),
     switchMap(requisicion => {
-      return this.service
-        .cerrar(requisicion)
-        .pipe(
-          map(res => new fromRequisicion.CerrarRequisicionSuccess(res)),
-          catchError(error =>
-            of(new fromRequisicion.CerrarRequisicionFail(error))
-          )
-        );
+      return this.service.cerrar(requisicion).pipe(
+        map(res => new fromRequisicion.CerrarRequisicionSuccess(res)),
+        catchError(error =>
+          of(new fromRequisicion.CerrarRequisicionFail(error))
+        )
+      );
     })
   );
 
@@ -132,7 +149,8 @@ export class RequisicionesEffects {
     ofType(
       RequisicionActionTypes.UPDATE_REQUISICION_FAIL,
       RequisicionActionTypes.SAVE_REQUISICION_FAIL,
-      RequisicionActionTypes.CERRAR_REQUISICION_FAIL
+      RequisicionActionTypes.CERRAR_REQUISICION_FAIL,
+      RequisicionActionTypes.LoadRequiscionesFail
     ),
     map((action: any) => {
       const error = action.payload;

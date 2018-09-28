@@ -11,6 +11,8 @@ import {
 } from '@angular/core';
 import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 
+import * as _ from 'lodash';
+
 import { CuentaPorPagar } from '../../model/cuentaPorPagar';
 
 @Component({
@@ -20,8 +22,10 @@ import { CuentaPorPagar } from '../../model/cuentaPorPagar';
   styleUrls: ['./cxp-facturas-table.component.scss']
 })
 export class CxpFacturasTableComponent implements OnInit, OnChanges {
-  @Input() facturas: CuentaPorPagar[] = [];
-  @Input() multipleSelection = true;
+  @Input()
+  facturas: CuentaPorPagar[] = [];
+  @Input()
+  multipleSelection = true;
   dataSource = new MatTableDataSource<CuentaPorPagar>([]);
 
   displayColumns = [
@@ -37,9 +41,12 @@ export class CxpFacturasTableComponent implements OnInit, OnChanges {
     'saldo',
     'uuid'
   ];
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @Output() select = new EventEmitter();
+  @ViewChild(MatSort)
+  sort: MatSort;
+  @ViewChild(MatPaginator)
+  paginator: MatPaginator;
+  @Output()
+  select = new EventEmitter();
 
   constructor() {}
 
@@ -74,5 +81,9 @@ export class CxpFacturasTableComponent implements OnInit, OnChanges {
     filterValue = filterValue.trim();
     filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
     this.dataSource.filter = filterValue;
+  }
+
+  getTotal(property: string) {
+    return _.sumBy(this.dataSource.filteredData, property);
   }
 }

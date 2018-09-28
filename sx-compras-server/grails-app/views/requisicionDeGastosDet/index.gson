@@ -1,0 +1,8 @@
+import sx.cxp.RequisicionDeGastosDet
+
+model {
+	Iterable<RequisicionDeGastosDet> requisicionDeGastosDetList
+}
+
+json tmpl.requisicionDeGastosDet(requisicionDeGastosDetList ?: [])
+

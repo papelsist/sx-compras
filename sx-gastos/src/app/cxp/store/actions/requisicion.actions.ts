@@ -1,8 +1,14 @@
 import { Action } from '@ngrx/store';
 
-import { Requisicion } from '../../model';
+import { Requisicion, RequisicionesFilter } from '../../model';
 
 export enum RequisicionActionTypes {
+  SetRequisicionesFilter = '[Requisicion de Gastos] Set requisiciones filter',
+
+  LoadRequisciones = '[Requisicion de Gastos] Load requsiciones',
+  LoadRequiscionesFail = '[Requisicion de Gastos] Load requsiciones Fail',
+  LoadRequiscionesSuccess = '[Requisicion de Gastos] Load requsiciones Success',
+
   LOAD = '[Requisicion de compra] Load',
   LOAD_FAIL = '[Requisicion de compra] Load Fail',
 
@@ -23,6 +29,23 @@ export enum RequisicionActionTypes {
   CERRAR_REQUISICION = '[Requisicion de compra] Cerrar',
   CERRAR_REQUISICION_FAIL = '[Requisicion de compra] Cerrar Fail',
   CERRAR_REQUISICION_SUCCESS = '[Requisicion de compra] Cerrar Success'
+}
+
+export class SetRequisicionesFilter implements Action {
+  readonly type = RequisicionActionTypes.SetRequisicionesFilter;
+  constructor(public payload: { filter: RequisicionesFilter }) {}
+}
+
+export class LoadRequisiciones implements Action {
+  readonly type = RequisicionActionTypes.LoadRequisciones;
+}
+export class LoadRequisicionesFail implements Action {
+  readonly type = RequisicionActionTypes.LoadRequiscionesFail;
+  constructor(public payload: { response: any }) {}
+}
+export class LoadRequisicionesSuccess implements Action {
+  readonly type = RequisicionActionTypes.LoadRequiscionesSuccess;
+  constructor(public payload: { requisiciones: Requisicion[] }) {}
 }
 
 export class LoadRequisicion implements Action {
@@ -91,6 +114,10 @@ export class CerrarRequisicionSuccess implements Action {
 }
 
 export type RequisicionActions =
+  | SetRequisicionesFilter
+  | LoadRequisiciones
+  | LoadRequisicionesFail
+  | LoadRequisicionesSuccess
   | LoadRequisicion
   | LoadRequisicionFail
   | SaveRequisicion

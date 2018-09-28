@@ -58,22 +58,13 @@ export class FacturasFilterComponent implements OnInit {
 
   private buildForm() {
     this.form = this.fb.group({
-      fechaInicial: [null],
-      fechaFinal: [null],
-      proveedor: [{ value: null, disabled: false }],
+      fechaInicial: [null, [Validators.required]],
+      fechaFinal: [null, [Validators.required]],
+      proveedor: [null],
       registros: [
         10,
-        [Validators.required, Validators.min(10), Validators.max(500)]
+        [Validators.required, Validators.min(10), Validators.max(300)]
       ]
     });
-  }
-
-  toggleProveedor(event) {
-    if (event.checked) {
-      this.form.get('proveedor').enable();
-    } else {
-      this.form.get('proveedor').setValue(null);
-      this.form.get('proveedor').disable();
-    }
   }
 }

@@ -30,7 +30,7 @@ class Requisicion {
 
     BigDecimal apagar = 0.0
 
-    List partidas = []
+    List<RequisicionDet> partidas = []
 
     String comentario
 

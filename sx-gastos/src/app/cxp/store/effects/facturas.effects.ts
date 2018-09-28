@@ -43,6 +43,12 @@ export class FacturasEffects {
   );
 
   @Effect()
+  filterChange$ = this.actions$.pipe(
+    ofType<fromActions.SetFacturasFilter>(FacturaActionTypes.SetFacturasFilter),
+    map(action => new fromActions.LoadFacturas())
+  );
+
+  @Effect()
   updateFactura$ = this.actions$.pipe(
     ofType<fromActions.UpdateFactura>(FacturaActionTypes.UpdateFactura),
     map(action => action.payload),

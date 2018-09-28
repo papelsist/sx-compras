@@ -6,9 +6,11 @@ import { FacturaExistsGuard } from './factura-exist.guard';
 import { PagosGuard } from './pagos.guard';
 import { PagoExistsGuard } from './pago-exists.guard';
 import { CfdisGuard } from './cfdis.guard';
+import { RequisicionesGuard } from './requisiciones.guard';
 
 export const guards: any[] = [
   CfdisGuard,
+  RequisicionesGuard,
   RequisicionExistsGuard,
   NotasGuard,
   NotaExistsGuard,
@@ -19,6 +21,7 @@ export const guards: any[] = [
 ];
 
 export * from './cfdis.guard';
+export * from './requisiciones.guard';
 export * from './requisicion-exists.guard';
 export * from './notas.guard';
 export * from './nota-exists.guard';

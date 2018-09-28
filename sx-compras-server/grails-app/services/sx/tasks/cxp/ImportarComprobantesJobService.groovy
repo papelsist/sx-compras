@@ -21,7 +21,7 @@ class ImportarComprobantesJobService {
             return
         log.info('Importando CFDIS de COMPRAS  desde {} , {}', comprobanteFiscalService.cfdiDir, new Date().format("dd/MM/yyyy hh:mm:ss"))
         try{
-            int rows = comprobanteFiscalService.importacionLocal('COMPRAS')
+            int rows = comprobanteFiscalService.importacionLocal('COMPRAS', true)
             log.info('Comprobantes importados: {}', rows)
         } catch (Exception ex) {
             String message = ExceptionUtils.getRootCauseMessage(ex)

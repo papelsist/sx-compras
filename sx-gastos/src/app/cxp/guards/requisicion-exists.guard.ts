@@ -9,13 +9,13 @@ import { Observable, of } from 'rxjs';
 import { tap, map, take, switchMap, catchError } from 'rxjs/operators';
 
 import { Requisicion } from '../model';
-import { RequisicionDeCompraService } from '../services';
+import { RequisicionesService } from '../services';
 
 @Injectable()
 export class RequisicionExistsGuard implements CanActivate {
   constructor(
     private store: Store<fromStore.State>,
-    private service: RequisicionDeCompraService
+    private service: RequisicionesService
   ) {}
 
   canActivate(route: ActivatedRouteSnapshot): Observable<boolean> {

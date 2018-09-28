@@ -1,42 +1,62 @@
-import * as _ from 'lodash';
+import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 
 import {
   RequisicionActionTypes,
   RequisicionActions
 } from '../actions/requisicion.actions';
 
-import { Requisicion } from '../../model';
+import {
+  Requisicion,
+  RequisicionesFilter,
+  createRequisicionesFilter
+} from '../../model';
 
-export interface RequisicionState {
-  entities: { [id: string]: Requisicion };
-  loaded: boolean;
+export interface State extends EntityState<Requisicion> {
   loading: boolean;
+  loaded: boolean;
+  filter: RequisicionesFilter;
 }
 
-export const initialState: RequisicionState = {
-  entities: {},
+export const adapter: EntityAdapter<Requisicion> = createEntityAdapter<
+  Requisicion
+>();
+
+export const initialState: State = adapter.getInitialState({
+  loading: false,
   loaded: false,
-  loading: false
-};
+  filter: createRequisicionesFilter()
+});
 
 export function reducer(
   state = initialState,
   action: RequisicionActions
-): RequisicionState {
+): State {
   switch (action.type) {
-    case RequisicionActionTypes.LOAD: {
-      const requisicion = action.payload;
-      const entities = {
-        ...state.entities,
-        [requisicion.id]: requisicion
-      };
+    case RequisicionActionTypes.LoadRequisciones: {
       return {
         ...state,
-        loaded: true,
-        loading: false,
-        entities
+        loaded: false,
+        loading: true
       };
     }
+
+    case RequisicionActionTypes.LoadRequiscionesSuccess: {
+      return adapter.addAll(action.payload.requisiciones, {
+        ...state,
+        loading: false,
+        loaded: true
+      });
+    }
+
+    case RequisicionActionTypes.LOAD: {
+      const requisicion = action.payload;
+      return adapter.upsertOne(requisicion, {
+        ...state,
+        loading: false
+      });
+    }
+
+    case RequisicionActionTypes.LoadRequiscionesFail:
     case RequisicionActionTypes.LOAD_FAIL: {
       return {
         ...state,
@@ -53,6 +73,7 @@ export function reducer(
         loading: true
       };
     }
+
     case RequisicionActionTypes.SAVE_REQUISICION_FAIL:
     case RequisicionActionTypes.UPDATE_REQUISICION_FAIL:
     case RequisicionActionTypes.DELETE_REQUISICION_FAIL:
@@ -67,32 +88,32 @@ export function reducer(
     case RequisicionActionTypes.UPDATE_REQUISICION_SUCCESS:
     case RequisicionActionTypes.CERRAR_REQUISICION_SUCCESS: {
       const requisicion = action.payload;
-      const entities = {
-        ...state.entities,
-        [requisicion.id]: requisicion
-      };
-      return {
+      return adapter.upsertOne(requisicion, {
         ...state,
-        loading: false,
-        entities
-      };
+        loading: false
+      });
     }
 
     // Delete
     case RequisicionActionTypes.DELETE_REQUISICION_SUCCESS: {
       const requisicion = action.payload;
-      const { [requisicion.id]: result, ...entities } = state.entities;
-      return {
+      return adapter.removeOne(requisicion.id, {
         ...state,
-        loading: false,
-        entities
-      };
+        loading: false
+      });
     }
   }
   return state;
 }
 
-export const getRequisicionLoaded = (state: RequisicionState) => state.loaded;
-export const getRequisicionLoading = (state: RequisicionState) => state.loading;
-export const getRequisicionEntities = (state: RequisicionState) =>
-  state.entities;
+export const {
+  selectIds,
+  selectEntities,
+  selectAll,
+  selectTotal
+} = adapter.getSelectors();
+
+export const getRequisicionLoaded = (state: State) => state.loaded;
+export const getRequisicionLoading = (state: State) => state.loading;
+export const getRequisicionEntities = (state: State) => state.entities;
+export const getRequisicionesFilter = (state: State) => state.filter;

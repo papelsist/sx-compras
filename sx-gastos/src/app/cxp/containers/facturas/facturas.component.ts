@@ -13,11 +13,15 @@ import { CuentaPorPagar, CxPFilter } from '../../model';
   selector: 'sx-facturas-cxp',
   template: `
     <mat-card>
-      <sx-search-title title="Facturas de compras" (search)="onSearch($event)">
+      <sx-search-title title="Facturas de compras (Cuentas por pagar)" (search)="onSearch($event)">
+        <sx-facturas-filter-btn class="options" [filter]="filter$ | async" (change)="onFilter($event)"></sx-facturas-filter-btn>
       </sx-search-title>
       <mat-divider></mat-divider>
       <sx-facturas-table [facturas]="facturas$ | async" (xml)="onXml($event)" (pdf)="onPdf($event)" >
       </sx-facturas-table>
+      <mat-card-footer>
+        <sx-facturas-filter-label [filter]="filter$ | async"></sx-facturas-filter-label>
+      </mat-card-footer>
     </mat-card>
   `
 })

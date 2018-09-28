@@ -25,6 +25,16 @@ class ComprobanteFiscalConcepto {
 
     static belongsTo = [comprobante: ComprobanteFiscal]
 
+    static constraints = {
+        claveProdServ nullable: true
+        claveUnidad nullable: true
+        unidad nullable: true
+        descripcion nullable: true
+        cantidad nullable: true
+        valorUnitario nullable: true
+        importe nullable: true
+    }
+
     static mapping = {
         id generator: 'uuid'
     }

@@ -22,6 +22,7 @@ const routes: Routes = [
       },
       {
         path: 'requisiciones',
+        canActivate: [fromGuards.RequisicionesGuard],
         children: [
           { path: '', component: fromContainers.RequisicionesComponent },
           { path: 'create', component: fromContainers.RequisicionComponent },

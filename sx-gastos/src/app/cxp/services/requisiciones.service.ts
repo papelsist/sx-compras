@@ -10,11 +10,11 @@ import * as _ from 'lodash';
 import { Requisicion } from '../model';
 
 @Injectable()
-export class RequisicionDeCompraService {
+export class RequisicionesService {
   private apiUrl: string;
 
   constructor(private http: HttpClient, private configService: ConfigService) {
-    this.apiUrl = configService.buildApiUrl('requisicionesDeCompras');
+    this.apiUrl = configService.buildApiUrl('requisiciones/gastos');
   }
 
   list(filtro: any = {}): Observable<Requisicion[]> {

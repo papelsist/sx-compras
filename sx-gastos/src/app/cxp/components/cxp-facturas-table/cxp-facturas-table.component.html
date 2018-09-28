@@ -2,52 +2,64 @@
   <ng-container matColumnDef="tipo">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo</th>
     <td mat-cell *matCellDef="let cfdi">{{cfdi.tipo}}</td>
+    <td mat-footer-cell *matFooterCellDef>Totales</td>
   </ng-container>
 
   <ng-container matColumnDef="serie">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Serie</th>
     <td mat-cell *matCellDef="let cfdi">{{cfdi.serie}}</td>
+    <td mat-footer-cell *matFooterCellDef> </td>
   </ng-container>
   <ng-container matColumnDef="folio">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Folio</th>
     <td mat-cell *matCellDef="let cfdi">{{cfdi.folio}}</td>
+    <td mat-footer-cell *matFooterCellDef> </td>
   </ng-container>
   <ng-container matColumnDef="fecha">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
     <td mat-cell *matCellDef="let cfdi">{{cfdi.fecha | date: 'dd/MM/yyyy'}}</td>
+    <td mat-footer-cell *matFooterCellDef> </td>
   </ng-container>
   <ng-container matColumnDef="moneda">
     <th mat-header-cell *matHeaderCellDef>Mon</th>
     <td mat-cell *matCellDef="let cfdi">{{cfdi.moneda}}</td>
+    <td mat-footer-cell *matFooterCellDef> </td>
   </ng-container>
   <ng-container matColumnDef="tipoDeCambio">
     <th mat-header-cell *matHeaderCellDef>TC</th>
     <td mat-cell *matCellDef="let cfdi">{{cfdi.tipoDeCambio}}</td>
+    <td mat-footer-cell *matFooterCellDef> </td>
   </ng-container>
   <ng-container matColumnDef="total">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Total</th>
     <td mat-cell *matCellDef="let cfdi">{{cfdi.total | currency:'USD'}}</td>
+    <td mat-footer-cell *matFooterCellDef> {{ getTotal('total') | currency }}</td>
   </ng-container>
   <ng-container matColumnDef="pagos">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Pagos</th>
     <td mat-cell *matCellDef="let cfdi">{{cfdi.pagos | currency:'USD'}}</td>
+    <td mat-footer-cell *matFooterCellDef> </td>
   </ng-container>
   <ng-container matColumnDef="compensaciones">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Notas</th>
     <td mat-cell *matCellDef="let cfdi">{{cfdi.compensaciones | currency:'USD'}}</td>
+    <td mat-footer-cell *matFooterCellDef> </td>
   </ng-container>
   <ng-container matColumnDef="saldo">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Saldo</th>
     <td mat-cell *matCellDef="let cfdi">{{cfdi.saldo | currency:'USD'}}</td>
+    <td mat-footer-cell *matFooterCellDef> </td>
   </ng-container>
   <ng-container matColumnDef="uuid">
     <th mat-header-cell *matHeaderCellDef>UIID</th>
     <td mat-cell *matCellDef="let row">{{row.uuid.substr(-12, 12)}}</td>
+    <td mat-footer-cell *matFooterCellDef> </td>
   </ng-container>
 
 
   <tr mat-header-row *matHeaderRowDef="displayColumns"></tr>
   <tr mat-row *matRowDef="let cfdi; columns: displayColumns" class="cursor-pointer" (click)="toogleSelect(cfdi)"
     [ngClass]="{'active': cfdi.selected}"></tr>
+  <tr mat-footer-row *matFooterRowDef="displayColumns"></tr>
 </table>
 <mat-paginator [pageSizeOptions]="[20, 50, 100, 200]" showFirstLastButtons></mat-paginator>

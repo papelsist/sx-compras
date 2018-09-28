@@ -14,22 +14,17 @@ export const getRequisicionState = createSelector(
 
 export const getRequisicionEntities = createSelector(
   getRequisicionState,
-  fromRequisicion.getRequisicionEntities
+  fromRequisicion.selectEntities
 );
 
 export const getAllRequisiciones = createSelector(
-  getRequisicionEntities,
-  entities => _.sortBy(Object.keys(entities).map(id => entities[id]), 'id')
+  getRequisicionState,
+  fromRequisicion.selectAll
 );
 
 export const getRequisicionLoading = createSelector(
   getRequisicionState,
   fromRequisicion.getRequisicionLoading
-);
-
-export const getRequisicionLoaded = createSelector(
-  getRequisicionState,
-  fromRequisicion.getRequisicionLoaded
 );
 
 export const getSelectedRequisicion = createSelector(
@@ -38,4 +33,14 @@ export const getSelectedRequisicion = createSelector(
   (entities, router): Requisicion => {
     return router.state && entities[router.state.params.requisicionId];
   }
+);
+
+export const getRequisicionesLoaded = createSelector(
+  getRequisicionState,
+  fromRequisicion.getRequisicionLoaded
+);
+
+export const getRequisicionesFilter = createSelector(
+  getRequisicionState,
+  fromRequisicion.getRequisicionesFilter
 );

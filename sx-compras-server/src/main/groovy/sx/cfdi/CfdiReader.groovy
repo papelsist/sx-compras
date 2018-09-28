@@ -16,6 +16,8 @@ class CfdiReader {
 
     static String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss"
 
+
+
     @CompileDynamic
     ComprobanteFiscal readXml(byte[] xmlData, String fileName, String tipo){
 
@@ -32,6 +34,13 @@ class CfdiReader {
         log.info('CFDI version {}', version)
         log.info('XML Data: {}', data)
 
+        if(version != '3.2'){
+            return null
+            // log.debug('Tratando de importar con ver 3.2 para compras')
+            // return importadorCfdi32.buildFromXml32(xml, xmlData ,fileName)
+
+        }
+
         def receptorNode = xml.breadthFirst().find { it.name() == 'Receptor'}
         def receptorNombre = receptorNode.attributes()['Nombre']
         def receptorRfc = receptorNode.attributes()['Rfc']
@@ -45,19 +54,16 @@ class CfdiReader {
 
         def proveedor = Proveedor.findByRfc(emisorRfc)
         if(!proveedor) {
-            log.info('Proveedor {} not found ', emisorRfc)
             if(tipo == 'GASTOS') {
                 proveedor = new Proveedor(nombre: emisorNombre, rfc: emisorRfc, tipo: tipo)
                 proveedor.clave = "GS${emisorRfc[0..-4]}"
-                proveedor.validate
-                log.info('Errores: {} ', proveedor.errors)
-                proveedor.save
+                proveedor.tipo = tipo
+                proveedor.save flush: true
+                log.info('Nuevo proveedor registrado: {}', proveedor.nombre)
             } else {
                 throw new ComprobanteFiscalException(
                         message:"El proveedor de RFC: ${emisorRfc} / ${emisorNombre} no esta dado de alta en el sistema")
-
             }
-
         }
 
         def serie = xml.attributes()['Serie']
@@ -76,7 +82,6 @@ class CfdiReader {
         def tipoDeComprobante =  data['TipoDeComprobante']
         def moneda = data['Moneda']
         def tipoDeCamio = data['TipoCambio'] as BigDecimal
-
 
         def comprobanteFiscal=ComprobanteFiscal.findByUuid(uuid)
 
@@ -107,7 +112,9 @@ class CfdiReader {
                 usoCfdi: usoCfdi,
                 versionCfdi: '3.3'
         )
-        // comprobanteFiscal.save failOnError: true, flush: true
+        if(tipo == 'GASTOS') {
+            addConceptos(comprobanteFiscal, xml)
+        }
         return comprobanteFiscal
     }
 

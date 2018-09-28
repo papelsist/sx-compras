@@ -17,11 +17,14 @@ export class CuentaPorPagarService {
     this.apiUrl = configService.buildApiUrl('cuentaPorPagar');
   }
 
-  list(filtro?: CxPFilter): Observable<CuentaPorPagar[]> {
-    let params = new HttpParams().set('tipo', 'GASTOS');
-    _.forIn(filtro, (value, key) => {
-      params = params.set(key, value.toString());
-    });
+  list(filtro: CxPFilter): Observable<CuentaPorPagar[]> {
+    let params = new HttpParams()
+      .set('tipo', 'GASTOS')
+      .set('fechaInicial', filtro.fechaInicial.toISOString())
+      .set('fechaFinal', filtro.fechaFinal.toISOString());
+    if (filtro.proveedor) {
+      params = params.set('proveedor', filtro.proveedor.id);
+    }
     return this.http
       .get<CuentaPorPagar[]>(this.apiUrl, { params: params })
       .pipe(catchError((error: any) => throwError(error)));

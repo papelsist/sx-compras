@@ -35,6 +35,7 @@ export class ApplicationsEffects {
     this.router.events.subscribe(event => {
       switch (true) {
         case event instanceof NavigationStart: {
+          console.log('Nav start:-------');
           this.store.dispatch(
             new fromApplication.SetGlobalLoading({ loading: true })
           );
@@ -43,6 +44,7 @@ export class ApplicationsEffects {
         case event instanceof NavigationEnd:
         case event instanceof NavigationError:
         case event instanceof NavigationCancel: {
+          console.log('Cancel navigation.....');
           this.store.dispatch(
             new fromApplication.SetGlobalLoading({ loading: false })
           );

@@ -10,7 +10,7 @@ import {
   EventEmitter
 } from '@angular/core';
 import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
-
+import * as _ from 'lodash';
 import { CuentaPorPagar } from '../../model';
 
 @Component({
@@ -55,12 +55,10 @@ export class FacturasTableComponent implements OnInit, OnChanges {
   select = new EventEmitter();
   @Output()
   edit = new EventEmitter();
-  @Output()
-  analisis = new EventEmitter();
+
   @Output()
   pdf = new EventEmitter();
-  @Output()
-  xml = new EventEmitter();
+
   constructor() {}
 
   ngOnInit() {
@@ -88,8 +86,7 @@ export class FacturasTableComponent implements OnInit, OnChanges {
     this.edit.emit(row);
   }
 
-  onAnalisis($event: Event, row) {
-    $event.preventDefault();
-    this.analisis.emit(row);
+  getTotal(property: string) {
+    return _.sumBy(this.dataSource.filteredData, property);
   }
 }
