@@ -5,21 +5,39 @@ import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.*
 
 import groovy.util.logging.Slf4j
+import sx.core.Proveedor
 
 @Slf4j()
-@Secured("ROLE_COMPRAS")
+@Secured(['ROLE_COMPRAS', 'ROLE_GASTOS'])
 @GrailsCompileStatic
 class PagoController extends RestfulController<Pago> {
+
     static responseFormats = ['json']
+
     PagoService pagoService
+
     PagoController() {
         super(Pago)
     }
 
+
     @Override
     protected List<Pago> listAllResources(Map params) {
+        log.debug('List: {}', params)
+        params.sort = 'fecha'
+        params.order = 'desc'
+        params.max = params.registros?: 10
         def query = Pago.where{}
-        return query.list([sort: 'folio', order: 'asc'])
+
+        if(params.periodo) {
+            def periodo = params.periodo
+            query = query.where{fecha >= periodo.fechaInicial && fecha<= periodo.fechaFinal}
+        }
+        if(params.proveedor) {
+            query = query.where {proveedor.id == params.proveedor}
+        }
+        log.info('List: {}', params)
+        return query.list(params)
 
     }
 
@@ -34,3 +52,4 @@ class PagoController extends RestfulController<Pago> {
         forward action: 'show', params: params
     }
 }
+

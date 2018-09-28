@@ -7,7 +7,7 @@ import { catchError } from 'rxjs/operators';
 import { ConfigService } from 'app/utils/config.service';
 
 import * as _ from 'lodash';
-import { Requisicion } from '../model';
+import { Requisicion, RequisicionesFilter } from '../model';
 
 @Injectable()
 export class RequisicionesService {
@@ -17,11 +17,15 @@ export class RequisicionesService {
     this.apiUrl = configService.buildApiUrl('requisiciones/gastos');
   }
 
-  list(filtro: any = {}): Observable<Requisicion[]> {
-    let params = new HttpParams();
-    _.forIn(filtro, (value, key) => {
-      params = params.set(key, value);
-    });
+  list(filtro: RequisicionesFilter): Observable<Requisicion[]> {
+    let params = new HttpParams()
+      .set('tipo', 'GASTOS')
+      .set('fechaInicial', filtro.fechaInicial.toISOString())
+      .set('fechaFinal', filtro.fechaFinal.toISOString())
+      .set('registros', filtro.registros.toString() || '20');
+    if (filtro.proveedor) {
+      params = params.set('proveedor', filtro.proveedor.id);
+    }
     return this.http
       .get<Requisicion[]>(this.apiUrl, { params: params })
       .pipe(catchError((error: any) => throwError(error)));

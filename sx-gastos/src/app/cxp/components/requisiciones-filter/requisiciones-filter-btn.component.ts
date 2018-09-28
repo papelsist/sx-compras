@@ -1,28 +1,28 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { CxPFilter } from '../../model';
-import { FacturasFilterComponent } from './facturas-filter.component';
+import { RequisicionesFilterComponent } from './requisiciones-filter.component';
+import { RequisicionesFilter } from '../../model';
 
 @Component({
-  selector: 'sx-facturas-filter-btn',
+  selector: 'sx-requisiciones-filter-btn',
   template: `
   <button mat-button mat-icon-button (click)="openFilter()" ><mat-icon [color]="color">filter_list</mat-icon></button>
   `
 })
-export class RequisicionesFilterBtnComponent implements OnInit {
+export class FacturasFilterBtnComponent implements OnInit {
   @Input()
   color = 'primary';
   @Input()
-  filter: CxPFilter;
+  filter: RequisicionesFilter;
   @Output()
-  change = new EventEmitter<CxPFilter>();
+  change = new EventEmitter<RequisicionesFilter>();
   constructor(private dialog: MatDialog) {}
 
   ngOnInit() {}
 
   openFilter() {
     this.dialog
-      .open(FacturasFilterComponent, {
+      .open(RequisicionesFilterComponent, {
         data: { filter: this.filter }
       })
       .afterClosed()

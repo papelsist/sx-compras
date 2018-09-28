@@ -31,14 +31,22 @@ import { Subscription } from 'rxjs';
   templateUrl: './requisicion-form.component.html'
 })
 export class RequisicionFormComponent implements OnInit, OnDestroy, OnChanges {
-  @Input() requisicion: Requisicion;
-  @Input() facturas: CuentaPorPagar[];
-  @Output() save = new EventEmitter();
-  @Output() update = new EventEmitter();
-  @Output() cancel = new EventEmitter();
-  @Output() delete = new EventEmitter();
-  @Output() cerrar = new EventEmitter();
-  @Output() proveedor = new EventEmitter();
+  @Input()
+  requisicion: Requisicion;
+  @Input()
+  facturas: CuentaPorPagar[];
+  @Output()
+  save = new EventEmitter();
+  @Output()
+  update = new EventEmitter();
+  @Output()
+  cancel = new EventEmitter();
+  @Output()
+  delete = new EventEmitter();
+  @Output()
+  cerrar = new EventEmitter();
+  @Output()
+  proveedor = new EventEmitter();
 
   subscription: Subscription;
 
@@ -90,7 +98,7 @@ export class RequisicionFormComponent implements OnInit, OnDestroy, OnChanges {
         formaDePago: ['TRANSFERENCIA', [Validators.required]],
         moneda: ['MXN', [Validators.required]],
         tipoDeCambio: [1.0, [Validators.required, Validators.min(1)]],
-        descuentof: [0.0, [Validators.min(0.0), Validators.max(100)]],
+        descuentof: [{ value: 0.0, disabled: true }],
         total: [
           { value: 0.0, disabled: true },
           [Validators.required, Validators.min(1)]

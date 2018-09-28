@@ -32,6 +32,13 @@ export function reducer(
   action: RequisicionActions
 ): State {
   switch (action.type) {
+
+    case RequisicionActionTypes.SetRequisicionesFilter: {
+      return {
+        ...state,
+        filter: action.payload.filter
+      };
+    }
     case RequisicionActionTypes.LoadRequisciones: {
       return {
         ...state,

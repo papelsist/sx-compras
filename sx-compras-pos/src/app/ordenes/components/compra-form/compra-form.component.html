@@ -15,7 +15,8 @@
         <span class="pad-right tc-pink-600">{{compra.cerrada | date: 'dd/MM/yyyy'}}</span>
       </ng-container>
 
-      <sx-compra-add-partida [parent]="form" [productos]="productos" (addPartida)="onInsertPartida($event)" *ngIf="!compra.cerrada"></sx-compra-add-partida>
+      <sx-compra-add-partida [parent]="form" [moneda]="moneda" [productos]="productos" (addPartida)="onInsertPartida($event)"
+        *ngIf="!compra.cerrada"></sx-compra-add-partida>
     </div>
     <ng-template #alta>
       <div layout layout-align="start center" class="mat-title pad-left pad-top">
@@ -44,8 +45,8 @@
     <mat-divider></mat-divider>
 
     <div class="partidas-panel">
-      <sx-compra-partidas-table [parent]="form" [partidas]="partidas.value" (delete)="onDeletePartida($event)" (depurar)="onDepurar($event)"
-        (update)="onEditPartida($event)" [cerrada]="cerrada">
+      <sx-compra-partidas-table [parent]="form" [partidas]="partidas.value" (delete)="onDeletePartida($event)"
+        (depurar)="onDepurar($event)" (update)="onEditPartida($event)" [cerrada]="cerrada">
       </sx-compra-partidas-table>
     </div>
     <mat-divider></mat-divider>

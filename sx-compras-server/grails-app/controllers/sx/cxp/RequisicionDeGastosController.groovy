@@ -5,10 +5,12 @@ import grails.rest.RestfulController
 
 import grails.plugin.springsecurity.annotation.Secured
 import groovy.transform.CompileDynamic
+import groovy.util.logging.Slf4j
 import sx.reports.ReportService
 
 @Secured("ROLE_GASTOS")
 @GrailsCompileStatic
+@Slf4j
 class RequisicionDeGastosController extends RestfulController<RequisicionDeGastos> {
 
     static responseFormats = ['json']
@@ -21,23 +23,23 @@ class RequisicionDeGastosController extends RestfulController<RequisicionDeGasto
         super(RequisicionDeGastos)
     }
 
+
+
     @Override
     @CompileDynamic
     protected List<RequisicionDeGastos> listAllResources(Map params) {
         log.debug('List: {}', params)
-        params.max = 500
-        params.sort = 'lastUpdated'
+        params.sort = 'fecha'
         params.order = 'desc'
+        params.max = params.registros?: 10
         def query = RequisicionDeGastos.where{}
 
         if(params.periodo) {
             def periodo = params.periodo
             query = query.where{fecha >= periodo.fechaInicial && fecha<= periodo.fechaFinal}
         }
-        def nombre = params.nombre
-        if(nombre) {
-            String search = nombre + '%'
-            query = query.where { nombre =~ search  }
+        if(params.proveedor) {
+            query = query.where {proveedor.id == params.proveedor}
         }
         return query.list(params)
     }
@@ -86,7 +88,9 @@ class RequisicionDeGastosController extends RestfulController<RequisicionDeGasto
         String id = params.proveedorId
         List<CuentaPorPagar> facturas = CuentaPorPagar
                 .findAll("""
-                 from CuentaPorPagar c where c.proveedor.id = ? and c.tipo = ?
+                 from CuentaPorPagar c 
+                  where c.proveedor.id = ? 
+                    and c.tipo = ?
                     and c.importePorPagar > 0 
                     and c not in(select d.cxp from RequisicionDet d where d.requisicion.proveedor = c.proveedor)
                     order by c.fecha desc

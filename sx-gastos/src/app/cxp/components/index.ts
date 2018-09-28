@@ -1,22 +1,36 @@
 import { CfdisTableComponent } from './cfdis-table/cfdis-table.component';
 import { CfdisTotalesPanelComponent } from './cfdis-totales-panel/cfdis-totales-panel.component';
+import { CfdisFilterBtnComponent } from './cfdis-filter/cfdis-filter-btn.component';
+import { CfdisConceptosTableComponent } from './cfdi-conceptos-table/cfdi-conceptos-table.component';
+
+// Facturas
+import { FacturasTableComponent } from './facturas-table/facturas-table.component';
 import { FacturaSelectorComponent } from './factura-selector/factura-selector.component';
 import { FacturasSelectorBtnComponent } from './factura-selector/factura-selector-btn.component';
 import { CxpFacturasTableComponent } from './cxp-facturas-table/cxp-facturas-table.component';
 import { FacturaHeaderComponent } from './factura-header/factura-header.component';
+import { FacturasFilterComponent } from './facturas-filter/facturas-filter.component';
+import { FacturasFilterBtnComponent } from './requisiciones-filter/requisiciones-filter-btn.component';
+import { FacturasFilterLabelComponent } from './facturas-filter/facturas-filter-label.component';
+
 import { ComsSelectorComponent } from './coms-selector/coms-selector.component';
 import { ComsTableComponent } from './coms-table/coms-table.component';
+
 // Requisiciones
 import { RequisicionesTableComponent } from './requisiciones-table/requisiciones-table.component';
 import { RequisicionFormComponent } from './requisicion-form/requisicion-form.component';
 import { RequisicionPartidasComponent } from './requisicion-partidas/requisicion-partidas.component';
 import { AgregarFacturasComponent } from './requisicion-form/agregar-facturas.component';
 import { PrintRequisicionComponent } from './print-requisicion/print-requisicion.component';
+import { RequisicionesFilterComponent } from './requisiciones-filter/requisiciones-filter.component';
+import { RequisicionesFilterLabelComponent } from './requisiciones-filter/requisiciones-filter-label.component';
+import { RequisicionesFilterBtnComponent } from './facturas-filter/facturas-filter-btn.component';
+
 // Notas
 import { NotasTableComponent } from './notas-table/notas-table.component';
 import { NotaFormComponent } from './nota-form/nota-form.component';
 import { NotaConceptosComponent } from './nota-conceptos/nota-conceptos.component';
-import { FacturasTableComponent } from './facturas-table/facturas-table.component';
+
 import { SelectorCxPComponent } from './selector-cxp/selector-cxp.component';
 import { PagosTableComponent } from './pagos-table/pagos-table.component';
 import { PagoFormComponent } from './pago-form/pago-form.component';
@@ -25,12 +39,6 @@ import { AplicacionFormComponent } from './aplicacion-form/aplicacion-form.compo
 import { NotaPrintComponent } from './nota-print/nota-print.component';
 import { CfdisFilterComponent } from './cfdis-filter/cfdis-filter.component';
 import { CfdisFilterLabelComponent } from './cfdis-filter/cfdis-filter-label.component';
-
-import { CfdisFilterBtnComponent } from './cfdis-filter/cfdis-filter-btn.component';
-import { CfdisConceptosTableComponent } from './cfdi-conceptos-table/cfdi-conceptos-table.component';
-import { FacturasFilterComponent } from './facturas-filter/facturas-filter.component';
-import { FacturasFilterBtnComponent } from './facturas-filter/facturas-filter-btn.component';
-import { FacturasFilterLabelComponent } from './facturas-filter/facturas-filter-label.component';
 
 export const components: any[] = [
   CfdisTableComponent,
@@ -51,6 +59,9 @@ export const components: any[] = [
   ComsTableComponent,
   RequisicionesTableComponent,
   RequisicionFormComponent,
+  RequisicionesFilterComponent,
+  RequisicionesFilterLabelComponent,
+  RequisicionesFilterBtnComponent,
   RequisicionPartidasComponent,
   PrintRequisicionComponent,
   AgregarFacturasComponent,
@@ -70,7 +81,8 @@ export const entryComponents = [
   ComsSelectorComponent,
   AplicacionFormComponent,
   CfdisFilterComponent,
-  FacturasFilterComponent
+  FacturasFilterComponent,
+  RequisicionesFilterComponent
 ];
 
 export * from './cfdis-table/cfdis-table.component';

@@ -166,6 +166,9 @@ class ComprobanteFiscalService implements  LogUser{
             cxp.updateUser = 'PENDIENTE'
             cxp.createUser = 'ADMIN'
         }
+        if(tipo == 'GASTOS') {
+            cxp.importePorPagar = cxp.total
+        }
         return cxp
     }
 

@@ -25,9 +25,14 @@ import { CompraDet, buildCompraDet } from '../../models/compraDet';
   `
 })
 export class CompraAddPartidaComponent implements OnInit {
-  @Input() parent: FormGroup;
-  @Input() productos: ProveedorProducto[];
-  @Output() addPartida = new EventEmitter<Partial<CompraDet>>();
+  @Input()
+  parent: FormGroup;
+  @Input()
+  moneda = 'MXN';
+  @Input()
+  productos: ProveedorProducto[];
+  @Output()
+  addPartida = new EventEmitter<Partial<CompraDet>>();
 
   constructor(private dialog: MatDialog) {}
 
@@ -36,7 +41,10 @@ export class CompraAddPartidaComponent implements OnInit {
   buildPartida() {
     this.dialog
       .open(CompraPartidaFormComponent, {
-        data: { proveedor: this.proveedor, productos: this.productos },
+        data: {
+          proveedor: this.proveedor,
+          productos: this.productos.filter(item => item.moneda === this.moneda)
+        },
         width: '600px'
       })
       .afterClosed()

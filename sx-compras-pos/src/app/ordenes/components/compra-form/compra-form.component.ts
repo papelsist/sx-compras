@@ -28,10 +28,14 @@ import { ProveedorProducto } from 'app/proveedores/models/proveedorProducto';
   styleUrls: ['./compra-form.component.scss']
 })
 export class CompraFormComponent implements OnInit, OnChanges {
-  @Input() compra: Partial<Compra>;
-  @Input() productos: ProveedorProducto[];
-  @Output() save = new EventEmitter<Partial<Compra>>();
-  @Output() delete = new EventEmitter<Compra>();
+  @Input()
+  compra: Partial<Compra>;
+  @Input()
+  productos: ProveedorProducto[];
+  @Output()
+  save = new EventEmitter<Partial<Compra>>();
+  @Output()
+  delete = new EventEmitter<Compra>();
 
   form: FormGroup;
   constructor(private fb: FormBuilder) {}

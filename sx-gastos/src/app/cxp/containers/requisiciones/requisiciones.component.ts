@@ -6,28 +6,28 @@ import { Store, select } from '@ngrx/store';
 import * as fromRoot from 'app/store';
 import * as fromStore from '../../store';
 
-import { Requisicion } from '../../model';
+import { Requisicion, RequisicionesFilter } from '../../model';
 
 @Component({
   selector: 'sx-cxp-requisiciones',
   template: `
   <ng-template tdLoading [tdLoadingUntil]="!(loading$ | async)" tdLoadingStrategy="overlay">
-    <mat-card>
-      <div layout="row" layout-align="start center" class="pad-left pad-right">
-        <span class="push-left-sm " layout="column">
-          <span class="pad-right mat-title">Requisiciones de gastos  </span>
-        </span>
-      </div>
+    <mat-card >
+      <sx-search-title title="Requisiciones de gastos" (search)="search = $event">
+        <sx-requisiciones-filter-btn [filter]="filter$ | async" class="options"
+          (change)="onFilter($event)"></sx-requisiciones-filter-btn>
+      </sx-search-title>
       <mat-divider></mat-divider>
-      <div layout="column">
-        <div class="cfdis-panel">
-          <sx-requisiciones-table [comprobantes]="requisiciones$ | async"
-            (print)="onPrint($event)"
-            (select)="onSelect($event)"
-            (edit)="onEdit($event)">
-          </sx-requisiciones-table>
-        </div>
+      <div class="table-panel">
+        <sx-requisiciones-table [comprobantes]="requisiciones$ | async" [filter]="search"
+              (print)="onPrint($event)"
+              (select)="onSelect($event)"
+              (edit)="onEdit($event)">
+        </sx-requisiciones-table>
       </div>
+      <mat-card-footer>
+        <sx-requisiciones-filter-label [filter]="filter$ | async"></sx-requisiciones-filter-label>
+      </mat-card-footer>
     </mat-card>
     <a mat-fab matTooltip="Alta de requisición" matTooltipPosition="before" color="accent" class="mat-fab-position-bottom-right z-3"
       [routerLink]="['create']">
@@ -37,10 +37,10 @@ import { Requisicion } from '../../model';
   `,
   styles: [
     `
-      .cfdis-panel {
+      .table-panel {
         min-height: 400px;
       }
-      .cfdis-det-panel {
+      .table-det-panel {
         min-height: 200px;
       }
     `
@@ -49,6 +49,8 @@ import { Requisicion } from '../../model';
 export class RequisicionesComponent implements OnInit {
   requisiciones$: Observable<Requisicion[]>;
   loading$: Observable<boolean>;
+  filter$: Observable<RequisicionesFilter>;
+  search = '';
 
   constructor(private store: Store<fromStore.State>) {}
 
@@ -57,12 +59,16 @@ export class RequisicionesComponent implements OnInit {
       select(fromStore.getAllRequisiciones)
     );
     this.loading$ = this.store.pipe(select(fromStore.getRequisicionLoading));
-    this.loading$.subscribe(res => console.log('Loading: ', res));
+    this.filter$ = this.store.pipe(select(fromStore.getRequisicionesFilter));
   }
 
   onSelect(event: Requisicion[]) {}
 
-  search(event: string) {}
+  onSearch(event: string) {}
+
+  onFilter(filter: RequisicionesFilter) {
+    this.store.dispatch(new fromStore.SetRequisicionesFilter({ filter }));
+  }
 
   onEdit(event: Requisicion) {
     this.store.dispatch(

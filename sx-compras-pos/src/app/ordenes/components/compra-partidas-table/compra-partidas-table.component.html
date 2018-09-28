@@ -17,10 +17,12 @@
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Solicitado</th>
       <td mat-cell *matCellDef="let row , let i = index">
         <input type="number" [(ngModel)]="row.solicitado" [ngModelOptions]="{standalone: true}" (input)="actualizar(i)"
+          [disabled]="readOnly">
+        <!-- <input type="number" [(ngModel)]="row.solicitado" [ngModelOptions]="{standalone: true}" (input)="actualizar(i)"
           [disabled]="readOnly" *ngIf="!readOnly && !cerrada && row.depurado === 0 else solicitado;">
         <ng-template #solicitado>
           <span>{{row.solicitado}}</span>
-        </ng-template>
+        </ng-template> -->
       </td>
     </ng-container>
 

@@ -20,7 +20,11 @@ import { Requisicion } from '../../model';
   styleUrls: ['./requisiciones-table.component.scss']
 })
 export class RequisicionesTableComponent implements OnInit, OnChanges {
-  @Input() comprobantes: Requisicion[] = [];
+  @Input()
+  comprobantes: Requisicion[] = [];
+  @Input()
+  filter;
+
   dataSource = new MatTableDataSource<Requisicion>([]);
 
   displayColumns = [
@@ -31,17 +35,21 @@ export class RequisicionesTableComponent implements OnInit, OnChanges {
     'moneda',
     'tipoDeCambio',
     'total',
-    'descuentofImporte',
     'apagar',
     'cerrada',
     'comentario',
     'operaciones'
   ];
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @Output() print = new EventEmitter();
-  @Output() select = new EventEmitter();
-  @Output() edit = new EventEmitter();
+  @ViewChild(MatSort)
+  sort: MatSort;
+  @ViewChild(MatPaginator)
+  paginator: MatPaginator;
+  @Output()
+  print = new EventEmitter();
+  @Output()
+  select = new EventEmitter();
+  @Output()
+  edit = new EventEmitter();
   constructor() {}
 
   ngOnInit() {
@@ -52,6 +60,10 @@ export class RequisicionesTableComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     if (changes.comprobantes && changes.comprobantes.currentValue) {
       this.dataSource.data = changes.comprobantes.currentValue;
+    }
+    if (changes.filter) {
+      const f: string = changes.filter.currentValue || '';
+      this.dataSource.filter = f.toLowerCase();
     }
   }
 

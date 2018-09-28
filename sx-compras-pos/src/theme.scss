@@ -57,9 +57,9 @@ mat-nav-list {
 .mat-row {
   position: relative; // For matRipple
   &:hover:not(.active) {
-    background: mat-color($hoover);
+    background: mat-color($accent);
     .mat-cell {
-      color: mat-color($hoover, default-contrast)
+      color: mat-color($accent, default-contrast)
     }
   }
 }

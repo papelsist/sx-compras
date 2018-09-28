@@ -9,7 +9,8 @@ import { Observable } from 'rxjs';
 
 @Component({
   selector: 'sx-cxp-page',
-  templateUrl: './cxc-page.component.html'
+  templateUrl: './cxc-page.component.html',
+  styleUrls: ['./cxp-page.component.scss']
 })
 export class CxpPageComponent implements OnInit {
   navmenu: Object[] = [

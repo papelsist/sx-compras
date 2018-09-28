@@ -51,6 +51,14 @@ export class RequisicionesEffects {
   );
 
   @Effect()
+  changeFilter$ = this.actions$.pipe(
+    ofType<fromRequisicion.SetRequisicionesFilter>(
+      RequisicionActionTypes.SetRequisicionesFilter
+    ),
+    map(() => new fromRequisicion.LoadRequisiciones())
+  );
+
+  @Effect()
   save$ = this.actions$.pipe(
     ofType<SaveRequisicion>(RequisicionActionTypes.SAVE_REQUISICION),
     map(action => action.payload),
