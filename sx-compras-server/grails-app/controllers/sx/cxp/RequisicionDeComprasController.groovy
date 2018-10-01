@@ -25,9 +25,10 @@ class RequisicionDeComprasController extends RestfulController<RequisicionDeComp
     @CompileDynamic
     protected List<RequisicionDeCompras> listAllResources(Map params) {
         log.debug('List: {}', params)
-        params.max = 500
+
         params.sort = 'lastUpdated'
         params.order = 'desc'
+        params.max = params.registros?: 20
         def query = RequisicionDeCompras.where{}
 
         if(params.periodo) {
@@ -77,6 +78,7 @@ class RequisicionDeComprasController extends RestfulController<RequisicionDeComp
     /**
      *
      * @return La Lista de facturas pendientes
+     *
      * @TODO Modificar el hql query para contemplar solo las analizadas y descriminar
      * las ya incluidas en una requisicion
      */

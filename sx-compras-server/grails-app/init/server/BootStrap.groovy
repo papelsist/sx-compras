@@ -44,6 +44,11 @@ class BootStrap {
                 UserRole.create(admin, gastos)
             }
 
+            Role tesoreria = Role.findOrSaveWhere(authority:'ROLE_TESORERIA')
+            if(!UserRole.exists(admin.id, tesoreria.id)) {
+                UserRole.create(admin, tesoreria)
+            }
+
         }
     }
     def destroy = {

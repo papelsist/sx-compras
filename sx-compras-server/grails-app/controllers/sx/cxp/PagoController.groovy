@@ -6,6 +6,7 @@ import grails.rest.*
 
 import groovy.util.logging.Slf4j
 import sx.core.Proveedor
+import sx.utils.Periodo
 
 @Slf4j()
 @Secured(['ROLE_COMPRAS', 'ROLE_GASTOS'])
@@ -30,7 +31,7 @@ class PagoController extends RestfulController<Pago> {
         def query = Pago.where{}
 
         if(params.periodo) {
-            def periodo = params.periodo
+            def periodo = (Periodo)params.periodo
             query = query.where{fecha >= periodo.fechaInicial && fecha<= periodo.fechaFinal}
         }
         if(params.proveedor) {

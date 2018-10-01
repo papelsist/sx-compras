@@ -8,7 +8,7 @@ import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
 import sx.reports.ReportService
 
-@Secured("ROLE_GASTOS")
+@Secured(['ROLE_GASTOS', 'ROLE_TESORERIA'])
 @GrailsCompileStatic
 @Slf4j
 class RequisicionDeGastosController extends RestfulController<RequisicionDeGastos> {
@@ -106,6 +106,24 @@ class RequisicionDeGastosController extends RestfulController<RequisicionDeGasto
         }
         requisicion = requisicionDeGastosService.cerrar(requisicion)
         respond requisicion
+    }
+
+
+    def pendientesDePago() {
+        log.debug('Pendientes de pago: {}', params)
+        params.sort = 'fecha'
+        params.order = 'desc'
+        params.max = params.registros?: 10
+        def query = RequisicionDeGastos.where{egreso == null && cerrada != null}
+
+        if(params.periodo) {
+            def periodo = params.periodo
+            query = query.where{fecha >= periodo.fechaInicial && fecha<= periodo.fechaFinal}
+        }
+        if(params.proveedor) {
+            query = query.where {proveedor.id == params.proveedor}
+        }
+        return query.list(params)
     }
 
     def print( ) {
