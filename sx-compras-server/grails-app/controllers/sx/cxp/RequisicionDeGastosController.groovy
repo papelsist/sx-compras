@@ -7,7 +7,9 @@ import grails.plugin.springsecurity.annotation.Secured
 import grails.validation.Validateable
 import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
-import org.springframework.http.HttpStatus
+
+import org.apache.commons.lang3.exception.ExceptionUtils
+
 import sx.reports.ReportService
 import sx.tesoreria.CuentaDeBanco
 import sx.utils.Periodo
@@ -35,6 +37,7 @@ class RequisicionDeGastosController extends RestfulController<RequisicionDeGasto
         params.sort = 'fecha'
         params.order = 'desc'
         params.max = params.registros?: 10
+        log.info('List: {}', params)
         def query = RequisicionDeGastos.where{}
 
         Boolean pendientes = this.params.getBoolean('pendientes')
@@ -48,6 +51,9 @@ class RequisicionDeGastosController extends RestfulController<RequisicionDeGasto
         }
         if(params.proveedor) {
             query = query.where {proveedor.id == params.proveedor}
+        }
+        if(this.params.getBoolean('cerradas')) {
+            query = query.where{cerrada != null}
         }
         return query.list(params)
     }
@@ -151,15 +157,28 @@ class RequisicionDeGastosController extends RestfulController<RequisicionDeGasto
             respond(command.errors, status: 422)
             return
         }
+        log.info("Pago: {}", command)
         RequisicionDeGastos requisicion = requisicionDeGastosService.pagar(command.requisicion, command.cuenta, command.referencia)
         respond requisicion
     }
+
+
+    def handleException(Exception e) {
+        String message = ExceptionUtils.getRootCauseMessage(e)
+        log.error(message, e)
+        respond([message: message], status: 500)
+    }
+
 }
 
 class PagoDeGastos implements  Validateable{
     RequisicionDeGastos requisicion
     CuentaDeBanco cuenta
     String referencia
+
+    String toString() {
+        return "Pago de requisicion ${requisicion.folio} Cuenta: ${cuenta?.clave}  Referencia ${referencia}"
+    }
 }
 
 

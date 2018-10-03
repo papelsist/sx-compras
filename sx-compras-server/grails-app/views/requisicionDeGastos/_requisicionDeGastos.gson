@@ -4,4 +4,8 @@ model {
 	RequisicionDeGastos requisicionDeGastos
 }
 
-json g.render(requisicionDeGastos, [resolveTemplate: false])
+json g.render(requisicionDeGastos, [excludes: ['partidas'], resolveTemplate: false]) {
+	partidas g.render(requisicionDeGastos.partidas)
+	egresoReferencia requisicionDeGastos?.egreso?.referencia
+	// reciboDePago requisicionDeGastos?.egreso?.uuid
+}

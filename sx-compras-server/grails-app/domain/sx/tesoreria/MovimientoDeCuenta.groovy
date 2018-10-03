@@ -36,6 +36,9 @@ class MovimientoDeCuenta {
 
     Date lastUpdated
 
+    String createUser
+    String updateUser
+
     static belongsTo = [movimientoDeTesoreria: MovimientoDeTesoreria]
 
     //static mappedBy = [pago: 'egreso']
@@ -51,6 +54,8 @@ class MovimientoDeCuenta {
         concepto nullable:true,maxSize:50
         sw2 nullable:true
         movimientoDeTesoreria nullable: true
+        createUser nullable: true
+        updateUser nullable: true
 
     }
 

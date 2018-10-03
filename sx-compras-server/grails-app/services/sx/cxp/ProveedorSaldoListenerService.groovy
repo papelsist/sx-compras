@@ -34,7 +34,9 @@ class ProveedorSaldoListenerService {
         Pago pago = getEntity(event)
         if(pago) {
             // log.debug('{} {} ', event.eventType.name(), event.entity.name)
-            proveedorSaldoService.actualizarSaldo(pago.proveedor.id)
+            Pago.withNewSession {
+                proveedorSaldoService.actualizarSaldo(pago.proveedor.id)
+            }
         }
 
     }
@@ -55,7 +57,10 @@ class ProveedorSaldoListenerService {
     void afterDelete(PostDeleteEvent event) {
         Pago pago = getEntity(event)
         if(pago) {
-            proveedorSaldoService.actualizarSaldo(pago.proveedor.id)
+            log.debug('{} {} ', event.eventType.name(), event.entity.name)
+            Pago.withNewSession {
+                proveedorSaldoService.actualizarSaldo(pago.proveedor.id)
+            }
         }
     }
 }

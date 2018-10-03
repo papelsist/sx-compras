@@ -66,7 +66,15 @@ class RequisicionDeGastosService implements LogUser, FolioLog{
 
     RequisicionDeGastos pagar(RequisicionDeGastos requisicion, CuentaDeBanco cuenta, String referencia) {
         log.info("Pagando requisicion {}", requisicion.folio)
-        if(requisicion.egreso) throw new RequisicionDeGastosException("Requisicion ${requisicion.folio} ya está pagada")
+        if(requisicion.egreso != null)
+            throw new RequisicionDeGastosException("Requisicion ${requisicion.folio} ya está pagada con el egreso ${requisicion.egreso}")
+        if(!requisicion.partidas) {
+            throw new RequisicionDeGastosException("Requisicion ${requisicion.folio} no tiene documentos por pagar")
+        }
+        if(!requisicion.cerrada) {
+            throw new RequisicionDeGastosException("Requisicion ${requisicion.folio} no no esta cerrada")
+        }
+
         movimientoDeCuentaService.generarPagoDeGastos(requisicion, cuenta, referencia)
         pagoService.pagarGasto(requisicion)
         return requisicion.save(flush: true)

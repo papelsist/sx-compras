@@ -27,7 +27,7 @@ abstract class PagoService implements  LogUser{
     Pago generarPagoDeRequisicion(Requisicion requisicion) {
         Pago found = Pago.where{requisicion.id == requisicion.id}.find()
         if(found)
-            throw new RuntimeException("Ya existe el pago: ${found.folio} de la requisicion")
+            throw new RuntimeException("Ya existe el pago: ${found.id} para la  requisicion ${requisicion.folio}")
 
         String serie = requisicion.class.simpleName
         Pago pago = new Pago()
@@ -46,8 +46,6 @@ abstract class PagoService implements  LogUser{
         logEntity(pago)
         pago.createUser = requisicion.createUser
         pago.updateUser = requisicion.updateUser
-        requisicion.pagada = pago.fecha
-
         pago =  save(pago)
         log.info("Pago generado ${pago.id}")
         return pago
@@ -91,6 +89,7 @@ abstract class PagoService implements  LogUser{
             requisicion.aplicada = requisicion.fechaDePago
             requisicion.save flush: true
             pago.refresh()
+            logEntity(pago)
             log.info("Pago {} aplicado disponible: {}", pago.folio, pago.disponible)
         }
         return pago

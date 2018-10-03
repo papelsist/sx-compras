@@ -23,6 +23,8 @@ export interface Requisicion {
   cerrada: string;
   pagada?: string;
   egreso?: number;
+  egresoReferencia?: number;
+  reciboDePago?: string;
 }
 
 export class RequisicionesFilter {
@@ -36,7 +38,7 @@ export class RequisicionesFilter {
 export function createRequisicionesFilter() {
   const { fechaInicial, fechaFinal } = Periodo.fromNow(10);
   const registros = 20;
-  const pendientes = true;
+  const pendientes = false;
   return {
     fechaInicial,
     fechaFinal,

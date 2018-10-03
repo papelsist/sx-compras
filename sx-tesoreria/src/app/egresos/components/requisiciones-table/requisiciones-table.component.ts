@@ -38,8 +38,9 @@ export class RequisicionesTableComponent implements OnInit, OnChanges {
     'tipoDeCambio',
     'total',
     'pagada',
-    'egreso',
+    'egresoReferencia',
     'comentario',
+    'reciboDePago',
     'operaciones'
   ];
   @ViewChild(MatSort)

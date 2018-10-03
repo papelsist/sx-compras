@@ -7,7 +7,7 @@ import * as fromApplication from '../actions/application.actions';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 
 import { Observable, defer, of } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { tap, map } from 'rxjs/operators';
 
 import {
   Router,
@@ -22,7 +22,7 @@ import {
   RouterCancelAction,
   ROUTER_CANCEL
 } from '@ngrx/router-store';
-import { TdLoadingService } from '@covalent/core';
+import { TdLoadingService, TdDialogService } from '@covalent/core';
 
 @Injectable()
 export class ApplicationsEffects {
@@ -30,7 +30,8 @@ export class ApplicationsEffects {
     private actions$: Actions,
     private router: Router,
     private store: Store<fromStore.State>,
-    private loadingService: TdLoadingService
+    private loadingService: TdLoadingService,
+    private dialogService: TdDialogService
   ) {
     this.router.events.subscribe(event => {
       switch (true) {
@@ -66,6 +67,23 @@ export class ApplicationsEffects {
       } else {
         this.loadingService.resolve();
       }
+    })
+  );
+
+  @Effect({ dispatch: false })
+  errorHandler$ = this.actions$.pipe(
+    ofType<fromApplication.GlobalHttpError>(
+      fromApplication.ApplicationActionTypes.GlobalHttpError
+    ),
+    map(action => action.payload.response),
+    map(response => {
+      const message = response.error ? response.error.message : 'Error';
+      console.error('Error: ', response.message);
+      this.dialogService.openAlert({
+        message: `${response.status} ${message}`,
+        title: `Error ${response.status}`,
+        closeButton: 'Cerrar'
+      });
     })
   );
 

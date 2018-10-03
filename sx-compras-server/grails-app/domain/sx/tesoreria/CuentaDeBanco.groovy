@@ -22,6 +22,8 @@ class CuentaDeBanco {
 
     Boolean disponibleEnVenta = false
 
+    Boolean disponibleEnPagos = false
+
     String subCuentaOperativa
 
     String impresionTemplate
@@ -41,6 +43,7 @@ class CuentaDeBanco {
         subCuentaOperativa nullable:true, maxSize:4
         sw2 nullable:true
         bancoSat nullable: true
+        disponibleEnPagos nullable: true
     }
 
     String toString() {

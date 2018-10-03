@@ -16,6 +16,8 @@ class UrlMappings {
             "/saldo"(resources: 'proveedorSaldo', excludes:['create', 'edit','patch'])
         }
 
+        "/api/tesoreria/cuentas"(resources: 'cuentaDeBanco')
+
         "/api/listaDePreciosProveedor"(resources: 'listaDePreciosProveedor')
         "/api/listaDePreciosProveedor/aplicar/$id"(controller: 'listaDePreciosProveedor', action: 'aplicar', method: 'PUT')
         "/api/listaDePreciosProveedor/actualizar/$id"(controller: 'listaDePreciosProveedor', action: 'actualizar', method: 'PUT')

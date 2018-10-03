@@ -57,7 +57,7 @@ export class GastosEffects {
     switchMap(pago => {
       return this.service.pagar(pago).pipe(
         map(res => new fromGastos.PagarGastoSuccess({ requisicion: res })),
-        catchError(error => of(new fromGastos.PagarGastoFail(error)))
+        catchError(response => of(new fromGastos.PagarGastoFail({ response })))
       );
     })
   );
@@ -75,21 +75,16 @@ export class GastosEffects {
         }
       )
     ),
-    map(res => new fromRoot.Go({ path: ['cxp/requisiciones', res.id] }))
+    map(res => new fromRoot.Go({ path: ['/egresos/gastos'] }))
   );
 
-  @Effect({ dispatch: false })
+  @Effect()
   errorHandler$ = this.actions$.pipe(
-    ofType(GastosActionTypes.LoadGastosFail, GastosActionTypes.PagarGastoFail),
-    map((action: any) => {
-      const error = action.payload;
-      this.snackBar.open(
-        `Error: ${error.status}: ${error.statusText}`,
-        'Cerrar',
-        {
-          duration: 8000
-        }
-      );
-    })
+    ofType<fromGastos.LoadGastosFail | fromGastos.PagarGastoFail>(
+      GastosActionTypes.LoadGastosFail,
+      GastosActionTypes.PagarGastoFail
+    ),
+    map(action => action.payload.response),
+    map(response => new fromRoot.GlobalHttpError({ response }))
   );
 }

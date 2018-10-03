@@ -5,7 +5,7 @@ import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import sx.core.Proveedor
 
-@ToString(excludes =  ['version','lastUpdated', 'dateCreated'], includeNames=true,includePackage=false)
+@ToString(includes =   ['nombre','ejercicio', 'mes', 'saldoFinal'], includeNames=true,includePackage=false)
 @EqualsAndHashCode(includeFields = true,includes = ['proveedor','ejercicio', 'mes'])
 @GrailsCompileStatic
 class ProveedorSaldo {

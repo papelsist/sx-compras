@@ -3,6 +3,7 @@ package sx.cxp
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import sx.core.Proveedor
+import sx.tesoreria.MovimientoDeCuenta
 
 @ToString(excludes ='id,version,dateCreated,lastUpdated,sw2,partidas',includeNames=true,includePackage=false)
 @EqualsAndHashCode(includes='id')
@@ -44,8 +45,7 @@ class Requisicion {
 
     Date pagada
 
-
-    String egreso
+    MovimientoDeCuenta egreso
 
     Date aplicada
 
@@ -78,6 +78,7 @@ class Requisicion {
         cerrada type: 'date'
         pagada type: 'date'
         aplicada type: 'date'
+        egreso column: 'egreso'
     }
 
 

@@ -12,8 +12,15 @@
   <div class="md-title pad-bottom-sm" layout>
     <span class="pad-left pad-right">Fecha: </span>
     <span class="pad-left"> {{requisicion.fecha | date:'dd/MM/yyyy'}}</span>
-    <span class="pad-left">Pago: </span>
+    <span class="pad-left">Fecha de Pago: </span>
     <span class="pad-left"> {{requisicion.fechaDePago| date:'dd/MM/yyyy'}}</span>
+    <span flex></span>
+
+    <a *ngIf="requisicion.egreso" class="tc-pink-600" mat-button>
+      <span>Pagada </span>
+      <span>{{requisicion.pagada | date: 'dd/MM/yyyy'}}</span>
+    </a>
+    <span flex></span>
   </div>
   <mat-divider></mat-divider>
   <div layout="column" class="pad">
@@ -43,15 +50,13 @@
       <input matInput value="{{requisicion.total | currency}}" placeholder="Total" [disabled]="true">
     </mat-form-field>
     <mat-form-field>
-      <input matInput value="{{apagar | currency}}" placeholder="A Pagar" [disabled]="true">
+      <input matInput value="{{requisicion.apagar | currency}}" placeholder="A Pagar" [disabled]="true">
     </mat-form-field>
   </div>
   <mat-divider></mat-divider>
   <mat-card-actions>
     <button mat-button type="button" (click)="cancel.emit($event)">Cancelar</button>
-    <button mat-button [disabled]="requisicion.egreso" (click)="pagar.emit(requisicion)">
-      <mat-icon>save</mat-icon> Pagar
-    </button>
+    <sx-pago-requisicion-btn [requisicion]="requisicion" (pagar)="pagar.emit($event)"></sx-pago-requisicion-btn>
     <sx-print-requisicion [requisicion]="requisicion" *ngIf="requisicion"></sx-print-requisicion>
   </mat-card-actions>
 </mat-card>

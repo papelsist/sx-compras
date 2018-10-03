@@ -2,7 +2,10 @@
   <mat-card>
     <mat-card-title *ngIf="requisicion">
       <div layout>
-        <span class="pad-right"> Requisición: {{requisicion.folio}}</span>
+        <span class="pad-right " layout>
+          <span>Requisición: </span>
+          <span class="pad-left tc-blue-700">{{requisicion.folio}}</span>
+        </span>
         <span class="pad-left"> {{requisicion.nombre}}</span>
         <span flex></span>
         <ng-container *ngIf="requisicion.cerrada">
@@ -11,6 +14,13 @@
         </ng-container>
       </div>
     </mat-card-title>
+    <mat-card-subtitle *ngIf="requisicion.egreso">
+      <span class="tc-pink-600" layout>
+        <span>Pagada: </span>
+        <span class="pad-left">{{requisicion.pagada | date: 'dd/MM/yyyy'}}</span>
+        <span flex></span>
+      </span>
+    </mat-card-subtitle>
 
     <mat-card-title *ngIf="!requisicion">Alta de Requisición</mat-card-title>
     <div *ngIf="requisicion && requisicion.cerrada" class="md-title pad-bottom-sm" layout>
@@ -24,7 +34,7 @@
       <div layout *ngIf="!requisicion?.cerrada">
         <sx-proveedor-field formControlName="proveedor" flex *ngIf="!requisicion">
         </sx-proveedor-field>
-        <mat-form-field class="pad-left">
+        <mat-form-field>
           <input matInput [matDatepicker]="myDatepicker" formControlName="fecha" placeholder="Fecha">
           <mat-datepicker-toggle matSuffix [for]="myDatepicker"></mat-datepicker-toggle>
           <mat-datepicker #myDatepicker></mat-datepicker>
@@ -54,10 +64,8 @@
           <input matInput formControlName="descuentof" type="number" placeholder="Descuento F.">
         </mat-form-field> -->
 
+        <sx-upper-case-field formControlName="comentario" flex></sx-upper-case-field>
 
-        <mat-form-field flex>
-          <input matInput formControlName="comentario" placeholder="Comentario">
-        </mat-form-field>
       </div>
     </div>
 
@@ -72,9 +80,6 @@
         <input matInput value="{{total | currency}}" placeholder="Total" [disabled]="true">
       </mat-form-field>
       <mat-form-field>
-        <input matInput value="{{descuento | currency}}" placeholder="Descto F" [disabled]="true">
-      </mat-form-field>
-      <mat-form-field>
         <input matInput value="{{apagar | currency}}" placeholder="A Pagar" [disabled]="true">
       </mat-form-field>
     </div>
@@ -85,7 +90,7 @@
         <mat-icon>save</mat-icon> Salvar
       </button>
       <sx-agregar-facturas *ngIf="!requisicion?.cerrada" [facturas]="facturas" (selected)="onAgregarFactura($event)"></sx-agregar-facturas>
-      <ng-container *ngIf="requisicion  && !requisicion.cerrada">
+      <ng-container *ngIf="requisicion  && !form.disabled">
         <button mat-button color="warn" type="button" (click)="delete.emit(requisicion)">
           <mat-icon>delete</mat-icon> Eliminar
         </button>

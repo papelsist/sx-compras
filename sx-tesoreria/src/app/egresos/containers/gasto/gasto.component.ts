@@ -9,6 +9,7 @@ import * as fromStore from '../../store';
 import { Requisicion, CuentaPorPagar } from '../../models';
 
 import { TdDialogService } from '@covalent/core';
+import { PagoDeRequisicion } from '../../models/pagoDeRequisicion';
 
 @Component({
   selector: 'sx-requisicion',
@@ -44,21 +45,8 @@ export class GastoComponent implements OnInit {
     this.store.dispatch(new fromRoot.Go({ path: ['egresos/gastos'] }));
   }
 
-  onPagar(requisicion: Requisicion) {
-    this.dialogService
-      .openConfirm({
-        title: 'Pagar la requisición',
-        message: `Folio: ${requisicion.folio}`,
-        acceptButton: 'Aceptar',
-        cancelButton: 'Cancelar'
-      })
-      .afterClosed()
-      .subscribe(res => {
-        if (res) {
-          const pago = { requisicion, cuenta: '', referencia: 'TEST' };
-          this.store.dispatch(new fromStore.PagarGasto({ pago }));
-        }
-      });
+  onPagar(pago: PagoDeRequisicion) {
+    this.store.dispatch(new fromStore.PagarGasto({ pago }));
   }
 
   onCancelarPago(event: Requisicion) {

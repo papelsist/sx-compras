@@ -8,6 +8,7 @@ import { RequisicionesFilter } from '../../models';
     <span *ngIf="filter.proveedor" >{{filter.proveedor.nombre}}</span>
     <span *ngIf="filter.fechaInicial" class="pad-left">Del: {{filter.fechaInicial | date: 'dd/MM/yyyy'}}</span>
     <span *ngIf="filter.fechaFinal" class="pad-left">al: {{filter.fechaFinal | date: 'dd/MM/yyyy'}}</span>
+    <span *ngIf="filter.pendientes" class="pad-left tc-pink-800">(Solo pendientes)</span>
   <div>
   `
 })
