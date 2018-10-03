@@ -4,9 +4,13 @@ import grails.compiler.GrailsCompileStatic
 import grails.rest.RestfulController
 
 import grails.plugin.springsecurity.annotation.Secured
+import grails.validation.Validateable
 import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
+import org.springframework.http.HttpStatus
 import sx.reports.ReportService
+import sx.tesoreria.CuentaDeBanco
+import sx.utils.Periodo
 
 @Secured(['ROLE_GASTOS', 'ROLE_TESORERIA'])
 @GrailsCompileStatic
@@ -28,11 +32,15 @@ class RequisicionDeGastosController extends RestfulController<RequisicionDeGasto
     @Override
     @CompileDynamic
     protected List<RequisicionDeGastos> listAllResources(Map params) {
-        log.debug('List: {}', params)
         params.sort = 'fecha'
         params.order = 'desc'
         params.max = params.registros?: 10
         def query = RequisicionDeGastos.where{}
+
+        Boolean pendientes = this.params.getBoolean('pendientes')
+        if(pendientes) {
+            query = query.where {egreso == null}
+        }
 
         if(params.periodo) {
             def periodo = params.periodo
@@ -116,12 +124,13 @@ class RequisicionDeGastosController extends RestfulController<RequisicionDeGasto
         params.max = params.registros?: 10
         def query = RequisicionDeGastos.where{egreso == null && cerrada != null}
 
-        if(params.periodo) {
-            def periodo = params.periodo
+        Periodo periodo = (Periodo)params['periodo']
+        if(periodo) {
             query = query.where{fecha >= periodo.fechaInicial && fecha<= periodo.fechaFinal}
         }
-        if(params.proveedor) {
-            query = query.where {proveedor.id == params.proveedor}
+        String proveedorId = params['proveedor']
+        if(proveedorId) {
+            query = query.where {proveedor.id == proveedorId}
         }
         return query.list(params)
     }
@@ -132,4 +141,25 @@ class RequisicionDeGastosController extends RestfulController<RequisicionDeGasto
         def pdf =  reportService.run('Requisicion.jrxml', repParams)
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'Requisicion.pdf')
     }
+
+    def pagar(PagoDeGastos command) {
+        if(command == null) {
+            notFound()
+            return
+        }
+        if(command.hasErrors()) {
+            respond(command.errors, status: 422)
+            return
+        }
+        RequisicionDeGastos requisicion = requisicionDeGastosService.pagar(command.requisicion, command.cuenta, command.referencia)
+        respond requisicion
+    }
 }
+
+class PagoDeGastos implements  Validateable{
+    RequisicionDeGastos requisicion
+    CuentaDeBanco cuenta
+    String referencia
+}
+
+

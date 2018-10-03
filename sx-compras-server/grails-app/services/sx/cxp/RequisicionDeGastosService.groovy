@@ -8,11 +8,17 @@ import groovy.util.logging.Slf4j
 
 import sx.core.FolioLog
 import sx.core.LogUser
+import sx.tesoreria.CuentaDeBanco
+import sx.tesoreria.MovimientoDeCuentaService
 
 @Transactional
 @GrailsCompileStatic
 @Slf4j
 class RequisicionDeGastosService implements LogUser, FolioLog{
+
+    MovimientoDeCuentaService movimientoDeCuentaService
+
+    PagoService pagoService
 
     RequisicionDeGastos save(RequisicionDeGastos requisicion) {
         log.debug("Salvando requisicion  {}", requisicion)
@@ -41,7 +47,7 @@ class RequisicionDeGastosService implements LogUser, FolioLog{
             det.apagar = det.total
         }
         requisicion.total = requisicion.partidas.sum 0.0, {RequisicionDet det -> det.total}
-        requisicion.apagar = requisicion.partidas.sum 0.0, {RequisicionDet det -> det.apagar}
+        requisicion.apagar = requisicion.total
 
     }
 
@@ -56,6 +62,21 @@ class RequisicionDeGastosService implements LogUser, FolioLog{
     void delete(RequisicionDeGastos requisicion) throws RequisicionException{
         if(requisicion.cerrada) throw new RequisicionCerradaException(requisicion)
         requisicion.delete flush: true
+    }
+
+    RequisicionDeGastos pagar(RequisicionDeGastos requisicion, CuentaDeBanco cuenta, String referencia) {
+        log.info("Pagando requisicion {}", requisicion.folio)
+        if(requisicion.egreso) throw new RequisicionDeGastosException("Requisicion ${requisicion.folio} ya está pagada")
+        movimientoDeCuentaService.generarPagoDeGastos(requisicion, cuenta, referencia)
+        pagoService.pagarGasto(requisicion)
+        return requisicion.save(flush: true)
+
+    }
+}
+
+class RequisicionDeGastosException extends RuntimeException {
+    RequisicionDeGastosException(String message) {
+        super(message)
     }
 }
 

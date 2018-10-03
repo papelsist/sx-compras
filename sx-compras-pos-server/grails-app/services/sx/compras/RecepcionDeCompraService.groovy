@@ -90,12 +90,8 @@ class RecepcionDeCompraService implements LogUser {
 
     void actualizarCompra(RecepcionDeCompra com) {
         Compra compra = com.compra
-        if(compra.partidas.find{it.getPorRecibir()> 0.0 } == null){
-            compra.pendiente=false
-        }
-        else{
-            compra.pendiente=true
-        }
+        def pendiente = compra.partidas.find{it.getPorRecibir()> 0.0 }
+        compra.pendiente = pendiente != null
         compra.save flush: true
         log.debug('Status de compra {} actualizado', compra.folio)
     }

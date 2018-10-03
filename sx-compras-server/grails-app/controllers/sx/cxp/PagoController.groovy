@@ -48,8 +48,8 @@ class PagoController extends RestfulController<Pago> {
         respond pago
     }
 
-    def aplicar() {
-        pagoService.aplicarPago(params.id.toString())
+    def aplicar(Pago pago) {
+        pagoService.aplicarPago(pago)
         forward action: 'show', params: params
     }
 }

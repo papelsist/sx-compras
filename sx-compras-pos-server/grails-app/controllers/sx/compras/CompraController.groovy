@@ -35,6 +35,7 @@ class CompraController extends RestfulController<Compra> {
         Compra compra = new Compra()
         bindData compra, getObjectToBind()
         compra.sucursal = AppConfig.first().sucursal
+        compra.centralizada = false
         compra.folio = -1l
         compra.fecha = new Date()
         return compra

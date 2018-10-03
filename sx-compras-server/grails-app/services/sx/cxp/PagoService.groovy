@@ -18,13 +18,17 @@ abstract class PagoService implements  LogUser{
 
     abstract void delete(Serializable id)
 
+    Pago pagarGasto(RequisicionDeGastos requisicion) {
+        Pago pago = generarPagoDeRequisicion(requisicion)
+        return aplicarPago(pago)
+    }
+
     @CompileDynamic
-    Pago generarPagoDeRequisicion(String requisicionId) {
-        Pago found = Pago.where{requisicion.id == requisicionId}.find()
+    Pago generarPagoDeRequisicion(Requisicion requisicion) {
+        Pago found = Pago.where{requisicion.id == requisicion.id}.find()
         if(found)
             throw new RuntimeException("Ya existe el pago: ${found.folio} de la requisicion")
 
-        Requisicion requisicion = Requisicion.get(requisicionId)
         String serie = requisicion.class.simpleName
         Pago pago = new Pago()
         pago.proveedor = requisicion.proveedor
@@ -43,7 +47,10 @@ abstract class PagoService implements  LogUser{
         pago.createUser = requisicion.createUser
         pago.updateUser = requisicion.updateUser
         requisicion.pagada = pago.fecha
-        return save(pago)
+
+        pago =  save(pago)
+        log.info("Pago generado ${pago.id}")
+        return pago
 
     }
 
@@ -65,12 +72,10 @@ abstract class PagoService implements  LogUser{
 
 
     @CompileDynamic
-    Pago aplicarPago(String pagoId) {
-        Pago pago = Pago.get(pagoId)
+    Pago aplicarPago(Pago pago) {
+        // Pago pago = Pago.get(pagoId)
         Requisicion requisicion = pago.requisicion
         if(requisicion) {
-            List<AplicacionDePago> aplicaciones = []
-
             requisicion.partidas.each { RequisicionDet det ->
                 BigDecimal importe = det.apagar
                 AplicacionDePago apl = new AplicacionDePago(
@@ -82,11 +87,11 @@ abstract class PagoService implements  LogUser{
                         formaDePago: requisicion.formaDePago
                 )
                 apl.save flush: true
-                aplicaciones << apl
             }
             requisicion.aplicada = requisicion.fechaDePago
             requisicion.save flush: true
             pago.refresh()
+            log.info("Pago {} aplicado disponible: {}", pago.folio, pago.disponible)
         }
         return pago
     }
