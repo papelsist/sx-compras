@@ -1,0 +1,65 @@
+<div>
+  <table mat-table [dataSource]="dataSource" matSort>
+    <ng-container matColumnDef="documentoFolio">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Folio (Dcto)</th>
+      <td mat-cell *matCellDef="let row">{{row.documentoFolio}}</td>
+    </ng-container>
+    <ng-container matColumnDef="documentoSerie">
+      <th mat-header-cell *matHeaderCellDef>Serie (Dcto)</th>
+      <td mat-cell *matCellDef="let row">{{row.documentoSerie}}</td>
+    </ng-container>
+    <ng-container matColumnDef="documentoFecha">
+      <th mat-header-cell *matHeaderCellDef>Fecha (Docto)</th>
+      <td mat-cell *matCellDef="let row">{{row.documentoFecha | date: 'dd/MM/yyyy'}}</td>
+    </ng-container>
+    <ng-container matColumnDef="documentoTotal">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Total (Docto)</th>
+      <td mat-cell *matCellDef="let row">{{row.documentoTotal | currency}}</td>
+    </ng-container>
+    <ng-container matColumnDef="documentoPagos">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Pagos </th>
+      <td mat-cell *matCellDef="let row">{{row.documentoPagos | currency}}</td>
+    </ng-container>
+    <ng-container matColumnDef="documentoCompensaciones">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Notas</th>
+      <td mat-cell *matCellDef="let row">{{row.documentoCompensaciones | currency}}</td>
+    </ng-container>
+    <ng-container matColumnDef="documentoSaldo">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Saldo</th>
+      <td mat-cell *matCellDef="let row">{{row.documentoSaldo | currency}}</td>
+    </ng-container>
+    <ng-container matColumnDef="descuentof">
+      <th mat-header-cell *matHeaderCellDef>Dscto F</th>
+      <td mat-cell *matCellDef="let row">{{row.descuentofImporte | currency}}</td>
+    </ng-container>
+    <ng-container matColumnDef="total">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Analizado</th>
+      <td mat-cell *matCellDef="let row">
+        {{row.total | currency}}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="apagar">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Por Pagar</th>
+      <td mat-cell *matCellDef="let row">
+        {{row.apagar | currency}}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="comentario">
+      <th mat-header-cell *matHeaderCellDef>Comentario</th>
+      <td mat-cell *matCellDef="let row, let i = index" class="comentario">
+        <input [(ngModel)]="row.comentario" [ngModelOptions]="{standalone: true}" (input)="update.emit(row, i)"
+          [disabled]="readOnly">
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="operaciones">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let row, let i = index">
+        <mat-icon color="warn" class="cursor-pointer" *ngIf="!readOnly" (click)="delete.emit(i)">delete</mat-icon>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayColumns"></tr>
+    <tr mat-row *matRowDef="let cfdi; columns: displayColumns; "></tr>
+
+  </table>
+</div>

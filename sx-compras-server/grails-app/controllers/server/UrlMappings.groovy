@@ -59,7 +59,7 @@ class UrlMappings {
         "/api/requisiciones/gastos/cerrar/$id"(controller:'requisicionDeGastos', action: 'cerrar', method: 'PUT')
         "/api/requisiciones/gastos/print/$id"(controller: 'requisicionDeGastos', action: 'print', method: 'GET')
         "/api/requisiciones/gastos/pendientes/$proveedorId"(controller: 'requisicionDeGastos', action: 'pendientes', method: 'GET')
-        "/api/requisiciones/gastos/pagar/$id"(controller: 'requisicionDeGastos', action: 'pagar', method: 'PUT')
+        "/api/requisiciones/gastos/pagar"(controller: 'requisicionDeGastos', action: 'pagar', method: 'PUT')
 
 
 
