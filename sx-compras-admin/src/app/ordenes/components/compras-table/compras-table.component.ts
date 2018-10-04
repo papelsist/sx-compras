@@ -23,10 +23,16 @@ import { Compra } from '../../models/compra';
   styleUrls: ['./compras-table.component.scss']
 })
 export class ComprasTableComponent implements OnInit, OnChanges, OnDestroy {
-  @Input() compras: Compra[] = [];
-  @Input() multipleSelection = true;
-  @Input() filter;
+  @Input()
+  compras: Compra[] = [];
+  @Input()
+  multipleSelection = true;
+  @Input()
+  filter;
   dataSource = new MatTableDataSource<Compra>([]);
+
+  @Input()
+  selected = [];
 
   displayColumns = [
     // 'sucursalNombre',
@@ -45,10 +51,14 @@ export class ComprasTableComponent implements OnInit, OnChanges, OnDestroy {
     'operaciones'
   ];
 
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @Output() select = new EventEmitter();
-  @Output() edit = new EventEmitter();
+  @ViewChild(MatSort)
+  sort: MatSort;
+  @ViewChild(MatPaginator)
+  paginator: MatPaginator;
+  @Output()
+  select = new EventEmitter();
+  @Output()
+  edit = new EventEmitter();
   subscription: Subscription;
   constructor() {}
 
@@ -118,5 +128,8 @@ export class ComprasTableComponent implements OnInit, OnChanges, OnDestroy {
 
   getPrintUrl(event: Compra) {
     return `compras/print/${event.id}`;
+  }
+  isSelected(id: string) {
+    return this.selected.find(item => item === id);
   }
 }

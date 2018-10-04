@@ -8,6 +8,11 @@ import { EliminarCompraComponent } from './compra-form-actions/eliminar-compra.c
 import { EmailCompraComponent } from './compra-form-actions/email-compra.component';
 import { DepurarCompraComponent } from './compra-form-actions/depurar-compra.component';
 import { CompraPrintComponent } from './compra-print/compra-print.component';
+import { CompradetTableComponent } from './compradet-table/compradet-table.component';
+import { ComprasFilterDialogComponent } from './compras-filter/compras-filter-dialog.component';
+import { ComprasFilterLabelComponent } from './compras-filter/compras-filter-label.component';
+import { ComprasFilterComponent } from './compras-filter/compras-filter.component';
+
 
 export const components: any[] = [
   ComprasTableComponent,
@@ -19,9 +24,13 @@ export const components: any[] = [
   EliminarCompraComponent,
   EmailCompraComponent,
   DepurarCompraComponent,
-  CompraPrintComponent
+  CompraPrintComponent,
+  CompradetTableComponent,
+  ComprasFilterDialogComponent,
+  ComprasFilterLabelComponent,
+  ComprasFilterComponent
 ];
-export const entryComponents: any[] = [CompraPartidaFormComponent];
+export const entryComponents: any[] = [CompraPartidaFormComponent, ComprasFilterDialogComponent];
 
 export * from './compras-table/compras-table.component';
 export * from './compra-form/compra-form.component';
@@ -33,3 +42,9 @@ export * from './compra-form-actions/eliminar-compra.component';
 export * from './compra-form-actions/email-compra.component';
 export * from './compra-form-actions/depurar-compra.component';
 export * from './compra-print/compra-print.component';
+
+export * from './compradet-table/compradet-table.component';
+export * from './compras-filter/compras-filter-dialog.component';
+export * from './compras-filter/compras-filter-label.component';
+export * from './compras-filter/compras-filter.component';
+
