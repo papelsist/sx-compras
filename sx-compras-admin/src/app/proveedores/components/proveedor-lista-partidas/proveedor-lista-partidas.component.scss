@@ -1,7 +1,16 @@
+
 table {
   width: 100%;
   overflow: auto;
+  // height: 400px;
 }
+/*
+.mat-table {
+  overflow: auto;
+  min-height: 400px;
+  max-height: 550px;
+}
+*/
 .mat-cell {
   font-size: 11px;
 }

@@ -1,9 +1,13 @@
 <h2 mat-dialog-title>{{producto.descripcion}} ({{producto.clave}})</h2>
 <mat-dialog-content>
   <form [formGroup]="form" novalidate layout="column">
-    <mat-form-field>
-      <input matInput formControlName="claveProveedor" placeholder="Clave">
-    </mat-form-field>
+    <div layout>
+      <mat-form-field flex>
+        <input matInput formControlName="claveProveedor" placeholder="Clave">
+      </mat-form-field>
+      <mat-checkbox formControlName="suspendido" class="pad-left">Suspendido</mat-checkbox>
+    </div>
+
     <mat-form-field>
       <input matInput formControlName="codigoProveedor" placeholder="Código">
     </mat-form-field>

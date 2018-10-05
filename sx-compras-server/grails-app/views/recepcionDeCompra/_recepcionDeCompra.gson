@@ -11,6 +11,6 @@ json g.render(recepcionDeCompra, [excludes: ['partidas', 'lastUpdated', 'dateCre
     modificado recepcionDeCompra.lastUpdated
     compraFolio recepcionDeCompra.compra.folio
     compraFecha recepcionDeCompra.compra.fecha
-
+    partidas g.render(recepcionDeCompra.partidas)
 
 }

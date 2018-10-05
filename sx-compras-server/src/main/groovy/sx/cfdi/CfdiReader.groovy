@@ -130,6 +130,7 @@ class CfdiReader {
             concepto.unidad = map.Unidad
             String descripcion = map.Descripcion
             if(descripcion.length() > 240) {
+                log.info("Descripcion muy larga: ${descripcion}")
                 descripcion = descripcion.substring(0, 240)
             }
             concepto.descripcion = descripcion

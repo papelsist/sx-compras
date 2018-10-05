@@ -30,7 +30,8 @@ export class ProveedorProductoFormComponent implements OnInit {
       codigoProveedor: [],
       descripcionProveedor: [],
       paqueteTarima: [],
-      piezaPaquete: []
+      piezaPaquete: [],
+      suspendido: []
     });
     this.form.patchValue(this.producto);
   }

@@ -13,11 +13,11 @@ import { CuentaPorPagar } from '../../model/cuentaPorPagar';
   templateUrl: './coms-selector.component.html',
   styles: [
     `
-    .coms-table-panel {
-      max-height: 500px;
-      overflow: auto;
-    }
-  `
+      .coms-table-panel {
+        max-height: 500px;
+        overflow: auto;
+      }
+    `
   ]
 })
 export class ComsSelectorComponent implements OnInit {

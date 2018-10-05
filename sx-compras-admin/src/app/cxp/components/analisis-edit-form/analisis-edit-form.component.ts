@@ -34,25 +34,30 @@ import { CuentaPorPagar } from '../../model/cuentaPorPagar';
   templateUrl: './analisis-edit-form.component.html',
   styles: [
     `
-    .partidas-panel {
-      min-height: 300px;
-      max-height: 600px;
-      overflow: auto;
-    }
-    .totales-panel {
-
-      padding: 5px 15px 5px 15px;
-    }
+      .partidas-panel {
+        min-height: 300px;
+        max-height: 600px;
+        overflow: auto;
+      }
+      .totales-panel {
+        padding: 5px 15px 5px 15px;
+      }
     `
   ]
 })
 export class AnalisisEditFormComponent implements OnInit, OnDestroy {
-  @Input() analisis: Analisis;
-  @Input() comsDisponibles: RecepcionDeCompra[];
-  @Output() update = new EventEmitter();
-  @Output() cancel = new EventEmitter();
-  @Output() delete = new EventEmitter();
-  @Output() cerrar = new EventEmitter();
+  @Input()
+  analisis: Analisis;
+  @Input()
+  comsDisponibles: RecepcionDeCompra[];
+  @Output()
+  update = new EventEmitter();
+  @Output()
+  cancel = new EventEmitter();
+  @Output()
+  delete = new EventEmitter();
+  @Output()
+  cerrar = new EventEmitter();
 
   form: FormGroup;
 
