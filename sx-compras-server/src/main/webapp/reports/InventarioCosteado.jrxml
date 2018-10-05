@@ -34,7 +34,7 @@
 	</parameter>
 	<parameter name="EJERCICIO" isForPrompting="true" class="java.lang.Long"/>
 	<parameter name="MES" isForPrompting="true" class="java.lang.Long"/>
-	<queryString><![CDATA[SELECT S.CLAVE AS SUCURSAL,S.NOMBRE,P.CLAVE,P.DESCRIPCION AS DESCRIPCION1,P.KILOS,I.NACIONAL AS TIPO 
+	<queryString><![CDATA[SELECT P.CLAVE,P.DESCRIPCION AS DESCRIPCION1,S.CLAVE AS SUCURSAL,S.NOMBRE,P.KILOS,I.NACIONAL AS TIPO 
 ,SUM(I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end)) AS SALDO,I.COSTO_PROMEDIO
 ,SUM((I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end))*I.COSTO_PROMEDIO) AS COSTO
 ,SUM(CASE WHEN I.NACIONAL IS true THEN ((I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end))*I.COSTO_PROMEDIO) ELSE 0 END) AS NACIONAL
@@ -46,10 +46,10 @@ join producto p on(p.id=i.producto_id)
 where p.inventariable is true AND CANTIDAD<>0 and  i.anio=$P{EJERCICIO} and i.mes=$P{MES} AND S.id LIKE $P{SUC}
 GROUP BY I.CLAVE,I.NACIONAL]]></queryString>
 
-	<field name="SUCURSAL" class="java.lang.String"/>
-	<field name="NOMBRE" class="java.lang.String"/>
 	<field name="CLAVE" class="java.lang.String"/>
 	<field name="DESCRIPCION1" class="java.lang.String"/>
+	<field name="SUCURSAL" class="java.lang.String"/>
+	<field name="NOMBRE" class="java.lang.String"/>
 	<field name="KILOS" class="java.math.BigDecimal"/>
 	<field name="TIPO" class="java.lang.String"/>
 	<field name="SALDO" class="java.math.BigDecimal"/>
