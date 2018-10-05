@@ -34,6 +34,10 @@ export class ProductoFormComponent implements OnInit {
   save = new EventEmitter();
   @Output()
   delete = new EventEmitter();
+
+  @Output()
+  cancel = new EventEmitter();
+
   form: FormGroup;
   constructor(private fb: FormBuilder) {}
 

@@ -5,7 +5,7 @@ import * as fromRoot from 'app/store';
 import * as fromStore from '../../store';
 import * as fromActions from '../../store/actions/facturas.actions';
 
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { Periodo } from '../../../_core/models/periodo';
@@ -24,7 +24,8 @@ import { CuentaPorPagar } from '../../model';
       </div>
       </sx-search-title>
       <mat-divider></mat-divider>
-      <sx-facturas-table [facturas]="facturas$ | async" (xml)="onXml($event)" (pdf)="onPdf($event)" (analisis)="onAnalisis($event)">
+      <sx-facturas-table [facturas]="facturas$ | async" (xml)="onXml($event)" (pdf)="onPdf($event)" (analisis)="onAnalisis($event)"
+        [filter]="search$ | async">
       </sx-facturas-table>
     </mat-card>
   `
@@ -32,7 +33,7 @@ import { CuentaPorPagar } from '../../model';
 export class FacturasComponent implements OnInit {
   facturas$: Observable<CuentaPorPagar[]>;
   periodo$: Observable<Periodo>;
-  search$ = new Subject<string>();
+  search$ = new BehaviorSubject('');
 
   constructor(
     private store: Store<fromStore.CxpState>,

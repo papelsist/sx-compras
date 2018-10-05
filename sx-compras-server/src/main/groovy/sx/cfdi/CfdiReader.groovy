@@ -128,7 +128,11 @@ class CfdiReader {
             concepto.claveProdServ = map.ClaveProdServ
             concepto.claveUnidad = map.ClaveUnidad
             concepto.unidad = map.Unidad
-            concepto.descripcion = map.Descripcion
+            String descripcion = map.Descripcion
+            if(descripcion.length() > 240) {
+                descripcion = descripcion.substring(0, 240)
+            }
+            concepto.descripcion = descripcion
             concepto.cantidad = map.Cantidad.toBigDecimal()
             concepto.valorUnitario = map.ValorUnitario.toBigDecimal()
             concepto.importe = map.Importe.toBigDecimal()

@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 
 import { Store } from '@ngrx/store';
 import * as fromRoot from 'app/store';
@@ -16,10 +16,18 @@ import { Producto } from '../../models/producto';
 })
 export class ProductosComponent implements OnInit {
   productos$: Observable<Producto[]>;
+  search$ = new BehaviorSubject('');
+  private _storageKey = 'sx-compras.productos';
+
   constructor(private store: Store<fromStore.CatalogosState>) {}
 
   ngOnInit() {
     this.productos$ = this.store.select(fromStore.getAllProductos);
+
+    const lastSearch = localStorage.getItem(this._storageKey + '.filter');
+    if (lastSearch) {
+      this.search$.next(lastSearch);
+    }
   }
 
   onSelect(event: Producto) {
@@ -28,5 +36,10 @@ export class ProductosComponent implements OnInit {
         path: ['/catalogos/productos', event.id]
       })
     );
+  }
+
+  onSearch(event: string) {
+    this.search$.next(event);
+    localStorage.setItem(this._storageKey + '.filter', event);
   }
 }
