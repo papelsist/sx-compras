@@ -23,7 +23,7 @@ class ImportarComprobantesDeGastoJobService {
 
         log.info('Importando CFDIS de GASTOS  desde {} , {}', comprobanteFiscalService.gastosDir, new Date().format("dd/MM/yyyy hh:mm:ss"))
         try{
-            int rows = comprobanteFiscalService.importacionLocal('GASTOS', false)
+            int rows = comprobanteFiscalService.importacionLocal('GASTOS', true)
             log.info('Comprobantes importados: {}', rows)
         } catch (Exception ex) {
             String message = ExceptionUtils.getRootCauseMessage(ex)
