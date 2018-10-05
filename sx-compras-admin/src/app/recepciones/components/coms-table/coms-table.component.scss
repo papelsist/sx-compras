@@ -1,0 +1,32 @@
+
+.mat-table {
+  width: 100%;
+  overflow: auto;
+  max-height: 30vh;
+}
+
+.mat-column-folio, .mat-column-fecha{
+  max-width: 80px;
+}
+.mat-column-moneda {
+  max-width: 30px;
+}
+.mat-column-tipoDeCambio {
+  max-width: 60px;
+}
+.mat-column-fecha, .mat-column-ultimaModificacion {
+  max-width: 110px;
+}
+
+.mat-column-cerrada, .mat-column-ultimaDepuracion {
+  max-width: 80px;
+  font-size: 9px;
+}
+.mat-cell {
+  font-size: 11px;
+}
+.mat-row {
+  //cursor: pointer;
+  height: 30px;
+
+}

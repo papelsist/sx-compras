@@ -4,12 +4,10 @@ import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-import * as _ from 'lodash';
-
 import { ConfigService } from '../../utils/config.service';
-import { Sucursal } from '../../models';
-import { Compra } from '../models/compra';
-import { Periodo } from 'app/_core/models/periodo';
+
+import { Compra, ComprasFilter } from '../models/compra';
+
 import { ProveedorProducto } from '../../proveedores/models/proveedorProducto';
 
 @Injectable()
@@ -20,11 +18,17 @@ export class ComprasService {
     this.apiUrl = configService.buildApiUrl('compras');
   }
 
-  list(periodo: Periodo): Observable<Compra[]> {
-    const { fechaInicial, fechaFinal } = periodo.toApiJSON();
-    const params = new HttpParams()
-      .set('fechaInicial', fechaInicial)
-      .set('fechaFinal', fechaFinal);
+  list(filter: ComprasFilter): Observable<Compra[]> {
+    let params = new HttpParams()
+      .set('fechaInicial', filter.fechaInicial.toISOString())
+      .set('fechaFinal', filter.fechaFinal.toISOString())
+      .set('registros', filter.registros.toString());
+    if (filter.proveedor) {
+      params = params.set('proveedor', filter.proveedor.id);
+    }
+    if (filter.folio) {
+      params = params.set('folio', filter.folio.toString());
+    }
     return this.http.get<Compra[]>(this.apiUrl, { params: params });
   }
 

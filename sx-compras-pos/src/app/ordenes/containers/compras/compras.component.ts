@@ -23,7 +23,7 @@ export class ComprasComponent implements OnInit, OnDestroy {
   sucursales$: Observable<string[]>;
   partidas$: Observable<CompraDet[]>;
   comprasFilter$: Observable<ComprasFilter>;
-  selected$: Observable<String[]>;
+  selected$: Observable<Compra[]>;
 
   search$ = new BehaviorSubject('');
   tabIndex = 2;
@@ -49,7 +49,7 @@ export class ComprasComponent implements OnInit, OnDestroy {
       this.onSearch(lastSearch);
     }
 
-    this.selected$ = this.store.pipe(select(fromStore.getSelectedComprasIds));
+    this.selected$ = this.store.pipe(select(fromStore.getSelectedCompras));
   }
 
   ngOnDestroy() {
@@ -90,6 +90,7 @@ export class ComprasComponent implements OnInit, OnDestroy {
   }
 
   onFilter(event: ComprasFilter) {
+    this.clearSelection();
     this.store.dispatch(new fromActions.SetComprasFilter({ filter: event }));
   }
 }

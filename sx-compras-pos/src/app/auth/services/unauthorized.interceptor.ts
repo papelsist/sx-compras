@@ -41,8 +41,7 @@ export class UnautorizedInterceptor implements HttpInterceptor {
           // 401 Not autorized error redirect to
           console.log('HTTP 401 Unauthorized', response);
           localStorage.removeItem(SESSION_KEY);
-          // this.router.navigateByUrl('/login');
-          this.store.dispatch(new fromStore.Logout());
+          this.router.navigate(['/login']);
         }
         return throwError(response);
       })

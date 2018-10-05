@@ -40,9 +40,9 @@ mat-nav-list {
 }
 // Mat Table row active color
 .mat-row.active {
-  background-color: mat-color($active);
+  background-color: mat-color($accent);
   .mat-cell {
-    color: mat-color($active, default-contrast)
+    color: mat-color($accent, default-contrast)
   }
 }
 

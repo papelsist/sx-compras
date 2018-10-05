@@ -16,21 +16,22 @@
   </ng-container>
 
   <ng-container matColumnDef="remision">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Remisión</th>
+    <th mat-header-cell *matHeaderCellDef>Remisión</th>
     <td mat-cell *matCellDef="let com">{{com.remision}}</td>
   </ng-container>
 
   <ng-container matColumnDef="fechaRemision">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>F. Remisión</th>
+    <th mat-header-cell *matHeaderCellDef>F. Remisión</th>
     <td mat-cell *matCellDef="let com">{{com.fechaRemision| date:'dd/MM/yyyy'}}</td>
   </ng-container>
 
   <ng-container matColumnDef="pendiente">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Pendiente</th>
+    <th mat-header-cell *matHeaderCellDef>Pendiente</th>
     <td mat-cell *matCellDef="let com">{{com.pendienteDeAnalisis}}</td>
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="displayColumns"></tr>
-  <tr mat-row *matRowDef="let cfdi; columns: displayColumns" class="cursor-pointer" (click)="toogleSelect(cfdi)" [ngClass]="{'active': cfdi.selected}"></tr>
+  <tr mat-row *matRowDef="let cfdi; columns: displayColumns" class="cursor-pointer" (click)="toogleSelect(cfdi)"
+    [ngClass]="{'active': cfdi.selected}"></tr>
 </table>
 <mat-paginator [pageSizeOptions]="[10, 20, 50, 100, 200]" showFirstLastButtons></mat-paginator>

@@ -25,7 +25,7 @@ export class ProductosComponent implements OnInit {
   onSelect(event: Producto) {
     this.store.dispatch(
       new fromRoot.Go({
-        path: ['/productos/productos', event.id]
+        path: ['/catalogos/productos', event.id]
       })
     );
   }

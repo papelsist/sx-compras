@@ -28,11 +28,12 @@ export class ComprasComponent implements OnInit, OnDestroy {
   comprasPorSucursal$: Observable<any>;
   sucursales$: Observable<string[]>;
 
-  partidas$: Observable<CompraDet[]>;
-  comprasFilter$: Observable<ComprasFilter>;
-  selected$: Observable<String[]>;
-
+  filter$: Observable<ComprasFilter>;
   search$: Observable<string>;
+
+  selected$: Observable<String[]>;
+  partidas$: Observable<CompraDet[]>;
+
   tabIndex = 2;
   private _storageKey = 'sx-compras.ordenes';
   constructor(private store: Store<fromStore.State>) {}
@@ -42,6 +43,8 @@ export class ComprasComponent implements OnInit, OnDestroy {
       select(fromStore.getComprasPorSucursalPendientes)
     );
     this.sucursales$ = this.comprasPorSucursal$.pipe(map(res => _.keys(res)));
+
+    this.filter$ = this.store.pipe(select(fromStore.getComprasFilter));
     this.search$ = this.store.pipe(select(fromStore.getComprasSearchTerm));
 
     // Tab Idx
@@ -57,6 +60,7 @@ export class ComprasComponent implements OnInit, OnDestroy {
 
     this.selected$ = of([]); // this.store.pipe(select(fromStore.getSelectedComprasIds));
   }
+
   ngOnDestroy() {
     localStorage.setItem(
       this._storageKey + '.tabIndex',
@@ -66,8 +70,12 @@ export class ComprasComponent implements OnInit, OnDestroy {
 
   onSelect() {}
 
-  onSearch(event: string) {
-    this.store.dispatch(new fromActions.SetSearchTerm(event));
+  onSearch(term: string) {
+    this.store.dispatch(new fromActions.SetComprasSearchTerm({ term }));
+  }
+
+  onFilterChange(filter: ComprasFilter) {
+    this.store.dispatch(new fromActions.SetComprasFilter({ filter }));
   }
 
   getSucursales(object): string[] {

@@ -37,9 +37,12 @@ export class ProveedorFieldComponent implements OnInit, ControlValueAccessor {
 
   searchControl = new FormControl();
 
-  @Input() required = false;
-  @Input() tipo = 'COMPRAS';
-  @Input() estado: EstadoType = EstadoType.ACTIVOS;
+  @Input()
+  required = false;
+  @Input()
+  tipo = 'COMPRAS';
+  @Input()
+  estado: EstadoType = EstadoType.ACTIVOS;
 
   proveedores$: Observable<Proveedor[]>;
 

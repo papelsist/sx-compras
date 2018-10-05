@@ -24,19 +24,16 @@ import { SelectionModel } from '@angular/cdk/collections';
   styleUrls: ['./compras-table.component.scss']
 })
 export class ComprasTableComponent implements OnInit, OnChanges, OnDestroy {
-  @Input() compras: Compra[] = [];
-  @Input() multipleSelection = true;
-  @Input() filter;
+  @Input()
+  compras: Compra[] = [];
+  @Input()
+  multipleSelection = true;
+  @Input()
+  filter;
   dataSource = new MatTableDataSource<Compra>([]);
 
-  @Input() selected = [];
-
-  @Input() initialSelection = [];
-
-  selection = new SelectionModel<Compra>(
-    this.multipleSelection,
-    this.initialSelection
-  );
+  @Input()
+  selected = [];
 
   displayColumns = [
     // 'sucursalNombre',
@@ -56,10 +53,14 @@ export class ComprasTableComponent implements OnInit, OnChanges, OnDestroy {
     'operaciones'
   ];
 
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @Output() select = new EventEmitter();
-  @Output() edit = new EventEmitter();
+  @ViewChild(MatSort)
+  sort: MatSort;
+  @ViewChild(MatPaginator)
+  paginator: MatPaginator;
+  @Output()
+  select = new EventEmitter();
+  @Output()
+  edit = new EventEmitter();
   subscription: Subscription;
   constructor() {}
 
@@ -73,7 +74,8 @@ export class ComprasTableComponent implements OnInit, OnChanges, OnDestroy {
       this.dataSource.data = changes.compras.currentValue;
     }
     if (changes.filter) {
-      this.dataSource.filter = changes.filter.currentValue;
+      const s = changes.filter.currentValue || '';
+      this.dataSource.filter = s.toLowerCase();
     }
   }
 
@@ -84,6 +86,7 @@ export class ComprasTableComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   toogleSelect(event: Compra) {
+    /*
     if (this.multipleSelection) {
       event.selected = !event.selected;
       const data = this.compras.filter(item => item.selected);
@@ -97,12 +100,14 @@ export class ComprasTableComponent implements OnInit, OnChanges, OnDestroy {
       });
       this.select.emit([event]);
     }
-  }
-
-  applyFilter(filterValue: string) {
-    filterValue = filterValue.trim();
-    filterValue = filterValue.toLowerCase();
-    this.dataSource.filter = filterValue;
+    */
+    if (this.isSelected(event.id)) {
+      const res = this.selected.filter(item => item.id !== event.id);
+      this.select.emit(res);
+    } else {
+      const res = [...this.selected, event];
+      this.select.emit(res);
+    }
   }
 
   onEdit($event: Event, row) {
@@ -115,18 +120,6 @@ export class ComprasTableComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   isSelected(id: string) {
-    return this.selected.find(item => item === id);
-  }
-
-  isAllSelected() {
-    const numSelected = this.selection.selected.length;
-    const numRows = this.dataSource.data.length;
-    return numSelected === numRows;
-  }
-
-  masterToggle() {
-    this.isAllSelected()
-      ? this.selection.clear()
-      : this.dataSource.data.forEach(row => this.selection.select(row));
+    return this.selected.find(item => item.id === id);
   }
 }

@@ -28,15 +28,6 @@ export class CompraExistsGuard implements CanActivate {
     );
   }
 
-  hasCompra(id: string): Observable<boolean> {
-    return this.store
-      .select(fromStore.getComprasEntities)
-      .pipe(
-        map((entities: { [key: string]: Compra }) => !!entities[id]),
-        take(1)
-      );
-  }
-
   checkStore(): Observable<boolean> {
     return this.store.select(fromStore.getComprasLoaded).pipe(
       tap(loaded => {

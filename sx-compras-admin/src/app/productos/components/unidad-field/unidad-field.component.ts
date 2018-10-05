@@ -6,8 +6,8 @@ import { FormGroup } from '@angular/forms';
   template: `
     <mat-form-field [formGroup]="parent" [style.width.%]="100">
       <mat-select placeholder="Unidad" [formControlName]="entityField" >
-        <mat-option *ngFor="let unidad of unidades" [value]="unidad">
-          {{unidad}}
+        <mat-option *ngFor="let unidad of unidades" [value]="unidad.clave">
+          {{unidad.descripcion}}
         </mat-option>
       </mat-select>
       <mat-error>Seleccione una unidad</mat-error>
@@ -15,9 +15,19 @@ import { FormGroup } from '@angular/forms';
   `
 })
 export class UnidadFieldComponent implements OnInit {
-  @Input() unidades: any[] = ['MILLAR', 'PIEZA', 'KILO', 'GRAMO', 'TONELADA'];
-  @Input() parent: FormGroup;
-  @Input() entityField = 'unidad';
+  @Input()
+  unidades: any[] = [
+    { clave: 'MIL', descripcion: 'MILLAR' },
+    { clave: 'PZA', descripcion: 'PIEZA' },
+    { clave: 'KGS', descripcion: 'KILO' },
+    { clave: 'BOL', descripcion: 'BOLSA' },
+    { clave: 'TM.', descripcion: 'TONELADA' },
+    { clave: 'MTS', descripcion: 'METROS' }
+  ];
+  @Input()
+  parent: FormGroup;
+  @Input()
+  entityField = 'unidad';
 
   constructor() {}
 

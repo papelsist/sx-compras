@@ -53,11 +53,11 @@ export const getComprasPorSucursalPendientes = createSelector(
   compras => _.groupBy(compras, 'sucursalNombre')
 );
 
-export const getPeriodoDeCompras = createSelector(
+export const getComprasFilter = createSelector(
   getComprasState,
-  fromCompras.getPeriodo
+  fromCompras.getComprasFilter
 );
 export const getComprasSearchTerm = createSelector(
   getComprasState,
-  fromCompras.getSearchTerm
+  fromCompras.getComprasSearchTerm
 );

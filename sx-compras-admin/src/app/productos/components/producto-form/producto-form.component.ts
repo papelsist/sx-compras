@@ -22,12 +22,18 @@ import { Producto } from '../../models/producto';
   styleUrls: ['./producto-form.component.scss']
 })
 export class ProductoFormComponent implements OnInit {
-  @Input() producto: Producto;
-  @Input() lineas: any[] = [];
-  @Input() marcas: any[] = [];
-  @Input() clases: any[] = [];
-  @Output() save = new EventEmitter();
-  @Output() delete = new EventEmitter();
+  @Input()
+  producto: Producto;
+  @Input()
+  lineas: any[] = [];
+  @Input()
+  marcas: any[] = [];
+  @Input()
+  clases: any[] = [];
+  @Output()
+  save = new EventEmitter();
+  @Output()
+  delete = new EventEmitter();
   form: FormGroup;
   constructor(private fb: FormBuilder) {}
 
@@ -79,7 +85,8 @@ export class ProductoFormComponent implements OnInit {
       precioContado: [null, [Validators.required, Validators.min(1)]],
       precioCredito: [null, [Validators.required, Validators.min(1)]],
       largo: [0, Validators.required],
-      ancho: [0, Validators.required]
+      ancho: [0, Validators.required],
+      proveedorFavorito: [null]
     });
   }
 

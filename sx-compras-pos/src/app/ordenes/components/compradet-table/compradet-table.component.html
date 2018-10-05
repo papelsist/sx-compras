@@ -1,4 +1,4 @@
-<table mat-table [dataSource]="partidas" matSort>
+<table mat-table [dataSource]="dataSource" matSort>
 
   <ng-container matColumnDef="folio">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Compra</th>
@@ -45,34 +45,6 @@
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio</th>
     <td mat-cell *matCellDef="let row, let i = index">
       {{row?.precio | currency}}
-    </td>
-  </ng-container>
-
-  <ng-container matColumnDef="descuento1">
-    <th mat-header-cell *matHeaderCellDef>Desc 1</th>
-    <td mat-cell *matCellDef="let row, let i = index">
-      {{row?.descuento1 | currency}}
-    </td>
-  </ng-container>
-
-  <ng-container matColumnDef="descuento2">
-    <th mat-header-cell *matHeaderCellDef>Desc 2</th>
-    <td mat-cell *matCellDef="let row, let i = index">
-      {{row?.descuento2 | currency}}
-    </td>
-  </ng-container>
-
-  <ng-container matColumnDef="descuento3">
-    <th mat-header-cell *matHeaderCellDef>Desc 3</th>
-    <td mat-cell *matCellDef="let row, let i = index">
-      {{row?.descuento3 | currency}}
-    </td>
-  </ng-container>
-
-  <ng-container matColumnDef="descuento4">
-    <th mat-header-cell *matHeaderCellDef>Desc 4</th>
-    <td mat-cell *matCellDef="let row, let i = index">
-      {{row?.descuento4 | currency}}
     </td>
   </ng-container>
 

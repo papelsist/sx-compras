@@ -6,7 +6,7 @@
         <span *ngIf="producto">Producto: {{producto.descripcion}}</span>
       </mat-card-title>
       <mat-card-subtitle>
-        <span *ngIf="producto">Última modificación: {{producto.lastUpdated | date: 'dd/MM/yyyy'}}</span>
+        <span *ngIf="producto">Última modificación: {{producto.lastUpdated | date: 'dd/MM/yyyy HH:mm'}}</span>
       </mat-card-subtitle>
     </mat-card-title-group>
     <mat-divider></mat-divider>
@@ -19,9 +19,10 @@
       </div>
 
       <div layout class="form-row">
-        <sx-linea-field [parent]="form" [lineas]="lineas" flex></sx-linea-field>
-        <sx-marca-field [parent]="form" [marcas]="marcas" flex></sx-marca-field>
-        <sx-clase-field [parent]="form" [clases]="clases" flex></sx-clase-field>
+        <sx-linea-field [parent]="form" [lineas]="lineas"></sx-linea-field>
+        <sx-marca-field [parent]="form" [marcas]="marcas"></sx-marca-field>
+        <sx-clase-field [parent]="form" [clases]="clases"></sx-clase-field>
+        <sx-proveedor-field formControlName="proveedorFavorito" flex></sx-proveedor-field>
       </div>
 
       <div layout class="form-row">

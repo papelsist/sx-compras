@@ -1,6 +1,7 @@
 import { Linea } from './linea';
 import { Clase } from './clase';
 import { Marca } from './marca';
+import { Proveedor } from '../../proveedores/models/proveedor';
 
 export interface Producto {
   id?: string;
@@ -28,4 +29,5 @@ export interface Producto {
   presentacion: string;
   lastUpdated?: string;
   selected?: boolean;
+  proveedorFavorito?: Partial<Proveedor>;
 }

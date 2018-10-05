@@ -1,16 +1,22 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+
+import { Subscription } from 'rxjs';
+import { startWith } from 'rxjs/operators';
+
 import { ComprasFilter } from '../../models/compra';
 
 @Component({
   selector: 'sx-compras-filter-dialog',
   templateUrl: './compras-filter-dialog.component.html'
 })
-export class ComprasFilterDialogComponent implements OnInit {
+export class ComprasFilterDialogComponent implements OnInit, OnDestroy {
   title;
   form: FormGroup;
   filter: ComprasFilter;
+
+  subscription: Subscription;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -24,6 +30,28 @@ export class ComprasFilterDialogComponent implements OnInit {
     this.buildForm();
     if (this.filter) {
       this.form.patchValue(this.filter);
+    }
+    this.subscription = this.form
+      .get('pendientes')
+      .valueChanges.pipe(startWith(this.form.value.pendientes))
+      .subscribe(pendientes => {
+        if (pendientes) {
+          this.form.get('fechaInicial').disable();
+          this.form.get('fechaFinal').disable();
+          this.form.get('registros').disable();
+          this.form.get('proveedor').disable();
+        } else {
+          this.form.get('fechaInicial').enable();
+          this.form.get('fechaFinal').enable();
+          this.form.get('registros').enable();
+          this.form.get('proveedor').enable();
+        }
+      });
+  }
+
+  ngOnDestroy() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
     }
   }
 

@@ -1,14 +1,14 @@
 import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 
-import { Compra } from '../../models/compra';
+import { Compra, ComprasFilter, buildComprasFilter } from '../../models/compra';
 import { CompraActions, CompraActionTypes } from '../actions/compra.actions';
-import { Periodo } from 'app/_core/models/periodo';
 
 export interface State extends EntityState<Compra> {
   loading: boolean;
   loaded: boolean;
-  periodo: Periodo;
   searchTerm: string;
+  filter: ComprasFilter;
+  selected: string[];
 }
 
 export const adapter: EntityAdapter<Compra> = createEntityAdapter<Compra>();
@@ -16,24 +16,25 @@ export const adapter: EntityAdapter<Compra> = createEntityAdapter<Compra>();
 export const initialState: State = adapter.getInitialState({
   loading: false,
   loaded: false,
-  periodo: Periodo.fromNow(30),
-  searchTerm: undefined
+  searchTerm: '',
+  filter: buildComprasFilter(45),
+  selected: []
 });
 
 export function reducer(state = initialState, action: CompraActions): State {
   switch (action.type) {
-    case CompraActionTypes.SetPeriodo: {
-      const periodo = action.payload;
-      return {
-        ...state,
-        periodo
-      };
-    }
-    case CompraActionTypes.SetSearchTerm: {
-      const searchTerm = action.payload;
+    case CompraActionTypes.SetComprasSearchTerm: {
+      const searchTerm = action.payload.term;
       return {
         ...state,
         searchTerm
+      };
+    }
+    case CompraActionTypes.SetComprasFilter: {
+      const filter = action.payload.filter;
+      return {
+        ...state,
+        filter
       };
     }
 
@@ -125,5 +126,5 @@ export const {
 
 export const getComprasLoading = (state: State) => state.loading;
 export const getComprasLoaded = (state: State) => state.loaded;
-export const getPeriodo = (state: State) => state.periodo;
-export const getSearchTerm = (state: State) => state.searchTerm;
+export const getComprasFilter = (state: State) => state.filter;
+export const getComprasSearchTerm = (state: State) => state.searchTerm;

@@ -21,6 +21,10 @@ const routes: Routes = [
             component: containers.CompraComponent
           }
         ]
+      },
+      {
+        path: 'recepciones',
+        loadChildren: 'app/recepciones/recepciones.module#RecepcionesModule'
       }
     ]
   }

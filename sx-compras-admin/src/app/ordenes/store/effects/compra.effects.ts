@@ -4,15 +4,14 @@ import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Store, select } from '@ngrx/store';
 import * as fromRoot from 'app/store';
 import * as fromStore from '../../store';
-import { getPeriodoDeCompras } from '../selectors/compra.selectors';
+import { getComprasFilter } from '../selectors/compra.selectors';
 
 import { of } from 'rxjs';
 import { map, switchMap, tap, catchError, take } from 'rxjs/operators';
 
-import { CompraActionTypes, CompraActions } from '../actions/compra.actions';
+import { CompraActionTypes } from '../actions/compra.actions';
 import * as fromActions from '../actions/compra.actions';
 import { ComprasService } from '../../services';
-import { Periodo } from '../../../_core/models/periodo';
 
 import { MatSnackBar } from '@angular/material';
 
@@ -29,25 +28,23 @@ export class CompraEffects {
   loadCompras$ = this.actions$.pipe(
     ofType(CompraActionTypes.LoadCompras),
     switchMap(() => {
-      return this.store.pipe(select(getPeriodoDeCompras), take(1));
+      return this.store.pipe(
+        select(getComprasFilter),
+        take(1)
+      );
     }),
-    switchMap(periodo => {
-      return this.service
-        .list(periodo)
-        .pipe(
-          map(res => new fromActions.LoadComprasSuccess(res)),
-          catchError(error => of(new fromActions.LoadComprasFail(error)))
-        );
+    switchMap(filter => {
+      return this.service.list(filter).pipe(
+        map(res => new fromActions.LoadComprasSuccess(res)),
+        catchError(error => of(new fromActions.LoadComprasFail(error)))
+      );
     })
   );
 
   @Effect()
   setPeriodo$ = this.actions$.pipe(
-    ofType<fromActions.SetPeriodo>(CompraActionTypes.SetPeriodo),
+    ofType<fromActions.SetComprasFilter>(CompraActionTypes.SetComprasFilter),
     map(action => action.payload),
-    tap(periodo =>
-      Periodo.saveOnStorage('sx-compras.compras.periodo', periodo)
-    ),
     map(() => new fromActions.LoadCompras())
   );
 
@@ -56,12 +53,10 @@ export class CompraEffects {
     ofType<fromActions.AddCompra>(CompraActionTypes.AddCompra),
     map(action => action.payload),
     switchMap(compra => {
-      return this.service
-        .save(compra)
-        .pipe(
-          map(res => new fromActions.AddCompraSuccess(res)),
-          catchError(error => of(new fromActions.AddCompraFail(error)))
-        );
+      return this.service.save(compra).pipe(
+        map(res => new fromActions.AddCompraSuccess(res)),
+        catchError(error => of(new fromActions.AddCompraFail(error)))
+      );
     })
   );
 
@@ -80,12 +75,10 @@ export class CompraEffects {
     ofType<fromActions.UpdateCompra>(CompraActionTypes.UpdateCompra),
     map(action => action.payload),
     switchMap(compra => {
-      return this.service
-        .update(compra)
-        .pipe(
-          map(res => new fromActions.UpdateCompraSuccess(res)),
-          catchError(error => of(new fromActions.UpdateCompraFail(error)))
-        );
+      return this.service.update(compra).pipe(
+        map(res => new fromActions.UpdateCompraSuccess(res)),
+        catchError(error => of(new fromActions.UpdateCompraFail(error)))
+      );
     })
   );
 
@@ -94,12 +87,10 @@ export class CompraEffects {
     ofType<fromActions.DeleteCompra>(CompraActionTypes.DeleteCompra),
     map(action => action.payload),
     switchMap(compra => {
-      return this.service
-        .delete(compra.id)
-        .pipe(
-          map(res => new fromActions.DeleteCompraSuccess(compra)),
-          catchError(error => of(new fromActions.LoadComprasFail(error)))
-        );
+      return this.service.delete(compra.id).pipe(
+        map(res => new fromActions.DeleteCompraSuccess(compra)),
+        catchError(error => of(new fromActions.LoadComprasFail(error)))
+      );
     })
   );
 
@@ -128,34 +119,22 @@ export class CompraEffects {
     ofType<fromActions.CerrarCompra>(CompraActionTypes.CerrarCompra),
     map(action => action.payload),
     switchMap(compra => {
-      return this.service
-        .cerrar(compra)
-        .pipe(
-          map(res => new fromActions.UpdateCompraSuccess(res)),
-          catchError(error => of(new fromActions.UpdateCompraFail(error)))
-        );
+      return this.service.cerrar(compra).pipe(
+        map(res => new fromActions.UpdateCompraSuccess(res)),
+        catchError(error => of(new fromActions.UpdateCompraFail(error)))
+      );
     })
   );
+
   @Effect()
   depurarCompra$ = this.actions$.pipe(
     ofType<fromActions.DepurarCompra>(CompraActionTypes.DepurarCompra),
     map(action => action.payload),
     switchMap(compra => {
-      return this.service
-        .depurar(compra)
-        .pipe(
-          map(res => new fromActions.UpdateCompraSuccess(res)),
-          catchError(error => of(new fromActions.UpdateCompraFail(error)))
-        );
+      return this.service.depurar(compra).pipe(
+        map(res => new fromActions.UpdateCompraSuccess(res)),
+        catchError(error => of(new fromActions.UpdateCompraFail(error)))
+      );
     })
   );
-
-  /*
-  @Effect({ dispatch: false })
-  setSearchterm$ = this.actions$.pipe(
-    ofType<fromActions.SetSearchTerm>(CompraActionTypes.SetSearchTerm),
-    map(action => action.payload),
-    tap(term => localStorage.setItem('sx-compras.compras.searchTerm', term))
-  );
-  */
 }

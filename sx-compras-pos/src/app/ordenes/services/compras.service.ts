@@ -30,7 +30,7 @@ export class ComprasService {
         params = params.set(key, value);
       }
       if (filter.proveedor) {
-        params = params.set('proveedorId', filter.proveedor.id);
+        params = params.set('proveedor', filter.proveedor.id);
       }
     });
     return this.http.get<Compra[]>(this.apiUrl, { params: params });

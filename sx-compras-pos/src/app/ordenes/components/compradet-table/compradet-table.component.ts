@@ -21,20 +21,16 @@ import { CompraDet } from '../../models/compraDet';
   styleUrls: ['./compradet-table.component.scss']
 })
 export class CompradetTableComponent implements OnInit, OnChanges {
-  @Input() partidas: CompraDet[] = [];
-  @Input() filter;
+  @Input()
+  partidas: CompraDet[] = [];
+  @Input()
+  filter;
 
   displayColumns = [
     'folio',
     'clave',
     'descripcion',
     'solicitado',
-    // 'precio',
-    // 'descuento1',
-    // 'descuento2',
-    // 'descuento3',
-    // 'descuento4',
-    // 'importeNeto',
     'recibido',
     'depurado',
     'porRecibir'
@@ -42,7 +38,8 @@ export class CompradetTableComponent implements OnInit, OnChanges {
 
   dataSource = new MatTableDataSource<CompraDet>([]);
 
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort)
+  sort: MatSort;
 
   constructor() {}
 

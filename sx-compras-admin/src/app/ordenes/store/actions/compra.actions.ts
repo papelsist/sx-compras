@@ -1,10 +1,10 @@
 import { Action } from '@ngrx/store';
-import { Update } from '@ngrx/entity';
 
-import { Compra } from '../../models/compra';
-import { Periodo } from 'app/_core/models/periodo';
+import { Compra, ComprasFilter } from '../../models/compra';
 
 export enum CompraActionTypes {
+  SetComprasFilter = '[Compra] Set Compras filter',
+  SetComprasSearchTerm = '[Compra] Set Search Term',
   LoadCompras = '[Compra] Load Compras',
   LoadComprasFail = '[Compra] Load Compras fail',
   LoadComprasSuccess = '[Compra] Load Compras Success',
@@ -20,8 +20,6 @@ export enum CompraActionTypes {
   DeleteCompraFail = '[Compra] Delete Compra Fail',
   DeleteCompraSuccess = '[Compra] Delete Compra Success',
   ClearCompras = '[Compra] Clear Compras',
-  SetPeriodo = '[Compra] Set Periodo de compras',
-  SetSearchTerm = '[Compra] Set Search term de compras',
   Load = '[Compra] Load One Compra',
   LoadFail = '[Compra] Load One Compra fail',
   LoadSuccess = '[Compra] Load One Compra Success',
@@ -104,13 +102,13 @@ export class ClearCompras implements Action {
   readonly type = CompraActionTypes.ClearCompras;
 }
 
-export class SetPeriodo implements Action {
-  readonly type = CompraActionTypes.SetPeriodo;
-  constructor(public payload: Periodo) {}
+export class SetComprasFilter implements Action {
+  readonly type = CompraActionTypes.SetComprasFilter;
+  constructor(public payload: { filter: ComprasFilter }) {}
 }
-export class SetSearchTerm implements Action {
-  readonly type = CompraActionTypes.SetSearchTerm;
-  constructor(public payload: string) {}
+export class SetComprasSearchTerm implements Action {
+  readonly type = CompraActionTypes.SetComprasSearchTerm;
+  constructor(public payload: { term: string }) {}
 }
 
 export class CerrarCompra implements Action {
@@ -140,7 +138,7 @@ export type CompraActions =
   | DeleteCompraFail
   | DeleteCompraSuccess
   | ClearCompras
-  | SetPeriodo
-  | SetSearchTerm
+  | SetComprasFilter
+  | SetComprasSearchTerm
   | CerrarCompra
   | DepurarCompra;

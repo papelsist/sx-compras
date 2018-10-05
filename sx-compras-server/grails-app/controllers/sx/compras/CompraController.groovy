@@ -5,6 +5,7 @@ import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.*
 
 import groovy.transform.CompileDynamic
+import org.apache.commons.lang3.exception.ExceptionUtils
 import sx.core.Sucursal
 import sx.reports.ReportService
 import sx.utils.Periodo
@@ -43,21 +44,28 @@ class CompraController extends RestfulController<Compra> {
     @CompileDynamic
     protected List<Compra> listAllResources(Map params) {
 
-        params.max = 500
+        params.max = params.registros?: 20
         params.sort = 'lastUpdated'
         params.order = 'desc'
 
-        def query = Compra.where{}
-        def pendientes = this.params.getBoolean('pendientes') ?: true
+        log.info('List {}', params)
 
-        log.info('List: {} Pendientes: {} ', params, pendientes)
-        if(pendientes){
+        def query = Compra.where{}
+        def pendientes = this.params.getBoolean('pendientes')
+
+        if(pendientes){ // Regresa todos los pendientes sin importar
+            log.info('Surtiendo solo pendientes')
             query = query.where{ pendiente == true}
+            return query.list(params)
         }
 
         if(params.periodo) {
             Periodo periodo = params.periodo
             query = query.where{fecha >= periodo.fechaInicial && fecha <= periodo.fechaFinal}
+        }
+        if(params.proveedor) {
+            String provId = params.proveedor
+            query = query.where { proveedor.id == provId}
         }
         return  query.list(params)
     }
@@ -91,5 +99,11 @@ class CompraController extends RestfulController<Compra> {
         repParams.IMPRIMIR_COSTO = 'SI'
         def pdf =  reportService.run('Compra.jrxml', repParams)
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'ListaDePrecios.pdf')
+    }
+
+    def handleException(Exception e) {
+        String message = ExceptionUtils.getRootCauseMessage(e)
+        log.error(message, ExceptionUtils.getRootCause(e))
+        respond([message: message], status: 500)
     }
 }

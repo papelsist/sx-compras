@@ -24,11 +24,12 @@
     <sx-compras-filter-label [filter]="comprasFilter"></sx-compras-filter-label>
 
   </mat-card-footer>
+  <a mat-fab matTooltip="Nueva compra" matTooltipPosition="before" color="accent" class="mat-fab-position-bottom-left z-3"
+    [routerLink]="['create']">
+    <mat-icon>add</mat-icon>
+  </a>
 </mat-card>
-<a mat-fab matTooltip="Nueva compra" matTooltipPosition="before" color="accent" class="mat-fab-position-bottom-left z-3"
-  [routerLink]="['create']">
-  <mat-icon>add</mat-icon>
-</a>
+
 <mat-card *ngIf="partidas$ | async as partidas">
   <div layout layout-align="start center" class="pad-left-sm pad-right-sm">
     <span flex></span>

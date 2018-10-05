@@ -8,6 +8,7 @@ class UrlMappings {
 
         "/api/lineas"(resources: 'linea')
         "/api/marcas"(resources: 'marca')
+        "/api/clases"(resources: 'clase')
         "/api/productos"(resources: 'producto')
         "/api/proveedores"(resources: 'proveedor'){
             "/productos"(resources: 'proveedorProducto', excludes:['create', 'save', 'edit','patch'])
@@ -85,6 +86,8 @@ class UrlMappings {
             "/partidas"(resources: 'recepcionDeCompraDet', excludes:['create', 'edit','patch'])
         }
         "/api/coms/pendientesDeAnalisis/$id"(controller: 'recepcionDeCompra', action: 'pendientesDeAnalisis')
+        "/api/coms/print/$id"(controller: 'recepcionDeCompra', action: 'print', method: 'GET')
+        "/api/coms/recepcionesPorDia"(controller: 'recepcionDeCompra', action: 'recepcionesPorDia', method: 'GET')
 
         "/api/costos"(resources: 'costoPromedio', excludes:['create', 'edit','patch', 'update', 'save'])
         "/api/costos/$ejercicio/$mes"(controller: 'costoPromedio', action: 'costos', method: 'GET')

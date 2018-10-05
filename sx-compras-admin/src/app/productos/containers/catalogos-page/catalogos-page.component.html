@@ -13,7 +13,7 @@
     <span>Catálogos</span>
     <span flex></span>
   </div>
-  <mat-nav-list td-sidenav-content [tdLayoutNavListClose]="!media.query('gt-sm')">
+  <mat-nav-list dense td-sidenav-content [tdLayoutNavListClose]="!media.query('gt-sm')">
     <ng-template let-item let-last="last" ngFor [ngForOf]="navmenu">
       <a mat-list-item [routerLink]="[item.route]" routerLinkActive="active">
         <mat-icon matListAvatar>{{item.icon}}</mat-icon>

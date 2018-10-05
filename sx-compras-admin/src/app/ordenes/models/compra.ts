@@ -33,15 +33,15 @@ export interface Compra {
   ultimaDepuracion?: string;
 }
 export interface ComprasFilter {
-  fechaInicial?: Date;
-  fechaFinal?: Date;
+  fechaInicial: Date;
+  fechaFinal: Date;
   proveedor?: Partial<Proveedor>;
-  registros?: number;
-  pendientes?: boolean;
+  registros: number;
+  pendientes: boolean;
   folio?: number;
 }
 
-export function buildFilter(registros: number = 50): ComprasFilter {
+export function buildComprasFilter(registros: number = 50): ComprasFilter {
   const periodo = Periodo.fromNow(30);
   return {
     fechaInicial: periodo.fechaInicial,

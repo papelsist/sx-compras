@@ -7,7 +7,11 @@ import grails.rest.RestfulController
 @GrailsCompileStatic
 @Secured("IS_AUTHENTICATED_ANONYMOUSLY")
 class ProductoController extends RestfulController<Producto> {
+
     static responseFormats = ['json']
+
+    ProductoService productoService
+
     ProductoController() {
         super(Producto)
     }
@@ -32,4 +36,15 @@ class ProductoController extends RestfulController<Producto> {
 
         return query.list(params)
     }
+    /*
+    @Override
+    protected Producto updateResource(Producto resource) {
+        return super.updateResource(resource)
+    }
+
+    @Override
+    protected Producto saveResource(Producto resource) {
+        return super.saveResource(resource)
+    }
+    */
 }

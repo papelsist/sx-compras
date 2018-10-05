@@ -9,4 +9,11 @@ json g.render(producto, [resolveTemplate: false]) {
 		id producto?.linea?.id
 		linea producto.linea?.linea
 	}
+	if(producto.proveedorFavorito) {
+		proveedorFavorito {
+			id: producto.proveedorFavorito.id
+			nombre producto.proveedorFavorito.nombre
+			tipo producto.proveedorFavorito.tipo
+		}
+	}
 }

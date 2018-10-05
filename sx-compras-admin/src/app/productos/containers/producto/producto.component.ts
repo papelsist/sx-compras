@@ -14,7 +14,7 @@ import { TdDialogService } from '@covalent/core';
   selector: 'sx-producto',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-  <div layout="column" *tdLoading="let loading until !(saving$ | async); color: 'accent'">
+  <ng-template tdLoading [tdLoadingUntil]="!(saving$ | async)"  tdLoadingStrategy="overlay" >
     <sx-producto-form
       [producto]="producto$ | async"
       [lineas]="lineas$ | async"
@@ -23,9 +23,9 @@ import { TdDialogService } from '@covalent/core';
       (save)="onSave($event)"
       (delete)="onDelete($event)">
     </sx-producto-form>
-  </div>
+  </ng-template>
   `,
-  styles: [],
+  styles: []
 })
 export class ProductoComponent implements OnInit {
   producto$: Observable<Producto>;
@@ -36,16 +36,11 @@ export class ProductoComponent implements OnInit {
 
   constructor(
     private store: Store<fromStore.CatalogosState>,
-    private dialogservice: TdDialogService,
+    private dialogservice: TdDialogService
   ) {}
 
   ngOnInit() {
     this.saving$ = this.store.select(fromStore.getProductosLoading);
-
-    // this.store.dispatch(new fromStore.LoadLineas());
-    // this.store.dispatch(new fromStore.LoadMarcas());
-    // this.store.dispatch(new fromStore.LoadClases());
-
     this.producto$ = this.store.select(fromStore.getSelectedProducto);
     this.lineas$ = this.store.select(fromStore.getAllLineas);
     this.marcas$ = this.store.select(fromStore.getAllMarcas);
@@ -66,7 +61,7 @@ export class ProductoComponent implements OnInit {
         title: 'Manteniento de producto',
         message: `Eliminar el producto ${event.clave} ?`,
         acceptButton: 'Elimiar',
-        cancelButton: 'Cancelar',
+        cancelButton: 'Cancelar'
       })
       .afterClosed()
       .subscribe(res => {
