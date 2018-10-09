@@ -8,6 +8,7 @@ import { FacturasComponent } from './facturas/facturas.component';
 import { PagosComponent } from './pagos/pagos.component';
 import { PagoComponent } from './pago/pago.component';
 import { CfdisConceptosComponent } from './cfdis/cfdis-conceptos.component';
+import { ChequesComponent } from './cheques/cheques.component';
 
 export const containers: any[] = [
   CxpPageComponent,
@@ -19,7 +20,8 @@ export const containers: any[] = [
   NotaComponent,
   FacturasComponent,
   PagosComponent,
-  PagoComponent
+  PagoComponent,
+  ChequesComponent
 ];
 
 export * from './cxp-page/cxp-page.component';
@@ -32,3 +34,4 @@ export * from './nota/nota.component';
 export * from './facturas/facturas.component';
 export * from './pagos/pagos.component';
 export * from './pago/pago.component';
+export * from './cheques/cheques.component';

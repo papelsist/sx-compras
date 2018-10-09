@@ -1,22 +1,41 @@
 import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 
-import { Pago } from '../../model';
+import { Pago, PagosFilter, createPagoFilter } from '../../model';
 import { PagoActions, PagoActionTypes } from '../actions/pagos.actions';
 
 export interface State extends EntityState<Pago> {
   loading: boolean;
   loaded: boolean;
+  filter: PagosFilter;
+  term: string;
 }
 
 export const adapter: EntityAdapter<Pago> = createEntityAdapter<Pago>();
 
 export const initialState: State = adapter.getInitialState({
   loading: false,
-  loaded: false
+  loaded: false,
+  filter: createPagoFilter(),
+  term: ''
 });
 
 export function reducer(state = initialState, action: PagoActions): State {
   switch (action.type) {
+    case PagoActionTypes.SetPagosFilter: {
+      const filter = action.payload.filter;
+      return {
+        ...state,
+        filter
+      };
+    }
+    case PagoActionTypes.SetPagosSearchTerm: {
+      const term = action.payload.term;
+      return {
+        ...state,
+        term
+      };
+    }
+
     case PagoActionTypes.AplicarPago:
     case PagoActionTypes.DeletePago:
     case PagoActionTypes.LoadPagos: {
@@ -95,3 +114,5 @@ export const {
 
 export const getPagosLoading = (state: State) => state.loading;
 export const getPagosLoaded = (state: State) => state.loaded;
+export const getPagosFilter = (state: State) => state.filter;
+export const getPagosSearchTerm = (state: State) => state.term;

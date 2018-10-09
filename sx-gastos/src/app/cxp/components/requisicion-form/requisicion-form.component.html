@@ -14,7 +14,7 @@
         </ng-container>
       </div>
     </mat-card-title>
-    <mat-card-subtitle *ngIf="requisicion.egreso">
+    <mat-card-subtitle *ngIf="requisicion && requisicion.egreso">
       <span class="tc-pink-600" layout>
         <span>Pagada: </span>
         <span class="pad-left">{{requisicion.pagada | date: 'dd/MM/yyyy'}}</span>

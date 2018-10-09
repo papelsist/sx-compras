@@ -18,6 +18,9 @@ class UrlMappings {
         }
 
         "/api/tesoreria/cuentas"(resources: 'cuentaDeBanco')
+        "/api/tesoreria/cheques"(resources: 'cheque')
+        "/api/tesoreria/cheques/print/$id"(controller: 'cheque', action: 'print', method: 'GET')
+        "/api/tesoreria/cheques/printPoliza/$id"(controller: 'cheque', action: 'print', method: 'GET')
 
         "/api/listaDePreciosProveedor"(resources: 'listaDePreciosProveedor')
         "/api/listaDePreciosProveedor/aplicar/$id"(controller: 'listaDePreciosProveedor', action: 'aplicar', method: 'PUT')
@@ -57,6 +60,8 @@ class UrlMappings {
         "/api/requisicionesDeCompras/cerrar/$id"(controller:'requisicionDeCompras', action: 'cerrar', method: 'PUT')
         "/api/requisicionesDeCompras/print/$id"(controller: 'requisicionDeCompras', action: 'print', method: 'GET')
         "/api/requisicionesDeCompras/pendientes/$proveedorId"(controller: 'requisicionDeCompras', action: 'pendientes', method: 'GET')
+        "/api/requisicionesDeCompras/pagar"(controller: 'requisicionDeCompras', action: 'pagar', method: 'PUT')
+
 
         "/api/requisiciones/gastos"(resources: 'requisicionDeGastos')
         "/api/requisiciones/gastos/cerrar/$id"(controller:'requisicionDeGastos', action: 'cerrar', method: 'PUT')
@@ -104,6 +109,7 @@ class UrlMappings {
 
 
         "/"(controller: 'application', action:'index')
+        "/api/session"(controller: 'application', action: 'session')
         "500"(view: '/error')
         "404"(view: '/notFound')
     }

@@ -40,6 +40,9 @@ class RequisicionDeComprasController extends RestfulController<RequisicionDeComp
             String search = nombre + '%'
             query = query.where { nombre =~ search  }
         }
+        if(this.params.getBoolean('cerradas')) {
+            query = query.where{cerrada != null}
+        }
         return query.list(params);
     }
 
@@ -108,5 +111,19 @@ class RequisicionDeComprasController extends RestfulController<RequisicionDeComp
         repParams.MONEDA = params.moneda
         def pdf =  reportService.run('Requisicion.jrxml', repParams)
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'Requisicion.pdf')
+    }
+
+    def pagar(PagoDeRequisicion command) {
+        if(command == null) {
+            notFound()
+            return
+        }
+        if(command.hasErrors()) {
+            respond(command.errors, status: 422)
+            return
+        }
+        log.info("Pago: {}", command)
+        def requisicion = requisicionDeComprasService.pagar(command.requisicion, command.cuenta, command.referencia)
+        respond requisicion
     }
 }

@@ -7,6 +7,8 @@ import groovy.util.logging.Slf4j
 
 import sx.core.FolioLog
 import sx.core.LogUser
+import sx.tesoreria.CuentaDeBanco
+import sx.tesoreria.MovimientoDeCuentaService
 import sx.utils.MonedaUtils
 
 
@@ -14,6 +16,10 @@ import sx.utils.MonedaUtils
 @GrailsCompileStatic
 @Slf4j
 class RequisicionDeComprasService implements LogUser, FolioLog{
+
+    MovimientoDeCuentaService movimientoDeCuentaService
+
+    PagoService pagoService
 
     RequisicionDeCompras save(RequisicionDeCompras requisicion) {
         log.debug("Salvando requisicion  {}", requisicion)
@@ -67,6 +73,31 @@ class RequisicionDeComprasService implements LogUser, FolioLog{
     void delete(RequisicionDeCompras requisicion) throws RequisicionException{
         if(requisicion.cerrada) throw new RequisicionCerradaException(requisicion)
         requisicion.delete flush: true
+    }
+
+    /**
+     * Pagar una requisicion de compras
+     *
+     * @param requisicion
+     * @param cuenta
+     * @param referencia
+     * @return
+     */
+    Requisicion pagar(Requisicion requisicion, CuentaDeBanco cuenta, String referencia) {
+        log.info("Pagando requisicion {}", requisicion.folio)
+        if(requisicion.egreso != null)
+            throw new RequisicionDeGastosException("Requisicion ${requisicion.folio} ya está pagada con el egreso ${requisicion.egreso}")
+        if(!requisicion.partidas) {
+            throw new RequisicionDeGastosException("Requisicion ${requisicion.folio} no tiene documentos por pagar")
+        }
+        if(!requisicion.cerrada) {
+            throw new RequisicionDeGastosException("Requisicion ${requisicion.folio} no no esta cerrada")
+        }
+
+        movimientoDeCuentaService.generarPagoDeCompras((RequisicionDeCompras)requisicion, cuenta, referencia)
+        pagoService.pagar(requisicion)
+        return requisicion.save(flush: true)
+
     }
 }
 

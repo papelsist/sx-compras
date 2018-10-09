@@ -1,8 +1,11 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
+import { Subscription } from 'rxjs';
+
 import { Requisicion } from '../../models';
+
 import * as moment from 'moment';
 
 @Component({
@@ -21,10 +24,14 @@ import * as moment from 'moment';
             <mat-datepicker-toggle matSuffix [for]="myDatepicker"></mat-datepicker-toggle>
             <mat-datepicker #myDatepicker></mat-datepicker>
           </mat-form-field>
-
-          <mat-form-field class="pad-left">
-            <input matInput formControlName="referencia" placeholder="Referencia" autocomplete="off">
-          </mat-form-field>
+          <div layout>
+            <mat-form-field class="pad-left" flex>
+              <input matInput formControlName="referencia" placeholder="Referencia" autocomplete="off">
+            </mat-form-field>
+            <mat-form-field class="pad-left" flex>
+              <input matInput formControlName="cheque" placeholder="Próximo cheque" autocomplete="off">
+            </mat-form-field>
+          </div>
         </div>
 
       </div>
@@ -38,9 +45,10 @@ import * as moment from 'moment';
   </form>
   `
 })
-export class PagoDeRequisicionComponent implements OnInit {
+export class PagoDeRequisicionComponent implements OnInit, OnDestroy {
   form: FormGroup;
   requisicion: Requisicion;
+  subscription: Subscription;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -51,13 +59,30 @@ export class PagoDeRequisicionComponent implements OnInit {
 
   ngOnInit() {
     this.buildForm();
+    this.subscription = this.form.get('cuenta').valueChanges.subscribe(cta => {
+      if (this.requisicion.formaDePago === 'CHEQUE') {
+        this.form.get('cheque').setValue(cta.proximoCheque);
+        this.form.get('referencia').setValue(cta.proximoCheque);
+        this.form.get('referencia').disable();
+      } else {
+        this.form.get('referencia').setValue('');
+        this.form.get('referencia').enable();
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 
   private buildForm() {
     this.form = this.fb.group({
       fecha: [{ value: this.pago, disabled: true }, [Validators.required]],
       cuenta: [null, Validators.required],
-      referencia: [null, Validators.required]
+      referencia: [null, Validators.required],
+      cheque: [{ value: null, disabled: true }]
     });
   }
 

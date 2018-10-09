@@ -65,10 +65,10 @@ class CompraListenerService {
                  'CF5FEBRERO',
                  'VERTIZ 176',
                  'BOLIVAR'].each {
-                    buildLog(compra, it, type)
+                    buildLog(compra, it, compra.sw2)
                 }
             } else {
-                buildLog(compra, compra.sucursal.nombre, type)
+                buildLog(compra, compra.sucursal.nombre, compra.sw2)
             }
 
         }

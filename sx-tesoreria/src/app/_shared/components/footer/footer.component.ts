@@ -1,9 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
 
-import { Store, select } from '@ngrx/store';
-import * as fromRoot from 'app/store';
-import * as fromAuth from 'app/auth/store';
-
 import { AuthSession } from 'app/auth/models/authSession';
 
 @Component({
@@ -14,19 +10,30 @@ import { AuthSession } from 'app/auth/models/authSession';
       <span flex></span>
       <ng-container *ngIf="session">
         <mat-icon color="accent">person</mat-icon>
-        <span class="pad-left">{{session.username}}</span>
+        <span *ngIf="session.user; else username" class="pad-left">
+          {{session.user.nombre}}
+        </span>
+        <ng-template #username>
+          <span class="pad-left">{{session.username}}</span>
+        </ng-template>
+        <mat-icon class="pad-left" *ngIf="session.apiInfo" matTooltip="{{session.apiInfo | json}}">
+          settings_remote
+        </mat-icon>
       </ng-container>
     </div>
   `
 })
 export class FooterComponent implements OnInit {
-  @Input() session: AuthSession;
+  @Input()
+  session: AuthSession;
 
-  constructor(private store: Store<fromAuth.AuthState>) {}
+  constructor() {}
 
   ngOnInit() {
+    /*
     this.store
       .pipe(select(fromAuth.getSession))
       .subscribe(session => (this.session = session));
+      */
   }
 }

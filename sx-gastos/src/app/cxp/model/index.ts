@@ -9,3 +9,4 @@ export * from './notaDeCreditoCxP';
 export * from './notaDeCreditoCxPDet';
 export * from './aplicacionDePago';
 export * from './pago';
+export * from './cheque';

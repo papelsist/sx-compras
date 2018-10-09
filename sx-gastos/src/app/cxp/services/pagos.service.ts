@@ -6,9 +6,7 @@ import { catchError } from 'rxjs/operators';
 
 import { ConfigService } from 'app/utils/config.service';
 
-import { Pago, AplicacionDePago } from '../model';
-
-import { Periodo } from 'app/_core/models/periodo';
+import { Pago, AplicacionDePago, PagosFilter } from '../model';
 
 @Injectable()
 export class PagosService {
@@ -18,11 +16,17 @@ export class PagosService {
     this.apiUrl = configService.buildApiUrl('cxp/pagos');
   }
 
-  list(periodo: Periodo = Periodo.fromNow(10)): Observable<Pago[]> {
-    const data = periodo.toApiJSON();
-    const params = new HttpParams()
-      .set('fechaInicial', data.fechaInicial)
-      .set('fechaFinal', data.fechaFinal);
+  list(filter: PagosFilter): Observable<Pago[]> {
+    let params = new HttpParams()
+      .set('serie', 'RequisicionDeGastos')
+      .set('registros', filter.registros.toString())
+      .set('porAplicar', filter.porAplicar ? 'true' : 'false')
+      .set('reciboPendiente', filter.reciboPendiente ? 'true' : 'false')
+      .set('fechaInicial', filter.fechaInicial.toISOString())
+      .set('fechaFinal', filter.fechaFinal.toISOString());
+    if (filter.proveedor) {
+      params = params.set('proveedor', filter.proveedor.id);
+    }
     return this.http
       .get<Pago[]>(this.apiUrl, { params: params })
       .pipe(catchError((error: any) => throwError(error)));

@@ -9,7 +9,7 @@ import {
   SimpleChanges,
   ChangeDetectionStrategy
 } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+
 import { MatTable, MatTableDataSource, MatSort } from '@angular/material';
 
 import { RequisicionDet } from '../../models';
@@ -23,8 +23,7 @@ import { RequisicionDet } from '../../models';
 export class RequisicionPartidasComponent implements OnInit, OnChanges {
   @Input()
   partidas: RequisicionDet[] = [];
-  @Input()
-  parent: FormGroup;
+
   @Input()
   readOnly = false;
   @Output()

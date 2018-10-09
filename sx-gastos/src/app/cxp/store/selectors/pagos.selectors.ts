@@ -44,3 +44,13 @@ export const getSelectedPago = createSelector(
     return router.state && entities[router.state.params.pagoId];
   }
 );
+
+export const getPagosFilter = createSelector(
+  getPagosState,
+  fromPagos.getPagosFilter
+);
+
+export const getPagosSearchTerm = createSelector(
+  getPagosState,
+  fromPagos.getPagosSearchTerm
+);

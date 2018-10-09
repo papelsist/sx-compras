@@ -2,6 +2,7 @@ import { Proveedor } from '../../proveedores/models/proveedor';
 import { AplicacionDePago } from './aplicacionDePago';
 import { Requisicion } from './requisicion';
 import { ComprobanteFiscal } from './comprobanteFiscal';
+import { Periodo } from '../../_core/models/periodo';
 
 export interface Pago {
   id?: string;
@@ -30,4 +31,27 @@ export interface Pago {
   requisicion?: Partial<Requisicion>;
   egreso?: string;
   selected?: boolean;
+}
+
+export class PagosFilter {
+  fechaInicial?: Date;
+  fechaFinal?: Date;
+  proveedor?: Partial<Proveedor>;
+  registros?: number;
+  porAplicar?: boolean;
+  reciboPendiente: boolean;
+}
+
+export function createPagoFilter(): PagosFilter {
+  const { fechaInicial, fechaFinal } = Periodo.fromNow(20);
+  const registros = 50;
+  const porAplicar = false;
+  const reciboPendiente = false;
+  return {
+    fechaInicial,
+    fechaFinal,
+    registros,
+    porAplicar,
+    reciboPendiente
+  };
 }

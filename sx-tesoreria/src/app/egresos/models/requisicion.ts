@@ -22,7 +22,7 @@ export interface Requisicion {
   selected: boolean;
   cerrada: string;
   pagada?: string;
-  egreso?: number;
+  egreso?: any;
   egresoReferencia?: number;
   reciboDePago?: string;
 }

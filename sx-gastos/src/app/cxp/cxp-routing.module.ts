@@ -56,6 +56,11 @@ const routes: Routes = [
             component: fromContainers.NotaComponent
           }
         ]
+      },
+      {
+        path: 'cheques',
+        canActivate: [fromGuards.ChequesGuard],
+        children: [{ path: '', component: fromContainers.ChequesComponent }]
       }
     ]
   }

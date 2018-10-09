@@ -35,6 +35,10 @@ abstract class CompraService {
         }
         actualizar(compra)
         logEntity(compra)
+        // Fix para la replica
+        if(compra.cerrada && compra.sw2 == 'INSERT') {
+            compra.sw2 = 'UPDATE'
+        }
         compra.save failOnError: true, flush: true
         return compra
 
@@ -63,6 +67,7 @@ abstract class CompraService {
 
     Compra cerrarCompra(Compra compra){
         compra.cerrada =  new Date()
+        compra.sw2 = 'INSERT'
         logEntity(compra)
         return save(compra)
     }
@@ -76,6 +81,9 @@ abstract class CompraService {
         compra.ultimaDepuracion = depuracion
         compra.pendiente = false
         logEntity(compra)
+        if(compra.cerrada && compra.sw2 == 'INSERT') { // FIX para la replica
+            compra.sw2 = 'UPDATE'
+        }
         return save(compra)
     }
 

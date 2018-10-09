@@ -24,11 +24,24 @@ class PagoController extends RestfulController<Pago> {
 
     @Override
     protected List<Pago> listAllResources(Map params) {
-        log.debug('List: {}', params)
+
         params.sort = 'fecha'
         params.order = 'desc'
         params.max = params.registros?: 10
-        def query = Pago.where{}
+        log.debug('List: {}', params)
+        String ser = params.serie ?: 'RequisicionDeCompras'
+
+        def query = Pago.where{serie == ser}
+
+        Boolean disponibles = this.params.getBoolean('porAplicar', false)
+        if(disponibles) {
+            query = query.where{disponible > 0.0}
+        }
+
+        Boolean reciboPendiente = this.params.getBoolean('reciboPendiente', false)
+        if(reciboPendiente) {
+            query = query.where{comprobanteFiscal == null}
+        }
 
         if(params.periodo) {
             def periodo = (Periodo)params.periodo
@@ -37,7 +50,7 @@ class PagoController extends RestfulController<Pago> {
         if(params.proveedor) {
             query = query.where {proveedor.id == params.proveedor}
         }
-        log.info('List: {}', params)
+
         return query.list(params)
 
     }

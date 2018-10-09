@@ -9,7 +9,9 @@ export enum AuthActionTypes {
   LOGIN_SUCCESS = '[Auth] Login Success',
   LOGIN_FAIL = '[Auth] Login Fail',
   LOGIN_REDIRECT = '[Auth] Login Redirect',
-  LOGOUT = '[Auth] Logout'
+  LOGOUT = '[Auth] Logout',
+  LoadSession = '[Auth effect] Load session',
+  LoadSessionSuccess = '[Auth Effect] Load session success'
 }
 
 export class Login implements Action {
@@ -33,9 +35,19 @@ export class LoginRedirect implements Action {
   readonly type = AuthActionTypes.LOGIN_REDIRECT;
 }
 
+export class LoadSession implements Action {
+  readonly type = AuthActionTypes.LoadSession;
+}
+export class LoadSessionSuccess implements Action {
+  readonly type = AuthActionTypes.LoadSessionSuccess;
+  constructor(public payload: any) {}
+}
+
 export type AuthActions =
   | Login
   | LoginFail
   | LoginSuccess
   | Logout
-  | LoginRedirect;
+  | LoginRedirect
+  | LoadSession
+  | LoadSessionSuccess;

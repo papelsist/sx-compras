@@ -62,7 +62,9 @@ export class RequisicionComponent implements OnInit, OnDestroy {
   }
 
   onProveedor(event: any) {
-    this.store.dispatch(new fromStore.LoadFacturasPorRequisitar(event.id));
+    if (event !== null) {
+      this.store.dispatch(new fromStore.LoadFacturasPorRequisitar(event.id));
+    }
   }
 
   onCancel() {

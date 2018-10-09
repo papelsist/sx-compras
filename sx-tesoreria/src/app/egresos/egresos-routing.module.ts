@@ -17,6 +17,16 @@ const routes: Routes = [
         path: 'gastos/:requisicionId',
         canActivate: [fromGuards.GastoExistsGuard],
         component: fromContainers.GastoComponent
+      },
+      {
+        path: 'compras',
+        canActivate: [fromGuards.ComprasGuard],
+        component: fromContainers.ComprasComponent
+      },
+      {
+        path: 'compras/:requisicionId',
+        canActivate: [fromGuards.CompraExistsGuard],
+        component: fromContainers.CompraComponent
       }
     ]
   }

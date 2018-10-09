@@ -9,4 +9,8 @@ json g.render(requisicionDeCompras, [excludes: ['dateCreated','lastUpdated','cre
     proveedor {
         id requisicionDeCompras.proveedor.id
     }
+    egreso g.render(requisicionDeCompras.egreso, [excludes: ['moneda', 'cheque']]) {
+        cheque g.render(requisicionDeCompras.egreso.cheque)
+    }
+
 }

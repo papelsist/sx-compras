@@ -6,7 +6,6 @@ import { User } from '../../models/user';
 import { AuthSession, readFromStore } from '../../models/authSession';
 
 export interface AuthState {
-  user: User;
   session: AuthSession;
   loading: boolean;
   authError: any;
@@ -14,7 +13,6 @@ export interface AuthState {
 
 const initialState: AuthState = {
   session: readFromStore(),
-  user: undefined,
   loading: false,
   authError: undefined
 };
@@ -54,6 +52,17 @@ export function reducer(state = initialState, action: fromActions.AuthActions) {
         session: undefined
       };
     }
+    /*
+    case fromActions.AuthActionTypes.LoadSessionSuccess: {
+      const user: User = action.payload.user;
+      const apiInfo = action.payload.apiInfo;
+      return {
+        ...state,
+        user,
+        apiInfo
+      };
+    }
+    */
   }
   return state;
 }
@@ -75,3 +84,5 @@ export const getAuthError = createSelector(
   getAuthState,
   state => state.authError
 );
+
+export const getUser = createSelector(getSession, session => session.user);

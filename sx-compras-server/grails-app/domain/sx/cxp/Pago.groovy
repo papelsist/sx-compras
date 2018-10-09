@@ -62,6 +62,8 @@ class Pago {
 
     String egreso
 
+    BigDecimal disponible = 0.0
+
     static constraints = {
         folio nullable: true, maxSize: 30
         serie nullable: true, maxSize: 30
@@ -85,9 +87,10 @@ class Pago {
         fecha type:'date' ,index: 'CXP_APLICACION_IDX1'
         diferenciaFecha type: 'date'
         aplicado formula:'(select COALESCE(sum(x.importe),0) from aplicacion_de_pago x where x.pago_id=id)'
+        disponible formula:'total - diferencia - (select COALESCE(sum(x.importe),0) from aplicacion_de_pago x where x.pago_id=id)'
     }
 
-    static transients = ['disponible', 'aplicaciones']
+    static transients = ['aplicaciones']
 
 
     // static hasMany =[aplicaciones: AplicacionDePago]

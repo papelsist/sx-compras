@@ -18,9 +18,8 @@ abstract class PagoService implements  LogUser{
 
     abstract void delete(Serializable id)
 
-    Pago pagarGasto(RequisicionDeGastos requisicion) {
-        Pago pago = generarPagoDeRequisicion(requisicion)
-        return aplicarPago(pago)
+    Pago pagar(Requisicion requisicion) {
+        return generarPagoDeRequisicion(requisicion)
     }
 
     @CompileDynamic

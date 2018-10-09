@@ -3,6 +3,7 @@ package sx.cxp
 
 import grails.compiler.GrailsCompileStatic
 import grails.gorm.transactions.Transactional
+import grails.validation.Validateable
 import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
 
@@ -64,7 +65,17 @@ class RequisicionDeGastosService implements LogUser, FolioLog{
         requisicion.delete flush: true
     }
 
-    RequisicionDeGastos pagar(RequisicionDeGastos requisicion, CuentaDeBanco cuenta, String referencia) {
+    /**
+     * Registrar pago de requisicion de gastos
+     *
+     * Nota: En este tipo de requisiciones el pago se aplica automaticamente
+     *
+     * @param requisicion
+     * @param cuenta
+     * @param referencia
+     * @return
+     */
+    Requisicion pagar(Requisicion requisicion, CuentaDeBanco cuenta, String referencia) {
         log.info("Pagando requisicion {}", requisicion.folio)
         if(requisicion.egreso != null)
             throw new RequisicionDeGastosException("Requisicion ${requisicion.folio} ya está pagada con el egreso ${requisicion.egreso}")
@@ -75,8 +86,9 @@ class RequisicionDeGastosService implements LogUser, FolioLog{
             throw new RequisicionDeGastosException("Requisicion ${requisicion.folio} no no esta cerrada")
         }
 
-        movimientoDeCuentaService.generarPagoDeGastos(requisicion, cuenta, referencia)
-        pagoService.pagarGasto(requisicion)
+        movimientoDeCuentaService.generarPagoDeGastos((RequisicionDeGastos)requisicion, cuenta, referencia)
+        Pago pago = pagoService.pagar(requisicion)
+        pagoService.aplicarPago(pago)
         return requisicion.save(flush: true)
 
     }
@@ -85,6 +97,20 @@ class RequisicionDeGastosService implements LogUser, FolioLog{
 class RequisicionDeGastosException extends RuntimeException {
     RequisicionDeGastosException(String message) {
         super(message)
+    }
+}
+
+class PagoDeRequisicion implements  Validateable{
+    Requisicion requisicion
+    CuentaDeBanco cuenta
+    String referencia
+
+    String toString() {
+        return "Pago de requisicion ${requisicion.folio} Cuenta: ${cuenta?.clave}  Referencia ${referencia}"
+    }
+
+    static constraints =  {
+        referencia nullable: true
     }
 }
 

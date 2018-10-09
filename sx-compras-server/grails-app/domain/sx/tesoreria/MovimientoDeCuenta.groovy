@@ -1,9 +1,14 @@
 package sx.tesoreria
 
+import grails.compiler.GrailsCompileStatic
+
 import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
 
 
-@EqualsAndHashCode(includes='id')
+@ToString(includes = ['cuenta','afavor','fecha', 'importe'],includeNames=true,includePackage=false)
+@EqualsAndHashCode(includeFields = true, includes = ['id', 'cuenta', 'fecha', 'referencia', 'concepto', 'importe'])
+@GrailsCompileStatic
 class MovimientoDeCuenta {
 
     String id
@@ -39,9 +44,10 @@ class MovimientoDeCuenta {
     String createUser
     String updateUser
 
+    Cheque cheque
+
     static belongsTo = [movimientoDeTesoreria: MovimientoDeTesoreria]
 
-    //static mappedBy = [pago: 'egreso']
 
     static constraints = {
         tipoDeCambio scale:6
@@ -56,6 +62,7 @@ class MovimientoDeCuenta {
         movimientoDeTesoreria nullable: true
         createUser nullable: true
         updateUser nullable: true
+        cheque nullable: true, unique: true
 
     }
 

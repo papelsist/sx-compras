@@ -37,8 +37,18 @@ import { PagoFormComponent } from './pago-form/pago-form.component';
 import { AplicacionesComponent } from './aplicaciones-table/aplicaciones-table.component';
 import { AplicacionFormComponent } from './aplicacion-form/aplicacion-form.component';
 import { NotaPrintComponent } from './nota-print/nota-print.component';
+
+// Cfdis
 import { CfdisFilterComponent } from './cfdis-filter/cfdis-filter.component';
 import { CfdisFilterLabelComponent } from './cfdis-filter/cfdis-filter-label.component';
+import { PagosFilterComponent } from './pagos-filter/pagos-filter.component';
+import { PagosFilterBtnComponent } from './pagos-filter/pagos-filter-btn.component';
+import { PagosFilterLabelComponent } from './pagos-filter/pagos-filter-label.component';
+// Cheques
+import { ChequesTableComponent } from './cheques-table/cheques-table.component';
+import { ChequesFilterComponent } from './cheques-filter/cheques-filter.component';
+import { ChequesFilterBtnComponent } from './cheques-filter/cheques-filter-btn.component';
+import { ChequesFilterLabelComponent } from './cheques-filter/cheques-filter-label.component';
 
 export const components: any[] = [
   CfdisTableComponent,
@@ -65,6 +75,9 @@ export const components: any[] = [
   RequisicionPartidasComponent,
   PrintRequisicionComponent,
   AgregarFacturasComponent,
+  PagosFilterComponent,
+  PagosFilterBtnComponent,
+  PagosFilterLabelComponent,
   NotasTableComponent,
   NotaFormComponent,
   NotaConceptosComponent,
@@ -73,7 +86,12 @@ export const components: any[] = [
   PagoFormComponent,
   AplicacionesComponent,
   AplicacionFormComponent,
-  NotaPrintComponent
+  NotaPrintComponent,
+  // Cheques
+  ChequesTableComponent,
+  ChequesFilterComponent,
+  ChequesFilterBtnComponent,
+  ChequesFilterLabelComponent
 ];
 
 export const entryComponents = [
@@ -82,7 +100,9 @@ export const entryComponents = [
   AplicacionFormComponent,
   CfdisFilterComponent,
   FacturasFilterComponent,
-  RequisicionesFilterComponent
+  RequisicionesFilterComponent,
+  PagosFilterComponent,
+  ChequesFilterComponent
 ];
 
 export * from './cfdis-table/cfdis-table.component';
@@ -123,5 +143,15 @@ export * from './selector-cxp/selector-cxp.component';
 
 export * from './pagos-table/pagos-table.component';
 export * from './pago-form/pago-form.component';
+
+export * from './pagos-filter/pagos-filter.component';
+export * from './pagos-filter/pagos-filter-btn.component';
+export * from './pagos-filter/pagos-filter-label.component';
+
 export * from './aplicaciones-table/aplicaciones-table.component';
 export * from './aplicacion-form/aplicacion-form.component';
+// Cheques
+export * from './cheques-table/cheques-table.component';
+export * from './cheques-filter/cheques-filter.component';
+export * from './cheques-filter/cheques-filter-btn.component';
+export * from './cheques-filter/cheques-filter-label.component';

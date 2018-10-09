@@ -148,7 +148,7 @@ class RequisicionDeGastosController extends RestfulController<RequisicionDeGasto
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'Requisicion.pdf')
     }
 
-    def pagar(PagoDeGastos command) {
+    def pagar(PagoDeRequisicion command) {
         if(command == null) {
             notFound()
             return
@@ -158,7 +158,7 @@ class RequisicionDeGastosController extends RestfulController<RequisicionDeGasto
             return
         }
         log.info("Pago: {}", command)
-        RequisicionDeGastos requisicion = requisicionDeGastosService.pagar(command.requisicion, command.cuenta, command.referencia)
+        def requisicion = requisicionDeGastosService.pagar(command.requisicion, command.cuenta, command.referencia)
         respond requisicion
     }
 
@@ -171,14 +171,6 @@ class RequisicionDeGastosController extends RestfulController<RequisicionDeGasto
 
 }
 
-class PagoDeGastos implements  Validateable{
-    RequisicionDeGastos requisicion
-    CuentaDeBanco cuenta
-    String referencia
 
-    String toString() {
-        return "Pago de requisicion ${requisicion.folio} Cuenta: ${cuenta?.clave}  Referencia ${referencia}"
-    }
-}
 
 

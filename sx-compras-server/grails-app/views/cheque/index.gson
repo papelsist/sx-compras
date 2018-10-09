@@ -1,0 +1,8 @@
+import sx.tesoreria.Cheque
+
+model {
+	Iterable<Cheque> chequeList
+}
+
+json tmpl.cheque(chequeList ?: [])
+

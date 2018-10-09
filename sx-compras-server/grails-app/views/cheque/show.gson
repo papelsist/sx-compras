@@ -1,0 +1,7 @@
+import sx.tesoreria.Cheque
+
+model {
+	Cheque cheque
+}
+
+json tmpl.cheque(cheque)

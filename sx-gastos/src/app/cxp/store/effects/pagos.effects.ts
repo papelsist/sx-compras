@@ -10,8 +10,9 @@ import { map, switchMap, tap, catchError, take } from 'rxjs/operators';
 
 import { PagoActionTypes } from '../actions/pagos.actions';
 import * as fromActions from '../actions/pagos.actions';
+import { getPagosFilter } from '../../store/selectors';
+
 import { PagosService } from '../../services';
-import { Periodo } from '../../../_core/models/periodo';
 
 import { MatSnackBar } from '@angular/material';
 
@@ -25,10 +26,22 @@ export class PagosEffects {
   ) {}
 
   @Effect()
+  changeFilter$ = this.actions$.pipe(
+    ofType<fromActions.SetPagosFilter>(PagoActionTypes.SetPagosFilter),
+    map(action => new fromActions.LoadPagos())
+  );
+
+  @Effect()
   loadPagos$ = this.actions$.pipe(
     ofType(PagoActionTypes.LoadPagos),
-    switchMap(() =>
-      this.service.list().pipe(
+    switchMap(() => {
+      return this.store.pipe(
+        select(getPagosFilter),
+        take(1)
+      );
+    }),
+    switchMap(filter =>
+      this.service.list(filter).pipe(
         map(res => new fromActions.LoadPagosSuccess(res)),
         catchError(error => of(new fromActions.LoadPagosFail(error)))
       )

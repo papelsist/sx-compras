@@ -39,6 +39,12 @@ export class CxpPageComponent implements OnInit {
       icon: 'money_off'
     },
     {
+      route: 'cheques',
+      title: 'Cheques',
+      description: 'Entrega de cheques',
+      icon: 'account_balance_wallet'
+    },
+    {
       route: 'notas',
       title: 'Notas ',
       description: 'Notas de crédito',

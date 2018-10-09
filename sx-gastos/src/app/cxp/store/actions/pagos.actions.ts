@@ -1,10 +1,10 @@
 import { Action } from '@ngrx/store';
-import { Update } from '@ngrx/entity';
 
-import { Pago } from '../../model';
-import { Periodo } from 'app/_core/models/periodo';
+import { Pago, PagosFilter } from '../../model';
 
 export enum PagoActionTypes {
+  SetPagosFilter = '[Pagos Component ] Set pagos filter',
+  SetPagosSearchTerm = '[Pagos Component] Set pagos term',
   LoadPagos = '[Pago] Load Pagos',
   LoadPagosFail = '[Pago] Load Pagos fail',
   LoadPagosSuccess = '[Pago] Load Pagos Success',
@@ -21,6 +21,16 @@ export enum PagoActionTypes {
   LoadFail = '[Pago] Load One Pago fail',
   LoadSuccess = '[Pago] Load One Pago Success',
   AplicarPago = '[Pago] Aplicar  Pago '
+}
+
+export class SetPagosFilter implements Action {
+  readonly type = PagoActionTypes.SetPagosFilter;
+  constructor(public payload: { filter: PagosFilter }) {}
+}
+
+export class SetPagosSearchTerm implements Action {
+  readonly type = PagoActionTypes.SetPagosSearchTerm;
+  constructor(public payload: { term: string }) {}
 }
 
 export class LoadPagos implements Action {
@@ -90,6 +100,8 @@ export class AplicarPago implements Action {
 }
 
 export type PagoActions =
+  | SetPagosFilter
+  | SetPagosSearchTerm
   | LoadPagos
   | LoadPagosFail
   | LoadPagosSuccess

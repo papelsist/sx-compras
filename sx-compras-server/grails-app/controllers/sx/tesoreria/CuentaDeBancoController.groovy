@@ -2,12 +2,17 @@ package sx.tesoreria
 
 import grails.compiler.GrailsCompileStatic
 import grails.plugin.springsecurity.annotation.Secured
-import grails.rest.*
+import grails.rest.RestfulController
+import sx.reports.ReportService
 
 @GrailsCompileStatic
 @Secured("IS_AUTHENTICATED_ANONYMOUSLY")
 class CuentaDeBancoController extends RestfulController {
+
     static responseFormats = ['json']
+
+    ReportService reportService
+
     CuentaDeBancoController() {
         super(CuentaDeBanco)
     }

@@ -20,8 +20,10 @@ import { Pago } from '../../model';
   styleUrls: ['./pagos-table.component.scss']
 })
 export class PagosTableComponent implements OnInit, OnChanges {
-  @Input() pagos: Pago[] = [];
-  @Input() filter: string;
+  @Input()
+  pagos: Pago[] = [];
+  @Input()
+  filter: string;
   dataSource = new MatTableDataSource<Pago>([]);
 
   displayColumns = [
@@ -34,16 +36,24 @@ export class PagosTableComponent implements OnInit, OnChanges {
     'total',
     'aplicado',
     'disponible',
-    'modificado',
+    // 'modificado',
+    'recibo',
     'operaciones'
   ];
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @Output() print = new EventEmitter();
-  @Output() select = new EventEmitter();
-  @Output() edit = new EventEmitter();
-  @Output() pdf = new EventEmitter();
-  @Output() xml = new EventEmitter();
+  @ViewChild(MatSort)
+  sort: MatSort;
+  @ViewChild(MatPaginator)
+  paginator: MatPaginator;
+  @Output()
+  print = new EventEmitter();
+  @Output()
+  select = new EventEmitter();
+  @Output()
+  edit = new EventEmitter();
+  @Output()
+  pdf = new EventEmitter();
+  @Output()
+  xml = new EventEmitter();
   constructor() {}
 
   ngOnInit() {

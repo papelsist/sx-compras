@@ -1,7 +1,11 @@
 package sx.tesoreria
 
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
 import sx.sat.BancoSat
 
+@ToString(includes = ['id', 'clave', 'descripcion', 'numero'],includeNames=true,includePackage=false)
+@EqualsAndHashCode(includeFields = true,includes = ['id', 'clave', 'numero'])
 class CuentaDeBanco {
 
     String id
@@ -34,6 +38,11 @@ class CuentaDeBanco {
 
     Date lastUpdated
 
+    String createUser
+    String updateUser
+
+    Long proximoCheque
+
     static constraints = {
     	numero maxSize:30
         clave maxSize:30, unique: true
@@ -44,6 +53,10 @@ class CuentaDeBanco {
         sw2 nullable:true
         bancoSat nullable: true
         disponibleEnPagos nullable: true
+        disponibleEnVenta nullable: true
+        createUser nullable: true
+        updateUser nullable: true
+        proximoCheque nullable: true
     }
 
     String toString() {
@@ -53,4 +66,6 @@ class CuentaDeBanco {
     static mapping={
         id generator:'uuid'
     }
+
+
 }
