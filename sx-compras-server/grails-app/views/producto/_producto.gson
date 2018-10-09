@@ -4,16 +4,9 @@ model {
 	Producto producto
 }
 
-json g.render(producto, [resolveTemplate: false]) {
-	linea {
-		id producto?.linea?.id
-		linea producto.linea?.linea
-	}
-	if(producto.proveedorFavorito) {
-		proveedorFavorito {
-			id: producto.proveedorFavorito.id
-			nombre producto.proveedorFavorito.nombre
-			tipo producto.proveedorFavorito.tipo
-		}
-	}
+json g.render(producto, [excludes: ['linea', 'marca', 'clase'], resolveTemplate: false]) {
+	linea producto.linea?.linea
+	clase producto.clase?.clase
+	marca producto.marca?.marca
+	proveedor producto?.proveedorFavorito?.clave
 }

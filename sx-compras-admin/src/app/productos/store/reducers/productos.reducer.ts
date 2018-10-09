@@ -64,6 +64,7 @@ export function reducer(
       };
     }
 
+    case fromProductos.UPSERT_PRODUCTO:
     case fromProductos.UPDATE_PRODUCTO_SUCCESS:
     case fromProductos.CREATE_PRODUCTO_SUCCESS: {
       const producto = action.payload;

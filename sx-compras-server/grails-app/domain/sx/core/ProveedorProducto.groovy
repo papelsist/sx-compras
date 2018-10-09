@@ -50,7 +50,7 @@ class ProveedorProducto {
 
     String updateUser
 
-    Boolean suspendido
+    Boolean suspendido = false
 
     static constraints = {
         claveProveedor nullable:true

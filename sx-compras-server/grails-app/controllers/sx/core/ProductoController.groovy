@@ -22,6 +22,7 @@ class ProductoController extends RestfulController<Producto> {
         def query = Producto.where {}
         params.sort = params.sort ?:'lastUpdated'
         params.order = params.order ?:'desc'
+        params.max = 1000
 
         if(params.term){
             def search = '%' + params.term + '%'

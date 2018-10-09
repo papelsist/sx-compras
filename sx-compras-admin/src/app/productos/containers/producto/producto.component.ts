@@ -1,8 +1,10 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import * as fromRoot from 'app/store';
 import * as fromStore from '../../store';
+
+import { Observable } from 'rxjs';
 
 import { Producto } from '../../models/producto';
 import { Linea } from '../../models/linea';
@@ -21,7 +23,8 @@ import { TdDialogService } from '@covalent/core';
       [marcas]="marcas$ | async"
       [clases]="clases$ | async"
       (save)="onSave($event)"
-      (delete)="onDelete($event)">
+      (delete)="onDelete($event)"
+      (cancel)="onCancel()">
     </sx-producto-form>
   </ng-template>
   `,
@@ -69,5 +72,8 @@ export class ProductoComponent implements OnInit {
           this.store.dispatch(new fromStore.RemoveProducto(event));
         }
       });
+  }
+  onCancel() {
+    this.store.dispatch(new fromRoot.Back());
   }
 }

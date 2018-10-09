@@ -4,4 +4,11 @@ model {
 	Producto producto
 }
 
-json tmpl.producto(producto)
+json g.render(producto, [ excludes: ['linea', 'proveedorFavorito'], resolveTemplate: false]) {
+	linea {
+		id producto?.linea?.id
+		linea producto.linea?.linea
+	}
+	proveedorFavorito g.render(producto.proveedorFavorito, [includes: ['id','nombre','tipo']])
+
+}

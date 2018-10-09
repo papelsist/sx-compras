@@ -1,8 +1,7 @@
-
+/*
 .productos-table-container {
   display: flex;
   flex-direction: column;
-  //max-height: 500px;
   min-height: 500px;
 }
 
@@ -42,4 +41,40 @@
 
 .mat-column-linea, .mat-column-clase, .mat-column-marca {
   min-width: 110px;
+}
+*/
+
+.mat-table {
+  width: 100%;
+  overflow: auto;
+  max-height: 70vh;
+}
+
+.mat-column-folio, .mat-column-fecha{
+  max-width: 80px;
+}
+.mat-column-moneda {
+  max-width: 30px;
+}
+.mat-column-tipoDeCambio {
+  max-width: 60px;
+}
+.mat-column-fecha, .mat-column-ultimaModificacion {
+  max-width: 110px;
+}
+
+.mat-column-cerrada, .mat-column-ultimaDepuracion {
+  max-width: 80px;
+  font-size: 9px;
+}
+.mat-cell {
+  font-size: 11px;
+}
+.mat-row {
+  //cursor: pointer;
+  height: 30px;
+
+}
+.suspendido {
+  color: red;
 }

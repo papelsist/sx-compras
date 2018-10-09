@@ -16,12 +16,18 @@ class CuentaPorPagarController extends RestfulController<CuentaPorPagar> {
 
     @Override
     protected List<CuentaPorPagar> listAllResources(Map params) {
-        // log.info('List: {}', params)
+        log.info('List: {}', params)
         params.sort = 'fecha'
         params.order = 'desc'
         params.max = params.registros ?: 20
+
         def tipo = params.tipo?: 'COMPRAS'
         def query = CuentaPorPagar.where {tipo == tipo}
+        log.info('Tipo {}', tipo)
+        if(tipo == 'COMPRAS') {
+            params.max = 500
+        }
+
 
         if(params.periodo) {
             Periodo periodo = (Periodo)params.periodo

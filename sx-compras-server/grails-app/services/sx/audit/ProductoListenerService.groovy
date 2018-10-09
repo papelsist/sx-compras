@@ -7,18 +7,24 @@ import groovy.util.logging.Slf4j
 
 import org.grails.datastore.mapping.engine.event.AbstractPersistenceEvent
 import org.grails.datastore.mapping.engine.event.PostDeleteEvent
+import org.grails.datastore.mapping.engine.event.PostInsertEvent
 import org.grails.datastore.mapping.engine.event.PostUpdateEvent
 
 import org.springframework.beans.factory.annotation.Autowired
+import sx.core.ExistenciaService
 import sx.core.Producto
+
 
 
 @Slf4j
 @CompileStatic
-@Transactional
+// @Transactional
 class ProductoListenerService {
 
     @Autowired AuditLogDataService auditLogDataService
+
+    @Autowired ExistenciaService existenciaService
+
 
     String getId(AbstractPersistenceEvent event) {
         if ( event.entityObject instanceof Producto ) {
@@ -35,8 +41,21 @@ class ProductoListenerService {
     }
 
     @Subscriber
+    void afterInsert(PostInsertEvent event) {
+        Producto producto = getProducto(event)
+        if(producto) {
+            log.debug('Alta de producto nuevo generando existencias')
+            logEntity(producto, 'INSERT')
+            Producto.withNewSession {
+                existenciaService.generarExistencias(producto)
+            }
+        }
+
+    }
+
+    @Subscriber
     void afterUpdate(PostUpdateEvent event) {
-        log.debug('{} {} ', event.eventType.name(), event.entity.name)
+        // log.debug('{} {} ', event.eventType.name(), event.entity.name)
         String id = getId(event)
         if ( id ) {
             log.debug('{} {} Id: {}', event.eventType.name(), event.entity.name, id)
@@ -44,6 +63,8 @@ class ProductoListenerService {
             logEntity(producto, 'UPDATE')
         }
     }
+
+
 
     @Subscriber
     void afterDelete(PostDeleteEvent event) {
@@ -54,6 +75,7 @@ class ProductoListenerService {
     }
 
     def logEntity(Producto producto, String type) {
+
         ['SOLIS',
          'TACUBA',
          'ANDRADE',

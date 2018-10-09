@@ -40,15 +40,15 @@ abstract class ListaDePreciosProveedorService implements LogUser{
     ListaDePreciosProveedor actualizarProductos(ListaDePreciosProveedor lista) {
 
         List<ProveedorProducto> prods = ProveedorProducto.where{proveedor == lista.proveedor && suspendido == false && moneda == lista.moneda}.list()
-        // log.info('Productos activos del proveedor: {} ', prods.collect{it.producto.clave}.join(','))
+        log.info('Productos activos del proveedor: {} ', prods.collect{it.producto.clave}.join(',').size())
         List<String> existentes = lista.partidas.collect {it.clave.trim()}
-        //log.info('En lista {}', existentes)
+        log.info('En lista {}', existentes.size())
 
         List<ProveedorProducto> faltantes = prods.findAll{ item ->
             def good = existentes.contains(item.producto.clave.trim())
             return !good
         }
-        // log.debug('Faltantes: {}', faltantes.size())
+        log.debug('Faltantes: {}', faltantes.size())
         faltantes.each {
             ListaDePreciosProveedorDet det = new ListaDePreciosProveedorDet()
             det.producto = it

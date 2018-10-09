@@ -47,6 +47,8 @@ export const UPDATE_PRODUCTO = '[Catalogos] Update producto';
 export const UPDATE_PRODUCTO_FAIL = '[Catalogos] Update producto Fail';
 export const UPDATE_PRODUCTO_SUCCESS = '[Catalogos] Update producto Success';
 
+export const UPSERT_PRODUCTO = '[Catalogos] Upsert producto';
+
 export class UpdateProducto implements Action {
   readonly type = UPDATE_PRODUCTO;
   constructor(public payload: Producto) {}
@@ -59,6 +61,11 @@ export class UpdateProductoFail implements Action {
 
 export class UpdateProductoSuccess implements Action {
   readonly type = UPDATE_PRODUCTO_SUCCESS;
+  constructor(public payload: Producto) {}
+}
+
+export class UpsertProducto implements Action {
+  readonly type = UPSERT_PRODUCTO;
   constructor(public payload: Producto) {}
 }
 
@@ -111,6 +118,7 @@ export type ProductosAction =
   | UpdateProducto
   | UpdateProductoFail
   | UpdateProductoSuccess
+  | UpsertProducto
   | RemoveProducto
   | RemoveProductoFail
   | RemoveProductoSuccess
