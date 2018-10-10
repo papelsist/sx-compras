@@ -57,6 +57,12 @@
       <span class="tc-pink-700" *ngIf="!req.egreso">
         PENDIENTE
       </span>
+      <span *ngIf="req.egreso">
+        Ref: {{req.egresoReferencia}}
+      </span>
+      <span *ngIf="req?.egreso?.cheque?.impresion" class="text-sm">
+        Imp({{req.egreso.cheque.impresion | date: 'dd/MM/yyyy'}})
+      </span>
     </td>
   </ng-container>
   <ng-container matColumnDef="reciboDePago">

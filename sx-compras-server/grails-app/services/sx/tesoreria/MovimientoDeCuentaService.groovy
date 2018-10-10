@@ -71,7 +71,7 @@ class MovimientoDeCuentaService implements  LogUser{
             cheque.nombre = egreso.afavor
             cheque.fecha = egreso.fecha
             cheque.folio = cuenta.proximoCheque
-            cheque.importe = egreso.importe
+            cheque.importe = egreso.importe.abs()
             cuenta.proximoCheque = cuenta.proximoCheque + 1
 
             cheque.egreso = egreso

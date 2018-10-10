@@ -38,7 +38,7 @@ export class RequisicionesTableComponent implements OnInit, OnChanges {
     'tipoDeCambio',
     'total',
     'pagada',
-    'egresoReferencia',
+    // 'egresoReferencia',
     'comentario',
     'reciboDePago',
     'operaciones'

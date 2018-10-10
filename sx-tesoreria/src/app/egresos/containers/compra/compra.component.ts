@@ -21,7 +21,6 @@ import { ReportService } from '../../../reportes/services/report.service';
         [requisicion]="requisicion$ | async"
         (cancel)="onCancel()"
         (pagar)="onPagar($event)"
-        (printCheque)="onPrintCheque($event)"
         (poliza)="onPoliza($event)">
       </sx-requisicion-pago>
     </div>
@@ -69,28 +68,10 @@ export class CompraComponent implements OnInit {
       });
   }
 
-  onPrintCheque(egreso) {
-    this.dialogService
-      .openConfirm({
-        title: 'Impresión de Cheque',
-        message: 'Folio: ' + egreso.cheque.folio,
-        acceptButton: 'Aceptar',
-        cancelButton: 'Cancelar'
-      })
-      .afterClosed()
-      .subscribe(res => {
-        if (res) {
-          const cheque = { id: egreso.cheque.id };
-          const url = `tesoreria/cheques/print/${cheque.id}`;
-          this.reportService.runReport(url, {});
-        }
-      });
-  }
-
   onPoliza(egreso) {
     if (egreso.cheque) {
       const cheque = { id: egreso.cheque.id };
-      const url = `tesoreria/cheques/print/${cheque.id}`;
+      const url = `tesoreria/cheques/printPoliza/${cheque.id}`;
       this.reportService.runReport(url, {});
     }
   }

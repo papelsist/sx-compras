@@ -24,6 +24,12 @@ export class EgresosPageComponent implements OnInit {
       title: 'Gastos',
       description: 'Pago de gastos',
       icon: 'receipt'
+    },
+    {
+      route: 'cheques',
+      title: 'Cheques',
+      description: 'Pagos con cheque',
+      icon: 'account_balance_wallet'
     }
   ];
 

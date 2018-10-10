@@ -27,6 +27,11 @@ const routes: Routes = [
         path: 'compras/:requisicionId',
         canActivate: [fromGuards.CompraExistsGuard],
         component: fromContainers.CompraComponent
+      },
+      {
+        path: 'cheques',
+        canActivate: [fromGuards.ChequesGuard],
+        children: [{ path: '', component: fromContainers.ChequesComponent }]
       }
     ]
   }

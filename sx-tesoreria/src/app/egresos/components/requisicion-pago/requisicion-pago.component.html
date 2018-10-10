@@ -16,9 +16,12 @@
     <span class="pad-left"> {{requisicion.fechaDePago| date:'dd/MM/yyyy'}}</span>
     <span flex></span>
 
-    <a *ngIf="requisicion?.egreso" class="tc-pink-600" mat-button>
+    <a *ngIf="requisicion?.egreso" mat-button>
       <span>Pagada </span>
       <span>{{requisicion.pagada | date: 'dd/MM/yyyy'}}</span>
+      <span class="pad-left" *ngIf="requisicion?.egreso?.cheque">
+        Cheque: {{requisicion.egreso.cheque.folio}}
+      </span>
     </a>
     <span flex></span>
   </div>
@@ -59,7 +62,8 @@
     <sx-pago-requisicion-btn [requisicion]="requisicion" (pagar)="pagar.emit($event)"></sx-pago-requisicion-btn>
     <sx-print-requisicion [requisicion]="requisicion" *ngIf="requisicion"></sx-print-requisicion>
     <ng-container *ngIf="requisicion?.egreso?.cheque">
-      <button mat-button (click)="printCheque.emit(requisicion.egreso)"> Imprimir Cheque</button>
+      <!-- <button mat-button (click)="printCheque.emit(requisicion.egreso)"> Imprimir Cheque</button> -->
+      <sx-print-cheque [egreso]="requisicion.egreso"></sx-print-cheque>
       <button mat-button (click)="poliza.emit(requisicion.egreso)"> Póliza</button>
     </ng-container>
   </mat-card-actions>

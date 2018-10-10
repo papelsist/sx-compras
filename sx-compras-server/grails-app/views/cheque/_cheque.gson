@@ -4,4 +4,7 @@ model {
 	Cheque cheque
 }
 
-json g.render(cheque, [resolveTemplate: false])
+json g.render(cheque, [resolveTemplate: false]) {
+	cuentaNumero cheque.cuenta.numero
+	banco cheque.cuenta.descripcion
+}

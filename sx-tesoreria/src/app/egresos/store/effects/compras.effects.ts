@@ -14,12 +14,14 @@ import * as fromServices from '../../services';
 import * as fromRoot from 'app/store';
 
 import { MatSnackBar } from '@angular/material';
+import { ReportService } from '../../../reportes/services/report.service';
 
 @Injectable()
 export class ComprasEffects {
   constructor(
     private actions$: Actions,
     private service: fromServices.ComprasService,
+    private reportService: ReportService,
     private store: Store<fromStore.State>,
     public snackBar: MatSnackBar
   ) {}

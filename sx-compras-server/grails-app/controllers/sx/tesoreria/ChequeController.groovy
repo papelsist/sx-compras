@@ -7,6 +7,7 @@ import grails.rest.*
 import org.apache.commons.lang3.exception.ExceptionUtils
 
 import sx.reports.ReportService
+import sx.utils.ImporteALetra
 import sx.utils.Periodo
 
 @GrailsCompileStatic
@@ -62,9 +63,11 @@ class ChequeController extends RestfulController<Cheque> {
     }
 
     def printPoliza( ) {
+        Cheque cheque = Cheque.get(params.id.toString())
         Map repParams = [ID: params.id]
-        def pdf =  reportService.run('Requisicion.jrxml', repParams)
-        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'Requisicion.pdf')
+        repParams.IMPLETRA = ImporteALetra.aLetra(cheque.importe.abs())
+        def pdf =  reportService.run('PolizaCheque.jrxml', repParams)
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'PolizaCheque.pdf')
     }
 
     def handleException(Exception e) {

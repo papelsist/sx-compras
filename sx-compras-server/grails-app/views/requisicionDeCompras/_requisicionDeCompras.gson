@@ -10,4 +10,5 @@ json g.render(requisicionDeCompras, [excludes: ['proveedor','partidas'], resolve
         nombre: requisicionDeCompras.proveedor.nombre
     }
     partidas g.render(requisicionDeCompras.partidas)
+    egresoReferencia requisicionDeCompras?.egreso?.referencia
 }

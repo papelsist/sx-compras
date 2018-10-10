@@ -7,6 +7,12 @@ import { RequisicionPagoComponent } from './requisicion-pago/requisicion-pago.co
 import { RequisicionPartidasComponent } from './requisicion-partidas/requisicion-partidas.component';
 import { PagoDeRequisicionComponent } from './pago-de-requisicion/pago-de-requisicion.component';
 import { PagoDeRequisicionBtnComponent } from './pago-de-requisicion/pago-de-requisicion-btn.component';
+import { PrintChequeComponent } from './print-cheque/print-cheque.component';
+// Cheques
+import { ChequesTableComponent } from './cheques-table/cheques-table.component';
+import { ChequesFilterComponent } from './cheques-filter/cheques-filter.component';
+import { ChequesFilterBtnComponent } from './cheques-filter/cheques-filter-btn.component';
+import { ChequesFilterLabelComponent } from './cheques-filter/cheques-filter-label.component';
 
 export const components: any[] = [
   RequisicionesTableComponent,
@@ -17,7 +23,13 @@ export const components: any[] = [
   RequisicionPagoComponent,
   RequisicionPartidasComponent,
   PagoDeRequisicionComponent,
-  PagoDeRequisicionBtnComponent
+  PagoDeRequisicionBtnComponent,
+  PrintChequeComponent,
+  // Cheques
+  ChequesTableComponent,
+  ChequesFilterComponent,
+  ChequesFilterBtnComponent,
+  ChequesFilterLabelComponent
 ];
 
 export const entryComponents: any[] = [
@@ -33,3 +45,9 @@ export * from './requisicion-pago/requisicion-pago.component';
 export * from './requisicion-partidas/requisicion-partidas.component';
 export * from './pago-de-requisicion/pago-de-requisicion.component';
 export * from './pago-de-requisicion/pago-de-requisicion-btn.component';
+export * from './print-cheque/print-cheque.component';
+// Cheques
+export * from './cheques-table/cheques-table.component';
+export * from './cheques-filter/cheques-filter.component';
+export * from './cheques-filter/cheques-filter-btn.component';
+export * from './cheques-filter/cheques-filter-label.component';
