@@ -1,0 +1,19 @@
+import sx.cxp.Requisicion
+import sx.cxp.RequisicionDeCompras
+
+model {
+    Requisicion requisicion
+}
+
+json g.render(requisicion, [excludes: ['dateCreated','lastUpdated','createUser', 'partidas', 'proveedor']]) {
+    partidas g.render(requisicion.partidas)
+    proveedor {
+        id requisicion.proveedor.id
+    }
+    if(requisicion instanceof  RequisicionDeCompras) {
+        tipo 'COMPRAS'
+    } else {
+        tipo 'GASTOS'
+    }
+
+}

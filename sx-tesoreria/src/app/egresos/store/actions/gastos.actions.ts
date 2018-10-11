@@ -14,7 +14,11 @@ export enum GastosActionTypes {
 
   PagarGasto = '[Gasto] Pagar',
   PagarGastoFail = '[Gasto] Pagar fail',
-  PagarGastoSuccess = '[Gasto] Pagar success'
+  PagarGastoSuccess = '[Gasto] Pagar success',
+
+  CancelarPagarGasto = '[Gasto component] Cancelar pago',
+  CancelarPagarGastoFail = '[Gasto API] Cancelar pago fail',
+  CancelarPagarGastoSuccess = '[Gasto API] Cancelar pago success'
 }
 
 export class SetGastosFilter implements Action {
@@ -53,6 +57,20 @@ export class PagarGastoSuccess implements Action {
   constructor(public payload: { requisicion: Requisicion }) {}
 }
 
+// Cancelar pago
+export class CancelarPagarGasto implements Action {
+  readonly type = GastosActionTypes.CancelarPagarGasto;
+  constructor(public payload: { pago: PagoDeRequisicion }) {}
+}
+export class CancelarPagarGastoFail implements Action {
+  readonly type = GastosActionTypes.CancelarPagarGastoFail;
+  constructor(public payload: { response: any }) {}
+}
+export class CancelarPagarGastoSuccess implements Action {
+  readonly type = GastosActionTypes.CancelarPagarGastoSuccess;
+  constructor(public payload: { requisicion: Requisicion }) {}
+}
+
 export type GastosActions =
   | SetGastosFilter
   | LoadGastos
@@ -61,4 +79,7 @@ export type GastosActions =
   | UpsertGasto
   | PagarGasto
   | PagarGastoFail
-  | PagarGastoSuccess;
+  | PagarGastoSuccess
+  | CancelarPagarGasto
+  | CancelarPagarGastoFail
+  | CancelarPagarGastoSuccess;

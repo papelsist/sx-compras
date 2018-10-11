@@ -7,13 +7,13 @@ import { TdDialogService } from '@covalent/core';
   selector: 'sx-print-cheque',
   template: `
     <button mat-button [color]="color" (click)="runReport()" >
-      Imprimir cheque
+      <mat-icon>picture_as_pdf</mat-icon> Cheque
     </button>
   `
 })
 export class PrintChequeComponent implements OnInit {
   @Input()
-  color = 'default';
+  color = 'accent';
   @Input()
   title = 'Imprimir';
   @Input()

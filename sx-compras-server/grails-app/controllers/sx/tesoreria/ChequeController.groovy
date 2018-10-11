@@ -55,10 +55,15 @@ class ChequeController extends RestfulController<Cheque> {
     // @CompileDynamic
     def print( ) {
         Cheque cheque = Cheque.get(params.id.toString())
+        String reportName = cheque.cuenta.impresionTemplate
+        if(!reportName) {
+            throw new RuntimeException("No existe formato de imresion para la cuenta ${cheque.cuenta.numero} (${cheque.cuenta.descripcion})")
+        }
         cheque.impresion = new Date()
         cheque.save flush: true
         Map repParams = [ID: params.id]
-        def pdf =  reportService.run('Requisicion.jrxml', repParams)
+        repParams.IMPLETRA = ImporteALetra.aLetra(cheque.importe.abs())
+        def pdf =  reportService.run(reportName, repParams)
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'Requisicion.pdf')
     }
 

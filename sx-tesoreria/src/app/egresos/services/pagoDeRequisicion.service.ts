@@ -5,17 +5,19 @@ import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 import { ConfigService } from 'app/utils/config.service';
-
-import * as _ from 'lodash';
-import { Requisicion, RequisicionesFilter } from '../models';
+import {
+  Requisicion,
+  RequisicionesFilter,
+  CancelacionDeCheque
+} from '../models';
 import { PagoDeRequisicion } from '../models/pagoDeRequisicion';
 
 @Injectable()
-export class GastosService {
+export class PagoDeRequisicionService {
   private apiUrl: string;
 
-  constructor(private http: HttpClient, private configService: ConfigService) {
-    this.apiUrl = configService.buildApiUrl('requisiciones/gastos');
+  constructor(private http: HttpClient, configService: ConfigService) {
+    this.apiUrl = configService.buildApiUrl('requisiciones/pago');
   }
 
   list(filtro: RequisicionesFilter): Observable<Requisicion[]> {
@@ -42,17 +44,30 @@ export class GastosService {
   }
 
   pagar(pago: PagoDeRequisicion): Observable<Requisicion> {
-    const url = this.configService.buildApiUrl('requisiciones/pago/pagar');
-    // const url = `${this.apiUrl}/pagar`;
+    const url = `${this.apiUrl}/pagar`;
     return this.http
       .put<Requisicion>(url, pago)
       .pipe(catchError((error: any) => throwError(error)));
   }
 
-  cancelarPago(id: string) {
-    const url = `${this.apiUrl}/cancelarPago/${id}`;
+  cancelarPago(requisicion: Requisicion): Observable<Requisicion> {
+    const url = `${this.apiUrl}/cancelarPago/${requisicion.id}`;
     return this.http
-      .delete(url)
+      .put<Requisicion>(url, {})
+      .pipe(catchError((error: any) => throwError(error)));
+  }
+
+  generarCheque(requisicion: Requisicion): Observable<Requisicion> {
+    const url = `${this.apiUrl}/generarCheque/${requisicion.id}`;
+    return this.http
+      .put<Requisicion>(url, {})
+      .pipe(catchError((error: any) => throwError(error)));
+  }
+
+  cancelarCheque(cancelacion: CancelacionDeCheque): Observable<Requisicion> {
+    const url = `${this.apiUrl}/cancelarCheque`;
+    return this.http
+      .put<Requisicion>(url, cancelacion)
       .pipe(catchError((error: any) => throwError(error)));
   }
 }

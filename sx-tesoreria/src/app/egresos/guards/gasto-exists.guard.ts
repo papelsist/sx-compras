@@ -29,7 +29,6 @@ export class GastoExistsGuard implements CanActivate {
   hasEntityInApi(id: string): Observable<boolean> {
     return this.service.get(id).pipe(
       map(requisicion => new fromStore.UpsertGasto({ requisicion })),
-      // tap(action => console.log('Req in api dispatchin action: ', action)),
       tap(action => this.store.dispatch(action)),
       map(requisicion => !!requisicion),
       catchError(() => {

@@ -21,7 +21,9 @@ import { ReportService } from '../../../reportes/services/report.service';
         [requisicion]="requisicion$ | async"
         (cancel)="onCancel()"
         (pagar)="onPagar($event)"
-        (poliza)="onPoliza($event)">
+        (poliza)="onPoliza($event)"
+        (cancelarPago)="onCancelarPago($event)"
+        (cancelarCheque)="onCancelarCheque($event)">>
       </sx-requisicion-pago>
     </div>
   </ng-template>
@@ -57,6 +59,24 @@ export class CompraComponent implements OnInit {
       .openConfirm({
         title: 'Cancelar el pago de la requisición',
         message: `Folio: ${event.folio}`,
+        acceptButton: 'Aceptar',
+        cancelButton: 'Cancelar'
+      })
+      .afterClosed()
+      .subscribe(res => {
+        if (res) {
+          // this.store.dispatch(new fromStore.DeleteRequisicion(event));
+        }
+      });
+  }
+
+  onCancelarCheque(event: Requisicion) {
+    this.dialogService
+      .openConfirm({
+        title: 'Cancelar el cheque ',
+        message: `Cheque: ${event.egreso.cheque.folio} (${
+          event.egreso.cheque.banco
+        })`,
         acceptButton: 'Aceptar',
         cancelButton: 'Cancelar'
       })

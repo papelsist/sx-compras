@@ -1,0 +1,24 @@
+import sx.cxp.Requisicion
+import sx.cxp.RequisicionDeCompras
+
+model {
+    Requisicion requisicion
+}
+
+json g.render(requisicion, [excludes: ['dateCreated','lastUpdated','createUser', 'partidas', 'proveedor']]) {
+    partidas g.render(requisicion.partidas)
+    proveedor {
+        id requisicion.proveedor.id
+    }
+    egreso g.render(requisicion.egreso, [excludes: ['moneda', 'cheque']]) {
+        cheque g.render(requisicion.egreso.cheque)
+        cuenta g.render(requisicion.egreso.cuenta)
+    }
+    // tipo (requisicion instanceof  RequisicionDeCompras) ? 'COMPRAS' : 'GASTOS'
+    if(requisicion instanceof  RequisicionDeCompras) {
+        tipo 'COMPRAS'
+    } else {
+        tipo 'GASTOS'
+    }
+
+}

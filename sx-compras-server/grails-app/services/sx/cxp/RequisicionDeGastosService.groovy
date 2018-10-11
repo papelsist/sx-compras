@@ -3,23 +3,18 @@ package sx.cxp
 
 import grails.compiler.GrailsCompileStatic
 import grails.gorm.transactions.Transactional
-import grails.validation.Validateable
+
 import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
 
 import sx.core.FolioLog
 import sx.core.LogUser
-import sx.tesoreria.CuentaDeBanco
-import sx.tesoreria.MovimientoDeCuentaService
 
 @Transactional
 @GrailsCompileStatic
 @Slf4j
 class RequisicionDeGastosService implements LogUser, FolioLog{
 
-    MovimientoDeCuentaService movimientoDeCuentaService
-
-    PagoService pagoService
 
     RequisicionDeGastos save(RequisicionDeGastos requisicion) {
         log.debug("Salvando requisicion  {}", requisicion)
@@ -65,33 +60,7 @@ class RequisicionDeGastosService implements LogUser, FolioLog{
         requisicion.delete flush: true
     }
 
-    /**
-     * Registrar pago de requisicion de gastos
-     *
-     * Nota: En este tipo de requisiciones el pago se aplica automaticamente
-     *
-     * @param requisicion
-     * @param cuenta
-     * @param referencia
-     * @return
-     */
-    Requisicion pagar(Requisicion requisicion, CuentaDeBanco cuenta, String referencia) {
-        log.info("Pagando requisicion {}", requisicion.folio)
-        if(requisicion.egreso != null)
-            throw new RequisicionDeGastosException("Requisicion ${requisicion.folio} ya está pagada con el egreso ${requisicion.egreso}")
-        if(!requisicion.partidas) {
-            throw new RequisicionDeGastosException("Requisicion ${requisicion.folio} no tiene documentos por pagar")
-        }
-        if(!requisicion.cerrada) {
-            throw new RequisicionDeGastosException("Requisicion ${requisicion.folio} no no esta cerrada")
-        }
 
-        movimientoDeCuentaService.generarPagoDeGastos((RequisicionDeGastos)requisicion, cuenta, referencia)
-        Pago pago = pagoService.pagar(requisicion)
-        pagoService.aplicarPago(pago)
-        return requisicion.save(flush: true)
-
-    }
 }
 
 class RequisicionDeGastosException extends RuntimeException {
@@ -100,17 +69,4 @@ class RequisicionDeGastosException extends RuntimeException {
     }
 }
 
-class PagoDeRequisicion implements  Validateable{
-    Requisicion requisicion
-    CuentaDeBanco cuenta
-    String referencia
-
-    String toString() {
-        return "Pago de requisicion ${requisicion.folio} Cuenta: ${cuenta?.clave}  Referencia ${referencia}"
-    }
-
-    static constraints =  {
-        referencia nullable: true
-    }
-}
 

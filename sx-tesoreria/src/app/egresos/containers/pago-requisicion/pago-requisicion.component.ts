@@ -13,7 +13,7 @@ import { PagoDeRequisicion } from '../../models/pagoDeRequisicion';
 import { ReportService } from '../../../reportes/services/report.service';
 
 @Component({
-  selector: 'sx-gasto',
+  selector: 'sx-pago-requisicion',
   template: `
   <ng-template tdLoading [tdLoadingUntil]="!(loading$ | async)"  tdLoadingStrategy="overlay" >
     <div>
@@ -30,7 +30,7 @@ import { ReportService } from '../../../reportes/services/report.service';
   </ng-template>
   `
 })
-export class GastoComponent implements OnInit {
+export class PagoRequisicionComponent implements OnInit {
   requisicion$: Observable<Requisicion>;
   facturasPendientes$: Observable<CuentaPorPagar[]>;
   loading$: Observable<boolean>;
@@ -43,8 +43,8 @@ export class GastoComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.requisicion$ = this.store.pipe(select(fromStore.getSelectedGasto));
-    this.loading$ = this.store.select(fromStore.getGastosLoading);
+    this.requisicion$ = this.store.pipe(select(fromStore.getSelectedCompra));
+    this.loading$ = this.store.select(fromStore.getComprasLoading);
   }
 
   onCancel() {
@@ -52,7 +52,7 @@ export class GastoComponent implements OnInit {
   }
 
   onPagar(pago: PagoDeRequisicion) {
-    this.store.dispatch(new fromStore.PagarGasto({ pago }));
+    this.store.dispatch(new fromStore.PagarCompra({ pago }));
   }
 
   onCancelarPago(event: Requisicion) {

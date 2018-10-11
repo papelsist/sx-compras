@@ -29,13 +29,22 @@ export class RequisicionPagoComponent implements OnInit, OnChanges {
   @Output()
   poliza = new EventEmitter();
 
+  @Output()
+  cancelarPago = new EventEmitter();
+
+  @Output()
+  cancelarCheque = new EventEmitter();
+
+  @Output()
+  generarCheque = new EventEmitter();
+
   constructor() {}
 
   ngOnInit() {}
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.requisicion && changes.requisicion.currentValue) {
-      // console.log('Requisicion: ', changes.requisicion.currentValue);
+      console.log('Requisicion: ', changes.requisicion.currentValue);
     }
   }
 }

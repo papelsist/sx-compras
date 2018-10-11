@@ -148,19 +148,7 @@ class RequisicionDeGastosController extends RestfulController<RequisicionDeGasto
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'Requisicion.pdf')
     }
 
-    def pagar(PagoDeRequisicion command) {
-        if(command == null) {
-            notFound()
-            return
-        }
-        if(command.hasErrors()) {
-            respond(command.errors, status: 422)
-            return
-        }
-        log.info("Pago: {}", command)
-        def requisicion = requisicionDeGastosService.pagar(command.requisicion, command.cuenta, command.referencia)
-        respond requisicion
-    }
+
 
 
     def handleException(Exception e) {

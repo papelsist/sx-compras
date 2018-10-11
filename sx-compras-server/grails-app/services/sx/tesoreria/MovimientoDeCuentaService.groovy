@@ -2,9 +2,9 @@ package sx.tesoreria
 
 import grails.compiler.GrailsCompileStatic
 import grails.gorm.transactions.Transactional
-import grails.validation.Validateable
+
 import groovy.util.logging.Slf4j
-import sx.core.FolioLog
+
 import sx.core.LogUser
 import sx.cxp.Requisicion
 import sx.cxp.RequisicionDeCompras
@@ -85,14 +85,5 @@ class MovimientoDeCuentaService implements  LogUser{
     }
 }
 
-class PagoDeRequisicion implements Validateable {
-    Requisicion requisicion
-    CuentaDeBanco cuenta
-
-
-    static constraints = {
-
-    }
-}
 
 

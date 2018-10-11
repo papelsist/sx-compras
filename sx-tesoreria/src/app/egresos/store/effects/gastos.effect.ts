@@ -62,7 +62,7 @@ export class GastosEffects {
     })
   );
 
-  @Effect()
+  @Effect({ dispatch: false })
   pagoSuccess$ = this.actions$.pipe(
     ofType<fromGastos.PagarGastoSuccess>(GastosActionTypes.PagarGastoSuccess),
     map(action => action.payload.requisicion),
@@ -74,8 +74,8 @@ export class GastosEffects {
           duration: 8000
         }
       )
-    ),
-    map(res => new fromRoot.Go({ path: ['/egresos/gastos'] }))
+    )
+    // map(res => new fromRoot.Go({ path: ['/egresos/gastos', requisicion.id] }))
   );
 
   @Effect()

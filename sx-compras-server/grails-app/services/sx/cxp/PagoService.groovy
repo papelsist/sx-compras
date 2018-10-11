@@ -51,21 +51,7 @@ abstract class PagoService implements  LogUser{
 
     }
 
-    void cancelarPago(String pagoId){
-        Pago pago = Pago.get(pagoId)
-        // Eliminar las aplicaciones
-        AplicacionDePago.executeUpdate('delete from AplicacionDePago p where p.pago = ?', [pago])
 
-        // Actualizar requisicion
-        Requisicion requisicion = pago.requisicion
-        if(requisicion) {
-            requisicion.pagada = null
-            requisicion.aplicada = null
-            requisicion.save flush: true
-        }
-        // Eliminar el pago
-        delete(pago.id)
-    }
 
 
     @CompileDynamic

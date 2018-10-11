@@ -1,7 +1,7 @@
 <mat-card>
   <mat-card-title>
     <div layout>
-      <span class="pad-right"> Requisición: {{requisicion.folio}}</span>
+      <span class="pad-right"> Requisición: {{requisicion.folio}} ({{requisicion.tipo}})</span>
       <span class="pad-left"> {{requisicion.nombre}}</span>
       <span flex></span>
       <span class="tc-pink-600 pad-right"> CERRADA: </span>
@@ -16,13 +16,16 @@
     <span class="pad-left"> {{requisicion.fechaDePago| date:'dd/MM/yyyy'}}</span>
     <span flex></span>
 
-    <a *ngIf="requisicion?.egreso" mat-button>
+    <span *ngIf="requisicion?.egreso">
       <span>Pagada </span>
       <span>{{requisicion.pagada | date: 'dd/MM/yyyy'}}</span>
       <span class="pad-left" *ngIf="requisicion?.egreso?.cheque">
-        Cheque: {{requisicion.egreso.cheque.folio}}
+        Cheque: {{requisicion.egreso.cheque.folio}} ({{requisicion.egreso.cheque.banco}})
       </span>
-    </a>
+      <span class="pad-left" *ngIf="requisicion?.egreso?.cheque?.impresion">
+        Impreso: ({{requisicion.egreso.cheque.impresion | date: 'dd/MM/yyyy'}})
+      </span>
+    </span>
     <span flex></span>
   </div>
   <mat-divider></mat-divider>
@@ -61,10 +64,23 @@
     <button mat-button type="button" (click)="cancel.emit($event)">Cancelar</button>
     <sx-pago-requisicion-btn [requisicion]="requisicion" (pagar)="pagar.emit($event)"></sx-pago-requisicion-btn>
     <sx-print-requisicion [requisicion]="requisicion" *ngIf="requisicion"></sx-print-requisicion>
-    <ng-container *ngIf="requisicion?.egreso?.cheque">
-      <!-- <button mat-button (click)="printCheque.emit(requisicion.egreso)"> Imprimir Cheque</button> -->
-      <sx-print-cheque [egreso]="requisicion.egreso"></sx-print-cheque>
-      <button mat-button (click)="poliza.emit(requisicion.egreso)"> Póliza</button>
+    <sx-generar-cheque-btn [requisicion]="requisicion" (generar)="generarCheque.emit($event)"></sx-generar-cheque-btn>
+    <ng-container *ngIf="requisicion.egreso">
+
+
+
+      <button (click)="cancelarPago.emit(requisicion)" mat-button color="warn">
+        <mat-icon>cancel</mat-icon> Cancelar pago
+      </button>
+      <ng-container *ngIf="requisicion.egreso?.cheque">
+        <sx-print-cheque [egreso]="requisicion.egreso"></sx-print-cheque>
+        <button mat-button (click)="poliza.emit(requisicion.egreso)">
+          <mat-icon>print</mat-icon> Póliza
+        </button>
+        <button (click)="cancelarCheque.emit(requisicion)" mat-button color="warn">
+          <mat-icon>money_off</mat-icon> Cancelar cheque
+        </button>
+      </ng-container>
     </ng-container>
   </mat-card-actions>
 </mat-card>

@@ -4,4 +4,15 @@ model {
 	RequisicionDeGastos requisicionDeGastos
 }
 
-json tmpl.requisicionDeGastos(requisicionDeGastos)
+json g.render(requisicionDeGastos, [excludes: ['dateCreated','lastUpdated','createUser', 'partidas', 'proveedor']]) {
+	partidas g.render(requisicionDeGastos.partidas)
+	proveedor {
+		id requisicionDeGastos.proveedor.id
+	}
+	egreso g.render(requisicionDeGastos.egreso, [excludes: ['moneda', 'cheque']]) {
+		cheque g.render(requisicionDeGastos.egreso.cheque)
+	}
+	tipo 'GASTOS'
+
+}
+

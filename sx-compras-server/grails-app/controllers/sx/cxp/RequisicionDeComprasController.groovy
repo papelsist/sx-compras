@@ -23,6 +23,13 @@ class RequisicionDeComprasController extends RestfulController<RequisicionDeComp
 
     @Override
     @CompileDynamic
+    Object show() {
+        log.info('Show: {}', params.id)
+        respond queryForResource(params.id)
+    }
+
+    @Override
+    @CompileDynamic
     protected List<RequisicionDeCompras> listAllResources(Map params) {
         log.debug('List: {}', params)
 

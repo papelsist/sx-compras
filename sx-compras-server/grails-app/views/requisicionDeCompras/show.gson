@@ -11,6 +11,8 @@ json g.render(requisicionDeCompras, [excludes: ['dateCreated','lastUpdated','cre
     }
     egreso g.render(requisicionDeCompras.egreso, [excludes: ['moneda', 'cheque']]) {
         cheque g.render(requisicionDeCompras.egreso.cheque)
+        cuenta g.render(requisicionDeCompras.egreso.cuenta)
     }
+    tipo 'COMPRAS'
 
 }
