@@ -9,4 +9,5 @@ json g.render(compra, [excludes:['dateCreated','lastUpdated','version', 'partida
     modificada compra.dateCreated
     creada compra.dateCreated
     status compra.status
+    partidas g.render(compra.partidas)
 }

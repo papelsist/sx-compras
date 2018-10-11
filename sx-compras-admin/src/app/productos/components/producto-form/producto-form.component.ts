@@ -44,6 +44,7 @@ export class ProductoFormComponent implements OnInit {
   ngOnInit() {
     this.buildForm();
     if (this.producto) {
+      console.log('Editando producto: ', this.producto);
       this.form.patchValue(this.producto);
       // this.form.markAsPristine();
     }
@@ -90,7 +91,9 @@ export class ProductoFormComponent implements OnInit {
       precioCredito: [null, [Validators.required, Validators.min(1)]],
       largo: [0, Validators.required],
       ancho: [0, Validators.required],
-      proveedorFavorito: [null]
+      proveedorFavorito: [null],
+      productoSat: [],
+      unidadSat: []
     });
   }
 

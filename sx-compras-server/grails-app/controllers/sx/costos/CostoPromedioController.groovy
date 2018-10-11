@@ -5,7 +5,8 @@ import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.*
 
 import groovy.util.logging.Slf4j
-import sx.core.Sucursal
+import sx.core.Proveedor
+
 import sx.reports.ReportService
 import sx.utils.Periodo
 
@@ -85,6 +86,28 @@ class CostoPromedioController extends RestfulController<CostoPromedio> {
         repParams.ARTICULOS = params.producto ?: '%'
         def pdf =  reportService.run('MovimientosCosteados.jrxml', repParams)
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'MovimientosCosteados.pdf')
+    }
+
+    def mercanciaEnTransito() {
+        Map repParams = [:]
+        Periodo periodo  = (Periodo)params.periodo
+        repParams.FECHA_INI = periodo.fechaInicial
+        repParams.FECHA_FIN = periodo.fechaFinal
+        def pdf =  reportService.run('MercanciaEnTransito.jrxml', repParams)
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'MercanciaEnTransito.pdf')
+    }
+
+    def facturasAnalizadas() {
+        Map repParams = [:]
+        Periodo periodo  = (Periodo)params.periodo
+        repParams.FECHA_INI = periodo.fechaInicial
+        repParams.FECHA_FIN = periodo.fechaFinal
+
+        Proveedor proveedor = Proveedor.get(params.proveedor.toString())
+        repParams.PROVEEDOR = proveedor.clave
+
+        def pdf =  reportService.run('FacturasAnalizadasPorProveedor.jrxml', repParams)
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'FacturasAnalizadasPorProveedor.pdf')
     }
 
 

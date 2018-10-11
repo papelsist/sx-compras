@@ -8,7 +8,7 @@ import { Requisicion } from '../../models';
 @Component({
   selector: 'sx-generar-cheque-btn',
   template: `
-  <ng-container *ngIf="requisicion.egreso && !requisicion.egreso.cheque">
+  <ng-container *ngIf="isVisible()">
     <button mat-button mat-button (click)="open()"  [color]="color">
       <mat-icon>account_balance_wallet</mat-icon> Generar cheque
     </button>
@@ -39,5 +39,13 @@ export class GenerarChequeBtnComponent implements OnInit {
           this.generar.emit(this.requisicion);
         }
       });
+  }
+
+  isVisible() {
+    return (
+      this.requisicion.formaDePago === 'CHEQUE' &&
+      this.requisicion.egreso &&
+      !this.requisicion.egreso.cheque
+    );
   }
 }

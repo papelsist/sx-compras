@@ -6,24 +6,25 @@ import { Store, select } from '@ngrx/store';
 import * as fromRoot from 'app/store';
 import * as fromStore from '../../store';
 
-import { Requisicion, CuentaPorPagar } from '../../models';
+import { Requisicion, CancelacionDeCheque } from '../../models';
 
-import { TdDialogService } from '@covalent/core';
 import { PagoDeRequisicion } from '../../models/pagoDeRequisicion';
-import { ReportService } from '../../../reportes/services/report.service';
 
 @Component({
   selector: 'sx-compra',
   template: `
   <ng-template tdLoading [tdLoadingUntil]="!(loading$ | async)"  tdLoadingStrategy="overlay" >
-    <div>
+    <div *ngIf="requisicion$ | async as requisicion">
       <sx-requisicion-pago
-        [requisicion]="requisicion$ | async"
-        (cancel)="onCancel()"
-        (pagar)="onPagar($event)"
-        (poliza)="onPoliza($event)"
-        (cancelarPago)="onCancelarPago($event)"
-        (cancelarCheque)="onCancelarCheque($event)">>
+        [requisicion]="requisicion"
+        (cancel)="onCancel()">
+        <sx-pago-requisicion-btn [requisicion]="requisicion" (pagar)="onPagar($event)"></sx-pago-requisicion-btn>
+        <sx-cancelar-pago [requisicion]="requisicion" (cancelar)="onCancelarPago($event)"></sx-cancelar-pago>
+        <sx-generar-cheque-btn [requisicion]="requisicion" (generar)="onGenerarCheque($event)"></sx-generar-cheque-btn>
+        <sx-cancelar-cheque [requisicion]="requisicion" (cancelar)="onCancelarCheque($event)"></sx-cancelar-cheque>
+        <sx-print-requisicion [requisicion]="requisicion"></sx-print-requisicion>
+        <sx-print-cheque [egreso]="requisicion.egreso"></sx-print-cheque>
+        <sx-poliza-cheque [egreso]="requisicion.egreso"></sx-poliza-cheque>
       </sx-requisicion-pago>
     </div>
   </ng-template>
@@ -31,15 +32,10 @@ import { ReportService } from '../../../reportes/services/report.service';
 })
 export class CompraComponent implements OnInit {
   requisicion$: Observable<Requisicion>;
-  facturasPendientes$: Observable<CuentaPorPagar[]>;
   loading$: Observable<boolean>;
   subscription: Subscription;
 
-  constructor(
-    private store: Store<fromStore.State>,
-    private dialogService: TdDialogService,
-    private reportService: ReportService
-  ) {}
+  constructor(private store: Store<fromStore.State>) {}
 
   ngOnInit() {
     this.requisicion$ = this.store.pipe(select(fromStore.getSelectedCompra));
@@ -47,7 +43,7 @@ export class CompraComponent implements OnInit {
   }
 
   onCancel() {
-    this.store.dispatch(new fromRoot.Go({ path: ['egresos/compras'] }));
+    this.store.dispatch(new fromRoot.Back());
   }
 
   onPagar(pago: PagoDeRequisicion) {
@@ -55,44 +51,16 @@ export class CompraComponent implements OnInit {
   }
 
   onCancelarPago(event: Requisicion) {
-    this.dialogService
-      .openConfirm({
-        title: 'Cancelar el pago de la requisición',
-        message: `Folio: ${event.folio}`,
-        acceptButton: 'Aceptar',
-        cancelButton: 'Cancelar'
-      })
-      .afterClosed()
-      .subscribe(res => {
-        if (res) {
-          // this.store.dispatch(new fromStore.DeleteRequisicion(event));
-        }
-      });
+    this.store.dispatch(
+      new fromStore.CancelarPagoRequisicion({ requisicion: event })
+    );
   }
 
-  onCancelarCheque(event: Requisicion) {
-    this.dialogService
-      .openConfirm({
-        title: 'Cancelar el cheque ',
-        message: `Cheque: ${event.egreso.cheque.folio} (${
-          event.egreso.cheque.banco
-        })`,
-        acceptButton: 'Aceptar',
-        cancelButton: 'Cancelar'
-      })
-      .afterClosed()
-      .subscribe(res => {
-        if (res) {
-          // this.store.dispatch(new fromStore.DeleteRequisicion(event));
-        }
-      });
+  onCancelarCheque(cancelacion: CancelacionDeCheque) {
+    this.store.dispatch(new fromStore.CancelarCheque({ cancelacion }));
   }
 
-  onPoliza(egreso) {
-    if (egreso.cheque) {
-      const cheque = { id: egreso.cheque.id };
-      const url = `tesoreria/cheques/printPoliza/${cheque.id}`;
-      this.reportService.runReport(url, {});
-    }
+  onGenerarCheque(requisicion: Requisicion) {
+    this.store.dispatch(new fromStore.GenerarCheque({ requisicion }));
   }
 }

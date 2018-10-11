@@ -2,7 +2,7 @@ import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
-import { ComprasFilter } from '../../models/compra';
+import { ComprasFilter, buildComprasFilter } from '../../models/compra';
 
 import { Subscription } from 'rxjs';
 import { startWith } from 'rxjs/operators';
@@ -23,6 +23,10 @@ export class ComprasFilterDialogComponent implements OnInit, OnDestroy {
   ) {
     this.title = data.title || 'Filtro de compras ';
     this.filter = data.filter;
+    if (this.filter.pendientes === true) {
+      this.filter = buildComprasFilter();
+      this.filter.pendientes = true;
+    }
   }
 
   ngOnInit() {

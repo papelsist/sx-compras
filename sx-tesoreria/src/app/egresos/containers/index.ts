@@ -6,7 +6,6 @@ import { ComprasComponent } from './compras/compras.component';
 import { CompraComponent } from './compra/compra.component';
 
 import { ChequesComponent } from './cheques/cheques.component';
-import { PagoRequisicionComponent } from './pago-requisicion/pago-requisicion.component';
 
 export const containers = [
   EgresosPageComponent,
@@ -14,8 +13,7 @@ export const containers = [
   GastoComponent,
   ComprasComponent,
   CompraComponent,
-  ChequesComponent,
-  PagoRequisicionComponent
+  ChequesComponent
 ];
 
 export * from './egresos-page/egresos-page.component';
@@ -26,5 +24,3 @@ export * from './compras/compras.component';
 export * from './compra/compra.component';
 
 export * from './cheques/cheques.component';
-
-export * from './pago-requisicion/pago-requisicion.component';

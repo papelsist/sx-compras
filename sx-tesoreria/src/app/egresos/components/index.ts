@@ -15,6 +15,9 @@ import { ChequesFilterBtnComponent } from './cheques-filter/cheques-filter-btn.c
 import { ChequesFilterLabelComponent } from './cheques-filter/cheques-filter-label.component';
 import { GenerarChequeComponent } from './generar-cheque/generar-cheque.component';
 import { GenerarChequeBtnComponent } from './generar-cheque/generar-cheque-btn.component';
+import { CancelarChequeComponent } from './cancelaciones/cancelar-cheque.component';
+import { CancelarPagoComponent } from './cancelaciones/cancelar-pago.component';
+import { PolizaChequeComponent } from './poliza-cheque/poliza-cheque.component';
 
 export const components: any[] = [
   RequisicionesTableComponent,
@@ -33,7 +36,10 @@ export const components: any[] = [
   ChequesFilterBtnComponent,
   ChequesFilterLabelComponent,
   GenerarChequeComponent,
-  GenerarChequeBtnComponent
+  GenerarChequeBtnComponent,
+  CancelarChequeComponent,
+  CancelarPagoComponent,
+  PolizaChequeComponent
 ];
 
 export const entryComponents: any[] = [
@@ -58,3 +64,6 @@ export * from './cheques-filter/cheques-filter-btn.component';
 export * from './cheques-filter/cheques-filter-label.component';
 export * from './generar-cheque/generar-cheque.component';
 export * from './generar-cheque/generar-cheque-btn.component';
+export * from './cancelaciones/cancelar-cheque.component';
+export * from './cancelaciones/cancelar-pago.component';
+export * from './poliza-cheque/poliza-cheque.component';

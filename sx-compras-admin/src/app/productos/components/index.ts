@@ -12,6 +12,8 @@ import { PresentacionFieldComponent } from './producto-form/presentacion-field.c
 import { MododeventaFieldComponent } from './producto-form/mododeventa-field.component';
 import { LineaFormComponent } from './linea-form/linea-form.component';
 import { ClaseFormComponent } from './clase-form/clase-form.component';
+import { ProductoSatComponent } from './producto-sat/producto-sat.component';
+import { UnidadSatComponent } from './unidad-sat/unidad-sat.component';
 
 export const components = [
   ProductosTableComponent,
@@ -27,7 +29,9 @@ export const components = [
   LineaFormComponent,
   UnidadFieldComponent,
   PresentacionFieldComponent,
-  MododeventaFieldComponent
+  MododeventaFieldComponent,
+  ProductoSatComponent,
+  UnidadSatComponent
 ];
 
 export const entryComponents: any[] = [
@@ -50,3 +54,5 @@ export * from './linea-form/linea-form.component';
 export * from './unidad-field/unidad-field.component';
 export * from './producto-form/presentacion-field.component';
 export * from './producto-form/mododeventa-field.component';
+export * from './producto-sat/producto-sat.component';
+export * from './unidad-sat/unidad-sat.component';

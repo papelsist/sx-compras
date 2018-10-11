@@ -55,6 +55,7 @@ class CompraController extends RestfulController<Compra> {
 
         if(pendientes){ // Regresa todos los pendientes sin importar
             log.info('Surtiendo solo pendientes')
+            params.max = 10000
             query = query.where{ pendiente == true}
             return query.list(params)
         }

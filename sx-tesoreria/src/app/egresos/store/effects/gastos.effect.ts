@@ -56,6 +56,7 @@ export class GastosEffects {
     map(action => action.payload.pago),
     switchMap(pago => {
       return this.service.pagar(pago).pipe(
+        tap(res => console.log('Success: ', res)),
         map(res => new fromGastos.PagarGastoSuccess({ requisicion: res })),
         catchError(response => of(new fromGastos.PagarGastoFail({ response })))
       );

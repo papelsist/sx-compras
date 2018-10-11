@@ -4,7 +4,7 @@ import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 
 
-@ToString(includes = ['cuenta,folio'],includeNames=true,includePackage=false)
+@ToString(includes = ['cuenta', 'folio'],includeNames=true,includePackage=false)
 @EqualsAndHashCode(includeFields = true,includes = ['id', 'cuenta', 'folio'])
 class Cheque {
 

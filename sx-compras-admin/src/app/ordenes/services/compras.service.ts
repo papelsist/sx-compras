@@ -19,10 +19,15 @@ export class ComprasService {
   }
 
   list(filter: ComprasFilter): Observable<Compra[]> {
-    let params = new HttpParams()
-      .set('fechaInicial', filter.fechaInicial.toISOString())
-      .set('fechaFinal', filter.fechaFinal.toISOString())
-      .set('registros', filter.registros.toString());
+    let params = new HttpParams();
+    if (!filter.pendientes) {
+      params = params
+        .set('registros', filter.registros.toString())
+        .set('fechaInicial', filter.fechaInicial.toISOString())
+        .set('fechaFinal', filter.fechaFinal.toISOString());
+    } else {
+      params = params.set('pendientes', filter.pendientes.toString());
+    }
     if (filter.proveedor) {
       params = params.set('proveedor', filter.proveedor.id);
     }

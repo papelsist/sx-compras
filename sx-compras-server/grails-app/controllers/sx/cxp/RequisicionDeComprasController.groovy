@@ -5,6 +5,8 @@ import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.RestfulController
 import groovy.transform.CompileDynamic
 import sx.reports.ReportService
+import sx.tesoreria.PagoDeRequisicion
+import sx.tesoreria.PagoDeRequisicionService
 import sx.utils.Periodo
 
 @Secured("IS_AUTHENTICATED_ANONYMOUSLY")
@@ -15,17 +17,12 @@ class RequisicionDeComprasController extends RestfulController<RequisicionDeComp
 
     RequisicionDeComprasService requisicionDeComprasService
 
+    PagoDeRequisicionService pagoDeRequisicionService
+
     ReportService reportService
 
     RequisicionDeComprasController() {
         super(RequisicionDeCompras)
-    }
-
-    @Override
-    @CompileDynamic
-    Object show() {
-        log.info('Show: {}', params.id)
-        respond queryForResource(params.id)
     }
 
     @Override
@@ -129,8 +126,23 @@ class RequisicionDeComprasController extends RestfulController<RequisicionDeComp
             respond(command.errors, status: 422)
             return
         }
+        respond pagoDeRequisicionService.pagar(command)
+    }
+
+    /*
+
+    def pagar(PagoDeRequisicion command) {
+        if(command == null) {
+            notFound()
+            return
+        }
+        if(command.hasErrors()) {
+            respond(command.errors, status: 422)
+            return
+        }
         log.info("Pago: {}", command)
         def requisicion = requisicionDeComprasService.pagar(command.requisicion, command.cuenta, command.referencia)
         respond requisicion
     }
+    */
 }

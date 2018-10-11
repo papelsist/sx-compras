@@ -22,7 +22,7 @@ export class PrintRequisicionComponent implements OnInit {
   @Input()
   color = 'default';
   @Input()
-  title = 'Imprimir';
+  title = 'Requisicion';
   @Input()
   smallIcon = false;
   @Input()

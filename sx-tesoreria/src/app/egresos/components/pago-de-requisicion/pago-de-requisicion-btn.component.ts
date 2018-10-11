@@ -9,14 +9,16 @@ import { PagoDeRequisicion } from '../../models/pagoDeRequisicion';
 @Component({
   selector: 'sx-pago-requisicion-btn',
   template: `
-  <button mat-button mat-button (click)="open()" [disabled]="requisicion.egreso" [color]="color">
-    <mat-icon >attach_money</mat-icon> Pagar
-  </button>
+  <ng-container *ngIf="!requisicion.egreso">
+    <button mat-button mat-button (click)="open()" [color]="color">
+      <mat-icon >attach_money</mat-icon> Pagar
+    </button>
+  </ng-container>
   `
 })
 export class PagoDeRequisicionBtnComponent implements OnInit {
   @Input()
-  color = 'accent';
+  color = 'primary';
   @Input()
   requisicion: Requisicion;
   @Output()

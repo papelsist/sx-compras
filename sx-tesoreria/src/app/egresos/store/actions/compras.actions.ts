@@ -14,7 +14,11 @@ export enum ComprasActionTypes {
 
   PagarCompra = '[Compra compponent] Pagar compra',
   PagarCompraFail = '[Compra API] Pagar fail',
-  PagarCompraSuccess = '[Compra API] Pagar success'
+  PagarCompraSuccess = '[Compra API] Pagar success',
+
+  CancelarPagoCompra = '[Compra compponent]Cancelar pago compra',
+  CancelarPagoCompraFail = '[Compra API] Cancelar pago compra fail',
+  CancelarPagoCompraSuccess = '[Compra API] Cancelar pago compra success'
 }
 
 export class SetComprasFilter implements Action {

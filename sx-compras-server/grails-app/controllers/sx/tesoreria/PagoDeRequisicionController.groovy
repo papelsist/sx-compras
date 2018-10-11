@@ -32,9 +32,10 @@ class PagoDeRequisicionController {
             respond(command.errors, status: 422)
             return
         }
-        log.info("Pago: {}", command)
         Requisicion requisicion = pagoDeRequisicionService.pagar(command)
-        respond command.requisicion
+        requisicion.refresh()
+        log.info('Requisicion pagada: {} Egreso: {} Cheque: {}', requisicion.folio, requisicion.egreso, requisicion.egreso.cheque ?: '')
+        respond requisicion
     }
 
     def cancelarPago(Requisicion requisicion) {
@@ -42,8 +43,9 @@ class PagoDeRequisicionController {
             respond status: NOT_FOUND
             return
         }
-        pagoDeRequisicionService.cancelarPago(requisicion)
+        requisicion = pagoDeRequisicionService.cancelarPago(requisicion)
         [requisicion: requisicion]
+        // respond requisicion
     }
 
     def generarCheque() {

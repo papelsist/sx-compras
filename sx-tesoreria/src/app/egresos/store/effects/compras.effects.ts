@@ -67,7 +67,7 @@ export class ComprasEffects {
     })
   );
 
-  @Effect()
+  @Effect({ dispatch: false })
   pagoSuccess$ = this.actions$.pipe(
     ofType<fromCompras.PagarCompraSuccess>(
       ComprasActionTypes.PagarCompraSuccess
@@ -81,8 +81,7 @@ export class ComprasEffects {
           duration: 8000
         }
       )
-    ),
-    map(res => new fromRoot.Go({ path: ['/egresos/compras'] }))
+    )
   );
 
   @Effect()

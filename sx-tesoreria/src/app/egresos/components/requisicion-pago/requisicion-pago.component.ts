@@ -21,22 +21,7 @@ export class RequisicionPagoComponent implements OnInit, OnChanges {
   requisicion: Requisicion;
 
   @Output()
-  pagar = new EventEmitter();
-
-  @Output()
   cancel = new EventEmitter();
-
-  @Output()
-  poliza = new EventEmitter();
-
-  @Output()
-  cancelarPago = new EventEmitter();
-
-  @Output()
-  cancelarCheque = new EventEmitter();
-
-  @Output()
-  generarCheque = new EventEmitter();
 
   constructor() {}
 

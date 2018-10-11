@@ -60,7 +60,6 @@ export function actualizarPartida(row: CompraDet) {
     descuento4
   } = row;
   const factor = unidad === 'MIL' ? 1000 : 1;
-  console.log('Unidad/Factor: ', factor);
   const importeBruto = precio * (solicitado / factor);
   const importeNeto = aplicarDescuentosEnCascada(importeBruto, [
     descuento1,

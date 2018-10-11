@@ -42,7 +42,8 @@ export class ComprasService {
   }
 
   pagar(pago: PagoDeRequisicion): Observable<Requisicion> {
-    const url = `${this.apiUrl}/pagar`;
+    const url = this.configService.buildApiUrl('requisiciones/pago/pagar');
+    // const url = `${this.apiUrl}/pagar`;
     return this.http
       .put<Requisicion>(url, pago)
       .pipe(catchError((error: any) => throwError(error)));
