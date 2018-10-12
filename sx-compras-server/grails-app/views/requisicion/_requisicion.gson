@@ -10,7 +10,14 @@ json g.render(requisicion, [excludes: ['proveedor','partidas'], resolveTemplate:
 		id requisicion.proveedor.id
 		nombre: requisicion.proveedor.nombre
 	}
+	egreso g.render(requisicionDeCompras.egreso, [excludes: ['moneda', 'cheque']]) {
+        cuenta g.render(requisicionDeCompras.egreso.cuenta)
+        if(requisicionDeCompras?.egreso?.cheque)
+            cheque g.render(requisicionDeCompras.egreso.cheque)
+	}
 	partidas g.render(requisicion.partidas)
 	egresoReferencia requisicion?.egreso?.referencia
-	tipo (requisicion instanceof RequisicionDeCompras) ? 'COMPRAS' : 'GASTOS'
+    tipo requisicion.instanceOf(RequisicionDeCompras) ? 'COMPRAS' : 'GASTOS'
+    comentario: 'BEARE REQ'
+
 }

@@ -5,7 +5,16 @@ model {
 }
 
 json g.render(requisicionDeGastos, [excludes: ['partidas'], resolveTemplate: false]) {
+    proveedor {
+        id requisicionDeGastos.proveedor.id
+        nombre: requisicionDeGastos.proveedor.nombre
+    }
 	partidas g.render(requisicionDeGastos.partidas)
 	egresoReferencia requisicionDeGastos?.egreso?.referencia
-	// reciboDePago requisicionDeGastos?.egreso?.uuid
+    egreso g.render(requisicionDeGastos.egreso, [excludes: ['moneda', 'cheque']]) {
+        cuenta g.render(requisicionDeGastos.egreso.cuenta)
+        if(requisicionDeGastos?.egreso?.cheque)
+            cheque g.render(requisicionDeGastos.egreso.cheque)
+    }
+    tipo 'GASTOS'
 }

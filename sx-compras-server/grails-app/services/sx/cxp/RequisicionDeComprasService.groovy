@@ -17,9 +17,6 @@ import sx.utils.MonedaUtils
 @Slf4j
 class RequisicionDeComprasService implements LogUser, FolioLog{
 
-    MovimientoDeCuentaService movimientoDeCuentaService
-
-    PagoService pagoService
 
     RequisicionDeCompras save(RequisicionDeCompras requisicion) {
         log.debug("Salvando requisicion  {}", requisicion)
@@ -75,30 +72,7 @@ class RequisicionDeComprasService implements LogUser, FolioLog{
         requisicion.delete flush: true
     }
 
-    /**
-     * Pagar una requisicion de compras
-     *
-     * @param requisicion
-     * @param cuenta
-     * @param referencia
-     * @return
-     */
-    Requisicion pagar(Requisicion requisicion, CuentaDeBanco cuenta, String referencia) {
-        log.info("Pagando requisicion {}", requisicion.folio)
-        if(requisicion.egreso != null)
-            throw new RequisicionDeGastosException("Requisicion ${requisicion.folio} ya está pagada con el egreso ${requisicion.egreso}")
-        if(!requisicion.partidas) {
-            throw new RequisicionDeGastosException("Requisicion ${requisicion.folio} no tiene documentos por pagar")
-        }
-        if(!requisicion.cerrada) {
-            throw new RequisicionDeGastosException("Requisicion ${requisicion.folio} no no esta cerrada")
-        }
 
-        movimientoDeCuentaService.generarPagoDeCompras((RequisicionDeCompras)requisicion, cuenta, referencia)
-        pagoService.pagar(requisicion)
-        return requisicion.save(flush: true)
-
-    }
 }
 
 class RequisicionException extends RuntimeException {

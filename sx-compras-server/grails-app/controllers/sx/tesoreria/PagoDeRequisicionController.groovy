@@ -2,11 +2,11 @@ package sx.tesoreria
 
 import grails.compiler.GrailsCompileStatic
 import grails.plugin.springsecurity.annotation.Secured
-import grails.rest.RestfulController
+
 import grails.validation.Validateable
 import groovy.util.logging.Slf4j
 import sx.cxp.Requisicion
-import sx.cxp.RequisicionDeCompras
+
 
 import static org.springframework.http.HttpStatus.NOT_FOUND
 
@@ -44,6 +44,8 @@ class PagoDeRequisicionController {
             return
         }
         requisicion = pagoDeRequisicionService.cancelarPago(requisicion)
+        log.info('Requisicion con pago cancelado {}', requisicion.folio)
+        // respond requisicion
         [requisicion: requisicion]
         // respond requisicion
     }

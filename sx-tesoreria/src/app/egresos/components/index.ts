@@ -3,11 +3,14 @@ import { RequisicionesFilterComponent } from './requisiciones-filter/requisicion
 import { RequisicionesFilterBtnComponent } from './requisiciones-filter/requisiciones-filter-btn.component';
 import { RequisicionesFilterLabelComponent } from './requisiciones-filter/requisiciones-filter-label.component';
 import { PrintRequisicionComponent } from './print-requisicion/print-requisicion.component';
-import { RequisicionPagoComponent } from './requisicion-pago/requisicion-pago.component';
-import { RequisicionPartidasComponent } from './requisicion-partidas/requisicion-partidas.component';
-import { PagoDeRequisicionComponent } from './pago-de-requisicion/pago-de-requisicion.component';
-import { PagoDeRequisicionBtnComponent } from './pago-de-requisicion/pago-de-requisicion-btn.component';
+
+import { PagoRequisicionComponent } from './pago-requisicion/pago-requisicion.component';
+import { PagoRequisicionDialogComponent } from './pago-requisicion-dialog/pago-requisicion-dialog.component';
+import { PagoRequisicionDialogBtnComponent } from './pago-requisicion-dialog/pago-requisicion-dialog-btn.component';
+
 import { PrintChequeComponent } from './print-cheque/print-cheque.component';
+import { RequisicionPartidasComponent } from './requisicion-partidas/requisicion-partidas.component';
+
 // Cheques
 import { ChequesTableComponent } from './cheques-table/cheques-table.component';
 import { ChequesFilterComponent } from './cheques-filter/cheques-filter.component';
@@ -25,10 +28,10 @@ export const components: any[] = [
   RequisicionesFilterBtnComponent,
   RequisicionesFilterLabelComponent,
   PrintRequisicionComponent,
-  RequisicionPagoComponent,
+  PagoRequisicionComponent,
   RequisicionPartidasComponent,
-  PagoDeRequisicionComponent,
-  PagoDeRequisicionBtnComponent,
+  PagoRequisicionDialogComponent,
+  PagoRequisicionDialogBtnComponent,
   PrintChequeComponent,
   // Cheques
   ChequesTableComponent,
@@ -44,7 +47,7 @@ export const components: any[] = [
 
 export const entryComponents: any[] = [
   RequisicionesFilterComponent,
-  PagoDeRequisicionComponent,
+  PagoRequisicionDialogComponent,
   GenerarChequeComponent
 ];
 
@@ -52,10 +55,10 @@ export * from './requisiciones-table/requisiciones-table.component';
 export * from './requisiciones-filter/requisiciones-filter-btn.component';
 export * from './requisiciones-filter/requisiciones-filter-label.component';
 export * from './print-requisicion/print-requisicion.component';
-export * from './requisicion-pago/requisicion-pago.component';
+export * from './pago-requisicion/pago-requisicion.component';
 export * from './requisicion-partidas/requisicion-partidas.component';
-export * from './pago-de-requisicion/pago-de-requisicion.component';
-export * from './pago-de-requisicion/pago-de-requisicion-btn.component';
+export * from './pago-requisicion-dialog/pago-requisicion-dialog.component';
+export * from './pago-requisicion-dialog/pago-requisicion-dialog-btn.component';
 export * from './print-cheque/print-cheque.component';
 // Cheques
 export * from './cheques-table/cheques-table.component';

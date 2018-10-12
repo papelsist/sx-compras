@@ -37,7 +37,7 @@ class RequisicionDeGastosController extends RestfulController<RequisicionDeGasto
         params.sort = 'fecha'
         params.order = 'desc'
         params.max = params.registros?: 10
-        // log.info('List: {}', params)
+        log.info('List: {}', params)
         def query = RequisicionDeGastos.where{}
 
         Boolean pendientes = this.params.getBoolean('pendientes')

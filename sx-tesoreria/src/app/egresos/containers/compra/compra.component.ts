@@ -15,7 +15,7 @@ import { PagoDeRequisicion } from '../../models/pagoDeRequisicion';
   template: `
   <ng-template tdLoading [tdLoadingUntil]="!(loading$ | async)"  tdLoadingStrategy="overlay" >
     <div *ngIf="requisicion$ | async as requisicion">
-      <sx-requisicion-pago
+      <sx-pago-requisicion
         [requisicion]="requisicion"
         (cancel)="onCancel()">
         <sx-pago-requisicion-btn [requisicion]="requisicion" (pagar)="onPagar($event)"></sx-pago-requisicion-btn>
@@ -25,7 +25,7 @@ import { PagoDeRequisicion } from '../../models/pagoDeRequisicion';
         <sx-print-requisicion [requisicion]="requisicion"></sx-print-requisicion>
         <sx-print-cheque [egreso]="requisicion.egreso"></sx-print-cheque>
         <sx-poliza-cheque [egreso]="requisicion.egreso"></sx-poliza-cheque>
-      </sx-requisicion-pago>
+      </sx-pago-requisicion>
     </div>
   </ng-template>
   `

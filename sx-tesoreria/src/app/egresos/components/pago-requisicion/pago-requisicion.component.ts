@@ -12,11 +12,11 @@ import {
 import { Requisicion } from '../../models';
 
 @Component({
-  selector: 'sx-requisicion-pago',
+  selector: 'sx-pago-requisicion',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './requisicion-pago.component.html'
+  templateUrl: './pago-requisicion.component.html'
 })
-export class RequisicionPagoComponent implements OnInit, OnChanges {
+export class PagoRequisicionComponent implements OnInit, OnChanges {
   @Input()
   requisicion: Requisicion;
 
@@ -29,7 +29,7 @@ export class RequisicionPagoComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.requisicion && changes.requisicion.currentValue) {
-      console.log('Requisicion: ', changes.requisicion.currentValue);
+      // console.log('Requisicion: ', changes.requisicion.currentValue);
     }
   }
 }

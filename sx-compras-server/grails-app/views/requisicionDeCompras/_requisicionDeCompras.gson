@@ -5,11 +5,16 @@ model {
 }
 
 json g.render(requisicionDeCompras, [excludes: ['proveedor','partidas'], resolveTemplate: false]) {
-	proveedor {
+    proveedor {
         id requisicionDeCompras.proveedor.id
         nombre: requisicionDeCompras.proveedor.nombre
     }
     partidas g.render(requisicionDeCompras.partidas)
     egresoReferencia requisicionDeCompras?.egreso?.referencia
+    egreso g.render(requisicionDeCompras.egreso, [excludes: ['moneda', 'cheque']]) {
+        cuenta g.render(requisicionDeCompras.egreso.cuenta)
+        if(requisicionDeCompras?.egreso?.cheque)
+            cheque g.render(requisicionDeCompras.egreso.cheque)
+    }
     tipo 'COMPRAS'
 }

@@ -53,7 +53,8 @@ class PagoDeRequisicionService implements  LogUser {
         String tipo  = requisicion.instanceOf(RequisicionDeCompras) ? 'COMRA' : 'GASTO'
         movimientoDeCuentaService.generarEgreso(requisicion, tipo, tipo, cuenta, referencia)
         Pago pago = pagoService.pagar(requisicion)
-        pagoService.aplicarPago(pago)
+        if(pago.disponible > 0)
+            pagoService.aplicarPago(pago)
         return requisicion.save(flush: true)
 
     }
@@ -71,6 +72,7 @@ class PagoDeRequisicionService implements  LogUser {
         egreso.delete flush: true
         cancelarPagoCxP(requisicion)
         requisicion.save flush: true
+        return requisicion
     }
 
     void cancelarPagoCxP(Requisicion requisicion){

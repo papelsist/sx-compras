@@ -59,7 +59,8 @@ class RequisicionDeComprasController extends RestfulController<RequisicionDeComp
     protected RequisicionDeCompras updateResource(RequisicionDeCompras resource) {
         return requisicionDeComprasService.update(resource)
     }
-/**
+
+    /**
      * Elimina la requisicion
      *
      * @param resource
@@ -117,32 +118,5 @@ class RequisicionDeComprasController extends RestfulController<RequisicionDeComp
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'Requisicion.pdf')
     }
 
-    def pagar(PagoDeRequisicion command) {
-        if(command == null) {
-            notFound()
-            return
-        }
-        if(command.hasErrors()) {
-            respond(command.errors, status: 422)
-            return
-        }
-        respond pagoDeRequisicionService.pagar(command)
-    }
 
-    /*
-
-    def pagar(PagoDeRequisicion command) {
-        if(command == null) {
-            notFound()
-            return
-        }
-        if(command.hasErrors()) {
-            respond(command.errors, status: 422)
-            return
-        }
-        log.info("Pago: {}", command)
-        def requisicion = requisicionDeComprasService.pagar(command.requisicion, command.cuenta, command.referencia)
-        respond requisicion
-    }
-    */
 }

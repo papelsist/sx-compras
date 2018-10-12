@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { MatDialog } from '@angular/material';
 
-import { PagoDeRequisicionComponent } from './pago-de-requisicion.component';
+import { PagoRequisicionDialogComponent } from './pago-requisicion-dialog.component';
 
 import { Requisicion } from '../../models';
 import { PagoDeRequisicion } from '../../models/pagoDeRequisicion';
@@ -16,7 +16,7 @@ import { PagoDeRequisicion } from '../../models/pagoDeRequisicion';
   </ng-container>
   `
 })
-export class PagoDeRequisicionBtnComponent implements OnInit {
+export class PagoRequisicionDialogBtnComponent implements OnInit {
   @Input()
   color = 'primary';
   @Input()
@@ -30,7 +30,7 @@ export class PagoDeRequisicionBtnComponent implements OnInit {
 
   open() {
     this.dialog
-      .open(PagoDeRequisicionComponent, {
+      .open(PagoRequisicionDialogComponent, {
         data: { requisicion: this.requisicion },
         width: '650px'
       })

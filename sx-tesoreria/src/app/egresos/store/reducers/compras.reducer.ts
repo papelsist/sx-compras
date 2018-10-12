@@ -47,7 +47,6 @@ export function reducer(state = initialState, action: ComprasActions): State {
       });
     }
     case ComprasActionTypes.UpsertCompra: {
-      console.log('Actualizando compra....');
       const requisicion = action.payload.requisicion;
       return adapter.upsertOne(requisicion, {
         ...state,

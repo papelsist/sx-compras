@@ -26,6 +26,15 @@
         Impreso: ({{requisicion.egreso.cheque.impresion | date: 'dd/MM/yyyy'}})
       </span>
     </span>
+    <ng-container *ngIf="requisicion.egreso && requisicion.formaDePago !== 'CHEQUE'">
+
+      <span class="pad-left">
+        Banco: {{requisicion.egreso.cuenta.descripcion}}
+      </span>
+      <span class="pad-left">
+        Referencia: {{requisicion.egreso.referencia}}
+      </span>
+    </ng-container>
     <span flex></span>
   </div>
   <mat-divider></mat-divider>

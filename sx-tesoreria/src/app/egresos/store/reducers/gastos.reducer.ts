@@ -48,7 +48,6 @@ export function reducer(state = initialState, action: GastosActions): State {
     }
     case GastosActionTypes.UpsertGasto: {
       const requisicion = action.payload.requisicion;
-      console.log('Upsert requisicion de gastos: ', requisicion);
       return adapter.upsertOne(requisicion, {
         ...state,
         loading: false

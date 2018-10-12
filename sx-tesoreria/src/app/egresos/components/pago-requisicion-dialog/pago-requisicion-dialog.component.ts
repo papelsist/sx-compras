@@ -9,7 +9,7 @@ import { Requisicion } from '../../models';
 import * as moment from 'moment';
 
 @Component({
-  selector: 'sx-pago-requisicion',
+  selector: 'sx-pago-requisicion-dialog',
   template: `
   <form [formGroup]="form">
     <h2 mat-dialog-title>Pago de la requisicion {{requisicion.folio}}</h2>
@@ -45,7 +45,7 @@ import * as moment from 'moment';
   </form>
   `
 })
-export class PagoDeRequisicionComponent implements OnInit, OnDestroy {
+export class PagoRequisicionDialogComponent implements OnInit, OnDestroy {
   form: FormGroup;
   requisicion: Requisicion;
   subscription: Subscription;

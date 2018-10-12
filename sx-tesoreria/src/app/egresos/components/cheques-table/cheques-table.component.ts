@@ -35,7 +35,8 @@ export class ChequesTableComponent implements OnInit, OnChanges {
     'impreso',
     'importe',
     'liberado',
-    'entregado'
+    'entregado',
+    'comentario'
   ];
 
   @ViewChild(MatSort)
