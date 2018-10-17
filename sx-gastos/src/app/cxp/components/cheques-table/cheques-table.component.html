@@ -10,9 +10,13 @@
       {{req.folio}}
     </td>
   </ng-container>
-  <ng-container matColumnDef="cuenta">
+  <ng-container matColumnDef="banco">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Banco</th>
+    <td mat-cell *matCellDef="let req" class="cursor-pointer">{{req.banco}}</td>
+  </ng-container>
+  <ng-container matColumnDef="cuentaNumero">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Cuenta</th>
-    <td mat-cell *matCellDef="let req" class="cursor-pointer">{{req.cuenta}}</td>
+    <td mat-cell *matCellDef="let req" class="cursor-pointer">{{req.cuentaNumero}}</td>
   </ng-container>
 
   <ng-container matColumnDef="fecha">
@@ -20,9 +24,14 @@
     <td mat-cell *matCellDef="let req">{{req.fecha | date: 'dd/MM/yyyy'}}</td>
   </ng-container>
 
+  <ng-container matColumnDef="modificado">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
+    <td mat-cell *matCellDef="let req">{{req.lastUpdated | date: 'dd/MM/yyyy: HH:mm'}}</td>
+  </ng-container>
+
   <ng-container matColumnDef="impreso">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Impreso</th>
-    <td mat-cell *matCellDef="let req">{{req.modificado | date: 'dd/MM/yyyy : HH:mm'}}</td>
+    <td mat-cell *matCellDef="let req">{{req.impresion | date: 'dd/MM/yyyy'}}</td>
   </ng-container>
 
   <ng-container matColumnDef="importe">
@@ -33,7 +42,7 @@
   <ng-container matColumnDef="liberado">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Liberado</th>
     <td mat-cell *matCellDef="let cheque">
-      <button mat-button (click)="liberar.emit(cheque)" *ngIf="!cheque.liberado; else libaradoIcon">
+      <button mat-button (click)="liberar.emit(cheque)" *ngIf="!cheque.liberado; else liberadoIcon">
         Liberar
       </button>
       <ng-template #liberadoIcon>

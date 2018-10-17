@@ -10,10 +10,10 @@ json g.render(requisicion, [excludes: ['proveedor','partidas'], resolveTemplate:
 		id requisicion.proveedor.id
 		nombre: requisicion.proveedor.nombre
 	}
-	egreso g.render(requisicionDeCompras.egreso, [excludes: ['moneda', 'cheque']]) {
-        cuenta g.render(requisicionDeCompras.egreso.cuenta)
-        if(requisicionDeCompras?.egreso?.cheque)
-            cheque g.render(requisicionDeCompras.egreso.cheque)
+	egreso g.render(requisicion.egreso, [excludes: ['moneda', 'cheque']]) {
+        cuenta g.render(requisicion.egreso.cuenta)
+        if(requisicion?.egreso?.cheque)
+            cheque g.render(requisicion.egreso.cheque)
 	}
 	partidas g.render(requisicion.partidas)
 	egresoReferencia requisicion?.egreso?.referencia

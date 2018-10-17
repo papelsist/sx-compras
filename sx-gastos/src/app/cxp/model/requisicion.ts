@@ -20,7 +20,7 @@ export interface Requisicion {
   comentario: string;
   selected: boolean;
   cerrada: string;
-  egreso?: number;
+  egreso?: any;
   pagada?: string;
   egresoReferencia?: number;
   reciboDePago?: string;

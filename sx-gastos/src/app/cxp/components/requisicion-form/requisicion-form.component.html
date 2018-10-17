@@ -15,10 +15,20 @@
       </div>
     </mat-card-title>
     <mat-card-subtitle *ngIf="requisicion && requisicion.egreso">
-      <span class="tc-pink-600" layout>
+      <span layout>
         <span>Pagada: </span>
         <span class="pad-left">{{requisicion.pagada | date: 'dd/MM/yyyy'}}</span>
+        <span>{{requisicion.pagada | date: 'dd/MM/yyyy'}}</span>
+        <ng-container *ngIf="requisicion.egreso.cheque">
+          <span class="pad-left">
+            Cheque: {{requisicion.egreso.cheque.folio}} ({{requisicion.egreso.cheque.banco}})
+          </span>
+          <span class="pad-left" *ngIf="requisicion?.egreso?.cheque?.impresion">
+            Impreso: ({{requisicion.egreso.cheque.impresion | date: 'dd/MM/yyyy'}})
+          </span>
+        </ng-container>
         <span flex></span>
+
       </span>
     </mat-card-subtitle>
 

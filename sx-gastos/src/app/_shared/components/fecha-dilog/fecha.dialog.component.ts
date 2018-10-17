@@ -25,6 +25,7 @@ export class FechaDialogComponent implements OnInit {
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any) {
     this.title = data.title || '';
+    this.fecha = data.fecha || new Date();
   }
 
   ngOnInit() {}

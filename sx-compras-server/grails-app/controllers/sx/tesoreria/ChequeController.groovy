@@ -25,14 +25,15 @@ class ChequeController extends RestfulController<Cheque> {
     @Override
     protected List<Cheque> listAllResources(Map params) {
 
-        log.info('List: {}', params)
-        params.sort = 'lastUpdated'
+
+        params.sort = 'folio'
         params.order = 'desc'
         params.max = params.registros ?: 20
+        log.info('List: {}', params)
 
         def query = Cheque.where {}
 
-        def impresos = this.params.getBoolean('impresos', false)
+        def impresos = this.params.getBoolean('impresos')
 
         if(impresos) {
             query = query.where {impresion != null}

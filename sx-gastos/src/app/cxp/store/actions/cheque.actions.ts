@@ -12,7 +12,8 @@ export enum ChequeActionTypes {
   UpsertCheque = '[Cheque Guard] Upsert Cheque',
   UpdateCheque = '[Cheque Component] Update Cheque',
   UpdateChequeFail = '[Cheque API] Update Cheque Fail',
-  UpdateChequeSuccess = '[Cheque API] Update Cheque Success'
+  UpdateChequeSuccess = '[Cheque API] Update Cheque Success',
+  LiberarCheque = '[Cheques component] Liberar cheque'
 }
 
 export class SetChequesFilter implements Action {
@@ -57,7 +58,12 @@ export class UpdateChequeSuccess implements Action {
 export class UpsertCheque implements Action {
   readonly type = ChequeActionTypes.UpsertCheque;
 
-  constructor(public payload: { Cheque: Cheque }) {}
+  constructor(public payload: { cheque: Cheque }) {}
+}
+
+export class LiberarCheque implements Action {
+  readonly type = ChequeActionTypes.LiberarCheque;
+  constructor(public payload: { cheque: Cheque }) {}
 }
 
 export type ChequeActions =

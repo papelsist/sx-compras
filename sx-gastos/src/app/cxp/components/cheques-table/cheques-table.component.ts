@@ -29,12 +29,14 @@ export class ChequesTableComponent implements OnInit, OnChanges {
   displayColumns = [
     'folio',
     'nombre',
-    'cuenta',
+    'banco',
+    'cuentaNumero',
     'fecha',
     'impreso',
     'importe',
     'liberado',
     'entregado'
+    // 'modificado'
   ];
 
   @ViewChild(MatSort)
@@ -58,8 +60,8 @@ export class ChequesTableComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.pagos && changes.pagos.currentValue) {
-      this.dataSource.data = changes.pagos.currentValue;
+    if (changes.cheques && changes.cheques.currentValue) {
+      this.dataSource.data = changes.cheques.currentValue;
     }
     if (changes.filter && changes.filter.currentValue) {
       const s = changes.filter.currentValue || '';

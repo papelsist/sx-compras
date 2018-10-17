@@ -18,6 +18,10 @@ class UrlMappings {
         }
 
         "/api/tesoreria/cuentas"(resources: 'cuentaDeBanco')
+        "/api/tesoreria/cuentas/$id/movimientos"(controller: 'cuentaDeBanco', action: 'movimientos', method: 'GET')
+        "/api/tesoreria/cuentas/$id/saldos"(controller: 'cuentaDeBanco', action: 'saldos', method: 'GET')
+
+
         "/api/tesoreria/cheques"(resources: 'cheque')
         "/api/tesoreria/cheques/print/$id"(controller: 'cheque', action: 'print', method: 'GET')
         "/api/tesoreria/cheques/printPoliza/$id"(controller: 'cheque', action: 'printPoliza', method: 'GET')
@@ -109,6 +113,8 @@ class UrlMappings {
         "/api/costos/movimientosCosteados"(controller: 'costoPromedio', action: 'movimientosCosteados')
         "/api/costos/mercanciaEnTransito"(controller: 'costoPromedio', action: 'mercanciaEnTransito')
         "/api/costos/facturasAnalizadas"(controller: 'costoPromedio', action: 'facturasAnalizadas')
+        "/api/costos/movimientosCosteadosDeDocumentos"(controller: 'costoPromedio', action: 'movimientosCosteadosDeDocumentos')
+        "/api/costos/movimientosCosteadosDet"(controller: 'costoPromedio', action: 'movimientosCosteadosDet')
 
         "/api/inventario"(resources: 'inventario', excludes:['create', 'update', 'save', 'edit','patch'])
         "/api/inventario/$producto/$ejercicio/$mes"(controller: 'inventario', action: 'movimientos', method: 'GET')

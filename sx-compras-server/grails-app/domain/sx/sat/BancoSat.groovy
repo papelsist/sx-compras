@@ -1,9 +1,15 @@
 package sx.sat
 
+import grails.compiler.GrailsCompileStatic
+import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.*
+import groovy.transform.EqualsAndHashCode
 
 
-//@Resource(uri='/api/sat/bancos', formats=['json'])
+@Resource(readOnly = false, formats = ['json'], uri = "/api/sat/bancos")
+@GrailsCompileStatic
+@Secured("IS_AUTHENTICATED_ANONYMOUSLY")
+@EqualsAndHashCode(includes='clave')
 class BancoSat {
 
     String id
@@ -16,6 +22,7 @@ class BancoSat {
 
     static constraints = {
         clave nullable:false,unique:true,maxSize:20
+        razonSocial nullable: true
     }
 
     String toString(){

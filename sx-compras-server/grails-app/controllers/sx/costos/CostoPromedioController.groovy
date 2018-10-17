@@ -3,10 +3,10 @@ package sx.costos
 import grails.compiler.GrailsCompileStatic
 import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.*
-
+import grails.validation.Validateable
 import groovy.util.logging.Slf4j
 import sx.core.Proveedor
-
+import sx.core.Sucursal
 import sx.reports.ReportService
 import sx.utils.Periodo
 
@@ -110,5 +110,62 @@ class CostoPromedioController extends RestfulController<CostoPromedio> {
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'FacturasAnalizadasPorProveedor.pdf')
     }
 
+    def movimientosCosteadosDeDocumentos(MovimientosCosteadosCommand command) {
+
+        Map repParams = [:]
+
+
+        repParams.FECHA_INICIAL = command.fechaIni
+        repParams.FECHA_FINAL = command.fechaFin
+        repParams.TIPO = command.tipo
+        repParams.GRUPO = command.grupo
+        repParams.SUCURSAL = command.sucursal.id
+
+        def pdf =  reportService.run('MovimientosCosteadosDeDocumentos.jrxml', repParams)
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'MovimientosCosteadosDeDocumentos.pdf')
+    }
+
+    def movimientosCosteadosDet(MovimientosCosteadosDetCommand command) {
+
+        Map repParams = [:]
+
+        repParams.FECHA_INI = command.fechaIni
+        repParams.FECHA_FIN = command.fechaFin
+        repParams.DOCUMENTO = command.documento
+        repParams.TIPO = command.tipo
+        repParams.SUCURSAL = command.sucursal.id
+
+        def pdf =  reportService.run('MovimientosCosteadosDetalle.jrxml', repParams)
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'MovimientosCosteadosDetalle.pdf')
+    }
+
+
+}
+
+class MovimientosCosteadosCommand implements  Validateable {
+
+    Date fechaIni
+    Date fechaFin
+    String tipo
+    String grupo
+    Sucursal sucursal
+
+    String toString() {
+        return " ${tipo} ${sucursal.nombre}  ${grupo} "
+    }
+
+}
+
+class MovimientosCosteadosDetCommand implements  Validateable {
+
+    Date fechaIni
+    Date fechaFin
+    String tipo
+    String documento
+    Sucursal sucursal
+
+    String toString() {
+        return " ${tipo} ${sucursal.nombre}  ${documento} "
+    }
 
 }

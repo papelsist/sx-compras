@@ -38,7 +38,7 @@ export class RequisicionesFilter {
 export function createRequisicionesFilter() {
   const { fechaInicial, fechaFinal } = Periodo.fromNow(30);
   const registros = 50;
-  const pendientes = false;
+  const pendientes = true;
   return {
     fechaInicial,
     fechaFinal,

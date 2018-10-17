@@ -31,19 +31,18 @@ export interface ComprobanteFiscal {
 }
 
 export class CfdisFilter {
-  fechaInicial?: Date;
-  fechaFinal?: Date;
+  fechaInicial: Date;
+  fechaFinal: Date;
   proveedor?: Partial<Proveedor>;
-  registros?: number;
-  folio?: number;
+  registros: number;
 }
 
-export function createDefaultFilter() {
-  const { fechaInicial, fechaFinal } = Periodo.fromNow(10);
-  const registris = 10;
+export function createDefaultFilter(): CfdisFilter {
+  const { fechaInicial, fechaFinal } = Periodo.fromNow(30);
+  const registros = 100;
   return {
     fechaInicial,
     fechaFinal,
-    registris
+    registros
   };
 }

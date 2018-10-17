@@ -33,7 +33,7 @@ class CostoPromedio {
 
     BigDecimal  getDiferencia() {
         if(costo)
-            return 1.0 - costoAnterior / costo
+            return 1.0 - (costoAnterior / costo)
         else return 0
     }
 

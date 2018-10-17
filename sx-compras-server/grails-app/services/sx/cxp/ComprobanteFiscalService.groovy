@@ -217,6 +217,9 @@ class ComprobanteFiscalService implements  LogUser{
         ComprobanteFiscal found = ComprobanteFiscal.where {uuid == cf.uuid}.find()
         if(!found) {
             def pdf = new File(xmlFile.path.replace('.xml','.pdf'))
+            if(!pdf.exists()){
+                pdf = new File(xmlFile.path.replace('.xml','.PDF'))
+            }
             def maxSize = 10924 * 512 * 20 // 10MB
             if(pdf.exists() && pdf.isFile() && pdf.size() < maxSize) {
                 cf.pdf = pdf.bytes
@@ -227,7 +230,7 @@ class ComprobanteFiscalService implements  LogUser{
                 cxp.comprobanteFiscal = cf
                 cxp.save failOnError: true, flush: true
 
-            } else {
+            } else if(cf.tipoDeComprobante == 'E'){
                 NotaDeCreditoCxP nota = this.notaDeCreditoCxPService.generarNota(cf)
 
             }
@@ -247,7 +250,12 @@ class ComprobanteFiscalService implements  LogUser{
         log.info('Eliminando: {}', xmlFile.path)
         xmlFile.delete()
         def pdf = new File(xmlFile.path.replace('.xml','.pdf'))
-        if(pdf.exists()) pdf.delete()
+        if(!pdf.exists()) {
+            pdf = new File(xmlFile.path.replace('.XML','.pdf'))
+        }
+        if(pdf.exists())
+            pdf.delete()
+
     }
 
 

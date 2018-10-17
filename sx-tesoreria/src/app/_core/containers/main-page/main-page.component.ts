@@ -15,6 +15,11 @@ export class MainPageComponent implements OnInit {
       title: 'Inicio'
     },
     {
+      icon: 'toc',
+      route: '/cuentas',
+      title: 'Cuentas de banco'
+    },
+    {
       icon: 'my_library_books',
       route: '/egresos',
       title: 'Egresos'

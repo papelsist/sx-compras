@@ -4,6 +4,7 @@ import grails.compiler.GrailsCompileStatic
 
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
+import sx.cxp.Requisicion
 
 
 @ToString(includes = ['cuenta','afavor','fecha', 'importe'],includeNames=true,includePackage=false)
@@ -46,7 +47,7 @@ class MovimientoDeCuenta {
 
     Cheque cheque
 
-    static belongsTo = [movimientoDeTesoreria: MovimientoDeTesoreria]
+    static belongsTo = [movimientoDeTesoreria: MovimientoDeTesoreria, requisicion: Requisicion]
 
 
     static constraints = {
@@ -60,6 +61,7 @@ class MovimientoDeCuenta {
         concepto nullable:true,maxSize:50
         sw2 nullable:true
         movimientoDeTesoreria nullable: true
+        requisicion nullable: true
         createUser nullable: true
         updateUser nullable: true
         cheque nullable: true, unique: true

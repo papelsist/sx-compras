@@ -5,7 +5,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 import { ConfigService } from 'app/utils/config.service';
-import { ComprobanteFiscal } from '../model/comprobanteFiscal';
+import { ComprobanteFiscal, CfdisFilter } from '../model/comprobanteFiscal';
 
 import * as _ from 'lodash';
 import { CuentaPorPagar } from '../model/cuentaPorPagar';
@@ -31,11 +31,15 @@ export class ComprobanteFiscalService {
       .pipe(catchError((error: any) => throwError(error)));
   }
 
-  list(filtro: any = {}): Observable<ComprobanteFiscal[]> {
+  list(filtro: CfdisFilter): Observable<ComprobanteFiscal[]> {
     let params = new HttpParams().set('tipo', 'GASTOS');
-    _.forIn(filtro, (value, key) => {
-      params = params.set(key, value);
-    });
+    params = params
+      .set('fechaInicial', filtro.fechaInicial.toISOString())
+      .set('fechaFinal', filtro.fechaFinal.toISOString())
+      .set('max', filtro.registros.toString());
+    if (filtro.proveedor) {
+      params = params.set('proveedor', filtro.proveedor.id);
+    }
     return this.http
       .get<ComprobanteFiscal[]>(this.apiUrl, { params: params })
       .pipe(catchError((error: any) => throwError(error)));
