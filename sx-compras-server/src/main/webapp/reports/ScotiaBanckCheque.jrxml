@@ -97,9 +97,9 @@ where ch.id=$P{ID}]]></queryString>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="470"
+						x="475"
 						y="59"
-						width="106"
+						width="101"
 						height="22"
 						key="textField"/>
 					<box></box>
