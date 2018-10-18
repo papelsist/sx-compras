@@ -1,0 +1,13 @@
+<mat-form-field class="fill">
+  <input type="text" matInput [formControl]="searchControl" (blur)="onBlur()" [placeholder]="placeholder" #inputField [required]="required"
+    [matAutocomplete]="auto">
+  <mat-error>
+    Seleccione un producto
+  </mat-error>
+</mat-form-field>
+
+<mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+  <mat-option *ngFor="let producto of productos$ | async " [value]="producto" [ngClass]="{'tc-red-800': !producto.producto.activo}">
+    ({{producto.clave}}) {{producto.descripcion}}
+  </mat-option>
+</mat-autocomplete>

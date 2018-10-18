@@ -1,0 +1,8 @@
+{
+  "apiUrl": "http://10.10.1.229:9290/siipapx/api",
+  "sucursal": {
+    "id": "402880fc5e4ec411015e4ec64161012c",
+    "clave": "1",
+    "nombre": "OFICINAS"
+  }
+}

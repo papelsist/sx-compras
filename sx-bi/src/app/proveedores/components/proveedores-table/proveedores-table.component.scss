@@ -1,0 +1,35 @@
+.mat-table {
+  overflow: auto;
+  min-height: 400px;
+  max-height: 550px;
+}
+
+.mat-column-tipo, .mat-column-rfc{
+  max-width: 120px;
+}
+.mat-column-clave {
+  max-width: 80px;
+}
+
+.mat-row {
+  cursor: pointer;
+  min-height: 35px;
+  position: relative; // For matRipple
+  &:hover {
+    background: rgba(105, 71, 7, 0.09);
+  }
+}
+/*
+.mat-column-plazo {
+  max-width: 50px;
+}
+.mat-column-limiteDeCredito {
+  max-width: 110px;
+  max-font-size: 11px;
+}
+.mat-column-tipoVencimiento, .mat-column-facturas{
+  max-width: 60px;
+  font-size: 10px;
+}
+
+*/

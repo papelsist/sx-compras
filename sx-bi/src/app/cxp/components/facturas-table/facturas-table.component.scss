@@ -1,0 +1,24 @@
+table {
+  width: 100%;
+  // min-height: 200px;
+  max-height: 500px;
+  overflow: auto;
+}
+.mat-column-tipoDeComprobante{
+  max-width: 20px;
+}
+.mat-cell {
+  font-size: 11px;
+}
+.mat-row {
+  height: 30px;
+}
+
+.mat-footer-row {
+  height: 30px;
+  font-size: 11px;
+  font-weight: bold;
+  font-style: italic;
+}
+
+
