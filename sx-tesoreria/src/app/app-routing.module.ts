@@ -13,6 +13,10 @@ const routes: Routes = [
     children: [
       { path: '', component: HomePageComponent },
       {
+        path: 'cuentas',
+        loadChildren: './cuentas/cuentas.module#CuentasModule'
+      },
+      {
         path: 'egresos',
         loadChildren: './egresos/egresos.module#EgresosModule'
       }

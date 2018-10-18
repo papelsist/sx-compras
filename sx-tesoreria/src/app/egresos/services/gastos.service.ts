@@ -21,7 +21,7 @@ export class GastosService {
   list(filtro: RequisicionesFilter): Observable<Requisicion[]> {
     let params = new HttpParams()
       .set('tipo', 'GASTOS')
-      .set('cerradas', 'true')
+      // .set('cerradas', 'true')
       .set('fechaInicial', filtro.fechaInicial.toISOString())
       .set('fechaFinal', filtro.fechaFinal.toISOString())
       .set('pendientes', filtro.pendientes.toString())

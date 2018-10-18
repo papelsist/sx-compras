@@ -45,10 +45,10 @@ class PagoDeRequisicionService implements  LogUser {
         if(requisicion.egreso != null)
             throw new PagoDeRequisicionException("Requisicion ${requisicion.folio} ya está pagada con el egreso ${requisicion.egreso}")
         if(!requisicion.partidas) {
-            throw new PagoDeRequisicionException("Requisicion ${requisicion.folio} no tiene documentos por pagar")
+            // throw new PagoDeRequisicionException("Requisicion ${requisicion.folio} no tiene documentos por pagar")
         }
         if(!requisicion.cerrada) {
-            throw new PagoDeRequisicionException("Requisicion ${requisicion.folio} no no esta cerrada")
+            // throw new PagoDeRequisicionException("Requisicion ${requisicion.folio} no no esta cerrada")
         }
         String tipo  = requisicion.instanceOf(RequisicionDeCompras) ? 'COMRA' : 'GASTO'
         movimientoDeCuentaService.generarEgreso(requisicion, tipo, tipo, cuenta, referencia)

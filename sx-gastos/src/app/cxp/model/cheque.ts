@@ -27,7 +27,7 @@ export class ChequesFilter {
 }
 
 export function createChequesFilter(): ChequesFilter {
-  const { fechaInicial, fechaFinal } = Periodo.fromNow(20);
+  const { fechaInicial, fechaFinal } = Periodo.fromNow(30);
   const registros = 50;
   return {
     fechaInicial,

@@ -1,0 +1,26 @@
+<td-layout-nav>
+
+  <div td-toolbar-content layout="row" layout-align="start center" flex>
+    <button mat-icon-button td-menu-button tdLayoutToggle>
+      <mat-icon>menu</mat-icon>
+    </button>
+    <span class="cursor-pointer">Cuentas de banco </span>
+    <span flex></span>
+  </div>
+
+
+  <div layout-gt-sm="row" tdMediaToggle="gt-xs" [mediaClasses]="['push-sm']">
+    <div flex-gt-sm="50">
+      <sx-cuentas-card></sx-cuentas-card>
+      <sx-saldo-card></sx-saldo-card>
+    </div>
+    <div flex-gt-sm="50">
+      <sx-egresos-card></sx-egresos-card>
+      <sx-ingresos-card></sx-ingresos-card>
+    </div>
+  </div>
+
+  <td-layout-footer>
+    <sx-footer></sx-footer>
+  </td-layout-footer>
+</td-layout-nav>

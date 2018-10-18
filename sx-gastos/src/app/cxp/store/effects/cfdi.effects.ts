@@ -4,6 +4,7 @@ import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Store, select } from '@ngrx/store';
 import * as fromRoot from 'app/store';
 import * as fromStore from '../../store';
+import { getComprobantesFilter } from '../../store/selectors/cfdis.selectors';
 
 import { of } from 'rxjs';
 import { map, switchMap, tap, catchError, take } from 'rxjs/operators';
@@ -20,6 +21,7 @@ export class CfdiEffects {
   constructor(
     private actions$: Actions,
     private service: ComprobanteFiscalService,
+    private store: Store<fromStore.State>,
     private reportService: ReportService,
     private snackBar: MatSnackBar
   ) {}
@@ -28,7 +30,13 @@ export class CfdiEffects {
   loadCfdis$ = this.actions$.pipe(
     ofType(ComprobanteActionTypes.LoadComprobantes),
     switchMap(() => {
-      return this.service.list().pipe(
+      return this.store.pipe(
+        select(getComprobantesFilter),
+        take(1)
+      );
+    }),
+    switchMap(filter => {
+      return this.service.list(filter).pipe(
         map(res => new fromActions.LoadComprobantesSuccess(res)),
         catchError(error => of(new fromActions.LoadComprobantesFail(error)))
       );

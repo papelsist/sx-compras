@@ -4,6 +4,7 @@ model {
 	CuentaDeBanco cuentaDeBanco
 }
 
-json g.render(cuentaDeBanco, [deep:true, excludes:['moneda','dateCreated','lastUpdated']]){
+json g.render(cuentaDeBanco, [deep:true, excludes:['moneda']]){
 	moneda cuentaDeBanco.moneda.currencyCode
+	banco cuentaDeBanco?.bancoSat?.nombreCorto
 }

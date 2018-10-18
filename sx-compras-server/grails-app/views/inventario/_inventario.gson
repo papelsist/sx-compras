@@ -6,5 +6,5 @@ model {
 
 json g.render(inventario, [resolveTemplate: false]) {
     unidad inventario.producto.unidad
-    importeCosto (inventario.cantidad.abs() / (inventario.producto.unidad == 'MIL' ? 1000 : 1)) * inventario.costoPromedio
+    importeCosto inventario.calcularImporteCosto()
 }

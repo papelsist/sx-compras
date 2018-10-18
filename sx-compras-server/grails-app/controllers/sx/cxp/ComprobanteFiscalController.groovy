@@ -22,11 +22,11 @@ class ComprobanteFiscalController extends RestfulController<ComprobanteFiscal> {
 
         params.sort = 'fecha'
         params.order = 'desc'
-        log.debug('List {}', params)
         def tipo = params.tipo ?: 'COMPRAS'
         if(tipo == 'COMPRAS') {
             params.max = 1000
         }
+        log.debug('List {}', params)
         def query = ComprobanteFiscal.where{ tipo == tipo}
 
         if(params.periodo) {

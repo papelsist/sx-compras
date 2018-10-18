@@ -14,7 +14,6 @@ json g.render(requisicion, [excludes: ['dateCreated','lastUpdated','createUser',
         cheque g.render(requisicion.egreso.cheque)
         cuenta g.render(requisicion.egreso.cuenta)
     }
-    // tipo (requisicion instanceof  RequisicionDeCompras) ? 'COMPRAS' : 'GASTOS'
     if(requisicion instanceof  RequisicionDeCompras) {
         tipo 'COMPRAS'
     } else {

@@ -25,6 +25,7 @@ abstract class PagoService implements  LogUser{
     @CompileDynamic
     Pago generarPagoDeRequisicion(Requisicion requisicion) {
         Pago found = Pago.where{requisicion.id == requisicion.id}.find()
+        if(found)
             return found
 
         /* TEMPORALMENTE SE PERMITE PARA QUE COMPRAS SE ACTUALIZE

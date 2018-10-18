@@ -20,7 +20,8 @@ import { ComprobanteFiscal, CfdisFilter } from '../../model/comprobanteFiscal';
         <td-search-box class="push-right-sm" placeholder="Fitrar" flex
             (searchDebounce)="filter($event)" [value]="search$ | async">
         </td-search-box>
-        <sx-cfdis-filter-btn></sx-cfdis-filter-btn>
+        <sx-cfdis-filter-btn [filter]="filter$ | async"></sx-cfdis-filter-btn>
+        <button mat-icon-button (click)="load()"><mat-icon>refresh</mat-icon></button>
       </div>
       <mat-divider></mat-divider>
       <sx-cfdis-table [comprobantes]="cfdis$ | async" (pdf)="onPdf($event)" [selected]="selected$ | async"
@@ -71,5 +72,9 @@ export class CfdisComponent implements OnInit {
   onSelect(event: ComprobanteFiscal[]) {
     const ids = event.map(item => item.id);
     this.store.dispatch(new fromCfdis.SelectCfdis({ ids }));
+  }
+
+  load() {
+    this.store.dispatch(new fromCfdis.LoadComprobantes());
   }
 }

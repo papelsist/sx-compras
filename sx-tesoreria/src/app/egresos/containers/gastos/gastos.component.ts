@@ -29,10 +29,7 @@ import { Requisicion, RequisicionesFilter } from '../../models';
         <sx-requisiciones-filter-label [filter]="filter$ | async"></sx-requisiciones-filter-label>
       </mat-card-footer>
     </mat-card>
-    <a mat-fab matTooltip="Alta de requisición" matTooltipPosition="before" color="accent" class="mat-fab-position-bottom-right z-3"
-      [routerLink]="['create']">
-    <mat-icon>add</mat-icon>
-    </a>
+
   </ng-template>
   `,
   styles: [

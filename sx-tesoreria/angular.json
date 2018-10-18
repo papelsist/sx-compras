@@ -47,7 +47,8 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "sx-tesoreria:build"
+            "browserTarget": "sx-tesoreria:build",
+            "port": 4500
           },
           "configurations": {
             "production": {

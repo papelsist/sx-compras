@@ -73,7 +73,7 @@ export class RequisicionFormComponent implements OnInit, OnDestroy, OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     this.buildForm();
     if (changes.requisicion && changes.requisicion.currentValue) {
-      // console.log('Editando requisicion: ', changes.requisicion.currentValue);
+      console.log('Editando requisicion: ', changes.requisicion.currentValue);
       this.setRequisicion();
     }
   }
@@ -84,7 +84,7 @@ export class RequisicionFormComponent implements OnInit, OnDestroy, OnChanges {
     this.requisicion.partidas.forEach(det => {
       this.partidas.push(new FormControl(det));
     });
-    if (this.requisicion.cerrada || this.requisicion.egreso) {
+    if (this.requisicion.cerrada && !this.requisicion.egreso) {
       this.form.disable();
     }
   }

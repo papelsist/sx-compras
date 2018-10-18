@@ -18,7 +18,7 @@ export class ChequesService {
 
   list(filter: ChequesFilter): Observable<Cheque[]> {
     let params = new HttpParams()
-      .set('impresos', 'true')
+      // .set('impresos', 'true')
       .set('registros', filter.registros.toString())
       .set('fechaInicial', filter.fechaInicial.toISOString())
       .set('fechaFinal', filter.fechaFinal.toISOString());

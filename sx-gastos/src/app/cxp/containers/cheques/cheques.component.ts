@@ -8,6 +8,10 @@ import * as fromActions from '../../store/actions/cheque.actions';
 import { Observable, Subject } from 'rxjs';
 
 import { Cheque, ChequesFilter } from '../../model';
+import { MatDialog } from '@angular/material';
+import { FechaDialogComponent } from 'app/_shared/components';
+
+import * as moment from 'moment';
 
 @Component({
   selector: 'sx-cheques',
@@ -31,7 +35,10 @@ export class ChequesComponent implements OnInit {
   search$ = new Subject<string>();
   filter$: Observable<ChequesFilter>;
 
-  constructor(private store: Store<fromStore.State>) {}
+  constructor(
+    private store: Store<fromStore.State>,
+    private dialog: MatDialog
+  ) {}
 
   ngOnInit() {
     this.cheques$ = this.store.pipe(select(fromStore.getAllCheques));
@@ -48,7 +55,35 @@ export class ChequesComponent implements OnInit {
     this.search$.next(event);
   }
 
-  onLiberar(event: Cheque) {}
+  onLiberar(event: Cheque) {
+    this.dialog
+      .open(FechaDialogComponent, {
+        data: { fecha: event.impresion, title: 'Fecha de liberación' }
+      })
+      .afterClosed()
+      .subscribe((res: string) => {
+        if (res) {
+          const cheque = {
+            id: event.id,
+            changes: { liberado: res }
+          };
+          this.store.dispatch(new fromStore.UpdateCheque({ cheque }));
+        }
+      });
+  }
 
-  onEntregar(event: Cheque) {}
+  onEntregar(event: Cheque) {
+    this.dialog
+      .open(FechaDialogComponent, { data: { fecha: event.impresion } })
+      .afterClosed()
+      .subscribe((res: string) => {
+        if (res) {
+          const cheque = {
+            id: event.id,
+            changes: { entregado: res }
+          };
+          this.store.dispatch(new fromStore.UpdateCheque({ cheque }));
+        }
+      });
+  }
 }
