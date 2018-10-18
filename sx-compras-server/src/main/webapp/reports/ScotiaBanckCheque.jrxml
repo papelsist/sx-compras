@@ -29,7 +29,7 @@
 	</parameter>
 	<queryString><![CDATA[SELECT ch.ID,M.FECHA,UPPER(ch.nombre) AS AFAVOR,-m.importe as IMPORTE
 FROM cheque ch 
-join movimiento_de_cuenta m on(m.id=ch.egreso_id) 
+join movimiento_de_cuenta m on(m.cheque_id=ch.id)
 join requisicion r on(r.egreso=m.id) 
 where ch.id=$P{ID}]]></queryString>
 

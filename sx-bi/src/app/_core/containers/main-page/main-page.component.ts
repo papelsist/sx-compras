@@ -20,14 +20,9 @@ export class MainPageComponent implements OnInit {
       title: 'Inicio'
     },
     {
-      icon: 'people',
-      route: '/proveedores',
-      title: 'Proveedores'
-    },
-    {
-      icon: 'my_library_books',
-      route: '/cxp',
-      title: 'Cuentas por pagar (CXP)'
+      icon: 'trending_up',
+      route: '/analisisDeVentas',
+      title: 'Análisis de ventas'
     }
   ];
 
@@ -50,11 +45,11 @@ export class MainPageComponent implements OnInit {
 
   ngOnInit() {
     this.modulo$ = of('SIIPAPX BI');
-    this.store.dispatch(new fromAuth.LoadUserSession());
+    // this.store.dispatch(new fromAuth.LoadUserSession());
 
     this.expiration$ = this.store.pipe(select(fromAuth.getSessionExpiration));
     this.apiInfo$ = this.store.pipe(select(fromAuth.getApiInfo));
-    
+
     this.store.pipe(select(fromAuth.getUser)).subscribe(u => (this.user = u));
   }
 

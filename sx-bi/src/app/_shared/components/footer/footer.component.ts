@@ -9,9 +9,9 @@ import { User } from 'app/auth/models/user';
     <div layout="row" layout-align="start center">
       <span class="md-caption">Copyright &copy; 2017 Luxsoft Mx. All rights reserved</span>
       <span flex></span>
-
+      <mat-icon color="accent">person</mat-icon>
       <ng-container *ngIf="user">
-        <mat-icon color="accent">person</mat-icon>
+
         <span class="pad-left">
           {{user.nombre}}
         </span>
