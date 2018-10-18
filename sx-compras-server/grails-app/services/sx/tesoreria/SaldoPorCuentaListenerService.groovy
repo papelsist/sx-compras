@@ -4,7 +4,7 @@ package sx.tesoreria
 import grails.compiler.GrailsCompileStatic
 import grails.events.annotation.Subscriber
 import groovy.util.logging.Slf4j
-
+import org.apache.commons.lang3.exception.ExceptionUtils
 import org.grails.datastore.mapping.engine.event.AbstractPersistenceEvent
 import org.grails.datastore.mapping.engine.event.PostInsertEvent
 import org.grails.datastore.mapping.engine.event.PostDeleteEvent
@@ -33,10 +33,8 @@ class SaldoPorCuentaListenerService {
     void afterInsert(PostInsertEvent event) {
         MovimientoDeCuenta mov = getEntity(event)
         if(mov) {
-            log.debug('{} {} ', event.eventType.name(), event.entity.name)
-            MovimientoDeCuenta.withNewSession {
-                saldoPorCuentaDeBancoService.actualizarSaldo(mov.cuenta.id)
-            }
+            log.debug('{} {} {} {} ', event.eventType.name(), event.entity.name, mov.id , mov.importe)
+            actualizarSaldo(mov)
         }
 
     }
@@ -46,10 +44,20 @@ class SaldoPorCuentaListenerService {
     void afterDelete(PostDeleteEvent event) {
         MovimientoDeCuenta mov = getEntity(event)
         if(mov) {
-            log.debug('{} {} ', event.eventType.name(), event.entity.name)
-            MovimientoDeCuenta.withNewSession {
+            log.debug('{} {} {} {}', event.eventType.name(), event.entity.name, mov.id, mov.importe)
+            actualizarSaldo(mov)
+        }
+    }
+
+    private actualizarSaldo(MovimientoDeCuenta mov) {
+        SaldoPorCuentaDeBanco.withNewSession {
+            try {
                 saldoPorCuentaDeBancoService.actualizarSaldo(mov.cuenta.id)
+            }catch (Exception ex) {
+                String message = ExceptionUtils.getRootCauseMessage(ex)
+                log.error("Error al tratar de actualizar saldo por cuenta de banco", message)
             }
         }
+
     }
 }

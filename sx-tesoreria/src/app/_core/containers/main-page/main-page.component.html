@@ -1,10 +1,10 @@
 <td-layout #layout mode="over" opened="false" [sidenavWidth]="sidenavWidth">
 
   <div td-sidenav-content>
-    SideNac (Pendiente)
+    <span> Su sesión expira en {{expiration$ | async}}</span>
   </div>
 
-  <td-navigation-drawer sidenavTitle="{{modulo$ | async}}" color="accent" navigationRoute="/" email="{{session?.user?.nombre}}"
+  <td-navigation-drawer sidenavTitle="{{modulo$ | async}}" color="accent" navigationRoute="/" email="{{user?.nombre}}"
     flex>
 
     <div td-navigation-drawer-menu>

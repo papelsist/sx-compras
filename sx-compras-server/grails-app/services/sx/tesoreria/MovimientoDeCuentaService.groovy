@@ -9,6 +9,7 @@ import sx.core.LogUser
 import sx.cxp.Requisicion
 import sx.cxp.RequisicionDeCompras
 import sx.cxp.RequisicionDeGastos
+import sx.utils.MonedaUtils
 
 @Transactional
 @GrailsCompileStatic
@@ -17,19 +18,8 @@ class MovimientoDeCuentaService implements  LogUser{
 
 
 
-    MovimientoDeCuenta generarPagoDeGastos(RequisicionDeGastos requisicionDeGastos, CuentaDeBanco cuenta, String referencia) {
-        return generarEgreso(requisicionDeGastos, 'GASTO', 'GASTOS', cuenta, referencia)
-
-    }
-
-    MovimientoDeCuenta generarPagoDeCompras(RequisicionDeCompras requisicionDeCompras, CuentaDeBanco cuenta, String referencia) {
-        return generarEgreso(requisicionDeCompras, 'COMRA', 'COMPRAS', cuenta, referencia)
-    }
-
     MovimientoDeCuenta generarEgreso(Requisicion requisicion,String tipo, String concepto, CuentaDeBanco cuenta, String referencia) {
-        if(requisicion.egreso) {
-            throw new RuntimeException("La ${requisicion.class.simpleName} ${requisicion.folio} ya ha sido pagada")
-        }
+
         MovimientoDeCuenta egreso = new MovimientoDeCuenta()
         egreso.tipo = tipo
         egreso.importe = requisicion.apagar * -1
@@ -44,20 +34,14 @@ class MovimientoDeCuentaService implements  LogUser{
         egreso.referencia = referencia
         egreso.afavor = requisicion.nombre
         egreso.cuenta = cuenta
+        logEntity(egreso)
 
-
-        egreso.save flush: true
         if(egreso.formaDePago == 'CHEQUE') {
             generarCheque(egreso)
             egreso.referencia = egreso.cheque.folio.toString()
         }
-
-        requisicion.egreso = egreso
-        requisicion.pagada = egreso.fecha
-        logEntity(egreso)
-        requisicion.save()
-        log.info("Egreso generado ${egreso.id}")
         return egreso
+
     }
 
     def generarCheque(MovimientoDeCuenta egreso) {
@@ -76,11 +60,34 @@ class MovimientoDeCuentaService implements  LogUser{
 
             cheque.egreso = egreso
             egreso.cheque = cheque
-
-            logEntity(cuenta)
             logEntity(cheque)
 
             cuenta.save()
+        }
+    }
+
+    MovimientoDeCuenta generarComisionPorTransferencia(Requisicion requisicion) {
+        if(requisicion.egreso.cuenta.comisionPorTransferencia > 0) {
+            BigDecimal importe = MonedaUtils.calcularTotal(requisicion.egreso.cuenta.comisionPorTransferencia)
+            MovimientoDeCuenta comision = new MovimientoDeCuenta()
+            comision.tipo = requisicion.egreso.tipo
+            comision.importe = importe * -1
+            comision.fecha = requisicion.fechaDePago
+            comision.concepto = 'COMISION_POR_TRANSFERENCIA'
+            comision.moneda = Currency.getInstance(requisicion.moneda)
+            comision.tipoDeCambio = requisicion.tipoDeCambio
+            comision.comentario = requisicion.comentario
+            comision.formaDePago = requisicion.formaDePago
+
+            // Datos del pago
+            comision.referencia = requisicion.egreso.id
+            comision.afavor = requisicion.nombre
+            comision.cuenta = requisicion.egreso.cuenta
+            logEntity(comision)
+            return comision
+            //comision.save flush: true
+        } else {
+            return null
         }
     }
 }

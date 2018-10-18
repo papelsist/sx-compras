@@ -16,9 +16,7 @@ import { of, Observable, defer } from 'rxjs';
 import { AuthActionTypes, AuthActions } from '../actions/auth.actions';
 import * as fromActions from '../actions/auth.actions';
 import * as fromRoot from 'app/store';
-
 import { AuthService } from '../../services/auth.service';
-import { readFromStore } from '../../models/authSession';
 
 @Injectable()
 export class AuthEffects {
@@ -51,11 +49,7 @@ export class AuthEffects {
       session.start = new Date();
       localStorage.setItem('siipapx_session', JSON.stringify(session));
     }),
-    switchMap(() => [
-      new fromRoot.Go({ path: ['/'] }),
-      new fromActions.LoadSession()
-    ])
-    // map(() => new fromRoot.Go({ path: ['/'] }))
+    map(() => new fromRoot.Go({ path: ['/'] }))
   );
 
   @Effect()
@@ -75,25 +69,21 @@ export class AuthEffects {
 
   @Effect()
   loadSession = this.actions$.pipe(
-    ofType<fromActions.LoadSession>(AuthActionTypes.LoadSession),
+    ofType<fromActions.LoadUserSession>(AuthActionTypes.LoadUserSession),
     tap(() => console.log('Loading session information.....')),
     mergeMap(() => {
       return this.service.getSessionInfo().pipe(
-        tap(sessionInfo => {
-          const session = readFromStore();
-          session.apiInfo = sessionInfo.apiInfo;
-          session.user = sessionInfo.user;
-          localStorage.setItem('siipapx_session', JSON.stringify(session));
-        }),
-        map(sessionInfo => new fromActions.LoadSessionSuccess(sessionInfo)),
+        map(
+          sessionInfo => new fromActions.LoadUserSessionSuccess({ sessionInfo })
+        ),
         catchError(response => of(new fromRoot.GlobalHttpError({ response })))
       );
     })
   );
 
   @Effect({ dispatch: false })
-  init$: Observable<any> = defer(() => of(null))
-    .pipe
+  init$: Observable<any> = defer(() => of(null)).pipe(
     // tap(() => console.log('Cargando detalles de la session....'))
-    ();
+    tap(() => console.log('Cargando detalles de la session....'))
+  );
 }

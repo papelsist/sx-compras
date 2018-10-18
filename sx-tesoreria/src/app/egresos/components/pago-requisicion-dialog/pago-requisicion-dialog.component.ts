@@ -28,8 +28,13 @@ import * as moment from 'moment';
             <mat-form-field class="pad-left" flex>
               <input matInput formControlName="referencia" placeholder="Referencia" autocomplete="off">
             </mat-form-field>
-            <mat-form-field class="pad-left" flex>
+            <mat-form-field class="pad-left" flex *ngIf="requisicion.formaDePago === 'CHEQUE'">
               <input matInput formControlName="cheque" placeholder="Próximo cheque" autocomplete="off">
+            </mat-form-field>
+            <mat-form-field class="pad-left" flex *ngIf="requisicion.formaDePago === 'TRANSFERENCIA'">
+              <input matInput formControlName="comision" placeholder="Comisión" autocomplete="off">
+              <span matPrefix>$&nbsp;</span>
+              <mat-hint align="end">Pesos + IVA</mat-hint>
             </mat-form-field>
           </div>
         </div>
@@ -60,6 +65,7 @@ export class PagoRequisicionDialogComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.buildForm();
     this.subscription = this.form.get('cuenta').valueChanges.subscribe(cta => {
+      console.log('Cuenta: ', cta);
       if (this.requisicion.formaDePago === 'CHEQUE') {
         this.form.get('cheque').setValue(cta.proximoCheque);
         this.form.get('referencia').setValue(cta.proximoCheque);
@@ -67,6 +73,11 @@ export class PagoRequisicionDialogComponent implements OnInit, OnDestroy {
       } else {
         this.form.get('referencia').setValue('');
         this.form.get('referencia').enable();
+      }
+      if (this.requisicion.formaDePago === 'TRANSFERENCIA') {
+        if (cta.comisionPorTransferencia) {
+          this.form.get('comision').setValue(cta.comisionPorTransferencia);
+        }
       }
     });
   }
@@ -82,6 +93,7 @@ export class PagoRequisicionDialogComponent implements OnInit, OnDestroy {
       fecha: [{ value: this.pago, disabled: true }, [Validators.required]],
       cuenta: [null, Validators.required],
       referencia: [null, Validators.required],
+      comision: [{ value: 0.0, disabled: true }],
       cheque: [{ value: null, disabled: true }]
     });
   }

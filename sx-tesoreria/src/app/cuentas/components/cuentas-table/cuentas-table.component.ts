@@ -33,12 +33,12 @@ export class CuentasTableComponent implements OnInit, OnChanges {
 
   displayColumns = [
     'numero',
-    'clave',
+    // 'clave',
     'descripcion',
     'banco',
     'moneda',
     'lastUpdated',
-    'updateUser',
+    // 'updateUser',
     'operaciones'
   ];
   @ViewChild(MatSort)

@@ -50,11 +50,26 @@ class PagoDeRequisicionService implements  LogUser {
         if(!requisicion.cerrada) {
             // throw new PagoDeRequisicionException("Requisicion ${requisicion.folio} no no esta cerrada")
         }
+
         String tipo  = requisicion.instanceOf(RequisicionDeCompras) ? 'COMRA' : 'GASTO'
-        movimientoDeCuentaService.generarEgreso(requisicion, tipo, tipo, cuenta, referencia)
+
+        MovimientoDeCuenta egreso = movimientoDeCuentaService.generarEgreso(requisicion, tipo, tipo, cuenta, referencia)
+        requisicion.egreso = egreso
+        requisicion.pagada = egreso.fecha
+        log.info('Egreso generado {}', egreso.importe)
+
+        if(requisicion.formaDePago == 'TRANSFERENCIA') {
+            MovimientoDeCuenta comision = movimientoDeCuentaService.generarComisionPorTransferencia(requisicion)
+            if(comision) {
+                requisicion.comision = comision
+                log.info("Comision por transrerencia  generada ${comision.importe}")
+            }
+        }
+
         Pago pago = pagoService.pagar(requisicion)
         if(pago.disponible > 0)
             pagoService.aplicarPago(pago)
+
         return requisicion.save(flush: true)
 
     }
@@ -70,6 +85,13 @@ class PagoDeRequisicionService implements  LogUser {
         MovimientoDeCuenta egreso = requisicion.egreso
         requisicion.egreso = null
         egreso.delete flush: true
+
+        if(requisicion.comision) {
+            MovimientoDeCuenta comision = requisicion.comision
+            requisicion.comision = null
+            comision.delete flush: true
+        }
+
         cancelarPagoCxP(requisicion)
         requisicion.save flush: true
         return requisicion

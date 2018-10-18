@@ -22,7 +22,7 @@ abstract class SaldoPorCuentaDeBancoService {
         egresos(saldo)
         saldo.saldoFinal = saldo.saldoInicial + saldo.ingresos - saldo.egresos
         saldo = save(saldo)
-        log.info('Saldo actualizado: {}', saldo)
+        log.info('Saldo de cuenta:{} actializado Saldo final:{}', id, saldo.saldoFinal)
         return saldo
     }
 

@@ -15,7 +15,7 @@ class MovimientosCosteadosService {
     DataSource dataSource
 
     static String MOVIMIENTOS_SQL = """
-    SELECT A.CLAVE as clave ,A.DESCRIPCION as descripcion ,L.LINEA as linea, C.CLASE as clase, M.MARCA as marca 
+    SELECT A.CLAVE as clave ,x.de_linea as deLinea,A.DESCRIPCION as descripcion ,L.LINEA as linea, C.CLASE as clase, M.MARCA as marca 
     ,SUM(CASE WHEN A.TIPO='INI' THEN A.SALDO ELSE 0 END) AS saldoInicial
     ,SUM(CASE WHEN A.TIPO='INI' THEN A.COSTO ELSE 0 END) AS costoInicial
     ,SUM(CASE WHEN A.TIPO='SNA' THEN A.SALDO ELSE 0 END) AS comsSinAUni
@@ -58,7 +58,7 @@ class MovimientosCosteadosService {
     LEFT JOIN LINEA L ON(X.LINEA_ID=L.ID)
     LEFT JOIN CLASE C ON(X.CLASE_ID=C.ID)
     LEFT JOIN MARCA M ON(X.MARCA_ID=M.ID)
-    where x.inventariable=true and x.de_linea = true 
+    where x.inventariable=true  
     and ( (case when saldo<0 then abs(saldo) else 0 end) + (case when saldo>0 then saldo else 0 end) ) > 0
     GROUP BY 1 ORDER BY 1 
     """

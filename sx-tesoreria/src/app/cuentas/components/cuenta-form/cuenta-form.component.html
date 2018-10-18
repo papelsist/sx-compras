@@ -27,12 +27,19 @@
   </div>
 
   <div layout>
-    <sx-upper-case-field formControlName="subCuentaOperativa" placeholder="SubCuenta operativa" flex></sx-upper-case-field>
-    <!-- <mat-form-field class="pad-left">
-      <input matInput formcontrolName="impresionTemplate" placeholder="Plantilla">
-    </mat-form-field> -->
-    <mat-form-field flex class="pad-left">
+    <mat-form-field flex>
       <input type="number" formControlName="proximoCheque" matInput placeholder="Próximo cheque" autocomplete="off">
+    </mat-form-field>
+    <mat-form-field flex class="pad-left">
+      <input type="number" formControlName="comisionPorTransferencia" matInput placeholder="Comisión por transferencia"
+        autocomplete="off">
+    </mat-form-field>
+  </div>
+
+  <div layout>
+    <sx-upper-case-field formControlName="subCuentaOperativa" placeholder="SubCuenta operativa" flex></sx-upper-case-field>
+    <mat-form-field class="pad-left" flex>
+      <input matInput formcontrolName="impresionTemplate" placeholder="Plantilla">
     </mat-form-field>
   </div>
 

@@ -46,7 +46,8 @@ export class CuentaFormComponent implements OnInit {
       disponibleEnVentas: [],
       subCuentaOperativa: [],
       impresionTemplate: [],
-      proximoCheque: []
+      proximoCheque: [],
+      comisionPorTransferencia: []
     });
   }
 

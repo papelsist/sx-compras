@@ -47,9 +47,9 @@ class Requisicion {
 
     MovimientoDeCuenta egreso
 
+    MovimientoDeCuenta comision
+
     Date aplicada
-
-
 
     String createUser
     String updateUser
@@ -67,6 +67,7 @@ class Requisicion {
         pagada nullable: true
         aplicada nullable: true
         egreso nullable: true
+        comision nullable: true
     }
 
     static mapping = {

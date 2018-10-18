@@ -22,7 +22,7 @@ abstract class ProveedorSaldoService {
         abonos(saldo)
         saldo.saldoFinal = saldo.saldoInicial + saldo.cargos - saldo.abonos
         saldo = save(saldo)
-        log.info('Saldo actualizado: {}', saldo)
+        log.info('Saldo del proveedor {} actualizado Saldo: {}',proveedorId, saldo)
         return saldo
     }
 

@@ -3,9 +3,9 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import * as fromStore from 'app/store';
 import * as fromAuth from 'app/auth/store';
-import { AuthSession } from '../../../auth/models/authSession';
 
-import { of, Observable, Subscription } from 'rxjs';
+import { of, Observable } from 'rxjs';
+import { User } from 'app/auth/models/user';
 
 @Component({
   selector: 'sx-main-page',
@@ -40,18 +40,21 @@ export class MainPageComponent implements OnInit, OnDestroy {
   ];
 
   modulo$: Observable<string>;
-
+  expiration$: Observable<any>;
+  apiInfo$: Observable<any>;
+  user: User;
   sidenavWidth = 300;
-
-  session: AuthSession;
 
   constructor(private store: Store<fromStore.State>) {}
 
   ngOnInit() {
     this.modulo$ = of('SX Tesoreía');
-    this.store
-      .pipe(select(fromAuth.getSession))
-      .subscribe(ses => (this.session = ses));
+    this.store.dispatch(new fromAuth.LoadUserSession());
+
+    this.expiration$ = this.store.pipe(select(fromAuth.getSessionExpiration));
+    this.apiInfo$ = this.store.pipe(select(fromAuth.getApiInfo));
+
+    this.store.pipe(select(fromAuth.getUser)).subscribe(u => (this.user = u));
   }
 
   ngOnDestroy() {}

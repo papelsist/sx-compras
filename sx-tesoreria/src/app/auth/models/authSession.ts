@@ -8,8 +8,6 @@ export interface AuthSession {
   token_type: string;
   expires_in: number;
   start: Date;
-  apiInfo: any;
-  user: User;
 }
 
 export const SESSION_KEY = 'siipapx_session';

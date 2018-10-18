@@ -10,8 +10,9 @@ export enum AuthActionTypes {
   LOGIN_FAIL = '[Auth] Login Fail',
   LOGIN_REDIRECT = '[Auth] Login Redirect',
   LOGOUT = '[Auth] Logout',
-  LoadSession = '[Auth effect] Load session',
-  LoadSessionSuccess = '[Auth Effect] Load session success'
+  LoadUserSession = '[Auth Component] Load User session',
+  LoadUserSessionFail = '[Auth API effect] Load User session fail',
+  LoadUserSessionSuccess = '[Auth API effect] Load User session success'
 }
 
 export class Login implements Action {
@@ -35,12 +36,12 @@ export class LoginRedirect implements Action {
   readonly type = AuthActionTypes.LOGIN_REDIRECT;
 }
 
-export class LoadSession implements Action {
-  readonly type = AuthActionTypes.LoadSession;
+export class LoadUserSession implements Action {
+  readonly type = AuthActionTypes.LoadUserSession;
 }
-export class LoadSessionSuccess implements Action {
-  readonly type = AuthActionTypes.LoadSessionSuccess;
-  constructor(public payload: any) {}
+export class LoadUserSessionSuccess implements Action {
+  readonly type = AuthActionTypes.LoadUserSessionSuccess;
+  constructor(public payload: { sessionInfo: any }) {}
 }
 
 export type AuthActions =
@@ -49,5 +50,5 @@ export type AuthActions =
   | LoginSuccess
   | Logout
   | LoginRedirect
-  | LoadSession
-  | LoadSessionSuccess;
+  | LoadUserSession
+  | LoadUserSessionSuccess;

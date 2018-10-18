@@ -32,6 +32,8 @@ class CuentaDeBanco {
 
     String impresionTemplate
 
+    BigDecimal comisionPorTransferencia = 0.0
+
     Long sw2
 
     Date dateCreated
@@ -47,7 +49,7 @@ class CuentaDeBanco {
     	numero maxSize:30
         clave maxSize:30, unique: true
         descripcion minSize:3
-        tipo inList:['CHEQUES','INVERSION']
+        tipo nullable: true, inList:['CHEQUES','INVERSION', 'MIXTA']
         impresionTemplate nullable:true, maxSize:50
         subCuentaOperativa nullable:true, maxSize:4
         sw2 nullable:true
@@ -57,6 +59,7 @@ class CuentaDeBanco {
         createUser nullable: true
         updateUser nullable: true
         proximoCheque nullable: true
+        comisionPorTransferencia nullable: true
     }
 
     String toString() {
