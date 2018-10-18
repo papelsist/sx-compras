@@ -9,6 +9,7 @@ import { CuentaDeBanco } from 'app/models';
 import { Update } from '@ngrx/entity';
 import { Movimiento } from '../models/movimiento';
 import { SaldoPorCuenta } from '../models/saldoPorCuenta';
+import { EjercicioMes } from 'app/models/ejercicioMes';
 
 @Injectable()
 export class CuentasService {
@@ -38,8 +39,13 @@ export class CuentasService {
       .pipe(catchError((error: any) => throwError(error)));
   }
 
-  loadMovimientos(cuenta: CuentaDeBanco): Observable<Movimiento[]> {
-    const url = `${this.apiUrl}/${cuenta.id}/movimientos`;
+  loadMovimientos(
+    cuentaId: string,
+    periodo: EjercicioMes
+  ): Observable<Movimiento[]> {
+    const url = `${this.apiUrl}/${cuentaId}/movimientos/${periodo.ejercicio}/${
+      periodo.mes
+    }`;
     return this.http
       .get<Movimiento[]>(url)
       .pipe(catchError((error: any) => throwError(error)));
@@ -49,6 +55,18 @@ export class CuentasService {
     const url = `${this.apiUrl}/${cuenta.id}/saldos`;
     return this.http
       .get<SaldoPorCuenta[]>(url)
+      .pipe(catchError((error: any) => throwError(error)));
+  }
+
+  getSaldo(
+    cuentaId: string,
+    periodo: EjercicioMes
+  ): Observable<SaldoPorCuenta> {
+    const url = `${this.apiUrl}/${cuentaId}/saldo/${periodo.ejercicio}/${
+      periodo.mes
+    }`;
+    return this.http
+      .get<SaldoPorCuenta>(url)
       .pipe(catchError((error: any) => throwError(error)));
   }
 }

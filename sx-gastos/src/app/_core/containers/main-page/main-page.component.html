@@ -1,26 +1,26 @@
-<td-layout #layout mode="over" opened="false" [sidenavWidth]="sidenavWidth" >
+<td-layout #layout mode="over" opened="false" [sidenavWidth]="sidenavWidth">
 
-  <div td-sidenav-content>
-    SideNac (Pendiente)
+  <div td-sidenav-content layout="column">
+    <span> Su sesión expira en {{expiration$ | async}}</span>
+
   </div>
 
-  <td-navigation-drawer sidenavTitle="{{modulo$ | async}}" color="accent"
-    navigationRoute= "/"
-    name="Operaciones"
-    email="admin@gmail.com" flex>
+  <td-navigation-drawer sidenavTitle="{{modulo$ | async}}" color="accent" navigationRoute="/" email="{{user?.nombre}}"
+    flex>
 
     <div td-navigation-drawer-menu>
       <mat-nav-list>
         <a *ngFor="let item of usermenu" mat-list-item [routerLink]="[item.route]">
           <mat-icon>{{item.icon}}</mat-icon>{{item.title}}
         </a>
+        <a mat-list-item (click)="logout()">
+          <mat-icon>exit_to_app</mat-icon>Salir del sistema
+        </a>
       </mat-nav-list>
     </div>
 
     <mat-nav-list>
-      <a *ngFor="let item of navigation" mat-list-item
-         [routerLink]="[item.route]"
-         (click)="layout.close()">
+      <a *ngFor="let item of navigation" mat-list-item [routerLink]="[item.route]" (click)="layout.close()">
         <mat-icon>{{item.icon}}</mat-icon>{{item.title}}
       </a>
     </mat-nav-list>

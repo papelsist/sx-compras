@@ -3,6 +3,7 @@ import { Actions, Effect, ofType } from '@ngrx/effects';
 
 import * as fromRoot from 'app/store';
 import { SaldoActionTypes } from '../actions/saldos.actions';
+import * as fromCuentas from '../actions/cuentas.actions';
 import * as fromActions from '../actions/saldos.actions';
 
 import { of } from 'rxjs';
@@ -15,12 +16,20 @@ export class SaldosEffects {
   constructor(private actions$: Actions, private service: CuentasService) {}
 
   @Effect()
+  selectedCuenta$ = this.actions$.pipe(
+    ofType<fromCuentas.SetSelectedCuenta>(
+      fromCuentas.CuentaActionTypes.SetSelectedCuenta
+    ),
+    map(action => action.payload.cuenta),
+    map(cuenta => new fromActions.LoadSaldos({ cuenta }))
+  );
+
+  @Effect()
   loadSaldos$ = this.actions$.pipe(
     ofType<fromActions.LoadSaldos>(SaldoActionTypes.LoadSaldos),
     map(action => action.payload.cuenta),
     switchMap(cuenta =>
       this.service.loadSaldos(cuenta).pipe(
-        tap(saldos => console.log('Saldos obtenidos: ', saldos)),
         map(saldos => new fromActions.LoadSaldosSuccess({ saldos })),
         catchError(response => of(new fromActions.LoadSaldosFail({ response })))
       )

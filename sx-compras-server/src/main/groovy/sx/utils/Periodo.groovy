@@ -100,20 +100,21 @@ class Periodo implements Comparable<Periodo>, WebDataBinding {
 		Periodo p=new Periodo(fechaInicial:start,fechaFinal:end);
 		return p;
 	}
+
 	public static Periodo getPeriodoEnUnMes(int mes,int ano){
-		Calendar cal=Calendar.getInstance();
-		cal.clear();
-		cal.set(Calendar.YEAR,ano);
-		cal.set(Calendar.MONTH,mes);
-		cal.set(Calendar.DATE,1);
+		Calendar cal=Calendar.getInstance()
+		cal.clear()
+		cal.set(Calendar.YEAR,ano)
+		cal.set(Calendar.MONTH,mes)
+		cal.set(Calendar.DATE,1)
 		
-		Date start=cal.getTime();
-		int last=cal.getActualMaximum(Calendar.DAY_OF_MONTH);
-		cal.set(Calendar.DATE,last);
+		Date start=cal.getTime()
+		int last=cal.getActualMaximum(Calendar.DAY_OF_MONTH)
+		cal.set(Calendar.DATE,last)
 		
-		Date end=cal.getTime();
-		Periodo p=new Periodo(fechaInicial:start,fechaFinal:end);
-		return p;
+		Date end=cal.getTime()
+		Periodo p=new Periodo(fechaInicial:start,fechaFinal:end)
+		return p
 	}
 	
 	public static Periodo getPeriodoAnual(int year){

@@ -4,7 +4,7 @@ import { SaldoPorCuenta } from '../../models/saldoPorCuenta';
 import { CuentaDeBanco } from 'app/models';
 
 export enum SaldoActionTypes {
-  LoadSaldos = '[Cuentas component] Load Saldos',
+  LoadSaldos = '[Saldos Effect] Load Saldos',
   LoadSaldosFail = '[Saldos API effect] Load Saldos fail',
   LoadSaldosSuccess = '[Saldos API effect] Load Saldos Success'
 }

@@ -4,8 +4,10 @@ import { TdMediaService } from '@covalent/core';
 
 import { Store, select } from '@ngrx/store';
 import * as fromStore from '../../store';
+import * as fromAuth from 'app/auth/store';
 
 import { Observable } from 'rxjs';
+import { User } from 'app/auth/models/user';
 
 @Component({
   selector: 'sx-cxp-page',
@@ -53,6 +55,8 @@ export class CxpPageComponent implements OnInit {
   ];
 
   loading$: Observable<boolean>;
+  user$: Observable<User>;
+  api$: Observable<any>;
 
   constructor(
     public media: TdMediaService,
@@ -61,5 +65,7 @@ export class CxpPageComponent implements OnInit {
 
   ngOnInit() {
     this.loading$ = this.store.pipe(select(fromStore.getNotasLoading));
+    this.user$ = this.store.pipe(select(fromAuth.getUser));
+    this.api$ = this.store.pipe(select(fromAuth.getApiInfo));
   }
 }

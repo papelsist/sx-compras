@@ -58,11 +58,8 @@
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Comentario</th>
     <td mat-cell *matCellDef="let cheque">
       <ng-container *ngIf="cheque.cancelado">
-        <span>
-          CANCELADO {{cheque.cancelado | date: 'dd/MM/yyyy'}}
-        </span>
-        <span class="text-sm">
-          {{cheque.canceladoComentario}}
+        <span class="tc-pink-700">
+          {{cheque.canceladoComentario}} ({{cheque.cancelado | date: 'dd/MM/yyyy'}})
         </span>
       </ng-container>
     </td>

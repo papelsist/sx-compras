@@ -129,9 +129,8 @@ class CostoPromedioController extends RestfulController<CostoPromedio> {
 
         Map repParams = [:]
 
-        repParams.FECHA_INI = command.fechaIni
-        repParams.FECHA_FIN = command.fechaFin
-        repParams.DOCUMENTO = command.documento
+        repParams.FECHA = command.fecha
+        repParams.DOCTO = command.documento
         repParams.TIPO = command.tipo
         repParams.SUCURSAL = command.sucursal.id
 
@@ -158,8 +157,7 @@ class MovimientosCosteadosCommand implements  Validateable {
 
 class MovimientosCosteadosDetCommand implements  Validateable {
 
-    Date fechaIni
-    Date fechaFin
+    Date fecha
     String tipo
     String documento
     Sucursal sucursal

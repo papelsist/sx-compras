@@ -24,7 +24,7 @@ export class CuentasTableComponent implements OnInit, OnChanges {
   cuentas: CuentaDeBanco[] = [];
 
   @Input()
-  selected: CuentaDeBanco;
+  selectedId: string;
 
   @Input()
   filter;

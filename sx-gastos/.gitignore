@@ -5,6 +5,7 @@
 /dist-server
 /tmp
 /out-tsc
+/gastos
 
 # dependencies
 /node_modules

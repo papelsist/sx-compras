@@ -18,6 +18,8 @@ export interface Cheque {
   modificado?: string;
   createUser: string;
   updateUser: string;
+  cancelado?: string;
+  canceladoComentario?: string;
 }
 export class ChequesFilter {
   fechaInicial?: Date;

@@ -63,7 +63,7 @@ export class ChequesTableComponent implements OnInit, OnChanges {
     if (changes.cheques && changes.cheques.currentValue) {
       this.dataSource.data = changes.cheques.currentValue;
     }
-    if (changes.filter && changes.filter.currentValue) {
+    if (changes.filter) {
       const s = changes.filter.currentValue || '';
       this.dataSource.filter = s.toLowerCase();
     }

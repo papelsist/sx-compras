@@ -48,8 +48,7 @@
   </ng-template>
 
 
-
   <td-layout-footer>
-    <sx-footer></sx-footer>
+    <sx-footer [user]="user$ | async" [apiInfo]="api$ | async"></sx-footer>
   </td-layout-footer>
 </td-layout-nav-list>

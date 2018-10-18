@@ -1,7 +1,9 @@
 import { Action } from '@ngrx/store';
+import { HttpErrorResponse } from '@angular/common/http';
 
 export enum ApplicationActionTypes {
-  SetGlobalLoading = '[Application] Set global loading'
+  SetGlobalLoading = '[Application] Set global loading',
+  GlobalHttpError = '[Application] Set global Http error'
 }
 
 export class SetGlobalLoading implements Action {
@@ -9,4 +11,9 @@ export class SetGlobalLoading implements Action {
   constructor(public payload: { loading: boolean }) {}
 }
 
-export type ApplicationActions = SetGlobalLoading;
+export class GlobalHttpError implements Action {
+  readonly type = ApplicationActionTypes.GlobalHttpError;
+  constructor(public payload: { response: HttpErrorResponse }) {}
+}
+
+export type ApplicationActions = SetGlobalLoading | GlobalHttpError;

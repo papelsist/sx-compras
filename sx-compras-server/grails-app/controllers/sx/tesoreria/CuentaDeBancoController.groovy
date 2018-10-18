@@ -5,6 +5,7 @@ import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.RestfulController
 import groovy.transform.CompileDynamic
 import sx.reports.ReportService
+import sx.utils.Periodo
 
 @GrailsCompileStatic
 @Secured("IS_AUTHENTICATED_ANONYMOUSLY")
@@ -21,7 +22,6 @@ class CuentaDeBancoController extends RestfulController {
     @Override
     protected List listAllResources(Map params) {
         params.max = 20
-        println params
         def query = CuentaDeBanco.where{}
 
         if(params.activas) {
@@ -42,15 +42,25 @@ class CuentaDeBancoController extends RestfulController {
         return super.updateResource(resource)
     }
 
-    def movimientos(CuentaDeBanco cuenta) {
+    @CompileDynamic
+    def movimientos(CuentaDeBanco cuenta, Integer ejercicio, Integer mes) {
         if(cuenta == null) {
             notFound()
             return
         }
-        params.max = 100
+        // params.max = 100
         params.sort = 'lastUpdated'
         params.order = 'desc'
-        List<MovimientoDeCuenta> res = MovimientoDeCuenta.where {cuenta == cuenta}.list(params)
+        Periodo periodo = Periodo.getPeriodoEnUnMes(mes - 1, ejercicio)
+        log.info('Movimientos: {}', params)
+        log.info('Periodo de movimientos: {}', periodo)
+
+        def c = MovimientoDeCuenta.createCriteria()
+        def res = c.list {
+            eq("cuenta", cuenta)
+            sqlRestriction("year(fecha) = ? and month(fecha) = ? ", [ejercicio, mes])
+        }
+        // List<MovimientoDeCuenta> res = MovimientoDeCuenta.where {cuenta == cuenta}.list(params)
         respond res
     }
 

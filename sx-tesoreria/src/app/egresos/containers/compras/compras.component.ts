@@ -16,6 +16,7 @@ import { Requisicion, RequisicionesFilter } from '../../models';
       <sx-search-title title="Requisiciones de compras" (search)="search = $event">
         <sx-requisiciones-filter-btn [filter]="filter$ | async" class="options"
           (change)="onFilter($event)"></sx-requisiciones-filter-btn>
+        <button mat-menu-item class="actions" (click)="reload()"><mat-icon>refresh</mat-icon> Recargar</button>
       </sx-search-title>
       <mat-divider></mat-divider>
       <div class="table-panel">
@@ -71,4 +72,8 @@ export class ComprasComponent implements OnInit {
   }
 
   onPrint(event: Requisicion) {}
+
+  reload() {
+    this.store.dispatch(new fromStore.LoadCompras());
+  }
 }

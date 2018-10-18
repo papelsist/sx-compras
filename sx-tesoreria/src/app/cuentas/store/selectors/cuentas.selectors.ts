@@ -38,7 +38,12 @@ export const getPeriodo = createSelector(
   fromCuentas.getPeriodo
 );
 
-export const getSelectedCuenta = createSelector(
+export const getSelectedCuentaId = createSelector(
+  getCuentasState,
+  fromCuentas.getSelectedCuentaId
+);
+
+export const getCurrentCuenta = createSelector(
   getCuentasEntities,
   fromRoot.getRouterState,
   (entities, router): CuentaDeBanco => {

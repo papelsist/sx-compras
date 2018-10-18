@@ -92,7 +92,8 @@ export class AuthEffects {
   );
 
   @Effect({ dispatch: false })
-  init$: Observable<any> = defer(() => of(null)).pipe(
-    tap(() => console.log('Cargando detalles de la session....'))
-  );
+  init$: Observable<any> = defer(() => of(null))
+    .pipe
+    // tap(() => console.log('Cargando detalles de la session....'))
+    ();
 }

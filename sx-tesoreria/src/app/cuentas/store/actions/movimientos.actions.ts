@@ -2,16 +2,16 @@ import { Action } from '@ngrx/store';
 
 import { Movimiento } from '../../models/movimiento';
 import { CuentaDeBanco } from 'app/models';
+import { EjercicioMes } from 'app/models/ejercicioMes';
 
 export enum MovimientoActionTypes {
-  LoadMovimientos = '[Movimientos component] Load Movimientos',
+  LoadMovimientos = '[Saldos effect] Load Movimientos',
   LoadMovimientosFail = '[Movimientos API effect] Load Movimientos fail',
   LoadMovimientosSuccess = '[Movimientos API effect] Load Movimientos Success'
 }
 
 export class LoadMovimientos implements Action {
   readonly type = MovimientoActionTypes.LoadMovimientos;
-  constructor(public payload: { cuenta: CuentaDeBanco }) {}
 }
 export class LoadMovimientosFail implements Action {
   readonly type = MovimientoActionTypes.LoadMovimientosFail;
