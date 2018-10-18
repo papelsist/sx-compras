@@ -43,16 +43,16 @@ FROM (
 select (CASE 	WHEN i.TIPO IN('TRS','REC') AND I.CANTIDAD>0 THEN concat('E',SUBSTR(i.tipo,1,2)) WHEN i.TIPO IN('TRS','REC') AND I.CANTIDAD<0 THEN concat('S',SUBSTR(i.tipo,1,2)) ELSE TIPO END) AS TIPO
 ,P.CLAVE,P.DESCRIPCION,(CASE 	WHEN I.TIPO IN('COM') THEN '02 COMPRAS' WHEN I.TIPO IN('AJU','CIM','CIS','DEC','MER','RMC') THEN '03 GASTO' WHEN I.TIPO IN('VIR','OIM') THEN '04 PRODUCTO'
             	WHEN I.TIPO IN('REC','TRS') THEN '05 TRANSFORM' WHEN I.TIPO IN('TPE','TPS') THEN '06 TRASLADO' WHEN I.TIPO IN('FAC','RMD') THEN '07 VENTAS' ELSE 'OTROS' END) AS GRUPO,S.SW2
-,ROUND(SUM(I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end)*P.KILOS),0) as KILOS,ROUND(SUM(I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end)),3) as SALDO
+,ROUND(SUM(I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end)*P.KILOS),3) as KILOS,ROUND(SUM(I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end)),3) as SALDO
 ,ROUND(SUM(I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end) * (case when i.TIPO IN('TRS','REC','COM') AND I.CANTIDAD>0 then i.costo else I.COSTO_promedio end)),2) as COSTO
 from inventario I  join producto p on(p.id=i.producto_id) JOIN sucursal s on(i.sucursal_id=s.id)
 where p.inventariable is true and YEAR(I.FECHA)=$P{EJERCICIO} AND MONTH(I.FECHA)=$P{MES} AND I.CLAVE LIKE $P{ARTICULOS} group by 4,1,5,2
 UNION
-SELECT 'INI' AS TIPO,P.CLAVE,P.DESCRIPCION,'01 A_INV' AS GRUPO,s.sw2,ROUND(SUM(I.EXISTENCIA_INICIAL/(case when p.unidad ='MIL' then 1000 else 1 end)*P.KILOS),0) as KILOS
+SELECT 'INI' AS TIPO,P.CLAVE,P.DESCRIPCION,'01 A_INV' AS GRUPO,s.sw2,ROUND(SUM(I.EXISTENCIA_INICIAL/(case when p.unidad ='MIL' then 1000 else 1 end)*P.KILOS),3) as KILOS
 ,ROUND(SUM(I.EXISTENCIA_INICIAL/(case when p.unidad ='MIL' then 1000 else 1 end)),3) as SALDO,ROUND(SUM(I.EXISTENCIA_INICIAL/(case when p.unidad ='MIL' then 1000 else 1 end) * I.COSTO ),2) as COSTO
 FROM existencia i join producto p on(p.id=i.producto_id) JOIN sucursal s on(i.sucursal_id=s.id) where p.inventariable is true and i.anio=$P{EJERCICIO} AND i.mes=$P{MES}  AND I.CLAVE LIKE $P{ARTICULOS} group by 4,1,5,2
 UNION
-SELECT 'FIN' AS TIPO,P.CLAVE,P.DESCRIPCION,'08 Z_INV' AS GRUPO,s.sw2,ROUND(SUM(I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end)*P.KILOS),0) as KILOS
+SELECT 'FIN' AS TIPO,P.CLAVE,P.DESCRIPCION,'08 Z_INV' AS GRUPO,s.sw2,ROUND(SUM(I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end)*P.KILOS),3) as KILOS
 ,ROUND(SUM(I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end)),3) as SALDO,ROUND(SUM(I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end) * I.costo_promedio ),2) as COSTO
 FROM existencia i join producto p on(p.id=i.producto_id) JOIN sucursal s on(i.sucursal_id=s.id) where p.inventariable is true and i.anio=$P{EJERCICIO} AND i.mes=$P{MES}  AND I.CLAVE LIKE $P{ARTICULOS} group by 4,1,5,2
 ) AS A GROUP BY 1,2 ORDER BY 2,1]]></queryString>
