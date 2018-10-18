@@ -122,6 +122,13 @@ class UrlMappings {
         "/api/inventario/printKardex"(controller: 'inventario', action: 'printKardex', method: 'GET')
 
 
+        //BI
+        "/api/bi/ventaNetaAcumulada"(controller: 'bi', action:'ventaNetaAcumulada', method:'GET')
+        "/api/bi/ventaNetaMensual"(controller: 'bi', action:'ventaNetaMensual', method: 'GET')
+        "/api/bi/movimientoCosteado"(controller: 'bi', action:'movimientoCosteado', method:'GET')
+        "/api/bi/movimientoCosteadoDet"(controller: 'bi', action:'movimientoCosteadoDet', method: 'GET')
+
+
         "/"(controller: 'application', action:'index')
         "/api/session"(controller: 'application', action: 'session')
         "500"(view: '/error')
