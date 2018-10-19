@@ -32,6 +32,9 @@ import { PagoFormComponent } from './pago-form/pago-form.component';
 import { AplicacionesComponent } from './aplicaciones-table/aplicaciones-table.component';
 import { AplicacionFormComponent } from './aplicacion-form/aplicacion-form.component';
 import { NotaPrintComponent } from './nota-print/nota-print.component';
+import { ProveedorPeriodoFilterDialogComponent } from './proveedor-periodo-filter/proveedor-periodo-filter-dialog.component';
+import { ProveedorPeriodoFilterBtnComponent } from './proveedor-periodo-filter/proveedor-periodo-filter-btn.component';
+import { ProveedorPeriodoFilterLabelComponent } from './proveedor-periodo-filter/proveedor-periodo-filter-label.component';
 
 export const components: any[] = [
   CfdisTableComponent,
@@ -65,14 +68,19 @@ export const components: any[] = [
   PagoFormComponent,
   AplicacionesComponent,
   AplicacionFormComponent,
-  NotaPrintComponent
+  NotaPrintComponent,
+
+  ProveedorPeriodoFilterDialogComponent,
+  ProveedorPeriodoFilterBtnComponent,
+  ProveedorPeriodoFilterLabelComponent
 ];
 
 export const entryComponents = [
   FacturaSelectorComponent,
   ComsSelectorComponent,
   ReportComsSinAnalizarComponent,
-  AplicacionFormComponent
+  AplicacionFormComponent,
+  ProveedorPeriodoFilterDialogComponent
 ];
 
 export * from './cfdis-table/cfdis-table.component';
@@ -116,3 +124,7 @@ export * from './pagos-table/pagos-table.component';
 export * from './pago-form/pago-form.component';
 export * from './aplicaciones-table/aplicaciones-table.component';
 export * from './aplicacion-form/aplicacion-form.component';
+
+export * from './proveedor-periodo-filter/proveedor-periodo-filter-dialog.component';
+export * from './proveedor-periodo-filter/proveedor-periodo-filter-btn.component';
+export * from './proveedor-periodo-filter/proveedor-periodo-filter-label.component';

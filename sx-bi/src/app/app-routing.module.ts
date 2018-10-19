@@ -9,20 +9,13 @@ const routes: Routes = [
   {
     path: '',
     component: MainPageComponent,
-    // canActivate: [AuthGuard],
+    canActivate: [AuthGuard],
     children: [
       { path: '', component: HomePageComponent },
       {
-        path: 'catalogos',
-        loadChildren: './productos/productos.module#ProductosModule'
-      },
-      {
-        path: 'cxp',
-        loadChildren: './cxp/cxp.module#CxpModule'
-      },
-      {
-        path: 'proveedores',
-        loadChildren: './proveedores/proveedores.module#ProveedoresModule'
+        path: 'analisisDeVentas',
+        loadChildren:
+          './analisis-de-ventas/analisis-de-ventas.module#AnalisisDeVentasModule'
       }
     ]
   }

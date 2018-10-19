@@ -3,6 +3,7 @@ import { createSelector } from '@ngrx/store';
 import * as fromRoot from 'app/store';
 import * as fromFeature from '../reducers';
 import * as fromContrarecibos from '../reducers/contrarecibos.reducer';
+
 import { Contrarecibo } from '../../model';
 
 export const getContrarecibosState = createSelector(
@@ -36,4 +37,9 @@ export const getSelectedContrarecibo = createSelector(
   (entities, router): Contrarecibo => {
     return router.state && entities[router.state.params.reciboId];
   }
+);
+
+export const getContrarecibosFilter = createSelector(
+  getContrarecibosState,
+  fromContrarecibos.getContrarecibosFilter
 );

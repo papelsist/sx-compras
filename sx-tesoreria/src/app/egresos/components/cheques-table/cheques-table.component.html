@@ -54,6 +54,15 @@
     </td>
   </ng-container>
 
+  <ng-container matColumnDef="cobrado">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Cobrado</th>
+    <td mat-cell *matCellDef="let cheque">
+      <span class="cursor-pointer" (click)="cobrado.emit(cheque)">{{cheque.cobrado | date: 'dd/MM/yyyy'}}</span>
+      <mat-icon [inline]="true" (click)="cobrado.emit(cheque)" class="pad-left cursor-pointer">today</mat-icon>
+
+    </td>
+  </ng-container>
+
   <ng-container matColumnDef="comentario">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Comentario</th>
     <td mat-cell *matCellDef="let cheque">

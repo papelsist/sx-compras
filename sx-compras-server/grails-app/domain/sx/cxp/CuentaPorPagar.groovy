@@ -76,11 +76,13 @@ class CuentaPorPagar {
         impuestoRetenido(sacle:4)
         total(scale:4)
         comentario(nullable:true)
+        /*
         vencimiento (validator: { vencimiento, cxp ->
             if( (vencimiento <=> cxp.fecha) < 0 )
                 return "vencimientoInvalido"
             else return true
         })
+        */
         descuentoFinanciero nullable:true
         descuentoFinancieroVto nullable:true
         uuid nullable:true, unique:true

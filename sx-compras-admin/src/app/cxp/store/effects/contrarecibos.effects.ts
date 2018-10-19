@@ -5,7 +5,11 @@ import { Store, select } from '@ngrx/store';
 import * as fromRoot from 'app/store';
 import * as fromStore from '../../store';
 import * as fromActions from '../actions/contrarecibos.actions';
-import { ContrareciboActionTypes } from '../actions/contrarecibos.actions';
+import {
+  ContrareciboActionTypes,
+  ContrareciboActions
+} from '../actions/contrarecibos.actions';
+import { getContrarecibosFilter } from '../selectors/contrarecibos.selectors';
 
 import { of } from 'rxjs';
 import { map, switchMap, tap, catchError, take } from 'rxjs/operators';
@@ -24,15 +28,25 @@ export class ContrarecibosEffects {
   ) {}
 
   @Effect()
+  filter$ = this.actions$.pipe(
+    ofType(ContrareciboActionTypes.SetContrarecibosFilter),
+    map(() => new fromActions.LoadContrarecibos())
+  );
+
+  @Effect()
   loadRecibos$ = this.actions$.pipe(
     ofType(ContrareciboActionTypes.LoadContrarecibos),
-    switchMap(action => {
-      return this.service
-        .list()
-        .pipe(
-          map(res => new fromActions.LoadContrarecibosSuccess(res)),
-          catchError(error => of(new fromActions.LoadContrarecibosFail(error)))
-        );
+    switchMap(() => {
+      return this.store.pipe(
+        select(getContrarecibosFilter),
+        take(1)
+      );
+    }),
+    switchMap(filter => {
+      return this.service.list(filter).pipe(
+        map(res => new fromActions.LoadContrarecibosSuccess(res)),
+        catchError(error => of(new fromActions.LoadContrarecibosFail(error)))
+      );
     })
   );
 
@@ -43,12 +57,10 @@ export class ContrarecibosEffects {
     ),
     map(action => action.payload),
     switchMap(recibo => {
-      return this.service
-        .save(recibo)
-        .pipe(
-          map(res => new fromActions.AddContrareciboSuccess(res)),
-          catchError(error => of(new fromActions.AddContrareciboFail(error)))
-        );
+      return this.service.save(recibo).pipe(
+        map(res => new fromActions.AddContrareciboSuccess(res)),
+        catchError(error => of(new fromActions.AddContrareciboFail(error)))
+      );
     })
   );
 
@@ -59,12 +71,10 @@ export class ContrarecibosEffects {
     ),
     map(action => action.payload),
     switchMap(recibo => {
-      return this.service
-        .update(recibo)
-        .pipe(
-          map(res => new fromActions.UpdateContrareciboSuccess(res)),
-          catchError(error => of(new fromActions.UpdateContrareciboFail(error)))
-        );
+      return this.service.update(recibo).pipe(
+        map(res => new fromActions.UpdateContrareciboSuccess(res)),
+        catchError(error => of(new fromActions.UpdateContrareciboFail(error)))
+      );
     })
   );
 
@@ -75,12 +85,10 @@ export class ContrarecibosEffects {
     ),
     map(action => action.payload),
     switchMap(recibo => {
-      return this.service
-        .delete(recibo.id.toString())
-        .pipe(
-          map(res => new fromActions.DeleteContrareciboSuccess(recibo)),
-          catchError(error => of(new fromActions.DeleteContrareciboFail(error)))
-        );
+      return this.service.delete(recibo.id.toString()).pipe(
+        map(res => new fromActions.DeleteContrareciboSuccess(recibo)),
+        catchError(error => of(new fromActions.DeleteContrareciboFail(error)))
+      );
     })
   );
 

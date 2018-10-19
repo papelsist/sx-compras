@@ -9,6 +9,7 @@ import { ConfigService } from 'app/utils/config.service';
 import * as _ from 'lodash';
 import { Contrarecibo, CuentaPorPagar } from '../model';
 import { Periodo } from '../../_core/models/periodo';
+import { ProveedorPeriodoFilter } from '../model/proveedorPeriodoFilter';
 
 @Injectable()
 export class ContrareciboService {
@@ -18,11 +19,21 @@ export class ContrareciboService {
     this.apiUrl = configService.buildApiUrl('cxp/contrarecibos');
   }
 
-  list(periodo: Periodo = Periodo.fromNow(30)): Observable<Contrarecibo[]> {
-    const data = periodo.toApiJSON();
-    const params = new HttpParams()
-      .set('fechaInicial', data.fechaInicial)
-      .set('fechaFinal', data.fechaFinal);
+  list2(): Observable<Contrarecibo[]> {
+    const params = new HttpParams();
+    return this.http
+      .get<Contrarecibo[]>(this.apiUrl, { params: params })
+      .pipe(catchError((error: any) => throwError(error)));
+  }
+
+  list(filter: ProveedorPeriodoFilter): Observable<Contrarecibo[]> {
+    let params = new HttpParams()
+      .set('registros', filter.registros.toString())
+      .set('fechaInicial', filter.fechaInicial.toISOString())
+      .set('fechaFinal', filter.fechaFinal.toISOString());
+    if (filter.proveedor) {
+      params = params.set('proveedor', filter.proveedor.id);
+    }
     return this.http
       .get<Contrarecibo[]>(this.apiUrl, { params: params })
       .pipe(catchError((error: any) => throwError(error)));

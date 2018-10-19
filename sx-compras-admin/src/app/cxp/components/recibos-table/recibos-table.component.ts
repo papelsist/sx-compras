@@ -20,8 +20,10 @@ import { Contrarecibo } from '../../model';
   styleUrls: ['./recibos-table.component.scss']
 })
 export class RecibosTableComponent implements OnInit, OnChanges {
-  @Input() recibos: Contrarecibo[] = [];
-  @Input() filter: string;
+  @Input()
+  recibos: Contrarecibo[] = [];
+  @Input()
+  filter: string;
   dataSource = new MatTableDataSource<Contrarecibo>([]);
 
   @Input()
@@ -33,13 +35,16 @@ export class RecibosTableComponent implements OnInit, OnChanges {
     'total',
     'comentario',
     'modificado',
-    'entregado',
+    'atendido',
     'operaciones'
   ];
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort)
+  sort: MatSort;
+  @ViewChild(MatPaginator)
+  paginator: MatPaginator;
 
-  @Output() select = new EventEmitter();
+  @Output()
+  select = new EventEmitter();
   // @Output() edit = new EventEmitter();
 
   constructor() {}
@@ -53,8 +58,9 @@ export class RecibosTableComponent implements OnInit, OnChanges {
     if (changes.recibos && changes.recibos.currentValue) {
       this.dataSource.data = changes.recibos.currentValue;
     }
-    if (changes.filter && changes.filter.currentValue) {
-      this.dataSource.filter = changes.filter.currentValue.toLowerCase();
+    if (changes.filter) {
+      const s = changes.filter.currentValue || '';
+      this.dataSource.filter = s.toLowerCase();
     }
   }
 

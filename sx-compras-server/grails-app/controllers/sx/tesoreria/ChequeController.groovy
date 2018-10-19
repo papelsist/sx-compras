@@ -76,6 +76,12 @@ class ChequeController extends RestfulController<Cheque> {
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'PolizaCheque.pdf')
     }
 
+    def chequesPendientes( ) {
+        Map repParams = [:]
+        def pdf =  reportService.run('ChequesPendientesDeCobro.jrxml', repParams)
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'ChequesPendientesDeCobro.pdf')
+    }
+
     def handleException(Exception e) {
         String message = ExceptionUtils.getRootCauseMessage(e)
         log.error(message, ExceptionUtils.getRootCause(e))

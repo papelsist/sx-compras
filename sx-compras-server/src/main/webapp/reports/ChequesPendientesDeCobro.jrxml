@@ -30,7 +30,7 @@
 		<defaultValueExpression ><![CDATA["CHEQUES PENDIENTES DE COBRO"]]></defaultValueExpression>
 	</parameter>
 	<queryString><![CDATA[select M.ID AS CARGOABONO_ID,C.FOLIO,m.fecha as FECHA,M.AFAVOR,C.IMPORTE,M.REFERENCIA,U.ID AS ID,U.DESCRIPCION,U.NUMERO AS CUENTA
-FROM CHEQUE C JOIN MOVIMIENTO_DE_CUENTA M ON (M.ID=C.EGRESO_ID) JOIN CUENTA_DE_BANCO U ON (U.ID=M.CUENTA_ID)
+FROM CHEQUE  C JOIN MOVIMIENTO_DE_CUENTA M ON (M.CHEQUE_ID=C.ID) JOIN CUENTA_DE_BANCO U ON (U.ID=M.CUENTA_ID)
 WHERE C.COBRADO IS NULL AND C.CANCELADO IS NULL]]></queryString>
 
 	<field name="CARGOABONO_ID" class="java.lang.String"/>
@@ -48,7 +48,7 @@ WHERE C.COBRADO IS NULL AND C.CANCELADO IS NULL]]></queryString>
 	</variable>
 
 		<group  name="GRUPO1" >
-			<groupExpression><![CDATA[$F{ID}]]></groupExpression>
+			<groupExpression><![CDATA[$F{CUENTA}]]></groupExpression>
 			<groupHeader>
 			<band height="18"  isSplitAllowed="true" >
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >

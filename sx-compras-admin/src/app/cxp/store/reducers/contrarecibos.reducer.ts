@@ -5,10 +5,15 @@ import {
   ContrareciboActions,
   ContrareciboActionTypes
 } from '../actions/contrarecibos.actions';
+import {
+  ProveedorPeriodoFilter,
+  buildProveedorPeriodoFilter
+} from 'app/cxp/model/proveedorPeriodoFilter';
 
 export interface State extends EntityState<Contrarecibo> {
   loading: boolean;
   loaded: boolean;
+  filter: ProveedorPeriodoFilter;
 }
 
 export function sortByModificado(a: Contrarecibo, b: Contrarecibo): number {
@@ -21,7 +26,8 @@ export const adapter: EntityAdapter<Contrarecibo> = createEntityAdapter<
 
 export const initialState: State = adapter.getInitialState({
   loading: false,
-  loaded: false
+  loaded: false,
+  filter: buildProveedorPeriodoFilter()
 });
 
 export function reducer(
@@ -29,6 +35,12 @@ export function reducer(
   action: ContrareciboActions
 ): State {
   switch (action.type) {
+    case ContrareciboActionTypes.SetContrarecibosFilter: {
+      return {
+        ...state,
+        filter: action.payload.filter
+      };
+    }
     case ContrareciboActionTypes.DeleteContrarecibo:
     case ContrareciboActionTypes.AddContrarecibo:
     case ContrareciboActionTypes.LoadContrarecibos: {
@@ -109,3 +121,4 @@ export const {
 
 export const getContrarecibosLoading = (state: State) => state.loading;
 export const getContrarecibosLoaded = (state: State) => state.loaded;
+export const getContrarecibosFilter = (state: State) => state.filter;
