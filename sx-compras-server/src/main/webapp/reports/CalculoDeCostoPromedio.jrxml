@@ -36,7 +36,7 @@
 	<queryString><![CDATA[select X.TIPO as ORIGEN
 ,year(x.fecha) as YEAR,month(x.fecha) as MES,(SELECT S.SW2 FROM sucursal S WHERE S.ID=X.SUCURSAL_ID) AS SUCURSAL,x.clave AS ARTCLAVE,x.descripcion AS ARTNOMBR,X.DOCUMENTO,X.FECHA
 ,ifnull((SELECT concat(ifnull(serie,''),' ',f.folio) FROM recepcion_de_compra_det r join analisis_de_factura_det ad on(ad.com_id=r.id) join analisis_de_factura a on(ad.analisis_id=a.id) join cuenta_por_pagar f on(a.factura_id=f.id) where r.inventario_id=x.id),'') as FACTURA
-,x.cantidad/(case when p.unidad ='MIL' then 1000 else 1 end) as CANTIDAD,x.costo as NETOMN,(x.cantidad/(case when p.unidad ='MIL' then 1000 else 1 end))*X.COSTO AS IMPORTE 
+,x.cantidad/(case when p.unidad ='MIL' then 1000 else 1 end) as CANTIDAD,(x.costo+x.gasto) as NETOMN,(x.cantidad/(case when p.unidad ='MIL' then 1000 else 1 end))*(X.COSTO+x.gasto) AS IMPORTE 
 ,IFNULL((SELECT sum(x.EXISTENCIA_INICIAL/(case when p.unidad ='MIL' then 1000 else 1 end)) from existencia x where x.anio=$P{EJERCICIO} and x.mes=$P{MES} and x.clave=$P{ARTICULOS}  group by x.anio,x.mes ,x.clave),0) AS INV_INI
 ,IFNULL((SELECT X.COSTO from existencia x where x.anio=$P{EJERCICIO} and x.mes=$P{MES} and x.clave=$P{ARTICULOS}  group by x.anio,x.mes ,x.clave,X.COSTO),0) AS  CST_INI
 from inventario x join producto p on(x.clave=p.clave) 
