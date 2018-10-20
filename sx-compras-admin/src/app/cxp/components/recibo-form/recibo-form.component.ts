@@ -29,11 +29,16 @@ import * as moment from 'moment';
   styleUrls: ['./recibo-form.component.scss']
 })
 export class ReciboFormComponent implements OnInit, OnDestroy, OnChanges {
-  @Input() recibo: Partial<Contrarecibo>;
-  @Input() facturas: CuentaPorPagar[];
-  @Output() save = new EventEmitter();
-  @Output() cancel = new EventEmitter();
-  @Output() delete = new EventEmitter();
+  @Input()
+  recibo: Partial<Contrarecibo>;
+  @Input()
+  facturas: CuentaPorPagar[];
+  @Output()
+  save = new EventEmitter();
+  @Output()
+  cancel = new EventEmitter();
+  @Output()
+  delete = new EventEmitter();
   filtro: string;
 
   form: FormGroup;
@@ -74,6 +79,7 @@ export class ReciboFormComponent implements OnInit, OnDestroy, OnChanges {
         fecha: [new Date(), [Validators.required]],
         moneda: ['MXN', [Validators.required]],
         comentario: [],
+        atendido: [null],
         partidas: this.fb.array([])
       });
     }
@@ -89,10 +95,12 @@ export class ReciboFormComponent implements OnInit, OnDestroy, OnChanges {
     if (this.form.valid && !this.form.disabled) {
       let entity = {};
       if (this.recibo) {
+        const atendido: Date = this.form.get('atendido').value;
         entity = {
           ...this.form.value,
           id: this.recibo.id,
-          partidas: this.prepararPartidas()
+          partidas: this.prepararPartidas(),
+          atendido: atendido ? atendido.toISOString() : null
         };
       } else {
         const proveedor: any = this.form.value.proveedor;
@@ -104,6 +112,7 @@ export class ReciboFormComponent implements OnInit, OnDestroy, OnChanges {
           ...this.form.value,
           proveedor: { id: proveedor.id },
           fecha,
+          atendido: null,
           partidas: this.prepararPartidas()
         };
       }

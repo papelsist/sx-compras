@@ -21,16 +21,25 @@ import { CuentaPorPagar } from '../../model';
   styleUrls: ['./recibo-partidas.component.scss']
 })
 export class ReciboPartidasComponent implements OnInit, OnChanges {
-  @Input() partidas: CuentaPorPagar[] = [];
-  @Input() filter: string;
-  @Input() parent: FormGroup;
-  @Input() readOnly = false;
-  @Output() delete = new EventEmitter();
-  @Output() xml = new EventEmitter();
-  @Output() pdf = new EventEmitter();
+  @Input()
+  partidas: CuentaPorPagar[] = [];
+  @Input()
+  filter: string;
+  @Input()
+  parent: FormGroup;
+  @Input()
+  readOnly = false;
+  @Output()
+  delete = new EventEmitter();
+  @Output()
+  xml = new EventEmitter();
+  @Output()
+  pdf = new EventEmitter();
 
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort)
+  sort: MatSort;
+  @ViewChild(MatPaginator)
+  paginator: MatPaginator;
 
   dataSource = new MatTableDataSource<CuentaPorPagar>([]);
 
@@ -58,8 +67,9 @@ export class ReciboPartidasComponent implements OnInit, OnChanges {
     if (changes.partidas && changes.partidas.currentValue) {
       this.dataSource.data = changes.partidas.currentValue;
     }
-    if (changes.filter && changes.filter.currentValue) {
-      this.dataSource.filter = changes.filter.currentValue.toLowerCase();
+    if (changes.filter) {
+      const s = changes.filter.currentValue || '';
+      this.dataSource.filter = s.toLowerCase();
     }
   }
 

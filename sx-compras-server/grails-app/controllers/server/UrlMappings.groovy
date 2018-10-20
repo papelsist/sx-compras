@@ -26,6 +26,7 @@ class UrlMappings {
         "/api/tesoreria/cheques"(resources: 'cheque')
         "/api/tesoreria/cheques/print/$id"(controller: 'cheque', action: 'print', method: 'GET')
         "/api/tesoreria/cheques/printPoliza/$id"(controller: 'cheque', action: 'printPoliza', method: 'GET')
+        "/api/tesoreria/cheques/chequesPendientes"(controller: 'cheque', action: 'chequesPendientes', method: 'GET')
 
         "/api/listaDePreciosProveedor"(resources: 'listaDePreciosProveedor')
         "/api/listaDePreciosProveedor/aplicar/$id"(controller: 'listaDePreciosProveedor', action: 'aplicar', method: 'PUT')
@@ -120,6 +121,13 @@ class UrlMappings {
         "/api/inventario"(resources: 'inventario', excludes:['create', 'update', 'save', 'edit','patch'])
         "/api/inventario/$producto/$ejercicio/$mes"(controller: 'inventario', action: 'movimientos', method: 'GET')
         "/api/inventario/printKardex"(controller: 'inventario', action: 'printKardex', method: 'GET')
+
+
+        //BI
+        "/api/bi/ventaNetaAcumulada"(controller: 'bi', action:'ventaNetaAcumulada', method:'GET')
+        "/api/bi/ventaNetaMensual"(controller: 'bi', action:'ventaNetaMensual', method: 'GET')
+        "/api/bi/movimientoCosteado"(controller: 'bi', action:'movimientoCosteado', method:'GET')
+        "/api/bi/movimientoCosteadoDet"(controller: 'bi', action:'movimientoCosteadoDet', method: 'GET')
 
 
         "/"(controller: 'application', action:'index')

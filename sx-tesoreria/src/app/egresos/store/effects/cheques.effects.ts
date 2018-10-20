@@ -62,7 +62,7 @@ export class ChequesEffects {
     })
   );
 
-  @Effect()
+  @Effect({ dispatch: false })
   updateSuccess$ = this.actions$.pipe(
     ofType<fromActions.UpdateChequeSuccess>(
       ChequeActionTypes.UpdateChequeSuccess
@@ -72,7 +72,7 @@ export class ChequesEffects {
       this.snackBar.open(`Cheque ${cheque.folio} actualizado `, 'Cerrar', {
         duration: 5000
       })
-    ),
-    map(cheque => new fromRoot.Go({ path: ['cxp/cheques'] }))
+    )
+    // map(cheque => new fromRoot.Go({ path: ['cxp/cheques'] }))
   );
 }

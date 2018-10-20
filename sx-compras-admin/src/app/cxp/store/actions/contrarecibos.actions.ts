@@ -2,7 +2,8 @@ import { Action } from '@ngrx/store';
 import { Update } from '@ngrx/entity';
 
 import { Contrarecibo } from '../../model';
-import { Periodo } from 'app/_core/models/periodo';
+
+import { ProveedorPeriodoFilter } from 'app/cxp/model/proveedorPeriodoFilter';
 
 export enum ContrareciboActionTypes {
   LoadContrarecibos = '[Contrarecibos CXP] Load Contrarecibos ',
@@ -19,7 +20,7 @@ export enum ContrareciboActionTypes {
   DeleteContrareciboFail = '[Contrarecibos CXP] Delete Contrarecibo Fail',
   DeleteContrareciboSuccess = '[Contrarecibos CXP] Delete Contrarecibo Success',
   ClearContrarecibos = '[Contrarecibos CXP] Clear Contrarecibos',
-  SetContrarecibosFilter = '[Contrarecibos CXP] Set Search term de notas',
+  SetContrarecibosFilter = '[Contrarecibos component] Set Search term de notas',
   Load = '[Contrarecibos CXP] Load One Contrarecibo',
   LoadFail = '[Contrarecibos CXP] Load One Contrarecibo fail',
   LoadSuccess = '[Contrarecibos CXP] Load One Contrarecibo Success'
@@ -97,7 +98,7 @@ export class ClearContrarecibos implements Action {
 
 export class SetContrarecibosFilter implements Action {
   readonly type = ContrareciboActionTypes.SetContrarecibosFilter;
-  constructor(public payload: string) {}
+  constructor(public payload: { filter: ProveedorPeriodoFilter }) {}
 }
 
 export type ContrareciboActions =

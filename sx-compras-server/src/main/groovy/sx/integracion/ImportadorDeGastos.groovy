@@ -113,7 +113,7 @@ class ImportadorDeGastos {
                 log.error('Error generando cheque {}' , ex.message)
             }
         }
-
+        db.close()
         return this
     }
 
@@ -228,6 +228,29 @@ class ImportadorDeGastos {
         String dbUrl = 'jdbc:mysql://10.10.1.228/produccion'
         Sql db = Sql.newInstance(dbUrl, user, password, driver)
         return db
+    }
+
+
+    def updateCheques(){
+        List<RequisicionDeGastos> gastos = RequisicionDeGastos.where{formaDePago == 'CHEQUE'}.list()
+        Sql db = getSql()
+        gastos.each { gasto ->
+            if(gasto.egreso && gasto.egreso.cheque) {
+                Cheque cheque = gasto.egreso.cheque
+                try {
+                    def row = findEgreso(db, gasto)
+                    println 'ROW:' + row
+                    cheque.impresion = row.impreso
+                    cheque.cobrado = row.FECHACOBRADO
+                    cheque.save flush: true
+                    log.info('Cheque actualizado: {}', cheque)
+                }catch(Exception ex) {
+                    log.error('Error generando cheque {}' , ex.message)
+                }
+            }
+        }
+        db.close()
+        return this
     }
 
 

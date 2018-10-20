@@ -58,6 +58,9 @@ export class RequisicionesTableComponent implements OnInit, OnChanges {
   ngOnInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+    this.dataSource.filterPredicate = (data, filter) => {
+      return data.folio.toString().startsWith(filter);
+    };
   }
 
   ngOnChanges(changes: SimpleChanges) {

@@ -7,6 +7,7 @@
         <span flex></span>
         <span>Plazo: {{recibo.proveedor.plazo}} Días</span>
         <span class="pad-left">Vto: {{recibo.proveedor.fechaRevision ? 'REV': 'FAC'}}</span>
+        <span class="pad-left" *ngIf="recibo.atendido">Entregado: {{recibo.atendido | date: 'dd/MM/yyyy'}}</span>
       </div>
     </mat-card-title>
 
@@ -30,7 +31,13 @@
 
 
         <sx-upper-case-field formControlName="comentario" placeholder="Comentario" flex class="pad-left"></sx-upper-case-field>
-        <mat-form-field class="pad-left" flex="20">
+        <mat-form-field class="pad-left">
+          <input matInput [matDatepicker]="myDatepicker2" formControlName="atendido" placeholder="Entregado">
+          <mat-datepicker-toggle matSuffix [for]="myDatepicker2"></mat-datepicker-toggle>
+          <mat-datepicker #myDatepicker2></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field class="pad-left" flex="10">
           <input matInput placeholder="Filtrar facturas" (input)="filtro = search.value" #search>
         </mat-form-field>
       </div>
@@ -39,7 +46,8 @@
 
     <div class="partidas-panel">
 
-      <sx-recibo-partidas [parent]="form" [partidas]="partidas.value" (delete)="onDeleteRow($event)" [filter]="filtro" [readOnly]="form.disabled">
+      <sx-recibo-partidas [parent]="form" [partidas]="partidas.value" (delete)="onDeleteRow($event)" [filter]="filtro"
+        [readOnly]="form.disabled">
       </sx-recibo-partidas>
 
     </div>

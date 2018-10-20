@@ -45,7 +45,7 @@ export class MainPageComponent implements OnInit {
 
   ngOnInit() {
     this.modulo$ = of('SIIPAPX BI');
-    // this.store.dispatch(new fromAuth.LoadUserSession());
+    this.store.dispatch(new fromAuth.LoadUserSession());
 
     this.expiration$ = this.store.pipe(select(fromAuth.getSessionExpiration));
     this.apiInfo$ = this.store.pipe(select(fromAuth.getApiInfo));

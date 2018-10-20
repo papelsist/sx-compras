@@ -7,6 +7,7 @@ import grails.rest.*
 import groovy.util.logging.Slf4j
 
 import sx.reports.ReportService
+import sx.utils.Periodo
 
 @Slf4j()
 @Secured("ROLE_COMPRAS")
@@ -23,10 +24,19 @@ class ContrareciboController extends RestfulController<Contrarecibo> {
 
     @Override
     protected List<Contrarecibo> listAllResources(Map params) {
-        params.max = 100
+        params.max = params.registros?: 50
         params.sort = 'lastUpdated'
         params.order = 'desc'
-        def query = Contrarecibo.where{ atendido == null}
+        def query = Contrarecibo.where{ }
+        if(params.periodo) {
+            Periodo periodo = (Periodo)params.periodo
+            query = query.where{fecha >= periodo.fechaInicial && fecha <= periodo.fechaFinal}
+        }
+        if(params.proveedor) {
+            String provId = params.proveedor
+            query = query.where { proveedor.id == provId}
+        }
+
         return query.list(params)
     }
 
