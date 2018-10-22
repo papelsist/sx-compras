@@ -29,7 +29,7 @@
 	<parameter name="FECHA_INI" isForPrompting="true" class="java.util.Date"/>
 	<parameter name="FECHA_FIN" isForPrompting="true" class="java.util.Date"/>
 	<parameter name="PROVEEDOR" isForPrompting="true" class="java.lang.String"/>
-	<queryString><![CDATA[SELECT S.CLAVE AS SUC,S.NOMBRE AS SUCURSAL,P.CLAVE AS CLAVPROV,P.NOMBRE,IC.FECHA AS FECHA_ENTRADA
+	<queryString><![CDATA[SELECT P.CLAVE AS CLAVPROV,P.NOMBRE,S.CLAVE AS SUC,S.NOMBRE AS SUCURSAL,IC.FECHA AS FECHA_ENTRADA
 ,C.FOLIO AS DOCUMENTO,C.FECHA,C.tipo_de_cambio AS TC,C.MONEDA,C.sub_total*C.tipo_de_cambio AS IMPORTE,C.TOTAL*C.tipo_de_cambio AS TOTAL,(X.importe_flete)*C.tipo_de_cambio AS FLETE
 ,SUM((A.CANTIDAD/(case when z.unidad='MIL' then 1000 else 1 end)*A.costo_unitario)*C.tipo_de_cambio) AS IMP_ANALISIS
 ,SUM((A.CANTIDAD/(case when z.unidad='MIL' then 1000 else 1 end)*A.costo_unitario)*C.tipo_de_cambio)*1.16 AS TOT_ANALISIS
@@ -58,10 +58,10 @@ WHERE  DATE(IC.FECHA) BETWEEN $P{FECHA_INI} AND $P{FECHA_FIN} AND P.CLAVE=$P{PRO
 GROUP BY P.ID,IC.FECHA,C.ID,S.ID,C.FECHA,C.MONEDA
 ORDER BY p.CLAVE]]></queryString>
 
-	<field name="SUC" class="java.lang.String"/>
-	<field name="SUCURSAL" class="java.lang.String"/>
 	<field name="CLAVPROV" class="java.lang.String"/>
 	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="SUC" class="java.lang.String"/>
+	<field name="SUCURSAL" class="java.lang.String"/>
 	<field name="FECHA_ENTRADA" class="java.sql.Timestamp"/>
 	<field name="DOCUMENTO" class="java.lang.String"/>
 	<field name="FECHA" class="java.sql.Date"/>
@@ -192,7 +192,7 @@ ORDER BY p.CLAVE]]></queryString>
 					<reportElement
 						x="15"
 						y="2"
-						width="114"
+						width="117"
 						height="14"
 						key="staticText-40"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -207,7 +207,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</staticText>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="364"
+						x="368"
 						y="2"
 						width="61"
 						height="14"
@@ -220,7 +220,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="129"
+						x="132"
 						y="2"
 						width="57"
 						height="14"
@@ -233,7 +233,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="186"
+						x="189"
 						y="2"
 						width="61"
 						height="14"
@@ -246,7 +246,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="425"
+						x="429"
 						y="2"
 						width="61"
 						height="14"
@@ -259,7 +259,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="487"
+						x="491"
 						y="2"
 						width="60"
 						height="11"
@@ -272,7 +272,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="247"
+						x="250"
 						y="2"
 						width="54"
 						height="11"
@@ -445,7 +445,7 @@ ORDER BY p.CLAVE]]></queryString>
 					<reportElement
 						x="84"
 						y="69"
-						width="198"
+						width="202"
 						height="14"
 						key="textField-18"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -489,7 +489,7 @@ ORDER BY p.CLAVE]]></queryString>
 					<reportElement
 						x="10"
 						y="5"
-						width="286"
+						width="294"
 						height="11"
 						forecolor="#000000"
 						backcolor="#CCCCCC"
@@ -547,7 +547,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</staticText>
 				<staticText>
 					<reportElement
-						x="247"
+						x="250"
 						y="16"
 						width="54"
 						height="11"
@@ -567,7 +567,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</staticText>
 				<staticText>
 					<reportElement
-						x="186"
+						x="189"
 						y="16"
 						width="61"
 						height="11"
@@ -587,7 +587,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</staticText>
 				<staticText>
 					<reportElement
-						x="487"
+						x="491"
 						y="5"
 						width="60"
 						height="22"
@@ -609,7 +609,7 @@ ORDER BY p.CLAVE]]></queryString>
 					<reportElement
 						x="103"
 						y="16"
-						width="26"
+						width="29"
 						height="11"
 						forecolor="#000000"
 						backcolor="#CCCCCC"
@@ -627,7 +627,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</staticText>
 				<staticText>
 					<reportElement
-						x="129"
+						x="132"
 						y="16"
 						width="57"
 						height="11"
@@ -647,7 +647,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</staticText>
 				<staticText>
 					<reportElement
-						x="324"
+						x="328"
 						y="16"
 						width="40"
 						height="11"
@@ -667,7 +667,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</staticText>
 				<staticText>
 					<reportElement
-						x="364"
+						x="368"
 						y="16"
 						width="61"
 						height="11"
@@ -687,7 +687,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</staticText>
 				<staticText>
 					<reportElement
-						x="425"
+						x="429"
 						y="16"
 						width="62"
 						height="11"
@@ -707,7 +707,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</staticText>
 				<staticText>
 					<reportElement
-						x="305"
+						x="309"
 						y="5"
 						width="182"
 						height="11"
@@ -727,7 +727,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</staticText>
 				<staticText>
 					<reportElement
-						x="305"
+						x="309"
 						y="16"
 						width="18"
 						height="11"
@@ -781,7 +781,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="425"
+						x="429"
 						y="3"
 						width="62"
 						height="11"
@@ -799,7 +799,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="247"
+						x="250"
 						y="3"
 						width="54"
 						height="11"
@@ -817,7 +817,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="186"
+						x="189"
 						y="3"
 						width="61"
 						height="11"
@@ -835,7 +835,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="487"
+						x="491"
 						y="3"
 						width="60"
 						height="11"
@@ -851,11 +851,11 @@ ORDER BY p.CLAVE]]></queryString>
 					</textElement>
 				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{IMP_DIF}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" pattern="##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" pattern="##0.0000" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="103"
 						y="3"
-						width="26"
+						width="29"
 						height="11"
 						key="textField"/>
 					<box></box>
@@ -866,7 +866,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="129"
+						x="132"
 						y="3"
 						width="57"
 						height="11"
@@ -884,7 +884,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="324"
+						x="328"
 						y="3"
 						width="39"
 						height="11"
@@ -897,7 +897,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="363"
+						x="367"
 						y="3"
 						width="62"
 						height="11"
@@ -915,7 +915,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="305"
+						x="309"
 						y="3"
 						width="19"
 						height="11"
@@ -1182,7 +1182,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</staticText>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="364"
+						x="368"
 						y="4"
 						width="61"
 						height="14"
@@ -1195,7 +1195,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="129"
+						x="132"
 						y="4"
 						width="57"
 						height="14"
@@ -1208,7 +1208,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="364"
+						x="368"
 						y="18"
 						width="61"
 						height="14"
@@ -1221,7 +1221,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="364"
+						x="368"
 						y="46"
 						width="61"
 						height="14"
@@ -1234,7 +1234,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="364"
+						x="368"
 						y="32"
 						width="61"
 						height="14"
@@ -1247,7 +1247,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</textField>
 				<staticText>
 					<reportElement
-						x="311"
+						x="315"
 						y="18"
 						width="53"
 						height="14"
@@ -1264,7 +1264,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</staticText>
 				<staticText>
 					<reportElement
-						x="311"
+						x="315"
 						y="32"
 						width="53"
 						height="14"
@@ -1281,7 +1281,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</staticText>
 				<staticText>
 					<reportElement
-						x="311"
+						x="315"
 						y="46"
 						width="53"
 						height="14"
@@ -1298,7 +1298,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</staticText>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="186"
+						x="189"
 						y="4"
 						width="61"
 						height="14"
@@ -1311,7 +1311,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="247"
+						x="250"
 						y="4"
 						width="54"
 						height="14"
@@ -1324,7 +1324,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="425"
+						x="429"
 						y="4"
 						width="61"
 						height="14"
@@ -1337,7 +1337,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="486"
+						x="490"
 						y="4"
 						width="60"
 						height="14"
@@ -1350,7 +1350,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="9"
+						x="14"
 						y="49"
 						width="58"
 						height="12"
@@ -1367,7 +1367,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</textField>
 				<staticText>
 					<reportElement
-						x="9"
+						x="14"
 						y="37"
 						width="58"
 						height="12"
@@ -1384,7 +1384,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</staticText>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="67"
+						x="72"
 						y="49"
 						width="58"
 						height="12"
@@ -1401,7 +1401,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</textField>
 				<staticText>
 					<reportElement
-						x="67"
+						x="72"
 						y="37"
 						width="58"
 						height="12"
@@ -1418,7 +1418,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</staticText>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="125"
+						x="130"
 						y="49"
 						width="58"
 						height="12"
@@ -1435,7 +1435,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</textField>
 				<staticText>
 					<reportElement
-						x="125"
+						x="130"
 						y="37"
 						width="58"
 						height="12"
@@ -1452,7 +1452,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</staticText>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="183"
+						x="188"
 						y="49"
 						width="58"
 						height="12"
@@ -1469,7 +1469,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</textField>
 				<staticText>
 					<reportElement
-						x="183"
+						x="188"
 						y="37"
 						width="58"
 						height="12"
@@ -1486,7 +1486,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</staticText>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="241"
+						x="246"
 						y="49"
 						width="58"
 						height="12"
@@ -1503,7 +1503,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</textField>
 				<staticText>
 					<reportElement
-						x="241"
+						x="246"
 						y="37"
 						width="58"
 						height="12"
@@ -1520,9 +1520,9 @@ ORDER BY p.CLAVE]]></queryString>
 				</staticText>
 				<staticText>
 					<reportElement
-						x="10"
+						x="15"
 						y="25"
-						width="288"
+						width="289"
 						height="12"
 						forecolor="#000000"
 						backcolor="#CCCCCC"
