@@ -55,6 +55,8 @@ class Inventario {
 
     String sucursalNombre
 
+    BigDecimal gasto = 0.0
+
     static constraints = {
         tipo nullable: true
         comentario nullable: true

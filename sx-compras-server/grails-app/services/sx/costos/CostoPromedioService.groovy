@@ -115,7 +115,7 @@ class CostoPromedioService {
             group by clave
             union
             SELECT 'INV' as tipo,P.clave
-            ,SUM(CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end)) AS CANT,SUM(CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end)*COSTO) AS IMP_COSTO
+            ,SUM(CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end)) AS CANT,SUM(CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end)*(COSTO+GASTO)) AS IMP_COSTO
              FROM INVENTARIO X JOIN PRODUCTO P ON(X.producto_id=P.ID) 
              WHERE year(x.fecha)=(?) and month(x.fecha)=(?) and x.tipo in('TRS','REC','COM')  and x.cantidad>0 and p.de_linea is true and p.inventariable is true
              GROUP BY P.CLAVE
