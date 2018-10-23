@@ -27,10 +27,9 @@ class VentaNetaService {
 
 
     def ventaNetaAcumulada(VentaAcumuladaCommand command){
+		def periodo = new Periodo(command.fechaInicial,command.fechaFinal)
 
-        def periodo=new Periodo(command.fechaInicial,command.fechaFinal)
-
-       def sql = ventaNetaAcumulada
+       	def sql = ventaNetaAcumulada
 
 		sql=sql.replaceAll("@YEAR", Periodo.obtenerYear(command.fechaFinal).toString())
 		sql=sql.replaceAll("@MES", (Periodo.obtenerMes(command.fechaFinal)+1).toString())
@@ -93,9 +92,10 @@ class VentaNetaService {
     }
 
     def ventaNetaMensual(VentaAcumuladaCommand  command){
-        
 
-        def periodo=new Periodo(command.fechaInicial,command.fechaFinal)
+		log.info('Venta mensual: ', command)
+
+        def periodo = new Periodo(command.fechaInicial,command.fechaFinal)
 		
 		def  sql=ventaNetaMensual
 

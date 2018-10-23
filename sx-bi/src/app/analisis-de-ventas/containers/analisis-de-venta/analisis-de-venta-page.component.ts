@@ -6,8 +6,12 @@ import { Store, select } from '@ngrx/store';
 import * as fromStore from 'app/store';
 import * as fromAuth from 'app/auth/store';
 
+import * as fromActions from '../../store/actions';
+
 import { Observable } from 'rxjs';
+
 import { User } from 'app/auth/models/user';
+import { VentaAcumulada } from 'app/analisis-de-ventas/models/ventaAcumulada';
 
 @Component({
   selector: 'sx-analisis-de-venta-page',
@@ -26,5 +30,9 @@ export class AnalisisDeVentaPageComponent implements OnInit {
   ngOnInit() {
     this.user$ = this.store.pipe(select(fromAuth.getUser));
     this.api$ = this.store.pipe(select(fromAuth.getApiInfo));
+  }
+
+  onAplicar(event: VentaAcumulada) {
+    this.store.dispatch(new fromActions.SetVentaNetaFilter({ filter: event }));
   }
 }

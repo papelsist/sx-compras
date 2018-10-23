@@ -75,6 +75,7 @@ class PagoDeRequisicion implements  Validateable{
     Requisicion requisicion
     CuentaDeBanco cuenta
     String referencia
+    BigDecimal importe
 
     String toString() {
         return "Pago de requisicion ${requisicion.folio} Cuenta: ${cuenta?.clave}  Referencia ${referencia}"
@@ -82,6 +83,7 @@ class PagoDeRequisicion implements  Validateable{
 
     static constraints =  {
         referencia nullable: true
+        importe nullable: true
     }
 }
 

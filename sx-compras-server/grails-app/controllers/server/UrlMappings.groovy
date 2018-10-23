@@ -124,7 +124,6 @@ class UrlMappings {
 
 
         //BI
-        "/api/bi/ventaNetaAcumulada"(controller: 'bi', action:'ventaNetaAcumulada', method:'GET')
         "/api/bi/ventaNetaMensual"(controller: 'bi', action:'ventaNetaMensual', method: 'GET')
         "/api/bi/movimientoCosteado"(controller: 'bi', action:'movimientoCosteado', method:'GET')
         "/api/bi/movimientoCosteadoDet"(controller: 'bi', action:'movimientoCosteadoDet', method: 'GET')

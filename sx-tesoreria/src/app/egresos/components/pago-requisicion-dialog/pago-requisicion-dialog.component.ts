@@ -12,7 +12,12 @@ import * as moment from 'moment';
   selector: 'sx-pago-requisicion-dialog',
   template: `
   <form [formGroup]="form">
-    <h2 mat-dialog-title>Pago de la requisicion {{requisicion.folio}}</h2>
+    <span mat-dialog-title layout>
+      <span >Pago requisicion: {{requisicion.folio}}</span>
+      <span flex></span>
+      <span> Importe: </span>
+      <span>{{requisicion.apagar | currency}}</span>
+    </span>
     <mat-dialog-content>
       <div layout="column">
 
@@ -37,6 +42,11 @@ import * as moment from 'moment';
               <mat-hint align="end">Pesos + IVA</mat-hint>
             </mat-form-field>
           </div>
+        </div>
+        <div layout>
+          <mat-form-field>
+            <input matInput placeholder="Importe a pagar" formControlName="importe" autocomplete="off" type="number">
+          </mat-form-field>
         </div>
 
       </div>
@@ -65,7 +75,6 @@ export class PagoRequisicionDialogComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.buildForm();
     this.subscription = this.form.get('cuenta').valueChanges.subscribe(cta => {
-      console.log('Cuenta: ', cta);
       if (this.requisicion.formaDePago === 'CHEQUE') {
         this.form.get('cheque').setValue(cta.proximoCheque);
         this.form.get('referencia').setValue(cta.proximoCheque);
@@ -94,7 +103,8 @@ export class PagoRequisicionDialogComponent implements OnInit, OnDestroy {
       cuenta: [null, Validators.required],
       referencia: [null, Validators.required],
       comision: [{ value: 0.0, disabled: true }],
-      cheque: [{ value: null, disabled: true }]
+      cheque: [{ value: null, disabled: true }],
+      importe: [null]
     });
   }
 

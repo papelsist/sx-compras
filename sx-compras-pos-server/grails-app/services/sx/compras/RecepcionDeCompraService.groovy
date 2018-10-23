@@ -35,7 +35,6 @@ class RecepcionDeCompraService implements LogUser {
         resource = resource.save flush: true
         afectarInventario(resource)
         actualizarExistencias(resource)
-        actualizarCompra(resource)
         return resource
     }
 
@@ -44,7 +43,6 @@ class RecepcionDeCompraService implements LogUser {
         resource = resource.save flush: true
         afectarInventario(resource)
         actualizarExistencias(resource)
-        actualizarCompra(resource)
         return resource
     }
 
@@ -88,13 +86,7 @@ class RecepcionDeCompraService implements LogUser {
     }
 
 
-    void actualizarCompra(RecepcionDeCompra com) {
-        Compra compra = com.compra
-        def pendiente = compra.partidas.find{it.getPorRecibir()> 0.0 }
-        compra.pendiente = pendiente != null
-        compra.save flush: true
-        log.debug('Status de compra {} actualizado', compra.folio)
-    }
+
 
     Long  nextFolio(String serie){
         Folio folio = Folio.findOrCreateWhere(entidad: 'COMS', serie: serie)

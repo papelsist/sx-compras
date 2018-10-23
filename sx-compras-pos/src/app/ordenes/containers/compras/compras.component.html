@@ -8,6 +8,9 @@
       [alwaysVisible]="(search$ | async)">
     </td-search-box>
     <sx-compras-filter (change)="onFilter($event)" [filter]="comprasFilter$ | async"></sx-compras-filter>
+    <button mat-icon-button (click)="reload()" class="actions">
+      <mat-icon>refresh</mat-icon>
+    </button>
   </div>
   <mat-divider></mat-divider>
   <ng-container *ngIf="comprasPorSucursal$ | async as rows">

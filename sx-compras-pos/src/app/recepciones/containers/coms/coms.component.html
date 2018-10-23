@@ -11,6 +11,9 @@
       [alwaysVisible]="(search$ | async)">
     </td-search-box>
     <sx-coms-filter (change)="onFilter($event)" [filter]="comsFilter$ | async" class="options"></sx-coms-filter>
+    <button mat-icon-button (click)="reload()" class="actions">
+      <mat-icon>refresh</mat-icon>
+    </button>
     <span>
       <button mat-icon-button [matMenuTriggerFor]="toolbarMenu">
         <mat-icon>more_vert</mat-icon>

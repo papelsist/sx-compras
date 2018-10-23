@@ -127,6 +127,18 @@ abstract class CompraService {
         return compra
     }
 
+    def depurarNegativos(Compra compra) {
+        compra.partidas.each{
+            if(it.porRecibir < 0) {
+                def ajuste  = it.depurado  - (it.porRecibir * -1)
+                it.depurado = ajuste
+                it.depuracion = new Date()
+                compra.ultimaDepuracion = new Date()
+            }
+        }
+        compra.save flush: true
+    }
+
     void logEntity(Compra compra) {
 
         User user = (User)springSecurityService.getCurrentUser()

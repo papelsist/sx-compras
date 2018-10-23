@@ -5,7 +5,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { startWith } from 'rxjs/operators';
 
-import { ComprasFilter } from '../../models/compra';
+import { ComprasFilter, buildFilter } from '../../models/compra';
 
 @Component({
   selector: 'sx-compras-filter-dialog',
@@ -24,6 +24,10 @@ export class ComprasFilterDialogComponent implements OnInit, OnDestroy {
   ) {
     this.title = data.title || 'Filtro de compras ';
     this.filter = data.filter;
+    if (this.filter.pendientes === true) {
+      this.filter = buildFilter(100);
+      this.filter.pendientes = true;
+    }
   }
 
   ngOnInit() {
@@ -62,7 +66,7 @@ export class ComprasFilterDialogComponent implements OnInit, OnDestroy {
       proveedor: [{ value: null, disabled: false }],
       pendientes: [false],
       registros: [
-        50,
+        100,
         [Validators.required, Validators.min(10), Validators.max(500)]
       ]
     });

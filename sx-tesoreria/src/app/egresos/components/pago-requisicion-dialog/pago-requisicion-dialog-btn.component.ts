@@ -40,7 +40,8 @@ export class PagoRequisicionDialogBtnComponent implements OnInit {
           const pago: PagoDeRequisicion = {
             referencia: command.referencia,
             cuenta: command.cuenta.id,
-            requisicion: this.requisicion
+            requisicion: this.requisicion,
+            importe: command.importe ? command.importe : undefined
           };
           this.pagar.emit(pago);
         }

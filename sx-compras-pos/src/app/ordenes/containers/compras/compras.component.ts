@@ -34,7 +34,7 @@ export class ComprasComponent implements OnInit, OnDestroy {
     this.comprasFilter$ = this.store.pipe(select(fromStore.getComprasFilter));
 
     this.comprasPorSucursal$ = this.store.pipe(
-      select(fromStore.getComprasPorSucursalPendientes)
+      select(fromStore.getComprasPorSucursal)
     );
     this.sucursales$ = this.comprasPorSucursal$.pipe(map(res => _.keys(res)));
 
@@ -92,5 +92,9 @@ export class ComprasComponent implements OnInit, OnDestroy {
   onFilter(event: ComprasFilter) {
     this.clearSelection();
     this.store.dispatch(new fromActions.SetComprasFilter({ filter: event }));
+  }
+
+  reload() {
+    this.store.dispatch(new fromActions.LoadCompras());
   }
 }

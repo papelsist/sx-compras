@@ -3,40 +3,46 @@ package sx.bi
 
 import grails.databinding.BindingFormat
 import grails.plugin.springsecurity.annotation.Secured
+import groovy.util.logging.Slf4j
+import sx.utils.Periodo
 
 
-
-//@Secured("ROLE_COMPRAS_USER")
+@Secured("IS_AUTHENTICATED_ANONYMOUSLY")
+@Slf4j
 class BiController {
 
-    VentaNetaService VentaNetaService
+    VentaNetaService ventaNetaService
 
     def ventaNetaAcumulada(VentaAcumuladaCommand command){
-
-        def ventas=VentaNetaService.ventaNetaAcumulada(command)  
+        log.info('Venta acumulada: {}', command)
+        def ventas = ventaNetaService.ventaNetaAcumulada(command)
         respond ventas
 
     }
 
     def ventaNetaMensual(VentaAcumuladaCommand command){
-
-        def ventas=VentaNetaService.ventaNetaMensual(command)  
+        Periodo periodo = (Periodo)params.periodo
+        command.fechaInicial = periodo.fechaInicial
+        command.fechaFinal = periodo.fechaFinal
+        log.info('Venta neta mensual: {}', command)
+        def ventas=ventaNetaService.ventaNetaMensual(command)
         respond ventas
 
     }
 
     def movimientoCosteado(VentaAcumuladaCommand  command,String id){
-
-        def movimientos=VentaNetaService.movimientoCosteado(command,id)  
+        Periodo periodo = (Periodo)params.periodo
+        command.fechaInicial = periodo.fechaInicial
+        command.fechaFinal = periodo.fechaFinal
+        log.info('Movimiento costeado: {}', command)
+        def movimientos = ventaNetaService.movimientoCosteado(command,id)
         respond movimientos
 
     }
 
     def movimientoCosteadoDet(VentaAcumuladaCommand  command,String id,String clave){
-
-        def movimientos=VentaNetaService.movimientoCosteadoDet(command,id,clave)  
+        def movimientos = ventaNetaService.movimientoCosteadoDet(command,id,clave)
         respond movimientos
-
     }
 
 }
@@ -56,7 +62,7 @@ class VentaAcumuladaCommand{
     Date fechaFinal
 
     String toString(){
-        return "$clasificacion $tipoVenta $tipo"  
+        return "${fechaInicial} ${fechaFinal} ${clasificacion} ${tipoVenta} ${tipo}"
     }
 
     static constraints = {

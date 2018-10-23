@@ -68,6 +68,7 @@ if (Environment.isDevelopmentMode() && targetDir != null) {
     logger("sx.tesoreria", DEBUG, ['STDOUT'], false)
     logger("sx.gastos", DEBUG, ['STDOUT'], false)
     logger("sx.integracion", DEBUG, ['STDOUT'], false)
+    logger("sx.bi", DEBUG, ['STDOUT'], false)
 
 
     // Log Listeners

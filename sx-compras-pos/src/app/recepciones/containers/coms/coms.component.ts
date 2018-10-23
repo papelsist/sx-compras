@@ -78,4 +78,8 @@ export class ComsComponent implements OnInit {
         }
       });
   }
+
+  reload() {
+    this.store.dispatch(new fromActions.LoadComs());
+  }
 }

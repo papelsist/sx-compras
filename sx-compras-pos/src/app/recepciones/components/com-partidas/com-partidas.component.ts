@@ -77,4 +77,8 @@ export class ComPartidasComponent implements OnInit, OnChanges {
   refresh() {
     this.table.renderRows();
   }
+
+  completar(row: RecepcionDeCompraDet) {
+    row.cantidad = row.solicitado - row.recibido;
+  }
 }

@@ -111,7 +111,7 @@ export class ComprasTableComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   onEdit($event: Event, row) {
-    $event.preventDefault();
+    $event.stopPropagation();
     this.edit.emit(row);
   }
 

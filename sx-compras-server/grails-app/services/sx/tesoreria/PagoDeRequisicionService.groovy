@@ -41,6 +41,7 @@ class PagoDeRequisicionService implements  LogUser {
         CuentaDeBanco cuenta = command.cuenta
         String referencia = command.referencia
 
+
         log.info("Pagando requisicion {}", requisicion.folio)
         if(requisicion.egreso != null)
             throw new PagoDeRequisicionException("Requisicion ${requisicion.folio} ya está pagada con el egreso ${requisicion.egreso}")
@@ -52,6 +53,11 @@ class PagoDeRequisicionService implements  LogUser {
         }
 
         String tipo  = requisicion.instanceOf(RequisicionDeCompras) ? 'COMRA' : 'GASTO'
+        if(command.importe > 0) {
+            requisicion.comentario = "PAGO MODIFICADO ORIGINAL DE:${requisicion.apagar}"
+            requisicion.apagar = command.importe
+            log.info('Pago re requisicion {} ajustado a {}', requisicion.folio, requisicion.apagar)
+        }
 
         MovimientoDeCuenta egreso = movimientoDeCuentaService.generarEgreso(requisicion, tipo, tipo, cuenta, referencia)
         requisicion.egreso = egreso

@@ -94,6 +94,6 @@ export class ApplicationsEffects {
 
   @Effect({ dispatch: false })
   init$: Observable<any> = defer(() => of(null)).pipe(
-    tap(() => console.log('Effect inicial de la applicacion: init$'))
+    // tap(() => console.log('Effect inicial de la applicacion: init$'))
   );
 }

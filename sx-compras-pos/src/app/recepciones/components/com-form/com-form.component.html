@@ -21,11 +21,12 @@
         <input matInput value="{{com.compraFecha | date: 'dd/MM/yyyy'}}" [disabled]="true" placeholder="F. Compra">
       </mat-form-field>
       <mat-form-field class="pad-left">
-        <input matInput [value]="com.remision" [disabled]="true" placeholder="Remisión">
+        <input matInput [value]="com.remision" [disabled]="true" placeholder="Remisión" autocomplete="off">
       </mat-form-field>
 
       <mat-form-field class="pad-left">
-        <input matInput value="{{com.compraFecha | date: 'dd/MM/yyyy'}}" [disabled]="true" placeholder="Fecha Remisión ">
+        <input matInput value="{{com.compraFecha | date: 'dd/MM/yyyy'}}" [disabled]="true" placeholder="Fecha Remisión "
+          autocomplete="off">
       </mat-form-field>
       <sx-upper-case-field formControlName="comentario" placeholder="Comentario" flex class="pad-left pad-right"></sx-upper-case-field>
       <mat-form-field class="pad-left">

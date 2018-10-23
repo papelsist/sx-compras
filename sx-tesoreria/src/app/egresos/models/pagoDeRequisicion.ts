@@ -4,4 +4,5 @@ export interface PagoDeRequisicion {
   requisicion: Requisicion;
   cuenta: string;
   referencia: string;
+  importe?: number;
 }

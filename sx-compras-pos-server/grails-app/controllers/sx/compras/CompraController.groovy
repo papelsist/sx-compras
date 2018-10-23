@@ -68,7 +68,9 @@ class CompraController extends RestfulController<Compra> {
             String provId = params.proveedor
             query = query.where { proveedor.id == provId}
         }
-        return  query.list(params)
+        List res = query.list(params)
+        // log.info('Res: {}', res.size())
+        return res
     }
 
 
