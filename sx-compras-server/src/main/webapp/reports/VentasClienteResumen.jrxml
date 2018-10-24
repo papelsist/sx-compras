@@ -31,7 +31,7 @@
 	<parameter name="ORIGEN" isForPrompting="true" class="java.lang.String"/>
 	<parameter name="CLIENTE" isForPrompting="true" class="java.lang.String"/>
 	<queryString><![CDATA[ SELECT YEAR(V.FECHA) AS YEAR,MONTH(V.FECHA) AS MES,(CASE WHEN V.CLIENTE_ID=8 THEN 'MOSTRADOR' ELSE v.cliente END) CLIENTE,SUM(V.IMP_NETO) AS IMP_NETO,SUM(V.IMP_NETO*1.16) AS CON_IVA,SUM(V.KILOS) AS KILOS 
- FROM fact_ventasdet V 
+ FROM bi.fact_ventasdet V 
  WHERE V.FECHA BETWEEN $P{FECHA_INI} AND $P{FECHA_FIN} AND V.CLIENTE_ID=$P{CLIENTE}
  AND (CASE WHEN V.ORIGEN='CRE' THEN 'CREDITO' ELSE 'CONTADO' END) LIKE $P{ORIGEN}
  GROUP BY YEAR(V.FECHA),MONTH(V.FECHA),V.CLIENTE]]></queryString>
