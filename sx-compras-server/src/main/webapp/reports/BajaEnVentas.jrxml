@@ -65,7 +65,7 @@ SELECT 'ACT' as PRDO,(CASE WHEN V.CLIENTE_ID=8 THEN 'MOSTRADOR' ELSE v.cliente E
 ,0 as prom_vta
 ,sum(v.IMP_NETO) as periodo
 ,max(v.fecha) as ULT_VTA
-FROM fact_ventasdet V  
+FROM bi.fact_ventasdet V  
 WHERE V.FECHA BETWEEN DATE_ADD($P{FECHA_FIN}, INTERVAL -30 DAY) AND $P{FECHA_FIN}
 AND V.SUCURSAL_ID LIKE $P{SUCURSAL} AND (CASE WHEN V.ORIGEN='CRE' THEN 'CREDITO' ELSE 'CONTADO' END) LIKE $P{ORIGEN}
 group by V.CLIENTE 
@@ -791,7 +791,7 @@ $P{ORDER}.intValue()==8 ? "ULT.VENTA" : "N/D"]]></textFieldExpression>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
 					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font fontName="Times-Roman" pdfFontName="Times-Roman" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
+						<font fontName="Arial" pdfFontName="Times-Roman" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
 					</textElement>
 				<textFieldExpression   class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
 				</textField>
@@ -918,7 +918,7 @@ $P{ORDER}.intValue()==8 ? "ULT.VENTA" : "N/D"]]></textFieldExpression>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
 					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
-						<font fontName="Times-Roman" pdfFontName="Times-Roman" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
+						<font fontName="Arial" pdfFontName="Times-Roman" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
 					</textElement>
 				<textFieldExpression   class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
 				</textField>
