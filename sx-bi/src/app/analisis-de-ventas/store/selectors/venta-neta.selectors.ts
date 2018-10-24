@@ -29,15 +29,29 @@ export const getVentaNetaLoading = createSelector(
   fromVentaNeta.getVentasNetasLoading
 );
 
+export const getSelectedVenta = createSelector(
+  getVentaNetaState,
+  fromVentaNeta.getSelected
+);
+
+/*
 export const getSelectedVentaNeta = createSelector(
   getVentaNetaEntities,
   fromRoot.getRouterState,
-  (entities, router): Object => {
+  (entities, router) => {
+    const id = router.state.params.id;
+    console.log('Analizando Row: ', id);
     return router.state && entities[router.state.params.id];
   }
 );
+*/
 
-export const getVentaNetaFilter = createSelector(
+export const getVentaFilter = createSelector(
   getVentaNetaState,
-  fromVentaNeta.getVentaNetaFilter
+  fromVentaNeta.getVentaFilter
+);
+
+export const getSegmento = createSelector(
+  getVentaFilter,
+  filter => filter.clasificacion
 );

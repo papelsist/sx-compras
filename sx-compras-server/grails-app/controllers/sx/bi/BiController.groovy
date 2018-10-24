@@ -4,6 +4,7 @@ package sx.bi
 import grails.databinding.BindingFormat
 import grails.plugin.springsecurity.annotation.Secured
 import groovy.util.logging.Slf4j
+import sx.reports.ReportService
 import sx.utils.Periodo
 
 
@@ -12,6 +13,8 @@ import sx.utils.Periodo
 class BiController {
 
     VentaNetaService ventaNetaService
+
+    ReportService reportService
 
     def ventaNetaAcumulada(VentaAcumuladaCommand command){
         log.info('Venta acumulada: {}', command)
@@ -34,15 +37,24 @@ class BiController {
         Periodo periodo = (Periodo)params.periodo
         command.fechaInicial = periodo.fechaInicial
         command.fechaFinal = periodo.fechaFinal
-        log.info('Movimiento costeado: {}', command)
+        log.info('Movimiento costeado: {} ID: ', command, id)
         def movimientos = ventaNetaService.movimientoCosteado(command,id)
         respond movimientos
 
     }
 
     def movimientoCosteadoDet(VentaAcumuladaCommand  command,String id,String clave){
+        Periodo periodo = (Periodo)params.periodo
+        command.fechaInicial = periodo.fechaInicial
+        command.fechaFinal = periodo.fechaFinal
         def movimientos = ventaNetaService.movimientoCosteadoDet(command,id,clave)
         respond movimientos
+    }
+
+    def bajaEnVentas() {
+        Map repParams = [:]
+        def pdf =  reportService.run('BajaEnVentas.jrxml', repParams)
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'BajaEnVentas.pdf')
     }
 
 }
