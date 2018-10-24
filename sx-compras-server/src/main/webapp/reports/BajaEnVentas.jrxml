@@ -46,7 +46,7 @@
 ,ROUND(SUM(A.PERIODO)*100/SUM(A.PROM_VTA),1) AS PORC_VTA
 ,MAX(A.ULT_VTA) AS ULT_VTA,A.SUC
 FROM (
-SELECT V.SUC,'HST' AS PRDO,(CASE WHEN V.CLIENTE_ID=8 THEN 'MOSTRADOR' ELSE v.cliente END) nombre
+SELECT V.SUC,'HST' AS PRDO,(CASE WHEN V.CLIENTE_ID='402880fc5e4ec411015e4ecc5dfc0554' THEN 'MOSTRADOR' ELSE v.cliente END) nombre
 ,(CASE 	WHEN 	MAX((CASE WHEN v.origen = 'CRE' THEN 'CRE' ELSE 'CON' END)) =  'CON' THEN 'CON' ELSE 'CRE' END) AS TIPO
 ,sum(v.IMP_NETO) as venta_neta 
 ,round((to_days(DATE_ADD($P{FECHA_FIN}, INTERVAL -(30+1) DAY))-(to_days($P{FECHA_INI})))/30.4167,2) as meses
@@ -58,7 +58,7 @@ WHERE V.FECHA BETWEEN $P{FECHA_INI} AND DATE_ADD($P{FECHA_FIN}, INTERVAL -(30+1)
 AND V.SUCURSAL_ID LIKE $P{SUCURSAL} AND (CASE WHEN V.ORIGEN='CRE' THEN 'CREDITO' ELSE 'CONTADO' END) LIKE $P{ORIGEN}
 group by V.CLIENTE,V.FECHA 
 union
-SELECT V.SUC,'ACT' as PRDO,(CASE WHEN V.CLIENTE_ID=8 THEN 'MOSTRADOR' ELSE v.cliente END) nombre
+SELECT V.SUC,'ACT' as PRDO,(CASE WHEN V.CLIENTE_ID='402880fc5e4ec411015e4ecc5dfc0554' THEN 'MOSTRADOR' ELSE v.cliente END) nombre
 ,(CASE 	WHEN 	MAX((CASE WHEN v.origen = 'CRE' THEN 'CRE' ELSE 'CON' END)) =  'CON' THEN 'CON' ELSE 'CRE' END) AS TIPO
 ,0 as venta_neta
 ,0 as meses
@@ -166,7 +166,7 @@ AND (ROUND(SUM(A.PERIODO)*100/SUM(A.PROM_VTA),1))<=$P{PORCENTAJE}
 					<reportElement
 						x="29"
 						y="30"
-						width="41"
+						width="54"
 						height="12"
 						key="textField-2"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -253,7 +253,7 @@ $P{ORDER}.intValue()==8 ? "ULT.VENTA" : "N/D"]]></textFieldExpression>
 				<staticText>
 					<reportElement
 						mode="Opaque"
-						x="70"
+						x="88"
 						y="30"
 						width="17"
 						height="12"
@@ -272,9 +272,9 @@ $P{ORDER}.intValue()==8 ? "ULT.VENTA" : "N/D"]]></textFieldExpression>
 				</staticText>
 				<textField isStretchWithOverflow="false" pattern="dd-MMM-yy" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="87"
+						x="105"
 						y="30"
-						width="41"
+						width="54"
 						height="12"
 						key="textField-14"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -364,7 +364,7 @@ $P{ORDER}.intValue()==8 ? "ULT.VENTA" : "N/D"]]></textFieldExpression>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="29"
-						y="14"
+						y="15"
 						width="100"
 						height="14"
 						key="textField-18"/>
@@ -377,7 +377,7 @@ $P{ORDER}.intValue()==8 ? "ULT.VENTA" : "N/D"]]></textFieldExpression>
 				<staticText>
 					<reportElement
 						x="4"
-						y="14"
+						y="15"
 						width="25"
 						height="14"
 						forecolor="#000000"
@@ -449,7 +449,7 @@ $P{ORDER}.intValue()==8 ? "ULT.VENTA" : "N/D"]]></textFieldExpression>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="57"
-						y="-1"
+						y="0"
 						width="99"
 						height="14"
 						key="textField-22"/>
@@ -462,7 +462,7 @@ $P{ORDER}.intValue()==8 ? "ULT.VENTA" : "N/D"]]></textFieldExpression>
 				<staticText>
 					<reportElement
 						x="4"
-						y="-1"
+						y="0"
 						width="53"
 						height="14"
 						forecolor="#000000"
