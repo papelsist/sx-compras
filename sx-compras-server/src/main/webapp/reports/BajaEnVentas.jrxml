@@ -222,13 +222,12 @@ ORDER BY  $P!{ORDER} $P!{FORMA}]]></queryString>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="8" isBold="true" isUnderline="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{ORDER}.intValue()==1 ? "CLAVE" : 
-$P{ORDER}.intValue()==2 ? "CLIENTE" :
-$P{ORDER}.intValue()==4 ? "TIPO" :
-$P{ORDER}.intValue()==6 ? "PROMEDIO" :
-$P{ORDER}.intValue()==7 ? "PERIODO" :
-$P{ORDER}.intValue()==8 ? "PORCENTAJE" :
-$P{ORDER}.intValue()==9 ? "ULT.VENTA" : "N/D"]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{ORDER}.intValue()==1 ? "CLIENTE" :
+$P{ORDER}.intValue()==3 ? "TIPO" :
+$P{ORDER}.intValue()==5 ? "PROMEDIO" :
+$P{ORDER}.intValue()==6 ? "PERIODO" :
+$P{ORDER}.intValue()==7 ? "PORCENTAJE" :
+$P{ORDER}.intValue()==8 ? "ULT.VENTA" : "N/D"]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
@@ -1031,7 +1030,7 @@ $P{ORDER}.intValue()==9 ? "ULT.VENTA" : "N/D"]]></textFieldExpression>
 				</staticText>
 				<textField isStretchWithOverflow="false" pattern="#,##0" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="82"
+						x="78"
 						y="0"
 						width="37"
 						height="13"
@@ -1050,7 +1049,7 @@ $P{ORDER}.intValue()==9 ? "ULT.VENTA" : "N/D"]]></textFieldExpression>
 				<staticText>
 					<reportElement
 						mode="Opaque"
-						x="19"
+						x="15"
 						y="0"
 						width="63"
 						height="13"
