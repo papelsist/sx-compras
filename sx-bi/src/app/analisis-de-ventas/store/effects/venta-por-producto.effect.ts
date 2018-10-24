@@ -7,10 +7,16 @@ import * as fromStore from '../../store';
 import * as fromVentas from '../../store/actions/venta-neta.actions';
 import * as fromActions from '../../store/actions/venta-por-producto';
 
-import { getVentaNetaFilter } from '../../store/selectors/venta-neta.selectors';
-
 import { of } from 'rxjs';
-import { map, switchMap, tap, catchError, take } from 'rxjs/operators';
+import {
+  map,
+  switchMap,
+  tap,
+  catchError,
+  take,
+  withLatestFrom,
+  filter
+} from 'rxjs/operators';
 
 import { MatSnackBar } from '@angular/material';
 import { VentasService } from 'app/analisis-de-ventas/services';
@@ -25,28 +31,17 @@ export class VentaPorProductoEffects {
   ) {}
 
   @Effect()
-  changeFilter$ = this.actions$.pipe(
-    ofType<fromVentas.SetVentaNetaFilter>(
-      fromVentas.VentaNetaActionTypes.SetVentaNetaFilter
-    ),
-    map(action => new fromActions.LoadVentaPorProducto())
-  );
-
-  @Effect()
   load$ = this.actions$.pipe(
     ofType<fromActions.LoadVentaPorProducto>(
       fromActions.VentaPorProductoActionTypes.LoadVentaPorProducto
     ),
-    switchMap(() => {
-      return this.store.pipe(
-        select(getVentaNetaFilter),
-        take(1)
-      );
-    }),
-    switchMap(filter =>
-      this.service.ventaNetaMensual(filter).pipe(
-        map(res => new fromVentas.LoadVentasNetasSuccess(res)),
-        catchError(error => of(new fromVentas.LoadVentasNetasFail(error)))
+    map(action => action.payload),
+    switchMap(command =>
+      this.service.movimientoCosteado(command.filter, command.origenId).pipe(
+        map(res => new fromActions.LoadVentaPorProductoSuccess(res)),
+        catchError(error =>
+          of(new fromRoot.GlobalHttpError({ response: error }))
+        )
       )
     )
   );

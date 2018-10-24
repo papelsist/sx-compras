@@ -102,6 +102,7 @@ class ImportadorDeGastos {
                 cheque.importe = egreso.importe.abs()
                 cheque.egreso = egreso
                 cheque.impresion = row.impreso
+                cheque.cobrado = row.FECHACOBRADO
 
                 cheque.save failOnError: true, flush: true
 

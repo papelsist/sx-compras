@@ -10,11 +10,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Periodo } from 'app/_core/models/periodo';
 import {
   Clasificacion,
-  VentaAcumulada
-} from 'app/analisis-de-ventas/models/ventaAcumulada';
+  VentaFilter
+} from 'app/analisis-de-ventas/models/venta-filter';
 
 @Component({
-  selector: 'sx-venta-acumuada-form',
+  selector: 'sx-venta-filter-form',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
   <form [formGroup]="form" (ngSubmit)="aplicar.emit(form.value)">
@@ -55,16 +55,21 @@ import {
       </mat-form-field>
     </div>
     <div layout>
-      <button mat-button [disabled]="form.invalid" (click)="aplicar.emit(form.value)">Aplicar</button>
+      <span flex></span>
+      <button mat-stroked-button [disabled]="form.invalid" (click)="aplicar.emit(form.value)"
+        class="pad-right"
+        color="primary">Aplicar
+      </button>
+      <span class="pad-left"></span>
     </div>
   </form>
   `
 })
-export class VentaAcumuladaFormComponent implements OnInit {
+export class VentaFilterFormComponent implements OnInit {
   form: FormGroup;
 
   @Output()
-  aplicar = new EventEmitter<VentaAcumulada>();
+  aplicar = new EventEmitter<VentaFilter>();
 
   clases = [
     Clasificacion.CLIENTE,

@@ -1,4 +1,4 @@
-export interface VentaAcumulada {
+export interface VentaFilter {
   fechaInicial: Date;
   fechaFinal: Date;
   clasificacion: Clasificacion;

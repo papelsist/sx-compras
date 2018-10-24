@@ -19,6 +19,10 @@ const routes: Routes = [
       {
         path: 'egresos',
         loadChildren: './egresos/egresos.module#EgresosModule'
+      },
+      {
+        path: 'ingresos',
+        loadChildren: './ingresos/ingresos.module#IngresosModule'
       }
     ]
   }

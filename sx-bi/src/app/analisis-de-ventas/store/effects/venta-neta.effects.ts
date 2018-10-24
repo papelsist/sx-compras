@@ -5,7 +5,7 @@ import { Store, select } from '@ngrx/store';
 import * as fromRoot from 'app/store';
 import * as fromStore from '../../store';
 import * as fromActions from '../../store/actions/venta-neta.actions';
-import { getVentaNetaFilter } from '../../store/selectors/venta-neta.selectors';
+import { getVentaFilter } from '../../store/selectors/venta-neta.selectors';
 
 import { of } from 'rxjs';
 import { map, switchMap, tap, catchError, take } from 'rxjs/operators';
@@ -37,7 +37,7 @@ export class VentaNetaEffects {
     ),
     switchMap(() => {
       return this.store.pipe(
-        select(getVentaNetaFilter),
+        select(getVentaFilter),
         take(1)
       );
     }),

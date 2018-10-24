@@ -1,8 +1,40 @@
 <table mat-table [dataSource]="dataSource" matSort>
 
-  <ng-container matColumnDef="descripcion">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Descripción</th>
-    <td mat-cell *matCellDef="let com">{{com.descripcion}}</td>
+  <ng-container matColumnDef="tipo">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo</th>
+    <td mat-cell *matCellDef="let com">{{com.tipo}}</td>
+  </ng-container>
+  <ng-container matColumnDef="cliente">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Cliente</th>
+    <td mat-cell *matCellDef="let com">{{com.cliente}}</td>
+  </ng-container>
+  <ng-container matColumnDef="documento">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Docto</th>
+    <td mat-cell *matCellDef="let com">{{com.documento}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="fecha">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
+    <td mat-cell *matCellDef="let com">{{com.fecha | date: 'dd/MM/yyyy'}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="origen">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Venta</th>
+    <td mat-cell *matCellDef="let com">{{com.origen}}</td>
+  </ng-container>
+  <ng-container matColumnDef="kilos">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Kilos</th>
+    <td mat-cell *matCellDef="let com">{{com.kilos}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="precio_kilos">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio/K</th>
+    <td mat-cell *matCellDef="let com">{{com.precio_kilos | currency}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="suc">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Suc</th>
+    <td mat-cell *matCellDef="let com">{{com.suc}}</td>
   </ng-container>
 
   <ng-container matColumnDef="ventaNeta">
@@ -10,15 +42,6 @@
     <td mat-cell *matCellDef="let com">{{com.ventaNeta | currency}}</td>
   </ng-container>
 
-  <ng-container matColumnDef="kilos">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Kilos</th>
-    <td mat-cell *matCellDef="let com">{{com.kilos}}</td>
-  </ng-container>
-
-  <ng-container matColumnDef="precio_kilos">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>P. x Kilo</th>
-    <td mat-cell *matCellDef="let com">{{com.precio_kilos | currency}}</td>
-  </ng-container>
 
   <ng-container matColumnDef="costo">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Costo </th>
@@ -40,18 +63,10 @@
     <td mat-cell *matCellDef="let com">{{com.porcentajeUtilidad}}</td>
   </ng-container>
 
-  <ng-container matColumnDef="inventarioCosteado">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Inv costo</th>
-    <td mat-cell *matCellDef="let com">{{com.inventarioCosteado | currency}}</td>
-  </ng-container>
 
-  <ng-container matColumnDef="kilosInv">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Kilos (Inv)</th>
-    <td mat-cell *matCellDef="let com">{{com.kilosInv}}</td>
-  </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="displayColumns"></tr>
   <tr mat-row *matRowDef="let cfdi; columns: displayColumns" class="cursor-pointer" (click)="select.emit(cfdi)"
     [ngClass]="{'active': cfdi.selected}"></tr>
 </table>
-<mat-paginator [pageSizeOptions]="[50, 100, 200]" showFirstLastButtons></mat-paginator>
+<!-- <mat-paginator [pageSizeOptions]="[10, 20, 50, 100, 200]" showFirstLastButtons></mat-paginator> -->

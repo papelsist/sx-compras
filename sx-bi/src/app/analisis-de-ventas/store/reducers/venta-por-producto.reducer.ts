@@ -5,14 +5,16 @@ import {
   VentaPorProductoActionTypes
 } from '../actions/venta-por-producto';
 
-import { VentaAcumulada } from '../../models/ventaAcumulada';
+import { VentaPorProducto } from 'app/analisis-de-ventas/models/venta-por-producto';
 
-export interface State extends EntityState<any> {
+export interface State extends EntityState<VentaPorProducto> {
   loading: boolean;
 }
 
-export const adapter: EntityAdapter<any> = createEntityAdapter<any>({
-  selectId: item => item.origenId
+export const adapter: EntityAdapter<VentaPorProducto> = createEntityAdapter<
+  VentaPorProducto
+>({
+  selectId: item => item.clave
 });
 
 export const initialState: State = adapter.getInitialState({
@@ -40,6 +42,11 @@ export function reducer(
       return adapter.addAll(action.payload, {
         ...state,
         loading: false
+      });
+    }
+    case VentaPorProductoActionTypes.ClearVentasPorProducto: {
+      return adapter.removeAll({
+        ...state
       });
     }
 
