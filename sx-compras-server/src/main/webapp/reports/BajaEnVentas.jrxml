@@ -44,21 +44,21 @@
 ,ROUND(SUM(A.PROM_VTA),2) AS PROM_VTA
 ,ROUND(SUM(A.PERIODO),2) AS PERIODO 
 ,ROUND(SUM(A.PERIODO)*100/SUM(A.PROM_VTA),1) AS PORC_VTA
-,MAX(A.ULT_VTA) AS ULT_VTA
+,MAX(A.ULT_VTA) AS ULT_VTA,A.SUC
 FROM (
-SELECT 'HST' AS PRDO,(CASE WHEN V.CLIENTE_ID=8 THEN 'MOSTRADOR' ELSE v.cliente END) nombre
+SELECT V.SUC,'HST' AS PRDO,(CASE WHEN V.CLIENTE_ID=8 THEN 'MOSTRADOR' ELSE v.cliente END) nombre
 ,(CASE 	WHEN 	MAX((CASE WHEN v.origen = 'CRE' THEN 'CRE' ELSE 'CON' END)) =  'CON' THEN 'CON' ELSE 'CRE' END) AS TIPO
 ,sum(v.IMP_NETO) as venta_neta 
 ,round((to_days(DATE_ADD($P{FECHA_FIN}, INTERVAL -(30+1) DAY))-(to_days($P{FECHA_INI})))/30.4167,2) as meses
 ,sum(v.IMP_NETO)/round((to_days(DATE_ADD($P{FECHA_FIN}, INTERVAL -(30+1) DAY))-(to_days($P{FECHA_INI})))/30.4167,2) as prom_vta
 ,0 as periodo
 ,max(v.fecha) as ULT_VTA
-FROM fact_ventasdet V  
+FROM bi.fact_ventasdet V  
 WHERE V.FECHA BETWEEN $P{FECHA_INI} AND DATE_ADD($P{FECHA_FIN}, INTERVAL -(30+1) DAY)
 AND V.SUCURSAL_ID LIKE $P{SUCURSAL} AND (CASE WHEN V.ORIGEN='CRE' THEN 'CREDITO' ELSE 'CONTADO' END) LIKE $P{ORIGEN}
 group by V.CLIENTE,V.FECHA 
 union
-SELECT 'ACT' as PRDO,(CASE WHEN V.CLIENTE_ID=8 THEN 'MOSTRADOR' ELSE v.cliente END) nombre
+SELECT V.SUC,'ACT' as PRDO,(CASE WHEN V.CLIENTE_ID=8 THEN 'MOSTRADOR' ELSE v.cliente END) nombre
 ,(CASE 	WHEN 	MAX((CASE WHEN v.origen = 'CRE' THEN 'CRE' ELSE 'CON' END)) =  'CON' THEN 'CON' ELSE 'CRE' END) AS TIPO
 ,0 as venta_neta
 ,0 as meses
@@ -73,7 +73,7 @@ group by V.CLIENTE
 GROUP BY A.NOMBRE,A.TIPO 
 HAVING SUM(A.PROM_VTA)>=$P{VALOR_VENTA} AND ROUND(SUM(A.PERIODO),2)>0
 AND (ROUND(SUM(A.PERIODO)*100/SUM(A.PROM_VTA),1))<=$P{PORCENTAJE}
-ORDER BY  $P!{ORDER} $P!{FORMA}]]></queryString>
+]]></queryString>
 
 	<field name="NOMBRE" class="java.lang.String"/>
 	<field name="MESES" class="java.math.BigDecimal"/>
@@ -83,6 +83,7 @@ ORDER BY  $P!{ORDER} $P!{FORMA}]]></queryString>
 	<field name="PERIODO" class="java.lang.Double"/>
 	<field name="PORC_VTA" class="java.lang.Double"/>
 	<field name="ULT_VTA" class="java.sql.Date"/>
+	<field name="SUC" class="java.lang.String"/>
 
 	<variable name="PERIODO" class="java.lang.Double" resetType="Report" calculation="Sum">
 		<variableExpression><![CDATA[$F{PERIODO}]]></variableExpression>
@@ -444,6 +445,34 @@ $P{ORDER}.intValue()==8 ? "ULT.VENTA" : "N/D"]]></textFieldExpression>
 						<font pdfFontName="Helvetica-Bold" size="8" isBold="true" isUnderline="true"/>
 					</textElement>
 				<text><![CDATA[%]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="57"
+						y="-1"
+						width="99"
+						height="14"
+						key="textField-22"/>
+					<box></box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="8" isBold="true" isUnderline="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{SUCURSAL}.equals("%") ? "TODAS":$F{SUC}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="4"
+						y="-1"
+						width="53"
+						height="14"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="staticText-43"/>
+					<box></box>
+					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
+						<font fontName="Arial" pdfFontName="Helvetica-BoldOblique" size="8" isBold="true" isItalic="true" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+					</textElement>
+				<text><![CDATA[SUCURSAL :]]></text>
 				</staticText>
 			</band>
 		</pageHeader>
