@@ -11,6 +11,7 @@ import { reducers, effects } from './store';
 import { services } from './services';
 import { containers } from './containers';
 import { components, entryComponents } from './components';
+import { reportes } from './reportes';
 import { ReportesModule } from 'app/reportes/reportes.module';
 
 @NgModule({
@@ -21,8 +22,8 @@ import { ReportesModule } from 'app/reportes/reportes.module';
     StoreModule.forFeature('analisis-de-venta', reducers),
     EffectsModule.forFeature(effects)
   ],
-  declarations: [...components, ...containers],
-  entryComponents: [...entryComponents],
+  declarations: [...components, ...containers, ...reportes],
+  entryComponents: [...entryComponents, ...reportes],
   providers: [...services]
 })
 export class AnalisisDeVentasModule {}

@@ -17,6 +17,8 @@ class UrlMappings {
             "/saldo"(resources: 'proveedorSaldo', excludes:['create', 'edit','patch'])
         }
 
+        "/api/clientes"(resources: 'cliente')
+
         "/api/tesoreria/cuentas"(resources: 'cuentaDeBanco')
         // "/api/tesoreria/cuentas/$id/movimientos"(controller: 'cuentaDeBanco', action: 'movimientos', method: 'GET')
         "/api/tesoreria/cuentas/$id/movimientos/$ejercicio/$mes"(controller: 'cuentaDeBanco', action: 'movimientos', method: 'GET')
@@ -129,6 +131,9 @@ class UrlMappings {
         "/api/bi/movimientoCosteadoDet"(controller: 'bi', action:'movimientoCosteadoDet', method: 'GET')
         // Reportes BI
         "/api/bi/bajaEnVentas"(controller: 'bi', action:'bajaEnVentas', method: 'GET')
+        "/api/bi/mejoresClientes"(controller: 'bi', action:'mejoresClientes', method: 'GET')
+        "/api/bi/ventasClientesResumen"(controller: 'bi', action:'ventasClientesResumen', method: 'GET')
+
 
 
 

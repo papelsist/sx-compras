@@ -52,9 +52,39 @@ class BiController {
     }
 
     def bajaEnVentas() {
-        Map repParams = [:]
+        log.info('Params: {} ', params)
+        Periodo periodo = params.periodo
+        Map repParams = ['FECHA_INI': periodo.fechaInicial, 'FECHA_FIN': periodo.fechaFinal]
+        repParams.FORMA = params.forma
+        repParams.ORDER = params.orden as Integer
+        repParams.DIAS = params.dias  as Integer
+        repParams.VALOR_VENTA = params.valorVenta as BigDecimal
+        repParams.ORIGEN = params.origen
+        repParams.PORCENTAJE = params.porcentaje as Double
+        repParams.SUCURSAL = params.sucursal
         def pdf =  reportService.run('BajaEnVentas.jrxml', repParams)
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'BajaEnVentas.pdf')
+    }
+    def mejoresClientes() {
+        log.info('Params: {} ', params)
+        Periodo periodo = params.periodo
+        Map repParams = ['FECHA_INI': periodo.fechaInicial, 'FECHA_FIN': periodo.fechaFinal]
+        repParams.ORIGEN = params.origen
+        repParams.NO_CLIENTES = params.numeroDeClientes  as Integer
+
+        def pdf =  reportService.run('MejoresClientes.jrxml', repParams)
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'MejoresClientess.pdf')
+    }
+
+    def ventasClientesResumen() {
+        log.info('Params: {} ', params)
+        Periodo periodo = params.periodo
+        Map repParams = ['FECHA_INI': periodo.fechaInicial, 'FECHA_FIN': periodo.fechaFinal]
+        repParams.ORIGEN = params.origen
+        repParams.CLIENTE = params.cliente
+
+        def pdf =  reportService.run('VentasClienteResumen.jrxml', repParams)
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'VentasClienteResumen.pdf')
     }
 
 }
