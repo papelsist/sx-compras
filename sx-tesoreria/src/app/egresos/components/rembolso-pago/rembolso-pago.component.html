@@ -1,0 +1,89 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <mat-card>
+    <mat-card-title *ngIf="rembolso">
+      <div layout>
+        <span class="pad-right " layout>
+          <span>Rembolso: </span>
+          <span class="pad-left tc-blue-700">{{rembolso.id}}</span>
+        </span>
+        <span class="pad-left"> {{rembolso.nombre}}</span>
+        <span flex></span>
+      </div>
+    </mat-card-title>
+    <mat-card-subtitle *ngIf="rembolso && rembolso.egreso">
+      <span layout>
+        <span>Pagada: </span>
+        <span class="pad-left">{{rembolso.egreso.fecha | date: 'dd/MM/yyyy'}}</span>
+        <ng-container *ngIf="rembolso.egreso.cheque">
+          <span class="pad-left">
+            Cheque: {{rembolso.egreso.cheque.folio}} ({{rembolso.egreso.cheque.banco}})
+          </span>
+          <span class="pad-left" *ngIf="rembolso?.egreso?.cheque?.impresion">
+            Impreso: ({{rembolso.egreso.cheque.impresion | date: 'dd/MM/yyyy'}})
+          </span>
+        </ng-container>
+        <span flex></span>
+
+      </span>
+    </mat-card-subtitle>
+
+    <mat-card-title *ngIf="!rembolso">Alta de Rembolso</mat-card-title>
+
+    <div *ngIf="rembolso " class="md-title pad-bottom-sm" layout>
+      <span class="pad-left pad-right">Fecha: </span>
+      <span class="pad-left"> {{rembolso.fecha | date:'dd/MM/yyyy'}}</span>
+    </div>
+    <mat-divider></mat-divider>
+
+    <div layout class="pad">
+      <sx-sucursal-field [parent]="form"></sx-sucursal-field>
+      <mat-form-field class="pad-left">
+        <input matInput [matDatepicker]="myDatepicker" formControlName="fecha" placeholder="Fecha">
+        <mat-datepicker-toggle matSuffix [for]="myDatepicker"></mat-datepicker-toggle>
+        <mat-datepicker #myDatepicker></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field class="pad-left">
+        <input matInput [matDatepicker]="myDatepicker2" formControlName="fechaDePago" placeholder="Fecha pago">
+        <mat-datepicker-toggle matSuffix [for]="myDatepicker2"></mat-datepicker-toggle>
+        <mat-datepicker #myDatepicker2></mat-datepicker>
+      </mat-form-field>
+      <sx-upper-case-field formControlName="comentario" flex placeholder="Comentario" class="pad-left"></sx-upper-case-field>
+
+    </div>
+
+    <div class="partidas-panel">
+      <sx-rembolso-partidas [parent]="form" [partidas]="partidas.value" (delete)="onDeleteRow($event)" (update)="onUpdateRow($event)"
+        (edit)="onEditRow($event)" [readOnly]="form.disabled">
+      </sx-rembolso-partidas>
+
+    </div>
+    <div class="totales-panel" layout>
+      <span flex></span>
+      <mat-form-field>
+        <input matInput value="{{total | currency}}" placeholder="Total" [disabled]="true">
+      </mat-form-field>
+
+    </div>
+    <mat-divider></mat-divider>
+    <mat-card-actions>
+      <button mat-button type="button" (click)="cancel.emit($event)">Cancelar</button>
+      <button mat-button [disabled]="form.invalid || form.pristine" *ngIf="!form.disabled">
+        <mat-icon>save</mat-icon> Salvar
+      </button>
+      <ng-container *ngIf="!rembolso?.egreso">
+        <sx-selector-cxp-rembolso-btn (select)="onAgregarFactura($event)">
+        </sx-selector-cxp-rembolso-btn>
+        <button mat-button color="primary" (click)="addNoDeducible()" type="button">No Deducible</button>
+      </ng-container>
+      <ng-container *ngIf="rembolso  && !form.disabled">
+        <button mat-button color="warn" type="button" (click)="delete.emit(rembolso)">
+          <mat-icon>delete</mat-icon> Eliminar
+        </button>
+      </ng-container>
+
+      <sx-print-rembolso [rembolso]="rembolso" *ngIf="rembolso"></sx-print-rembolso>
+
+
+    </mat-card-actions>
+  </mat-card>
+</form>

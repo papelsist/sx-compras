@@ -22,6 +22,14 @@ import { CancelarChequeComponent } from './cancelaciones/cancelar-cheque.compone
 import { CancelarPagoComponent } from './cancelaciones/cancelar-pago.component';
 import { PolizaChequeComponent } from './poliza-cheque/poliza-cheque.component';
 
+import { RembolsoPartidasComponent } from './rembolso-partidas/rembolso-partidas.component';
+import { RembolsosTableComponent } from './rembolsos-table/rembolsos-table.component';
+import { RembolsosFilterComponent } from './rembolsos-filter/rembolsos-filter.component';
+import { RembolsosFilterBtnComponent } from './rembolsos-filter/rembolsos-filter-btn.component';
+import { RembolsosFilterLabelComponent } from './rembolsos-filter/rembolsos-filter-label.component';
+import { PrintRembolsoComponent } from './print-rembolso/print-rembolso.component';
+import { RembolsoPagoComponent } from './rembolso-pago/rembolso-pago.component';
+
 export const components: any[] = [
   RequisicionesTableComponent,
   RequisicionesFilterComponent,
@@ -42,14 +50,24 @@ export const components: any[] = [
   GenerarChequeBtnComponent,
   CancelarChequeComponent,
   CancelarPagoComponent,
-  PolizaChequeComponent
+  PolizaChequeComponent,
+
+  //
+  RembolsoPagoComponent,
+  RembolsosTableComponent,
+  RembolsoPartidasComponent,
+  RembolsosFilterComponent,
+  RembolsosFilterBtnComponent,
+  RembolsosFilterLabelComponent,
+  PrintRembolsoComponent
 ];
 
 export const entryComponents: any[] = [
   RequisicionesFilterComponent,
   PagoRequisicionDialogComponent,
   ChequesFilterComponent,
-  GenerarChequeComponent
+  GenerarChequeComponent,
+  RembolsosFilterComponent
 ];
 
 export * from './requisiciones-table/requisiciones-table.component';
@@ -71,3 +89,12 @@ export * from './generar-cheque/generar-cheque-btn.component';
 export * from './cancelaciones/cancelar-cheque.component';
 export * from './cancelaciones/cancelar-pago.component';
 export * from './poliza-cheque/poliza-cheque.component';
+
+// Rembolso
+export * from './rembolso-pago/rembolso-pago.component';
+export * from './rembolsos-table/rembolsos-table.component';
+export * from './rembolso-partidas/rembolso-partidas.component';
+export * from './rembolsos-filter/rembolsos-filter.component';
+export * from './rembolsos-filter/rembolsos-filter-btn.component';
+export * from './rembolsos-filter/rembolsos-filter-label.component';
+export * from './print-rembolso/print-rembolso.component';

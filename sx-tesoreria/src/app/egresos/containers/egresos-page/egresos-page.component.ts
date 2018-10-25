@@ -30,6 +30,12 @@ export class EgresosPageComponent implements OnInit {
       title: 'Cheques',
       description: 'Pagos con cheque',
       icon: 'account_balance_wallet'
+    },
+    {
+      route: 'rembolsos',
+      title: 'Rembolsos',
+      description: 'Mto de rembolsos',
+      icon: 'settings_backup_restore'
     }
   ];
 
