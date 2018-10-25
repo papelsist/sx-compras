@@ -30,6 +30,8 @@ export class RembolsoPartidasComponent implements OnInit, OnChanges {
   @Output()
   update = new EventEmitter();
   @Output()
+  edit = new EventEmitter();
+  @Output()
   delete = new EventEmitter();
   @ViewChild(MatSort)
   sort: MatSort;

@@ -25,6 +25,8 @@ import {
 } from '../../model';
 
 import * as _ from 'lodash';
+import { MatDialog } from '@angular/material';
+import { RembolsoDetComponent } from './rembolso-det.component';
 
 @Component({
   selector: 'sx-rembolso-form',
@@ -48,19 +50,19 @@ export class RembolsoFormComponent implements OnInit, OnChanges {
   cerrar = new EventEmitter();
 
   form: FormGroup;
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private dialog: MatDialog) {}
 
   ngOnInit() {}
 
   ngOnChanges(changes: SimpleChanges) {
     this.buildForm();
     if (changes.rembolso && changes.rembolso.currentValue) {
-      // console.log('Editando rembolso: ', changes.rembolso.currentValue);
-      this.setRequisicion();
+      console.log('Editando rembolso: ', changes.rembolso.currentValue);
+      this.setReembolso();
     }
   }
 
-  setRequisicion() {
+  setReembolso() {
     this.form.patchValue(this.rembolso);
     this.cleanPartidas();
     this.rembolso.partidas.forEach(det => {
@@ -138,12 +140,44 @@ export class RembolsoFormComponent implements OnInit, OnChanges {
     selected.forEach(cxp => {
       const det = buildRembolsoDet(cxp);
       const parts: RembolsoDet[] = this.partidas.value;
-      const found = parts.find(item => item.cxp.id === cxp.id);
+      const found = parts.find(item => {
+        if (item.cxp) {
+          return item.cxp.id === cxp.id;
+        } else {
+          return false;
+        }
+      });
       if (!found) {
         this.partidas.push(new FormControl(det));
       }
     });
     this.form.markAsDirty();
+  }
+
+  addNoDeducible() {
+    this.dialog
+      .open(RembolsoDetComponent, { data: {} })
+      .afterClosed()
+      .subscribe(partida => {
+        if (partida) {
+          this.partidas.push(new FormControl(partida));
+          this.form.markAsDirty();
+        }
+      });
+  }
+  onEditRow(index: number) {
+    const control = this.partidas.at(index);
+    const det: RembolsoDet = control.value;
+    this.dialog
+      .open(RembolsoDetComponent, { data: { partida: det } })
+      .afterClosed()
+      .subscribe(partida => {
+        if (partida) {
+          const res = { ...det, ...partida };
+          control.setValue(res);
+          this.form.markAsDirty();
+        }
+      });
   }
 
   onDeleteRow(index: number) {

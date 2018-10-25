@@ -57,6 +57,7 @@ import { RembolsosFilterComponent } from './rembolsos-filter/rembolsos-filter.co
 import { RembolsosFilterBtnComponent } from './rembolsos-filter/rembolsos-filter-btn.component';
 import { RembolsosFilterLabelComponent } from './rembolsos-filter/rembolsos-filter-label.component';
 import { PrintRembolsoComponent } from './print-rembolso/print-rembolso.component';
+import { RembolsoDetComponent } from './rembolso-form/rembolso-det.component';
 
 export const components: any[] = [
   CfdisTableComponent,
@@ -109,7 +110,8 @@ export const components: any[] = [
   RembolsosFilterComponent,
   RembolsosFilterBtnComponent,
   RembolsosFilterLabelComponent,
-  PrintRembolsoComponent
+  PrintRembolsoComponent,
+  RembolsoDetComponent
 ];
 
 export const entryComponents = [
@@ -122,7 +124,8 @@ export const entryComponents = [
   PagosFilterComponent,
   ChequesFilterComponent,
   SelectorCxpRembolsoComponent,
-  RembolsosFilterComponent
+  RembolsosFilterComponent,
+  RembolsoDetComponent
 ];
 
 export * from './cfdis-table/cfdis-table.component';
@@ -183,3 +186,4 @@ export * from './rembolsos-filter/rembolsos-filter.component';
 export * from './rembolsos-filter/rembolsos-filter-btn.component';
 export * from './rembolsos-filter/rembolsos-filter-label.component';
 export * from './print-rembolso/print-rembolso.component';
+export * from './rembolso-form/rembolso-det.component';

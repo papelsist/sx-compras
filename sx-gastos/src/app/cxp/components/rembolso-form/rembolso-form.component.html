@@ -53,7 +53,7 @@
 
     <div class="partidas-panel">
       <sx-rembolso-partidas [parent]="form" [partidas]="partidas.value" (delete)="onDeleteRow($event)" (update)="onUpdateRow($event)"
-        [readOnly]="form.disabled">
+        (edit)="onEditRow($event)" [readOnly]="form.disabled">
       </sx-rembolso-partidas>
 
     </div>
@@ -70,8 +70,11 @@
       <button mat-button [disabled]="form.invalid || form.pristine" *ngIf="!form.disabled">
         <mat-icon>save</mat-icon> Salvar
       </button>
-      <sx-selector-cxp-rembolso-btn (select)="onAgregarFactura($event)" *ngIf="!rembolso?.egreso">
-      </sx-selector-cxp-rembolso-btn>
+      <ng-container *ngIf="!rembolso?.egreso">
+        <sx-selector-cxp-rembolso-btn (select)="onAgregarFactura($event)">
+        </sx-selector-cxp-rembolso-btn>
+        <button mat-button color="primary" (click)="addNoDeducible()" type="button">No Deducible</button>
+      </ng-container>
       <ng-container *ngIf="rembolso  && !form.disabled">
         <button mat-button color="warn" type="button" (click)="delete.emit(rembolso)">
           <mat-icon>delete</mat-icon> Eliminar

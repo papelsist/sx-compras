@@ -10,6 +10,7 @@ export interface RembolsoDet {
   total?: number;
   apagar?: number;
   comentario?: string;
+  concepto?: string;
   uuid?: string;
 }
 
@@ -22,6 +23,7 @@ export function buildRembolsoDet(cxp: CuentaPorPagar): RembolsoDet {
     documentoFecha: cxp.fecha,
     total: cxp.importePorPagar,
     apagar: cxp.importePorPagar,
+    concepto: 'GASTO',
     uuid: cxp.uuid
   };
   return det;

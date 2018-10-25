@@ -16,6 +16,7 @@ import { Requisicion, RequisicionesFilter } from '../../model';
       <sx-search-title title="Requisiciones de gastos" (search)="search = $event">
         <sx-requisiciones-filter-btn [filter]="filter$ | async" class="options"
           (change)="onFilter($event)"></sx-requisiciones-filter-btn>
+        <button mat-button color="primary" (click)="reload()" class="actions"><mat-icon>refresh</mat-icon> Refrescar</button>
       </sx-search-title>
       <mat-divider></mat-divider>
       <div class="table-panel">
@@ -74,6 +75,10 @@ export class RequisicionesComponent implements OnInit {
     this.store.dispatch(
       new fromRoot.Go({ path: ['cxp/requisiciones', event.id] })
     );
+  }
+
+  reload() {
+    this.store.dispatch(new fromStore.LoadRequisiciones());
   }
 
   onPrint(event: Requisicion) {}

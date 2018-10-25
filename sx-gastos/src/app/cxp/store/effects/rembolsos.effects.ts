@@ -104,6 +104,22 @@ export class RembolsosEffects {
   );
 
   @Effect()
+  saveSuccess$ = this.actions$.pipe(
+    ofType<fromActions.UpdateRembolsoSuccess | fromActions.SaveRembolsoSuccess>(
+      RembolsoActionTypes.UpdateRembolsoSuccess,
+      RembolsoActionTypes.SaveRembolsoSuccess
+    ),
+    map(action => action.payload.rembolso),
+    tap(rembolso =>
+      this.snackBar.open(`Rembolso ${rembolso.id} actualizado `, 'Cerrar', {
+        duration: 5000
+      })
+    ),
+    map(res => new fromRoot.Go({ path: ['cxp/rembolsos', res.id] }))
+  );
+
+  /*
+  @Effect()
   updateSuccess$ = this.actions$.pipe(
     ofType<fromActions.UpdateRembolsoSuccess | fromActions.SaveRembolsoSuccess>(
       RembolsoActionTypes.UpdateRembolsoSuccess,
@@ -117,6 +133,7 @@ export class RembolsosEffects {
     ),
     map(res => new fromRoot.Go({ path: ['cxp/rembolsos', res.id] }))
   );
+  */
 
   @Effect()
   fail$ = this.actions$.pipe(
