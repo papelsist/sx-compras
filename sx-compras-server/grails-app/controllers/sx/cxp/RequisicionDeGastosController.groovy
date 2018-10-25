@@ -98,7 +98,7 @@ class RequisicionDeGastosController extends RestfulController<RequisicionDeGasto
      * las ya incluidas en una requisicion
      */
     def pendientes() {
-        // log.debug('Facturas pendientes {}', params)
+        log.debug('Facturas pendientes {}', params)
         String id = params.proveedorId
         List<CuentaPorPagar> facturas = CuentaPorPagar
                 .findAll("""
@@ -110,6 +110,7 @@ class RequisicionDeGastosController extends RestfulController<RequisicionDeGasto
                     order by c.fecha desc
                  """,
                 [id, 'GASTOS'], [max: 100])
+        log.info("Facturas localizadas: {}", facturas.size())
         respond facturas
     }
 

@@ -24,15 +24,13 @@ class MovimientoDeCuentaService implements  LogUser{
         egreso.tipo = tipo
         egreso.fecha = requisicion.fechaDePago
         egreso.concepto = concepto
+        egreso.moneda = cuenta.moneda
+        egreso.tipoDeCambio = requisicion.tipoDeCambio
 
-        if(cuenta.moneda == MonedaUtils.PESOS) {
-            egreso.moneda = Currency.getInstance(requisicion.moneda)
-            egreso.tipoDeCambio = requisicion.tipoDeCambio
-            egreso.importe = requisicion.apagar * -1
-        } else {
-            egreso.moneda = cuenta.moneda
-            egreso.tipoDeCambio = requisicion.tipoDeCambio
+        if(cuenta.moneda != requisicion.moneda) {
             egreso.importe = (requisicion.apagar * -1) * requisicion.tipoDeCambio
+        } else {
+            egreso.importe = requisicion.apagar * -1
         }
 
         egreso.comentario = requisicion.comentario

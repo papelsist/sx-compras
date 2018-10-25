@@ -61,18 +61,29 @@ class RembolsoController extends RestfulController {
     }
 
     @CompileDynamic
-    @Override
-    protected Object updateResource(Object resource) {
+    private logUser(Rembolso instance) {
         if (isLoggedIn()) {
             String username = getPrincipal().username
             instance.updateUser = username
+            if(!instance.createUser)
+                instance.createUser = username
             instance.partidas.each {
                 it.updateUser = username
+                if(!it.createUser)
+                    it.createUser = username
             }
         }
-        instance.nombre = instance.sucursal.nombre
-        return instance
     }
+
+
+    @CompileDynamic
+    @Override
+    protected Object updateResource(Object resource) {
+        logUser(resource)
+        resource.nombre = resource.sucursal.nombre
+        resource.save flush: true
+    }
+
 
     @Override
     protected void deleteResource(Object resource) {

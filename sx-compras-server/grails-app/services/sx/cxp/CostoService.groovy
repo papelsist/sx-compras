@@ -43,6 +43,7 @@ class CostoService {
 
                     Inventario inventario = it.com.inventario
                     inventario.costo = costo
+                    // inventario.gasto = fleteUnitario
                     log.debug("Costo de : {} = {} ", it.clave, costo)
                     inventario.save flush: true
                 }

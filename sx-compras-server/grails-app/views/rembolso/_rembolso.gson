@@ -4,9 +4,11 @@ model {
 	Rembolso rembolso
 }
 
-json g.render(rembolso, [excludes: ['sucursal'], resolveTemplate: false]) {
+json g.render(rembolso, [excludes: ['sucursal', 'partidas'], resolveTemplate: false]) {
 	sucursal {
 		id rembolso.sucursal.id
 		nombre rembolso.sucursal.nombre
 	}
+	partidas g.render(rembolso.partidas)
+
 }

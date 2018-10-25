@@ -33,6 +33,8 @@ class RembolsoDet {
 
     String updateUser
 
+    String concepto
+
     static belongsTo = [rembolso:Rembolso]
 
     static constraints = {
@@ -42,6 +44,7 @@ class RembolsoDet {
         documentoFecha nullable:true
         documentoFolio nullable:true
         documentoSerie nullable:true
+        concepto nullable: true
     }
 
 }
