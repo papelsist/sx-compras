@@ -96,6 +96,13 @@ export class RembolsosEffects {
     })
   );
 
+  deleteSuccess$ = this.actions$.pipe(
+    ofType<fromActions.DeleteRembolsoSuccess>(
+      RembolsoActionTypes.DeleteRembolsoSuccess
+    ),
+    map(() => new fromRoot.Go({ path: ['cxp/rembolsos'] }))
+  );
+
   @Effect()
   updateSuccess$ = this.actions$.pipe(
     ofType<fromActions.UpdateRembolsoSuccess | fromActions.SaveRembolsoSuccess>(

@@ -134,7 +134,7 @@ export class RembolsoFormComponent implements OnInit, OnChanges {
   }
 
   onAgregarFactura(selected: CuentaPorPagar[]) {
-    console.log('Agregando: ', selected);
+    // console.log('Agregando: ', selected);
     selected.forEach(cxp => {
       const det = buildRembolsoDet(cxp);
       const parts: RembolsoDet[] = this.partidas.value;
