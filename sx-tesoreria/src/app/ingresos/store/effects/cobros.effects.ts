@@ -53,6 +53,7 @@ export class CobrosEffects {
     ofType<fromActions.UpdateCobro>(CobroActionTypes.UpdateCobro),
     map(action => action.payload.cobro),
     switchMap(cobro => {
+      const update = { id: cobro.id, changes: cobro.changes };
       return this.service.update({ id: cobro.id, changes: cobro.changes }).pipe(
         map(res => new fromActions.UpdateCobroSuccess({ cobro: res })),
         catchError(error => of(new fromActions.UpdateCobroFail(error)))
@@ -63,9 +64,9 @@ export class CobrosEffects {
   @Effect({ dispatch: false })
   updateSuccess$ = this.actions$.pipe(
     ofType<fromActions.UpdateCobroSuccess>(CobroActionTypes.UpdateCobroSuccess),
-    map(action => action.payload.cheque),
-    tap(cheque =>
-      this.snackBar.open(`Cobro ${cheque.folio} actualizado `, 'Cerrar', {
+    map(action => action.payload.cobro),
+    tap(cobro =>
+      this.snackBar.open(`Cobro actualizado `, 'Cerrar', {
         duration: 5000
       })
     )

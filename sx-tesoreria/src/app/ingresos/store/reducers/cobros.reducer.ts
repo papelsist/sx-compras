@@ -51,7 +51,7 @@ export function reducer(state = initialState, action: CobroActions): State {
       };
     }
     case CobroActionTypes.LoadCobrosSuccess: {
-      return adapter.addAll(action.payload.cheques, {
+      return adapter.addAll(action.payload.cobros, {
         ...state,
         loading: false,
         loaded: true
@@ -59,11 +59,11 @@ export function reducer(state = initialState, action: CobroActions): State {
     }
 
     case CobroActionTypes.UpdateCobroSuccess: {
-      const cheque = action.payload.cheque;
+      const cobro = action.payload.cobro;
       return adapter.updateOne(
         {
-          id: cheque.id,
-          changes: cheque
+          id: cobro.id,
+          changes: cobro
         },
         {
           ...state,
@@ -73,7 +73,7 @@ export function reducer(state = initialState, action: CobroActions): State {
     }
 
     case CobroActionTypes.UpsertCobro: {
-      return adapter.upsertOne(action.payload.Cobro, {
+      return adapter.upsertOne(action.payload.cobro, {
         ...state,
         loading: false
       });
