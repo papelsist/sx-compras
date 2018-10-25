@@ -1,0 +1,7 @@
+import sx.cxp.RembolsoDet
+
+model {
+	RembolsoDet rembolsoDet
+}
+
+json tmpl.rembolsoDet(rembolsoDet)

@@ -10,3 +10,5 @@ export * from './notaDeCreditoCxPDet';
 export * from './aplicacionDePago';
 export * from './pago';
 export * from './cheque';
+export * from './rembolso';
+export * from './rembolsoDet';

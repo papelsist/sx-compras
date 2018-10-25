@@ -31,7 +31,6 @@ import { NotasTableComponent } from './notas-table/notas-table.component';
 import { NotaFormComponent } from './nota-form/nota-form.component';
 import { NotaConceptosComponent } from './nota-conceptos/nota-conceptos.component';
 
-import { SelectorCxPComponent } from './selector-cxp/selector-cxp.component';
 import { PagosTableComponent } from './pagos-table/pagos-table.component';
 import { PagoFormComponent } from './pago-form/pago-form.component';
 import { AplicacionesComponent } from './aplicaciones-table/aplicaciones-table.component';
@@ -49,6 +48,15 @@ import { ChequesTableComponent } from './cheques-table/cheques-table.component';
 import { ChequesFilterComponent } from './cheques-filter/cheques-filter.component';
 import { ChequesFilterBtnComponent } from './cheques-filter/cheques-filter-btn.component';
 import { ChequesFilterLabelComponent } from './cheques-filter/cheques-filter-label.component';
+import { RembolsoFormComponent } from './rembolso-form/rembolso-form.component';
+import { SelectorCxpRembolsoBtnComponent } from './selectores/selector-cxp-rembolso-btn.component';
+import { SelectorCxpRembolsoComponent } from './selectores/selector-cxp-rembolso.component';
+import { RembolsoPartidasComponent } from './rembolso-partidas/rembolso-partidas.component';
+import { RembolsosTableComponent } from './rembolsos-table/rembolsos-table.component';
+import { RembolsosFilterComponent } from './rembolsos-filter/rembolsos-filter.component';
+import { RembolsosFilterBtnComponent } from './rembolsos-filter/rembolsos-filter-btn.component';
+import { RembolsosFilterLabelComponent } from './rembolsos-filter/rembolsos-filter-label.component';
+import { PrintRembolsoComponent } from './print-rembolso/print-rembolso.component';
 
 export const components: any[] = [
   CfdisTableComponent,
@@ -81,7 +89,7 @@ export const components: any[] = [
   NotasTableComponent,
   NotaFormComponent,
   NotaConceptosComponent,
-  SelectorCxPComponent,
+
   PagosTableComponent,
   PagoFormComponent,
   AplicacionesComponent,
@@ -91,7 +99,17 @@ export const components: any[] = [
   ChequesTableComponent,
   ChequesFilterComponent,
   ChequesFilterBtnComponent,
-  ChequesFilterLabelComponent
+  ChequesFilterLabelComponent,
+  // Rembolso
+  RembolsosTableComponent,
+  RembolsoFormComponent,
+  SelectorCxpRembolsoBtnComponent,
+  SelectorCxpRembolsoComponent,
+  RembolsoPartidasComponent,
+  RembolsosFilterComponent,
+  RembolsosFilterBtnComponent,
+  RembolsosFilterLabelComponent,
+  PrintRembolsoComponent
 ];
 
 export const entryComponents = [
@@ -102,7 +120,9 @@ export const entryComponents = [
   FacturasFilterComponent,
   RequisicionesFilterComponent,
   PagosFilterComponent,
-  ChequesFilterComponent
+  ChequesFilterComponent,
+  SelectorCxpRembolsoComponent,
+  RembolsosFilterComponent
 ];
 
 export * from './cfdis-table/cfdis-table.component';
@@ -138,9 +158,6 @@ export * from './nota-form/nota-form.component';
 export * from './nota-conceptos/nota-conceptos.component';
 export * from './nota-print/nota-print.component';
 
-// Cuentas Por Pagar
-export * from './selector-cxp/selector-cxp.component';
-
 export * from './pagos-table/pagos-table.component';
 export * from './pago-form/pago-form.component';
 
@@ -155,3 +172,14 @@ export * from './cheques-table/cheques-table.component';
 export * from './cheques-filter/cheques-filter.component';
 export * from './cheques-filter/cheques-filter-btn.component';
 export * from './cheques-filter/cheques-filter-label.component';
+
+// Rembolso
+export * from './rembolsos-table/rembolsos-table.component';
+export * from './rembolso-form/rembolso-form.component';
+export * from './selectores/selector-cxp-rembolso-btn.component';
+export * from './selectores/selector-cxp-rembolso.component';
+export * from './rembolso-partidas/rembolso-partidas.component';
+export * from './rembolsos-filter/rembolsos-filter.component';
+export * from './rembolsos-filter/rembolsos-filter-btn.component';
+export * from './rembolsos-filter/rembolsos-filter-label.component';
+export * from './print-rembolso/print-rembolso.component';

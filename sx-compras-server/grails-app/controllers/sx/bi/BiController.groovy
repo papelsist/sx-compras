@@ -87,6 +87,20 @@ class BiController {
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'VentasClienteResumen.pdf')
     }
 
+    def clienteSinVentas() {
+        log.info('Params: {} ', params)
+        Periodo periodo = params.periodo
+        Map repParams = ['FECHA_INI': periodo.fechaInicial, 'FECHA_FIN': periodo.fechaFinal]
+        repParams.FORMA = params.forma
+        repParams.ORDER = params.orden as Integer
+        repParams.DIAS = params.dias  as Integer
+        repParams.VALOR_VENTA = params.valorVenta as BigDecimal
+        repParams.ORIGEN = params.origen
+        repParams.SUCURSAL = params.sucursal
+        def pdf =  reportService.run('ClienteSinVenta.jrxml', repParams)
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'ClientesSinVenta.pdf')
+    }
+
 }
 
 class VentaAcumuladaCommand{

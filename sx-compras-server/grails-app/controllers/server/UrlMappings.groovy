@@ -125,6 +125,13 @@ class UrlMappings {
         "/api/inventario/printKardex"(controller: 'inventario', action: 'printKardex', method: 'GET')
 
 
+        // Rembolsos
+        "/api/rembolsos"(resources: 'rembolso', excludes:['create', 'edit','patch']) {
+            "/partidas"(resources: 'rembolsoDet', excludes:['create', 'edit','patch'])
+        }
+        "/api/rembolsos/pendientes"(controller: 'rembolso', action: 'pendientes')
+        "/api/rembolsos/print/$id"(controller: 'rembolso', action: 'print')
+
         //BI
         "/api/bi/ventaNetaMensual"(controller: 'bi', action:'ventaNetaMensual', method: 'GET')
         "/api/bi/movimientoCosteado"(controller: 'bi', action:'movimientoCosteado', method:'GET')
@@ -133,7 +140,7 @@ class UrlMappings {
         "/api/bi/bajaEnVentas"(controller: 'bi', action:'bajaEnVentas', method: 'GET')
         "/api/bi/mejoresClientes"(controller: 'bi', action:'mejoresClientes', method: 'GET')
         "/api/bi/ventasClientesResumen"(controller: 'bi', action:'ventasClientesResumen', method: 'GET')
-
+        "/api/bi/clienteSinVentas"(controller: 'bi', action:'clienteSinVentas', method: 'GET')
 
 
 

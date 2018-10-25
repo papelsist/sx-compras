@@ -8,6 +8,8 @@ import { PagoExistsGuard } from './pago-exists.guard';
 import { CfdisGuard } from './cfdis.guard';
 import { RequisicionesGuard } from './requisiciones.guard';
 import { ChequesGuard } from './cheques.guard';
+import { RembolsosGuard } from './rembolsos.guard';
+import { RembolsoExistsGuard } from './rembolso-exists.guard';
 
 export const guards: any[] = [
   CfdisGuard,
@@ -19,7 +21,9 @@ export const guards: any[] = [
   FacturaExistsGuard,
   PagosGuard,
   PagoExistsGuard,
-  ChequesGuard
+  ChequesGuard,
+  RembolsosGuard,
+  RembolsoExistsGuard
 ];
 
 export * from './cfdis.guard';
@@ -32,3 +36,5 @@ export * from './factura-exist.guard';
 export * from './pagos.guard';
 export * from './pago-exists.guard';
 export * from './cheques.guard';
+export * from './rembolsos.guard';
+export * from './rembolso-exists.guard';

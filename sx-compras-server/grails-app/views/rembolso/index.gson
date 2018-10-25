@@ -1,0 +1,8 @@
+import sx.cxp.Rembolso
+
+model {
+	Iterable<Rembolso> rembolsoList
+}
+
+json tmpl.rembolso(rembolsoList ?: [])
+

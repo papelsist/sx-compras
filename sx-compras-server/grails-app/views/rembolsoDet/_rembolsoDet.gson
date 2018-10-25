@@ -1,0 +1,9 @@
+import sx.cxp.RembolsoDet
+
+model {
+	RembolsoDet rembolsoDet
+}
+
+json g.render(rembolsoDet, [resolveTemplate: false]) {
+	uuid rembolsoDet?.cxp?.uuid
+}

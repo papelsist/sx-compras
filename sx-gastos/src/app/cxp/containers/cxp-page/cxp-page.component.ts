@@ -35,6 +35,12 @@ export class CxpPageComponent implements OnInit {
       icon: 'gradient'
     },
     {
+      route: 'rembolsos',
+      title: 'Rembolsos',
+      description: 'Mto de rembolsos',
+      icon: 'settings_backup_restore'
+    },
+    {
       route: 'pagos',
       title: 'Pagos ',
       description: 'Pagos registrados',

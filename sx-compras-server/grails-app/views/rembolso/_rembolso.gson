@@ -1,0 +1,12 @@
+import sx.cxp.Rembolso
+
+model {
+	Rembolso rembolso
+}
+
+json g.render(rembolso, [excludes: ['sucursal'], resolveTemplate: false]) {
+	sucursal {
+		id rembolso.sucursal.id
+		nombre rembolso.sucursal.nombre
+	}
+}

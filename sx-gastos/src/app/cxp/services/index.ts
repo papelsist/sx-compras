@@ -5,6 +5,7 @@ import { NotasService } from './notas.service';
 import { PagosService } from './pagos.service';
 import { AplicacionDePagoService } from './aplicacionDePago.service';
 import { ChequesService } from './cheques.service';
+import { RembolsoService } from './rembolso.service';
 
 export const services: any[] = [
   ComprobanteFiscalService,
@@ -13,7 +14,8 @@ export const services: any[] = [
   NotasService,
   PagosService,
   AplicacionDePagoService,
-  ChequesService
+  ChequesService,
+  RembolsoService
 ];
 
 export * from './comprobante-fiscal.service';
@@ -23,3 +25,4 @@ export * from './notas.service';
 export * from './pagos.service';
 export * from './aplicacionDePago.service';
 export * from './cheques.service';
+export * from './rembolso.service';

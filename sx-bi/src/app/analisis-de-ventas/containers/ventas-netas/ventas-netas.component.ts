@@ -13,7 +13,8 @@ import { ReportService } from 'app/reportes/services/report.service';
 import {
   BajaEnVentasComponent,
   MejoresClientesComponent,
-  VentasClientesResumenComponent
+  VentasClientesResumenComponent,
+  ClienteSinVentasComponent
 } from 'app/analisis-de-ventas/reportes';
 
 @Component({
@@ -61,6 +62,12 @@ export class VentasNetasComponent implements OnInit {
   }
   ventasClientesResumen() {
     this.run('bi/ventasClientesResumen', VentasClientesResumenComponent, {});
+  }
+
+  clienteSinVentas() {
+    this.run('bi/clienteSinVentas', ClienteSinVentasComponent, {
+      data: { title: 'Cliente sin Ventas' }
+    });
   }
 
   run(path: string, component, data) {

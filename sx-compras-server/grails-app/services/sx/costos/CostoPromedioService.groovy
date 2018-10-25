@@ -47,12 +47,14 @@ class CostoPromedioService {
     }
 
     def costearExistenciaInicial(Integer ejercicio, Integer mes) {
+        log.info('Calculando el costo inicial de la existencia {} - {}', ejercicio, mes)
         Integer ejercicioAnterior = ejercicio
-        Integer mesAnterior = mes
+        Integer mesAnterior = mes - 1
         if(mes == 1) {
             ejercicioAnterior = ejercicio - 1
             mesAnterior = 12
         }
+        log.info('Ejercicio anterior: {}-{}', ejercicioAnterior, mesAnterior)
         String sql = """ 
                 UPDATE EXISTENCIA E 
                 SET COSTO = IFNULL((SELECT C.COSTO FROM COSTO_PROMEDIO C WHERE C.EJERCICIO = ? AND C.MES = ? AND C.PRODUCTO_ID = E.PRODUCTO_ID ), 0)
@@ -157,9 +159,9 @@ class CostoPromedioService {
     def costearExistenciaFinal(Integer ejercicio, Integer mes) {
         log.debug("Costaeand el inventario final para {} - {}", mes, ejercicio)
         String sql = """ 
-                UPDATE EXISTENCIA E 
+                UPDATE EXISTENCIA E JOIN PRODUCTO P ON(P.ID = E.PRODUCTO_ID)
                 SET COSTO_PROMEDIO = IFNULL((SELECT C.COSTO FROM COSTO_PROMEDIO C WHERE C.EJERCICIO = E.ANIO AND C.MES = E.MES AND C.PRODUCTO_ID = E.PRODUCTO_ID ), 0)
-                WHERE E.ANIO = ? AND E.MES = ? 
+                WHERE P.DE_LINEA IS TRUE AND E.ANIO = ? AND E.MES = ? 
                 """
         executeUdate(sql, [ejercicio, mes])
     }
@@ -167,9 +169,9 @@ class CostoPromedioService {
     def costearMovimientosDeInventario(Integer ejercicio, Integer mes) {
         log.debug("Costeando los movimientos de  inventario  {} - {}", mes, ejercicio)
         String sql = """ 
-                UPDATE INVENTARIO E 
+                UPDATE INVENTARIO E JOIN PRODUCTO P ON(P.ID = E.PRODUCTO_ID)
                 SET COSTO_PROMEDIO = IFNULL((SELECT C.COSTO FROM COSTO_PROMEDIO C WHERE C.EJERCICIO = ? AND C.MES = ? AND C.PRODUCTO_ID = E.PRODUCTO_ID ), 0)
-                WHERE year(E.FECHA) = ? AND month(E.FECHA) = ? 
+                WHERE P.DE_LINEA IS TRUE AND year(E.FECHA) = ? AND month(E.FECHA) = ? 
                 """
         executeUdate(sql, [ejercicio, mes, ejercicio, mes])
     }

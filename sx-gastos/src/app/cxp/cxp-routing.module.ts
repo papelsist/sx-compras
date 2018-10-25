@@ -34,6 +34,19 @@ const routes: Routes = [
         ]
       },
       {
+        path: 'rembolsos',
+        canActivate: [fromGuards.RembolsosGuard],
+        children: [
+          { path: '', component: fromContainers.RembolsosComponent },
+          { path: 'create', component: fromContainers.RembolsoComponent },
+          {
+            path: ':rembolsoId',
+            canActivate: [fromGuards.RembolsoExistsGuard],
+            component: fromContainers.RembolsoComponent
+          }
+        ]
+      },
+      {
         path: 'pagos',
         canActivate: [fromGuards.PagosGuard],
         children: [

@@ -29,15 +29,16 @@ export class CxpFacturasTableComponent implements OnInit, OnChanges {
   dataSource = new MatTableDataSource<CuentaPorPagar>([]);
 
   displayColumns = [
-    'tipo',
+    //'tipo',
+    'nombre',
     'serie',
     'folio',
     'fecha',
     'moneda',
     'tipoDeCambio',
     'total',
-    'pagos',
-    'compensaciones',
+    // 'pagos',
+    // 'compensaciones',
     'saldo',
     'uuid'
   ];
