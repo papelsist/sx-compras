@@ -5,7 +5,11 @@ import * as fromContainers from './containers';
 import * as fromGuards from './guards';
 
 const routes: Routes = [
-  { path: '', component: fromContainers.IngresosPageComponent }
+  {
+    path: '',
+    component: fromContainers.IngresosPageComponent,
+    children: [{ path: 'cobros', component: fromContainers.CobrosComponent }]
+  }
 ];
 
 @NgModule({
