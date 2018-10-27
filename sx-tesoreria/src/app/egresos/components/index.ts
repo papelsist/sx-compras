@@ -29,6 +29,12 @@ import { RembolsosFilterBtnComponent } from './rembolsos-filter/rembolsos-filter
 import { RembolsosFilterLabelComponent } from './rembolsos-filter/rembolsos-filter-label.component';
 import { PrintRembolsoComponent } from './print-rembolso/print-rembolso.component';
 import { RembolsoPagoComponent } from './rembolso-pago/rembolso-pago.component';
+import { RembolsoPagoDialogComponent } from './rembolso-pago-dialog/rembolos-pago-dialog.component';
+import { RembolsoPagoDialogBtnComponent } from './rembolso-pago-dialog/rembolso-pago-dialog-btn.component';
+import { CancelarPagoRembolsoComponent } from './cancelaciones/cancelar-pago-rembolso.component';
+import { CancelarChequeRembolsoComponent } from './cancelaciones/cancelar-cheque-rembolso.component';
+import { GenerarChequeRembolsoComponent } from './generar-cheque-rembolso/generar-cheque-rembolso.component';
+import { GenerarChequeRembolsoBtnComponent } from './generar-cheque-rembolso/generar-cheque-rembolso-btn.component';
 
 export const components: any[] = [
   RequisicionesTableComponent,
@@ -59,7 +65,13 @@ export const components: any[] = [
   RembolsosFilterComponent,
   RembolsosFilterBtnComponent,
   RembolsosFilterLabelComponent,
-  PrintRembolsoComponent
+  PrintRembolsoComponent,
+  RembolsoPagoDialogComponent,
+  RembolsoPagoDialogBtnComponent,
+  CancelarPagoRembolsoComponent,
+  CancelarChequeRembolsoComponent,
+  GenerarChequeRembolsoComponent,
+  GenerarChequeRembolsoBtnComponent
 ];
 
 export const entryComponents: any[] = [
@@ -67,7 +79,9 @@ export const entryComponents: any[] = [
   PagoRequisicionDialogComponent,
   ChequesFilterComponent,
   GenerarChequeComponent,
-  RembolsosFilterComponent
+  RembolsosFilterComponent,
+  RembolsoPagoDialogComponent,
+  GenerarChequeRembolsoComponent
 ];
 
 export * from './requisiciones-table/requisiciones-table.component';
@@ -98,3 +112,9 @@ export * from './rembolsos-filter/rembolsos-filter.component';
 export * from './rembolsos-filter/rembolsos-filter-btn.component';
 export * from './rembolsos-filter/rembolsos-filter-label.component';
 export * from './print-rembolso/print-rembolso.component';
+export * from './rembolso-pago-dialog/rembolos-pago-dialog.component';
+export * from './rembolso-pago-dialog/rembolso-pago-dialog-btn.component';
+export * from './cancelaciones/cancelar-pago-rembolso.component';
+export * from './cancelaciones/cancelar-cheque-rembolso.component';
+export * from './generar-cheque-rembolso/generar-cheque-rembolso.component';
+export * from './generar-cheque-rembolso/generar-cheque-rembolso-btn.component';

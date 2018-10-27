@@ -129,6 +129,10 @@ class UrlMappings {
         "/api/rembolsos"(resources: 'rembolso', excludes:['create', 'edit','patch']) {
             "/partidas"(resources: 'rembolsoDet', excludes:['create', 'edit','patch'])
         }
+        "/api/rembolsos/pagar"(controller: 'rembolso', action: 'pagar', method: 'PUT')
+        "/api/rembolsos/cancelarPago/$id"(controller: 'rembolso', action: 'cancelarPago', method: 'PUT')
+        "/api/rembolsos/cancelarCheque/$id"(controller: 'rembolso', action: 'cancelarCheque', method: 'PUT')
+        "/api/rembolsos/generarCheque/$id"(controller: 'rembolso', action: 'generarCheque', method: 'PUT')
         "/api/rembolsos/pendientes"(controller: 'rembolso', action: 'pendientes')
         "/api/rembolsos/print/$id"(controller: 'rembolso', action: 'print')
 

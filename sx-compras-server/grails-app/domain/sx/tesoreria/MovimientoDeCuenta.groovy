@@ -47,6 +47,8 @@ class MovimientoDeCuenta {
 
     Cheque cheque
 
+    String sucursal
+
     static belongsTo = [movimientoDeTesoreria: MovimientoDeTesoreria, requisicion: Requisicion]
 
 
@@ -65,6 +67,7 @@ class MovimientoDeCuenta {
         createUser nullable: true
         updateUser nullable: true
         cheque nullable: true, unique: true
+        sucursal nullable: true
 
     }
 

@@ -12,6 +12,7 @@ import { MatDialog } from '@angular/material';
 import { FechaDialogComponent } from 'app/_shared/components';
 
 import * as moment from 'moment';
+import { TdDialogService } from '@covalent/core';
 
 @Component({
   selector: 'sx-cheques',
@@ -22,7 +23,7 @@ import * as moment from 'moment';
       </sx-search-title>
       <mat-divider></mat-divider>
         <sx-cheques-table [cheques]="cheques$ | async" [filter]="search$ | async"
-          (liberar)="onLiberar($event)" (entregar)="onEntregar($event)">
+          (liberar)="onLiberar($event)" (entregar)="onEntregar($event)" (asignar)="onAsignar($event)">
         </sx-cheques-table>
       <mat-card-footer>
         <sx-cheques-filter-label [filter]="filter$ | async"></sx-cheques-filter-label>
@@ -37,7 +38,8 @@ export class ChequesComponent implements OnInit {
 
   constructor(
     private store: Store<fromStore.State>,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private dialogService: TdDialogService
   ) {}
 
   ngOnInit() {
@@ -81,6 +83,26 @@ export class ChequesComponent implements OnInit {
           const cheque = {
             id: event.id,
             changes: { entregado: res }
+          };
+          this.store.dispatch(new fromStore.UpdateCheque({ cheque }));
+        }
+      });
+  }
+
+  onAsignar(event: Cheque) {
+    this.dialogService
+      .openPrompt({
+        message: 'Nombre:',
+        title: 'Asignación ',
+        acceptButton: 'Aceptar',
+        cancelButton: 'Cancelar'
+      })
+      .afterClosed()
+      .subscribe(res => {
+        if (res) {
+          const cheque = {
+            id: event.id,
+            changes: { asignado: res }
           };
           this.store.dispatch(new fromStore.UpdateCheque({ cheque }));
         }

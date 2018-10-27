@@ -88,7 +88,9 @@ export class CuentaBancoFieldComponent implements OnInit, ControlValueAccessor {
   }
 
   displayFn(cuenta) {
-    return cuenta ? `${cuenta.descripcion} (${cuenta.numero})` : '';
+    return cuenta
+      ? `${cuenta.descripcion} (${cuenta.numero}) ${cuenta.moneda}`
+      : '';
   }
 
   writeValue(obj: any): void {

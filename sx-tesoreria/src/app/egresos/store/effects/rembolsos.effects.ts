@@ -53,50 +53,109 @@ export class RembolsosEffects {
   );
 
   @Effect()
-  updateRembolso$ = this.actions$.pipe(
-    ofType<fromActions.UpdateRembolso>(RembolsoActionTypes.UpdateRembolso),
-    map(action => action.payload.rembolso),
-    switchMap(rembolso => {
-      return this.service
-        .update({ id: rembolso.id, changes: rembolso.changes })
-        .pipe(
-          map(res => new fromActions.UpdateRembolsoSuccess({ rembolso: res })),
-          catchError(error =>
-            of(new fromActions.UpdateRembolsoFail({ response: error }))
-          )
-        );
+  pagoRembolso$ = this.actions$.pipe(
+    ofType<fromActions.PagoRembolso>(RembolsoActionTypes.PagoRembolso),
+    map(action => action.payload.pago),
+    switchMap(pago => {
+      return this.service.pagar(pago).pipe(
+        map(res => new fromActions.PagoRembolsoSuccess({ rembolso: res })),
+        catchError(error =>
+          of(new fromActions.PagoRembolsoFail({ response: error }))
+        )
+      );
     })
   );
-  /*
-  deleteSuccess$ = this.actions$.pipe(
-    ofType<fromActions.DeleteRembolsoSuccess>(
-      RembolsoActionTypes.DeleteRembolsoSuccess
-    ),
-    map(() => new fromRoot.Go({ path: ['cxp/rembolsos'] }))
-  );
-  */
-  /*
+
   @Effect()
-  updateSuccess$ = this.actions$.pipe(
-    ofType<fromActions.UpdateRembolsoSuccess | fromActions.SaveRembolsoSuccess>(
-      RembolsoActionTypes.UpdateRembolsoSuccess,
-      RembolsoActionTypes.SaveRembolsoSuccess
+  cancelarPago$ = this.actions$.pipe(
+    ofType<fromActions.CancelarPagoRembolso>(
+      RembolsoActionTypes.CancelarPagoRembolso
+    ),
+    map(action => action.payload.rembolso),
+    switchMap(rembolso => {
+      return this.service.cancelarPago(rembolso).pipe(
+        map(
+          res => new fromActions.CancelarPagoRembolsoSuccess({ rembolso: res })
+        ),
+        catchError(error =>
+          of(new fromActions.CancelarPagoRembolsoFail({ response: error }))
+        )
+      );
+    })
+  );
+
+  @Effect()
+  cancelarCheque$ = this.actions$.pipe(
+    ofType<fromActions.CancelarChequeRembolso>(
+      RembolsoActionTypes.CancelarChequeRembolso
+    ),
+    map(action => action.payload),
+    switchMap(payload => {
+      return this.service.cancelarCheque(payload.id, payload.comentario).pipe(
+        map(
+          res =>
+            new fromActions.CancelarChequeRembolsoSuccess({ rembolso: res })
+        ),
+        catchError(error =>
+          of(new fromActions.CancelarChequeRembolsoFail({ response: error }))
+        )
+      );
+    })
+  );
+
+  @Effect()
+  generarCheque$ = this.actions$.pipe(
+    ofType<fromActions.GenerarChequeRembolso>(
+      RembolsoActionTypes.GenerarChequeRembolso
+    ),
+    map(action => action.payload.rembolso),
+    switchMap(rembolso => {
+      return this.service.generarCheque(rembolso).pipe(
+        map(
+          res => new fromActions.GenerarChequeRembolsoSuccess({ rembolso: res })
+        ),
+        catchError(error =>
+          of(new fromActions.GenerarChequeRembolsoFail({ response: error }))
+        )
+      );
+    })
+  );
+
+  @Effect({ dispatch: false })
+  pagoSuccess$ = this.actions$.pipe(
+    ofType<
+      | fromActions.PagoRembolsoSuccess
+      | fromActions.CancelarPagoRembolsoSuccess
+      | fromActions.GenerarChequeRembolsoSuccess
+    >(
+      RembolsoActionTypes.PagoRembolsoSuccess,
+      RembolsoActionTypes.CancelarPagoRembolsoSuccess,
+      RembolsoActionTypes.GenerarChequeRembolsoSuccess
     ),
     map(action => action.payload.rembolso),
     tap(rembolso =>
-      this.snackBar.open(`Rembolso ${rembolso.id} actualizado `, 'Cerrar', {
-        duration: 5000
-      })
-    ),
-    map(res => new fromRoot.Go({ path: ['cxp/rembolsos', res.id] }))
+      this.snackBar.open(
+        `Rembolso ${rembolso.id} actualizado exitosamente `,
+        'Cerrar',
+        {
+          duration: 8000
+        }
+      )
+    )
   );
-  */
 
   @Effect()
   fail$ = this.actions$.pipe(
-    ofType<fromActions.LoadRembolsosFail | fromActions.UpdateRembolsoFail>(
+    ofType<
+      | fromActions.LoadRembolsosFail
+      | fromActions.PagoRembolsoFail
+      | fromActions.CancelarPagoRembolsoFail
+      | fromActions.GenerarChequeRembolsoFail
+    >(
       RembolsoActionTypes.LoadRembolsosFail,
-      RembolsoActionTypes.UpdateRembolsoFail
+      RembolsoActionTypes.PagoRembolsoFail,
+      RembolsoActionTypes.CancelarPagoRembolsoFail,
+      RembolsoActionTypes.GenerarChequeRembolsoFail
     ),
     map(action => action.payload.response),
     // tap(response => console.log('Error: ', response)),

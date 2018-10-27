@@ -48,19 +48,6 @@ export class CobrosEffects {
     )
   );
 
-  @Effect()
-  updateCobro$ = this.actions$.pipe(
-    ofType<fromActions.UpdateCobro>(CobroActionTypes.UpdateCobro),
-    map(action => action.payload.cobro),
-    switchMap(cobro => {
-      const update = { id: cobro.id, changes: cobro.changes };
-      return this.service.update({ id: cobro.id, changes: cobro.changes }).pipe(
-        map(res => new fromActions.UpdateCobroSuccess({ cobro: res })),
-        catchError(error => of(new fromActions.UpdateCobroFail(error)))
-      );
-    })
-  );
-
   @Effect({ dispatch: false })
   updateSuccess$ = this.actions$.pipe(
     ofType<fromActions.UpdateCobroSuccess>(CobroActionTypes.UpdateCobroSuccess),

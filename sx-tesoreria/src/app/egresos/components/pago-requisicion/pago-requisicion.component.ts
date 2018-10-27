@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 
 import { Requisicion } from '../../models';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'sx-pago-requisicion',
@@ -31,5 +32,9 @@ export class PagoRequisicionComponent implements OnInit, OnChanges {
     if (changes.requisicion && changes.requisicion.currentValue) {
       // console.log('Requisicion: ', changes.requisicion.currentValue);
     }
+  }
+
+  getImporteLocal(req: Requisicion) {
+    return req.total * req.tipoDeCambio;
   }
 }

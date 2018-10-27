@@ -45,8 +45,7 @@ export class RembolsoPartidasComponent implements OnInit, OnChanges {
     'documentoFecha',
     'total',
     'factura',
-    'comentario',
-    'operaciones'
+    'comentario'
   ];
 
   @ViewChild('table')

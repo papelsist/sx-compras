@@ -43,6 +43,8 @@ class Cheque {
 
 	String createUser
 	String updateUser
+
+	String asignado
 	
 
     static constraints = {
@@ -58,6 +60,7 @@ class Cheque {
 		cobrado nullable: true
 		createUser nullable: true
 		updateUser nullable: true
+		asignado nullable: true
     }
 
 	static mapping = {

@@ -57,7 +57,7 @@ export class RembolsoFormComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     this.buildForm();
     if (changes.rembolso && changes.rembolso.currentValue) {
-      console.log('Editando rembolso: ', changes.rembolso.currentValue);
+      
       this.setReembolso();
     }
   }

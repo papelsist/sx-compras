@@ -84,12 +84,15 @@ class PagoDeRequisicionService implements  LogUser {
         if(!requisicion.egreso ) {
             throw new PagoDeRequisicionException("La requisicion no se ha pagado")
         }
-        if(requisicion.egreso.cheque) {
-            requisicion = cancelarCheque(new CancelacionDeCheque(requisicion: requisicion, comentario: 'CANCELACION'))
-        }
 
         MovimientoDeCuenta egreso = requisicion.egreso
         requisicion.egreso = null
+
+        if(egreso.cheque) {
+            Cheque cheque = requisicion.egreso.cheque
+            egreso.cheque = null
+            cheque.delete flush: true
+        }
         egreso.delete flush: true
 
         if(requisicion.comision) {

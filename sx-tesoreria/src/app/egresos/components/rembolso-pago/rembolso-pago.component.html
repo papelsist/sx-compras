@@ -8,9 +8,11 @@
         </span>
         <span class="pad-left"> {{rembolso.nombre}}</span>
         <span flex></span>
+        <span>Total: {{rembolso.total | currency}}</span>
+        <span fex></span>
       </div>
     </mat-card-title>
-    <mat-card-subtitle *ngIf="rembolso && rembolso.egreso">
+    <mat-card-subtitle *ngIf="rembolso.egreso">
       <span layout>
         <span>Pagada: </span>
         <span class="pad-left">{{rembolso.egreso.fecha | date: 'dd/MM/yyyy'}}</span>
@@ -26,13 +28,6 @@
 
       </span>
     </mat-card-subtitle>
-
-    <mat-card-title *ngIf="!rembolso">Alta de Rembolso</mat-card-title>
-
-    <div *ngIf="rembolso " class="md-title pad-bottom-sm" layout>
-      <span class="pad-left pad-right">Fecha: </span>
-      <span class="pad-left"> {{rembolso.fecha | date:'dd/MM/yyyy'}}</span>
-    </div>
     <mat-divider></mat-divider>
 
     <div layout class="pad">
@@ -48,41 +43,19 @@
         <mat-datepicker #myDatepicker2></mat-datepicker>
       </mat-form-field>
       <sx-upper-case-field formControlName="comentario" flex placeholder="Comentario" class="pad-left"></sx-upper-case-field>
-
     </div>
 
     <div class="partidas-panel">
-      <sx-rembolso-partidas [parent]="form" [partidas]="partidas.value" (delete)="onDeleteRow($event)" (update)="onUpdateRow($event)"
-        (edit)="onEditRow($event)" [readOnly]="form.disabled">
+      <sx-rembolso-partidas [parent]="form" [partidas]="partidas.value" [readOnly]="form.disabled">
       </sx-rembolso-partidas>
-
     </div>
-    <div class="totales-panel" layout>
-      <span flex></span>
-      <mat-form-field>
-        <input matInput value="{{total | currency}}" placeholder="Total" [disabled]="true">
-      </mat-form-field>
 
-    </div>
     <mat-divider></mat-divider>
     <mat-card-actions>
-      <button mat-button type="button" (click)="cancel.emit($event)">Cancelar</button>
-      <button mat-button [disabled]="form.invalid || form.pristine" *ngIf="!form.disabled">
-        <mat-icon>save</mat-icon> Salvar
-      </button>
+      <ng-content></ng-content>
+
       <ng-container *ngIf="!rembolso?.egreso">
-        <sx-selector-cxp-rembolso-btn (select)="onAgregarFactura($event)">
-        </sx-selector-cxp-rembolso-btn>
-        <button mat-button color="primary" (click)="addNoDeducible()" type="button">No Deducible</button>
       </ng-container>
-      <ng-container *ngIf="rembolso  && !form.disabled">
-        <button mat-button color="warn" type="button" (click)="delete.emit(rembolso)">
-          <mat-icon>delete</mat-icon> Eliminar
-        </button>
-      </ng-container>
-
-      <sx-print-rembolso [rembolso]="rembolso" *ngIf="rembolso"></sx-print-rembolso>
-
 
     </mat-card-actions>
   </mat-card>

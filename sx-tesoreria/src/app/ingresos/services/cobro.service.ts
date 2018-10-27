@@ -64,9 +64,9 @@ export class CobroService {
     return this.http.post(this.apiUrl, com);
   }
 
-  update(id: string, cobro: Partial<Cobro>): Observable<Cobro> {
-    const url = `${this.apiUrl}/${update.id}`;
-    return this.http.put<Cobro>(url, update.changes);
+  update(id: string, changes: Partial<Cobro>): Observable<Cobro> {
+    const url = `${this.apiUrl}/${id}`;
+    return this.http.put<Cobro>(url, changes);
   }
 
   delete(id: string) {
