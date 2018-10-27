@@ -1,0 +1,8 @@
+import sx.cxc.Cobro
+
+model {
+	Iterable<Cobro> cobroList
+}
+
+json tmpl.cobro(cobroList ?: [])
+

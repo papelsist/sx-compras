@@ -1,0 +1,7 @@
+import sx.cxc.Cobro
+
+model {
+	Cobro cobro
+}
+
+json tmpl.cobro(cobro)
