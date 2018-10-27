@@ -5,3 +5,4 @@ export * from './cheque';
 export * from './cancelacionDeCheque';
 export * from './rembolso';
 export * from './rembolsoDet';
+export * from './pagoDeRembolso';

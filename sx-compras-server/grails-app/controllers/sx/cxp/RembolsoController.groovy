@@ -3,10 +3,15 @@ package sx.cxp
 import grails.compiler.GrailsCompileStatic
 import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.*
+import grails.validation.Validateable
 import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
-import sx.core.Empresa
+
 import sx.reports.ReportService
+import sx.tesoreria.CuentaDeBanco
+import sx.tesoreria.PagoDeRembolsoService
+
+import static org.springframework.http.HttpStatus.NOT_FOUND
 
 @Secured(['ROLE_GASTOS', 'ROLE_TESORERIA'])
 @GrailsCompileStatic
@@ -18,6 +23,8 @@ class RembolsoController extends RestfulController {
     ReportService reportService
 
     RembolsoService rembolsoService
+
+    PagoDeRembolsoService pagoDeRembolsoService
 
     RembolsoController() {
         super(Rembolso)
@@ -119,9 +126,79 @@ class RembolsoController extends RestfulController {
         respond q.list(params)
     }
 
+    def pagar(PagoDeRembolso command) {
+        if(command == null) {
+            respond status: NOT_FOUND
+            return
+        }
+        if(command.hasErrors()) {
+            respond(command.errors, status: 422)
+            return
+        }
+        Rembolso rembolso = pagoDeRembolsoService.pagar(command)
+        rembolso.refresh()
+        log.info('Rembolso pagado: {} Egreso: {} Cheque: {}', rembolso.id, rembolso.egreso.id, rembolso.egreso.cheque ?: '')
+        respond rembolso
+    }
+
+    def cancelarPago(Rembolso rembolso) {
+        if(rembolso == null) {
+            notFound()
+            return
+        }
+        rembolso = pagoDeRembolsoService.cancelarPago(rembolso)
+        respond rembolso
+    }
+
+    def cancelarCheque() {
+        String comentario = params.comentario?: 'CANCELACION'
+        Rembolso rembolso = Rembolso.get(this.params.getInt('id'))
+        rembolso = pagoDeRembolsoService.cancelarCheque(rembolso, comentario)
+        respond rembolso
+    }
+
+    def generarCheque(Rembolso rembolso) {
+        if(rembolso == null) {
+            notFound()
+            return
+        }
+        rembolso = pagoDeRembolsoService.generarCheque(rembolso)
+        respond rembolso
+    }
+
     def print( ) {
         Map repParams = [ID: params.id]
         def pdf =  reportService.run('Rembolso.jrxml', repParams)
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'Rembolso.pdf')
     }
 }
+
+class PagoDeRembolso implements  Validateable{
+    Rembolso rembolso
+    CuentaDeBanco cuenta
+    String referencia
+    BigDecimal importe
+
+    String toString() {
+        return "Pago de rembolso ${rembolso.id} Cuenta: ${cuenta?.clave}  Referencia ${referencia}"
+    }
+
+    static constraints =  {
+        referencia nullable: true
+        importe nullable: true
+    }
+}
+
+class CancelacionPagoDeRembolsoCheque implements  Validateable{
+    Rembolso rembolso
+    String comentario
+
+    String toString() {
+        return "Cancelacion de cheque ${rembolso.folio} Comentario: ${comentario}"
+    }
+
+    static constraints =  {
+        comentario nullable: true
+    }
+}
+

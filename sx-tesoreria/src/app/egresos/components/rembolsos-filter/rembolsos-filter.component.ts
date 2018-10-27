@@ -22,7 +22,7 @@ import { RembolsosFilter } from '../../models';
           <mat-datepicker #myDatepicker2></mat-datepicker>
         </mat-form-field>
       </div>
-      <sx-sucursal-field formControlName="sucursal"></sx-sucursal-field>
+
       <div layout="column">
         <h3>Registros {{form.value.registros}}</h3>
         <mat-slider thumbLabel step="10" tickInterval="10" min="10" max="200" formControlName="registros" flex></mat-slider>

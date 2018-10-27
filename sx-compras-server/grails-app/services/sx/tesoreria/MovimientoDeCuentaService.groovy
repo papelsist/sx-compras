@@ -6,6 +6,7 @@ import grails.gorm.transactions.Transactional
 import groovy.util.logging.Slf4j
 
 import sx.core.LogUser
+import sx.cxp.Rembolso
 import sx.cxp.Requisicion
 import sx.cxp.RequisicionDeCompras
 import sx.cxp.RequisicionDeGastos
@@ -95,6 +96,30 @@ class MovimientoDeCuentaService implements  LogUser{
         } else {
             return null
         }
+    }
+
+    MovimientoDeCuenta generarEgreso(Rembolso rembolso, CuentaDeBanco cuenta, String referencia) {
+
+        MovimientoDeCuenta egreso = new MovimientoDeCuenta()
+        egreso.tipo = 'REMBOLSO'
+        egreso.concepto = 'REMBOLSO'
+        egreso.sucursal = egreso.sucursal
+        egreso.fecha = rembolso.fechaDePago
+        egreso.moneda = cuenta.moneda
+        egreso.tipoDeCambio = rembolso.tipoDeCambio
+        egreso.importe = rembolso.apagar * -1
+        egreso.comentario = rembolso.comentario
+        egreso.formaDePago = rembolso.formaDePago
+
+        // Datos del pago
+        egreso.referencia = referencia
+        egreso.afavor = rembolso.nombre
+        egreso.cuenta = cuenta
+        logEntity(egreso)
+        generarCheque(egreso)
+        egreso.referencia = egreso.cheque.folio.toString()
+        return egreso
+
     }
 }
 

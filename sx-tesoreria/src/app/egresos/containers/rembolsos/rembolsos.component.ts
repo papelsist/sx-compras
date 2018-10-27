@@ -20,8 +20,6 @@ import { Rembolso, RembolsosFilter } from '../../models';
       <mat-divider></mat-divider>
       <div class="table-panel">
         <sx-rembolsos-table [rembolsos]="rembolsos$ | async" [filter]="search"
-              (print)="onPrint($event)"
-              (select)="onSelect($event)"
               (edit)="onEdit($event)">
         </sx-rembolsos-table>
       </div>
@@ -29,10 +27,6 @@ import { Rembolso, RembolsosFilter } from '../../models';
         <sx-rembolsos-filter-label [filter]="filter$ | async"></sx-rembolsos-filter-label>
       </mat-card-footer>
     </mat-card>
-    <a mat-fab matTooltip="Alta de rembolso" matTooltipPosition="before" color="accent" class="mat-fab-position-bottom-right z-3"
-      [routerLink]="['create']">
-    <mat-icon>add</mat-icon>
-    </a>
   </ng-template>
   `,
   styles: [
@@ -60,17 +54,13 @@ export class RembolsosComponent implements OnInit {
     this.filter$ = this.store.pipe(select(fromStore.getRembolsosFilter));
   }
 
-  onSelect(event: Rembolso[]) {}
-
-  onSearch(event: string) {}
-
   onFilter(filter: RembolsosFilter) {
     this.store.dispatch(new fromStore.SetRembolsosFilter({ filter }));
   }
 
   onEdit(event: Rembolso) {
-    this.store.dispatch(new fromRoot.Go({ path: ['cxp/rembolsos', event.id] }));
+    this.store.dispatch(
+      new fromRoot.Go({ path: ['egresos/rembolsos', event.id] })
+    );
   }
-
-  onPrint(event: Rembolso) {}
 }

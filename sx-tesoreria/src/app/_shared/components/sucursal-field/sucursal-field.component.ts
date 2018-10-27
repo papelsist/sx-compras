@@ -13,11 +13,14 @@ import { ConfigService } from 'app/utils/config.service';
 export class SucursalFieldComponent implements OnInit, OnDestroy {
   apiUrl: string;
 
-  @Input() parent: FormGroup;
+  @Input()
+  parent: FormGroup;
 
-  @Input() sucursalProperty = 'sucursal';
+  @Input()
+  sucursalProperty = 'sucursal';
 
-  @Input() placeholder = 'Sucursal';
+  @Input()
+  placeholder = 'Sucursal';
 
   sucursales: Sucursal[];
 
@@ -41,5 +44,9 @@ export class SucursalFieldComponent implements OnInit, OnDestroy {
     return this.http.get<Sucursal[]>(this.apiUrl, {
       params: new HttpParams().set('activas', 'activas')
     });
+  }
+
+  compareFn(c1: Sucursal, c2: Sucursal): boolean {
+    return c1 && c2 ? c1.id === c2.id : c1 === c2;
   }
 }

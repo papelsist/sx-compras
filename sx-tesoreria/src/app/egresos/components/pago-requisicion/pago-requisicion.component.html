@@ -64,8 +64,11 @@
     <mat-form-field>
       <input matInput value="{{requisicion.total | currency}}" placeholder="Total" [disabled]="true">
     </mat-form-field>
-    <mat-form-field>
+    <mat-form-field class="pad-left">
       <input matInput value="{{requisicion.apagar | currency}}" placeholder="A Pagar" [disabled]="true">
+    </mat-form-field>
+    <mat-form-field class="pad-left">
+      <input matInput value="{{getImporteLocal(requisicion) | currency}}" placeholder="A Pagar (MX)" [disabled]="true">
     </mat-form-field>
   </div>
   <mat-divider></mat-divider>

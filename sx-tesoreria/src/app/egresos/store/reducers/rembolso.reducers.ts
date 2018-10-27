@@ -38,6 +38,11 @@ export function reducer(state = initialState, action: RembolsoActions): State {
         term
       };
     }
+
+    case RembolsoActionTypes.GenerarChequeRembolso:
+    case RembolsoActionTypes.CancelarChequeRembolso:
+    case RembolsoActionTypes.CancelarPagoRembolso:
+    case RembolsoActionTypes.PagoRembolso:
     case RembolsoActionTypes.LoadRembolsos: {
       return {
         ...state,
@@ -45,7 +50,10 @@ export function reducer(state = initialState, action: RembolsoActions): State {
       };
     }
 
-    case RembolsoActionTypes.UpdateRembolsoFail:
+    case RembolsoActionTypes.GenerarChequeRembolsoFail:
+    case RembolsoActionTypes.CancelarChequeRembolsoFail:
+    case RembolsoActionTypes.CancelarPagoRembolsoFail:
+    case RembolsoActionTypes.PagoRembolsoFail:
     case RembolsoActionTypes.LoadRembolsosFail: {
       return {
         ...state,
@@ -60,7 +68,10 @@ export function reducer(state = initialState, action: RembolsoActions): State {
       });
     }
 
-    case RembolsoActionTypes.UpdateRembolsoSuccess: {
+    case RembolsoActionTypes.GenerarChequeRembolsoSuccess:
+    case RembolsoActionTypes.CancelarChequeRembolsoSuccess:
+    case RembolsoActionTypes.CancelarPagoRembolsoSuccess:
+    case RembolsoActionTypes.PagoRembolsoSuccess: {
       const rembolso = action.payload.rembolso;
       return adapter.updateOne(
         {

@@ -34,6 +34,7 @@ export class ChequesTableComponent implements OnInit, OnChanges {
     'fecha',
     'impreso',
     'importe',
+    'asignado',
     'liberado',
     'entregado'
     // 'modificado'
@@ -51,6 +52,9 @@ export class ChequesTableComponent implements OnInit, OnChanges {
 
   @Output()
   entregar = new EventEmitter();
+
+  @Output()
+  asignar = new EventEmitter();
 
   constructor() {}
 

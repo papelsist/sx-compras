@@ -46,8 +46,18 @@
         Liberar
       </button>
       <ng-template #liberadoIcon>
-        <mat-icon color="accent">check</mat-icon>
+        <mat-icon color="accent" (click)="liberar.emit(cheque)">check</mat-icon>
       </ng-template>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="asignado">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Asignado</th>
+    <td mat-cell *matCellDef="let cheque">
+      <span mat-button (click)="asignar.emit(cheque)" class="cursor-pointer">
+        {{cheque.asignado ? cheque.asignado : 'NA'}}
+      </span>
+
     </td>
   </ng-container>
 
@@ -58,7 +68,7 @@
         Entrgar
       </button>
       <ng-template #entregadoIcon>
-        <mat-icon color="accent">check</mat-icon>
+        <mat-icon color="accent" (click)="entregar.emit(cheque)">check</mat-icon>
       </ng-template>
     </td>
   </ng-container>

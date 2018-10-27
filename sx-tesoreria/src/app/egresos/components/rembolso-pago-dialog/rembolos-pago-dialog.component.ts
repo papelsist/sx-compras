@@ -4,25 +4,22 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 import { Subscription } from 'rxjs';
 
-import { Requisicion } from '../../models';
+import { Rembolso } from '../../models';
 
 import * as moment from 'moment';
 import { CuentaDeBanco } from 'app/models';
 
 @Component({
-  selector: 'sx-pago-requisicion-dialog',
+  selector: 'sx-rembolso-pago-dialog',
   template: `
   <form [formGroup]="form">
-    <span mat-dialog-title layout>
-      <span >Pago requisicion: {{requisicion.folio}}</span>
-      <span flex></span>
-      <span> Importe: </span>
-      <span>{{requisicion.apagar | currency}}</span>
-      <ng-container *ngIf="requisicion.moneda !== 'MXN'">
+    <span mat-dialog-title >
+      <div layout>
+        <span >Pago rembolso: {{rembolso.id}}</span>
         <span flex></span>
-        <span> MX: </span>
-        <span>{{requisicion.apagar * requisicion.tipoDeCambio | currency}}</span>
-      </ng-container>
+        <span> Importe: </span>
+        <span>{{rembolso.apagar | currency}}</span>
+      </div>
     </span>
     <mat-dialog-content>
       <div layout="column">
@@ -39,10 +36,10 @@ import { CuentaDeBanco } from 'app/models';
             <mat-form-field class="pad-left" flex>
               <input matInput formControlName="referencia" placeholder="Referencia" autocomplete="off">
             </mat-form-field>
-            <mat-form-field class="pad-left" flex *ngIf="requisicion.formaDePago === 'CHEQUE'">
+            <mat-form-field class="pad-left" flex *ngIf="rembolso.formaDePago === 'CHEQUE'">
               <input matInput formControlName="cheque" placeholder="Próximo cheque" autocomplete="off">
             </mat-form-field>
-            <mat-form-field class="pad-left" flex *ngIf="requisicion.formaDePago === 'TRANSFERENCIA'">
+            <mat-form-field class="pad-left" flex *ngIf="rembolso.formaDePago === 'TRANSFERENCIA'">
               <input matInput formControlName="comision" placeholder="Comisión" autocomplete="off">
               <span matPrefix>$&nbsp;</span>
               <mat-hint align="end">Pesos + IVA</mat-hint>
@@ -66,22 +63,22 @@ import { CuentaDeBanco } from 'app/models';
   </form>
   `
 })
-export class PagoRequisicionDialogComponent implements OnInit, OnDestroy {
+export class RembolsoPagoDialogComponent implements OnInit, OnDestroy {
   form: FormGroup;
-  requisicion: Requisicion;
+  rembolso: Rembolso;
   subscription: Subscription;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private fb: FormBuilder
   ) {
-    this.requisicion = data.requisicion;
+    this.rembolso = data.rembolso;
   }
 
   ngOnInit() {
     this.buildForm();
     this.subscription = this.form.get('cuenta').valueChanges.subscribe(cta => {
-      if (this.requisicion.formaDePago === 'CHEQUE') {
+      if (this.rembolso.formaDePago === 'CHEQUE') {
         this.form.get('cheque').setValue(cta.proximoCheque);
         this.form.get('referencia').setValue(cta.proximoCheque);
         this.form.get('referencia').disable();
@@ -89,7 +86,7 @@ export class PagoRequisicionDialogComponent implements OnInit, OnDestroy {
         this.form.get('referencia').setValue('');
         this.form.get('referencia').enable();
       }
-      if (this.requisicion.formaDePago === 'TRANSFERENCIA') {
+      if (this.rembolso.formaDePago === 'TRANSFERENCIA') {
         if (cta.comisionPorTransferencia) {
           this.form.get('comision').setValue(cta.comisionPorTransferencia);
         }
@@ -115,6 +112,6 @@ export class PagoRequisicionDialogComponent implements OnInit, OnDestroy {
   }
 
   get pago() {
-    return moment(this.requisicion.fechaDePago).toDate();
+    return moment(this.rembolso.fechaDePago).toDate();
   }
 }

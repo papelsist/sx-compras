@@ -7,6 +7,7 @@ import { catchError } from 'rxjs/operators';
 import { ConfigService } from 'app/utils/config.service';
 
 import { Rembolso, RembolsosFilter } from '../models';
+import { PagoDeRembolso } from '../models/pagoDeRembolso';
 
 @Injectable()
 export class RembolsoService {
@@ -36,13 +37,36 @@ export class RembolsoService {
       .pipe(catchError((error: any) => throwError(error)));
   }
 
-  update(update: {
-    id: string | number;
-    changes: Partial<Rembolso>;
-  }): Observable<Rembolso> {
-    const url = `${this.apiUrl}/${update.id}`;
+  pagar(pago: PagoDeRembolso): Observable<Rembolso> {
+    const url = `${this.apiUrl}/pagar`;
+    const payload = {
+      ...pago,
+      rembolso: pago.rembolso.id
+    };
     return this.http
-      .put<Rembolso>(url, update.changes)
+      .put<Rembolso>(url, payload)
+      .pipe(catchError((error: any) => throwError(error)));
+  }
+
+  cancelarPago(rembolso: Rembolso): Observable<Rembolso> {
+    const url = `${this.apiUrl}/cancelarPago/${rembolso.id}`;
+    return this.http
+      .put<Rembolso>(url, {})
+      .pipe(catchError((error: any) => throwError(error)));
+  }
+
+  cancelarCheque(rembolsoId: number, comentario: string): Observable<Rembolso> {
+    const url = `${this.apiUrl}/cancelarCheque/${rembolsoId}`;
+    const params = new HttpParams().set('comentario', comentario);
+    return this.http
+      .put<Rembolso>(url, {}, { params: params })
+      .pipe(catchError((error: any) => throwError(error)));
+  }
+
+  generarCheque(rembolso: Rembolso): Observable<Rembolso> {
+    const url = `${this.apiUrl}/generarCheque/${rembolso.id}`;
+    return this.http
+      .put<Rembolso>(url, {})
       .pipe(catchError((error: any) => throwError(error)));
   }
 }

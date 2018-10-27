@@ -1,7 +1,7 @@
 import { Action } from '@ngrx/store';
-import { Update } from '@ngrx/entity';
 
 import { Rembolso, RembolsosFilter } from '../../models';
+import { PagoDeRembolso } from 'app/egresos/models/pagoDeRembolso';
 
 export enum RembolsoActionTypes {
   SetRembolsosFilter = '[Rembolsos Component ] Set Rembolsos filter',
@@ -11,9 +11,21 @@ export enum RembolsoActionTypes {
   LoadRembolsosFail = '[Rembolso API] Load Rembolsos fail',
   LoadRembolsosSuccess = '[Rembolso API] Load Rembolsos Success',
 
-  UpdateRembolso = '[Rembolso Component] Update Rembolso',
-  UpdateRembolsoFail = '[Rembolso API] Update Rembolso Fail',
-  UpdateRembolsoSuccess = '[Rembolso API] Update Rembolso Success',
+  PagoRembolso = '[Rembolso Component] Pago Rembolso',
+  PagoRembolsoFail = '[Rembolso API] Pago Rembolso Fail',
+  PagoRembolsoSuccess = '[Rembolso API] Pago Rembolso Success',
+
+  CancelarPagoRembolso = '[Rembolso Component] CancelarPago Rembolso',
+  CancelarPagoRembolsoFail = '[Rembolso API] CancelarPago Rembolso Fail',
+  CancelarPagoRembolsoSuccess = '[Rembolso API] CancelarPago Rembolso Success',
+
+  CancelarChequeRembolso = '[Rembolso Component] CancelarCheque Rembolso',
+  CancelarChequeRembolsoFail = '[Rembolso API] CancelarCheque Rembolso Fail',
+  CancelarChequeRembolsoSuccess = '[Rembolso API] CancelarCheque Rembolso Success',
+
+  GenerarChequeRembolso = '[Rembolso Component] GenerarCheque Rembolso',
+  GenerarChequeRembolsoFail = '[Rembolso API] GenerarCheque Rembolso Fail',
+  GenerarChequeRembolsoSuccess = '[Rembolso API] GenerarCheque Rembolso Success',
 
   UpsertRembolso = '[Rembolso exists guard] Upser existing rembolso'
 }
@@ -41,18 +53,67 @@ export class LoadRembolsosSuccess implements Action {
   constructor(public payload: { rembolsos: Rembolso[] }) {}
 }
 
-export class UpdateRembolso implements Action {
-  readonly type = RembolsoActionTypes.UpdateRembolso;
+export class PagoRembolso implements Action {
+  readonly type = RembolsoActionTypes.PagoRembolso;
 
-  constructor(public payload: { rembolso: Update<Rembolso> }) {}
+  constructor(public payload: { pago: PagoDeRembolso }) {}
 }
-export class UpdateRembolsoFail implements Action {
-  readonly type = RembolsoActionTypes.UpdateRembolsoFail;
+export class PagoRembolsoFail implements Action {
+  readonly type = RembolsoActionTypes.PagoRembolsoFail;
 
   constructor(public payload: { response: any }) {}
 }
-export class UpdateRembolsoSuccess implements Action {
-  readonly type = RembolsoActionTypes.UpdateRembolsoSuccess;
+export class PagoRembolsoSuccess implements Action {
+  readonly type = RembolsoActionTypes.PagoRembolsoSuccess;
+
+  constructor(public payload: { rembolso: Rembolso }) {}
+}
+// Cancelacion de pago
+export class CancelarPagoRembolso implements Action {
+  readonly type = RembolsoActionTypes.CancelarPagoRembolso;
+
+  constructor(public payload: { rembolso: Rembolso }) {}
+}
+export class CancelarPagoRembolsoFail implements Action {
+  readonly type = RembolsoActionTypes.CancelarPagoRembolsoFail;
+
+  constructor(public payload: { response: any }) {}
+}
+export class CancelarPagoRembolsoSuccess implements Action {
+  readonly type = RembolsoActionTypes.CancelarPagoRembolsoSuccess;
+
+  constructor(public payload: { rembolso: Rembolso }) {}
+}
+// Cancelacion de cheque
+export class CancelarChequeRembolso implements Action {
+  readonly type = RembolsoActionTypes.CancelarChequeRembolso;
+
+  constructor(public payload: { id: number; comentario: string }) {}
+}
+export class CancelarChequeRembolsoFail implements Action {
+  readonly type = RembolsoActionTypes.CancelarChequeRembolsoFail;
+
+  constructor(public payload: { response: any }) {}
+}
+export class CancelarChequeRembolsoSuccess implements Action {
+  readonly type = RembolsoActionTypes.CancelarChequeRembolsoSuccess;
+
+  constructor(public payload: { rembolso: Rembolso }) {}
+}
+
+// Generacion de un nuevo cheque
+export class GenerarChequeRembolso implements Action {
+  readonly type = RembolsoActionTypes.GenerarChequeRembolso;
+
+  constructor(public payload: { rembolso: Rembolso }) {}
+}
+export class GenerarChequeRembolsoFail implements Action {
+  readonly type = RembolsoActionTypes.GenerarChequeRembolsoFail;
+
+  constructor(public payload: { response: any }) {}
+}
+export class GenerarChequeRembolsoSuccess implements Action {
+  readonly type = RembolsoActionTypes.GenerarChequeRembolsoSuccess;
 
   constructor(public payload: { rembolso: Rembolso }) {}
 }
@@ -68,7 +129,16 @@ export type RembolsoActions =
   | LoadRembolsos
   | LoadRembolsosFail
   | LoadRembolsosSuccess
-  | UpdateRembolso
-  | UpdateRembolsoFail
-  | UpdateRembolsoSuccess
+  | PagoRembolso
+  | PagoRembolsoFail
+  | PagoRembolsoSuccess
+  | CancelarPagoRembolso
+  | CancelarPagoRembolsoFail
+  | CancelarPagoRembolsoSuccess
+  | CancelarChequeRembolso
+  | CancelarChequeRembolsoFail
+  | CancelarChequeRembolsoSuccess
+  | GenerarChequeRembolso
+  | GenerarChequeRembolsoFail
+  | GenerarChequeRembolsoSuccess
   | UpsertRembolso;
