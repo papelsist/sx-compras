@@ -25,5 +25,5 @@ json g.render(cobro, [ excludes: ['moneda'], resolveTemplate: false]) {
     if(cobro.cfdi) {
         recibo cobro.cfdi.uuid
     }
-    
+
 }

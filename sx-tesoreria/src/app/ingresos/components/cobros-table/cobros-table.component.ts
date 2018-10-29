@@ -12,6 +12,7 @@ import {
 import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 
 import { Cobro } from '../../models';
+import { PagosUtils } from '../../../_core/services/pagos-utils.service';
 
 @Component({
   selector: 'sx-cobros-table',
@@ -24,9 +25,24 @@ import { Cobro } from '../../models';
         max-height: 500px;
         overflow: auto;
       }
-      .mat-column-requisicion,
-      .mat-column-folio {
-        max-width: 50px;
+      .mat-column-tipo {
+        width: 50px;
+      }
+      .mat-column-fecha,
+      .mat-column-formaDePago {
+        width: 90px;
+      }
+      .mat-column-nombre {
+        max-width: 250px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .mat-column-comentario {
+        max-width: 150px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
       .mat-cell {
         font-size: 11px;
@@ -48,14 +64,14 @@ export class CobrosTableComponent implements OnInit, OnChanges {
     'tipo',
     'fecha',
     'nombre',
-    'comentario',
     'formaDePago',
+    'referencia',
     'moneda',
     'importe',
     'disponible',
-    'referencia',
-    'updateUser',
-    'modificado'
+    'comentario',
+    'updateUser'
+    // 'modificado'
   ];
 
   @ViewChild(MatSort)
@@ -66,7 +82,7 @@ export class CobrosTableComponent implements OnInit, OnChanges {
   @Output()
   edit = new EventEmitter();
 
-  constructor() {}
+  constructor(private utils: PagosUtils) {}
 
   ngOnInit() {
     this.dataSource.paginator = this.paginator;
@@ -81,5 +97,9 @@ export class CobrosTableComponent implements OnInit, OnChanges {
       const s = changes.filter.currentValue || '';
       this.dataSource.filter = s.toLowerCase();
     }
+  }
+
+  getForma(row: Cobro) {
+    return this.utils.slim(row.formaDePago);
   }
 }

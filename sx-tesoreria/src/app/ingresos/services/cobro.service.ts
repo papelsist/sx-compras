@@ -12,7 +12,7 @@ export class CobroService {
   private apiUrl: string;
 
   constructor(private http: HttpClient, private config: ConfigService) {
-    this.apiUrl = config.buildApiUrl('cxc/cobro');
+    this.apiUrl = config.buildApiUrl('cxc/cobros');
   }
 
   get(id: string): Observable<Cobro> {

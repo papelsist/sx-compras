@@ -9,30 +9,38 @@ import { Observable } from 'rxjs';
 @Component({
   selector: 'sx-ingresos-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './ingresos-page.component.html'
+  templateUrl: './ingresos-page.component.html',
+  styles: [
+    `
+      .document {
+        width: 100%;
+        height: 100%;
+      }
+    `
+  ]
 })
 export class IngresosPageComponent implements OnInit {
   navmenu: Object[] = [
     {
-      path: 'cobros',
+      route: 'cobros',
       title: 'Cobros',
       description: 'Registro de cobros',
       icon: 'attach_money'
     },
     {
-      path: 'fichas',
+      route: 'fichas',
       title: 'Fichas',
       description: 'Alta de fichas',
       icon: 'filter_none'
     },
     {
-      path: 'fichasContado',
+      route: 'fichasContado',
       title: 'Fichas (CON)',
       description: 'Fichas de  contado',
       icon: 'my_library_books'
     },
     {
-      path: 'chequesDevueltos',
+      route: 'chequesDevueltos',
       title: 'Cheques DEV',
       description: 'Cheques devueltos',
       icon: 'settings_backup_restore'

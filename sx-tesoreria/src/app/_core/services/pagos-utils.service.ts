@@ -18,6 +18,8 @@ export class PagosUtils {
         return 'DEP_EFE';
       case 'DEPOSITO_CHEQUE':
         return 'DEP_CHE';
+      case 'DEVOLUCION':
+        return 'DEVO';
       default:
         return formaDePago;
     }

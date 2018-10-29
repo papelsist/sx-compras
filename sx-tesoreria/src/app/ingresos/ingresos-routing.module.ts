@@ -8,7 +8,13 @@ const routes: Routes = [
   {
     path: '',
     component: fromContainers.IngresosPageComponent,
-    children: [{ path: 'cobros', component: fromContainers.CobrosComponent }]
+    children: [
+      {
+        path: 'cobros',
+        canActivate: [fromGuards.CobrosGuard],
+        component: fromContainers.CobrosComponent
+      }
+    ]
   }
 ];
 

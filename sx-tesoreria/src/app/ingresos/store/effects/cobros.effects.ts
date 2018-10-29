@@ -43,7 +43,9 @@ export class CobrosEffects {
     switchMap(filter =>
       this.service.list(filter).pipe(
         map(cobros => new fromActions.LoadCobrosSuccess({ cobros })),
-        catchError(error => of(new fromActions.LoadCobrosFail(error)))
+        catchError(error =>
+          of(new fromActions.LoadCobrosFail({ response: error }))
+        )
       )
     )
   );
@@ -55,7 +57,9 @@ export class CobrosEffects {
     switchMap(cobro => {
       return this.service.update({ id: cobro.id, changes: cobro.changes }).pipe(
         map(res => new fromActions.UpdateCobroSuccess({ cobro: res })),
-        catchError(error => of(new fromActions.UpdateCobroFail(error)))
+        catchError(error =>
+          of(new fromActions.UpdateCobroFail({ response: error }))
+        )
       );
     })
   );
@@ -70,5 +74,16 @@ export class CobrosEffects {
       })
     )
     // map(cheque => new fromRoot.Go({ path: ['cxp/cobros'] }))
+  );
+
+  @Effect()
+  fail$ = this.actions$.pipe(
+    ofType<fromActions.LoadCobrosFail | fromActions.UpdateCobroFail>(
+      CobroActionTypes.LoadCobrosFail,
+      CobroActionTypes.UpdateCobroFail
+    ),
+    map(action => action.payload.response),
+    // tap(response => console.log('Error: ', response)),
+    map(response => new fromRoot.GlobalHttpError({ response }))
   );
 }

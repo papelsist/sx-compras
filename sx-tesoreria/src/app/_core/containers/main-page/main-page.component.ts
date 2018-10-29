@@ -25,9 +25,14 @@ export class MainPageComponent implements OnInit, OnDestroy {
       title: 'Cuentas de banco'
     },
     {
-      icon: 'my_library_books',
+      icon: 'file_download',
       route: '/egresos',
       title: 'Egresos'
+    },
+    {
+      icon: 'my_library_books',
+      route: '/ingresos',
+      title: 'Ingresos'
     }
   ];
 

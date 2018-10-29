@@ -20,20 +20,32 @@ import { MatDialog } from '@angular/material';
           <sx-cobros-filter-btn class="options" [filter]="filter$ | async" (change)="onFilterChange($event)"></sx-cobros-filter-btn>
         -->
         <button mat-menu-item class="actions" (click)="reload()"><mat-icon>refresh</mat-icon> Recargar</button>
+        <a mat-menu-item  color="accent"[routerLink]="['create']" class="actions">
+          <mat-icon>add</mat-icon> Nuevo cobro
+        </a>
       </sx-search-title>
       <mat-divider></mat-divider>
-      <!--
-        <sx-cobros-table [cobros]="cobros$ | async" [filter]="search"
-          (liberar)="onLiberar($event)" (entregar)="onEntregar($event)" (cobrado)="onCobro($event)">
-        </sx-cobros-table>
-      -->
+      <sx-cobros-table [cobros]="cobros$ | async" (edit)="onEdit($event)"></sx-cobros-table>
       <mat-card-footer>
         <!--
         <sx-cobros-filter-label [filter]="filter$ | async"></sx-cobros-filter-label>
         -->
       </mat-card-footer>
+      <a mat-fab matTooltip="Alta de cobro" matTooltipPosition="before" color="accent" class="mat-fab-position-bottom-right z-3"
+      [routerLink]="['create']">
+    <mat-icon>add</mat-icon>
+    </a>
     </mat-card>
-  `
+
+  `,
+  styles: [
+    `
+      .mat-card {
+        width: calc(100% - 15px);
+        height: calc(100% - 10px);
+      }
+    `
+  ]
 })
 export class CobrosComponent implements OnInit {
   cobros$: Observable<Cobro[]>;
@@ -59,5 +71,9 @@ export class CobrosComponent implements OnInit {
 
   reload() {
     this.store.dispatch(new fromStore.LoadCobros());
+  }
+
+  onEdit(event: Cobro) {
+    this.store.dispatch(new fromRoot.Go({ path: [event.id] }));
   }
 }

@@ -75,14 +75,21 @@ export class ApplicationsEffects {
     ofType<fromApplication.GlobalHttpError>(
       fromApplication.ApplicationActionTypes.GlobalHttpError
     ),
+    tap(action => console.log('Action: ', action)),
     map(action => action.payload.response),
-    map(response => {
-      let message = response.error ? response.error.message : 'Error';
-      const path = response.url;
-      if (path) {
-        message = `${message} Url: ${path}`;
+    tap(response => {
+      this.loadingService.resolve();
+      let message = 'HttpError ';
+      if (response) {
+        message = response.error ? response.error.message : 'Error';
+        const path = response.url;
+        if (path) {
+          message = `${message} Url: ${path}`;
+        }
+        console.error('Error: ', response.message);
+      } else {
+        message = 'HttpError sin mayor informacion';
       }
-      console.error('Error: ', response.message);
       this.dialogService.openAlert({
         message: `${response.status} ${message}`,
         title: `Error ${response.status}`,
