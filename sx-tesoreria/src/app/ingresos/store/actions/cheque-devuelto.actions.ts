@@ -2,6 +2,7 @@ import { Action } from '@ngrx/store';
 import { Update } from '@ngrx/entity';
 
 import { ChequeDevuelto } from 'app/ingresos/models/cheque-devuelto';
+import { PeriodoFilter } from 'app/models';
 
 export enum ChequeDevueltoActionTypes {
   SetChequeDevueltosFilter = '[ChequeDevueltos Component ] Set ChequeDevueltos filter',
@@ -26,7 +27,7 @@ export enum ChequeDevueltoActionTypes {
 
 export class SetChequeDevueltosFilter implements Action {
   readonly type = ChequeDevueltoActionTypes.SetChequeDevueltosFilter;
-  constructor(public payload: { filter: ChequeDevueltosFilter }) {}
+  constructor(public payload: { filter: PeriodoFilter }) {}
 }
 
 export class SetChequeDevueltosSearchTerm implements Action {
