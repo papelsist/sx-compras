@@ -19,14 +19,10 @@ class UrlMappings {
 
         "/api/clientes"(resources: 'cliente')
 
-
-        "/api/tesoreria/bancos"(resources: 'banco')
-
         "/api/tesoreria/cuentas"(resources: 'cuentaDeBanco')
         // "/api/tesoreria/cuentas/$id/movimientos"(controller: 'cuentaDeBanco', action: 'movimientos', method: 'GET')
         "/api/tesoreria/cuentas/$id/movimientos/$ejercicio/$mes"(controller: 'cuentaDeBanco', action: 'movimientos', method: 'GET')
         "/api/tesoreria/cuentas/$id/saldos"(controller: 'cuentaDeBanco', action: 'saldos', method: 'GET')
-
 
         "/api/tesoreria/cheques"(resources: 'cheque')
         "/api/tesoreria/cheques/print/$id"(controller: 'cheque', action: 'print', method: 'GET')

@@ -5,7 +5,7 @@ import { Store, select } from '@ngrx/store';
 import * as fromRoot from 'app/store';
 import * as fromStore from '../../store';
 
-import { of, from } from 'rxjs';
+import { of } from 'rxjs';
 import { map, switchMap, tap, catchError, take } from 'rxjs/operators';
 
 import { CobroActionTypes } from '../actions/cobros.actions';
@@ -51,20 +51,6 @@ export class CobrosEffects {
   );
 
   @Effect()
-  createCobro$ = this.actions$.pipe(
-    ofType<fromActions.CreateCobro>(CobroActionTypes.CreateCobro),
-    map(action => action.payload.cobro),
-    switchMap(cobro => {
-      return this.service.save(cobro).pipe(
-        map(res => new fromActions.CreateCobroSuccess({ cobro: res })),
-        catchError(error =>
-          of(new fromActions.CreateCobroFail({ response: error }))
-        )
-      );
-    })
-  );
-
-  @Effect()
   updateCobro$ = this.actions$.pipe(
     ofType<fromActions.UpdateCobro>(CobroActionTypes.UpdateCobro),
     map(action => action.payload.cobro),
@@ -78,82 +64,23 @@ export class CobrosEffects {
     })
   );
 
-  @Effect()
-  deleteCobro$ = this.actions$.pipe(
-    ofType<fromActions.DeleteCobro>(CobroActionTypes.DeleteCobro),
-    map(action => action.payload.cobro),
-    switchMap(cobro => {
-      return this.service.delete(cobro).pipe(
-        map(() => new fromActions.DeleteCobroSuccess({ cobro })),
-        catchError(error =>
-          of(new fromActions.DeleteCobroFail({ response: error }))
-        )
-      );
-    })
-  );
-
-  @Effect()
-  devolverCobro$ = this.actions$.pipe(
-    ofType<fromActions.DevolverCheque>(CobroActionTypes.DevolverCheque),
-    map(action => action.payload),
-    switchMap(cmd => {
-      return this.service.registrarChequeDevuelto(cmd.fecha, cmd.cobro).pipe(
-        map(res => new fromActions.DevolverChequeSuccess({ cobro: res })),
-        catchError(error =>
-          of(new fromActions.DevolverChequeFail({ response: error }))
-        )
-      );
-    })
-  );
-
   @Effect({ dispatch: false })
   updateSuccess$ = this.actions$.pipe(
-    ofType<fromActions.UpdateCobroSuccess | fromActions.CreateCobroSuccess>(
-      CobroActionTypes.UpdateCobroSuccess,
-      CobroActionTypes.CreateCobroSuccess,
-      CobroActionTypes.DeleteCobroSuccess,
-      CobroActionTypes.DevolverChequeSuccess
-    ),
+    ofType<fromActions.UpdateCobroSuccess>(CobroActionTypes.UpdateCobroSuccess),
     map(action => action.payload.cobro),
     tap(cobro =>
-      this.snackBar.open(
-        `Cobro registrado/actualizado ${cobro.importe} exitosamente`,
-        'Cerrar',
-        {
-          duration: 7000
-        }
-      )
+      this.snackBar.open(`Cobro actualizado `, 'Cerrar', {
+        duration: 5000
+      })
     )
-  );
-
-  @Effect({ dispatch: false })
-  deleteSuccess$ = this.actions$.pipe(
-    ofType<fromActions.DeleteCobroSuccess>(CobroActionTypes.DeleteCobroSuccess),
-    map(action => action.payload.cobro),
-    tap(cobro =>
-      this.snackBar.open(
-        `Cobro ${cobro.importe} eliminado exitosamente`,
-        'Cerrar',
-        {
-          duration: 7000
-        }
-      )
-    )
+    // map(cheque => new fromRoot.Go({ path: ['cxp/cobros'] }))
   );
 
   @Effect()
   fail$ = this.actions$.pipe(
-    ofType<
-      | fromActions.LoadCobrosFail
-      | fromActions.UpdateCobroFail
-      | fromActions.CreateCobroFail
-      | fromActions.DeleteCobroFail
-    >(
+    ofType<fromActions.LoadCobrosFail | fromActions.UpdateCobroFail>(
       CobroActionTypes.LoadCobrosFail,
-      CobroActionTypes.UpdateCobroFail,
-      CobroActionTypes.CreateCobroFail,
-      CobroActionTypes.DeleteCobroFail,
-      CobroActionTypes.DevolverChequeFail
+      CobroActionTypes.UpdateCobroFail
     ),
     map(action => action.payload.response),
     // tap(response => console.log('Error: ', response)),

@@ -2,7 +2,7 @@
 
   <ng-container matColumnDef="tipo">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo</th>
-    <td mat-cell *matCellDef="let row" matTooltip="{{row.id}}">{{row.tipo}}</td>
+    <td mat-cell *matCellDef="let row">{{row.tipo}}</td>
   </ng-container>
 
   <ng-container matColumnDef="fecha">
@@ -23,10 +23,7 @@
 
   <ng-container matColumnDef="formaDePago">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>F. Pago</th>
-    <td mat-cell *matCellDef="let row" matTooltip="{{row.tarjeta | json}} {{row.cheque | json }}">
-      {{getForma(row)}}
-
-    </td>
+    <td mat-cell *matCellDef="let row">{{getForma(row)}}</td>
   </ng-container>
   <ng-container matColumnDef="moneda">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>M</th>
@@ -40,7 +37,7 @@
 
   <ng-container matColumnDef="disponible">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Disponible</th>
-    <td mat-cell *matCellDef="let row">{{row.saldo | currency}}</td>
+    <td mat-cell *matCellDef="let row">{{row.disponible | currency}}</td>
   </ng-container>
 
   <ng-container matColumnDef="referencia">
@@ -50,23 +47,15 @@
 
   <ng-container matColumnDef="updateUser">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Usuario</th>
-    <td mat-cell *matCellDef="let row" matTooltip="{{row.lastUpdated | date: 'dd/MM/yyyy : HH:mm:ss'}}">{{row.updateUser}}</td>
+    <td mat-cell *matCellDef="let row">{{row.updateUser}}</td>
   </ng-container>
 
-  <ng-container matColumnDef="lastUpdated">
+  <ng-container matColumnDef="modificado">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Cliente</th>
     <td mat-cell *matCellDef="let row">{{row.lastUpdated | date: 'dd/MM/yyyy : HH:mm'}}</td>
   </ng-container>
 
-  <ng-container matColumnDef="operaciones">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>...</th>
-    <td mat-cell *matCellDef="let row">
-      <mat-icon color="warn" *ngIf="row.aplicado <= 0" (click)="doDelete($event, row)">delete</mat-icon>
-      <mat-icon color="primary" *ngIf="row.formaDePago === 'CHEQUE'" (click)="doChequeDevuelto($event, row)" matTooltip="Mandar a cheques devueltos">
-        assignment_return
-      </mat-icon>
-    </td>
-  </ng-container>
+
 
   <tr mat-header-row *matHeaderRowDef="displayColumns; sticky: true"></tr>
   <tr mat-row *matRowDef="let row; columns: displayColumns" class="cursor-pointer" (click)="edit.emit(row)"></tr>

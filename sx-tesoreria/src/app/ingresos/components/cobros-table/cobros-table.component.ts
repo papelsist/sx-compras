@@ -70,9 +70,8 @@ export class CobrosTableComponent implements OnInit, OnChanges {
     'importe',
     'disponible',
     'comentario',
-    'updateUser',
-    'operaciones'
-    // 'lastUpdated'
+    'updateUser'
+    // 'modificado'
   ];
 
   @ViewChild(MatSort)
@@ -82,12 +81,6 @@ export class CobrosTableComponent implements OnInit, OnChanges {
 
   @Output()
   edit = new EventEmitter();
-
-  @Output()
-  delete = new EventEmitter();
-
-  @Output()
-  chequeDevuelto = new EventEmitter();
 
   constructor(private utils: PagosUtils) {}
 
@@ -108,15 +101,5 @@ export class CobrosTableComponent implements OnInit, OnChanges {
 
   getForma(row: Cobro) {
     return this.utils.slim(row.formaDePago);
-  }
-
-  doDelete(event: Event, row: Cobro) {
-    event.stopPropagation();
-    this.delete.emit(row);
-  }
-
-  doChequeDevuelto(event: Event, row: Cobro) {
-    event.stopPropagation();
-    this.chequeDevuelto.emit(row);
   }
 }

@@ -4,18 +4,12 @@ model {
 	Cobro cobro
 }
 
-json g.render(cobro, [ excludes: ['moneda', 'cliente'], resolveTemplate: false]) {
-    cliente g.render(cobro.cliente, [includes: ['id', 'nombre', 'rfc']])
+json g.render(cobro, [ excludes: ['moneda'], resolveTemplate: false]) {
     nombre cobro.cliente.nombre
     moneda cobro.moneda.currencyCode
     sucursalNombre cobro.sucursal.nombre
     if(cobro.cheque) {
-        cheque g.render(cobro.cheque, [excludes: ['cobro']]) {
-            bancoOrigen {
-                id cobro.cheque.bancoOrigen.id
-                nombre cobro.cheque.bancoOrigen.nombre
-            }
-        }
+        cheque g.render(cobro.cheque)
         bancoOrigen cobro.cheque.bancoOrigen.nombre
     }
     if(cobro.deposito) {
