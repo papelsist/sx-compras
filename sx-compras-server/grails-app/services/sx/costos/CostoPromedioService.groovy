@@ -112,8 +112,7 @@ class CostoPromedioService {
             SELECT A.clave ,round(ifnull(SUM(a.IMP_COSTO)/SUM(A.CANT),0),2) AS costop
             FROM (
             SELECT 'EXI' as tipo,p.clave
-            ,(case when SUM(x.existencia_inicial)>0 then SUM(x.existencia_inicial/(case when p.unidad ='MIL' then 1000 else 1 end)) else 0 end) AS CANT
-            ,(case when SUM(x.existencia_inicial)>0 then SUM(x.existencia_inicial/(case when p.unidad ='MIL' then 1000 else 1 end)*COSTO) else 0 end) AS IMP_COSTO
+            ,SUM(x.existencia_inicial/(case when p.unidad ='MIL' then 1000 else 1 end)) AS CANT,SUM(x.existencia_inicial/(case when p.unidad ='MIL' then 1000 else 1 end)*COSTO) AS IMP_COSTO 
             FROM existencia x JOIN PRODUCTO P ON(X.producto_id=P.ID) WHERE anio=? and mes=? and p.de_linea is true and p.inventariable is true and existencia_inicial<>0
             group by clave
             union

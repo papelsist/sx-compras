@@ -3,9 +3,11 @@ package sx.cxc
 import grails.compiler.GrailsCompileStatic
 import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.*
-
+import grails.validation.Validateable
+import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
-
+import org.apache.commons.lang3.exception.ExceptionUtils
+import sx.core.Sucursal
 import sx.reports.ReportService
 import sx.utils.Periodo
 
@@ -28,11 +30,17 @@ class CobroController extends RestfulController<Cobro> {
         params.sort = params.sort ?: 'lastUpdated'
         params.order = params.order ?: 'desc'
         params.max = params.registros ?: 20
-        params.tipo = params.tipo ?: 'CRE'
+        def stipo = params.tipo ?: 'CRE'
 
         log.info('List: {}', params)
 
-        def query = Cobro.where { tipo == params.tipo}
+        def query = Cobro.where { formaDePago != 'BONIFICACION' || formaDePago != 'DEVOLUCION'}
+
+        if(stipo != 'TODOS') {
+            query = Cobro.where{ tipo == stipo}
+        } else {
+            query = Cobro.where{ tipo != 'CON' && tipo != 'COD'}
+        }
 
         if(params.periodo) {
             Periodo periodo = (Periodo)params.periodo
@@ -44,7 +52,6 @@ class CobroController extends RestfulController<Cobro> {
         }
         return query.list(params)
     }
-
 
     @Override
     protected Cobro createResource() {

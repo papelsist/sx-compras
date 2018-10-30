@@ -16,17 +16,20 @@ import { FormGroup } from '@angular/forms';
   `,
   styles: [
     `
-    .fill {
-      width: 100%;
-    }
+      .fill {
+        width: 100%;
+      }
     `
   ]
 })
 export class FormaDePagoComponent implements OnInit {
-  @Input() parent: FormGroup;
+  @Input()
+  parent: FormGroup;
 
-  @Input() propertyName = 'formaDePago';
+  @Input()
+  propertyName = 'formaDePago';
 
+  @Input()
   tipos = [
     'POR DEFINIR',
     'EFECTIVO',
