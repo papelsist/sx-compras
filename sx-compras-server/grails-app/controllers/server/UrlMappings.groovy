@@ -35,6 +35,9 @@ class UrlMappings {
 
         "/api/cxc/cobros"(resources: 'cobro')
 
+        "/api/cxc/chequesDevuetos"(resources: 'chequeDevuelto')
+
+
         "/api/listaDePreciosProveedor"(resources: 'listaDePreciosProveedor')
         "/api/listaDePreciosProveedor/aplicar/$id"(controller: 'listaDePreciosProveedor', action: 'aplicar', method: 'PUT')
         "/api/listaDePreciosProveedor/actualizar/$id"(controller: 'listaDePreciosProveedor', action: 'actualizar', method: 'PUT')

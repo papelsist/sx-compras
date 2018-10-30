@@ -32,8 +32,7 @@ import { FechaDialogComponent } from 'app/_shared/components';
       <sx-cobros-table [cobros]="cobros$ | async"
         (edit)="onEdit($event)"
         (delete)="onDelete($event)"
-        [filter]="search"
-        (chequeDevuelto)="onChequeDevuelto($event)">
+        [filter]="search">
       </sx-cobros-table>
       <mat-card-footer>
         <sx-cobros-filter-label [filter]="filter$ | async"></sx-cobros-filter-label>
@@ -117,21 +116,6 @@ export class CobrosComponent implements OnInit {
       .subscribe(res => {
         if (res) {
           this.store.dispatch(new fromActions.DeleteCobro({ cobro: event }));
-        }
-      });
-  }
-
-  onChequeDevuelto(event: Cobro) {
-    this.dialog
-      .open(FechaDialogComponent, {
-        data: { title: 'Registro de cheque devuelto' }
-      })
-      .afterClosed()
-      .subscribe(fecha => {
-        if (fecha) {
-          this.store.dispatch(
-            new fromActions.DevolverCheque({ cobro: event, fecha })
-          );
         }
       });
   }

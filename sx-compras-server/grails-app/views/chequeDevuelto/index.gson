@@ -1,0 +1,8 @@
+import sx.cxc.ChequeDevuelto
+
+model {
+	Iterable<ChequeDevuelto> chequeDevueltoList
+}
+
+json tmpl.chequeDevuelto(chequeDevueltoList ?: [])
+

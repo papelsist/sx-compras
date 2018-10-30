@@ -1,0 +1,7 @@
+import sx.cxc.ChequeDevuelto
+
+model {
+	ChequeDevuelto chequeDevuelto
+}
+
+json g.render(chequeDevuelto, [resolveTemplate: false])

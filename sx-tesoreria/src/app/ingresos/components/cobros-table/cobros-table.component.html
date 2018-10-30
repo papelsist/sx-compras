@@ -62,9 +62,6 @@
     <th mat-header-cell *matHeaderCellDef mat-sort-header>...</th>
     <td mat-cell *matCellDef="let row">
       <mat-icon color="warn" *ngIf="row.aplicado <= 0" (click)="doDelete($event, row)">delete</mat-icon>
-      <mat-icon color="primary" *ngIf="row.formaDePago === 'CHEQUE'" (click)="doChequeDevuelto($event, row)" matTooltip="Mandar a cheques devueltos">
-        assignment_return
-      </mat-icon>
     </td>
   </ng-container>
 

@@ -86,9 +86,6 @@ export class CobrosTableComponent implements OnInit, OnChanges {
   @Output()
   delete = new EventEmitter();
 
-  @Output()
-  chequeDevuelto = new EventEmitter();
-
   constructor(private utils: PagosUtils) {}
 
   ngOnInit() {
@@ -113,10 +110,5 @@ export class CobrosTableComponent implements OnInit, OnChanges {
   doDelete(event: Event, row: Cobro) {
     event.stopPropagation();
     this.delete.emit(row);
-  }
-
-  doChequeDevuelto(event: Event, row: Cobro) {
-    event.stopPropagation();
-    this.chequeDevuelto.emit(row);
   }
 }

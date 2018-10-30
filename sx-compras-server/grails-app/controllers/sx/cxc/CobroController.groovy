@@ -20,6 +20,7 @@ class CobroController extends RestfulController<Cobro> {
     ReportService reportService
     CobroService cobroService
 
+
     CobroController() {
         super(Cobro)
     }
@@ -72,17 +73,7 @@ class CobroController extends RestfulController<Cobro> {
         return this.cobroService.update(resource)
     }
 
-    def registrarChequeDevuelto(ChequeDevueltoCommand command){
-        if(command == null){
-            notFound()
-            return
-        }
-        // this.chequeDevueltoService.registrarChequeDevuelto(cobro.cheque, fecha)
-        Cobro cobro = command.cobro
-        cobro.comentario = "CHEQUE DEVUELTO EL: ${command.fecha.format('dd/MM/yyyy')}"
-        cobro.save flush: true
-        respond cobro
-    }
+
 
     def handleException(Exception e) {
         String message = ExceptionUtils.getRootCauseMessage(e)
@@ -91,7 +82,3 @@ class CobroController extends RestfulController<Cobro> {
     }
 }
 
-class ChequeDevueltoCommand implements  Validateable {
-    Cobro cobro
-    Date fecha
-}
