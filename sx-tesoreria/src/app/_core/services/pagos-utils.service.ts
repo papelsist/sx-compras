@@ -20,8 +20,6 @@ export class PagosUtils {
         return 'DEP_CHE';
       case 'DEVOLUCION':
         return 'DEVO';
-      case 'BONIFICACION':
-        return 'BONIFIC';
       default:
         return formaDePago;
     }

@@ -12,7 +12,7 @@ import java.sql.SQLException
 
 
 @Slf4j()
-@Secured(['ROLE_COMPRAS','ROLE_GASTOS'])
+@Secured("ROLE_COMPRAS")
 @GrailsCompileStatic
 class NotaDeCreditoCxPController extends RestfulController<NotaDeCreditoCxP>{
 
