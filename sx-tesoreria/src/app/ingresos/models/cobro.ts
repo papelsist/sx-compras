@@ -3,6 +3,7 @@ import { Periodo } from 'app/_core/models/periodo';
 export interface Cobro {
   id?: string;
   cliente: { id: string; nombre: string };
+  nombre?: string;
   sucursal: { id: string; nombre: string };
   tipo: string;
   fecha: string;
@@ -46,16 +47,18 @@ export interface CobroCheque {
 export class CobrosFilter {
   fechaInicial?: Date;
   fechaFinal?: Date;
+  tipo?: string;
   nombre?: string;
   registros?: number;
 }
 
 export function createCobrosFilter(): CobrosFilter {
-  const { fechaInicial, fechaFinal } = Periodo.fromNow(2);
+  const { fechaInicial, fechaFinal } = Periodo.fromNow(20);
   const registros = 100;
   return {
     fechaInicial,
     fechaFinal,
+    tipo: 'CRE',
     registros
   };
 }

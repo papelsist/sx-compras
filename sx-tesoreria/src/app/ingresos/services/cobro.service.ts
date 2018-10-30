@@ -22,6 +22,7 @@ export class CobroService {
 
   list(filter: CobrosFilter): Observable<Cobro[]> {
     let params = new HttpParams()
+      .set('tipo', filter.tipo)
       .set('registros', filter.registros.toString())
       .set('fechaInicial', filter.fechaInicial.toISOString())
       .set('fechaFinal', filter.fechaFinal.toISOString());
@@ -35,13 +36,14 @@ export class CobroService {
 
   save(cobro: Cobro): Observable<Cobro> {
     return this.http
-      .put<Cobro>(this.apiUrl, cobro)
+      .post<Cobro>(this.apiUrl, cobro)
       .pipe(catchError((error: any) => throwError(error)));
   }
 
   delete(cobro: Cobro) {
+    const url = `${this.apiUrl}/${cobro.id}`;
     return this.http
-      .delete<Cobro>(this.apiUrl)
+      .delete<Cobro>(url)
       .pipe(catchError((error: any) => throwError(error)));
   }
 
@@ -52,6 +54,14 @@ export class CobroService {
     const url = `${this.apiUrl}/${update.id}`;
     return this.http
       .put<Cobro>(url, update.changes)
+      .pipe(catchError((error: any) => throwError(error)));
+  }
+
+  registrarChequeDevuelto(fecha: Date, com: Cobro): Observable<Cobro> {
+    const url = `${this.apiUrl}/registrarChequeDevuelto/${com.id}`;
+    const params = new HttpParams().set('fecha', fecha.toISOString());
+    return this.http
+      .put<Cobro>(url, {}, { params: params })
       .pipe(catchError((error: any) => throwError(error)));
   }
 }

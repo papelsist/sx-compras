@@ -1,9 +1,11 @@
 package sx.tesoreria
 
-
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
 import sx.sat.BancoSat
 
-
+@ToString(includes = ['id', 'nombre'],includeNames=true,includePackage=false)
+@EqualsAndHashCode(includeFields = true,includes = ['id', 'nombre'])
 class Banco {
 
 	String id
