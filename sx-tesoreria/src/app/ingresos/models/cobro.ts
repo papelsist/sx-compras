@@ -42,6 +42,7 @@ export interface CobroCheque {
   banco: { id: string };
   numero: string;
   numeroDeCuenta: string;
+  selected?: boolean;
 }
 
 export class CobrosFilter {

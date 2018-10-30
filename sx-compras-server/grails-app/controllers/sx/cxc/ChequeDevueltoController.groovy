@@ -40,6 +40,24 @@ class ChequeDevueltoController extends RestfulController<ChequeDevuelto> {
         throw new RuntimeException('No se permite modificar cheques devueltos')
     }
 
+    def cobros() {
+        params.max = params.max?: 20
+        params.sort = 'lastUpdated'
+        params.order = 'desc'
+        log.info('Cobros: {}', params)
+
+        def query = CobroCheque.where {}
+        if(params.numero) {
+            query = query.where{ numero == params.getLong('numero')}
+        }
+        if(params.importe) {
+            BigDecimal importe = params.importe as BigDecimal
+            query = query.where{ cobro.importe == importe}
+        }
+        respond query.list(params)
+
+    }
+
     /*
     def registrarChequeDevuelto(ChequeDevueltoCommand command){
         if(command == null){

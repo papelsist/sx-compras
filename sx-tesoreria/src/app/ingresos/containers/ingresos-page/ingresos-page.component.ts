@@ -40,7 +40,7 @@ export class IngresosPageComponent implements OnInit {
       icon: 'my_library_books'
     },
     {
-      route: 'chequesDevueltos',
+      route: 'chequesdevueltos',
       title: 'Cheques DEV',
       description: 'Cheques devueltos',
       icon: 'settings_backup_restore'
