@@ -65,7 +65,8 @@ export class ChequesDevueltosTableComponent implements OnInit, OnChanges {
     'importe',
     'comentario',
     'modificado',
-    'usuario'
+    'usuario',
+    'operaciones'
   ];
 
   @ViewChild(MatSort)
@@ -75,6 +76,9 @@ export class ChequesDevueltosTableComponent implements OnInit, OnChanges {
 
   @Output()
   edit = new EventEmitter();
+
+  @Output()
+  delete = new EventEmitter();
 
   constructor() {}
 

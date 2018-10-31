@@ -7,7 +7,7 @@ import { catchError } from 'rxjs/operators';
 import * as _ from 'lodash';
 
 import { ConfigService } from '../../utils/config.service';
-import { Ficha } from '../models/ficha';
+import { Ficha, FichaFilter } from '../models/ficha';
 
 @Injectable()
 export class FichasService {
@@ -17,7 +17,7 @@ export class FichasService {
     this.apiUrl = config.buildApiUrl('tesoreria/fichas');
   }
 
-  list(filtro: {} = {}): Observable<Ficha[]> {
+  list2(filtro: {} = {}): Observable<Ficha[]> {
     let params = new HttpParams();
     _.forIn(filtro, (value, key) => {
       params = params.set(key, value);
@@ -27,19 +27,29 @@ export class FichasService {
       .pipe(catchError(err => throwError(err)));
   }
 
+  list(filter: FichaFilter): Observable<Ficha[]> {
+    const params = new HttpParams()
+      .set('tipo', filter.tipo)
+      .set('fecha', filter.fecha.toISOString())
+      .set('sucursal', filter.sucursal);
+    return this.http
+      .get<Ficha[]>(this.apiUrl, { params: params })
+      .pipe(catchError((error: any) => throwError(error)));
+  }
+
   get(id: string): Observable<Ficha> {
     const url = `${this.apiUrl}/${id}`;
     return this.http.get<Ficha>(url).pipe(catchError(err => throwError(err)));
   }
 
-  generar(filtro: any = {}) {
+  generar(filtro: any = {}): Observable<Ficha[]> {
     let params = new HttpParams();
     _.forIn(filtro, (value, key) => {
       params = params.set(key, value);
     });
     const url = `${this.apiUrl}/generar`;
     return this.http
-      .get(url, { params: params })
+      .get<Ficha[]>(url, { params: params })
       .pipe(catchError(err => throwError(err)));
   }
 

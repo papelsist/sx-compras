@@ -45,7 +45,7 @@ class MovimientoDeCuentaService implements  LogUser{
 
         if(egreso.formaDePago == 'CHEQUE') {
             generarCheque(egreso)
-            egreso.referencia = egreso.cheque.folio.toString()
+
         }
         return egreso
 
@@ -61,15 +61,18 @@ class MovimientoDeCuentaService implements  LogUser{
             cheque.cuenta = egreso.cuenta
             cheque.nombre = egreso.afavor
             cheque.fecha = egreso.fecha
-            cheque.folio = cuenta.proximoCheque
-            cheque.importe = egreso.importe.abs()
-            cuenta.proximoCheque = cuenta.proximoCheque + 1
 
+            cheque.importe = egreso.importe.abs()
+            if(!egreso.referencia) {
+                cheque.folio = cuenta.proximoCheque
+                cuenta.proximoCheque = cuenta.proximoCheque + 1
+                cuenta.save()
+                egreso.referencia = cheque.folio.toString()
+            }
             cheque.egreso = egreso
             egreso.cheque = cheque
             logEntity(cheque)
 
-            cuenta.save()
         }
     }
 

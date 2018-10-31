@@ -79,5 +79,17 @@ class ChequeDevueltoService implements  LogUser{
         return mov
     }
 
+    void cancelar(ChequeDevuelto chequeDevuelto) {
+        MovimientoDeCuenta egreso = chequeDevuelto.egreso
+        CuentaPorCobrar cxc = chequeDevuelto.cxc
+        chequeDevuelto.cxc = null
+        chequeDevuelto.egreso = null
+
+        chequeDevuelto.delete flush: true
+        egreso.delete flush: true
+        cxc.delete flush: true
+
+    }
+
 
 }

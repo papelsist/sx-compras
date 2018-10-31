@@ -14,11 +14,11 @@ import { HttpClient, HttpParams } from '@angular/common/http';
       <span>
         <span mat-dialog-title>{{title}}</span>
       </span>
-      <mat-form-field>
-        <input matInput placeholder="Folio" autocomplete="off" (keyup.enter)="buscar()" [(ngModel)]="folio">
+      <mat-form-field flex>
+        <input matInput placeholder="Importe" autocomplete="off" (keyup.enter)="buscar()" [(ngModel)]="importe" type="number">
       </mat-form-field>
       <mat-form-field class="pad-left" flex>
-        <input matInput placeholder="Importe" autocomplete="off" (keyup.enter)="buscar()" [(ngModel)]="importe" type="number">
+        <input matInput placeholder="Número" autocomplete="off" (keyup.enter)="buscar()" [(ngModel)]="folio">
       </mat-form-field>
     </div>
     <mat-divider></mat-divider>

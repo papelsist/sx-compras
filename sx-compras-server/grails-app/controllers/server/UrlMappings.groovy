@@ -33,10 +33,22 @@ class UrlMappings {
         "/api/tesoreria/cheques/printPoliza/$id"(controller: 'cheque', action: 'printPoliza', method: 'GET')
         "/api/tesoreria/cheques/chequesPendientes"(controller: 'cheque', action: 'chequesPendientes', method: 'GET')
 
-        "/api/cxc/cobros"(resources: 'cobro')
+        // Fichas de deposito
+        "/api/tesoreria/fichas"(resources: "ficha"){
+            "/cheques"( controller: 'ficha', action: 'cheques')
+            "/ingreso"( controller: 'ficha', action: 'ingreso')
+        }
+        "/api/tesoreria/fichas/generar"(controller: "ficha", action: 'generar', method: 'GET')
+        "/api/tesoreria/fichas/reporteDeRelacionDeFichas"(controller: "ficha", action: 'reporteDeRelacionDeFichas', method: 'GET')
 
+        "/api/cxc/cobros"(resources: 'cobro')
+        "/api/cxc/cobro/reporteDeCobranza"(controller: "cobro", action: 'reporteDeCobranza', method: 'GET')
+        "/api/cxc/cobro/reporteDeRelacionDePagos"(controller: "cobro", action: 'reporteDeRelacionDePagos', method: 'GET')
+
+        // Cheques devueltos
         "/api/cxc/chequesDevuetos"(resources: 'chequeDevuelto')
         "/api/cxc/chequesDevuetos/cobros"(controller: 'chequeDevuelto', action: 'cobros', method: 'GET')
+
 
 
         "/api/listaDePreciosProveedor"(resources: 'listaDePreciosProveedor')

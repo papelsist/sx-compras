@@ -16,3 +16,24 @@ export interface Ficha {
   creado?: string;
   modificado?: string;
 }
+
+export class FichaFilter {
+  fecha: Date;
+  tipo: string;
+  sucursal: string;
+}
+
+export function buildFichasFilter(): FichaFilter {
+  return {
+    fecha: new Date(),
+    tipo: 'CRE',
+    sucursal: undefined
+  };
+}
+
+export interface FichaBuildCommand {
+  fecha: string;
+  formaDePago: string;
+  tipo: string;
+  cuenta: string;
+}

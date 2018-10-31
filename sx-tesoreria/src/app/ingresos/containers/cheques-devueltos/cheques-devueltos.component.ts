@@ -28,7 +28,7 @@ import { ChequeDevueltoFormComponent } from 'app/ingresos/components';
       </sx-search-title>
       <mat-divider></mat-divider>
 
-      <sx-cheques-devueltos-table [cheques]="cheques$ | async" (edit)="onEdit($event)" [filter]="search">
+      <sx-cheques-devueltos-table [cheques]="cheques$ | async" (edit)="onEdit($event)" (delete)="onDelete($event)" [filter]="search">
       </sx-cheques-devueltos-table>
 
       <a mat-fab matTooltip="Alta de cheque" matTooltipPosition="before" color="accent" class="mat-fab-position-bottom-right z-3"

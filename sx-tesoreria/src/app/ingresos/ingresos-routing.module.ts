@@ -18,6 +18,11 @@ const routes: Routes = [
         path: 'chequesdevueltos',
         canActivate: [fromGuards.ChequesDevueltosGuard],
         component: fromContainers.ChequesDevueltosComponent
+      },
+      {
+        path: 'fichas',
+        canActivate: [fromGuards.FichasGuard],
+        component: fromContainers.FichasComponent
       }
     ]
   }

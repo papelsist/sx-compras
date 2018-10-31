@@ -5,6 +5,9 @@ import { TdMediaService } from '@covalent/core';
 import { Store, select } from '@ngrx/store';
 
 import { Observable } from 'rxjs';
+import { ReportService } from 'app/reportes/services/report.service';
+import { MatDialog } from '@angular/material';
+import { RelacionPagosComponent } from 'app/reportes/components/relacion-pagos.component';
 
 @Component({
   selector: 'sx-ingresos-page',
@@ -49,7 +52,26 @@ export class IngresosPageComponent implements OnInit {
 
   loading$: Observable<boolean>;
 
-  constructor(public media: TdMediaService) {}
+  constructor(
+    public media: TdMediaService,
+    private reportService: ReportService,
+    private dialog: MatDialog
+  ) {}
 
   ngOnInit() {}
+
+  reporteDeCobros() {
+    this.dialog
+      .open(RelacionPagosComponent, { data: {} })
+      .afterClosed()
+      .subscribe(res => {
+        if (res) {
+          console.log('Run report: ', res);
+          this.reportService.runReport(
+            'cxc/cobro/reporteDeRelacionDePagos',
+            res
+          );
+        }
+      });
+  }
 }

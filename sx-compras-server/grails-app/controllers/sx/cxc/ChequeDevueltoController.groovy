@@ -29,7 +29,6 @@ class ChequeDevueltoController extends RestfulController<ChequeDevuelto> {
     Object save() {
         def instance = createResource()
         instance = chequeDevueltoService.save(instance)
-
         respond instance, [status: CREATED, view:'show']
     }
 
@@ -43,10 +42,9 @@ class ChequeDevueltoController extends RestfulController<ChequeDevuelto> {
     }
 
     @Override
-    protected ChequeDevuelto saveResource(ChequeDevuelto resource) {
-        return chequeDevueltoService.save(resource)
+    protected void deleteResource(ChequeDevuelto resource) {
+        chequeDevueltoService.cancelar(resource)
     }
-
 
     @Override
     protected ChequeDevuelto updateResource(ChequeDevuelto resource) {

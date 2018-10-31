@@ -1,0 +1,8 @@
+import sx.tesoreria.Ficha
+
+model {
+	Iterable<Ficha> fichaList
+}
+
+json tmpl.ficha(fichaList ?: [])
+
