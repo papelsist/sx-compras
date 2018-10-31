@@ -39,10 +39,17 @@ export class CobrosChequeTableComponent implements OnInit, OnChanges {
   @Input()
   cheques: CobroCheque[] = [];
   @Input()
-  multipleSelection = true;
+  multipleSelection = false;
   dataSource = new MatTableDataSource<CobroCheque>([]);
 
-  displayColumns = ['numero', 'fecha', 'importe'];
+  displayColumns = [
+    'numero',
+    'fecha',
+    'primeraAplicacion',
+    'importe',
+    'nombre',
+    'ficha'
+  ];
   @ViewChild(MatSort)
   sort: MatSort;
   @ViewChild(MatPaginator)
@@ -53,13 +60,12 @@ export class CobrosChequeTableComponent implements OnInit, OnChanges {
   constructor() {}
 
   ngOnInit() {
-    // this.dataSource.paginator = this.paginator;
+    this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.cheques && changes.cheques.currentValue) {
-      console.log('Cheques: ', changes.cheques.currentValue);
       this.dataSource.data = changes.cheques.currentValue;
     }
     if (changes.filter) {

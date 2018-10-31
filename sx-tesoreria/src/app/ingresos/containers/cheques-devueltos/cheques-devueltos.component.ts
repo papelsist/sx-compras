@@ -14,33 +14,23 @@ import { MatDialog } from '@angular/material';
 import { TdDialogService } from '@covalent/core';
 import { PeriodoFilter } from 'app/models';
 import { SelectorDeCobrosChequeComponent } from 'app/ingresos/components/selecor-de-cheques/selector-de-cobros-cheques.component';
+import { ChequeDevueltoFormComponent } from 'app/ingresos/components';
 
 @Component({
   selector: 'sx-cheques-devueltos',
   template: `
     <mat-card>
       <sx-search-title title="Registro de cheques devueltos" (search)="search = $event">
-        <!--
-        <sx-cheques-filter-btn class="options" [filter]="filter$ | async" (change)="onFilterChange($event)"></sx-cheques-filter-btn>
-        -->
         <button mat-menu-item class="actions" (click)="reload()"><mat-icon>refresh</mat-icon> Recargar</button>
-        <a mat-menu-item  color="accent"[routerLink]="['create']" class="actions">
+        <a mat-menu-item  color="accent" (click)="onCreate()" class="actions">
           <mat-icon>add</mat-icon> Nuevo cobro
         </a>
       </sx-search-title>
       <mat-divider></mat-divider>
-      <!--
-      <sx-cheques-table [cheques]="cheques$ | async"
-        (edit)="onEdit($event)"
-        (delete)="onDelete($event)"
-        [filter]="search">
-      </sx-cheques-table>
-      -->
-      <mat-card-footer>
-      <!--
-        <sx-cheques-filter-label [filter]="filter$ | async"></sx-cheques-filter-label>
-        -->
-      </mat-card-footer>
+
+      <sx-cheques-devueltos-table [cheques]="cheques$ | async" (edit)="onEdit($event)" [filter]="search">
+      </sx-cheques-devueltos-table>
+
       <a mat-fab matTooltip="Alta de cheque" matTooltipPosition="before" color="accent" class="mat-fab-position-bottom-right z-3"
       (click)="onCreate()">
     <mat-icon>add</mat-icon>
@@ -88,8 +78,28 @@ export class ChequesDevueltosComponent implements OnInit {
     this.dialog
       .open(SelectorDeCobrosChequeComponent, { data: {}, width: '750px' })
       .afterClosed()
-      .subscribe((selected: CobroCheque) => {
-        console.log('Regresando  cobro: ', selected);
+      .subscribe(selected => {
+        if (selected) {
+          this.doGenerate(selected[0]);
+        }
+      });
+  }
+
+  doGenerate(cobro: CobroCheque) {
+    this.dialog
+      .open(ChequeDevueltoFormComponent, {
+        data: { cobro: cobro },
+        width: '650px'
+      })
+      .afterClosed()
+      .subscribe(command => {
+        if (command) {
+          const cheque: ChequeDevuelto = {
+            cheque: { id: cobro.id },
+            fecha: command.fecha
+          };
+          this.store.dispatch(new fromActions.CreateChequeDevuelto({ cheque }));
+        }
       });
   }
 

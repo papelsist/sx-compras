@@ -15,17 +15,22 @@ class ChequeDevueltoService implements  LogUser{
 
     ChequeDevuelto save(ChequeDevuelto che) {
 
+        che.importe = che.cheque.cobro.importe
+        che.numero = che.cheque.numero.toString()
+        che.comentario = "CHEQUE DEVUELTO EL ${che.fecha.format('dd/MM/yyyy')} "
+
         CuentaPorCobrar cxc = generarCuentaPorCobrar(che)
         logEntity(cxc)
+        che.cxc = cxc
+        che.folio = cxc.documento
         cxc.save flush: true
 
         MovimientoDeCuenta egreso = generarEgreso(che)
         logEntity(egreso)
         egreso.save flush: true
 
-        che.cxc = cxc
-        che.folio = cxc.documento
-        che.nombre = cxc.cliente.nombre
+
+
         che.egreso = egreso
         logEntity(che)
         return che.save(failOnError: true, flush: true)
@@ -53,12 +58,15 @@ class ChequeDevueltoService implements  LogUser{
 
     MovimientoDeCuenta generarEgreso(ChequeDevuelto chequeDevuelto) {
 
-        if(chequeDevuelto.egreso) return
-        assert chequeDevuelto.cheque.ficha, "Se requiere la ficha de deposito para el Cobro: ${chequeDevuelto.cheque.cobro.id}"
+        if(chequeDevuelto.egreso)
+            return
+        if(chequeDevuelto.cheque.ficha == null)
+            throw new RuntimeException("Cheque ${chequeDevuelto.cheque.numero} no tiene  ficha de deposito")
+
         Empresa empresa = Empresa.first()
         MovimientoDeCuenta mov = new MovimientoDeCuenta()
         mov.referencia = "${chequeDevuelto.cheque.numero} "
-        mov.tipo = 'CHE';
+        mov.tipo = 'CHE'
         mov.fecha = chequeDevuelto.cxc.fecha
         mov.formaDePago = 'CHEQUE'
         mov.comentario = "CHEQUE DEVUELTO:  ${chequeDevuelto.cxc.sucursal.nombre} "

@@ -18,6 +18,10 @@ class ChequeDevuelto {
 
     String nombre
 
+    String numero
+
+    BigDecimal importe
+
     CobroCheque cheque
 
     CuentaPorCobrar	cxc
@@ -48,6 +52,8 @@ class ChequeDevuelto {
         egreso unique: true, nullable: true
         recepcion nullable: true
         fecha nullable: true
+        importe nullable: true
+        numero nullable: true
     }
 
     static mapping = {

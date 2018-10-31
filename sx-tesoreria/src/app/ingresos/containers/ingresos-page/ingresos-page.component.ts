@@ -28,6 +28,12 @@ export class IngresosPageComponent implements OnInit {
       icon: 'attach_money'
     },
     {
+      route: 'chequesdevueltos',
+      title: 'Cheques DEV',
+      description: 'Cheques devueltos',
+      icon: 'settings_backup_restore'
+    },
+    {
       route: 'fichas',
       title: 'Fichas',
       description: 'Alta de fichas',
@@ -38,12 +44,6 @@ export class IngresosPageComponent implements OnInit {
       title: 'Fichas (CON)',
       description: 'Fichas de  contado',
       icon: 'my_library_books'
-    },
-    {
-      route: 'chequesdevueltos',
-      title: 'Cheques DEV',
-      description: 'Cheques devueltos',
-      icon: 'settings_backup_restore'
     }
   ];
 

@@ -4,7 +4,10 @@ import { CobrosFilterBtnComponent } from './cobros-filter/cobros-filter-btn.comp
 import { CobrosFilterLabelComponent } from './cobros-filter/cobros-filter-label.component';
 import { CobroFormComponent } from './cobro-form/cobro-form-component';
 import { CobrosChequeTableComponent } from './selecor-de-cheques/cobros-cheque-table.component';
+// Cheques devueltos
+import { ChequesDevueltosTableComponent } from './cheques-devueltos/cheques-devueltos-table.component';
 import { SelectorDeCobrosChequeComponent } from './selecor-de-cheques/selector-de-cobros-cheques.component';
+import { ChequeDevueltoFormComponent } from './cheque-devuelto-form/cheque-devuelto-form.component';
 
 export const components: any[] = [
   // Cobros
@@ -13,13 +16,17 @@ export const components: any[] = [
   CobrosFilterBtnComponent,
   CobrosFilterLabelComponent,
   CobroFormComponent,
+  // Cheques devueltos
+  ChequesDevueltosTableComponent,
+  SelectorDeCobrosChequeComponent,
   CobrosChequeTableComponent,
-  SelectorDeCobrosChequeComponent
+  ChequeDevueltoFormComponent
 ];
 export const entryComponents: any[] = [
   CobrosFilterComponent,
   CobroFormComponent,
-  SelectorDeCobrosChequeComponent
+  SelectorDeCobrosChequeComponent,
+  ChequeDevueltoFormComponent
 ];
 
 // Cobros
@@ -30,5 +37,7 @@ export * from './cobros-filter/cobros-filter-label.component';
 export * from './cobro-form/cobro-form-component';
 
 // Cheques devueltos
-export * from './selecor-de-cheques/cobros-cheque-table.component';
+export * from './cheques-devueltos/cheques-devueltos-table.component';
 export * from './selecor-de-cheques/selector-de-cobros-cheques.component';
+export * from './selecor-de-cheques/cobros-cheque-table.component';
+export * from './cheque-devuelto-form/cheque-devuelto-form.component';

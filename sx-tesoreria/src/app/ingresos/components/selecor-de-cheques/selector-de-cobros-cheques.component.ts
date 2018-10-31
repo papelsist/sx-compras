@@ -1,9 +1,4 @@
-import {
-  Component,
-  OnInit,
-  ChangeDetectionStrategy,
-  Inject
-} from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 
 import { MAT_DIALOG_DATA } from '@angular/material';
 import { CobroCheque } from '../../models';
@@ -18,9 +13,6 @@ import { HttpClient, HttpParams } from '@angular/common/http';
     <div layout>
       <span>
         <span mat-dialog-title>{{title}}</span>
-        <span *ngIf="selected">
-          Seleccionados: {{selected.length}}
-        </span>
       </span>
       <mat-form-field>
         <input matInput placeholder="Folio" autocomplete="off" (keyup.enter)="buscar()" [(ngModel)]="folio">
@@ -33,9 +25,10 @@ import { HttpClient, HttpParams } from '@angular/common/http';
     <div class="cobros-table-panel">
       <sx-cobros-cheque-table [cheques]="cobros" (select)="onSelection($event)"></sx-cobros-cheque-table>
     </div>
+
     <mat-dialog-actions>
-      <button mat-button mat-dialog-close type="button">Cancelar</button>
-      <button mat-button [mat-dialog-close]="selected" [disabled]="!selected" type="button">Seleccionar</button>
+      <button mat-raised-button mat-dialog-close type="button">Cancelar</button>
+      <button mat-raised-button [mat-dialog-close]="selected" [disabled]="!selected" type="button" color="primary">Aceptar</button>
     </mat-dialog-actions>
   `,
   styles: [
