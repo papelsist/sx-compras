@@ -56,9 +56,9 @@ class CostoPromedioService {
         }
         log.info('Ejercicio anterior: {}-{}', ejercicioAnterior, mesAnterior)
         String sql = """ 
-                UPDATE EXISTENCIA E 
+                UPDATE EXISTENCIA E JOIN PRODUCTO P ON(E.PRODUCTO_ID = P.ID)
                 SET COSTO = IFNULL((SELECT C.COSTO FROM COSTO_PROMEDIO C WHERE C.EJERCICIO = ? AND C.MES = ? AND C.PRODUCTO_ID = E.PRODUCTO_ID ), 0)
-                WHERE E.ANIO = ? AND E.MES = ? 
+                WHERE P.DE_LINEA IS TRUE AND E.ANIO = ? AND E.MES = ? 
                 """
         executeUdate(sql, [ejercicioAnterior, mesAnterior, ejercicio, mes])
     }
@@ -175,6 +175,17 @@ class CostoPromedioService {
                 WHERE P.DE_LINEA IS TRUE AND year(E.FECHA) = ? AND month(E.FECHA) = ? 
                 """
         executeUdate(sql, [ejercicio, mes, ejercicio, mes])
+    }
+
+    def actualizarMovimientosExistenciaSinCosto(Integer ejercicio, Integer mes) {
+        def q = CostoPromedio.where{ejercicio == ejercicio && mes == mes && costo <= 0}
+        q = q.where{costoAnterior > 0 }
+        q.list().each {
+           // log.info("${it.clave} ${it.costoAnterior} ${it.costo}")
+            // Actualizar todos los movimientos
+            Inventario.executeUpdate("update Inventario set costoPromedio = ? where year(fecha)=? and month(fecha)=? and producto =?", [it.costoAnterior, ejercicio, mes, it.producto])
+            Existencia.executeUpdate("update Existencia set costoPromedio = ? where anio = ? and mes = ? and producto = ?", [it.costoAnterior, ejercicio, mes, it.producto])
+        }
     }
 
     def analisisDeCosto(CostoPromedio cp) {

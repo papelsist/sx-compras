@@ -54,6 +54,7 @@ class CostoPromedioController extends RestfulController<CostoPromedio> {
     def aplicar(Integer ejercicio, Integer mes) {
         costoPromedioService.costearExistenciaFinal(ejercicio, mes)
         costoPromedioService.costearMovimientosDeInventario(ejercicio, mes)
+        costoPromedioService.actualizarMovimientosExistenciaSinCosto(ejercicio, mes)
         respond status: 200
     }
 
