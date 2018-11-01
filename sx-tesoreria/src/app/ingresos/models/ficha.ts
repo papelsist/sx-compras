@@ -15,6 +15,7 @@ export interface Ficha {
   tipo: string;
   creado?: string;
   modificado?: string;
+  usuario?: string;
 }
 
 export class FichaFilter {

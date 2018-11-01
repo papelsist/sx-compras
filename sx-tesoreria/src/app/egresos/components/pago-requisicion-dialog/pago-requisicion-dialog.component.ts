@@ -84,7 +84,7 @@ export class PagoRequisicionDialogComponent implements OnInit, OnDestroy {
       if (this.requisicion.formaDePago === 'CHEQUE') {
         this.form.get('cheque').setValue(cta.proximoCheque);
         this.form.get('referencia').setValue(cta.proximoCheque);
-        this.form.get('referencia').disable();
+        // this.form.get('referencia').disable();
       } else {
         this.form.get('referencia').setValue('');
         this.form.get('referencia').enable();

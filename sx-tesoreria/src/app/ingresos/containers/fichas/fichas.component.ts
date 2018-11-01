@@ -27,13 +27,13 @@ import { FormBuilder, Form } from '@angular/forms';
         </a>
       </sx-search-title>
       <mat-divider></mat-divider>
-      <!--
+
       <sx-fichas-table [fichas]="fichas$ | async"
         (edit)="onEdit($event)"
         (delete)="onDelete($event)"
+        (ingreso)="onIngreso($event)"
         [filter]="search">
       </sx-fichas-table>
-      -->
       <mat-card-footer>
 
       </mat-card-footer>
@@ -77,5 +77,9 @@ export class FichasComponent implements OnInit {
 
   generar() {}
 
-  onSelect(event: Ficha) {}
+  onIngreso(event: Ficha) {}
+
+  onEdit(event: Ficha) {}
+
+  onDelete(event: Ficha) {}
 }

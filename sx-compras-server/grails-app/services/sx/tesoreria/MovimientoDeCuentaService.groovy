@@ -68,6 +68,8 @@ class MovimientoDeCuentaService implements  LogUser{
                 cuenta.proximoCheque = cuenta.proximoCheque + 1
                 cuenta.save()
                 egreso.referencia = cheque.folio.toString()
+            } else {
+                cheque.folio = egreso.referencia.toLong()
             }
             cheque.egreso = egreso
             egreso.cheque = cheque

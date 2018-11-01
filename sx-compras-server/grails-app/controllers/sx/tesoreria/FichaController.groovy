@@ -39,7 +39,7 @@ class FichaController extends RestfulController<Ficha> {
         PorFechaCommand command = new PorFechaCommand()
         bindData(command, params)
         def query = Ficha.where {fecha == command.fecha}
-        if(cartera == 'CREDITO'){
+        if(cartera == 'TODAS'){
             query = query.where {origen == 'CRE'}
         } else {
             query = query.where {origen != 'CRE'}

@@ -80,33 +80,6 @@ abstract class CompraService {
     }
 
 
-    void actualizarPartida(CompraDet partida) {
-        partida.clave = partida.producto.clave
-        partida.descripcion = partida.producto.descripcion
-        partida.unidad = partida.producto.unidad
-        BigDecimal factor = partida.producto.unidad == 'MIL' ? 1000 : 1
-        BigDecimal cantidad = partida.solicitado / factor
-        BigDecimal importeBruto = MonedaUtils.round(cantidad * partida.precio) as BigDecimal
-        BigDecimal importeNeto = MonedaUtils.aplicarDescuentosEnCascada(
-                importeBruto,
-                partida.descuento1,
-                partida.descuento2,
-                partida.descuento3,
-                partida.descuento4
-        )
-        BigDecimal costo = MonedaUtils.aplicarDescuentosEnCascada(
-                partida.precio,
-                partida.descuento1,
-                partida.descuento2,
-                partida.descuento3,
-                partida.descuento4
-        )
-
-        partida.costo = costo
-        partida.importeBruto = importeBruto
-        partida.importeNeto = importeNeto
-    }
-
 
     Long  nextFolio(Compra compra){
         String serie = compra.sucursal.nombre

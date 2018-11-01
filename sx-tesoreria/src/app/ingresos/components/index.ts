@@ -9,6 +9,7 @@ import { ChequesDevueltosTableComponent } from './cheques-devueltos/cheques-devu
 import { SelectorDeCobrosChequeComponent } from './selecor-de-cheques/selector-de-cobros-cheques.component';
 import { ChequeDevueltoFormComponent } from './cheque-devuelto-form/cheque-devuelto-form.component';
 import { FichasFilterComponent } from './fichas-filter/fichas-filter.component';
+import { FichasTableComponent } from './fichas-table/fichas-table.component';
 
 export const components: any[] = [
   // Cobros
@@ -23,7 +24,8 @@ export const components: any[] = [
   CobrosChequeTableComponent,
   ChequeDevueltoFormComponent,
   // Fichas
-  FichasFilterComponent
+  FichasFilterComponent,
+  FichasTableComponent
 ];
 export const entryComponents: any[] = [
   CobrosFilterComponent,
@@ -46,3 +48,4 @@ export * from './selecor-de-cheques/cobros-cheque-table.component';
 export * from './cheque-devuelto-form/cheque-devuelto-form.component';
 // Fichas
 export * from './fichas-filter/fichas-filter.component';
+export * from './fichas-table/fichas-table.component';

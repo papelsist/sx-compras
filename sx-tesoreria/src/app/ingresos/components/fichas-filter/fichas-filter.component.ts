@@ -13,7 +13,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
         <mat-datepicker #myDatepicker></mat-datepicker>
       </mat-form-field>
       <sx-sucursal-field [parent]="form" class="pad-left"></sx-sucursal-field>
-      <button mat-button [disabled]="form.invalid && !form.pristine">Aceptar</button>
+      <div flex class="pad-left">
+        <button mat-button [disabled]="form.invalid && !form.pristine" >Aplicar</button>
+      </div>
     </div>
   </form>
   `
