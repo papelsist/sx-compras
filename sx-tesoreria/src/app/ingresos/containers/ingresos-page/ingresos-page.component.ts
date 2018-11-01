@@ -74,4 +74,19 @@ export class IngresosPageComponent implements OnInit {
         }
       });
   }
+
+  reporteDeRelacionDeFichas() {
+    /*
+    const dialogRef = this.dialog.open(RelacionFichasComponent);
+    dialogRef.afterClosed().subscribe(res => {
+      if (res) {
+        console.log('Run report: ', res);
+        this.reportService.runReport(
+          'cxc/cobro/reporteDeRelacionDeFichas',
+          res
+        );
+      }
+    });
+    */
+  }
 }

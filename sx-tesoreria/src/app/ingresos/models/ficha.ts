@@ -1,3 +1,6 @@
+import * as moment from 'moment';
+import { Sucursal } from 'app/models';
+
 export interface Ficha {
   id?: string;
   folio: number;
@@ -16,17 +19,20 @@ export interface Ficha {
   creado?: string;
   modificado?: string;
   usuario?: string;
+  ingreso?: any;
 }
 
 export class FichaFilter {
   fecha: Date;
   tipo: string;
-  sucursal: string;
+  sucursal: Sucursal;
 }
 
 export function buildFichasFilter(): FichaFilter {
   return {
-    fecha: new Date(),
+    fecha: moment()
+      .subtract(2, 'days')
+      .toDate(),
     tipo: 'CRE',
     sucursal: undefined
   };

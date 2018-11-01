@@ -14,5 +14,7 @@ json g.render(ficha, [excludes: ['sucursal', 'cuentaDeBanco']]){
 	creado ficha.createUser
 	modificado ficha.lastUpdated
 	usuario ficha.updateUser
+	banco ficha.cuentaDeBanco.descripcion
+	cuenta ficha.cuentaDeBanco.numero
 
 }

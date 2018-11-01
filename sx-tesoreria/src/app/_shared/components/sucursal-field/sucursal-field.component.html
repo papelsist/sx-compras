@@ -1,7 +1,7 @@
 <ng-container [formGroup]="parent">
   <mat-form-field [style.width.%]="100">
     <mat-select [placeholder]="placeholder" formControlName="sucursal" class="sucursal-field" [compareWith]="compareFn">
-      <mat-option [value]="null">Todas</mat-option>
+      <mat-option [value]="">Todas</mat-option>
       <mat-option *ngFor="let sucursal of sucursales" [value]="sucursal">
         {{sucursal.nombre}}
       </mat-option>

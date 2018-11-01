@@ -32,6 +32,13 @@
     </a>
     <mat-divider></mat-divider>
 
+    <mat-list-item (click)="reporteDeRelacionDeFichas()">
+      <mat-icon matListAvatar>insert_chart</mat-icon>
+      <h3 matLine> Fichas </h3>
+      <p matLine> Relación de Fichas </p>
+    </mat-list-item>
+    <mat-divider [inset]="true"></mat-divider>
+
   </mat-nav-list>
 
   <router-outlet></router-outlet>

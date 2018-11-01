@@ -29,16 +29,25 @@ class FichaController extends RestfulController<Ficha> {
     @Override
     protected List listAllResources(Map params) {
 
-        params.max = 100
+        params.max = 1000
         params.sort = params.sort ?:'lastUpdated'
         params.order = params.order ?:'desc'
         String cartera = params.cartera ?: 'CREDITO'
 
         log.debug('List : {}', params)
 
-        PorFechaCommand command = new PorFechaCommand()
+        FichasPorFechaCommand command = new FichasPorFechaCommand()
         bindData(command, params)
         def query = Ficha.where {fecha == command.fecha}
+        if(command.tipo ){
+            query = query.where{ origen == command.tipo}
+        }
+        log.info('Sucursal: ', command.sucursal)
+        if(command.sucursal) {
+            query = query.where{ sucursal == command.sucursal}
+        }
+
+        /*
         if(cartera == 'TODAS'){
             query = query.where {origen == 'CRE'}
         } else {
@@ -49,6 +58,7 @@ class FichaController extends RestfulController<Ficha> {
             def search = '%' + sucursal.toUpperCase() + '%'
             query = query.where { sucursal.nombre =~ search }
         }
+        */
         return query.list(params)
     }
 
@@ -86,12 +96,21 @@ class FichaController extends RestfulController<Ficha> {
     }
 }
 
-class PorFechaCommand {
+class FichasPorFechaCommand {
 
     Date fecha
 
+    String tipo
+
+    Sucursal sucursal
+
     String toString() {
         return fecha.format('dd/MM/yyyy')
+    }
+
+    static constraints = {
+        tipo nullable: true
+        sucursal nullable: true
     }
 }
 

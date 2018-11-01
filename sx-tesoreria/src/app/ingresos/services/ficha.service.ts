@@ -28,10 +28,13 @@ export class FichasService {
   }
 
   list(filter: FichaFilter): Observable<Ficha[]> {
-    const params = new HttpParams()
+    let params = new HttpParams()
       .set('tipo', filter.tipo)
-      .set('fecha', filter.fecha.toISOString())
-      .set('sucursal', filter.sucursal);
+      .set('fecha', filter.fecha.toISOString());
+    if (filter.sucursal) {
+      params = params.set('sucursal', filter.sucursal.id);
+    }
+
     return this.http
       .get<Ficha[]>(this.apiUrl, { params: params })
       .pipe(catchError((error: any) => throwError(error)));

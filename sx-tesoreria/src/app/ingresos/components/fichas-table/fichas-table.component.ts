@@ -45,11 +45,13 @@ export class FichasTableComponent implements OnInit, OnChanges {
   dataSource = new MatTableDataSource<Ficha>([]);
 
   displayColumns = [
+    'origen',
     'sucursalNombre',
     'folio',
     'fecha',
     'tipoDeFicha',
-    'cuentaDeBanco',
+    'banco',
+    'cuenta',
     'total',
     'ingresoFecha',
     'modificado',
@@ -96,5 +98,9 @@ export class FichasTableComponent implements OnInit, OnChanges {
   doRegistrarIngreso(event: Event, row: Ficha) {
     event.stopPropagation();
     this.ingreso.emit(row);
+  }
+
+  isEditable(row: Ficha) {
+    return !row.ingreso && row.origen !== 'CON' && row.origen !== 'COD';
   }
 }

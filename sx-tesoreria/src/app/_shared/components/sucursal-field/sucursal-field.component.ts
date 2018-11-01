@@ -42,7 +42,7 @@ export class SucursalFieldComponent implements OnInit, OnDestroy {
 
   buscarSucursales(): Observable<Sucursal[]> {
     return this.http.get<Sucursal[]>(this.apiUrl, {
-      params: new HttpParams().set('activas', 'activas')
+      // params: new HttpParams().set('activas', 'activas')
     });
   }
 

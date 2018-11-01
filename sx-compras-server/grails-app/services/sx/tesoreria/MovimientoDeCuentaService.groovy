@@ -4,7 +4,7 @@ import grails.compiler.GrailsCompileStatic
 import grails.gorm.transactions.Transactional
 
 import groovy.util.logging.Slf4j
-
+import sx.core.Empresa
 import sx.core.LogUser
 import sx.cxp.Rembolso
 import sx.cxp.Requisicion
@@ -118,7 +118,7 @@ class MovimientoDeCuentaService implements  LogUser{
 
         // Datos del pago
         egreso.referencia = referencia
-        egreso.afavor = rembolso.nombre
+        egreso.afavor = Empresa.first().nombre
         egreso.cuenta = cuenta
         logEntity(egreso)
         generarCheque(egreso)

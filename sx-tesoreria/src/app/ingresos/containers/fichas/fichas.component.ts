@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { Store, select } from '@ngrx/store';
-import * as fromRoot from 'app/store';
 import * as fromStore from '../../store';
-import * as fromActions from '../../store/actions';
 
 import { Observable } from 'rxjs';
 
@@ -11,21 +9,49 @@ import { Ficha, FichaFilter } from '../../models';
 import { ReportService } from 'app/reportes/services/report.service';
 
 import { MatDialog } from '@angular/material';
-
 import { TdDialogService } from '@covalent/core';
-import { FormBuilder, Form } from '@angular/forms';
+
+import * as _ from 'lodash';
 
 @Component({
   selector: 'sx-fichas',
   template: `
     <mat-card>
-      <sx-search-title title="Fichas registrados" (search)="search = $event">
-        <sx-fichas-filter [filter]="filter$ | async" class="options"></sx-fichas-filter>
-        <button mat-menu-item class="actions" (click)="reload()"><mat-icon>refresh</mat-icon> Recargar</button>
-        <a mat-menu-item  color="accent" class="actions" (click)="generar()">
-          <mat-icon>perm_data_setting</mat-icon> Generar
-        </a>
-      </sx-search-title>
+    <div layout layout-align="start center"  class="pad-left-sm pad-right-sm">
+      <span class="push-left-sm">
+        <span class="mat-title">Fichas registrados</span>
+        </span>
+        <span layout *ngIf="fichas$ | async as fichas" class="tc-indigo-600 pad">
+
+        <span layout>
+          <span class="pad-left">Efectivo: </span>
+          <span class="pad-left">{{getTotal(fichas, 'EFECTIVO') | currency}}</span>
+        </span>
+        <span layout>
+          <span class="pad-left">Otros: </span>
+          <span class="pad-left">{{getTotal(fichas, 'OTROS_BANCOS') | currency}}</span>
+        </span>
+        <span layout>
+          <span class="pad-left">Mismo: </span>
+          <span class="pad-left">{{getTotal(fichas, 'MISMO_BANCO') | currency }}</span>
+        </span>
+
+      </span>
+
+      <span flex></span>
+      <sx-fichas-filter [filter]="filter$ | async" (aplicar)="onFilterChange($event)"></sx-fichas-filter>
+      <span>
+        <button mat-icon-button [matMenuTriggerFor]="toolbarMenu">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #toolbarMenu="matMenu">
+          <button mat-menu-item  (click)="reload()"><mat-icon>refresh</mat-icon> Recargar</button>
+          <a mat-menu-item  color="accent"  (click)="generar()">
+            <mat-icon>perm_data_setting</mat-icon> Generar
+          </a>
+        </mat-menu>
+      </span>
+      </div>
       <mat-divider></mat-divider>
 
       <sx-fichas-table [fichas]="fichas$ | async"
@@ -34,9 +60,9 @@ import { FormBuilder, Form } from '@angular/forms';
         (ingreso)="onIngreso($event)"
         [filter]="search">
       </sx-fichas-table>
-      <mat-card-footer>
+      <mat-card-actions>
 
-      </mat-card-footer>
+      </mat-card-actions>
     </mat-card>
 
   `,
@@ -53,7 +79,6 @@ export class FichasComponent implements OnInit {
   fichas$: Observable<Ficha[]>;
   search = '';
   filter$: Observable<FichaFilter>;
-  form: Form;
 
   constructor(
     private store: Store<fromStore.State>,
@@ -67,7 +92,7 @@ export class FichasComponent implements OnInit {
     this.filter$ = this.store.pipe(select(fromStore.getFichasFilter));
   }
 
-  onFilterChange(filter: any) {
+  onFilterChange(filter: FichaFilter) {
     this.store.dispatch(new fromStore.SetFichasFilter({ filter }));
   }
 
@@ -82,4 +107,14 @@ export class FichasComponent implements OnInit {
   onEdit(event: Ficha) {}
 
   onDelete(event: Ficha) {}
+
+  getTotal(fichas: Ficha[], tipo: string) {
+    return _.sumBy(fichas, item => {
+      if (item.tipoDeFicha === tipo) {
+        return item.total;
+      } else {
+        return 0;
+      }
+    });
+  }
 }

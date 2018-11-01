@@ -1,27 +1,37 @@
 <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
 
+  <ng-container matColumnDef="origen">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Cartera</th>
+    <td mat-cell *matCellDef="let row">{{row.origen}}</td>
+  </ng-container>
   <ng-container matColumnDef="sucursalNombre">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal</th>
-    <td mat-cell *matCellDef="let row" matTooltip="{{row.id}}">{{row.sucursalNombre}}</td>
+    <td mat-cell *matCellDef="let row">{{row.sucursalNombre}}</td>
   </ng-container>
 
   <ng-container matColumnDef="folio">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Folio</th>
-    <td mat-cell *matCellDef="let row" matTooltip="{{row.id}}">{{row.folio}}</td>
+    <td mat-cell *matCellDef="let row">{{row.folio}}</td>
   </ng-container>
 
   <ng-container matColumnDef="tipoDeFicha">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo</th>
-    <td mat-cell *matCellDef="let row" matTooltip="{{row.id}}">{{row.tipoDeFicha}}</td>
+    <td mat-cell *matCellDef="let row">{{row.tipoDeFicha}}</td>
   </ng-container>
 
   <ng-container matColumnDef="fecha">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
     <td mat-cell *matCellDef="let row">{{row.fecha | date: 'dd/MM/yyyy'}}</td>
   </ng-container>
-  <ng-container matColumnDef="cuentaDeBanco">
+
+  <ng-container matColumnDef="banco">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Banco</th>
+    <td mat-cell *matCellDef="let row">{{row.banco}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="cuenta">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Cuenta</th>
-    <td mat-cell *matCellDef="let row">{{row.cuentaDeBanco}}</td>
+    <td mat-cell *matCellDef="let row">{{row.cuenta}}</td>
   </ng-container>
 
   <ng-container matColumnDef="total">
@@ -33,7 +43,7 @@
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Ingreso</th>
     <td mat-cell *matCellDef="let row">
       {{row.ingresoFecha | date: 'dd/MM/yyyy'}}
-      <div *ngIf="!row.ingreso">
+      <div *ngIf="isEditable(row)">
         <a mat-button color="primary" (click)="doRegistrarIngreso(row)"> Registrar </a>
       </div>
     </td>
@@ -41,7 +51,7 @@
 
   <ng-container matColumnDef="usuario">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Usuario</th>
-    <td mat-cell *matCellDef="let row" >{{row.usuario}}</td>
+    <td mat-cell *matCellDef="let row">{{row.usuario}}</td>
   </ng-container>
 
   <ng-container matColumnDef="modificado">
@@ -52,7 +62,7 @@
   <ng-container matColumnDef="operaciones">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>...</th>
     <td mat-cell *matCellDef="let row">
-      <mat-icon color="warn" *ngIf="!row.ingreso" (click)="doDelete($event, row)">delete</mat-icon>
+      <mat-icon color="warn" *ngIf="isEditable(row)" (click)="doDelete($event, row)">delete</mat-icon>
     </td>
   </ng-container>
 
