@@ -28,6 +28,8 @@ class CuentaDeBanco {
 
     Boolean disponibleEnPagos = false
 
+    Boolean cuentaConcentradora = false
+
     String subCuentaOperativa
 
     String impresionTemplate
@@ -60,6 +62,7 @@ class CuentaDeBanco {
         updateUser nullable: true
         proximoCheque nullable: true
         comisionPorTransferencia nullable: true
+        cuentaConcentradora nullable: true
     }
 
     String toString() {

@@ -55,6 +55,9 @@ export class CuentaBancoFieldComponent implements OnInit, ControlValueAccessor {
   @Input()
   disponibleEnPagos = true;
 
+  @Input()
+  concentradora = true;
+
   cuentas$: Observable<any[]>;
 
   onChange;
@@ -77,6 +80,9 @@ export class CuentaBancoFieldComponent implements OnInit, ControlValueAccessor {
           .set('activas', 'activas');
         if (this.disponibleEnPagos) {
           params = params.set('disponibleEnPagos', 'disponibleEnPagos');
+        }
+        if (this.concentradora) {
+          params = params.set('cuentaConcentradora', 'cuentaConcentradora');
         }
         return this.http.get<any[]>(this.apiUrl, { params: params });
       })

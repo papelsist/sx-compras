@@ -4,12 +4,15 @@ import grails.compiler.GrailsCompileStatic
 import grails.gorm.transactions.Transactional
 import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.*
-
+import grails.validation.Validateable
 import groovy.util.logging.Slf4j
+import org.apache.commons.lang3.exception.ExceptionUtils
 import org.springframework.http.HttpStatus
 import sx.core.Sucursal
 import sx.cxc.CobroCheque
 import sx.reports.ReportService
+
+import static org.springframework.http.HttpStatus.CREATED
 
 @Slf4j
 // @GrailsCompileStatic
@@ -46,29 +49,29 @@ class FichaController extends RestfulController<Ficha> {
         if(command.sucursal) {
             query = query.where{ sucursal == command.sucursal}
         }
-
-        /*
-        if(cartera == 'TODAS'){
-            query = query.where {origen == 'CRE'}
-        } else {
-            query = query.where {origen != 'CRE'}
-        }
-        if(params.sucursal) {
-            String sucursal = params.sucursal
-            def search = '%' + sucursal.toUpperCase() + '%'
-            query = query.where { sucursal.nombre =~ search }
-        }
-        */
         return query.list(params)
+    }
+
+    @Override
+    protected void deleteResource(Ficha resource) {
+        fichaService.cancelarFicha(resource)
     }
 
     @Transactional
     def generar(FichasBuildCommand command) {
-        log.debug('Generando fichas: {}', command)
-        def res = fichaService.generar(command)
-        // log.debug('Res: {}', res);
-        respond status: HttpStatus.CREATED
-
+        log.debug('Generando fichas: {}', this.params)
+        if(command == null) {
+            notFound()
+            return
+        }
+        command.validate()
+        if(command.hasErrors()) {
+            transactionStatus.setRollbackOnly()
+            respond command.errors, view:'create' // STATUS CODE 422
+            return
+        }
+        List<Ficha> fichasList = fichaService.generar(command.formaDePago, command.fecha, command.tipo, command.cuenta)
+        respond fichasList, [status: CREATED, view:'index']
     }
 
     def cheques() {
@@ -94,6 +97,13 @@ class FichaController extends RestfulController<Ficha> {
         def pdf =  reportService.run('RelacionDeFichas.jrxml', repParams)
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'RelacionDeFichas.pdf')
     }
+
+    def handleException(Exception e) {
+        String message = ExceptionUtils.getRootCauseMessage(e)
+        log.error(message, ExceptionUtils.getRootCause(e))
+        respond([message: message], status: 500)
+    }
+
 }
 
 class FichasPorFechaCommand {
@@ -114,14 +124,14 @@ class FichasPorFechaCommand {
     }
 }
 
-class FichasBuildCommand {
+class FichasBuildCommand implements  Validateable{
     Date fecha
     String formaDePago
     String tipo
     CuentaDeBanco cuenta
 
     String toString() {
-        return "${formaDePago} ${tipo} ${fecha.format('dd/MM/yyyy')} ${cuenta.descripcion}"
+        return "${formaDePago} ${tipo} ${fecha?.format('dd/MM/yyyy')} ${cuenta?.descripcion}"
     }
 }
 

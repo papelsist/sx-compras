@@ -11,6 +11,9 @@ export enum FichaActionTypes {
   GenerateFichas = '[Fichas Component] Generate Fichsa',
   GenerateFichasSuccess = '[Ficha API] Generate Fichsa Success',
 
+  DeleteFicha = '[Fichas Component] Delete Ficha',
+  DeleteFichaSuccess = '[Ficha API] Delete Ficha Success',
+
   FichaError = '[Ficha API] Fichas http error'
 }
 
@@ -44,10 +47,22 @@ export class FichaError implements Action {
   constructor(public payload: { response: any }) {}
 }
 
+export class DeleteFicha implements Action {
+  readonly type = FichaActionTypes.DeleteFicha;
+  constructor(public payload: { ficha: Ficha }) {}
+}
+
+export class DeleteFichaSuccess implements Action {
+  readonly type = FichaActionTypes.DeleteFichaSuccess;
+  constructor(public payload: { ficha: Ficha }) {}
+}
+
 export type FichaActions =
   | SetFichasFilter
   | LoadFichas
   | LoadFichasSuccess
   | GenerateFichas
   | GenerateFichasSuccess
+  | DeleteFicha
+  | DeleteFichaSuccess
   | FichaError;

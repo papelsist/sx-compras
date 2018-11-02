@@ -30,6 +30,9 @@ class CuentaDeBancoController extends RestfulController {
         if(params.disponibleEnPagos) {
             query = query.where {disponibleEnPagos == true}
         }
+        if(params.cuentaConcentradora) {
+            query = query.where{cuentaConcentradora == true}
+        }
         return query.list(params)
     }
 

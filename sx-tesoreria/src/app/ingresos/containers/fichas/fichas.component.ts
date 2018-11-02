@@ -12,10 +12,13 @@ import { MatDialog } from '@angular/material';
 import { TdDialogService } from '@covalent/core';
 
 import * as _ from 'lodash';
+import { RelacionFichasComponent } from '../../../reportes/components';
+import { FichasGenerarComponent } from '../../components';
 
 @Component({
   selector: 'sx-fichas',
   template: `
+  <ng-template tdLoading [tdLoadingUntil]="!(loading$ | async)" tdLoadingStrategy="overlay">
     <mat-card>
     <div layout layout-align="start center"  class="pad-left-sm pad-right-sm">
       <span class="push-left-sm">
@@ -46,9 +49,12 @@ import * as _ from 'lodash';
         </button>
         <mat-menu #toolbarMenu="matMenu">
           <button mat-menu-item  (click)="reload()"><mat-icon>refresh</mat-icon> Recargar</button>
-          <a mat-menu-item  color="accent"  (click)="generar()">
+          <a mat-menu-item  color="accent"  (click)="generar(filter)" *ngIf="filter$ | async as filter">
             <mat-icon>perm_data_setting</mat-icon> Generar
           </a>
+          <button mat-menu-item (click)="reporteDeRelacionDeFichas(filter)" *ngIf="filter$ | async as filter">
+            <mat-icon matListAvatar>insert_chart</mat-icon> Relación de fichas
+          </button>
         </mat-menu>
       </span>
       </div>
@@ -64,7 +70,7 @@ import * as _ from 'lodash';
 
       </mat-card-actions>
     </mat-card>
-
+  </ng-template>
   `,
   styles: [
     `
@@ -79,6 +85,7 @@ export class FichasComponent implements OnInit {
   fichas$: Observable<Ficha[]>;
   search = '';
   filter$: Observable<FichaFilter>;
+  loading$: Observable<boolean>;
 
   constructor(
     private store: Store<fromStore.State>,
@@ -88,6 +95,7 @@ export class FichasComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.loading$ = this.store.pipe(select(fromStore.getFichasLoading));
     this.fichas$ = this.store.pipe(select(fromStore.getAllFichas));
     this.filter$ = this.store.pipe(select(fromStore.getFichasFilter));
   }
@@ -100,13 +108,39 @@ export class FichasComponent implements OnInit {
     this.store.dispatch(new fromStore.LoadFichas());
   }
 
-  generar() {}
+  generar(filter: FichaFilter) {
+    this.dialog
+      .open(FichasGenerarComponent, {
+        data: { fecha: filter.fecha, tipo: filter.tipo }
+      })
+      .afterClosed()
+      .subscribe(command => {
+        if (command) {
+          this.store.dispatch(new fromStore.GenerateFichas({ command }));
+        }
+      });
+  }
 
   onIngreso(event: Ficha) {}
 
   onEdit(event: Ficha) {}
 
-  onDelete(event: Ficha) {}
+  onDelete(event: Ficha) {
+    this.dialogService
+      .openConfirm({
+        title: `Eliminar ficha ${event.folio}`,
+        message:
+          'Se eliminara también el ingreso a bancos, si es que ya se generó',
+        cancelButton: 'Cancelar',
+        acceptButton: 'Eliminar'
+      })
+      .afterClosed()
+      .subscribe(res => {
+        if (res) {
+          this.store.dispatch(new fromStore.DeleteFicha({ ficha: event }));
+        }
+      });
+  }
 
   getTotal(fichas: Ficha[], tipo: string) {
     return _.sumBy(fichas, item => {
@@ -114,6 +148,21 @@ export class FichasComponent implements OnInit {
         return item.total;
       } else {
         return 0;
+      }
+    });
+  }
+
+  reporteDeRelacionDeFichas(filter: FichaFilter) {
+    const dialogRef = this.dialog.open(RelacionFichasComponent, {
+      data: { filter }
+    });
+    dialogRef.afterClosed().subscribe(res => {
+      if (res) {
+        console.log('Run report: ', res);
+        this.reportService.runReport(
+          'tesoreria/fichas/reporteDeRelacionDeFichas',
+          res
+        );
       }
     });
   }

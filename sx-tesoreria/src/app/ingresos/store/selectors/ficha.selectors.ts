@@ -42,3 +42,8 @@ export const getFichasFilter = createSelector(
   getFichasState,
   fromFichas.getFichasFilter
 );
+
+export const getFichasFecha = createSelector(
+  getFichasFilter,
+  filter => filter.fecha
+);

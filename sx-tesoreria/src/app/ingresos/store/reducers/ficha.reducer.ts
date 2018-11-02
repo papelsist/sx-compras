@@ -36,7 +36,7 @@ export function reducer(state = initialState, action: FichaActions): State {
         filter
       };
     }
-
+    case FichaActionTypes.DeleteFicha:
     case FichaActionTypes.GenerateFichas:
     case FichaActionTypes.LoadFichas: {
       return {
@@ -61,6 +61,13 @@ export function reducer(state = initialState, action: FichaActions): State {
 
     case FichaActionTypes.GenerateFichasSuccess: {
       return adapter.addMany(action.payload.fichas, {
+        ...state,
+        loading: false
+      });
+    }
+
+    case FichaActionTypes.DeleteFichaSuccess: {
+      return adapter.removeOne(action.payload.ficha.id, {
         ...state,
         loading: false
       });

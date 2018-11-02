@@ -1,16 +1,21 @@
 package sx.tesoreria
 
+import grails.compiler.GrailsCompileStatic
 import grails.gorm.transactions.Transactional
+import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
+import sx.core.AppConfig
 import sx.core.Empresa
 import sx.core.Folio
 import sx.cxc.Cobro
+import sx.cxc.CobroCheque
 
 @Transactional
 @Slf4j
+@GrailsCompileStatic
 class FichaService {
 
-    def registrarIngreso(Ficha ficha){
+    Ficha registrarIngreso(Ficha ficha){
         if(ficha.ingreso) {
            throw new RuntimeException("Ficha ${ficha.folio} ya tiene ingreso: ${ficha.ingreso.id}")
         }
@@ -26,23 +31,23 @@ class FichaService {
         mov.importe = ficha.total
         mov.moneda = mov.cuenta.moneda
         mov.concepto = 'VENTAS'
+        mov.sucursal = ficha.sucursal.nombre
         mov.save failOnError: true, flush: true
         ficha.ingreso = mov
         ficha.save()
     }
 
 
-    def generar(String formaDePago, Date fecha, String tipo, CuentaDeBanco cuenta) {
+    List<Ficha> generar(String formaDePago, Date fecha, String tipo, CuentaDeBanco cuenta) {
         switch (formaDePago) {
             case 'CHEQUE':
-                generarFichasDeCheque(fecha, tipo, cuenta)
-                break
+                return generarFichasDeCheque(fecha, tipo, cuenta)
             case 'EFECTIVO':
-                generarFichaDeEfectivo(fecha, tipo, cuenta)
+                return [generarFichaDeEfectivo(fecha, tipo, cuenta)]
         }
     }
 
-    def generarFichasDeCheque(Date fecha, String tipo, CuentaDeBanco cuenta) {
+    List<Ficha> generarFichasDeCheque(Date fecha, String tipo, CuentaDeBanco cuenta) {
 
         String hql = "from Cobro a " +
                 " where date(a.fecha) = ? " +
@@ -50,35 +55,40 @@ class FichaService {
                 " and a.tipo = ?" +
                 " and a.cheque.ficha is null"
 
-        Set<Cobro> cobros = Cobro.executeQuery(hql, [fecha, 'CHEQUE', tipo])
-        Set<Cobro> mismoBanco = cobros.findAll { it.cheque.bancoOrigen.nombre == cuenta.descripcion}
-        Set<Cobro> otrosBancos = cobros.findAll { it.cheque.bancoOrigen.nombre != cuenta.descripcion}
-        armarFichas(fecha, new ArrayList(mismoBanco), 'MISMO_BANCO', tipo, cuenta)
-        armarFichas(fecha, new ArrayList(otrosBancos), 'OTROS_BANCOS', tipo, cuenta)
+        List<Cobro> cobros = Cobro.executeQuery(hql, [fecha, 'CHEQUE', tipo])
+        List<Cobro> mismoBanco = cobros.findAll { it.cheque.bancoOrigen.nombre == cuenta.descripcion}
+        List<Cobro> otrosBancos = cobros.findAll { it.cheque.bancoOrigen.nombre != cuenta.descripcion}
+
+        List<Ficha> fichasMismo = armarFichas(fecha, new ArrayList(mismoBanco), 'MISMO_BANCO', tipo, cuenta)
+        List<Ficha> fichasOtros = armarFichas(fecha, new ArrayList(otrosBancos), 'OTROS_BANCOS', tipo, cuenta)
+        fichasMismo.addAll(fichasOtros)
+        return fichasMismo
     }
 
-    def armarFichas(Date fecha, List<Cobro> cobros, String tipo, String origen, CuentaDeBanco cuenta) {
+    List<Ficha> armarFichas(Date fecha, List<Cobro> cobros, String tipo, String origen, CuentaDeBanco cuenta) {
         int folio = 1
-        List grupo = []
+        List<Cobro> grupo = []
+        List<Ficha> fichas = []
         for (int i = 0; i < cobros.size(); i++) {
             Cobro cobro = cobros.get(i)
             if(grupo.size() < 5) {
                 grupo << cobro
             } else {
-                generarFicha(fecha, tipo, origen, grupo, cuenta)
+                fichas << generarFicha(fecha, tipo, origen, grupo, cuenta)
                 grupo = []
                 grupo << cobro
             }
         }
         if (grupo) {
-            generarFicha(fecha, tipo, origen, grupo, cuenta)
+            fichas << generarFicha(fecha, tipo, origen, grupo, cuenta)
         }
+        return fichas
     }
 
 
-
-    def generarFicha(Date fecha, String tipo, String origen, List<Cobro> grupo, CuentaDeBanco cuenta) {
-        BigDecimal total = grupo.sum (0.0, {it.importe})
+    @CompileDynamic
+    Ficha generarFicha(Date fecha, String tipo, String origen, List<Cobro> cobros, CuentaDeBanco cuenta) {
+        BigDecimal total = cobros.sum (0.0, {it.importe})
 
         Ficha ficha = new Ficha()
         ficha.fecha = fecha
@@ -89,7 +99,7 @@ class FichaService {
         ficha.total = total
         ficha.folio = Folio.nextFolio('FICHAS','FICHAS')
         ficha.save failOnError: true, flush: true
-        grupo.each {
+        cobros.each {
             it.cheque.ficha = ficha
             it.save flush:true
         }
@@ -97,7 +107,7 @@ class FichaService {
         return ficha
     }
 
-    def generarFichaDeEfectivo(Date fecha, String origen, CuentaDeBanco cuenta) {
+    Ficha generarFichaDeEfectivo(Date fecha, String origen, CuentaDeBanco cuenta) {
 
         BigDecimal total = Cobro.executeQuery(
                 "select sum(c.importe) from Cobro c " +
@@ -105,9 +115,6 @@ class FichaService {
                         "   and c.tipo = ? " +
                         "   and c.formaDePago = 'EFECTIVO' ",
                 [fecha,origen ])[0];
-        // def cuenta = CuentaDeBanco.where{numero == '16919455' }.find()
-        assert cuenta, 'No existe la cuenta de banco para fichas'
-
         Ficha ficha = new Ficha()
         ficha.fecha = fecha
         ficha.cuentaDeBanco = cuenta
@@ -119,5 +126,19 @@ class FichaService {
         ficha.save failOnError: true, flush: true
         log.debug('Fihca generada {}', ficha)
         return ficha
+    }
+
+    void cancelarFicha(Ficha ficha) {
+
+        List<CobroCheque> cobros = CobroCheque.where{ficha == ficha}.list()
+        cobros.each { cobro ->
+            cobro.ficha = null
+        }
+
+        if(ficha.ingreso) {
+            MovimientoDeCuenta ingreso = ficha.ingreso
+            ingreso.delete flush: true
+        }
+        ficha.delete flush: true
     }
 }

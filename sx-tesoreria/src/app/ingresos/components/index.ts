@@ -10,6 +10,7 @@ import { SelectorDeCobrosChequeComponent } from './selecor-de-cheques/selector-d
 import { ChequeDevueltoFormComponent } from './cheque-devuelto-form/cheque-devuelto-form.component';
 import { FichasFilterComponent } from './fichas-filter/fichas-filter.component';
 import { FichasTableComponent } from './fichas-table/fichas-table.component';
+import { FichasGenerarComponent } from './fichas-generar/fichas-generar.component';
 
 export const components: any[] = [
   // Cobros
@@ -25,13 +26,15 @@ export const components: any[] = [
   ChequeDevueltoFormComponent,
   // Fichas
   FichasFilterComponent,
-  FichasTableComponent
+  FichasTableComponent,
+  FichasGenerarComponent
 ];
 export const entryComponents: any[] = [
   CobrosFilterComponent,
   CobroFormComponent,
   SelectorDeCobrosChequeComponent,
-  ChequeDevueltoFormComponent
+  ChequeDevueltoFormComponent,
+  FichasGenerarComponent
 ];
 
 // Cobros
@@ -49,3 +52,4 @@ export * from './cheque-devuelto-form/cheque-devuelto-form.component';
 // Fichas
 export * from './fichas-filter/fichas-filter.component';
 export * from './fichas-table/fichas-table.component';
+export * from './fichas-generar/fichas-generar.component';

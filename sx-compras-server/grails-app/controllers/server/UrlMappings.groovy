@@ -38,7 +38,7 @@ class UrlMappings {
             "/cheques"( controller: 'ficha', action: 'cheques')
             "/ingreso"( controller: 'ficha', action: 'ingreso')
         }
-        "/api/tesoreria/fichas/generar"(controller: "ficha", action: 'generar', method: 'GET')
+        "/api/tesoreria/fichas/generar"(controller: "ficha", action: 'generar', method: 'POST')
         "/api/tesoreria/fichas/reporteDeRelacionDeFichas"(controller: "ficha", action: 'reporteDeRelacionDeFichas', method: 'GET')
 
         "/api/cxc/cobros"(resources: 'cobro')

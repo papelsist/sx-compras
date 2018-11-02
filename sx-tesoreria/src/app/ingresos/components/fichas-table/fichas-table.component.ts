@@ -24,8 +24,13 @@ import { Ficha } from '../../models';
         max-height: 500px;
         overflow: auto;
       }
-      .mat-column-fecha,
-      .mat-column-formaDePago {
+      .mat-column-origen {
+        width: 70px;
+      }
+      .mat-column-sucursalNombre {
+        width: 110px;
+      }
+      .mat-column-folio {
         width: 90px;
       }
       .mat-cell {

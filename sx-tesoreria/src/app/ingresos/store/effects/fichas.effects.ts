@@ -60,6 +60,18 @@ export class FichaEffects {
     })
   );
 
+  @Effect()
+  delteFicha$ = this.actions$.pipe(
+    ofType<fromActions.DeleteFicha>(FichaActionTypes.DeleteFicha),
+    map(action => action.payload.ficha),
+    switchMap(ficha => {
+      return this.service.delete(ficha).pipe(
+        map(res => new fromActions.DeleteFichaSuccess({ ficha: ficha })),
+        catchError(error => of(new fromActions.FichaError({ response: error })))
+      );
+    })
+  );
+
   @Effect({ dispatch: false })
   success$ = this.actions$.pipe(
     ofType<fromActions.GenerateFichasSuccess>(
@@ -74,6 +86,17 @@ export class FichaEffects {
           duration: 7000
         }
       )
+    )
+  );
+
+  @Effect({ dispatch: false })
+  deleteSuccess$ = this.actions$.pipe(
+    ofType<fromActions.DeleteFichaSuccess>(FichaActionTypes.DeleteFichaSuccess),
+    map(action => action.payload.ficha),
+    tap(fichas =>
+      this.snackBar.open(`${fichas.folio} eliminada exitosamente`, 'Cerrar', {
+        duration: 7000
+      })
     )
   );
 

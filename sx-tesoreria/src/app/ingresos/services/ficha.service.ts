@@ -7,7 +7,7 @@ import { catchError } from 'rxjs/operators';
 import * as _ from 'lodash';
 
 import { ConfigService } from '../../utils/config.service';
-import { Ficha, FichaFilter } from '../models/ficha';
+import { Ficha, FichaFilter, FichaBuildCommand } from '../models/ficha';
 
 @Injectable()
 export class FichasService {
@@ -45,14 +45,17 @@ export class FichasService {
     return this.http.get<Ficha>(url).pipe(catchError(err => throwError(err)));
   }
 
-  generar(filtro: any = {}): Observable<Ficha[]> {
+  generar(command: FichaBuildCommand): Observable<Ficha[]> {
+    /*
     let params = new HttpParams();
     _.forIn(filtro, (value, key) => {
       params = params.set(key, value);
     });
+    */
+
     const url = `${this.apiUrl}/generar`;
     return this.http
-      .get<Ficha[]>(url, { params: params })
+      .post<Ficha[]>(url, command)
       .pipe(catchError(err => throwError(err)));
   }
 
