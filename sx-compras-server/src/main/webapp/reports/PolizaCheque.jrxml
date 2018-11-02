@@ -25,10 +25,9 @@
 
 	<parameter name="IMPLETRA" isForPrompting="true" class="java.lang.String"/>
 	<parameter name="ID" isForPrompting="true" class="java.lang.String"/>
-	<queryString><![CDATA[SELECT ch.ID,M.FECHA,UPPER(CH.nombre) AS AFAVOR,-m.importe as IMPORTE,CH.FOLIO,c.descripcion as BANCO,R.COMENTARIO
+	<queryString><![CDATA[SELECT ch.ID,M.FECHA,UPPER(CH.nombre) AS AFAVOR,-m.importe as IMPORTE,CH.FOLIO,c.descripcion as BANCO, m.COMENTARIO
 FROM cheque ch 
 join movimiento_de_cuenta m on(m.cheque_id=ch.id)
-join requisicion r on(r.egreso=m.id) 
 join cuenta_de_banco c on(c.id=m.cuenta_id)
 where ch.id=$P{ID}]]></queryString>
 

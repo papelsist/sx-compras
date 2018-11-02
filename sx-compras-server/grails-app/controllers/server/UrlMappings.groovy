@@ -19,19 +19,36 @@ class UrlMappings {
 
         "/api/clientes"(resources: 'cliente')
 
+
+        "/api/tesoreria/bancos"(resources: 'banco')
+
         "/api/tesoreria/cuentas"(resources: 'cuentaDeBanco')
         // "/api/tesoreria/cuentas/$id/movimientos"(controller: 'cuentaDeBanco', action: 'movimientos', method: 'GET')
         "/api/tesoreria/cuentas/$id/movimientos/$ejercicio/$mes"(controller: 'cuentaDeBanco', action: 'movimientos', method: 'GET')
         "/api/tesoreria/cuentas/$id/saldos"(controller: 'cuentaDeBanco', action: 'saldos', method: 'GET')
+
 
         "/api/tesoreria/cheques"(resources: 'cheque')
         "/api/tesoreria/cheques/print/$id"(controller: 'cheque', action: 'print', method: 'GET')
         "/api/tesoreria/cheques/printPoliza/$id"(controller: 'cheque', action: 'printPoliza', method: 'GET')
         "/api/tesoreria/cheques/chequesPendientes"(controller: 'cheque', action: 'chequesPendientes', method: 'GET')
 
-        "/api/cxc/cobros"(resources: 'cobro')
+        // Fichas de deposito
+        "/api/tesoreria/fichas"(resources: "ficha"){
+            "/cheques"( controller: 'ficha', action: 'cheques')
+            "/ingreso"( controller: 'ficha', action: 'ingreso')
+        }
+        "/api/tesoreria/fichas/generar"(controller: "ficha", action: 'generar', method: 'GET')
+        "/api/tesoreria/fichas/reporteDeRelacionDeFichas"(controller: "ficha", action: 'reporteDeRelacionDeFichas', method: 'GET')
 
+        "/api/cxc/cobros"(resources: 'cobro')
+        "/api/cxc/cobro/reporteDeCobranza"(controller: "cobro", action: 'reporteDeCobranza', method: 'GET')
+        "/api/cxc/cobro/reporteDeRelacionDePagos"(controller: "cobro", action: 'reporteDeRelacionDePagos', method: 'GET')
+
+        // Cheques devueltos
         "/api/cxc/chequesDevuetos"(resources: 'chequeDevuelto')
+        "/api/cxc/chequesDevuetos/cobros"(controller: 'chequeDevuelto', action: 'cobros', method: 'GET')
+
 
 
         "/api/listaDePreciosProveedor"(resources: 'listaDePreciosProveedor')

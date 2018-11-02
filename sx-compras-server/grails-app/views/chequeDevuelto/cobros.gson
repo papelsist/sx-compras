@@ -1,0 +1,8 @@
+import sx.cxc.CobroCheque
+
+model {
+    List<CobroCheque> cobros
+}
+
+json tmpl.cobroCheque("cobroCheque", cobros)
+

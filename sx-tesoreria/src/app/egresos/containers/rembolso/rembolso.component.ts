@@ -27,6 +27,7 @@ import { TdDialogService } from '@covalent/core';
         <sx-cancelar-cheque-rembolso [rembolso]="rembolso" (cancelar)="onCancelarCheque($event)"></sx-cancelar-cheque-rembolso>
         <sx-print-cheque [egreso]="rembolso.egreso"></sx-print-cheque>
         <sx-generar-cheque-rembolso-btn [rembolso]="rembolso" (generar)="onGenerarCheque($event)"></sx-generar-cheque-rembolso-btn>
+        <sx-poliza-cheque [egreso]="rembolso.egreso"></sx-poliza-cheque>
       </sx-rembolso-pago>
 
     </div>

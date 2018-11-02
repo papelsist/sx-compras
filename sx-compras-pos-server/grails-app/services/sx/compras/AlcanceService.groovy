@@ -9,6 +9,7 @@ import sx.core.AppConfig
 import sx.core.Producto
 import sx.core.Proveedor
 import sx.core.Sucursal
+import sx.utils.MonedaUtils
 
 class AlcancesService implements DataBinder{
 
@@ -103,6 +104,7 @@ class AlcancesService implements DataBinder{
     def generarOrden(String proveedorId, List<Alcance> alcances) {
         Compra compra = new Compra()
         compra.fecha = new Date()
+        compra.centralizada = false
         compra.sucursal = AppConfig.first().sucursal
         compra.proveedor = Proveedor.get(proveedorId)
         compra.comentario = " Compra automatica por alcance: ${alcances.get(0).fecha.format('dd/MM/yyyy')}"
@@ -117,6 +119,7 @@ class AlcancesService implements DataBinder{
                 det.sucursal = compra.sucursal
                 det.solicitado = Math.round(it.porPedir) * factor
                 det.sw2 = ""
+                actualizarPartida(det)
                 compra.addToPartidas(det)
                 it.comentario = "COMPRA ${compra.folio}"
                 it.save()
@@ -124,6 +127,33 @@ class AlcancesService implements DataBinder{
         }
         compra = compraService.saveCompra(compra)
         return compra
+    }
+
+    void actualizarPartida(CompraDet partida) {
+        partida.clave = partida.producto.clave
+        partida.descripcion = partida.producto.descripcion
+        partida.unidad = partida.producto.unidad
+        BigDecimal factor = partida.producto.unidad == 'MIL' ? 1000 : 1
+        BigDecimal cantidad = partida.solicitado / factor
+        BigDecimal importeBruto = MonedaUtils.round(cantidad * partida.precio) as BigDecimal
+        BigDecimal importeNeto = MonedaUtils.aplicarDescuentosEnCascada(
+                importeBruto,
+                partida.descuento1,
+                partida.descuento2,
+                partida.descuento3,
+                partida.descuento4
+        )
+        BigDecimal costo = MonedaUtils.aplicarDescuentosEnCascada(
+                partida.precio,
+                partida.descuento1,
+                partida.descuento2,
+                partida.descuento3,
+                partida.descuento4
+        )
+
+        partida.costo = costo
+        partida.importeBruto = importeBruto
+        partida.importeNeto = importeNeto
     }
 
     def actualizarMeses(int meses) {

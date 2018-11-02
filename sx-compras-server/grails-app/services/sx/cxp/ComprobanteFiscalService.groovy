@@ -36,14 +36,12 @@ class ComprobanteFiscalService implements  LogUser{
     }
 
     @CompileDynamic
-    ComprobanteFiscal buildFromXml(byte[] xmlData, String fileName, String tipo){
+    ComprobanteFiscal buildFromXml(File xmlFile, String fileName, String tipo){
+        def fis = new FileInputStream(xmlFile)
         CfdiReader reader = new CfdiReader()
         // ComprobanteFiscal comprobante = reader.readXml(xmlData, fileName, tipo)
         //return comprobante
-
-
-
-        GPathResult xml = new XmlSlurper().parse(new ByteArrayInputStream(xmlData))
+        GPathResult xml = new XmlSlurper().parse(fis)
 
         def data = xml.attributes()
 
@@ -207,7 +205,7 @@ class ComprobanteFiscalService implements  LogUser{
 
     @Transactional
     ComprobanteFiscal importar(File xmlFile, String tipo) {
-        ComprobanteFiscal cf = buildFromXml(xmlFile.bytes, xmlFile.name, tipo)
+        ComprobanteFiscal cf = buildFromXml(xmlFile, xmlFile.name, tipo)
         if(cf == null){
             cleanFile(xmlFile)
             return null

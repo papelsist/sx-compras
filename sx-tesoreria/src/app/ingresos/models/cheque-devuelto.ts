@@ -4,8 +4,10 @@ import { CobroCheque } from './cobro';
 export interface ChequeDevuelto {
   id?: string;
   folio?: number;
+  numero?: string;
   fecha: string;
-  nombre: string;
+  nombre?: string;
+  importe?: number;
   cheque: Partial<CobroCheque>;
   cxc?: Object;
   egreso?: Object;
