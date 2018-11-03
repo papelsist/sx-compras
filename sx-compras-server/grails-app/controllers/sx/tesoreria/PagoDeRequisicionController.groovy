@@ -5,6 +5,7 @@ import grails.plugin.springsecurity.annotation.Secured
 
 import grails.validation.Validateable
 import groovy.util.logging.Slf4j
+import org.apache.commons.lang3.exception.ExceptionUtils
 import sx.cxp.Requisicion
 
 
@@ -68,6 +69,12 @@ class PagoDeRequisicionController {
         Requisicion requisicion = pagoDeRequisicionService.cancelarCheque(command)
         log.info("Cheque de pago cancelado para la requisicion: {} ", requisicion.folio)
         [requisicion: requisicion]
+    }
+
+    def handleException(Exception e) {
+        String message = ExceptionUtils.getRootCauseMessage(e)
+        log.error(message, ExceptionUtils.getRootCause(e))
+        respond([message: message], status: 500)
     }
 }
 

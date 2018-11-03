@@ -89,7 +89,7 @@ class PagoDeRequisicionService implements  LogUser {
         requisicion.egreso = null
 
         if(egreso.cheque) {
-            Cheque cheque = requisicion.egreso.cheque
+            Cheque cheque = egreso.cheque
             egreso.cheque = null
             cheque.delete flush: true
         }

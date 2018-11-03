@@ -53,6 +53,9 @@ import { CuentaDeBanco } from 'app/models';
           <mat-form-field>
             <input matInput placeholder="Importe a pagar" formControlName="importe" autocomplete="off" type="number">
           </mat-form-field>
+          <mat-slide-toggle [checked]="false" (change)="manual($event)" *ngIf="requisicion.formaDePago === 'CHEQUE'">
+            Asignación manual de cheque
+          </mat-slide-toggle>
         </div>
 
       </div>
@@ -84,7 +87,7 @@ export class PagoRequisicionDialogComponent implements OnInit, OnDestroy {
       if (this.requisicion.formaDePago === 'CHEQUE') {
         this.form.get('cheque').setValue(cta.proximoCheque);
         this.form.get('referencia').setValue(cta.proximoCheque);
-        // this.form.get('referencia').disable();
+        this.form.get('referencia').disable();
       } else {
         this.form.get('referencia').setValue('');
         this.form.get('referencia').enable();
@@ -116,5 +119,13 @@ export class PagoRequisicionDialogComponent implements OnInit, OnDestroy {
 
   get pago() {
     return moment(this.requisicion.fechaDePago).toDate();
+  }
+
+  manual(event) {
+    if (event.checked) {
+      this.form.get('referencia').enable();
+    } else {
+      this.form.get('referencia').disable();
+    }
   }
 }
