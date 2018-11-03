@@ -70,7 +70,7 @@ export class FichasTableComponent implements OnInit, OnChanges {
   paginator: MatPaginator;
 
   @Output()
-  edit = new EventEmitter();
+  select = new EventEmitter();
 
   @Output()
   delete = new EventEmitter();
@@ -107,5 +107,9 @@ export class FichasTableComponent implements OnInit, OnChanges {
 
   isEditable(row: Ficha) {
     return !row.ingreso && row.origen !== 'CON' && row.origen !== 'COD';
+  }
+
+  isDeletable(row: Ficha) {
+    return row.origen !== 'CON' && row.origen !== 'COD';
   }
 }

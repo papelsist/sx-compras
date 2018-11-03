@@ -36,7 +36,7 @@ class UrlMappings {
         // Fichas de deposito
         "/api/tesoreria/fichas"(resources: "ficha"){
             "/cheques"( controller: 'ficha', action: 'cheques')
-            "/ingreso"( controller: 'ficha', action: 'ingreso')
+            "/registrarIngreso"( controller: 'ficha', action: 'registrarIngreso')
         }
         "/api/tesoreria/fichas/generar"(controller: "ficha", action: 'generar', method: 'POST')
         "/api/tesoreria/fichas/reporteDeRelacionDeFichas"(controller: "ficha", action: 'reporteDeRelacionDeFichas', method: 'GET')

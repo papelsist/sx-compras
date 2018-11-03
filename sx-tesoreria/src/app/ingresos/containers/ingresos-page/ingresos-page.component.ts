@@ -43,12 +43,6 @@ export class IngresosPageComponent implements OnInit {
       title: 'Fichas',
       description: 'Alta de fichas',
       icon: 'filter_none'
-    },
-    {
-      route: 'fichasContado',
-      title: 'Fichas (CON)',
-      description: 'Fichas de  contado',
-      icon: 'my_library_books'
     }
   ];
 

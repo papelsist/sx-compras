@@ -61,6 +61,18 @@ export class FichaEffects {
   );
 
   @Effect()
+  ingresoFicha$ = this.actions$.pipe(
+    ofType<fromActions.RegistrarIngreso>(FichaActionTypes.RegistrarIngreso),
+    map(action => action.payload.ficha),
+    switchMap(ficha => {
+      return this.service.registrarIngreso(ficha.id).pipe(
+        map(res => new fromActions.RegistrarIngresoSuccess({ ficha: res })),
+        catchError(error => of(new fromActions.FichaError({ response: error })))
+      );
+    })
+  );
+
+  @Effect()
   delteFicha$ = this.actions$.pipe(
     ofType<fromActions.DeleteFicha>(FichaActionTypes.DeleteFicha),
     map(action => action.payload.ficha),

@@ -13,7 +13,8 @@ import { TdDialogService } from '@covalent/core';
 
 import * as _ from 'lodash';
 import { RelacionFichasComponent } from '../../../reportes/components';
-import { FichasGenerarComponent } from '../../components';
+import { FichasGenerarComponent, FichaInfoComponent } from '../../components';
+import { FichasService } from '../../services';
 
 @Component({
   selector: 'sx-fichas',
@@ -61,7 +62,7 @@ import { FichasGenerarComponent } from '../../components';
       <mat-divider></mat-divider>
 
       <sx-fichas-table [fichas]="fichas$ | async"
-        (edit)="onEdit($event)"
+        (select)="onSelect($event)"
         (delete)="onDelete($event)"
         (ingreso)="onIngreso($event)"
         [filter]="search">
@@ -91,7 +92,8 @@ export class FichasComponent implements OnInit {
     private store: Store<fromStore.State>,
     private dialog: MatDialog,
     private reportService: ReportService,
-    private dialogService: TdDialogService
+    private dialogService: TdDialogService,
+    private service: FichasService
   ) {}
 
   ngOnInit() {
@@ -121,9 +123,28 @@ export class FichasComponent implements OnInit {
       });
   }
 
-  onIngreso(event: Ficha) {}
+  onIngreso(event: Ficha) {
+    this.dialogService
+      .openConfirm({
+        title: 'Tesorería',
+        message: `Registrar ingreso de ficha ${event.folio}?`,
+        acceptButton: 'Aceptar',
+        cancelButton: 'Cancelar'
+      })
+      .afterClosed()
+      .subscribe(val => {
+        this.store.dispatch(new fromStore.RegistrarIngreso({ ficha: event }));
+      });
+  }
 
   onEdit(event: Ficha) {}
+
+  onSelect(ficha: Ficha) {
+    this.dialog.open(FichaInfoComponent, {
+      data: { ficha: ficha },
+      width: '750px'
+    });
+  }
 
   onDelete(event: Ficha) {
     this.dialogService

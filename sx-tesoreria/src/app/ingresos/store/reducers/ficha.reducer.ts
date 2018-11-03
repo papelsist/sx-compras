@@ -36,6 +36,7 @@ export function reducer(state = initialState, action: FichaActions): State {
         filter
       };
     }
+    case FichaActionTypes.RegistrarIngreso:
     case FichaActionTypes.DeleteFicha:
     case FichaActionTypes.GenerateFichas:
     case FichaActionTypes.LoadFichas: {
@@ -68,6 +69,13 @@ export function reducer(state = initialState, action: FichaActions): State {
 
     case FichaActionTypes.DeleteFichaSuccess: {
       return adapter.removeOne(action.payload.ficha.id, {
+        ...state,
+        loading: false
+      });
+    }
+
+    case FichaActionTypes.RegistrarIngresoSuccess: {
+      return adapter.upsertOne(action.payload.ficha, {
         ...state,
         loading: false
       });

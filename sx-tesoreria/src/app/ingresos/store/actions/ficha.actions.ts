@@ -14,6 +14,9 @@ export enum FichaActionTypes {
   DeleteFicha = '[Fichas Component] Delete Ficha',
   DeleteFichaSuccess = '[Ficha API] Delete Ficha Success',
 
+  RegistrarIngreso = '[Fichas Component] RegistrarIngreso ',
+  RegistrarIngresoSuccess = '[Ficha API] RegistrarIngreso  Success',
+
   FichaError = '[Ficha API] Fichas http error'
 }
 
@@ -57,6 +60,16 @@ export class DeleteFichaSuccess implements Action {
   constructor(public payload: { ficha: Ficha }) {}
 }
 
+export class RegistrarIngreso implements Action {
+  readonly type = FichaActionTypes.RegistrarIngreso;
+  constructor(public payload: { ficha: Ficha }) {}
+}
+
+export class RegistrarIngresoSuccess implements Action {
+  readonly type = FichaActionTypes.RegistrarIngresoSuccess;
+  constructor(public payload: { ficha: Ficha }) {}
+}
+
 export type FichaActions =
   | SetFichasFilter
   | LoadFichas
@@ -65,4 +78,6 @@ export type FichaActions =
   | GenerateFichasSuccess
   | DeleteFicha
   | DeleteFichaSuccess
+  | RegistrarIngreso
+  | RegistrarIngresoSuccess
   | FichaError;

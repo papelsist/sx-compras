@@ -45,7 +45,6 @@ class FichaController extends RestfulController<Ficha> {
         if(command.tipo ){
             query = query.where{ origen == command.tipo}
         }
-        log.info('Sucursal: ', command.sucursal)
         if(command.sucursal) {
             query = query.where{ sucursal == command.sucursal}
         }
@@ -77,11 +76,12 @@ class FichaController extends RestfulController<Ficha> {
     def cheques() {
         // log.debug('Buscando cheques de ficha: {}', params)
         def fichaId = params.fichaId
-        def list = CobroCheque.where {ficha.id == fichaId}.list()
-        respond list
+        def cheques = CobroCheque.where {ficha.id == fichaId}.list()
+        // respond list
+        [cheques: cheques]
     }
 
-    def ingreso() {
+    def registrarIngreso() {
         Ficha ficha = Ficha.get(params.fichaId)
         log.debug('Registrando ingreso {}', ficha)
         ficha = fichaService.registrarIngreso(ficha)

@@ -46,13 +46,6 @@ export class FichasService {
   }
 
   generar(command: FichaBuildCommand): Observable<Ficha[]> {
-    /*
-    let params = new HttpParams();
-    _.forIn(filtro, (value, key) => {
-      params = params.set(key, value);
-    });
-    */
-
     const url = `${this.apiUrl}/generar`;
     return this.http
       .post<Ficha[]>(url, command)
@@ -72,23 +65,15 @@ export class FichasService {
       .pipe(catchError((error: any) => throwError(error)));
   }
 
-  update(update: {
-    id: string | number;
-    changes: Partial<Ficha>;
-  }): Observable<Ficha> {
-    const url = `${this.apiUrl}/${update.id}`;
-    return this.http
-      .put<Ficha>(url, update.changes)
-      .pipe(catchError((error: any) => throwError(error)));
-  }
-
   cheques(id: string): Observable<any> {
     const url = `${this.apiUrl}/${id}/cheques`;
     return this.http.get<any>(url);
   }
 
-  ingreso(id: string) {
-    const url = `${this.apiUrl}/${id}/ingreso`;
-    return this.http.get(url).pipe(catchError(err => throwError(err)));
+  registrarIngreso(id: string): Observable<Ficha> {
+    const url = `${this.apiUrl}/${id}/registrarIngreso`;
+    return this.http
+      .put<Ficha>(url, {})
+      .pipe(catchError(err => throwError(err)));
   }
 }

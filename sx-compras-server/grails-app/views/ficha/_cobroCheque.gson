@@ -1,0 +1,16 @@
+import sx.cxc.CobroCheque
+
+model {
+    CobroCheque cobroCheque
+}
+
+json g.render(cobroCheque, [ excludes: ['lastUpdated', 'dateCreated'], resolveTemplate: false]) {
+    creado cobroCheque.dateCreated
+    modificado cobroCheque.lastUpdated
+    nombre cobroCheque.cobro.cliente.nombre
+    fecha cobroCheque.cobro.fecha
+    primeraAplicacion cobroCheque.cobro.primeraAplicacion
+    importe cobroCheque.cobro.importe
+    ficha cobroCheque?.ficha?.folio
+    banco cobroCheque.bancoOrigen.nombre
+}

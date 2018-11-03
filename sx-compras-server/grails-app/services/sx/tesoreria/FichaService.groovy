@@ -34,7 +34,8 @@ class FichaService {
         mov.sucursal = ficha.sucursal.nombre
         mov.save failOnError: true, flush: true
         ficha.ingreso = mov
-        ficha.save()
+        ficha.save flush: true
+        return ficha
     }
 
 
@@ -137,6 +138,7 @@ class FichaService {
 
         if(ficha.ingreso) {
             MovimientoDeCuenta ingreso = ficha.ingreso
+            ficha.ingreso = null
             ingreso.delete flush: true
         }
         ficha.delete flush: true
