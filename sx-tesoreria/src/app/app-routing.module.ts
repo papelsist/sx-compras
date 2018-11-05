@@ -23,6 +23,11 @@ const routes: Routes = [
       {
         path: 'ingresos',
         loadChildren: './ingresos/ingresos.module#IngresosModule'
+      },
+      {
+        path: 'cortesTarjeta',
+        loadChildren:
+          './cortes-tarjeta/cortes-tarjeta.module#CortesTarjetaModule'
       }
     ]
   }

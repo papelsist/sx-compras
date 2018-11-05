@@ -33,6 +33,11 @@ export class MainPageComponent implements OnInit, OnDestroy {
       icon: 'my_library_books',
       route: '/ingresos',
       title: 'Ingresos'
+    },
+    {
+      icon: 'credit_card',
+      route: '/cortesTarjeta',
+      title: 'Cortes de tarjeta'
     }
   ];
 
