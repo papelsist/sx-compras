@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material';
 
 import { CorteDeTarjetaService } from '../../services';
 import { RepComisionTarjetasComponent } from '../../components';
+import { ReportService } from 'app/reportes/services/report.service';
 
 @Component({
   selector: 'sx-cortes',
@@ -27,7 +28,8 @@ export class CortesComponent implements OnInit {
   constructor(
     public media: TdMediaService,
     private service: CorteDeTarjetaService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private reportService: ReportService
   ) {}
 
   sucursales: any[];
@@ -42,18 +44,10 @@ export class CortesComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(res => {
       if (res) {
-        this.service
-          .reporteDeComisionesTarjeta(res.sucursal, res.fecha)
-          .subscribe(
-            pdf => {
-              const blob = new Blob([pdf], {
-                type: 'application/pdf'
-              });
-              const fileURL = window.URL.createObjectURL(blob);
-              window.open(fileURL, '_blank');
-            },
-            error2 => console.log(error2)
-          );
+        this.reportService.runReport(
+          'tesoreria/cortesTarjeta/reporteDeComisionesTarjeta',
+          { sucursal: res.sucursal, fecha: res.fecha.toISOString() }
+        );
       }
     });
   }

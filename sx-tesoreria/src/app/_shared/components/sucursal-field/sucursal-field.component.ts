@@ -22,6 +22,9 @@ export class SucursalFieldComponent implements OnInit, OnDestroy {
   @Input()
   placeholder = 'Sucursal';
 
+  @Input()
+  activas = false;
+
   sucursales: Sucursal[];
 
   private subscription: Subscription;
@@ -41,8 +44,12 @@ export class SucursalFieldComponent implements OnInit, OnDestroy {
   }
 
   buscarSucursales(): Observable<Sucursal[]> {
+    let params = new HttpParams();
+    if (this.activas) {
+      params = params.set('activas', 'activas');
+    }
     return this.http.get<Sucursal[]>(this.apiUrl, {
-      // params: new HttpParams().set('activas', 'activas')
+      params: params
     });
   }
 

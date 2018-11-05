@@ -56,7 +56,7 @@ export class CuentaBancoFieldComponent implements OnInit, ControlValueAccessor {
   disponibleEnPagos = true;
 
   @Input()
-  concentradora = true;
+  concentradora = false;
 
   cuentas$: Observable<any[]>;
 

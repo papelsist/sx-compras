@@ -9,7 +9,7 @@ import { Observable } from 'rxjs';
 import { ReportService } from 'app/reportes/services/report.service';
 import { MatDialog } from '@angular/material';
 import { RelacionPagosComponent } from 'app/reportes/components/relacion-pagos.component';
-import { RelacionFichasComponent } from '../../../reportes/components';
+import { RepComisionTarjetasComponent } from '../../../reportes/components';
 
 @Component({
   selector: 'sx-ingresos-page',
@@ -70,5 +70,20 @@ export class IngresosPageComponent implements OnInit {
           );
         }
       });
+  }
+
+  comisionesTarjeta() {
+    const dialogRef = this.dialog.open(RepComisionTarjetasComponent, {
+      data: {}
+    });
+    dialogRef.afterClosed().subscribe(res => {
+      if (res) {
+        console.log('Efecutando: ', res);
+        this.reportService.runReport(
+          'tesoreria/cortesTarjeta/reporteDeComisionesTarjeta',
+          { sucursal: res.sucursal.id, fecha: res.fecha.toISOString() }
+        );
+      }
+    });
   }
 }

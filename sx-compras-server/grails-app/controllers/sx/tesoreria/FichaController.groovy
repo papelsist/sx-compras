@@ -43,7 +43,13 @@ class FichaController extends RestfulController<Ficha> {
         bindData(command, params)
         def query = Ficha.where {fecha == command.fecha}
         if(command.tipo ){
-            query = query.where{ origen == command.tipo}
+
+            if(command.tipo == 'CON') {
+                log.info('Contado...')
+                query = query.where{ origen == 'CON' || origen == 'COD'}
+            } else {
+                query = query.where{ origen == command.tipo}
+            }
         }
         if(command.sucursal) {
             query = query.where{ sucursal == command.sucursal}
