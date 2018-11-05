@@ -40,11 +40,16 @@
 ,SUM(case when A.sw2=3 THEN  A.COSTO ELSE  0 end) as COSTO_TAC
 ,SUM(case when A.sw2=14 THEN  A.COSTO ELSE  0 end) as COSTO_ALE
 FROM (
-select (CASE 	WHEN i.TIPO IN('TRS','REC') AND I.CANTIDAD>0 THEN concat('E',SUBSTR(i.tipo,1,2)) WHEN i.TIPO IN('TRS','REC') AND I.CANTIDAD<0 THEN concat('S',SUBSTR(i.tipo,1,2)) ELSE TIPO END) AS TIPO
+select 'FLT' AS TIPO,P.CLAVE,P.DESCRIPCION,'02 COMPRAS' AS GRUPO,S.SW2,0 as KILOS,0 as SALDO
+,ROUND(SUM(I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end) * i.gasto),2) as COSTO
+from inventario I  join producto p on(p.id=i.producto_id) JOIN sucursal s on(i.sucursal_id=s.id)
+where I.TIPO='COM' AND I.GASTO>0 and YEAR(I.FECHA)=$P{EJERCICIO} AND MONTH(I.FECHA)=$P{MES} AND I.CLAVE LIKE $P{ARTICULOS} group by 4,1,5,2
+UNION
+select (CASE WHEN i.TIPO IN('COM') AND I.COSTO=0 THEN 'SNA' WHEN i.TIPO IN('TRS','REC') AND I.CANTIDAD>0 THEN concat('E',SUBSTR(i.tipo,1,2)) WHEN i.TIPO IN('TRS','REC') AND I.CANTIDAD<0 THEN concat('S',SUBSTR(i.tipo,1,2)) ELSE TIPO END) AS TIPO
 ,P.CLAVE,P.DESCRIPCION,(CASE 	WHEN I.TIPO IN('COM') THEN '02 COMPRAS' WHEN I.TIPO IN('AJU','CIM','CIS','DEC','MER','RMC') THEN '03 GASTO' WHEN I.TIPO IN('VIR','OIM') THEN '04 PRODUCTO'
             	WHEN I.TIPO IN('REC','TRS') THEN '05 TRANSFORM' WHEN I.TIPO IN('TPE','TPS') THEN '06 TRASLADO' WHEN I.TIPO IN('FAC','RMD') THEN '07 VENTAS' ELSE 'OTROS' END) AS GRUPO,S.SW2
 ,ROUND(SUM(I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end)*P.KILOS),3) as KILOS,ROUND(SUM(I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end)),3) as SALDO
-,ROUND(SUM(I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end) * (case when i.TIPO IN('TRS','REC','COM') AND I.CANTIDAD>0 then i.costo+I.GASTO else I.COSTO_promedio end)),2) as COSTO
+,ROUND(SUM(I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end) * (case when i.tipo='COM' and i.costo>0 then i.costo when i.TIPO IN('TRS','REC') AND I.CANTIDAD>0 then i.costo else I.COSTO_promedio end)),2) as COSTO
 from inventario I  join producto p on(p.id=i.producto_id) JOIN sucursal s on(i.sucursal_id=s.id)
 where p.inventariable is true and YEAR(I.FECHA)=$P{EJERCICIO} AND MONTH(I.FECHA)=$P{MES} AND I.CLAVE LIKE $P{ARTICULOS} group by 4,1,5,2
 UNION

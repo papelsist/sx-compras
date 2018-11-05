@@ -73,7 +73,7 @@ class CostoPromedioService {
         log.debug("Costeando {} registros de transformaciones para el periodo {} ", trs.size(), periodo)
         trs.each {
             def costo = null
-            it.partidas.each { tr ->
+            it.partidas.sort{it.cantidad}.sort{it.sw2}.each { tr ->
                 if(tr.cantidad < 0) {
                     CostoPromedio cp = CostoPromedio.where{ejercicio == anterior.ejercicio && mes == anterior.mes && producto == tr.producto}.find()
                     if(cp){
@@ -88,10 +88,15 @@ class CostoPromedioService {
                     if(costo) {
                         try {
                             Inventario iv = tr.inventario
-                            iv.costo = costo
-                            iv.save flush: true
-                            // println " Entrada costeada ${tr.producto.clave}  Cantidad:${tr.cantidad}  CostoU: ${costo}(sw2:${tr.sw2})"
+                            if(iv) {
+                                iv.costo = costo
+                                iv.save flush: true
+                                // println " Entrada costeada ${tr.producto.clave}  Cantidad:${tr.cantidad}  CostoU: ${costo}(sw2:${tr.sw2})"
+                            } else {
+                                log.info("TRS sin inventario {}", tr)
+                            }
                         }catch(Exception ex) {
+                            ex.printStackTrace()
                             log.error("Error costeando  ${it.tipo} ${it.documento} {}", ex.message)
                         }
                     }
@@ -120,7 +125,7 @@ class CostoPromedioService {
             SELECT 'INV' as tipo,P.clave
             ,SUM(CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end)) AS CANT,SUM(CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end)*(COSTO+GASTO)) AS IMP_COSTO
              FROM INVENTARIO X JOIN PRODUCTO P ON(X.producto_id=P.ID) 
-             WHERE year(x.fecha)=(?) and month(x.fecha)=(?) and x.tipo in('TRS','REC','COM')  and x.cantidad>0 and p.de_linea is true and p.inventariable is true
+             WHERE x.costo>0 and year(x.fecha)=(?) and month(x.fecha)=(?) and x.tipo in('TRS','REC','COM')  and x.cantidad>0 and p.de_linea is true and p.inventariable is true
              GROUP BY P.CLAVE
              ) AS A
              GROUP BY A.CLAVE
