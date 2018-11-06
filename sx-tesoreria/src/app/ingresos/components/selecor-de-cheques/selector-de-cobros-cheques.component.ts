@@ -64,7 +64,7 @@ export class SelectorDeCobrosChequeComponent implements OnInit {
   buscar() {
     let params = new HttpParams();
     if (this.importe) {
-      params = params.set('nombre', this.importe.toString());
+      params = params.set('importe', this.importe.toString());
     }
     if (this.folio) {
       params = params.set('folio', this.folio);

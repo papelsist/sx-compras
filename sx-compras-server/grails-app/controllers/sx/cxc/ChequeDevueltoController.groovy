@@ -61,11 +61,11 @@ class ChequeDevueltoController extends RestfulController<ChequeDevuelto> {
         params.max = params.max?: 20
         params.sort = 'lastUpdated'
         params.order = 'desc'
-        log.info('Cobros: {}', params)
+        log.info('Buscando cobros con cheque: {}', params)
 
         def query = CobroCheque.where {}
-        if(params.numero) {
-            query = query.where{ numero == params.getLong('numero')}
+        if(params.folio) {
+            query = query.where{ numero == params.getLong('folio')}
         }
         if(params.importe) {
             BigDecimal importe = params.importe as BigDecimal
@@ -74,6 +74,12 @@ class ChequeDevueltoController extends RestfulController<ChequeDevuelto> {
         List<CobroCheque> cobros = query.list(params)
         [cobros: cobros]
 
+    }
+
+    def reporteDeChequesDevueltos() {
+        def repParams = [FECHA_INI: params.getDate('fecha', 'dd/MM/yyyy')]
+        def pdf =  reportService.run('ChequesDevueltos.jrxml', repParams)
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'ChequesDevueltos.pdf')
     }
 
 

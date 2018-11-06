@@ -15,6 +15,9 @@ import { TdDialogService } from '@covalent/core';
 import { PeriodoFilter } from 'app/models';
 import { SelectorDeCobrosChequeComponent } from 'app/ingresos/components/selecor-de-cheques/selector-de-cobros-cheques.component';
 import { ChequeDevueltoFormComponent } from 'app/ingresos/components';
+import { FechaDialogComponent } from 'app/_shared/components';
+
+import * as moment from 'moment';
 
 @Component({
   selector: 'sx-cheques-devueltos',
@@ -23,8 +26,11 @@ import { ChequeDevueltoFormComponent } from 'app/ingresos/components';
       <sx-search-title title="Registro de cheques devueltos" (search)="search = $event">
         <button mat-menu-item class="actions" (click)="reload()"><mat-icon>refresh</mat-icon> Recargar</button>
         <a mat-menu-item  color="accent" (click)="onCreate()" class="actions">
-          <mat-icon>add</mat-icon> Nuevo cobro
+          <mat-icon>add</mat-icon> Nuevo
         </a>
+        <button mat-menu-item class="actions" (click)="runReport()">
+          <mat-icon>picture_as_pdf</mat-icon> Reporte de cheques
+        </button>
       </sx-search-title>
       <mat-divider></mat-divider>
 
@@ -121,5 +127,33 @@ export class ChequesDevueltosComponent implements OnInit {
           );
         }
       });
+  }
+
+  runReport() {
+    const dialogRef = this.dialog.open(FechaDialogComponent, {
+      data: { title: 'Reporte de cheques devueltos' }
+    });
+    dialogRef.afterClosed().subscribe((fecha: Date) => {
+      if (fecha) {
+        this.reportService.runReport(
+          'cxc/chequesDevuetos/reporteDeChequesDevueltos',
+          {
+            fecha: moment(fecha).format('DD/MM/YYYY')
+          }
+        );
+        /*
+        this.service.reporteDeChequesDevueltos(fecha).subscribe(
+          res => {
+            const blob = new Blob([res], {
+              type: 'application/pdf'
+            });
+            const fileURL = window.URL.createObjectURL(blob);
+            window.open(fileURL, '_blank');
+          },
+          error2 => console.log(error2)
+        );
+        */
+      }
+    });
   }
 }

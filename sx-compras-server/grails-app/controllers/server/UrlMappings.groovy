@@ -57,6 +57,9 @@ class UrlMappings {
         // Cheques devueltos
         "/api/cxc/chequesDevuetos"(resources: 'chequeDevuelto')
         "/api/cxc/chequesDevuetos/cobros"(controller: 'chequeDevuelto', action: 'cobros', method: 'GET')
+        "/api/cxc/chequesDevuetos/reporteDeChequesDevueltos"(controller: "chequeDevuelto", action:'reporteDeChequesDevueltos', method: 'GET')
+
+
 
         "/api/listaDePreciosProveedor"(resources: 'listaDePreciosProveedor')
         "/api/listaDePreciosProveedor/aplicar/$id"(controller: 'listaDePreciosProveedor', action: 'aplicar', method: 'PUT')

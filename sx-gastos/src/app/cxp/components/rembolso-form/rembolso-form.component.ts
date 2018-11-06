@@ -160,6 +160,7 @@ export class RembolsoFormComponent implements OnInit, OnChanges {
       .afterClosed()
       .subscribe(partida => {
         if (partida) {
+          partida.apagar = partida.total;
           this.partidas.push(new FormControl(partida));
           this.form.markAsDirty();
         }
