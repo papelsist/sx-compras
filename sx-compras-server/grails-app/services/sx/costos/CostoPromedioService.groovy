@@ -234,7 +234,8 @@ class CostoPromedioService {
         }
     }
 
-    def costeoMedidasEspeciales(def mes, def ejercicio){
+def costeoMedidasEspeciales(def mes, def ejercicio){
+    
     def productos = Producto.findAllByDeLineaAndInventariable(false,true)
     productos.each{producto ->
         costeoPorProducto(mes, ejercicio, producto)
