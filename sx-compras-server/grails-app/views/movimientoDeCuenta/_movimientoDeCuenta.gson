@@ -6,4 +6,6 @@ model {
 
 json g.render(movimientoDeCuenta, [ excludes: ['moneda'], resolveTemplate: false]){
 	moneda movimientoDeCuenta.moneda.currencyCode
+	banco movimientoDeCuenta.cuenta.descripcion
+	cuentaNumero movimientoDeCuenta.cuenta.numero
 }

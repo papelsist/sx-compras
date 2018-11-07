@@ -19,11 +19,11 @@ import { FichasService } from '../../services';
 @Component({
   selector: 'sx-fichas',
   template: `
-  <ng-template tdLoading [tdLoadingUntil]="!(loading$ | async)" tdLoadingStrategy="overlay">
-    <mat-card>
-    <div layout layout-align="start center"  class="pad-left-sm pad-right-sm">
-      <span class="push-left-sm">
-        <span class="mat-title">Fichas registrados</span>
+  <mat-card>
+    <ng-template tdLoading [tdLoadingUntil]="!(loading$ | async)" tdLoadingStrategy="overlay">
+      <div layout layout-align="start center"  class="pad-left-sm pad-right-sm">
+        <span class="push-left-sm">
+          <span class="mat-title">Fichas registrados</span>
         </span>
         <span layout *ngIf="fichas$ | async as fichas" class="tc-indigo-600 pad">
 
@@ -70,8 +70,9 @@ import { FichasService } from '../../services';
       <mat-card-actions>
 
       </mat-card-actions>
-    </mat-card>
-  </ng-template>
+    </ng-template>
+  </mat-card>
+
   `,
   styles: [
     `

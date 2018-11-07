@@ -1,13 +1,13 @@
 package sx.tesoreria
 
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
 
 
-
+@EqualsAndHashCode(includes='id')
+@ToString(includeNames=true,includeSuper = true, includePackage=false, includes = ['rendimientoReal', 'tasa'])
 class Inversion extends Traspaso{
 
-	String id
-	
-	Date rendimientoFecha = new Date()
 
 	BigDecimal rendimientoReal = 0.0
 
@@ -19,11 +19,13 @@ class Inversion extends Traspaso{
 
 	BigDecimal tasaIsr = 0.0
 
-	BigDecimal importeIsr=0.0
+	BigDecimal importeIsr = 0.0
 	
-	int plazo = 1
+	Integer plazo = 1
 	
-	Date vencimiento= new Date()
+	Date vencimiento
+
+	Date rendimientoFecha = new Date()
 	
 
     static constraints = {
@@ -35,9 +37,8 @@ class Inversion extends Traspaso{
     }
 	
 	static mapping ={
-		id generator: 'uuid'
-        rendimientoFecha type:'date' 
+        rendimientoFecha type:'date'
+		vencimiento type: 'date'
     }
-	
 	
 }

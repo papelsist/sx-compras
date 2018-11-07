@@ -1,0 +1,8 @@
+import sx.tesoreria.Traspaso
+
+model {
+	Iterable<Traspaso> traspasoList
+}
+
+json tmpl.traspaso(traspasoList ?: [])
+

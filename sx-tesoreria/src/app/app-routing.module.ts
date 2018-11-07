@@ -25,6 +25,10 @@ const routes: Routes = [
         loadChildren: './ingresos/ingresos.module#IngresosModule'
       },
       {
+        path: 'movimientos',
+        loadChildren: './movimientos/movimientos.module#MovimientosModule'
+      },
+      {
         path: 'cortesTarjeta',
         loadChildren:
           './cortes-tarjeta/cortes-tarjeta.module#CortesTarjetaModule'

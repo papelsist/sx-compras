@@ -35,6 +35,11 @@ export class MainPageComponent implements OnInit, OnDestroy {
       title: 'Ingresos'
     },
     {
+      icon: 'storage',
+      route: '/movimientos',
+      title: 'Movimientos de tesorería'
+    },
+    {
       icon: 'credit_card',
       route: '/cortesTarjeta',
       title: 'Cortes de tarjeta'

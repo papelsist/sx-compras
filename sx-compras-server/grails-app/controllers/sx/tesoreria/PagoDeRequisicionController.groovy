@@ -46,9 +46,7 @@ class PagoDeRequisicionController {
         }
         requisicion = pagoDeRequisicionService.cancelarPago(requisicion)
         log.info('Requisicion con pago cancelado {}', requisicion.folio)
-        // respond requisicion
         [requisicion: requisicion]
-        // respond requisicion
     }
 
     def generarCheque() {
@@ -96,6 +94,7 @@ class PagoDeRequisicion implements  Validateable{
 
 class CancelacionDeCheque implements  Validateable{
     Requisicion requisicion
+    Date fecha
     String comentario
 
     String toString() {

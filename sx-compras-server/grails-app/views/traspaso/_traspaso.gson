@@ -1,0 +1,11 @@
+import sx.tesoreria.Traspaso
+
+model {
+	Traspaso traspaso
+}
+
+json g.render(traspaso, [excludes: ['movimientos','version'], resolveTemplate: false]) {
+	origen "${traspaso.cuentaOrigen.descripcion} (${traspaso.cuentaOrigen.numero})"
+	destino "${traspaso.cuentaDestino.descripcion} (${traspaso.cuentaDestino.numero})"
+	movimientos g.render(traspaso.movimientos)
+}

@@ -17,4 +17,6 @@ export interface Movimiento {
   updateUser: string;
   lastUpdated: string;
   dateCreated: string;
+  cuentaNumero?: string;
+  banco?: string;
 }

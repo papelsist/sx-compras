@@ -18,7 +18,7 @@ class ImportadorCfdi32{
 
     
 
-    ComprobanteFiscal buildFromXml32(xml,xmlData,fileName){
+    ComprobanteFiscal buildFromXml32(xml, xmlData,fileName, String origen){
 
        
         String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss"
@@ -78,30 +78,30 @@ class ImportadorCfdi32{
            
         }
             
-            comprobanteFiscal=new ComprobanteFiscal(
-                xml:xmlData,
-                proveedor: proveedor,
-                fileName: fileName,
-                uuid: uuid,
-                serie: serie,
-                folio: folio,
-                emisorNombre: emisorNombre,
-                emisorRfc: emisorRfc,
-                receptorRfc: receptorRfc,
-                receptorNombre: receptorNombre,
-                subTotal: subTotal,
-                descuento: descuento,
-                total: total,
-                fecha: fecha,
-                formaDePago: formaDePago,
-                metodoDePago: metodoDePago,
-                tipoDeComprobante: tipo,
-                moneda: moneda,
-                versionCfdi: '3.2',
-                tipoDeCambio: tipoDeCamio?: 1.0
-                
-              
-        )
+        comprobanteFiscal=new ComprobanteFiscal(
+            xml:xmlData,
+            proveedor: proveedor,
+            fileName: fileName,
+            uuid: uuid,
+            serie: serie,
+            folio: folio,
+            emisorNombre: emisorNombre,
+            emisorRfc: emisorRfc,
+            receptorRfc: receptorRfc,
+            receptorNombre: receptorNombre,
+            subTotal: subTotal,
+            descuento: descuento,
+            total: total,
+            fecha: fecha,
+            formaDePago: formaDePago,
+            metodoDePago: metodoDePago,
+            tipoDeComprobante: tipo,
+            moneda: moneda,
+            versionCfdi: '3.2',
+            tipoDeCambio: tipoDeCamio?: 1.0,
+            tipo: origen)
+        comprobanteFiscal = comprobanteFiscal.save failOnError: true, flush: true
+        println 'Comprobante: ' + comprobanteFiscal.id
 
         return comprobanteFiscal
 
