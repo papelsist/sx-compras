@@ -13,6 +13,7 @@ import sx.core.Existencia
 import sx.core.Inventario
 import sx.core.Producto
 import sx.inventario.Transformacion
+import sx.inventario.TransformacionDet
 import sx.utils.Periodo
 
 import javax.sql.DataSource
@@ -91,7 +92,6 @@ class CostoPromedioService {
                             if(iv) {
                                 iv.costo = costo
                                 iv.save flush: true
-                                // println " Entrada costeada ${tr.producto.clave}  Cantidad:${tr.cantidad}  CostoU: ${costo}(sw2:${tr.sw2})"
                             } else {
                                 log.info("TRS sin inventario {}", tr)
                             }
@@ -106,6 +106,13 @@ class CostoPromedioService {
             }
         }
 
+    }
+
+    def costearTransformacion(Transformacion trs) {
+        List<TransformacionDet> partidas = trs.partidas.sort{it.cantidad}.sort{it.sw2}
+        partidas.each {
+
+        }
     }
 
     @NotTransactional
@@ -234,17 +241,17 @@ class CostoPromedioService {
         }
     }
 
-def costeoMedidasEspeciales(def mes, def ejercicio){
+    void costeoMedidasEspeciales(Integer ejercicio, Integer mes){
 
-    def productos = Producto.findAllByDeLineaAndInventariable(false,true)
-    productos.each{producto ->
-        costeoPorProducto(mes, ejercicio, producto)
+        def productos = Producto.findAllByDeLineaAndInventariable(false,true)
+        productos.each{producto ->
+            this.costeoPorProducto(ejercicio, mes, producto)
+        }
     }
-}
 
-def costeoPorProducto(def mes, def ejercicio, def producto){
+    void calcularPorProducto(Integer ejercicio, Integer mes,  Producto producto){
     
-		def periodo = Periodo.getPeriodoEnUnMes(mes-1,ejercicio)   	
+		def periodo = Periodo.getPeriodoEnUnMes(mes - 1 ,ejercicio)
     	
     	def ejercicioAnterior = ejercicio
 
@@ -267,7 +274,7 @@ def costeoPorProducto(def mes, def ejercicio, def producto){
         //  Corriendo costo final anterior a inicial actual en existencia
     	def costoAnt = 0.00
     
-    	exisCostoAnt = existenciasAnt.find{it.costoPromedio != 0}
+    	def exisCostoAnt = existenciasAnt.find{it.costoPromedio != 0}
     
         if(exisCostoAnt){
 			costoAnt = exisCostoAnt.costoPromedio
@@ -280,44 +287,32 @@ def costeoPorProducto(def mes, def ejercicio, def producto){
     
       
         if(inventarios){
-            
-           // println "************************************************************************" + producto.clave +" **********************"+periodo
-            
-             def costoPromedio = 0.00
-            
+
+            def costoPromedio = 0.00
    
-            def com=inventarios.find{it.tipo == 'COM'}
+            def com = inventarios.find{it.tipo == 'COM'}
             
-            def trs=inventarios.find{it.tipo == 'TRS' && it.cantidad >0 }
+            def trs = inventarios.find{it.tipo == 'TRS' && it.cantidad >0 }
             
-            def rec=inventarios.find{it.tipo == 'REC' && it.cantidad >0 }
+            def rec = inventarios.find{it.tipo == 'REC' && it.cantidad >0 }
            
             
-            if(!com && !trs && !rec){
-
-
-
-              //  No tiene entradas   
-                 
+            if(!com && !trs && !rec) {
+              //  No tiene entradas
                 def row = existencias.find{it.costo != 0}
-             	
+
              	if(row){
                  	costoPromedio= row.costo
              	}
 
                 if(!producto.deLinea){
-            
                         //Es medida especial y voy a buscar una com que coincida
-                        
                     inventarios.each{ invent ->
                             
                         if(invent.tipo == 'FAC' ){
-                            // println "Buscar com mas Proxima
-                            def com = Inventario.findByProductoAndTipoAndCantidad(invent.producto,'COM',-invent.cantidad)
-                            if(com){
-
-                                costoPromedio = com.costo+com.gasto
-
+                            def comFound = Inventario.findByProductoAndTipoAndCantidad(invent.producto,'COM', -invent.cantidad)
+                            if(comFound){
+                                costoPromedio = comFound.costo + comFound.gasto
                             }
                         }
                     }
@@ -325,14 +320,16 @@ def costeoPorProducto(def mes, def ejercicio, def producto){
                 }
                         
             }else{
+             //si tiene Entradas
+                def inventariosEnt =Inventario.executeQuery("""
+                    from Inventario i  
+                        where date(i.fecha) between ? and ? 
+                        and i.producto = ? AND TIPO in ('COM','TRS','REC') 
+                        and cantidad > 0 
+                        and costo>0 """,
+                    [fechaIni,fechaFin,producto])
                 
-             //si tiene Entradas  
-                
-                def inventariosEnt =Inventario.executeQuery("from Inventario i  where date(i.fecha) between ? and ? and i.producto = ? AND TIPO in ('COM','TRS','REC') and cantidad > 0 and costo>0 ",[fechaIni,fechaFin,producto])
-                
-                if(inventariosEnt.size()>=1 ){
-
-               
+                if(inventariosEnt.size() >= 1 ){
                     
                     def existenciaInicial = existencias.sum{it.existenciaInicial}?:0.00
                     def existenciaCosto = existencias.find{ it.costo >0 }
@@ -347,31 +344,19 @@ def costeoPorProducto(def mes, def ejercicio, def producto){
                         exisCosto = 0.00 
                     }
 
-                    def movsTotal=inventariosEnt.sum{it.cantidad} ?: 0.00 
-               
+                    def movsTotal=inventariosEnt.sum{it.cantidad} ?: 0.00
                     
                     def cantidadTotal=existenciaInicial + movsTotal
 
                     def costoInicial= existenciaInicial * exisCosto
-                                   
-                    def costoTotal=inventariosEnt.sum{it.cantidad*(it.costo+it.gasto)} + costoInicial
+
+                    def costoTotal = inventariosEnt.sum{ it.cantidad * ( it.costo +  it.gasto )} + costoInicial
 
                     costoPromedio=costoTotal/cantidadTotal
-                /*    
-                    println " e ini:  "+existenciaInicial
-                    println " c ini:  "+exisCosto
-                    println "costo in: "+costoInicial
-
-                    println " movs tot:  "+movsTotal
-                    println " tot uni:  "+cantidadTotal
-                    println " costo tot:  "+costoTotal
-                    println "-------"+costoPromedio
-                    */
                 } 
             }
             
-            if(costoPromedio){         
-                   
+            if(costoPromedio){
                    //Aplicando costo promedio 
                     inventarios.each{invent ->
                         invent.costoPromedio=costoPromedio
@@ -405,7 +390,7 @@ def costeoPorProducto(def mes, def ejercicio, def producto){
                  }
              }            
         }
-}
+    }
 
     Sql getLocalSql(){
         Sql sql = new Sql(this.dataSource)
@@ -479,6 +464,6 @@ class AnalisisDeCosto {
         }
     }
 
-
-
 }
+
+
