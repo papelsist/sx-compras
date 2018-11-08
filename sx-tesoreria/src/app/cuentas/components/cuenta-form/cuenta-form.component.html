@@ -1,51 +1,94 @@
 <form [formGroup]="form">
   <div layout>
-    <span mat-dialog-title>Cuenta de banco</span>
-    <span flex></span>
+    <span mat-dialog-title>Cuenta de banco</span> <span flex></span>
   </div>
   <div layout>
-    <sx-upper-case-field formControlName="numero" placeholder="Número"></sx-upper-case-field>
-    <sx-upper-case-field formControlName="descripcion" class="pad-left" flex placeholder="Descripción"></sx-upper-case-field>
+    <sx-upper-case-field
+      formControlName="numero"
+      placeholder="Número"
+    ></sx-upper-case-field>
+    <sx-upper-case-field
+      formControlName="descripcion"
+      class="pad-left"
+      flex
+      placeholder="Descripción"
+    ></sx-upper-case-field>
   </div>
   <div layout>
-    <sx-banco-sat-field formControlName="bancoSat" flex [required]="true"></sx-banco-sat-field>
+    <sx-banco-sat-field
+      formControlName="bancoSat"
+      flex
+      [required]="true"
+    ></sx-banco-sat-field>
   </div>
   <div layout>
     <sx-moneda-field [parent]="form"></sx-moneda-field>
     <mat-form-field flex class="pad-left">
       <mat-select placeholder="Tipo" formControlName="tipo">
         <mat-option>No aplica</mat-option>
-        <mat-option *ngFor="let tipo of ['CHEQUERA', 'INVERSION']" [value]="tipo">{{ tipo }}
+        <mat-option *ngFor="let tipo of ['CHEQUES', 'INVERSION']" [value]="tipo"
+          >{{ tipo }}
         </mat-option>
       </mat-select>
     </mat-form-field>
   </div>
   <div layout>
     <mat-checkbox formControlName="activo" flex>Activa</mat-checkbox>
-    <mat-checkbox formControlName="disponibleEnVentas" flex>Disp. Ventas</mat-checkbox>
-    <mat-checkbox formControlName="disponibleEnPagos" flex>Disp. Pagos</mat-checkbox>
-    <mat-checkbox formControlName="cuentaConcentradora" flex>Concentradora</mat-checkbox>
+    <mat-checkbox formControlName="disponibleEnVentas" flex
+      >Disp. Ventas</mat-checkbox
+    >
+    <mat-checkbox formControlName="disponibleEnPagos" flex
+      >Disp. Pagos</mat-checkbox
+    >
+    <mat-checkbox formControlName="cuentaConcentradora" flex
+      >Concentradora</mat-checkbox
+    >
   </div>
 
   <div layout>
     <mat-form-field flex>
-      <input type="number" formControlName="proximoCheque" matInput placeholder="Próximo cheque" autocomplete="off">
+      <input
+        type="number"
+        formControlName="proximoCheque"
+        matInput
+        placeholder="Próximo cheque"
+        autocomplete="off"
+      />
     </mat-form-field>
     <mat-form-field flex class="pad-left">
-      <input type="number" formControlName="comisionPorTransferencia" matInput placeholder="Comisión por transferencia"
-        autocomplete="off">
+      <input
+        type="number"
+        formControlName="comisionPorTransferencia"
+        matInput
+        placeholder="Comisión por transferencia"
+        autocomplete="off"
+      />
     </mat-form-field>
   </div>
 
   <div layout>
-    <sx-upper-case-field formControlName="subCuentaOperativa" placeholder="SubCuenta operativa" flex></sx-upper-case-field>
+    <sx-upper-case-field
+      formControlName="subCuentaOperativa"
+      placeholder="SubCuenta operativa"
+      flex
+    ></sx-upper-case-field>
     <mat-form-field class="pad-left" flex>
-      <input matInput formcontrolName="impresionTemplate" placeholder="Plantilla">
+      <input
+        matInput
+        formcontrolName="impresionTemplate"
+        placeholder="Plantilla"
+      />
     </mat-form-field>
   </div>
 
   <mat-dialog-actions>
-    <button mat-button [mat-dialog-close]="form.value" [disabled]="form.invalid">Aceptar</button>
+    <button
+      mat-button
+      [mat-dialog-close]="form.value"
+      [disabled]="form.invalid"
+    >
+      Aceptar
+    </button>
     <button mat-button mat-dialog-close type="button">Cancelar</button>
   </mat-dialog-actions>
 </form>

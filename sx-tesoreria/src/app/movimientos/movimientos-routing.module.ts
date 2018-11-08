@@ -13,6 +13,11 @@ const routes: Routes = [
         path: 'traspasos',
         canActivate: [fromGuards.TraspasosGuard],
         component: fromContainers.TraspasosComponent
+      },
+      {
+        path: 'inversiones',
+        canActivate: [fromGuards.InversionesGuard],
+        component: fromContainers.InversionesComponent
       }
     ]
   }

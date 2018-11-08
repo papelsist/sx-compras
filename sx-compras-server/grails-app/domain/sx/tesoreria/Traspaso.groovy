@@ -25,6 +25,8 @@ class Traspaso {
 	BigDecimal impuesto = 0.0
 
 	String comentario
+
+	String referencia
 	
 	Date dateCreated
 
@@ -48,6 +50,7 @@ class Traspaso {
 		comentario(blank:true)
 		createUser nullable: true
 		updateUser nullable: true
+		referencia nullable: true
     }
 	
 	static mapping ={

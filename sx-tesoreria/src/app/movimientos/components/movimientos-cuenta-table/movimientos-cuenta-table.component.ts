@@ -53,6 +53,7 @@ export class MovimientosCuentaTableComponent implements OnInit, OnChanges {
     'importe',
     'referencia',
     'afavor',
+    'tipo',
     'concepto',
     'updateUser'
   ];

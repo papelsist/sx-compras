@@ -7,18 +7,19 @@ import { catchError } from 'rxjs/operators';
 import * as _ from 'lodash';
 
 import { ConfigService } from '../../utils/config.service';
-import { Traspaso, TraspasosFilter } from '../models/traspaso';
+import { Inversion } from '../models/inversion';
+import { TraspasosFilter } from '../models/traspaso';
 import { Update } from '@ngrx/entity';
 
 @Injectable()
-export class TraspasoService {
+export class InversionService {
   private apiUrl: string;
 
   constructor(private http: HttpClient, private config: ConfigService) {
-    this.apiUrl = config.buildApiUrl('tesoreria/traspasos');
+    this.apiUrl = config.buildApiUrl('tesoreria/inversiones');
   }
 
-  list(filter: TraspasosFilter): Observable<Traspaso[]> {
+  list(filter: TraspasosFilter): Observable<Inversion[]> {
     let params = new HttpParams()
       .set('fechaInicial', filter.fechaInicial.toISOString())
       .set('fechaFinal', filter.fechaFinal.toISOString());
@@ -26,34 +27,34 @@ export class TraspasoService {
       params = params.set('cuenta', filter.cuenta.id);
     }
     return this.http
-      .get<Traspaso[]>(this.apiUrl, { params: params })
+      .get<Inversion[]>(this.apiUrl, { params: params })
       .pipe(catchError((error: any) => throwError(error)));
   }
 
-  get(id: string): Observable<Traspaso> {
+  get(id: string): Observable<Inversion> {
     const url = `${this.apiUrl}/${id}`;
     return this.http
-      .get<Traspaso>(url)
+      .get<Inversion>(url)
       .pipe(catchError(err => throwError(err)));
   }
 
-  save(ficha: Traspaso): Observable<Traspaso> {
+  save(ficha: Inversion): Observable<Inversion> {
     return this.http
-      .post<Traspaso>(this.apiUrl, ficha)
+      .post<Inversion>(this.apiUrl, ficha)
       .pipe(catchError((error: any) => throwError(error)));
   }
 
-  delete(ficha: Traspaso) {
+  delete(ficha: Inversion) {
     const url = `${this.apiUrl}/${ficha.id}`;
     return this.http
-      .delete<Traspaso>(url)
+      .delete<Inversion>(url)
       .pipe(catchError((error: any) => throwError(error)));
   }
 
-  update(traspaso: Update<Traspaso>): Observable<Traspaso> {
-    const url = `${this.apiUrl}/${traspaso.id}`;
+  update(inversion: Update<Inversion>): Observable<Inversion> {
+    const url = `${this.apiUrl}/${inversion.id}`;
     return this.http
-      .put<Traspaso>(url, traspaso.changes)
+      .put<Inversion>(url, inversion.changes)
       .pipe(catchError((error: any) => throwError(error)));
   }
 }

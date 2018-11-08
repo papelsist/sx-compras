@@ -12,6 +12,7 @@ export interface Traspaso {
   comision: number;
   impuesto: number;
   comentario?: string;
+  referencia?: string;
   dateCreated: string;
   lastUpdated: string;
   createUser: string;

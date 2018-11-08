@@ -15,17 +15,17 @@ class Inversion extends Traspaso{
 
 	BigDecimal rendimientoImpuesto = 0.0
 	
-	BigDecimal tasa = 16.00
+	BigDecimal tasa = 0.0
 
-	BigDecimal tasaIsr = 0.0
+	Integer plazo
 
-	BigDecimal importeIsr = 0.0
-	
-	Integer plazo = 1
-	
 	Date vencimiento
 
-	Date rendimientoFecha = new Date()
+	BigDecimal isr = 0.0
+
+	BigDecimal isrImporte = 0.0
+
+	Date rendimientoFecha  // La fecha real del vencimiento
 	
 
     static constraints = {

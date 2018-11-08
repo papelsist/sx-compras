@@ -69,6 +69,8 @@ export class TraspasosTableComponent implements OnInit, OnChanges {
     'destino',
     'moneda',
     'importe',
+    'comision',
+    'referencia',
     'comentario',
     'updateUser',
     'operaciones'

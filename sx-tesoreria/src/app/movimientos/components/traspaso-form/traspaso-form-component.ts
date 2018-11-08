@@ -20,27 +20,33 @@ import * as _ from 'lodash';
     <h2 mat-dialog-title>{{title}}</h2>
     <mat-dialog-content>
       <div layout="column">
-        <sx-cuenta-banco-field formControlName="cuentaOrigen"></sx-cuenta-banco-field>
-        <sx-cuenta-banco-field formControlName="cuentaDestino"></sx-cuenta-banco-field>
         <div layout>
-          <mat-form-field flex>
+          <mat-form-field >
             <input matInput [matDatepicker]="myDatepicker" placeholder="Fecha" formControlName="fecha" autocomplete="off">
             <mat-datepicker-toggle matSuffix [for]="myDatepicker"></mat-datepicker-toggle>
             <mat-datepicker #myDatepicker></mat-datepicker>
           </mat-form-field>
-          <mat-form-field class="pad-left" flex>
-            <input matInput placeholder="Importe" formControlName="importe" type="number" autocomplete="off" >
-          </mat-form-field>
         </div>
+        <sx-cuenta-banco-field formControlName="cuentaOrigen" placeholder="Origen"></sx-cuenta-banco-field>
+        <sx-cuenta-banco-field formControlName="cuentaDestino" placeholder="Destino"></sx-cuenta-banco-field>
         <div layout>
           <mat-form-field flex>
+            <input matInput placeholder="Importe" formControlName="importe" type="number" autocomplete="off" >
+          </mat-form-field>
+          <mat-form-field  class="pad-left" flex>
             <input matInput placeholder="Comision" formControlName="comision" type="number" autocomplete="off" >
           </mat-form-field>
           <mat-form-field class="pad-left" flex>
             <input matInput placeholder="IVA" formControlName="impuesto" type="number" autocomplete="off" >
           </mat-form-field>
         </div>
-        <sx-upper-case-field formControlName="comentario" placeholder="Comentario"></sx-upper-case-field>
+
+        <div layout>
+          <mat-form-field >
+            <input matInput placeholder="Referencia" formControlName="referencia" autocomplete="off" >
+          </mat-form-field>
+          <sx-upper-case-field formControlName="comentario" placeholder="Comentario" flex class="pad-left"></sx-upper-case-field>
+        </div>
 
         <td-message label="Error!" sublabel="No puede usar la misma cuenta como origen y destino para el traspaso"
           color="warn" icon="error" *ngIf="form.get('cuentaDestino').hasError('mismaCuenta')" flex>
@@ -114,9 +120,10 @@ export class TraspasoFormComponent implements OnInit, OnDestroy {
         null,
         [Validators.required, this.validarDestino.bind(this)]
       ],
-      importe: [0.0, [Validators.required, Validators.min(1)]],
+      importe: [null, [Validators.required, Validators.min(1)]],
       comision: [0.0, [Validators.required]],
       impuesto: [0.0, [Validators.required]],
+      referencia: [null],
       comentario: []
     });
   }

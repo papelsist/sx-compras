@@ -41,7 +41,7 @@ export class MovimientosPageComponent implements OnInit {
       route: 'inversiones',
       title: 'Inversiones ',
       description: 'Inversiones',
-      icon: 'filter_none'
+      icon: 'file_upload'
     },
     {
       route: 'devolucion',

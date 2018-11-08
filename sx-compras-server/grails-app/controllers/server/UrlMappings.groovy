@@ -52,6 +52,7 @@ class UrlMappings {
 
         // Traspaso entre cuentas
         "/api/tesoreria/traspasos"(resources: 'traspaso', excludes:['create', 'edit','patch'] )
+        "/api/tesoreria/inversiones"(resources: 'inversion', excludes:['create', 'edit','patch'] )
 
         "/api/cxc/cobros"(resources: 'cobro')
         "/api/cxc/cobro/reporteDeCobranza"(controller: "cobro", action: 'reporteDeCobranza', method: 'GET')
