@@ -26,7 +26,7 @@ abstract  class InversionService implements  LogUser{
     void registrarSalida(Inversion inversion) {
         MovimientoDeCuenta egreso = generarMovimiento(
                 inversion.fecha,
-                inversion.importe * -1, 'INVERSION', 'EGRESO',
+                inversion.importe * -1, 'INVERSION', 'RETIRO',
                 inversion.cuentaOrigen, inversion.referencia )
         logEntity(egreso)
         inversion.addToMovimientos(egreso)
@@ -35,7 +35,7 @@ abstract  class InversionService implements  LogUser{
     void registrarEntrada(Inversion inversion) {
         MovimientoDeCuenta ingreso = generarMovimiento(
                 inversion.fecha,
-                inversion.importe, 'INVERSION', 'INGRESO',
+                inversion.importe, 'INVERSION', 'DEPOSITO',
                 inversion.cuentaDestino,
                 inversion.referencia)
         logEntity(ingreso)

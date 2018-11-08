@@ -239,15 +239,15 @@ export class InversionFormComponent implements OnInit, OnDestroy {
   }) {
     const { importe, tasa, plazo, isr } = cfg;
     // Calcular rendimiento
-    this.calcularVto(plazo);
-    const rendimientoDiario = (importe * (tasa / 100)) / 365;
-    const rendimiento = _.round(rendimientoDiario * plazo, 2);
+    const rendimientoDiario = (importe * (tasa / 100)) / 360;
+
+    const rendimientoBruto = rendimientoDiario * plazo;
 
     const isrDiario = (importe * (isr / 100)) / 365;
-    const isrImporte = _.round(isrDiario * plazo, 2);
+    const isrImporte = isrDiario * plazo;
 
-    const rendimientoBruto = rendimiento + isrImporte;
-    const redimientoCalculado = _.round(rendimientoBruto / 1.16, 2);
+    const rendimientoNeto = rendimientoBruto - isrImporte;
+    const redimientoCalculado = _.round(rendimientoNeto, 2);
 
     const rendimientoImpuesto = _.round(redimientoCalculado * 0.16, 2);
 
