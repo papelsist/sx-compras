@@ -91,11 +91,11 @@ class MonedaUtils {
 		return neto;
 	}
 
-	public static final round(BigDecimal importe){
+	public static final BigDecimal round(BigDecimal importe){
 		return importe.setScale(2, RoundingMode.HALF_EVEN);
 	}
 	
-	public static final round(BigDecimal importe,int decimales){
+	public static final BigDecimal round(BigDecimal importe,int decimales){
 		return importe.setScale(decimales, RoundingMode.HALF_EVEN);
 	}
 	

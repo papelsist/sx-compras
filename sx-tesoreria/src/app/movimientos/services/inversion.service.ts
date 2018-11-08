@@ -57,4 +57,11 @@ export class InversionService {
       .put<Inversion>(url, inversion.changes)
       .pipe(catchError((error: any) => throwError(error)));
   }
+
+  retorno(inversion: Update<Inversion>): Observable<Inversion> {
+    const url = `${this.apiUrl}/retorno/${inversion.id}`;
+    return this.http
+      .put<Inversion>(url, inversion.changes)
+      .pipe(catchError((error: any) => throwError(error)));
+  }
 }

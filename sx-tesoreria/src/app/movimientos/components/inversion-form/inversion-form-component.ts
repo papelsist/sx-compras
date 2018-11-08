@@ -21,29 +21,28 @@ import * as moment from 'moment';
   <form [formGroup]="form">
     <h2 mat-dialog-title>{{title}}</h2>
     <mat-dialog-content>
+
       <div layout="column">
         <div layout>
-          <mat-form-field >
+          <mat-form-field flex="50">
             <input matInput [matDatepicker]="myDatepicker" placeholder="Fecha" formControlName="fecha" autocomplete="off">
             <mat-datepicker-toggle matSuffix [for]="myDatepicker"></mat-datepicker-toggle>
             <mat-datepicker #myDatepicker></mat-datepicker>
           </mat-form-field>
-          <sx-cuenta-banco-field formControlName="cuentaOrigen" tipo="CHEQUES"
-            placeholder="Origen" class="pad-left" flex></sx-cuenta-banco-field>
         </div>
-        <div layout>
-          <sx-cuenta-banco-field formControlName="cuentaDestino" tipo="INVERSION" disponibleEnPagos="false"
-            placeholder="Destino"  flex></sx-cuenta-banco-field>
-        </div>
+        <sx-cuenta-banco-field formControlName="cuentaOrigen" tipo="CHEQUES"
+            placeholder="Chequera" ></sx-cuenta-banco-field>
+        <sx-cuenta-banco-field formControlName="cuentaDestino" tipo="INVERSION" disponibleEnPagos="false"
+            placeholder="Inversión"  ></sx-cuenta-banco-field>
 
         <div layout>
           <mat-form-field flex>
             <input matInput placeholder="Importe" formControlName="importe" type="number" autocomplete="off" >
           </mat-form-field>
-          <mat-form-field class="pad-left">
+          <mat-form-field class="pad-left" flex>
             <input matInput placeholder="Tasa" formControlName="tasa" type="number">
           </mat-form-field>
-          <mat-form-field class="pad-left" >
+          <mat-form-field class="pad-left" flex>
             <input matInput placeholder="Plazo" formControlName="plazo" type="number">
           </mat-form-field>
         </div>
@@ -55,7 +54,7 @@ import * as moment from 'moment';
           <mat-form-field class="pad-left" flex>
             <input matInput placeholder="ISR ($)" formControlName="isrImporte" type="number" autocomplete="off" >
           </mat-form-field>
-          <mat-form-field class="pad-left">
+          <mat-form-field class="pad-left" flex>
             <input matInput [matDatepicker]="vtoPicker" placeholder="Vencimiento" formControlName="vencimiento" autocomplete="off">
             <mat-datepicker-toggle matSuffix [for]="vtoPicker"></mat-datepicker-toggle>
             <mat-datepicker #vtoPicker></mat-datepicker>
@@ -67,9 +66,6 @@ import * as moment from 'moment';
             <input matInput placeholder="Rendimiento Calculado" formControlName="rendimientoCalculado" type="number" autocomplete="off" >
           </mat-form-field>
           <mat-form-field class="pad-left" flex>
-            <input matInput placeholder="Rendimiento Real" formControlName="rendimientoReal" type="number" autocomplete="off" >
-          </mat-form-field>
-          <mat-form-field class="pad-left" flex>
             <input matInput [matDatepicker]="rendimientoPicker" placeholder="Rendimiento fecha"
               formControlName="rendimientoFecha" autocomplete="off">
             <mat-datepicker-toggle matSuffix [for]="rendimientoPicker"></mat-datepicker-toggle>
@@ -78,7 +74,7 @@ import * as moment from 'moment';
         </div>
 
         <div layout>
-          <mat-form-field >
+          <mat-form-field flex>
             <input matInput placeholder="Referencia" formControlName="referencia" autocomplete="off" >
           </mat-form-field>
           <sx-upper-case-field formControlName="comentario" placeholder="Comentario" flex class="pad-left"></sx-upper-case-field>
@@ -128,14 +124,21 @@ export class InversionFormComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.buildForm();
+    this.inversionListener();
+    this.rendimientoListener();
     if (this.inversion) {
       this.form.patchValue(this.inversion);
       this.form.get('cuentaOrigen').disable();
       this.form.get('cuentaDestino').disable();
+      this.form.patchValue(this.inversion);
+    } else {
+      this.form.patchValue({
+        fecha: new Date(),
+        tasa: 5.65,
+        plazo: 1,
+        isr: 0.46
+      });
     }
-    this.inversionListener();
-    this.rendimientoListener();
-    this.form.get('fecha').setValue(new Date());
   }
 
   private inversionListener() {
@@ -184,7 +187,7 @@ export class InversionFormComponent implements OnInit, OnDestroy {
       vencimiento: [null, [Validators.required]],
       //
       rendimientoCalculado: [],
-      rendimientoReal: [],
+      // rendimientoReal: [],
       rendimientoFecha: [],
       rendimientoImpuesto: [],
       referencia: [null],
@@ -244,7 +247,7 @@ export class InversionFormComponent implements OnInit, OnDestroy {
     const rendimientoBruto = rendimientoDiario * plazo;
 
     const isrDiario = (importe * (isr / 100)) / 365;
-    const isrImporte = isrDiario * plazo;
+    const isrImporte = _.round(isrDiario * plazo, 2);
 
     const rendimientoNeto = rendimientoBruto - isrImporte;
     const redimientoCalculado = _.round(rendimientoNeto, 2);

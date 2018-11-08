@@ -69,6 +69,20 @@ export class InversionesEffects {
   );
 
   @Effect()
+  retorno$ = this.actions$.pipe(
+    ofType<fromActions.RetornoInversion>(InversionActionTypes.RetornoInversion),
+    map(action => action.payload.update),
+    switchMap(inversion => {
+      return this.service.retorno(inversion).pipe(
+        map(res => new fromActions.UpsertInversion({ inversion: res })),
+        catchError(error =>
+          of(new fromActions.InversionError({ response: error }))
+        )
+      );
+    })
+  );
+
+  @Effect()
   delete$ = this.actions$.pipe(
     ofType<fromActions.DeleteInversion>(InversionActionTypes.DeleteInversion),
     map(action => action.payload.inversion),

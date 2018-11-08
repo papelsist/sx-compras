@@ -96,7 +96,8 @@ export function reducer(state = initialState, action: InversionActions): State {
 
     case InversionActionTypes.UpsertInversion: {
       return adapter.upsertOne(action.payload.inversion, {
-        ...state
+        ...state,
+        loading: false
       });
     }
 

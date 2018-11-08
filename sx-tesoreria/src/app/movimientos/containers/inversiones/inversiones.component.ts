@@ -12,7 +12,10 @@ import { ReportService } from 'app/reportes/services/report.service';
 import { MatDialog } from '@angular/material';
 
 import { TdDialogService } from '@covalent/core';
-import { InversionFormComponent } from 'app/movimientos/components';
+import {
+  InversionFormComponent,
+  InversionRetornoFormComponent
+} from 'app/movimientos/components';
 
 @Component({
   selector: 'sx-inversiones',
@@ -20,7 +23,7 @@ import { InversionFormComponent } from 'app/movimientos/components';
     <mat-card flex>
     <ng-template  tdLoading [tdLoadingUntil]="!(loading$ | async)" tdLoadingStrategy="overlay">
 
-      <sx-search-title title="Inversiones entre cuentas" (search)="search = $event">
+      <sx-search-title title="Inversiones " (search)="search = $event">
         <!--
         <sx-traspasos-filter-btn class="options" [filter]="filter$ | async" (change)="onFilterChange($event)"></sx-traspasos-filter-btn>
         -->
@@ -31,13 +34,14 @@ import { InversionFormComponent } from 'app/movimientos/components';
       </sx-search-title>
       <mat-divider></mat-divider>
 
-      <sx-traspasos-table [traspasos]="inversiones | async"
+      <sx-inversiones-table [inversiones]="inversiones | async"
         (edit)="onEdit($event)"
         (delete)="onDelete($event)"
         (select)="onSelect($event)"
+        (retorno)="onRetorno($event)"
         [filter]="search"
         [selected]="selected">
-      </sx-traspasos-table>
+      </sx-inversiones-table>
 
       <sx-traspaso-detail [traspaso]="selected" *ngIf="selected"></sx-traspaso-detail>
 
@@ -97,10 +101,11 @@ export class InversionesComponent implements OnInit {
   }
 
   onCreate() {
+    this.selected = null;
     this.dialog
       .open(InversionFormComponent, {
         data: {},
-        width: '750px'
+        width: '650px'
       })
       .afterClosed()
       .subscribe((inversion: Inversion) => {
@@ -110,22 +115,10 @@ export class InversionesComponent implements OnInit {
       });
   }
 
-  onEdit(event: Inversion) {
-    /*
-    this.dialog
-      .open(InversionFormComponent, { data: { cobro: event }, width: '750px' })
-      .afterClosed()
-      .subscribe((changes: Partial<Inversion>) => {
-        if (changes) {
-          this.store.dispatch(
-            new fromActions.UpdateInversion({ cobro: { id: event.id, changes } })
-          );
-        }
-      });
-      */
-  }
+  onEdit(event: Inversion) {}
 
   onDelete(event: Inversion) {
+    this.selected = null;
     this.dialogService
       .openConfirm({
         title: `Eliminación de inversión`,
@@ -138,6 +131,25 @@ export class InversionesComponent implements OnInit {
         if (res) {
           this.store.dispatch(
             new fromActions.DeleteInversion({ inversion: event })
+          );
+        }
+      });
+  }
+
+  onRetorno(event: Inversion) {
+    this.selected = null;
+    this.dialog
+      .open(InversionRetornoFormComponent, {
+        data: { inversion: event },
+        width: '700px'
+      })
+      .afterClosed()
+      .subscribe(changes => {
+        if (changes) {
+          this.store.dispatch(
+            new fromActions.RetornoInversion({
+              update: { id: event.id, changes }
+            })
           );
         }
       });

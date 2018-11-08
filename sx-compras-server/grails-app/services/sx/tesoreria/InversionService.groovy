@@ -2,9 +2,11 @@ package sx.tesoreria
 
 import grails.compiler.GrailsCompileStatic
 import grails.gorm.services.Service
+import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
 import sx.core.Empresa
 import sx.core.LogUser
+import sx.utils.MonedaUtils
 
 @Slf4j
 @GrailsCompileStatic
@@ -17,29 +19,31 @@ abstract  class InversionService implements  LogUser{
 
     Inversion registrar(Inversion inversion) {
         inversion.moneda = inversion.cuentaOrigen.moneda
-        registrarSalida(inversion)
-        registrarEntrada(inversion)
-        logEntity(inversion)
-        return save(inversion)
-    }
 
-    void registrarSalida(Inversion inversion) {
+        // Retiro
         MovimientoDeCuenta egreso = generarMovimiento(
                 inversion.fecha,
-                inversion.importe * -1, 'INVERSION', 'RETIRO',
-                inversion.cuentaOrigen, inversion.referencia )
+                inversion.importe * -1,
+                'INVERSION',
+                'RETIRO',
+                inversion.cuentaOrigen,
+                inversion.referencia )
         logEntity(egreso)
         inversion.addToMovimientos(egreso)
-    }
 
-    void registrarEntrada(Inversion inversion) {
+        // Deposito
         MovimientoDeCuenta ingreso = generarMovimiento(
                 inversion.fecha,
-                inversion.importe, 'INVERSION', 'DEPOSITO',
+                inversion.importe,
+                'INVERSION',
+                'DEPOSITO',
                 inversion.cuentaDestino,
                 inversion.referencia)
         logEntity(ingreso)
         inversion.addToMovimientos(ingreso)
+
+        logEntity(inversion)
+        return save(inversion)
     }
 
 
@@ -66,6 +70,80 @@ abstract  class InversionService implements  LogUser{
         egreso.cuenta = cuenta
         logEntity(egreso)
         return egreso
+
+    }
+
+    @CompileDynamic
+    def recalcular(Inversion inversion) {
+
+        def importe = inversion.importe,
+            tasa = inversion.tasa,
+            plazo = inversion.plazo,
+            isr = inversion.isr
+        Date fecha = inversion.fecha
+        Date retorno = inversion.rendimientoFecha
+        BigDecimal intereses = 0.0
+        (fecha..retorno) {
+            BigDecimal base = importe
+            intereses = intereses + calcularIntereses(base, tasa, plazo, isr)
+        }
+
+        BigDecimal interesesIva = MonedaUtils.round(intereses * 0.16, 2)
+
+
+    }
+
+    BigDecimal calcularIntereses(BigDecimal importe, BigDecimal tasa, BigDecimal plazo, BigDecimal isr) {
+        BigDecimal rendimientoDiario = (importe * (tasa / 100)) / 360
+        BigDecimal rendimientoBruto = rendimientoDiario * plazo
+
+        BigDecimal isrDiario = (importe * (isr / 100)) / 365
+        BigDecimal isrImporte = MonedaUtils.round(isrDiario * plazo, 2)
+
+        BigDecimal rendimientoNeto = rendimientoBruto - isrImporte
+        BigDecimal redimientoCalculado = MonedaUtils.round(rendimientoNeto, 2)
+        return redimientoCalculado
+
+    }
+
+    Inversion retorno(Inversion inversion) {
+
+        // Retiro
+        BigDecimal importe = inversion.importe  + inversion.rendimientoReal
+
+        MovimientoDeCuenta retiro = generarMovimiento(
+                inversion.rendimientoFecha,
+                importe * -1,
+                'RETORNO',
+                'RETIRO',
+                inversion.cuentaDestino,
+                inversion.referencia )
+        logEntity(retiro)
+        inversion.addToMovimientos(retiro)
+
+        MovimientoDeCuenta rendimiento = generarMovimiento(
+                inversion.rendimientoFecha,
+                inversion.rendimientoReal,
+                'RETORNO',
+                'RETIRO',
+                inversion.cuentaDestino,
+                inversion.referencia )
+        logEntity(rendimiento)
+        inversion.addToMovimientos(rendimiento)
+
+        // Deposito
+        MovimientoDeCuenta deposito = generarMovimiento(
+                inversion.rendimientoFecha,
+                importe,
+                'RETORNO',
+                'DEPOSITO',
+                inversion.cuentaOrigen,
+                inversion.referencia)
+        logEntity(deposito)
+        inversion.addToMovimientos(deposito)
+        inversion.retorno = new Date()
+        logEntity(inversion)
+        return save(inversion)
 
     }
 }

@@ -4,12 +4,15 @@ import grails.compiler.GrailsCompileStatic
 import grails.gorm.DetachedCriteria
 import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.*
+import grails.web.http.HttpHeaders
 import groovy.util.logging.Slf4j
 
 import org.apache.commons.lang3.exception.ExceptionUtils
 
 import sx.reports.ReportService
 import sx.utils.Periodo
+
+import static org.springframework.http.HttpStatus.OK
 
 @Slf4j
 @GrailsCompileStatic
@@ -48,6 +51,23 @@ class InversionController extends RestfulController<Inversion> {
     @Override
     protected Inversion updateResource(Inversion resource) {
         return inversionService.actualizar(resource)
+    }
+
+    def retorno() {
+        Inversion inversion = Inversion.get(params.id.toString())
+        if (inversion == null) {
+            notFound()
+            return
+        }
+        inversion.properties = getObjectToBind()
+        log.info('Generando')
+        if (inversion.hasErrors()) {
+            respond inversion.errors, view:'edit' // STATUS CODE 422
+            return
+        }
+
+        inversion = inversionService.retorno(inversion)
+        respond inversion, [status: OK]
     }
 
     def relacionDeInversiones(){

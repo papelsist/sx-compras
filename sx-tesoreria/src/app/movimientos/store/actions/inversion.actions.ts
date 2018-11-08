@@ -20,6 +20,9 @@ export enum InversionActionTypes {
   DeleteInversion = '[Inversion Component] Delete Inversion',
   DeleteInversionSuccess = '[Inversion API] Delete Inversion Success',
 
+  RetornoInversion = '[Inversion Component] Retorno Inversion',
+  RetornoInversionSuccess = '[Inversion API] Retorno Inversion Success',
+
   UpsertInversion = '[Inversion exists guard] Upser existing inversion',
   InversionError = '[Inversion API] Inversion Http Error'
 }
@@ -84,6 +87,17 @@ export class UpsertInversion implements Action {
   constructor(public payload: { inversion: Inversion }) {}
 }
 
+// Update
+export class RetornoInversion implements Action {
+  readonly type = InversionActionTypes.RetornoInversion;
+  constructor(public payload: { update: Update<Inversion> }) {}
+}
+
+export class RetornoInversionSuccess implements Action {
+  readonly type = InversionActionTypes.RetornoInversionSuccess;
+  constructor(public payload: { inversion: Inversion }) {}
+}
+
 // Errors
 export class InversionError implements Action {
   readonly type = InversionActionTypes.InversionError;
@@ -102,4 +116,6 @@ export type InversionActions =
   | UpdateInversion
   | UpdateInversionSuccess
   | InversionError
+  | RetornoInversion
+  | RetornoInversionSuccess
   | UpsertInversion;

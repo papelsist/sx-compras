@@ -26,6 +26,8 @@ class Inversion extends Traspaso{
 	BigDecimal isrImporte = 0.0
 
 	Date rendimientoFecha  // La fecha real del vencimiento
+
+	Date retorno
 	
 
     static constraints = {
@@ -34,11 +36,13 @@ class Inversion extends Traspaso{
 			if(val<obj.fecha)
 				return "vencimientoInvalido" 
 		})
+		retorno nullable: true
     }
 	
 	static mapping ={
         rendimientoFecha type:'date'
 		vencimiento type: 'date'
+		retorno type: 'date'
     }
 	
 }

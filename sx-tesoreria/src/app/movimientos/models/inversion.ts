@@ -10,4 +10,5 @@ export interface Inversion extends Traspaso {
   isrImporte: number;
   rendimientoFecha: string;
   rendimientoImpuesto?: number;
+  retorno?: string;
 }
