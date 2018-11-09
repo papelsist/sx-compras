@@ -70,12 +70,15 @@ import * as moment from 'moment';
 export class MovTesFormComponent implements OnInit {
   form: FormGroup;
   movimiento: Partial<MovimientoDeTesoreria>;
+  tipo:'DEPOSITO'| 'RETIRO';
 
   constructor(
     public dialogRef: MatDialogRef<MovTesFormComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private fb: FormBuilder
-  ) {}
+  ) {
+    this.tipo = data.tipo;
+  }
 
   ngOnInit() {
     this.buildForm();
@@ -108,7 +111,7 @@ export class MovTesFormComponent implements OnInit {
     if (this.movimiento) {
       return `Depósito / Retiro  ${this.movimiento.id} `;
     } else {
-      return 'Alta de inversión';
+      return `Alta de ${this.tipo === 'DEPOSITO' ?'Depósito' : 'Retiro'}` ;
     }
   }
 }
