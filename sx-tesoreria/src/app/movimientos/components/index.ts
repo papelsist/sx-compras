@@ -5,6 +5,8 @@ import { MovimientosCuentaTableComponent } from './movimientos-cuenta-table/movi
 import { InversionFormComponent } from './inversion-form/inversion-form-component';
 import { InversionesTableComponent } from './inversiones-table/inversiones-table.component';
 import { InversionRetornoFormComponent } from './inversion-retorno-form/inversion-retorno-form-component';
+import { MovTesFormComponent } from './mov-tes-form/mov-tes-form-component';
+import { MovTesTableComponent } from './mov-tes-table/mov-tes-table.component';
 
 export const components: any[] = [
   TraspasosTableComponent,
@@ -13,12 +15,15 @@ export const components: any[] = [
   MovimientosCuentaTableComponent,
   InversionFormComponent,
   InversionesTableComponent,
-  InversionRetornoFormComponent
+  InversionRetornoFormComponent,
+  MovTesFormComponent,
+  MovTesTableComponent
 ];
 export const entryComponents: any[] = [
   TraspasoFormComponent,
   InversionFormComponent,
-  InversionRetornoFormComponent
+  InversionRetornoFormComponent,
+  MovTesFormComponent
 ];
 
 export * from './traspasos-table/traspasos-table.component';
@@ -28,3 +33,5 @@ export * from './movimientos-cuenta-table/movimientos-cuenta-table.component';
 export * from './inversion-form/inversion-form-component';
 export * from './inversiones-table/inversiones-table.component';
 export * from './inversion-retorno-form/inversion-retorno-form-component';
+export * from './mov-tes-form/mov-tes-form-component';
+export * from './mov-tes-table/mov-tes-table.component';

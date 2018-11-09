@@ -50,10 +50,13 @@ class UrlMappings {
         "/api/tesoreria/cortesTarjeta/cancelarAplicacion/$id"( controller: 'corteDeTarjeta', action: 'cancelarAplicacion', method: 'PUT')
         "/api/tesoreria/cortesTarjeta/reporteDeComisionesTarjeta"(controller: 'corteDeTarjeta', action: 'reporteDeComisionesTarjeta', method: 'GET')
 
-        // Traspaso entre cuentas
+        // Traspaso e inversiones
         "/api/tesoreria/traspasos"(resources: 'traspaso', excludes:['create', 'edit','patch'] )
         "/api/tesoreria/inversiones"(resources: 'inversion', excludes:['create', 'edit','patch'] )
         "/api/tesoreria/inversiones/retorno/$id"(controller: 'inversion', action: 'retorno', method: 'PUT')
+
+        // Movimientos genericos
+        "/api/tesoreria/movimientos"(resources: 'movimientoDeTesoreria', excludes:['create', 'edit','patch', 'update'] )
 
         "/api/cxc/cobros"(resources: 'cobro')
         "/api/cxc/cobro/reporteDeCobranza"(controller: "cobro", action: 'reporteDeCobranza', method: 'GET')

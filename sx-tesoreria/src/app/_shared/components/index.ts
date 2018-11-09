@@ -23,6 +23,9 @@ import { ProductoFieldComponent } from './producto-field/producto-field.componen
 import { EjercicioMesComponent } from './ejercicio-mes/ejercicio-mes.component';
 import { EjercicioMesBtnComponent } from './ejercicio-mes/ejercicio-mes-btn.component';
 import { ClienteFieldComponent } from './cliente-field/cliente-field.component';
+import { PeriodoFilterComponent } from './periodo-filter/periodo-filter.component';
+import { PeriodoFilterBtnComponent } from './periodo-filter/periodo-filter-btn.component';
+import { PeriodoFilterLabelComponent } from './periodo-filter/periodo-filter-label.component';
 
 export const components = [
   DireccionComponent,
@@ -47,13 +50,18 @@ export const components = [
   ProductoFieldComponent,
   EjercicioMesComponent,
   EjercicioMesBtnComponent,
-  ClienteFieldComponent
+  ClienteFieldComponent,
+  PeriodoFilterComponent,
+  PeriodoFilterBtnComponent,
+  PeriodoFilterLabelComponent
 ];
 
 export const entyComponents: any[] = [
   FechaDialogComponent,
   PeriodoDialogComponent,
-  EjercicioMesComponent
+  EjercicioMesComponent,
+  PeriodoFilterComponent,
+  PeriodoFilterLabelComponent
 ];
 
 export * from './direccion/direccion.component';
@@ -80,3 +88,6 @@ export * from './ejercicio-mes/ejercicio-mes.component';
 export * from './ejercicio-mes/ejercicio-mes-btn.component';
 
 export * from './cliente-field/cliente-field.component';
+export * from './periodo-filter/periodo-filter.component';
+export * from './periodo-filter/periodo-filter-btn.component';
+export * from './periodo-filter/periodo-filter-label.component';

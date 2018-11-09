@@ -6,8 +6,8 @@ export interface PeriodoFilter {
   registros?: number;
 }
 
-export function createPeriodoFilter(): PeriodoFilter {
-  const { fechaInicial, fechaFinal } = Periodo.fromNow(20);
+export function createPeriodoFilter(dias = 20): PeriodoFilter {
+  const { fechaInicial, fechaFinal } = Periodo.fromNow(dias);
   const registros = 20;
   return {
     fechaInicial,

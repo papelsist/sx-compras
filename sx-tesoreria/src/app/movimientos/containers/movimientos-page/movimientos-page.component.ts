@@ -20,7 +20,7 @@ import { ReportService } from 'app/reportes/services/report.service';
 export class MovimientosPageComponent implements OnInit {
   navmenu: Object[] = [
     {
-      route: 'depositosRetiros',
+      route: 'tesoreria',
       title: 'Depósito/Retiro',
       description: 'Depositos y retiros',
       icon: 'import_export'

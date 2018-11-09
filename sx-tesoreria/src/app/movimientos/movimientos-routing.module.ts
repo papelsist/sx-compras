@@ -18,6 +18,11 @@ const routes: Routes = [
         path: 'inversiones',
         canActivate: [fromGuards.InversionesGuard],
         component: fromContainers.InversionesComponent
+      },
+      {
+        path: 'tesoreria',
+        canActivate: [fromGuards.MovimientosGuard],
+        component: fromContainers.MovimientosTesComponent
       }
     ]
   }
