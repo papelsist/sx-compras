@@ -58,13 +58,7 @@ export class PeriodoFilterComponent implements OnInit {
 
   getPeriodo() {
     if (this.form.valid) {
-      const f1 = this.form.get('fechaInicial').value;
-      const f2 = this.form.get('fechaFinal').value;
-      return {
-        ...this.form.value,
-        fechaInicial: f1.toISOString(),
-        fechaFinal: f1.toISOString()
-      };
+      return this.form.value;
     }
     return null;
   }

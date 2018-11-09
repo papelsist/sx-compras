@@ -22,10 +22,13 @@ import { MovTesFormComponent } from 'app/movimientos/components';
     <ng-template  tdLoading [tdLoadingUntil]="!(loading$ | async)" tdLoadingStrategy="overlay">
 
       <sx-search-title title="Movimientos de tesorería " (search)="search = $event">
-        <sx-periodo-filter-btn [filter]="filter$ | async" class="options"></sx-periodo-filter-btn>
+        <sx-periodo-filter-btn [filter]="filter$ | async" class="options" (change)="onFilterChange($event)"></sx-periodo-filter-btn>
         <button mat-menu-item class="actions" (click)="reload()"><mat-icon>refresh</mat-icon> Recargar</button>
-        <a mat-menu-item  color="accent"[routerLink]="['create']" class="actions">
-          <mat-icon>add</mat-icon> Nuevo
+        <a mat-menu-item  color="accent" class="actions" (click)="onCreate('DEPOSITO')">
+          <mat-icon>add_circle_outline</mat-icon> DEPOSITO
+        </a>
+        <a mat-menu-item  color="accent" class="actions" (click)="onCreate('RETIRO')">
+          <mat-icon>remove_circle_outline</mat-icon> RETIRO
         </a>
       </sx-search-title>
       <mat-divider></mat-divider>
@@ -44,11 +47,6 @@ import { MovTesFormComponent } from 'app/movimientos/components';
       </mat-card-footer>
     </ng-template>
     </mat-card>
-
-    <a mat-fab matTooltip="Alta" matTooltipPosition="before" color="accent" class="mat-fab-position-bottom-right z-3"
-    (click)="onCreate()">
-  <mat-icon>add</mat-icon>
-  </a>
 
   `,
   styles: [
@@ -92,10 +90,10 @@ export class MovimientosTesComponent implements OnInit {
     this.store.dispatch(new fromStore.LoadMovimientos());
   }
 
-  onCreate() {
+  onCreate(tipo: 'DEPOSITO' | 'RETIRO') {
     this.dialog
       .open(MovTesFormComponent, {
-        data: {},
+        data: { tipo },
         width: '650px'
       })
       .afterClosed()

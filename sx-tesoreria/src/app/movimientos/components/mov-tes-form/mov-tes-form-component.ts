@@ -5,16 +5,16 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MovimientoDeTesoreria } from '../../models';
 
 import * as _ from 'lodash';
-import * as moment from 'moment';
 
 @Component({
   selector: 'sx-mov-tes-form',
   template: `
   <form [formGroup]="form">
     <h2 mat-dialog-title>{{title}}</h2>
+    <mat-divider></mat-divider>
     <mat-dialog-content>
 
-      <div layout="column">
+      <div layout="column" class="pad-top">
         <div layout>
           <mat-form-field flex="50">
             <input matInput [matDatepicker]="myDatepicker" placeholder="Fecha" formControlName="fecha" autocomplete="off">
@@ -23,7 +23,7 @@ import * as moment from 'moment';
           </mat-form-field>
           <mat-form-field flex  class="pad-left">
             <mat-select placeholder="Concepto" formControlName="concepto" >
-              <mat-option *ngFor="let c of ['ACLARACION', 'CONCILIACION', 'FALTANTE', 'SOBRANTE']"
+              <mat-option *ngFor="let c of conceptos"
                   [value]="c">{{ c }}
               </mat-option>
             </mat-select>
@@ -41,7 +41,7 @@ import * as moment from 'moment';
           </mat-form-field>
         </div>
 
-        <sx-upper-case-field formControlName="comentario" placeholder="Comentario" flex class="pad-left"></sx-upper-case-field>
+        <sx-upper-case-field formControlName="comentario" placeholder="Comentario" ></sx-upper-case-field>
       </div>
 
     </mat-dialog-content>
@@ -70,7 +70,8 @@ import * as moment from 'moment';
 export class MovTesFormComponent implements OnInit {
   form: FormGroup;
   movimiento: Partial<MovimientoDeTesoreria>;
-  tipo:'DEPOSITO'| 'RETIRO';
+  tipo: 'DEPOSITO' | 'RETIRO';
+  conceptos: string[] = [];
 
   constructor(
     public dialogRef: MatDialogRef<MovTesFormComponent>,
@@ -78,6 +79,24 @@ export class MovTesFormComponent implements OnInit {
     private fb: FormBuilder
   ) {
     this.tipo = data.tipo;
+    if (this.tipo === 'DEPOSITO') {
+      this.conceptos = [
+        'DEPOSITO',
+        'ABONO_MORRALLA',
+        'DEP_PENDIENTE_ACLARAR',
+        'DIFDEPOSITOSABONO',
+        'DIFCONCILIACIONA',
+        'ABONO_SOBRANTE'
+      ];
+    } else {
+      this.conceptos = [
+        'CARGO',
+        'CARGO_MORRALLA',
+        'DIFDEPOSITOSCARGO',
+        'DIFCONCILIACIONC',
+        'CARGO_FALTANTE'
+      ];
+    }
   }
 
   ngOnInit() {
@@ -101,7 +120,8 @@ export class MovTesFormComponent implements OnInit {
       const entity = {
         ...this.form.value,
         cuenta: this.form.get('cuenta').value.id,
-        fecha: this.form.get('fecha').value.toISOString()
+        fecha: this.form.get('fecha').value.toISOString(),
+        importe: this.importe
       };
       this.dialogRef.close(entity);
     }
@@ -111,7 +131,12 @@ export class MovTesFormComponent implements OnInit {
     if (this.movimiento) {
       return `Depósito / Retiro  ${this.movimiento.id} `;
     } else {
-      return `Alta de ${this.tipo === 'DEPOSITO' ?'Depósito' : 'Retiro'}` ;
+      return `Alta de ${this.tipo === 'DEPOSITO' ? 'Depósito' : 'Retiro'}`;
     }
+  }
+
+  get importe() {
+    const imp = this.form.get('importe').value;
+    return this.tipo === 'DEPOSITO' ? imp : imp * -1;
   }
 }

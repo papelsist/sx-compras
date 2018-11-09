@@ -2,12 +2,11 @@ package sx.tesoreria
 
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
+import sx.cxp.CuentaPorPagar
 
 @EqualsAndHashCode(includes='id')
 @ToString( excludes = "version, lastUpdated, dateCreated, cxc",includeNames=true,includePackage=false)
 class ComisionBancaria {
-
-    String id
 
     Date fecha
 
@@ -19,29 +18,36 @@ class ComisionBancaria {
 
     BigDecimal impuesto = 0.0
 
+    String concepto
+
     String comentario
 
-    String referenciaBancaria
+    String referencia
 
-    String cxp
+    CuentaPorPagar cxp
 
-    Set<MovimientoDeCuenta> movimientos
+    List<MovimientoDeCuenta> movimientos
 
     Date dateCreated
     Date lastUpdated
 
-    static hasMany =[movimientos:MovimientoDeCuenta]
+    String createUser
+    String updateUser
+
+    static hasMany = [movimientos:MovimientoDeCuenta]
 
     static constraints = {
-        comentario(nullable:true,maxSize:200)
-        referenciaBancaria(nullable:true,maxSize:100)
-        cxp nullable:true
+        comentario nullable:true, maxSize: 200
+        referencia nullable:true, maxSize: 100
+        cxp nullable: true
+        createUser nullable: true
+        updateUser nullable: true
+        concepto inList: ['POR_TRASFERENCIA', 'CHEQUES_GIRADOS', 'DIFERENCIA_COMISIONES']
     }
 
     static mapping ={
-        id generator: 'uuid'
         fecha type:'date'
-        movimientos cascade:"all-delete-orphan"
+        movimientos cascade: "all-delete-orphan"
     }
 
 }

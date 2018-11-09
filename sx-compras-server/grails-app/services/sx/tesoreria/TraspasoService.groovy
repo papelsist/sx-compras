@@ -28,7 +28,7 @@ abstract class TraspasoService implements  LogUser{
     void registrarSalida(Traspaso traspaso) {
         MovimientoDeCuenta egreso = generarMovimiento(
                 traspaso.fecha,
-                traspaso.importe * -1, 'TRASPASO', 'EGRESO',
+                traspaso.importe * -1, 'TRASPASO', 'RETIRO',
                 traspaso.cuentaOrigen, traspaso.referencia )
         logEntity(egreso)
         traspaso.addToMovimientos(egreso)
@@ -37,7 +37,7 @@ abstract class TraspasoService implements  LogUser{
     void registrarEntrada(Traspaso traspaso) {
         MovimientoDeCuenta ingreso = generarMovimiento(
                 traspaso.fecha,
-                traspaso.importe, 'TRASPASO', 'INGRESO',
+                traspaso.importe, 'TRASPASO', 'DEPOSITO',
                 traspaso.cuentaDestino,
                 traspaso.referencia)
         logEntity(ingreso)

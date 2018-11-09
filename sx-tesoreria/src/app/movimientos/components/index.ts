@@ -7,6 +7,7 @@ import { InversionesTableComponent } from './inversiones-table/inversiones-table
 import { InversionRetornoFormComponent } from './inversion-retorno-form/inversion-retorno-form-component';
 import { MovTesFormComponent } from './mov-tes-form/mov-tes-form-component';
 import { MovTesTableComponent } from './mov-tes-table/mov-tes-table.component';
+import { ComisionesTableComponent } from './comisiones-table/comisiones-table.component';
 
 export const components: any[] = [
   TraspasosTableComponent,
@@ -17,7 +18,8 @@ export const components: any[] = [
   InversionesTableComponent,
   InversionRetornoFormComponent,
   MovTesFormComponent,
-  MovTesTableComponent
+  MovTesTableComponent,
+  ComisionesTableComponent
 ];
 export const entryComponents: any[] = [
   TraspasoFormComponent,
@@ -35,3 +37,4 @@ export * from './inversiones-table/inversiones-table.component';
 export * from './inversion-retorno-form/inversion-retorno-form-component';
 export * from './mov-tes-form/mov-tes-form-component';
 export * from './mov-tes-table/mov-tes-table.component';
+export * from './comisiones-table/comisiones-table.component';

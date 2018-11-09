@@ -35,11 +35,14 @@ class MovimientoDeTesoreria {
     String updateUser
     String createUser
 
+    Long sw2
+
     static constraints = {
         comentario nullable: true
         referencia nullable: true
         createUser nullable: true
         updateUser nullable: true
+        sw2 nullable: true
     }
 
     static mapping = {
@@ -48,14 +51,16 @@ class MovimientoDeTesoreria {
 }
 
 enum ConceptoTesoreria {
-    ACLARACION,
-    CONCILIACION,
-    COMISION,
-    FALTANTE,
-    SOBRANTE,
-    MORRALLA,
-    INTERESES,
-    ISR,
-    IVA
+    DEPOSITO,
+    ABONO_MORRALLA,
+    DEP_PENDIENTE_ACLARAR,
+    DIFDEPOSITOSABONO,
+    DIFCONCILIACIONA,
+    ABONO_SOBRANTE,
+    CARGO,
+    CARGO_MORRALLA,
+    DIFDEPOSITOSCARGO,
+    DIFCONCILIACIONC,
+    CARGO_FALTANTE
 }
 

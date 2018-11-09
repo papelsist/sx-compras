@@ -1,0 +1,8 @@
+import sx.tesoreria.ComisionBancaria
+
+model {
+	Iterable<ComisionBancaria> comisionBancariaList
+}
+
+json tmpl.comisionBancaria(comisionBancariaList ?: [])
+

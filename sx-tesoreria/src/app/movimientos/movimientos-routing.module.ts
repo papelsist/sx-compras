@@ -23,6 +23,11 @@ const routes: Routes = [
         path: 'tesoreria',
         canActivate: [fromGuards.MovimientosGuard],
         component: fromContainers.MovimientosTesComponent
+      },
+      {
+        path: 'comisiones',
+        canActivate: [fromGuards.ComisionGuard],
+        component: fromContainers.ComisionesComponent
       }
     ]
   }

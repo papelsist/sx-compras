@@ -36,6 +36,9 @@ class Traspaso {
 	String updateUser
 
 	List<MovimientoDeCuenta> movimientos
+
+	Long sw2
+
 	
 	static hasMany = [movimientos:MovimientoDeCuenta]
 
@@ -47,10 +50,11 @@ class Traspaso {
 				return "diferenteMonedaError"
 			
 		}
-		comentario(blank:true)
+		comentario nullable: true
 		createUser nullable: true
 		updateUser nullable: true
 		referencia nullable: true
+		sw2 nullable: true
     }
 	
 	static mapping ={
