@@ -58,7 +58,10 @@ class UrlMappings {
         // Movimientos genericos
         "/api/tesoreria/movimientos"(resources: 'movimientoDeTesoreria', excludes:['create', 'edit','patch', 'update'] )
 
+
         "/api/tesoreria/comisiones"(resources: 'comisionBancaria', excludes:['create', 'edit','patch', 'update'] )
+
+        "/api/tesoreria/compraMonedas"(resources: 'compraDeMoneda', excludes:['create', 'edit','patch', 'update'] )
 
         "/api/cxc/cobros"(resources: 'cobro')
         "/api/cxc/cobro/reporteDeCobranza"(controller: "cobro", action: 'reporteDeCobranza', method: 'GET')

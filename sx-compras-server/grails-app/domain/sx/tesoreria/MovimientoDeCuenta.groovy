@@ -49,7 +49,11 @@ class MovimientoDeCuenta {
 
     String sucursal
 
-    static belongsTo = [movimientoDeTesoreria: MovimientoDeTesoreria, requisicion: Requisicion]
+    static belongsTo = [
+            movimientoDeTesoreria: MovimientoDeTesoreria,
+            requisicion: Requisicion,
+            compraDeMoneda: CompraDeMoneda
+    ]
 
 
     static constraints = {
@@ -68,6 +72,7 @@ class MovimientoDeCuenta {
         updateUser nullable: true
         cheque nullable: true, unique: true
         sucursal nullable: true
+        compraDeMoneda nullable: true
 
     }
 
