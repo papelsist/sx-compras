@@ -74,7 +74,7 @@ export class InversionesEffects {
     map(action => action.payload.update),
     switchMap(inversion => {
       return this.service.retorno(inversion).pipe(
-        map(res => new fromActions.UpsertInversion({ inversion: res })),
+        map(res => new fromActions.UpdateInversionSuccess({ inversion: res })),
         catchError(error =>
           of(new fromActions.InversionError({ response: error }))
         )

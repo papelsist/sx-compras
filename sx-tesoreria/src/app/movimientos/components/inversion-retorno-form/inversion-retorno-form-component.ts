@@ -62,22 +62,12 @@ import * as moment from 'moment';
           <mat-form-field flex class="pad-left" >
             <input matInput placeholder="Rendimiento Calculado" value="{{inversion.rendimientoCalculado | currency}}" [disabled]="true" >
           </mat-form-field>
-        </div>
-
-        <div layout>
-          <mat-form-field  flex="50">
+          <mat-form-field  flex class="pad-left">
             <input matInput [matDatepicker]="rendimientoPicker" placeholder="Rendimiento fecha"
               formControlName="rendimientoFecha" autocomplete="off">
             <mat-datepicker-toggle matSuffix [for]="rendimientoPicker"></mat-datepicker-toggle>
             <mat-datepicker #rendimientoPicker></mat-datepicker>
           </mat-form-field>
-        </div>
-
-        <div layout>
-          <mat-form-field flex>
-            <input matInput placeholder="Referencia" formControlName="referencia" autocomplete="off" >
-          </mat-form-field>
-          <sx-upper-case-field formControlName="comentario" placeholder="Comentario" flex class="pad-left"></sx-upper-case-field>
         </div>
 
       </div>
@@ -86,7 +76,7 @@ import * as moment from 'moment';
 
     <mat-dialog-actions>
       <button mat-button mat-dialog-close type="button">Canelar</button>
-      <button mat-button [disabled]="form.invalid || form.pristine" (click)="submit()" *ngIf="!form.disabled">
+      <button mat-button [disabled]="form.invalid " (click)="submit()" *ngIf="!form.disabled">
         Aceptar
       </button>
     </mat-dialog-actions>
@@ -129,10 +119,10 @@ export class InversionRetornoFormComponent implements OnInit {
     this.form = this.fb.group({
       isr: [null, [Validators.required]],
       isrImporte: [null, [Validators.required]],
-      tasa: [null, [Validators.required]],
-      plazo: [null, [Validators.required]],
-      rendimientoReal: [],
-      rendimientoFecha: [],
+      tasa: [{ value: null, disabled: true }],
+      plazo: [{ value: null, disabled: true }],
+      rendimientoReal: [null, [Validators.required]],
+      rendimientoFecha: [null],
       rendimientoImpuesto: [],
       referencia: [null],
       comentario: []
@@ -142,8 +132,8 @@ export class InversionRetornoFormComponent implements OnInit {
   submit() {
     if (this.form.valid) {
       const res = {
-        ...this.form.value,
-        rendimientoFecha: this.form.get('rendimientoFecha').value.toISOString()
+        ...this.form.value
+        // rendimientoFecha: this.form.get('rendimientoFecha').value.toISOString()
       };
       this.dialogRef.close(res);
     }

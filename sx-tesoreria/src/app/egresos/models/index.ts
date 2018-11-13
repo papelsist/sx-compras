@@ -7,3 +7,4 @@ export * from './rembolso';
 export * from './rembolsoDet';
 export * from './pagoDeRembolso';
 export * from './compraMoneda';
+export * from './pago-nomina';

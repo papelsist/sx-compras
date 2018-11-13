@@ -19,6 +19,8 @@ abstract  class InversionService implements  LogUser{
 
     Inversion registrar(Inversion inversion) {
         inversion.moneda = inversion.cuentaOrigen.moneda
+        if(!inversion.rendimientoFecha)
+            inversion.rendimientoFecha = inversion.vencimiento
 
         // Retiro
         MovimientoDeCuenta egreso = generarMovimiento(
@@ -73,43 +75,16 @@ abstract  class InversionService implements  LogUser{
 
     }
 
-    @CompileDynamic
-    def recalcular(Inversion inversion) {
 
-        def importe = inversion.importe,
-            tasa = inversion.tasa,
-            plazo = inversion.plazo,
-            isr = inversion.isr
-        Date fecha = inversion.fecha
-        Date retorno = inversion.rendimientoFecha
-        BigDecimal intereses = 0.0
-        (fecha..retorno) {
-            BigDecimal base = importe
-            intereses = intereses + calcularIntereses(base, tasa, plazo, isr)
-        }
-
-        BigDecimal interesesIva = MonedaUtils.round(intereses * 0.16, 2)
-
-
-    }
-
-    BigDecimal calcularIntereses(BigDecimal importe, BigDecimal tasa, BigDecimal plazo, BigDecimal isr) {
-        BigDecimal rendimientoDiario = (importe * (tasa / 100)) / 360
-        BigDecimal rendimientoBruto = rendimientoDiario * plazo
-
-        BigDecimal isrDiario = (importe * (isr / 100)) / 365
-        BigDecimal isrImporte = MonedaUtils.round(isrDiario * plazo, 2)
-
-        BigDecimal rendimientoNeto = rendimientoBruto - isrImporte
-        BigDecimal redimientoCalculado = MonedaUtils.round(rendimientoNeto, 2)
-        return redimientoCalculado
-
-    }
 
     Inversion retorno(Inversion inversion) {
 
+        if(!inversion.rendimientoFecha)
+            inversion.rendimientoFecha = inversion.vencimiento
+
         // Retiro
         BigDecimal importe = inversion.importe  + inversion.rendimientoReal
+
 
         MovimientoDeCuenta retiro = generarMovimiento(
                 inversion.rendimientoFecha,
@@ -144,6 +119,39 @@ abstract  class InversionService implements  LogUser{
         inversion.retorno = new Date()
         logEntity(inversion)
         return save(inversion)
+
+    }
+
+    @CompileDynamic
+    def recalcular(Inversion inversion) {
+
+        def importe = inversion.importe,
+            tasa = inversion.tasa,
+            plazo = inversion.plazo,
+            isr = inversion.isr
+        Date fecha = inversion.fecha
+        Date retorno = inversion.rendimientoFecha
+        BigDecimal intereses = 0.0
+        (fecha..retorno) {
+            BigDecimal base = importe
+            intereses = intereses + calcularIntereses(base, tasa, plazo, isr)
+        }
+
+        BigDecimal interesesIva = MonedaUtils.round(intereses * 0.16, 2)
+
+
+    }
+
+    BigDecimal calcularIntereses(BigDecimal importe, BigDecimal tasa, BigDecimal plazo, BigDecimal isr) {
+        BigDecimal rendimientoDiario = (importe * (tasa / 100)) / 360
+        BigDecimal rendimientoBruto = rendimientoDiario * plazo
+
+        BigDecimal isrDiario = (importe * (isr / 100)) / 365
+        BigDecimal isrImporte = MonedaUtils.round(isrDiario * plazo, 2)
+
+        BigDecimal rendimientoNeto = rendimientoBruto - isrImporte
+        BigDecimal redimientoCalculado = MonedaUtils.round(rendimientoNeto, 2)
+        return redimientoCalculado
 
     }
 }
