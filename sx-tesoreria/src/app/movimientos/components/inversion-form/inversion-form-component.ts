@@ -161,7 +161,7 @@ export class InversionFormComponent implements OnInit, OnDestroy {
     )
       .pipe(takeUntil(this.destroy$))
       .subscribe(res => {
-        this.calcularVto(res.fecha);
+        this.calcularVto(res.fecha, res.plazo);
         this.calcularRendimiento(res);
       });
   }
@@ -260,8 +260,10 @@ export class InversionFormComponent implements OnInit, OnDestroy {
     // this.form.get('')
   }
 
-  private calcularVto(plazo: number) {
-    const fecha = moment(this.form.get('fecha').value);
-    this.form.get('vencimiento').setValue(fecha.add(plazo, 'days').toDate());
+  private calcularVto(dia: Date, plazo: number) {
+    const fecha = moment(dia);
+    const vto = fecha.add(plazo, 'days').toDate();
+    this.form.get('vencimiento').setValue(vto);
+    this.form.get('rendimientoFecha').setValue(vto);
   }
 }

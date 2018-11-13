@@ -21,6 +21,7 @@ class CompraDeMoneda {
     String moneda = 'USD'
 
     BigDecimal importe
+    BigDecimal apagar
     String formaDePago
     BigDecimal tipoDeCambio
     BigDecimal tipoDeCambioCompra
@@ -28,8 +29,9 @@ class CompraDeMoneda {
 
     Proveedor proveedor
     String afavor
-    MovimientoDeCuenta ingreso
-    MovimientoDeCuenta egreso
+
+    List<MovimientoDeCuenta> movimientos
+
     CuentaPorPagar cxp
 
     String referencia
@@ -42,23 +44,31 @@ class CompraDeMoneda {
 
     Long sw2
 
+    static hasMany = [movimientos:MovimientoDeCuenta]
+
 
     static constraints = {
+        /*
         cuentaDestino validator:{val, obj ->
             if(obj.cuentaOrigen==val)
                 return "mismaCuentaError"
-            if(obj.cuentaOrigen.moneda!=val.moneda)
+            if(obj.cuentaOrigen.moneda!=obj.moneda)
                 return "diferenteMonedaError"
 
         }
+        */
         createUser nullable: true
         updateUser nullable: true
         referencia nullable: true
+        cxp nullable: true
         sw2 nullable: true
     }
 
+
+
     static mapping ={
         fecha type: 'date'
+        movimientos cascade: "all-delete-orphan"
     }
 
 

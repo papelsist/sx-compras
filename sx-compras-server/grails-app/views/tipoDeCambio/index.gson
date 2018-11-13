@@ -1,0 +1,8 @@
+import sx.core.TipoDeCambio
+
+model {
+	Iterable<TipoDeCambio> tipoDeCambioList
+}
+
+json tmpl.tipoDeCambio(tipoDeCambioList ?: [])
+

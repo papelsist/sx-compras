@@ -4,10 +4,10 @@ model {
 	CompraDeMoneda compraDeMoneda
 }
 
-json g.render(compraDeMoneda, [excludes: ['ingreso', 'egreso'], resolveTemplate: false]) {
+json g.render(compraDeMoneda, [excludes: ['movimientos'], resolveTemplate: false]) {
 	origen "${compraDeMoneda.cuentaOrigen.descripcion} (${compraDeMoneda.cuentaOrigen.numero})"
 	destino "${compraDeMoneda.cuentaDestino.descripcion} (${compraDeMoneda.cuentaDestino.numero})"
-	egreso g.render(compraDeMoneda.egreso)
-	ingreso g.render(compraDeMoneda.ingreso)
+	factura compraDeMoneda?.cxp?.uuid
+	movimientos g.render(compraDeMoneda.movimientos)
 }
 

@@ -14,9 +14,9 @@ class ComisionBancaria {
 
     BigDecimal comision = 0.0
 
-    BigDecimal impuestoTasa = 0.0
+    BigDecimal impuestoTasa
 
-    BigDecimal impuesto = 0.0
+    BigDecimal impuesto
 
     String concepto
 
@@ -42,7 +42,9 @@ class ComisionBancaria {
         cxp nullable: true
         createUser nullable: true
         updateUser nullable: true
-        concepto inList: ['POR_TRASFERENCIA', 'CHEQUES_GIRADOS', 'DIFERENCIA_COMISIONES']
+        concepto inList: [
+                'POR_TRASFERENCIA', 'CHEQUES_GIRADOS', 'DIFERENCIA_COMISIONES', 'CHEQUE_CERTIFICADO',
+                'COBU', 'ANUALIDAD', 'EXC_PAQ', 'IN_MDIA', 'SERV_BCA', 'TRANSFER_FONDOS', 'SPEI', 'OTROS']
     }
 
     static mapping ={

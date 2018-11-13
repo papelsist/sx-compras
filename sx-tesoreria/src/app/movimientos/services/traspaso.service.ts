@@ -22,6 +22,9 @@ export class TraspasoService {
     let params = new HttpParams()
       .set('fechaInicial', filter.fechaInicial.toISOString())
       .set('fechaFinal', filter.fechaFinal.toISOString());
+    if (filter.registros) {
+      params = params.set('max', filter.registros.toString());
+    }
     if (filter.cuenta) {
       params = params.set('cuenta', filter.cuenta.id);
     }

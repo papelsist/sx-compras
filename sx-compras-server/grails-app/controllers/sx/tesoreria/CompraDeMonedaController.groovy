@@ -41,6 +41,17 @@ class CompraDeMonedaController extends RestfulController<CompraDeMoneda> {
     }
 
     @Override
+    protected CompraDeMoneda createResource() {
+        CompraDeMoneda compraDeMoneda = new CompraDeMoneda()
+        bindData compraDeMoneda, getObjectToBind()
+        compraDeMoneda.afavor = compraDeMoneda.proveedor.nombre
+        // compraDeMoneda.formaDePago = 'TRANSFERENCIA'
+        // compraDeMoneda.tipoDeCambioCompra = compraDeMoneda.tipoDeCambio
+        compraDeMoneda.diferenciaCambiaria = 0.0
+        return compraDeMoneda
+    }
+
+    @Override
     protected CompraDeMoneda saveResource(CompraDeMoneda resource) {
         return compraDeMonedaService.registrar(resource)
     }

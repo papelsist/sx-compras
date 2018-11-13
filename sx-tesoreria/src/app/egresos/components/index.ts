@@ -35,6 +35,8 @@ import { CancelarPagoRembolsoComponent } from './cancelaciones/cancelar-pago-rem
 import { CancelarChequeRembolsoComponent } from './cancelaciones/cancelar-cheque-rembolso.component';
 import { GenerarChequeRembolsoComponent } from './generar-cheque-rembolso/generar-cheque-rembolso.component';
 import { GenerarChequeRembolsoBtnComponent } from './generar-cheque-rembolso/generar-cheque-rembolso-btn.component';
+import { ComprasMonedaTableComponent } from './compras-moneda-table/compras-moneda-table.component';
+import { CompraMonedaFormComponent } from './compra-moneda-form/compra-moneda-form.component';
 
 export const components: any[] = [
   RequisicionesTableComponent,
@@ -71,7 +73,10 @@ export const components: any[] = [
   CancelarPagoRembolsoComponent,
   CancelarChequeRembolsoComponent,
   GenerarChequeRembolsoComponent,
-  GenerarChequeRembolsoBtnComponent
+  GenerarChequeRembolsoBtnComponent,
+  //
+  ComprasMonedaTableComponent,
+  CompraMonedaFormComponent
 ];
 
 export const entryComponents: any[] = [
@@ -81,7 +86,8 @@ export const entryComponents: any[] = [
   GenerarChequeComponent,
   RembolsosFilterComponent,
   RembolsoPagoDialogComponent,
-  GenerarChequeRembolsoComponent
+  GenerarChequeRembolsoComponent,
+  CompraMonedaFormComponent
 ];
 
 export * from './requisiciones-table/requisiciones-table.component';
@@ -118,3 +124,7 @@ export * from './cancelaciones/cancelar-pago-rembolso.component';
 export * from './cancelaciones/cancelar-cheque-rembolso.component';
 export * from './generar-cheque-rembolso/generar-cheque-rembolso.component';
 export * from './generar-cheque-rembolso/generar-cheque-rembolso-btn.component';
+
+// Compra de moneda
+export * from './compras-moneda-table/compras-moneda-table.component';
+export * from './compra-moneda-form/compra-moneda-form.component';

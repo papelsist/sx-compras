@@ -30,14 +30,16 @@ class TraspasoController extends RestfulController<Traspaso> {
     protected List listAllResources(Map params) {
         params.sort = params.sort ?:'lastUpdated'
         params.order = params.order ?:'desc'
-        params.max = 500
+
         log.debug('List : {}', params)
         Periodo periodo = (Periodo)params.periodo
 
         def criteria = new DetachedCriteria(Traspaso).build {
             between("fecha", periodo.fechaInicial, periodo.fechaFinal)
         }
-        return criteria.list(params)
+        List res = criteria.list(params)
+        log.info('Traspasos: {}', res.size())
+        return res
     }
 
     @Override

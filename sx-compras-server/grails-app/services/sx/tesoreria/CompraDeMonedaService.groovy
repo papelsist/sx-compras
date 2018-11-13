@@ -17,8 +17,8 @@ abstract class CompraDeMonedaService implements  LogUser{
 
     CompraDeMoneda registrar(CompraDeMoneda compra) {
         compra.moneda = compra.cuentaOrigen.moneda
-        compra.egreso = buildEgreso(compra)
-        compra.ingreso = buildIngreso(compra)
+        compra.addToMovimientos(buildEgreso(compra))
+        compra.addToMovimientos(buildIngreso(compra))
         logEntity(compra)
         return save(compra)
     }

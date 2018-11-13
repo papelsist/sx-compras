@@ -20,7 +20,7 @@ class ComprobanteFiscalController extends RestfulController<ComprobanteFiscal> {
     @Override
     protected List<ComprobanteFiscal> listAllResources(Map params) {
 
-        params.sort = 'fecha'
+        params.sort = 'lastUpdated'
         params.order = 'desc'
         def tipo = params.tipo ?: 'COMPRAS'
         if(tipo == 'COMPRAS') {

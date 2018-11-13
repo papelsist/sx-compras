@@ -1,0 +1,7 @@
+import sx.core.TipoDeCambio
+
+model {
+	TipoDeCambio tipoDeCambio
+}
+
+json tmpl.tipoDeCambio(tipoDeCambio)

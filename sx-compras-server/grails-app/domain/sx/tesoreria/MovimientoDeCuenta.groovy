@@ -52,7 +52,6 @@ class MovimientoDeCuenta {
     static belongsTo = [
             movimientoDeTesoreria: MovimientoDeTesoreria,
             requisicion: Requisicion,
-            compraDeMoneda: CompraDeMoneda
     ]
 
 
@@ -66,14 +65,12 @@ class MovimientoDeCuenta {
         comentario nullable: true
         concepto nullable:true,maxSize:50
         sw2 nullable:true
-        movimientoDeTesoreria nullable: true
-        requisicion nullable: true
         createUser nullable: true
         updateUser nullable: true
         cheque nullable: true, unique: true
         sucursal nullable: true
-        compraDeMoneda nullable: true
-
+        movimientoDeTesoreria nullable: true
+        requisicion nullable: true
     }
 
     static mapping ={
@@ -83,10 +80,6 @@ class MovimientoDeCuenta {
         formaDePago index: 'MOV_CTA_IDX3'
     }
 
-
-
-    //static belongsTo = [cobro: Cobro,comision:Comision,traspaso:Traspaso]
-    //static belongsTo =[Traspaso,Comision,PagoProveedor,CompraDeMoneda]
 
     String toString(){
         return "${cuenta}  (${fecha.format('dd/MM/yyyy')}) ${importe}"

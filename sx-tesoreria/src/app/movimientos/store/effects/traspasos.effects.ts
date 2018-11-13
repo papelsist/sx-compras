@@ -44,6 +44,7 @@ export class TraspasosEffects {
     }),
     switchMap(filter =>
       this.service.list(filter).pipe(
+        tap(traspasos => console.log('Traspasos: ', traspasos)),
         map(traspasos => new fromActions.LoadTraspasosSuccess({ traspasos })),
         catchError(error =>
           of(new fromActions.TraspasoError({ response: error }))

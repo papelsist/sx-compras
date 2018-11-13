@@ -24,9 +24,7 @@ import {
     <ng-template  tdLoading [tdLoadingUntil]="!(loading$ | async)" tdLoadingStrategy="overlay">
 
       <sx-search-title title="Inversiones " (search)="search = $event">
-        <!--
-        <sx-traspasos-filter-btn class="options" [filter]="filter$ | async" (change)="onFilterChange($event)"></sx-traspasos-filter-btn>
-        -->
+        <sx-periodo-filter-btn [filter]="filter$ | async" class="options" (change)="onFilterChange($event)"></sx-periodo-filter-btn>
         <button mat-menu-item class="actions" (click)="reload()"><mat-icon>refresh</mat-icon> Recargar</button>
         <a mat-menu-item  color="accent"[routerLink]="['create']" class="actions">
           <mat-icon>add</mat-icon> Nuevo cobro
@@ -46,9 +44,7 @@ import {
       <sx-traspaso-detail [traspaso]="selected" *ngIf="selected"></sx-traspaso-detail>
 
       <mat-card-footer>
-      <!--
-        <sx-traspasos-filter-label [filter]="filter$ | async"></sx-traspasos-filter-label>
-      -->
+        <sx-periodo-filter-label [filter]="filter$ | async"></sx-periodo-filter-label>
       </mat-card-footer>
     </ng-template>
     </mat-card>

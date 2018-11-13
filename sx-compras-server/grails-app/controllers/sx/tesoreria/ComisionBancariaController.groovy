@@ -41,6 +41,7 @@ class ComisionBancariaController extends RestfulController<ComisionBancaria> {
         return criteria.list(params)
     }
 
+
     @Override
     protected ComisionBancaria saveResource(ComisionBancaria resource) {
         return comisionBancariaService.registrar(resource)

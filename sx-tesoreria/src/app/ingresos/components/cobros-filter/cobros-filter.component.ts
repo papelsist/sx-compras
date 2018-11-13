@@ -58,6 +58,8 @@ export class CobrosFilterComponent implements OnInit {
     { tipo: 'CRE', descripcion: 'CREDITO' },
     { tipo: 'JUR', descripcion: 'JURIDICO' },
     { tipo: 'CHE', descripcion: 'CHEQUE_DEVUELTO' },
+    // { tipo: 'CON', descripcion: 'CONTADO' },
+    // {tipo: 'COD', descripcion: 'CONTADO (COD)' },
     { tipo: 'TODOS', descripcion: 'TODAS' }
   ];
 

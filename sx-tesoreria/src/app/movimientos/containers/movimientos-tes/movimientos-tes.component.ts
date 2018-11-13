@@ -21,7 +21,7 @@ import { MovTesFormComponent } from 'app/movimientos/components';
     <mat-card flex>
     <ng-template  tdLoading [tdLoadingUntil]="!(loading$ | async)" tdLoadingStrategy="overlay">
 
-      <sx-search-title title="Movimientos de tesorería " (search)="search = $event">
+      <sx-search-title title="Depositos / Retiros " (search)="search = $event">
         <sx-periodo-filter-btn [filter]="filter$ | async" class="options" (change)="onFilterChange($event)"></sx-periodo-filter-btn>
         <button mat-menu-item class="actions" (click)="reload()"><mat-icon>refresh</mat-icon> Recargar</button>
         <a mat-menu-item  color="accent" class="actions" (click)="onCreate('DEPOSITO')">

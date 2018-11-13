@@ -29,11 +29,6 @@ const routes: Routes = [
         component: fromContainers.CompraComponent
       },
       {
-        path: 'cheques',
-        canActivate: [fromGuards.ChequesGuard],
-        children: [{ path: '', component: fromContainers.ChequesComponent }]
-      },
-      {
         path: 'rembolsos',
         canActivate: [fromGuards.RembolsosGuard],
         children: [
@@ -44,6 +39,16 @@ const routes: Routes = [
             component: fromContainers.RembolsoComponent
           }
         ]
+      },
+      {
+        path: 'comprasMoneda',
+        canActivate: [fromGuards.CompraMonedasGuard],
+        component: fromContainers.ComprasMonedaComponent
+      },
+      {
+        path: 'cheques',
+        canActivate: [fromGuards.ChequesGuard],
+        children: [{ path: '', component: fromContainers.ChequesComponent }]
       }
     ]
   }

@@ -20,6 +20,9 @@ class UrlMappings {
         "/api/clientes"(resources: 'cliente')
 
 
+        "/api/tesoreria/tiposDeCambio"(resources: 'tipoDeCambio')
+        "/api/tesoreria/tipoDeCambio/buscar"(controller: 'tipoDeCambio', action: 'buscar', method: 'GET')
+
         "/api/tesoreria/bancos"(resources: 'banco')
 
         "/api/tesoreria/cuentas"(resources: 'cuentaDeBanco')
@@ -61,7 +64,7 @@ class UrlMappings {
 
         "/api/tesoreria/comisiones"(resources: 'comisionBancaria', excludes:['create', 'edit','patch', 'update'] )
 
-        "/api/tesoreria/compraMonedas"(resources: 'compraDeMoneda', excludes:['create', 'edit','patch', 'update'] )
+        "/api/tesoreria/comprasMoneda"(resources: 'compraDeMoneda', excludes:['create', 'edit','patch', 'update'] )
 
         "/api/cxc/cobros"(resources: 'cobro')
         "/api/cxc/cobro/reporteDeCobranza"(controller: "cobro", action: 'reporteDeCobranza', method: 'GET')
