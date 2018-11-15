@@ -17,6 +17,7 @@ import { CxPFormComponent } from 'app/cxp/components';
     <mat-card>
       <sx-search-title title="Facturas de compras (Cuentas por pagar)" (search)="onSearch($event)">
         <sx-facturas-filter-btn class="options" [filter]="filter$ | async" (change)="onFilter($event)"></sx-facturas-filter-btn>
+        <button mat-menu-item class="actions" (click)="reload()"><mat-icon>refresh</mat-icon> Recargar</button>
       </sx-search-title>
       <mat-divider></mat-divider>
       <sx-facturas-table [facturas]="facturas$ | async" (xml)="onXml($event)" (pdf)="onPdf($event)" (edit)="onEdit($event)"
@@ -48,6 +49,10 @@ export class FacturasComponent implements OnInit {
 
   onSearch(event: string) {
     this.search$.next(event);
+  }
+
+  reload() {
+    this.store.dispatch(new fromActions.LoadFacturas());
   }
 
   onFilter(filter: CxPFilter) {

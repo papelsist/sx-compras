@@ -9,7 +9,7 @@ import groovy.transform.EqualsAndHashCode
 @EqualsAndHashCode(includes='id')
 @ToString(includeNames=true,includePackage=false, includes = ['cuentaOrigen', 'cuentaDestino', 'importe'])
 class Traspaso {
-	
+
 	Date fecha
 
 	CuentaDeBanco cuentaOrigen
@@ -27,7 +27,7 @@ class Traspaso {
 	String comentario
 
 	String referencia
-	
+
 	Date dateCreated
 
 	Date lastUpdated
@@ -39,7 +39,7 @@ class Traspaso {
 
 	Long sw2
 
-	
+
 	static hasMany = [movimientos:MovimientoDeCuenta]
 
     static constraints = {
@@ -48,7 +48,7 @@ class Traspaso {
 				return "mismaCuentaError"
 			if(obj.cuentaOrigen.moneda!=val.moneda)
 				return "diferenteMonedaError"
-			
+
 		}
 		comentario nullable: true
 		createUser nullable: true
@@ -56,7 +56,7 @@ class Traspaso {
 		referencia nullable: true
 		sw2 nullable: true
     }
-	
+
 	static mapping ={
 		fecha type: 'date'
 		movimientos cascad:"all-delete-orphan"

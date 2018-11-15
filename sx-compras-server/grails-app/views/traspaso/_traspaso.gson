@@ -4,7 +4,7 @@ model {
 	Traspaso traspaso
 }
 
-json g.render(traspaso, [excludes: ['movimientos','version'], resolveTemplate: false]) {
+json g.render(traspaso, [excludes: ['movimientos'], resolveTemplate: false]) {
 	origen "${traspaso.cuentaOrigen.descripcion} (${traspaso.cuentaOrigen.numero})"
 	destino "${traspaso.cuentaDestino.descripcion} (${traspaso.cuentaDestino.numero})"
 	movimientos g.render(traspaso.movimientos)

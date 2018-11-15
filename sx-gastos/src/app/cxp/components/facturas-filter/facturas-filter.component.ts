@@ -62,7 +62,7 @@ export class FacturasFilterComponent implements OnInit {
       fechaFinal: [null, [Validators.required]],
       proveedor: [null],
       registros: [
-        10,
+        100,
         [Validators.required, Validators.min(10), Validators.max(300)]
       ]
     });

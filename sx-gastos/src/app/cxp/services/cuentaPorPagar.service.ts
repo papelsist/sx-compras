@@ -26,6 +26,9 @@ export class CuentaPorPagarService {
     if (filtro.proveedor) {
       params = params.set('proveedor', filtro.proveedor.id);
     }
+    if (filtro.registros) {
+      params = params.set('max', filtro.registros.toString());
+    }
     return this.http
       .get<CuentaPorPagar[]>(this.apiUrl, { params: params })
       .pipe(catchError((error: any) => throwError(error)));

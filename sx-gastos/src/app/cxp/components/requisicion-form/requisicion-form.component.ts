@@ -95,7 +95,7 @@ export class RequisicionFormComponent implements OnInit, OnDestroy, OnChanges {
         proveedor: [null, [Validators.required]],
         fecha: [new Date(), [Validators.required]],
         fechaDePago: [new Date(), [Validators.required]],
-        formaDePago: ['TRANSFERENCIA', [Validators.required]],
+        formaDePago: ['CHEQUE', [Validators.required]],
         moneda: ['MXN', [Validators.required]],
         tipoDeCambio: [1.0, [Validators.required, Validators.min(1)]],
         descuentof: [{ value: 0.0, disabled: true }],

@@ -72,6 +72,7 @@ class MovimientoDeCuenta {
         sucursal nullable: true
         movimientoDeTesoreria nullable: true
         requisicion nullable: true
+        pagoNomina nullable: true
     }
 
     static mapping ={

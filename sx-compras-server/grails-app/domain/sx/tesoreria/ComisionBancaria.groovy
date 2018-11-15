@@ -43,8 +43,8 @@ class ComisionBancaria {
         createUser nullable: true
         updateUser nullable: true
         concepto inList: [
-                'POR_TRASFERENCIA', 'CHEQUES_GIRADOS', 'DIFERENCIA_COMISIONES', 'CHEQUE_CERTIFICADO',
-                'COBU', 'ANUALIDAD', 'EXC_PAQ', 'IN_MDIA', 'SERV_BCA', 'TRANSFER_FONDOS', 'SPEI', 'OTROS']
+                'POR_TRANSFERENCIA', 'CHEQUES_GIRADOS', 'DIFERENCIA_COMISIONES', 'CHEQUE_CERTIFICADO',
+                'COBU', 'ANUALIDAD', 'EXC_PAQ', 'INT_MDIA', 'SERV_BCA', 'TRANSFER_FONDOS', 'SPEI', 'OTROS']
     }
 
     static mapping ={

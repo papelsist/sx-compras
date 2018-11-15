@@ -19,4 +19,5 @@ export interface Movimiento {
   dateCreated: string;
   cuentaNumero?: string;
   banco?: string;
+  cheque?: any;
 }

@@ -37,9 +37,7 @@ class TraspasoController extends RestfulController<Traspaso> {
         def criteria = new DetachedCriteria(Traspaso).build {
             between("fecha", periodo.fechaInicial, periodo.fechaFinal)
         }
-        List res = criteria.list(params)
-        log.info('Traspasos: {}', res.size())
-        return res
+        return criteria.list(params)
     }
 
     @Override
