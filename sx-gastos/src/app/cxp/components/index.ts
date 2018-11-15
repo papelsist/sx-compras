@@ -58,6 +58,7 @@ import { RembolsosFilterBtnComponent } from './rembolsos-filter/rembolsos-filter
 import { RembolsosFilterLabelComponent } from './rembolsos-filter/rembolsos-filter-label.component';
 import { PrintRembolsoComponent } from './print-rembolso/print-rembolso.component';
 import { RembolsoDetComponent } from './rembolso-form/rembolso-det.component';
+import { CxPFormComponent } from './cxp-form/cxp-form.component';
 
 export const components: any[] = [
   CfdisTableComponent,
@@ -74,6 +75,7 @@ export const components: any[] = [
   FacturasFilterComponent,
   FacturasFilterBtnComponent,
   FacturasFilterLabelComponent,
+  CxPFormComponent,
   ComsSelectorComponent,
   ComsTableComponent,
   RequisicionesTableComponent,
@@ -116,6 +118,7 @@ export const components: any[] = [
 
 export const entryComponents = [
   FacturaSelectorComponent,
+  CxPFormComponent,
   ComsSelectorComponent,
   AplicacionFormComponent,
   CfdisFilterComponent,
@@ -140,6 +143,7 @@ export * from './factura-selector/factura-selector.component';
 export * from './factura-selector/factura-selector-btn.component';
 export * from './cxp-facturas-table/cxp-facturas-table.component';
 export * from './factura-header/factura-header.component';
+export * from './cxp-form/cxp-form.component';
 
 export * from './facturas-filter/facturas-filter.component';
 export * from './facturas-filter/facturas-filter-label.component';

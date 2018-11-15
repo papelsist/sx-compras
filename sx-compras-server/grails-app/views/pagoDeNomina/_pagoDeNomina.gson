@@ -1,0 +1,16 @@
+import sx.tesoreria.PagoDeNomina
+
+model {
+	PagoDeNomina pagoDeNomina
+}
+
+json g.render(pagoDeNomina, [ excludes: ['egreso'], resolveTemplate: false]) {
+	// egreso g.render(pagoDeNomina.egreso)
+
+    egreso g.render(pagoDeNomina.egreso, [excludes: ['moneda', 'cheque']]) {
+        cuenta g.render(pagoDeNomina.egreso.cuenta)
+        if(pagoDeNomina?.egreso?.cheque)
+            cheque g.render(pagoDeNomina.egreso.cheque)
+    }
+
+}

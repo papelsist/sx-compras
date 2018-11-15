@@ -5,13 +5,13 @@ import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 import { ConfigService } from '../../utils/config.service';
-import { PagoDeNomina } from '../models';
+import { PagoDeNomina, PagoDeNominaCommand } from '../models';
 
 import { Update } from '@ngrx/entity';
 import { PeriodoFilter } from 'app/models';
 
 @Injectable()
-export class PagoDeNominaMonedaService {
+export class PagoDeNominaService {
   private apiUrl: string;
 
   constructor(private http: HttpClient, private config: ConfigService) {
@@ -23,7 +23,7 @@ export class PagoDeNominaMonedaService {
       .set('fechaInicial', filter.fechaInicial.toISOString())
       .set('fechaFinal', filter.fechaFinal.toISOString());
     if (filter.registros) {
-      params = params.set('registros', filter.registros.toString());
+      params = params.set('max', filter.registros.toString());
     }
     return this.http
       .get<PagoDeNomina[]>(this.apiUrl, { params: params })
@@ -37,9 +37,17 @@ export class PagoDeNominaMonedaService {
       .pipe(catchError(err => throwError(err)));
   }
 
-  save(pago: PagoDeNomina): Observable<PagoDeNomina> {
+  importar(command: Object): Observable<PagoDeNomina[]> {
+    const url = `${this.apiUrl}/importar`;
     return this.http
-      .post<PagoDeNomina>(this.apiUrl, pago)
+      .post<PagoDeNomina[]>(url, command)
+      .pipe(catchError((error: any) => throwError(error)));
+  }
+
+  pagar(command: PagoDeNominaCommand): Observable<PagoDeNomina> {
+    const url = `${this.apiUrl}/pagar`;
+    return this.http
+      .post<PagoDeNomina>(url, command)
       .pipe(catchError((error: any) => throwError(error)));
   }
 

@@ -8,6 +8,7 @@ import { ConfigService } from 'app/utils/config.service';
 
 import * as _ from 'lodash';
 import { CuentaPorPagar, CxPFilter } from '../model/cuentaPorPagar';
+import { Update } from '@ngrx/entity';
 
 @Injectable()
 export class CuentaPorPagarService {
@@ -37,10 +38,10 @@ export class CuentaPorPagarService {
       .pipe(catchError((error: any) => throwError(error)));
   }
 
-  update(factura: CuentaPorPagar): Observable<CuentaPorPagar> {
+  update(factura: Update<CuentaPorPagar>): Observable<CuentaPorPagar> {
     const url = `${this.apiUrl}/${factura.id}`;
     return this.http
-      .put<CuentaPorPagar>(url, factura)
+      .put<CuentaPorPagar>(url, factura.changes)
       .pipe(catchError((error: any) => throwError(error)));
   }
 

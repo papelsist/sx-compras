@@ -1,0 +1,7 @@
+import sx.tesoreria.PagoDeNomina
+
+model {
+	PagoDeNomina pagoDeNomina
+}
+
+json tmpl.pagoDeNomina(pagoDeNomina)

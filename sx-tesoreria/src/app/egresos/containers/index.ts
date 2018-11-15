@@ -10,6 +10,8 @@ import { ChequesComponent } from './cheques/cheques.component';
 import { RembolsosComponent } from './rembolsos/rembolsos.component';
 import { RembolsoComponent } from './rembolso/rembolso.component';
 import { ComprasMonedaComponent } from './compras-moneda/compras-moneda.component';
+import { PagoNominasComponent } from './pago-nominas/pago-nominas.component';
+import { PagoDeNominaComponent } from './pago-nomina/pago-de-nomina.component';
 
 export const containers = [
   EgresosPageComponent,
@@ -20,7 +22,9 @@ export const containers = [
   ChequesComponent,
   RembolsosComponent,
   RembolsoComponent,
-  ComprasMonedaComponent
+  ComprasMonedaComponent,
+  PagoNominasComponent,
+  PagoDeNominaComponent
 ];
 
 export * from './egresos-page/egresos-page.component';
@@ -35,3 +39,5 @@ export * from './rembolsos/rembolsos.component';
 export * from './rembolso/rembolso.component';
 
 export * from './compras-moneda/compras-moneda.component';
+export * from './pago-nominas/pago-nominas.component';
+export * from './pago-nomina/pago-de-nomina.component';

@@ -1,0 +1,8 @@
+import sx.tesoreria.PagoDeNomina
+
+model {
+	Iterable<PagoDeNomina> pagoDeNominaList
+}
+
+json tmpl.pagoDeNomina(pagoDeNominaList ?: [])
+

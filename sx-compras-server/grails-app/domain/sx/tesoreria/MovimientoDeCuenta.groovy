@@ -52,6 +52,7 @@ class MovimientoDeCuenta {
     static belongsTo = [
             movimientoDeTesoreria: MovimientoDeTesoreria,
             requisicion: Requisicion,
+            pagoNomina: PagoDeNomina
     ]
 
 

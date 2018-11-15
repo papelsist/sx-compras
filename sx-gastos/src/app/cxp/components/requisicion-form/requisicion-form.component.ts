@@ -18,7 +18,7 @@ import {
 } from '@angular/forms';
 
 import { Requisicion, CuentaPorPagar } from '../../model';
-import { RequisicionDet, fromFactura } from '../../model/requisicionDet';
+import { fromFactura } from '../../model/requisicionDet';
 
 import * as _ from 'lodash';
 import * as moment from 'moment';
@@ -99,10 +99,9 @@ export class RequisicionFormComponent implements OnInit, OnDestroy, OnChanges {
         moneda: ['MXN', [Validators.required]],
         tipoDeCambio: [1.0, [Validators.required, Validators.min(1)]],
         descuentof: [{ value: 0.0, disabled: true }],
-        total: [
-          { value: 0.0, disabled: true },
-          [Validators.required, Validators.min(1)]
-        ],
+        total: [{ value: null, disabled: true }],
+        apagar: [null, [Validators.required]],
+        porComprobar: [false],
         comentario: [],
         partidas: this.fb.array([])
       });
@@ -137,7 +136,6 @@ export class RequisicionFormComponent implements OnInit, OnDestroy, OnChanges {
         this.save.emit(entity);
       } else {
         entity.id = this.requisicion.id;
-        // console.log('Salvando requisicion: ', entity);
         this.update.emit(entity);
       }
     }
@@ -155,11 +153,13 @@ export class RequisicionFormComponent implements OnInit, OnDestroy, OnChanges {
         this.partidas.push(new FormControl(det));
       }
     });
+    this.actualizarApagar();
     this.form.markAsDirty();
   }
 
   onDeleteRow(index: number) {
     this.partidas.removeAt(index);
+    this.actualizarApagar();
     this.form.markAsDirty();
   }
   onUpdateRow(event) {
@@ -184,5 +184,18 @@ export class RequisicionFormComponent implements OnInit, OnDestroy, OnChanges {
     } else {
       return 0.0;
     }
+  }
+
+  porComprobar(event) {
+    if (event.checked) {
+      this.form.get('total').enable();
+    } else {
+      this.form.get('total').disable();
+    }
+  }
+
+  actualizarApagar() {
+    const total = _.sumBy(this.partidas.value, 'total');
+    this.form.get('apagar').setValue(total);
   }
 }

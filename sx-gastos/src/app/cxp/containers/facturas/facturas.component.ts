@@ -8,6 +8,8 @@ import { Observable, Subject } from 'rxjs';
 
 import { ComprobanteFiscalService } from '../../services';
 import { CuentaPorPagar, CxPFilter } from '../../model';
+import { MatDialog } from '@angular/material';
+import { CxPFormComponent } from 'app/cxp/components';
 
 @Component({
   selector: 'sx-facturas-cxp',
@@ -17,7 +19,8 @@ import { CuentaPorPagar, CxPFilter } from '../../model';
         <sx-facturas-filter-btn class="options" [filter]="filter$ | async" (change)="onFilter($event)"></sx-facturas-filter-btn>
       </sx-search-title>
       <mat-divider></mat-divider>
-      <sx-facturas-table [facturas]="facturas$ | async" (xml)="onXml($event)" (pdf)="onPdf($event)" >
+      <sx-facturas-table [facturas]="facturas$ | async" (xml)="onXml($event)" (pdf)="onPdf($event)" (edit)="onEdit($event)"
+        [filter]="search$ | async">
       </sx-facturas-table>
       <mat-card-footer>
         <sx-facturas-filter-label [filter]="filter$ | async"></sx-facturas-filter-label>
@@ -32,7 +35,8 @@ export class FacturasComponent implements OnInit {
 
   constructor(
     private store: Store<fromStore.State>,
-    private service: ComprobanteFiscalService
+    private service: ComprobanteFiscalService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit() {
@@ -55,4 +59,19 @@ export class FacturasComponent implements OnInit {
   }
 
   onXml(event: CuentaPorPagar) {}
+
+  onEdit(event: CuentaPorPagar) {
+    this.dialog
+      .open(CxPFormComponent, { data: { cxp: event } })
+      .afterClosed()
+      .subscribe(res => {
+        if (res) {
+          const update = {
+            id: event.id,
+            changes: res
+          };
+          this.store.dispatch(new fromActions.UpdateFactura({ update }));
+        }
+      });
+  }
 }

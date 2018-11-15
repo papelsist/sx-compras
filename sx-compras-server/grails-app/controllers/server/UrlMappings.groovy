@@ -66,6 +66,10 @@ class UrlMappings {
 
         "/api/tesoreria/comprasMoneda"(resources: 'compraDeMoneda', excludes:['create', 'edit','patch', 'update'] )
 
+        "/api/tesoreria/pagoDeNomina"(resources: 'pagoDeNomina', excludes:['create', 'edit','patch', 'update'] )
+        "/api/tesoreria/pagoDeNomina/importar"(controller: 'pagoDeNomina', action: 'importar', method: 'POST')
+        "/api/tesoreria/pagoDeNomina/pagar"(controller: 'pagoDeNomina', action: 'pagar', method: 'POST')
+
         "/api/cxc/cobros"(resources: 'cobro')
         "/api/cxc/cobro/reporteDeCobranza"(controller: "cobro", action: 'reporteDeCobranza', method: 'GET')
         "/api/cxc/cobro/reporteDeRelacionDePagos"(controller: "cobro", action: 'reporteDeRelacionDePagos', method: 'GET')

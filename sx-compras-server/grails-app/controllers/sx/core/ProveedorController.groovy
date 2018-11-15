@@ -22,7 +22,7 @@ class ProveedorController extends RestfulController<Proveedor> {
         def query = Proveedor.where{tipo == tipo}
 
         if(tipo != 'COMPRAS')
-            params.max = 50
+            params.max = 500
 
         String estado = this.params.estado
         if (estado) {

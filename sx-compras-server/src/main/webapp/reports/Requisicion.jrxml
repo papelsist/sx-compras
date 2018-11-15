@@ -43,6 +43,7 @@
 	<parameter name="ID" isForPrompting="true" class="java.lang.String"/>
 	<queryString><![CDATA[SELECT r.id,r.folio,r.nombre,r.fecha,r.fecha_de_pago,r.moneda,r.tipo_de_cambio,r.forma_de_pago,r.comentario,r.descuentof
 ,concat(ifnull(d.documento_serie,''),ifnull(d.documento_folio,'')) as documento,d.documento_fecha,'PAGO' AS concepto,d.total,d.apagar,d.documento_total,d.uuid,d.acuse
+,r.total as totalReq,r.apagar as apagarReq,(case when r.por_comprobar is true then 'POR COMPROBAR' else '' end) as por_comprobar
 FROM requisicion R 
 LEFT JOIN requisicion_det  D ON(D.requisicion_id=R.id) 
 WHERE R.ID=$P{ID}]]></queryString>
@@ -65,6 +66,9 @@ WHERE R.ID=$P{ID}]]></queryString>
 	<field name="documento_total" class="java.math.BigDecimal"/>
 	<field name="uuid" class="java.lang.String"/>
 	<field name="acuse" class="java.lang.String"/>
+	<field name="totalReq" class="java.math.BigDecimal"/>
+	<field name="apagarReq" class="java.math.BigDecimal"/>
+	<field name="por_comprobar" class="java.lang.String"/>
 
 	<sortField name="documento" />
 
@@ -482,6 +486,20 @@ $P{MONEDA}.equals( "MXN" ) ? "(MONEDA NACIONAL)" : "(MONEDA ORIGEN)"]]></textFie
 					</textElement>
 				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{descuentof}]]></textFieldExpression>
 				</textField>
+				<textField isStretchWithOverflow="false" pattern="##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="171"
+						y="19"
+						width="123"
+						height="20"
+						forecolor="#333333"
+						key="textField-51"/>
+					<box></box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-BoldOblique" size="12" isBold="true" isItalic="true" isUnderline="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{por_comprobar}]]></textFieldExpression>
+				</textField>
 			</band>
 		</pageHeader>
 		<columnHeader>
@@ -736,7 +754,7 @@ $P{MONEDA}.equals( "MXN" ) ? $F{documento_total}.multiply( new BigDecimal($F{tip
 					</textElement>
 				<textFieldExpression   class="java.util.Date"><![CDATA[$F{documento_fecha}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="511"
 						y="0"
@@ -1069,7 +1087,7 @@ $P{MONEDA}.equals( "MXN" ) ? $F{total}.multiply( new BigDecimal($F{tipo_de_cambi
 					</textElement>
 				<text><![CDATA[TOTAL :  ]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="512"
 						y="12"
@@ -1081,7 +1099,8 @@ $P{MONEDA}.equals( "MXN" ) ? $F{total}.multiply( new BigDecimal($F{tipo_de_cambi
 					<textElement textAlignment="Right">
 						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{moneda}.equals( "MXN" ) ? $V{SUMAPAGAR}.multiply( new BigDecimal($F{tipo_de_cambio}.doubleValue()) ) : 
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{por_comprobar}.equals( "POR COMPROBAR" ) ? $F{apagarReq} : 
+$F{moneda}.equals( "MXN" ) ? $V{SUMAPAGAR}.multiply( new BigDecimal($F{tipo_de_cambio}.doubleValue()) ) : 
 $P{MONEDA}.equals( "MXN" ) ? $V{SUMAPAGAR}.multiply( new BigDecimal($F{tipo_de_cambio}.doubleValue()) ) : $V{SUMAPAGAR}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
@@ -1095,7 +1114,8 @@ $P{MONEDA}.equals( "MXN" ) ? $V{SUMAPAGAR}.multiply( new BigDecimal($F{tipo_de_c
 					<textElement textAlignment="Right">
 						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{moneda}.equals( "MXN" ) ? $V{SUMAFAC}.multiply( new BigDecimal($F{tipo_de_cambio}.doubleValue()) ) : 
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{por_comprobar}.equals( "POR COMPROBAR" ) ? $F{apagarReq} : 
+$F{moneda}.equals( "MXN" ) ? $V{SUMAFAC}.multiply( new BigDecimal($F{tipo_de_cambio}.doubleValue()) ) : 
 $P{MONEDA}.equals( "MXN" ) ? $V{SUMAFAC}.multiply( new BigDecimal($F{tipo_de_cambio}.doubleValue()) ) : $V{SUMAFAC}]]></textFieldExpression>
 				</textField>
 				<line direction="TopDown">

@@ -51,16 +51,16 @@ export class FacturasEffects {
   @Effect()
   updateFactura$ = this.actions$.pipe(
     ofType<fromActions.UpdateFactura>(FacturaActionTypes.UpdateFactura),
-    map(action => action.payload),
-    switchMap(factura => {
-      return this.service.update(factura).pipe(
+    map(action => action.payload.update),
+    switchMap(update => {
+      return this.service.update(update).pipe(
         map(res => new fromActions.UpdateFacturaSuccess(res)),
         catchError(error => of(new fromActions.UpdateFacturaFail(error)))
       );
     })
   );
 
-  @Effect()
+  @Effect({ dispatch: false })
   updateSuccess$ = this.actions$.pipe(
     ofType<fromActions.UpdateFacturaSuccess>(
       FacturaActionTypes.UpdateFacturaSuccess
@@ -70,8 +70,7 @@ export class FacturasEffects {
       this.snackBar.open(`Factura ${factura.folio} actualizada `, 'Cerrar', {
         duration: 5000
       })
-    ),
-    map(factura => new fromRoot.Go({ path: ['cxp/facturas', factura.id] }))
+    )
   );
 
   @Effect()

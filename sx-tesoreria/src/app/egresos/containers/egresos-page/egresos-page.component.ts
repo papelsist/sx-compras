@@ -38,6 +38,12 @@ export class EgresosPageComponent implements OnInit {
       icon: 'flag'
     },
     {
+      route: 'pagoNominas',
+      title: 'Nóminas',
+      description: 'Pago de Nóminas',
+      icon: 'people'
+    },
+    {
       route: 'cheques',
       title: 'Cheques',
       description: 'Pagos con cheque',
