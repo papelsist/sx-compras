@@ -52,7 +52,9 @@ class MovimientoDeCuenta {
     static belongsTo = [
             movimientoDeTesoreria: MovimientoDeTesoreria,
             requisicion: Requisicion,
-            pagoNomina: PagoDeNomina
+            pagoNomina: PagoDeNomina,
+            pagoDeMorralla: PagoDeMorralla,
+            morralla: Morralla
     ]
 
 
@@ -73,6 +75,8 @@ class MovimientoDeCuenta {
         movimientoDeTesoreria nullable: true
         requisicion nullable: true
         pagoNomina nullable: true
+        pagoDeMorralla nullable: true
+        morralla nullable: true
     }
 
     static mapping ={

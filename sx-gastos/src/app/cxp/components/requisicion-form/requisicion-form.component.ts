@@ -100,7 +100,7 @@ export class RequisicionFormComponent implements OnInit, OnDestroy, OnChanges {
         tipoDeCambio: [1.0, [Validators.required, Validators.min(1)]],
         descuentof: [{ value: 0.0, disabled: true }],
         total: [{ value: null, disabled: true }],
-        apagar: [null, [Validators.required]],
+        apagar: [0.0],
         porComprobar: [false],
         comentario: [],
         partidas: this.fb.array([])

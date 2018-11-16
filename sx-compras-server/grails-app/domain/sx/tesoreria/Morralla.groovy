@@ -13,32 +13,35 @@ class Morralla {
 
 	Sucursal sucursal
 
-  Date fecha // Fecha que asigna el usuario 
+	Date fecha // Fecha que asigna el usuario
 
 	String tipo
 
 	BigDecimal importe = 0.0
-  
-  String comentario
 
-  Date dateCreated
-	
+	String comentario
+
+	Date dateCreated
+
 	Date lastUpdated
 
 	String createUser
 
-  String updateUser
+	String updateUser
+
+	MovimientoDeCuenta egreso
 
 
-  static constraints = {
-  	comentario nullable: true
-  	createUser nullable: true
-  	updateUser nullable: true
-  }
+	static constraints = {
+		comentario nullable: true
+		createUser nullable: true
+		updateUser nullable: true
+		egreso nullable: true
+	}
 
 	static mapping = {
 		id generator: 'uuid'
 	}
-    
-   
+
+
 }

@@ -1,0 +1,7 @@
+import sx.tesoreria.PagoDeMorralla
+
+model {
+	PagoDeMorralla pagoDeMorralla
+}
+
+json tmpl.pagoDeMorralla(pagoDeMorralla)

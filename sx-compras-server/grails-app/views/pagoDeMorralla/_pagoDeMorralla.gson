@@ -1,0 +1,13 @@
+import sx.tesoreria.PagoDeMorralla
+
+
+model {
+	PagoDeMorralla pagoDeMorralla
+}
+
+json g.render(pagoDeMorralla, [excludes: ['egresos'], resolveTemplate: false]) {
+	origen "${pagoDeMorralla.cuentaEgreso.descripcion} (${pagoDeMorralla.cuentaEgreso.numero})"
+	destino "${pagoDeMorralla.cuentaIngreso.descripcion} (${pagoDeMorralla.cuentaIngreso.numero})"
+	egresos g.render(pagoDeMorralla.egresos)
+}
+
