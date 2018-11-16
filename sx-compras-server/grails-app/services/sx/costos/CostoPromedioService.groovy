@@ -65,52 +65,67 @@ class CostoPromedioService {
     }
 
 
+    @NotTransactional
     def costearTransformaciones(Integer ejercicio , Integer mes) {
         PeriodoDeCosteo per = new PeriodoDeCosteo(ejercicio, mes)
         PeriodoDeCosteo anterior = per.getPeriodoAnterior()
         Periodo periodo = Periodo.getPeriodoEnUnMes(mes - 1, ejercicio)
 
-        def trs = Transformacion.where{ fecha >= periodo.fechaInicial && fecha <= periodo.fechaFinal }
-        log.debug("Costeando {} registros de transformaciones para el periodo {} ", trs.size(), periodo)
-        trs.each {
-            def costo = null
-            it.partidas.sort{it.cantidad}.sort{it.sw2}.each { tr ->
-                if(tr.cantidad < 0) {
-                    CostoPromedio cp = CostoPromedio.where{ejercicio == anterior.ejercicio && mes == anterior.mes && producto == tr.producto}.find()
-                    if(cp){
-                        costo = cp.costo
-                        // log "Salida  ${tr.producto.clave} Cantidad: ${tr.cantidad} CostoU: ${costo} (sw2:${tr.sw2})"
-                    } else {
-                        log.error("Error no se enctontro Costo promedio en el periodo anterior...")
-                        costo = null
-                    }
-
-                } else {
-                    if(costo) {
-                        try {
-                            Inventario iv = tr.inventario
-                            if(iv) {
-                                iv.costo = costo
-                                iv.save flush: true
-                            } else {
-                                log.info("TRS sin inventario {}", tr)
-                            }
-                        }catch(Exception ex) {
-                            ex.printStackTrace()
-                            log.error("Error costeando  ${it.tipo} ${it.documento} {}", ex.message)
-                        }
-                    }
-
-                }
-
-            }
+        def rows = Transformacion.where{ fecha >= periodo.fechaInicial && fecha <= periodo.fechaFinal }
+        log.debug("Costeando {} registros de transformaciones para el periodo {} ", rows.size(), periodo)
+        rows.each { Transformacion trs ->
+            costearTransformacion(trs, anterior)
         }
 
     }
 
-    def costearTransformacion(Transformacion trs) {
+    def costearTransformacion(Transformacion trs, PeriodoDeCosteo anterior) {
+        log.info("Costeando TRS ${trs.documento}  ${trs.sucursal.nombre}")
         List<TransformacionDet> partidas = trs.partidas.sort{it.cantidad}.sort{it.sw2}
-        partidas.each {
+        def costo = null
+        def salida = 0
+        partidas.each { tr ->
+
+            if(tr.cantidad < 0) {
+                salida = tr.cantidad.abs()
+                log.info("Salen : ${tr.producto.clave} ${tr.cantidad}   (sw2:${tr.sw2})" )
+                CostoPromedio cp = CostoPromedio.where{ejercicio == anterior.ejercicio && mes == anterior.mes && producto == tr.producto}.find()
+                if(cp){
+                    costo = cp.costo
+                    log.info("Costo anterior: {}", costo)
+                } else {
+                    log.error("Error no se enctontro Costo promedio en el periodo anterior...")
+                    costo = null
+                }
+
+            } else {
+                if(costo) {
+                    log.info("Entran: ${tr.producto.clave} ${tr.cantidad}  (sw2:${tr.sw2})" )
+                    try {
+                        Inventario iv = tr.inventario
+                        if(iv) {
+
+                            if(salida != tr.cantidad.abs()) {
+                                log.info('Actualizando costo por diferencia de cantidades Salida: {} Entrada: {}', salida, tr.cantidad)
+                                def factor = tr.producto.unidad == 'MIL' ? 1000 : 1
+                                def importeCosto = (salida / factor ) * costo
+                                log.info('Costo total de la salida (Importe costo: {})', importeCosto)
+                                costo = (importeCosto /tr.cantidad) * factor
+
+                            }
+                            log.info('Costo por asignar:{} anteriormente: {}', costo, iv.costo)
+                            iv.costo = costo
+                            iv.save failOnError: true, flush: true
+                        } else {
+                            log.info("TRS sin inventario {}", tr)
+                        }
+                    }catch(Exception ex) {
+                        ex.printStackTrace()
+                        log.error("Error costeando  ${trs.tipo} ${trs.documento} {}", ex.message)
+                    }
+                }
+
+            }
 
         }
     }
