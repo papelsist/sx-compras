@@ -71,7 +71,9 @@ class CostoPromedioService {
         PeriodoDeCosteo anterior = per.getPeriodoAnterior()
         Periodo periodo = Periodo.getPeriodoEnUnMes(mes - 1, ejercicio)
 
-        def rows = Transformacion.where{ fecha >= periodo.fechaInicial && fecha <= periodo.fechaFinal }
+        def rows = Transformacion.findAll(
+                "from Transformacion t where date(t.fecha) between ? and ? ",
+                [periodo.fechaInicial, periodo.fechaFinal])
         log.debug("Costeando {} registros de transformaciones para el periodo {} ", rows.size(), periodo)
         rows.each { Transformacion trs ->
             costearTransformacion(trs, anterior)
