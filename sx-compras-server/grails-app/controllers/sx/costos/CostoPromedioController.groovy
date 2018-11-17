@@ -5,6 +5,7 @@ import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.*
 import grails.validation.Validateable
 import groovy.util.logging.Slf4j
+import sx.core.Producto
 import sx.core.Proveedor
 import sx.core.Sucursal
 import sx.reports.ReportService
@@ -51,9 +52,39 @@ class CostoPromedioController extends RestfulController<CostoPromedio> {
         respond costoPromedioService.calcular(ejercicio, mes)
     }
 
+    def costeoMedidasEspeciales(CosteoDeMedidasEspecialesCommand command) {
+        if(command == null) {
+            notFound()
+            return
+        }
+        command.validate()
+        if (command.hasErrors()) {
+            respond command.errors, status: 422
+            return
+        }
+        log.info('Actualizando medidas especiales: {}', command)
+
+        command.productos.each {
+            Producto producto = Producto.findByClave(it)
+            costoPromedioService.calcularPorProducto(command.ejercicio, command.mes, producto)
+            log.info("Costo actualizado {} ", producto.clave)
+        }
+
+        respond status: 200
+    }
+
+    def calcularPorProducto(Integer ejercicio, Integer mes) {
+        log.info('Params: {}', params)
+        Producto producto = Producto.get(params.productoId.toString())
+        log.info('Actualizando costo promedio para {}', producto.clave)
+        costoPromedioService.calcularPorProducto(ejercicio, mes, producto)
+        respond status: 200
+    }
+
     def aplicar(Integer ejercicio, Integer mes) {
         costoPromedioService.costearExistenciaFinal(ejercicio, mes)
         costoPromedioService.costearMovimientosDeInventario(ejercicio, mes)
+        costoPromedioService.actualizarMovimientosExistenciaSinCosto(ejercicio, mes)
         respond status: 200
     }
 
@@ -168,3 +199,14 @@ class MovimientosCosteadosDetCommand implements  Validateable {
     }
 
 }
+
+class CosteoDeMedidasEspecialesCommand {
+    Integer ejercicio
+    Integer mes
+    List<String> productos
+
+    String toString() {
+        "Costeo M.Especiales ${ejercicio} - ${mes}  Productos: ${productos.size()}"
+    }
+}
+
