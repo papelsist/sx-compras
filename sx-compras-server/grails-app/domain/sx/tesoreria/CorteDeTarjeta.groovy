@@ -33,6 +33,10 @@ class CorteDeTarjeta {
 
 	Date lastUpdated
 
+	String updateUser
+
+	String createUser
+
     String estatus
 
 	static hasMany =[partidas: CobroTarjeta, aplicaciones: CorteDeTarjetaAplicacion]
@@ -42,6 +46,8 @@ class CorteDeTarjeta {
     static constraints = {
     	sw2 nullable: true
     	comentario nullable: true
+		updateUser nullable: true
+		createUser nullable: true
     }
 
     static mapping ={

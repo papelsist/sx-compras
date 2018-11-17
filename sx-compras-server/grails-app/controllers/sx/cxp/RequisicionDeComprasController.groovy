@@ -47,6 +47,9 @@ class RequisicionDeComprasController extends RestfulController<RequisicionDeComp
         if(this.params.getBoolean('cerradas')) {
             query = query.where{cerrada != null}
         }
+        if(this.params.getBoolean('pendientes')) {
+            query = query.where{egreso == null}
+        }
         return query.list(params);
     }
 

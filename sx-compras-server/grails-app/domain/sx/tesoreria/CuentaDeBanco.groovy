@@ -28,6 +28,8 @@ class CuentaDeBanco {
 
     Boolean disponibleEnPagos = false
 
+    Boolean cuentaConcentradora = false
+
     String subCuentaOperativa
 
     String impresionTemplate
@@ -45,6 +47,10 @@ class CuentaDeBanco {
 
     Long proximoCheque
 
+    Boolean inversion
+    BigDecimal rendimientoTasa
+    Integer plazo
+
     static constraints = {
     	numero maxSize:30
         clave maxSize:30, unique: true
@@ -60,6 +66,10 @@ class CuentaDeBanco {
         updateUser nullable: true
         proximoCheque nullable: true
         comisionPorTransferencia nullable: true
+        cuentaConcentradora nullable: true
+        inversion nullable: true
+        rendimientoTasa nullable: true
+        plazo nullable: true
     }
 
     String toString() {

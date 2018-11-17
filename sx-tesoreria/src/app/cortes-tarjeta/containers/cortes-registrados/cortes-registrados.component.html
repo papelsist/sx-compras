@@ -1,0 +1,14 @@
+<mat-card>
+  <ng-template tdLoading [tdLoadingUntil]="!procesando" tdLoadingStrategy="overlay">
+
+    <sx-search-title title="Cortes de tarjeta">
+      <span layout class="info" flex>
+        <button mat-button color="primary" (click)="selectPeriodo()">{{periodo}}</button>
+      </span>
+      <button mat-menu-item (click)="load()" class="actions">
+        <mat-icon>refresh</mat-icon> Refrescar</button>
+    </sx-search-title>
+    <mat-divider></mat-divider>
+    <sx-cortes-tarjeta-table [cortes]="cortes$ | async" (select)="onSelect($event)"></sx-cortes-tarjeta-table>
+  </ng-template>
+</mat-card>

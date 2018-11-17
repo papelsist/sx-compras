@@ -168,7 +168,7 @@ class RembolsoController extends RestfulController {
 
     def print( ) {
         Map repParams = [ID: params.id]
-        def pdf =  reportService.run('Rembolso.jrxml', repParams)
+        def pdf =  reportService.run('Reembolso.jrxml', repParams)
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'Rembolso.pdf')
     }
 }

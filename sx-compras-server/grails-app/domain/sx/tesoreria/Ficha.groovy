@@ -52,6 +52,9 @@ class Ficha {
 
     Date lastUpdated
 
+    String createUser
+    String updateUser
+
 
     // static hasMany =[partidas: FichaDet]
 
@@ -63,6 +66,8 @@ class Ficha {
         ingreso nullable:true
         cancelada nullable: true
         fechaCorte nullable: true
+        createUser nullable: true
+        updateUser nullable: true
         // tipo nullable: true
     }
 

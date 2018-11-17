@@ -37,7 +37,7 @@ export class CxPFilter {
 
 export function createCxPFilter(): CxPFilter {
   const { fechaInicial, fechaFinal } = Periodo.fromNow(10);
-  const registros = 20;
+  const registros = 100;
   return {
     fechaInicial,
     fechaFinal,

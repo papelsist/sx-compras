@@ -4,7 +4,7 @@ import grails.compiler.GrailsCompileStatic
 import grails.gorm.transactions.Transactional
 
 import groovy.util.logging.Slf4j
-
+import sx.core.Empresa
 import sx.core.LogUser
 import sx.cxp.Rembolso
 import sx.cxp.Requisicion
@@ -45,7 +45,7 @@ class MovimientoDeCuentaService implements  LogUser{
 
         if(egreso.formaDePago == 'CHEQUE') {
             generarCheque(egreso)
-            egreso.referencia = egreso.cheque.folio.toString()
+
         }
         return egreso
 
@@ -61,15 +61,20 @@ class MovimientoDeCuentaService implements  LogUser{
             cheque.cuenta = egreso.cuenta
             cheque.nombre = egreso.afavor
             cheque.fecha = egreso.fecha
-            cheque.folio = cuenta.proximoCheque
-            cheque.importe = egreso.importe.abs()
-            cuenta.proximoCheque = cuenta.proximoCheque + 1
 
+            cheque.importe = egreso.importe.abs()
+            if(!egreso.referencia) {
+                cheque.folio = cuenta.proximoCheque
+                cuenta.proximoCheque = cuenta.proximoCheque + 1
+                cuenta.save()
+                egreso.referencia = cheque.folio.toString()
+            } else {
+                cheque.folio = egreso.referencia.toLong()
+            }
             cheque.egreso = egreso
             egreso.cheque = cheque
             logEntity(cheque)
 
-            cuenta.save()
         }
     }
 
@@ -113,7 +118,7 @@ class MovimientoDeCuentaService implements  LogUser{
 
         // Datos del pago
         egreso.referencia = referencia
-        egreso.afavor = rembolso.nombre
+        egreso.afavor = Empresa.first().nombre
         egreso.cuenta = cuenta
         logEntity(egreso)
         generarCheque(egreso)

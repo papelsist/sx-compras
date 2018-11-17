@@ -20,6 +20,9 @@ class UrlMappings {
         "/api/clientes"(resources: 'cliente')
 
 
+        "/api/tesoreria/tiposDeCambio"(resources: 'tipoDeCambio')
+        "/api/tesoreria/tipoDeCambio/buscar"(controller: 'tipoDeCambio', action: 'buscar', method: 'GET')
+
         "/api/tesoreria/bancos"(resources: 'banco')
 
         "/api/tesoreria/cuentas"(resources: 'cuentaDeBanco')
@@ -33,9 +36,51 @@ class UrlMappings {
         "/api/tesoreria/cheques/printPoliza/$id"(controller: 'cheque', action: 'printPoliza', method: 'GET')
         "/api/tesoreria/cheques/chequesPendientes"(controller: 'cheque', action: 'chequesPendientes', method: 'GET')
 
-        "/api/cxc/cobros"(resources: 'cobro')
+        // Fichas de deposito
+        "/api/tesoreria/fichas"(resources: "ficha"){
+            "/cheques"( controller: 'ficha', action: 'cheques')
+            "/registrarIngreso"( controller: 'ficha', action: 'registrarIngreso')
+        }
+        "/api/tesoreria/fichas/generar"(controller: "ficha", action: 'generar', method: 'POST')
+        "/api/tesoreria/fichas/reporteDeRelacionDeFichas"(controller: "ficha", action: 'reporteDeRelacionDeFichas', method: 'GET')
 
+        // Cortes de tarjeta
+        "/api/tesoreria/cortesTarjeta"(resources: 'corteDeTarjeta')
+        "/api/tesoreria/cortesTarjeta/pendientes"( controller: 'corteDeTarjeta', action: 'pendientes')
+        "/api/tesoreria/cortesTarjeta/generarCortes"( controller: 'corteDeTarjeta', action: 'generarCortes', method: 'POST')
+        "/api/tesoreria/cortesTarjeta/ajustarCobro"( controller: 'corteDeTarjeta', action: 'ajustarCobro', method: 'PUT')
+        "/api/tesoreria/cortesTarjeta/aplicar/$id"( controller: 'corteDeTarjeta', action: 'aplicar', method: 'PUT')
+        "/api/tesoreria/cortesTarjeta/cancelarAplicacion/$id"( controller: 'corteDeTarjeta', action: 'cancelarAplicacion', method: 'PUT')
+        "/api/tesoreria/cortesTarjeta/reporteDeComisionesTarjeta"(controller: 'corteDeTarjeta', action: 'reporteDeComisionesTarjeta', method: 'GET')
+
+        // Traspaso e inversiones
+        "/api/tesoreria/traspasos"(resources: 'traspaso', excludes:['create', 'edit','patch'] )
+        "/api/tesoreria/inversiones"(resources: 'inversion', excludes:['create', 'edit','patch'] )
+        "/api/tesoreria/inversiones/retorno/$id"(controller: 'inversion', action: 'retorno', method: 'PUT')
+
+        // Movimientos genericos
+        "/api/tesoreria/movimientos"(resources: 'movimientoDeTesoreria', excludes:['create', 'edit','patch', 'update'] )
+
+
+        "/api/tesoreria/comisiones"(resources: 'comisionBancaria', excludes:['create', 'edit','patch', 'update'] )
+
+        "/api/tesoreria/comprasMoneda"(resources: 'compraDeMoneda', excludes:['create', 'edit','patch', 'update'] )
+
+        "/api/tesoreria/pagoDeNomina"(resources: 'pagoDeNomina', excludes:['create', 'edit','patch', 'update'] )
+        "/api/tesoreria/pagoDeNomina/importar"(controller: 'pagoDeNomina', action: 'importar', method: 'POST')
+        "/api/tesoreria/pagoDeNomina/pagar"(controller: 'pagoDeNomina', action: 'pagar', method: 'POST')
+
+        "/api/tesoreria/pagoDeMorralla"(resources: 'pagoDeMorralla', excludes:['create', 'edit','patch', 'update'] )
+
+        "/api/cxc/cobros"(resources: 'cobro')
+        "/api/cxc/cobro/reporteDeCobranza"(controller: "cobro", action: 'reporteDeCobranza', method: 'GET')
+        "/api/cxc/cobro/reporteDeRelacionDePagos"(controller: "cobro", action: 'reporteDeRelacionDePagos', method: 'GET')
+
+        // Cheques devueltos
         "/api/cxc/chequesDevuetos"(resources: 'chequeDevuelto')
+        "/api/cxc/chequesDevuetos/cobros"(controller: 'chequeDevuelto', action: 'cobros', method: 'GET')
+        "/api/cxc/chequesDevuetos/reporteDeChequesDevueltos"(controller: "chequeDevuelto", action:'reporteDeChequesDevueltos', method: 'GET')
+
 
 
         "/api/listaDePreciosProveedor"(resources: 'listaDePreciosProveedor')

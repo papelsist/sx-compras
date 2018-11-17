@@ -70,6 +70,7 @@ class Inventario {
         clave nullable: true, maxSize:30
         descripcion nullable: true
         sucursalNombre nullable: true, maxSize:40
+        gasto nullable: true
     }
 
     static mapping ={

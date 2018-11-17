@@ -25,6 +25,8 @@ export interface Requisicion {
   egreso?: any;
   egresoReferencia?: number;
   reciboDePago?: string;
+  updateUser?: string;
+  createUser?: string;
 }
 
 export class RequisicionesFilter {

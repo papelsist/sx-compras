@@ -9,6 +9,6 @@
 
 <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="select($event)">
   <mat-option *ngFor="let cuenta of cuentas$ | async " [value]="cuenta">
-    {{cuenta.descripcion}} {{(cuenta.numero)}}
+    {{cuenta.descripcion}} {{(cuenta.numero)}} {{cuenta.moneda}}
   </mat-option>
 </mat-autocomplete>

@@ -1,6 +1,7 @@
 import { Action } from '@ngrx/store';
 
 import { CuentaPorPagar, CxPFilter } from '../../model';
+import { Update } from '@ngrx/entity';
 
 export enum FacturaActionTypes {
   LoadFacturas = '[Facturas CXP] Load Facturas ',
@@ -37,8 +38,7 @@ export class LoadFacturasSuccess implements Action {
 
 export class UpdateFactura implements Action {
   readonly type = FacturaActionTypes.UpdateFactura;
-
-  constructor(public payload: CuentaPorPagar) {}
+  constructor(public payload: { update: Update<CuentaPorPagar> }) {}
 }
 export class UpdateFacturaFail implements Action {
   readonly type = FacturaActionTypes.UpdateFacturaFail;

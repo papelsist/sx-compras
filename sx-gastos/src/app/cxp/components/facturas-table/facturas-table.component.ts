@@ -33,13 +33,14 @@ export class FacturasTableComponent implements OnInit, OnChanges {
     'serie',
     'folio',
     'fecha',
-    'moneda',
-    'tipoDeCambio',
-    'tcContable',
+    // 'moneda',
+    // 'tipoDeCambio',
+    // 'tcContable',
     'total',
+    'importePorPagar',
     'saldo',
     'metodoDePago',
-    'formaDePago',
+    // 'formaDePago',
     'usoCfdi',
     'tipoDeComprobante',
     'versionCfdi',
@@ -71,7 +72,8 @@ export class FacturasTableComponent implements OnInit, OnChanges {
       this.dataSource.data = changes.facturas.currentValue;
     }
     if (changes.filter) {
-      this.dataSource.filter = changes.filter.currentValue.toLowerCase();
+      const s = changes.filter.currentValue || '';
+      this.dataSource.filter = s.toLowerCase();
     }
   }
 

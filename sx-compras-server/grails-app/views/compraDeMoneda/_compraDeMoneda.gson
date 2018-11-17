@@ -1,0 +1,13 @@
+import sx.tesoreria.CompraDeMoneda
+
+model {
+	CompraDeMoneda compraDeMoneda
+}
+
+json g.render(compraDeMoneda, [excludes: ['movimientos'], resolveTemplate: false]) {
+	origen "${compraDeMoneda.cuentaOrigen.descripcion} (${compraDeMoneda.cuentaOrigen.numero})"
+	destino "${compraDeMoneda.cuentaDestino.descripcion} (${compraDeMoneda.cuentaDestino.numero})"
+	factura compraDeMoneda?.cxp?.uuid
+	movimientos g.render(compraDeMoneda.movimientos)
+}
+

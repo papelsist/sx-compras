@@ -1,0 +1,81 @@
+<div layout>
+  <div flex="50">
+    <sx-cobros-tarjeta-table [data]="cobrosPorSucursal.cobros" (edit)="editCobro.emit($event)">
+    </sx-cobros-tarjeta-table>
+  </div>
+  <div flex layout="column" class="pad-left">
+    <mat-toolbar layout>
+      <span>Resumen</span>
+      <span flex></span>
+      <button type="button" mat-button (click)="generarCorte()">
+        <mat-icon>save</mat-icon> Salvar
+      </button>
+    </mat-toolbar>
+    <mat-list>
+      <mat-list-item>
+        <mat-icon matListAvatar>credit_card</mat-icon>
+        <span matLine layout>
+          <span flex>Total Visa Mastercard</span>
+        </span>
+        <span flex class="pad-right">{{totalVisaMastercard | currency}}</span>
+      </mat-list-item>
+      <mat-list-item>
+        <span matLine layout>
+          <span flex class="text-center">Débito</span>
+        </span>
+        <span flex class="pad-right">{{totalDebito | currency}}</span>
+      </mat-list-item>
+      <mat-list-item>
+        <span matLine layout>
+          <span flex class="text-center">Débito (Comisión)</span>
+        </span>
+        <span flex class="pad-right">{{comisionDebito | currency}}</span>
+      </mat-list-item>
+      <mat-list-item>
+        <span matLine layout>
+          <span flex class="text-center">Débito (Comisión IVA)</span>
+        </span>
+        <span flex class="pad-right">{{comisionDebitoIva | currency}}</span>
+      </mat-list-item>
+      <mat-list-item>
+        <span matLine layout>
+          <span flex>Crédito</span>
+        </span>
+        <span flex class="pad-right">{{totalCredito | currency}}</span>
+      </mat-list-item>
+      <mat-list-item>
+        <span matLine layout>
+          <span flex class="text-center">Crédito (Comisión)</span>
+        </span>
+        <span flex class="pad-right">{{comisionCredito | currency}}</span>
+      </mat-list-item>
+      <mat-list-item>
+        <span matLine layout>
+          <span flex class="text-center">Crédito (Comisión IVA)</span>
+        </span>
+        <span flex class="pad-right">{{comisionCreditoIva | currency}}</span>
+        <mat-divider matInset></mat-divider>
+      </mat-list-item>
+
+      <mat-list-item>
+        <mat-icon matListAvatar>credit_card</mat-icon>
+        <span matLine layout>
+          <span flex>Total Amex</span>
+        </span>
+        <span flex class="pad-right">{{totalAmex | currency}}</span>
+      </mat-list-item>
+      <mat-list-item>
+        <span matLine layout>
+          <span flex class="text-center">Amex (Comisión)</span>
+        </span>
+        <span flex class="pad-right">{{comisionAmex | currency}}</span>
+      </mat-list-item>
+      <mat-list-item>
+        <span matLine layout>
+          <span flex class="text-center">Amex (Comisión IVA)</span>
+        </span>
+        <span flex class="pad-right">{{comisionAmexIva | currency}}</span>
+      </mat-list-item>
+    </mat-list>
+  </div>
+</div>

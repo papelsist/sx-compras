@@ -1,0 +1,13 @@
+import sx.tesoreria.ComisionBancaria
+
+model {
+	ComisionBancaria comisionBancaria
+}
+
+json g.render(comisionBancaria, [excludes: ['movimientos','version', 'cxp'], resolveTemplate: false]) {
+	cuentaNumero comisionBancaria.cuenta.numero
+	banco comisionBancaria.cuenta.descripcion
+	cxp g.render(comisionBancaria.cxp)
+	movimientos g.render(comisionBancaria.movimientos)
+}
+

@@ -1,23 +1,22 @@
 package sx.tesoreria
 
+import grails.compiler.GrailsCompileStatic
 import groovy.transform.ToString
 import groovy.transform.EqualsAndHashCode
 
-import sx.utils.MonedaUtils
 
+// @GrailsCompileStatic
 @EqualsAndHashCode(includes='id')
-@ToString(includeNames=true,includePackage=false)
+@ToString(includeNames=true,includePackage=false, includes = ['cuentaOrigen', 'cuentaDestino', 'importe'])
 class Traspaso {
 
-	String id
-	
-	Date fecha = new Date()
+	Date fecha
 
 	CuentaDeBanco cuentaOrigen
 
 	CuentaDeBanco cuentaDestino
 
-	Currency moneda = MonedaUtils.PESOS
+	String moneda = 'MXN'
 
 	BigDecimal importe = 0.0
 
@@ -26,11 +25,21 @@ class Traspaso {
 	BigDecimal impuesto = 0.0
 
 	String comentario
-	
+
+	String referencia
+
 	Date dateCreated
 
 	Date lastUpdated
-	
+
+	String createUser
+	String updateUser
+
+	List<MovimientoDeCuenta> movimientos
+
+	Long sw2
+
+
 	static hasMany = [movimientos:MovimientoDeCuenta]
 
     static constraints = {
@@ -39,13 +48,16 @@ class Traspaso {
 				return "mismaCuentaError"
 			if(obj.cuentaOrigen.moneda!=val.moneda)
 				return "diferenteMonedaError"
-			
+
 		}
-		comentario(blank:true)
+		comentario nullable: true
+		createUser nullable: true
+		updateUser nullable: true
+		referencia nullable: true
+		sw2 nullable: true
     }
-	
+
 	static mapping ={
-		id generator: 'uuid'
 		fecha type: 'date'
 		movimientos cascad:"all-delete-orphan"
 	}

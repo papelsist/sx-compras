@@ -21,12 +21,18 @@ import { RequisicionDet } from '../../model';
   styleUrls: ['./requisicion-partidas.component.scss']
 })
 export class RequisicionPartidasComponent implements OnInit, OnChanges {
-  @Input() partidas: RequisicionDet[] = [];
-  @Input() parent: FormGroup;
-  @Input() readOnly = false;
-  @Output() update = new EventEmitter();
-  @Output() delete = new EventEmitter();
-  @ViewChild(MatSort) sort: MatSort;
+  @Input()
+  partidas: RequisicionDet[] = [];
+  @Input()
+  parent: FormGroup;
+  @Input()
+  readOnly = false;
+  @Output()
+  update = new EventEmitter();
+  @Output()
+  delete = new EventEmitter();
+  @ViewChild(MatSort)
+  sort: MatSort;
 
   dataSource = new MatTableDataSource<RequisicionDet>([]);
 
@@ -39,13 +45,14 @@ export class RequisicionPartidasComponent implements OnInit, OnChanges {
     'documentoCompensaciones',
     'documentoSaldo',
     'total',
-    'descuentof',
+    // 'descuentof',
     'apagar',
     'comentario',
     'operaciones'
   ];
 
-  @ViewChild('table') table: MatTable<any>;
+  @ViewChild('table')
+  table: MatTable<any>;
 
   constructor() {}
 

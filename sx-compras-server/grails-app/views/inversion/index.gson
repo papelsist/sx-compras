@@ -1,0 +1,8 @@
+import sx.tesoreria.Inversion
+
+model {
+	Iterable<Inversion> inversionList
+}
+
+json tmpl.inversion(inversionList ?: [])
+

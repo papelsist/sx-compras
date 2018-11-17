@@ -1,0 +1,7 @@
+import sx.tesoreria.Ficha
+
+model {
+	Ficha ficha
+}
+
+json tmpl.ficha(ficha)

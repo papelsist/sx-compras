@@ -1,0 +1,8 @@
+import sx.cxc.CobroTarjeta
+import sx.tesoreria.CobrosPorSucursal
+
+model {
+    List<CobrosPorSucursal> cobros
+}
+
+json tmpl.cobrosPorSucursal(cobros)

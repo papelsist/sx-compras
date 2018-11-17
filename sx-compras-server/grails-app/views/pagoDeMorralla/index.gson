@@ -1,0 +1,8 @@
+import sx.tesoreria.PagoDeMorralla
+
+model {
+	Iterable<PagoDeMorralla> pagoDeMorrallaList
+}
+
+json tmpl.pagoDeMorralla(pagoDeMorrallaList ?: [])
+

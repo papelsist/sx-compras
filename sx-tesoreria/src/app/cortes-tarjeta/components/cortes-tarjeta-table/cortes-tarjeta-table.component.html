@@ -1,0 +1,14 @@
+<td-data-table #dataTable [data]="cortes" [columns]="columns">
+  <ng-template tdDataTableTemplate="folio" let-value="value" let-row="row">
+    <span class="cursor-pointer" (click)="select.emit(row)">{{value}}</span>
+  </ng-template>
+  <ng-template tdDataTableTemplate="corte" let-value="value" let-row="row">
+    {{value | date: 'dd/MM/yyyy'}}
+  </ng-template>
+  <ng-template tdDataTableTemplate="total" let-value="value" let-row="row">
+    {{value | currency: 'USD': 1.2-2}}
+  </ng-template>
+  <ng-template tdDataTableTemplate="aplicado" let-value="value" let-row="row">
+    <button mat-button [disabled]="value !== 'PENDIENTE'" (click)="select.emit(row)"> {{value}}</button>
+  </ng-template>
+</td-data-table>

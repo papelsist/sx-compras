@@ -17,6 +17,7 @@ class SucursalController extends RestfulController<Sucursal> {
         def query = Sucursal.where {}
         params.sort = params.sort ?:'nombre'
         params.order = params.order ?:'desc'
+        params.max = 100
         if(params.activas){
             query = query.where {activa == true}
         }

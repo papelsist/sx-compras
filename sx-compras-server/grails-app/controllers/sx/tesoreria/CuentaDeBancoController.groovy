@@ -21,14 +21,21 @@ class CuentaDeBancoController extends RestfulController {
 
     @Override
     protected List listAllResources(Map params) {
-        params.max = 20
+        params.max = 100
+        log.info('List {}', params)
         def query = CuentaDeBanco.where{}
 
         if(params.activas) {
             query = query.where {activo == true}
         }
-        if(params.disponibleEnPagos) {
-            query = query.where {disponibleEnPagos == true}
+        if( this.params.getBoolean('disponibleEnPagos')) {
+            query = query.where {disponibleEnPagos == this.params.getBoolean('disponibleEnPagos')}
+        }
+        if(params.cuentaConcentradora) {
+            query = query.where{cuentaConcentradora == true}
+        }
+        if(params.tipo) {
+            query = query.where{ tipo == params.tipo}
         }
         return query.list(params)
     }

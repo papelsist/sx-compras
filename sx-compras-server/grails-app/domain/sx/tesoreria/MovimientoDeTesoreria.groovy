@@ -1,5 +1,8 @@
 package sx.tesoreria
 
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
+
 
 /**
  * Entidad que agrupa los movimientos de bancos  agenos a las operaciones basicas de la empresa
@@ -7,11 +10,10 @@ package sx.tesoreria
  *
  * Created by rcancino on 06/04/17.
  */
+// @GrailsCompileStatic
+@EqualsAndHashCode(includes='id, concepto, cuenta, importe')
+@ToString(includeNames=true,includePackage=false, includes = ['fecha', 'cuenta', 'concepto', 'importe'])
 class MovimientoDeTesoreria {
-
-    String id
-
-    Long folio
 
     Date fecha
 
@@ -23,24 +25,40 @@ class MovimientoDeTesoreria {
 
     MovimientoDeCuenta movimiento
 
+    String referencia
+
     String comentario
 
     Date dateCreated
     Date lastUpdated
 
+    String updateUser
+    String createUser
+
+    Long sw2
+
     static constraints = {
         comentario nullable: true
+        referencia nullable: true
+        createUser nullable: true
+        updateUser nullable: true
+        sw2 nullable: true
     }
 
     static mapping = {
-        id generator: 'uuid'
         fecha type: 'date'
     }
 }
 
 enum ConceptoTesoreria {
-    ACLARACION,
-    CONCILIACION,
-    FALTANTE,
-    SOBRANTE
+    DEPOSITO,
+    DEP_PENDIENTE_ACLARAR,
+    DIFDEPOSITOSABONO,
+    DIFCONCILIACIONA,
+    ABONO_SOBRANTE,
+    CARGO,
+    DIFDEPOSITOSCARGO,
+    DIFCONCILIACIONC,
+    CARGO_FALTANTE
 }
+

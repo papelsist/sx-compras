@@ -1,0 +1,12 @@
+import sx.tesoreria.MovimientoDeTesoreria
+
+model {
+	MovimientoDeTesoreria movimientoDeTesoreria
+}
+
+
+json g.render(movimientoDeTesoreria, [excludes: ['movimiento'], resolveTemplate: false]) {
+	banco "${movimientoDeTesoreria.cuenta.descripcion} "
+	cuentaNumero "${movimientoDeTesoreria.cuenta.numero}"
+	movimiento g.render(movimientoDeTesoreria.movimiento)
+}

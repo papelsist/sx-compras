@@ -35,6 +35,13 @@ import { CancelarPagoRembolsoComponent } from './cancelaciones/cancelar-pago-rem
 import { CancelarChequeRembolsoComponent } from './cancelaciones/cancelar-cheque-rembolso.component';
 import { GenerarChequeRembolsoComponent } from './generar-cheque-rembolso/generar-cheque-rembolso.component';
 import { GenerarChequeRembolsoBtnComponent } from './generar-cheque-rembolso/generar-cheque-rembolso-btn.component';
+import { ComprasMonedaTableComponent } from './compras-moneda-table/compras-moneda-table.component';
+import { CompraMonedaFormComponent } from './compra-moneda-form/compra-moneda-form.component';
+import { PagosNominaTableComponent } from './pagos-nomina-table/pagos-nomina-table.component';
+import { PagoNominaImportarDialogComponent } from './pago-nomina-importar/pago-nomina-importar-dialog.component';
+import { PagoDeNominaDialogComponent } from './pago-nomina-dialog/pago-nomina-dialog.component';
+import { PagoDeNominaBtnComponent } from './pago-nomina-dialog/pago-nomina-dialog-btn.component';
+import { PagoDeNominaFormComponent } from './pago-nomina-form/pago-de-nomina-form.component';
 
 export const components: any[] = [
   RequisicionesTableComponent,
@@ -71,7 +78,16 @@ export const components: any[] = [
   CancelarPagoRembolsoComponent,
   CancelarChequeRembolsoComponent,
   GenerarChequeRembolsoComponent,
-  GenerarChequeRembolsoBtnComponent
+  GenerarChequeRembolsoBtnComponent,
+  //
+  ComprasMonedaTableComponent,
+  CompraMonedaFormComponent,
+  // Pago de nomina
+  PagosNominaTableComponent,
+  PagoNominaImportarDialogComponent,
+  PagoDeNominaDialogComponent,
+  PagoDeNominaBtnComponent,
+  PagoDeNominaFormComponent
 ];
 
 export const entryComponents: any[] = [
@@ -81,7 +97,11 @@ export const entryComponents: any[] = [
   GenerarChequeComponent,
   RembolsosFilterComponent,
   RembolsoPagoDialogComponent,
-  GenerarChequeRembolsoComponent
+  GenerarChequeRembolsoComponent,
+  CompraMonedaFormComponent,
+  // Pago de nomina
+  PagoNominaImportarDialogComponent,
+  PagoDeNominaDialogComponent
 ];
 
 export * from './requisiciones-table/requisiciones-table.component';
@@ -118,3 +138,14 @@ export * from './cancelaciones/cancelar-pago-rembolso.component';
 export * from './cancelaciones/cancelar-cheque-rembolso.component';
 export * from './generar-cheque-rembolso/generar-cheque-rembolso.component';
 export * from './generar-cheque-rembolso/generar-cheque-rembolso-btn.component';
+
+// Compra de moneda
+export * from './compras-moneda-table/compras-moneda-table.component';
+export * from './compra-moneda-form/compra-moneda-form.component';
+
+// Pago de nomina
+export * from './pagos-nomina-table/pagos-nomina-table.component';
+export * from './pago-nomina-importar/pago-nomina-importar-dialog.component';
+export * from './pago-nomina-dialog/pago-nomina-dialog.component';
+export * from './pago-nomina-dialog/pago-nomina-dialog-btn.component';
+export * from './pago-nomina-form/pago-de-nomina-form.component';

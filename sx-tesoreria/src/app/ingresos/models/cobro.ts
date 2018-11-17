@@ -39,9 +39,14 @@ export interface CobroTarjeta {
 
 export interface CobroCheque {
   id?: string;
+  importe?: number;
+  fecha?: string;
+  nombre?: string;
+  primeraAplicacion?: string;
   banco: { id: string };
   numero: string;
   numeroDeCuenta: string;
+  selected?: boolean;
 }
 
 export class CobrosFilter {

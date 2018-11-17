@@ -4,7 +4,7 @@ model {
 	ComprobanteFiscal comprobanteFiscal
 }
 
-json g.render(comprobanteFiscal, [resolveTemplate: false, excludes: ['xml', 'pdf','acuse', 'dateCreated', 'lastUpdated', 'version']]){
+json g.render(comprobanteFiscal, [resolveTemplate: false, excludes: ['xml', 'pdf','acuse']]){
     pdf comprobanteFiscal.pdf ? true : false
     xml comprobanteFiscal.xml ? true : false
     xml comprobanteFiscal.acuse ? true: false

@@ -1,0 +1,7 @@
+import sx.tesoreria.Inversion
+
+model {
+	Inversion inversion
+}
+
+json tmpl.inversion(inversion)

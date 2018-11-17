@@ -5,6 +5,9 @@ import { CompraExistsGuard } from './compra-exits.guard';
 import { ChequesGuard } from './cheques.guard';
 import { RembolsosGuard } from './rembolsos.guard';
 import { RembolsoExistsGuard } from './rembolso-exists.guard';
+import { CompraMonedasGuard } from './compra-monedas.guard';
+import { PagoNominasGuard } from './pago-nominas.guard';
+import { PagoNominaExistsGuard } from './pago-nomina-exists.guard';
 
 export const guards: any[] = [
   GastosGuard,
@@ -13,7 +16,10 @@ export const guards: any[] = [
   CompraExistsGuard,
   ChequesGuard,
   RembolsosGuard,
-  RembolsoExistsGuard
+  RembolsoExistsGuard,
+  CompraMonedasGuard,
+  PagoNominasGuard,
+  PagoNominaExistsGuard
 ];
 
 export * from './gastos.guard';
@@ -23,3 +29,6 @@ export * from './compra-exits.guard';
 export * from './cheques.guard';
 export * from './rembolsos.guard';
 export * from './rembolso-exists.guard';
+export * from './compra-monedas.guard';
+export * from './pago-nominas.guard';
+export * from './pago-nomina-exists.guard';

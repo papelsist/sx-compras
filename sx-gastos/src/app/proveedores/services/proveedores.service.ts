@@ -17,7 +17,8 @@ export class ProveedoresService {
   }
 
   list(): Observable<Proveedor[]> {
-    return this.http.get<Proveedor[]>(this.apiUrl);
+    const params = new HttpParams().set('tipo', 'GASTOS');
+    return this.http.get<Proveedor[]>(this.apiUrl, { params: params });
   }
 
   getProductos(proveedor: Proveedor): Observable<ProveedorProducto[]> {

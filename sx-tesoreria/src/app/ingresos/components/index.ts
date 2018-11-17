@@ -3,6 +3,15 @@ import { CobrosFilterComponent } from './cobros-filter/cobros-filter.component';
 import { CobrosFilterBtnComponent } from './cobros-filter/cobros-filter-btn.component';
 import { CobrosFilterLabelComponent } from './cobros-filter/cobros-filter-label.component';
 import { CobroFormComponent } from './cobro-form/cobro-form-component';
+import { CobrosChequeTableComponent } from './selecor-de-cheques/cobros-cheque-table.component';
+// Cheques devueltos
+import { ChequesDevueltosTableComponent } from './cheques-devueltos/cheques-devueltos-table.component';
+import { SelectorDeCobrosChequeComponent } from './selecor-de-cheques/selector-de-cobros-cheques.component';
+import { ChequeDevueltoFormComponent } from './cheque-devuelto-form/cheque-devuelto-form.component';
+import { FichasFilterComponent } from './fichas-filter/fichas-filter.component';
+import { FichasTableComponent } from './fichas-table/fichas-table.component';
+import { FichasGenerarComponent } from './fichas-generar/fichas-generar.component';
+import { FichaInfoComponent } from './fichas-info/ficha-info.component';
 
 export const components: any[] = [
   // Cobros
@@ -10,11 +19,25 @@ export const components: any[] = [
   CobrosFilterComponent,
   CobrosFilterBtnComponent,
   CobrosFilterLabelComponent,
-  CobroFormComponent
+  CobroFormComponent,
+  // Cheques devueltos
+  ChequesDevueltosTableComponent,
+  SelectorDeCobrosChequeComponent,
+  CobrosChequeTableComponent,
+  ChequeDevueltoFormComponent,
+  // Fichas
+  FichasFilterComponent,
+  FichasTableComponent,
+  FichasGenerarComponent,
+  FichaInfoComponent
 ];
 export const entryComponents: any[] = [
   CobrosFilterComponent,
-  CobroFormComponent
+  CobroFormComponent,
+  SelectorDeCobrosChequeComponent,
+  ChequeDevueltoFormComponent,
+  FichasGenerarComponent,
+  FichaInfoComponent
 ];
 
 // Cobros
@@ -23,3 +46,14 @@ export * from './cobros-filter/cobros-filter.component';
 export * from './cobros-filter/cobros-filter-btn.component';
 export * from './cobros-filter/cobros-filter-label.component';
 export * from './cobro-form/cobro-form-component';
+
+// Cheques devueltos
+export * from './cheques-devueltos/cheques-devueltos-table.component';
+export * from './selecor-de-cheques/selector-de-cobros-cheques.component';
+export * from './selecor-de-cheques/cobros-cheque-table.component';
+export * from './cheque-devuelto-form/cheque-devuelto-form.component';
+// Fichas
+export * from './fichas-filter/fichas-filter.component';
+export * from './fichas-table/fichas-table.component';
+export * from './fichas-generar/fichas-generar.component';
+export * from './fichas-info/ficha-info.component';

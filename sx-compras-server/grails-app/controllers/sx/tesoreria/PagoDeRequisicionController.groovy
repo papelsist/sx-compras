@@ -5,6 +5,7 @@ import grails.plugin.springsecurity.annotation.Secured
 
 import grails.validation.Validateable
 import groovy.util.logging.Slf4j
+import org.apache.commons.lang3.exception.ExceptionUtils
 import sx.cxp.Requisicion
 
 
@@ -45,9 +46,7 @@ class PagoDeRequisicionController {
         }
         requisicion = pagoDeRequisicionService.cancelarPago(requisicion)
         log.info('Requisicion con pago cancelado {}', requisicion.folio)
-        // respond requisicion
         [requisicion: requisicion]
-        // respond requisicion
     }
 
     def generarCheque() {
@@ -69,6 +68,12 @@ class PagoDeRequisicionController {
         log.info("Cheque de pago cancelado para la requisicion: {} ", requisicion.folio)
         [requisicion: requisicion]
     }
+
+    def handleException(Exception e) {
+        String message = ExceptionUtils.getRootCauseMessage(e)
+        log.error(message, ExceptionUtils.getRootCause(e))
+        respond([message: message], status: 500)
+    }
 }
 
 class PagoDeRequisicion implements  Validateable{
@@ -89,6 +94,7 @@ class PagoDeRequisicion implements  Validateable{
 
 class CancelacionDeCheque implements  Validateable{
     Requisicion requisicion
+    Date fecha
     String comentario
 
     String toString() {

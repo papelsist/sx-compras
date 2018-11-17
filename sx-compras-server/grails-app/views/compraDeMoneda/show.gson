@@ -1,0 +1,7 @@
+import sx.tesoreria.CompraDeMoneda
+
+model {
+	CompraDeMoneda compraDeMoneda
+}
+
+json tmpl.compraDeMoneda(compraDeMoneda)

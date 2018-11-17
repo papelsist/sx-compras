@@ -1,0 +1,7 @@
+import sx.tesoreria.Traspaso
+
+model {
+	Traspaso traspaso
+}
+
+json tmpl.traspaso(traspaso)

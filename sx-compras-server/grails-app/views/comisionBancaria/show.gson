@@ -1,0 +1,7 @@
+import sx.tesoreria.ComisionBancaria
+
+model {
+	ComisionBancaria comisionBancaria
+}
+
+json tmpl.comisionBancaria(comisionBancaria)

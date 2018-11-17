@@ -1,83 +1,101 @@
 <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
   <ng-container matColumnDef="nombre">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Proveedor</th>
-    <td mat-cell *matCellDef="let req">{{req.nombre}}</td>
+    <td mat-cell *matCellDef="let req">{{ req.nombre }}</td>
   </ng-container>
   <ng-container matColumnDef="folio">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Folio</th>
-    <td mat-cell *matCellDef="let req">{{req.folio}}</td>
+    <td mat-cell *matCellDef="let req">{{ req.folio }}</td>
   </ng-container>
   <ng-container matColumnDef="fecha">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
-    <td mat-cell *matCellDef="let req">{{req.fecha | date: 'dd/MM/yyyy'}}</td>
+    <td mat-cell *matCellDef="let req">{{ req.fecha | date: 'dd/MM/yyyy' }}</td>
   </ng-container>
   <ng-container matColumnDef="fechaDePago">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha P</th>
-    <td mat-cell *matCellDef="let req">{{req.fechaDePago | date: 'dd/MM/yyyy'}}</td>
+    <td mat-cell *matCellDef="let req">
+      {{ req.fechaDePago | date: 'dd/MM/yyyy' }}
+    </td>
   </ng-container>
   <ng-container matColumnDef="cerrada">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Cerrada</th>
-    <td mat-cell *matCellDef="let req">{{req.cerrada | date: 'dd/MM/yyyy'}}</td>
+    <td mat-cell *matCellDef="let req">
+      {{ req.cerrada | date: 'dd/MM/yyyy' }}
+    </td>
   </ng-container>
   <ng-container matColumnDef="pagada">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Pagada</th>
-    <td mat-cell *matCellDef="let req">{{req.pagada | date: 'dd/MM/yyyy'}}</td>
+    <td mat-cell *matCellDef="let req">
+      {{ req.pagada | date: 'dd/MM/yyyy' }}
+    </td>
   </ng-container>
   <ng-container matColumnDef="egresoReferencia">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Egreso</th>
-    <td mat-cell *matCellDef="let req">{{req.egresoReferencia}}</td>
+    <td mat-cell *matCellDef="let req">{{ req.egresoReferencia }}</td>
   </ng-container>
   <ng-container matColumnDef="moneda">
     <th mat-header-cell *matHeaderCellDef>Moneda</th>
-    <td mat-cell *matCellDef="let req">{{req.moneda}}</td>
+    <td mat-cell *matCellDef="let req">{{ req.moneda }}</td>
   </ng-container>
   <ng-container matColumnDef="tipoDeCambio">
     <th mat-header-cell *matHeaderCellDef>TC</th>
-    <td mat-cell *matCellDef="let req">{{req.tipoDeCambio}}</td>
+    <td mat-cell *matCellDef="let req">{{ req.tipoDeCambio }}</td>
   </ng-container>
   <ng-container matColumnDef="total">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Total</th>
-    <td mat-cell *matCellDef="let req">{{req.total | currency:'USD'}}</td>
+    <td mat-cell *matCellDef="let req">{{ req.total | currency }}</td>
   </ng-container>
+
   <ng-container matColumnDef="descuentofImporte">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Dscto F</th>
-    <td mat-cell *matCellDef="let req">{{req.descuentofImporte | currency:'USD'}}</td>
+    <td mat-cell *matCellDef="let req">
+      {{ req.descuentofImporte | currency }}
+    </td>
   </ng-container>
   <ng-container matColumnDef="apagar">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>A Pagar</th>
-    <td mat-cell *matCellDef="let req">{{req.apagar | currency:'USD'}}</td>
+    <td mat-cell *matCellDef="let req">{{ req.apagar | currency }}</td>
   </ng-container>
   <ng-container matColumnDef="formaDePago">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>F.Pago</th>
-    <td mat-cell *matCellDef="let req" class="cursor-pointer">{{getFormaDePago(req)}}</td>
+    <td mat-cell *matCellDef="let req" class="cursor-pointer">
+      {{ getFormaDePago(req) }}
+    </td>
   </ng-container>
   <ng-container matColumnDef="comentario">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Observaciones</th>
     <td mat-cell *matCellDef="let req">
-      <span class="tc-pink-700" *ngIf="!req.egreso">
-        PENDIENTE
-      </span>
-      <span *ngIf="req.egreso">
-        Ref: {{req.egresoReferencia}}
-      </span>
+      <span class="tc-pink-700" *ngIf="!req.egreso"> PENDIENTE </span>
+      <span *ngIf="req.egreso"> Ref: {{ req.egresoReferencia }} </span>
       <span *ngIf="req?.egreso?.cheque?.impresion" class="text-sm">
-        Imp({{req.egreso.cheque.impresion | date: 'dd/MM/yyyy'}})
+        Imp({{ req.egreso.cheque.impresion | date: 'dd/MM/yyyy' }})
       </span>
     </td>
   </ng-container>
   <ng-container matColumnDef="reciboDePago">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Recibo CFDI</th>
-    <td mat-cell *matCellDef="let req">
-      {{req.reciboDePago}}
-    </td>
+    <td mat-cell *matCellDef="let req">{{ req.reciboDePago }}</td>
   </ng-container>
   <ng-container matColumnDef="operaciones">
     <th mat-header-cell *matHeaderCellDef></th>
     <td mat-cell *matCellDef="let req">
-      <sx-print-requisicion [requisicion]="req" smallIcon="true"></sx-print-requisicion>
+      <sx-print-requisicion
+        [requisicion]="req"
+        smallIcon="true"
+      ></sx-print-requisicion>
     </td>
   </ng-container>
   <tr mat-header-row *matHeaderRowDef="displayColumns"></tr>
-  <tr mat-row *matRowDef="let req; columns: displayColumns" class="cursor-pointer" (click)="select.emit(req)" [ngClass]="{'active': req.selected}"></tr>
+  <tr
+    mat-row
+    *matRowDef="let req; columns: displayColumns"
+    class="cursor-pointer"
+    (click)="select.emit(req)"
+    [ngClass]="{ active: req.selected }"
+  ></tr>
 </table>
-<mat-paginator [pageSizeOptions]="[20, 50, 100, 200]" showFirstLastButtons></mat-paginator>
+
+<mat-paginator
+  [pageSizeOptions]="[20, 50, 100, 200]"
+  showFirstLastButtons
+></mat-paginator>

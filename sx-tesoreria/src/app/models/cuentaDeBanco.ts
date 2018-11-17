@@ -18,4 +18,5 @@ export interface CuentaDeBanco {
   proximoCheque?: number;
   bancoSat?: { id: string };
   comisionPorTransferencia?: number;
+  cuentaConcentradora?: boolean;
 }

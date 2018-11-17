@@ -1,0 +1,101 @@
+<mat-card flex="50">
+  <mat-card-title>
+    <div layout>
+      <span class="pad-right">
+        Nómina: {{ pagoNomina.tipo }} {{ pagoNomina.periodicidad }}
+      </span>
+      <span class="pad-left"> {{ pagoNomina.folio }}</span>
+    </div>
+  </mat-card-title>
+
+  <div class="md-title pad-bottom-sm" layout>
+    <span class="pad-left pad-right">Pago: </span>
+    <span class="pad-left"> {{ pagoNomina.pago | date: 'dd/MM/yyyy' }}</span>
+    <span flex></span>
+
+    <span *ngIf="pagoNomina?.egreso">
+      <span>Pagada </span>
+      <span>{{ pagoNomina.egreso.fecha | date: 'dd/MM/yyyy' }}</span>
+      <span class="pad-left" *ngIf="pagoNomina?.egreso?.cheque">
+        Cheque: {{ pagoNomina.egreso.cheque.folio }} ({{
+          pagoNomina.egreso.cheque.banco
+        }})
+      </span>
+    </span>
+    <ng-container
+      *ngIf="pagoNomina.egreso && pagoNomina.formaDePago !== 'CHEQUE'"
+    >
+      <span class="pad-left">
+        Banco: {{ pagoNomina.egreso.cuenta.descripcion }}
+      </span>
+      <span class="pad-left">
+        Referencia: {{ pagoNomina.egreso.referencia }}
+      </span>
+    </ng-container>
+    <span flex></span>
+  </div>
+  <mat-divider></mat-divider>
+
+  <div layout="column" class="pad">
+    <mat-form-field flex>
+      <input
+        matInput
+        placeholder="Afavor"
+        value="{{pagoNomina.afavor}}"
+        [disabled]="true"
+      />
+    </mat-form-field>
+    <mat-form-field flex>
+      <input
+        matInput
+        placeholder="Empleado"
+        value="{{pagoNomina.empleado}}"
+        [disabled]="true"
+      />
+    </mat-form-field>
+    <div layout>
+      <mat-form-field flex>
+        <input
+          matInput
+          value="{{pagoNomina.formaDePago}}"
+          placeholder="Forma de pago"
+          [disabled]="true"
+        />
+      </mat-form-field>
+      <mat-form-field class="pad-left" flex>
+        <input
+          matInput
+          value="{{pagoNomina.total | currency}}"
+          placeholder="Total"
+          [disabled]="true"
+        />
+      </mat-form-field>
+    </div>
+    <div layout>
+      <mat-form-field flex>
+        <input
+          matInput
+          value="{{pagoNomina?.egreso?.updateUser }}"
+          placeholder="Pagado por"
+          [disabled]="true"
+        />
+      </mat-form-field>
+      <mat-form-field flex class="pad-left">
+        <input
+          matInput
+          value="{{pagoNomina?.egreso?.cheque?.impresion | date: 'dd/MM/yy '}}"
+          placeholder="Impreso"
+          [disabled]="true"
+        />
+      </mat-form-field>
+    </div>
+  </div>
+  <mat-divider></mat-divider>
+
+  <mat-card-actions>
+    <button mat-button type="button" (click)="cancel.emit($event)">
+      Cancelar
+    </button>
+    <ng-content></ng-content>
+  </mat-card-actions>
+</mat-card>

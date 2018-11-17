@@ -1,0 +1,95 @@
+<table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+  <ng-container matColumnDef="id">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Id</th>
+    <td mat-cell *matCellDef="let row">{{ row.id }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="tipo">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo</th>
+    <td mat-cell *matCellDef="let row">{{ row.tipo }}</td>
+  </ng-container>
+  <ng-container matColumnDef="periodicidad">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Periodicidad</th>
+    <td mat-cell *matCellDef="let row">{{ row.periodicidad }}</td>
+  </ng-container>
+  <ng-container matColumnDef="folio">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Nómina</th>
+    <td mat-cell *matCellDef="let row">{{ row.folio }}</td>
+  </ng-container>
+  <ng-container matColumnDef="formaDePago">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>F. Pago</th>
+    <td mat-cell *matCellDef="let row">{{ row.formaDePago }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="fechaInicial">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Ini</th>
+    <td mat-cell *matCellDef="let row">
+      {{ row.fechaInicial | date: 'dd/MM/yyyy' }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="ejercicio">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Ejercicio</th>
+    <td mat-cell *matCellDef="let row">{{ row.ejercicio }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="referencia">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Referencia</th>
+    <td mat-cell *matCellDef="let row">{{ row?.egreso?.referencia }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="afavor">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
+    <td mat-cell *matCellDef="let row">{{ row.afavor }}</td>
+  </ng-container>
+  <ng-container matColumnDef="pago">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>F. Pago</th>
+    <td mat-cell *matCellDef="let row">{{ row.pago | date: 'dd/MM/yyyy' }}</td>
+  </ng-container>
+  <ng-container matColumnDef="egreso">
+    <th mat-header-cell *matHeaderCellDef>Egreso</th>
+    <td mat-cell *matCellDef="let row">
+      <span *ngIf="row.egreso">
+        {{ row.egreso.fecha | date: 'dd/MM/yyyy' }}
+      </span>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="total">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Total</th>
+    <td mat-cell *matCellDef="let row">{{ row.total | currency }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="updateUser">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Usuario</th>
+    <td
+      mat-cell
+      *matCellDef="let row"
+      matTooltip="{{row.lastUpdated | date: 'dd/MM/yyyy : HH:mm:ss'}}"
+    >
+      {{ row.updateUser }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="operaciones">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>...</th>
+    <td mat-cell *matCellDef="let row">
+      <mat-icon color="warn" (click)="doDelete($event, row)">delete</mat-icon>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayColumns; sticky: true"></tr>
+  <tr
+    mat-row
+    *matRowDef="let row; columns: displayColumns"
+    class="cursor-pointer"
+    (click)="toggle(row)"
+    [ngClass]="{ active: selected?.id === row.id }"
+  ></tr>
+</table>
+
+<mat-paginator
+  [pageSizeOptions]="[10, 20, 50, 100, 200]"
+  [pageSize]="20"
+  showFirstLastButtons
+></mat-paginator>

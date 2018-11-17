@@ -78,7 +78,7 @@ environments:
     development:
         dataSource:
             dbCreate: update
-            # url: jdbc:mysql://localhost/siipapx_oficinas?autoReconnect=true
+            #url: jdbc:mysql://localhost/siipapx_oficinas?autoReconnect=true
             url: jdbc:mysql://10.10.1.229/siipapx_dev?autoReconnect=true
             #url: jdbc:mysql://${JDBC_CONNECTION_STRING}?autoReconnect=true
             #url: jdbc:mysql://10.10.1.229/siipapx?autoReconnect=false
@@ -137,6 +137,28 @@ environments:
                     validationQuery: 'SELECT 1'
                     validationQueryTimeout: 3
                     validationInterval: 15000
+    tesoreria:
+            dataSource:
+                dbCreate: update
+                #url: jdbc:mysql://10.10.1.229/siipapx?autoReconnect=false
+                url: jdbc:mysql://${JDBC_CONNECTION_STRING}?autoReconnect=true
+                username: root
+                password: sys
+                properties:
+                    maxActive: 10
+                    maxIdle: 10
+                    minIdle: 3
+                    initialSize: 3
+                    minEvictableIdleTimeMillis: 1800000
+                    timeBetweenEvictionRunsMillis: 1800000
+                    numTestsPerEvictionRun: 3
+                    testOnBorrow: true
+                    testWhileIdle: true
+                    testOnReturn: true
+                    maxWait: 10000
+                    validationQuery: 'SELECT 1'
+                    validationQueryTimeout: 3
+                    validationInterval: 15000
     certificacion:
         dataSource:
             dbCreate: update
@@ -170,6 +192,9 @@ environments:
     contabilidad:
         server:
             port: 9290
+    tesoreria:
+            server:
+                port: 9490
 
 ---
 grails:

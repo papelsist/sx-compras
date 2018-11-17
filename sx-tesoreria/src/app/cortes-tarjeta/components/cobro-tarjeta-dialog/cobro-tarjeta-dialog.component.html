@@ -1,0 +1,22 @@
+<form novalidate (ngSubmit)="onSubmit()" [formGroup]="form">
+  <h3 mat-dialog-title>Datos de la tarjeta</h3>
+
+  <mat-dialog-content layout="column">
+    <div layout='column'>
+      <mat-form-field flex class="pad-right">
+        <input matInput placeholder="Importe" formControlName="importe" type="number">
+        <mat-error>
+          Inporte invalido margen permitodo (+- 10)
+        </mat-error>
+      </mat-form-field>
+      <mat-checkbox formControlName="visaMaster" class="pad" flex>Visa/MasterCard</mat-checkbox>
+      <mat-checkbox formControlName="debitoCredito" class="pad" flex>Débito</mat-checkbox>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions>
+    <button type="button" mat-button (click)="closeDialog()">Cancelar</button>
+    <button type="submit" mat-button [disabled]="form.invalid || form.pristine">Salvar</button>
+  </mat-dialog-actions>
+
+</form>

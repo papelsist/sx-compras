@@ -1,0 +1,11 @@
+import sx.tesoreria.Inversion
+
+model {
+	Inversion inversion
+}
+
+json g.render(inversion, [excludes: ['movimientos','version'], resolveTemplate: false]) {
+	origen "${inversion.cuentaOrigen.descripcion} (${inversion.cuentaOrigen.numero})"
+	destino "${inversion.cuentaDestino.descripcion} (${inversion.cuentaDestino.numero})"
+	movimientos g.render(inversion.movimientos)
+}

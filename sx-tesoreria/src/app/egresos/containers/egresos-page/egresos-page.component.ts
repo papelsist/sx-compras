@@ -26,16 +26,28 @@ export class EgresosPageComponent implements OnInit {
       icon: 'receipt'
     },
     {
-      route: 'cheques',
-      title: 'Cheques',
-      description: 'Pagos con cheque',
-      icon: 'account_balance_wallet'
-    },
-    {
       route: 'rembolsos',
       title: 'Rembolsos',
       description: 'Mto de rembolsos',
       icon: 'settings_backup_restore'
+    },
+    {
+      route: 'comprasMoneda',
+      title: 'Compra moneda',
+      description: 'Compras de moneda',
+      icon: 'flag'
+    },
+    {
+      route: 'pagoNominas',
+      title: 'Nóminas',
+      description: 'Pago de Nóminas',
+      icon: 'people'
+    },
+    {
+      route: 'cheques',
+      title: 'Cheques',
+      description: 'Pagos con cheque',
+      icon: 'account_balance_wallet'
     }
   ];
 

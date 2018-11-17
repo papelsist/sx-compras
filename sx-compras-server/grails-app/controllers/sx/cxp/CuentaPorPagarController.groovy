@@ -19,11 +19,10 @@ class CuentaPorPagarController extends RestfulController<CuentaPorPagar> {
         log.info('List: {}', params)
         params.sort = 'fecha'
         params.order = 'desc'
-        params.max = params.registros ?: 20
+
 
         def tipo = params.tipo?: 'COMPRAS'
         def query = CuentaPorPagar.where {tipo == tipo}
-        log.info('Tipo {}', tipo)
         if(tipo == 'COMPRAS') {
             params.max = 500
         }

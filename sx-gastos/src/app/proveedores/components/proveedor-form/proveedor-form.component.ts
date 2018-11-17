@@ -17,9 +17,12 @@ import { Proveedor } from '../../models/proveedor';
   styleUrls: ['./proveedor-form.component.scss']
 })
 export class ProveedorFormComponent implements OnInit {
-  @Input() proveedor: Proveedor;
-  @Output() save = new EventEmitter<Proveedor>();
-  @Output() cancel = new EventEmitter<Proveedor>();
+  @Input()
+  proveedor: Proveedor;
+  @Output()
+  save = new EventEmitter<Proveedor>();
+  @Output()
+  cancel = new EventEmitter<Proveedor>();
   form: FormGroup;
   constructor(private fb: FormBuilder) {}
 
@@ -48,7 +51,7 @@ export class ProveedorFormComponent implements OnInit {
           Validators.maxLength(13)
         ]
       ],
-      tipo: ['COMPRAS', [Validators.required]],
+      tipo: ['GASTOS', [Validators.required]],
       activo: [true, [Validators.required]],
       nacional: [true, [Validators.required]],
       comentario: [],

@@ -36,6 +36,11 @@ class RequisicionDeGastosService implements LogUser, FolioLog{
     @CompileDynamic
     def actualizarImportes(RequisicionDeGastos requisicion) {
         log.debug('Actualizando importes de la requisicion {}', requisicion)
+        if(requisicion.porComprobar && !requisicion.partidas) {
+            log.debug("Gastos por comprobar no actualizamos partidas")
+            requisicion.apagar = requisicion.total
+            return requisicion
+        }
         requisicion.partidas.each {RequisicionDet det ->
             CuentaPorPagar cxp = det.cxp
             def compensaciones = AplicacionDePago.where{cxp == cxp && (nota.concepto != 'DESCUENTO') }.list().sum 0.0, { it.importe}

@@ -1,6 +1,10 @@
 import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 
 import { GastosActionTypes, GastosActions } from '../actions/gastos.actions';
+import {
+  PagoRequisicionActions,
+  PagoRequisicionActionTypes
+} from '../actions/pagoDeRequisicion.actions';
 
 import {
   Requisicion,
@@ -24,7 +28,10 @@ export const initialState: State = adapter.getInitialState({
   filter: createRequisicionesFilter()
 });
 
-export function reducer(state = initialState, action: GastosActions): State {
+export function reducer(
+  state = initialState,
+  action: GastosActions | PagoRequisicionActions
+): State {
   switch (action.type) {
     case GastosActionTypes.SetGastosFilter: {
       return {
@@ -62,6 +69,7 @@ export function reducer(state = initialState, action: GastosActions): State {
       };
     }
 
+    case PagoRequisicionActionTypes.CancelarPagoRequisicion:
     case GastosActionTypes.PagarGasto: {
       return {
         ...state,
@@ -69,6 +77,7 @@ export function reducer(state = initialState, action: GastosActions): State {
       };
     }
 
+    case PagoRequisicionActionTypes.CancelarPagoRequisicionFail:
     case GastosActionTypes.PagarGastoFail: {
       return {
         ...state,

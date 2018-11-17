@@ -89,9 +89,15 @@ class PagoDeRequisicionService implements  LogUser {
         requisicion.egreso = null
 
         if(egreso.cheque) {
-            Cheque cheque = requisicion.egreso.cheque
+            Cheque cheque = egreso.cheque
             egreso.cheque = null
-            cheque.delete flush: true
+            if(cheque.impresion) {
+                cheque.egreso = null
+                cheque.cancelado = cheque.fecha
+                cheque.canceladoComentario = "CANCELADO ${cheque.cancelado.format('dd/MM/yyyy')}"
+                cheque.save flush: true
+            }else
+                cheque.delete flush: true
         }
         egreso.delete flush: true
 
@@ -148,8 +154,8 @@ class PagoDeRequisicionService implements  LogUser {
         Cheque cheque = egreso.cheque
 
         cheque.egreso = null
-        cheque.cancelado = new Date()
-        cheque.canceladoComentario = canclacion.comentario
+        cheque.cancelado = canclacion.fecha
+        cheque.canceladoComentario = "CANCELADO ${cheque.cancelado.format('dd/MM/yyyy')}" // canclacion.comentario
         cheque.save flush: true
 
         egreso.cheque = null

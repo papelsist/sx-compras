@@ -1,0 +1,8 @@
+import sx.tesoreria.CompraDeMoneda
+
+model {
+	Iterable<CompraDeMoneda> compraDeMonedaList
+}
+
+json tmpl.compraDeMoneda(compraDeMonedaList ?: [])
+
