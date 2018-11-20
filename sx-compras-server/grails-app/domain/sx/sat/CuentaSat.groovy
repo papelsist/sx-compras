@@ -2,8 +2,10 @@ package sx.sat
 
 
 import grails.rest.*
+import groovy.transform.EqualsAndHashCode
 
-//@Resource(uri='/api/sat/cuentas', formats=['json'])
+@Resource(uri='/api/sat/cuentas', formats=['json'])
+@EqualsAndHashCode(includes='codigo')
 class CuentaSat {
 
     String id
@@ -17,7 +19,7 @@ class CuentaSat {
     Integer nivel
 
     static constraints = {
-        codigo nullable:false,unique:true,maxSize:20
+        codigo nullable:false,unique:true,maxSize:50
         tipo maxSize:100,nullable:true
     }
 

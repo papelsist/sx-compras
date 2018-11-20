@@ -202,7 +202,8 @@ class UrlMappings {
         "/api/bi/ventasClientesResumen"(controller: 'bi', action:'ventasClientesResumen', method: 'GET')
         "/api/bi/clienteSinVentas"(controller: 'bi', action:'clienteSinVentas', method: 'GET')
 
-
+        //Contabilidad
+        "/api/contabilidad/cuentas"(resources: 'cuentaContable', excludes:['create', 'edit','patch'])
 
         "/"(controller: 'application', action:'index')
         "/api/session"(controller: 'application', action: 'session')
