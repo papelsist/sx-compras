@@ -24,6 +24,9 @@ import {
   CuentaPorPagar
 } from '../../model';
 
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+
 import * as _ from 'lodash';
 import { MatDialog } from '@angular/material';
 import { RembolsoDetComponent } from './rembolso-det.component';
@@ -33,7 +36,7 @@ import { RembolsoDetComponent } from './rembolso-det.component';
   // changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './rembolso-form.component.html'
 })
-export class RembolsoFormComponent implements OnInit, OnChanges {
+export class RembolsoFormComponent implements OnInit, OnChanges, OnDestroy {
   @Input()
   rembolso: Rembolso;
 
@@ -49,17 +52,34 @@ export class RembolsoFormComponent implements OnInit, OnChanges {
   @Output()
   cerrar = new EventEmitter();
 
+  destroy$ = new Subject();
+
   form: FormGroup;
+
+  conceptos = [
+    'REMBOLSO',
+    'PAGO_TARJETA',
+    'PAGO_CONTABLE',
+    'PRESTAMO_CHOFER',
+    'PRESTAMO_EMPLEADO'
+  ];
+
   constructor(private fb: FormBuilder, private dialog: MatDialog) {}
 
   ngOnInit() {}
 
   ngOnChanges(changes: SimpleChanges) {
     this.buildForm();
+    this.conceptoListener();
+    this.form.patchValue({ concepto: 'REMBOLSO' });
     if (changes.rembolso && changes.rembolso.currentValue) {
-      
       this.setReembolso();
     }
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next('end');
+    this.destroy$.complete();
   }
 
   setReembolso() {
@@ -77,6 +97,9 @@ export class RembolsoFormComponent implements OnInit, OnChanges {
     if (!this.form) {
       this.form = this.fb.group({
         sucursal: [null, [Validators.required]],
+        proveedor: [null],
+        nombre: [null],
+        concepto: [null, [Validators.required]],
         fecha: [new Date(), [Validators.required]],
         fechaDePago: [new Date(), [Validators.required]],
         formaDePago: [
@@ -97,6 +120,21 @@ export class RembolsoFormComponent implements OnInit, OnChanges {
         partidas: this.fb.array([])
       });
     }
+  }
+
+  conceptoListener() {
+    this.form
+      .get('concepto')
+      .valueChanges.pipe(takeUntil(this.destroy$))
+      .subscribe(val => {
+        if (val === 'REMBOLSO') {
+          this.form.get('proveedor').disable();
+          this.form.get('nombre').disable();
+        } else {
+          this.form.get('proveedor').enable();
+          this.form.get('nombre').enable();
+        }
+      });
   }
 
   private cleanPartidas() {

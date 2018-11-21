@@ -29,14 +29,11 @@ class Morralla {
 
 	String updateUser
 
-	MovimientoDeCuenta egreso
-
 
 	static constraints = {
 		comentario nullable: true
 		createUser nullable: true
 		updateUser nullable: true
-		egreso nullable: true
 	}
 
 	static mapping = {

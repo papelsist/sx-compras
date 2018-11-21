@@ -41,9 +41,9 @@
 	<parameter name="TESORERIA" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="AUTORIZADO" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="ID" isForPrompting="true" class="java.lang.String"/>
-	<queryString><![CDATA[SELECT r.id,r.ID folio,r.nombre,r.fecha,r.fecha_de_pago ,r.moneda,r.tipo_de_cambio,r.forma_de_pago,r.comentario
-,d.nombre proveedor,concat(ifnull(d.documento_serie,''),ifnull(d.documento_folio,'')) as documento,d.documento_fecha,'PAGO' AS concepto,d.total,d.apagar,SUBSTR(c.uuid,LENGTH(c.uuid)-12,LENGTH(c.uuid)) uuid ,f.acuse
-FROM rembolso R 
+	<queryString><![CDATA[SELECT r.id,r.ID folio,r.nombre afavor,s.nombre as sucursal,r.fecha,r.fecha_de_pago ,r.moneda,r.tipo_de_cambio,r.forma_de_pago,r.comentario
+,d.nombre proveedor,concat(ifnull(d.documento_serie,''),ifnull(d.documento_folio,'')) as documento,d.documento_fecha,r.concepto,d.total,d.apagar,SUBSTR(c.uuid,LENGTH(c.uuid)-12,LENGTH(c.uuid)) uuid ,f.acuse
+FROM rembolso R join sucursal s on(r.sucursal_id=s.id)
 LEFT JOIN rembolso_det  D ON(D.rembolso_id=R.id) 
 left join cuenta_por_pagar c on(d.cxp_id=c.id)
 left join comprobante_fiscal f on(c.comprobante_fiscal_id=f.id)
@@ -51,7 +51,8 @@ WHERE R.ID=$P{ID}]]></queryString>
 
 	<field name="id" class="java.lang.Long"/>
 	<field name="folio" class="java.lang.Long"/>
-	<field name="nombre" class="java.lang.String"/>
+	<field name="afavor" class="java.lang.String"/>
+	<field name="sucursal" class="java.lang.String"/>
 	<field name="fecha" class="java.sql.Date"/>
 	<field name="fecha_de_pago" class="java.sql.Date"/>
 	<field name="moneda" class="java.lang.String"/>
@@ -116,9 +117,9 @@ WHERE R.ID=$P{ID}]]></queryString>
 				</staticText>
 				<staticText>
 					<reportElement
-						x="402"
+						x="384"
 						y="19"
-						width="179"
+						width="197"
 						height="14"
 						forecolor="#000000"
 						key="staticText-3"/>
@@ -130,7 +131,7 @@ WHERE R.ID=$P{ID}]]></queryString>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-BoldOblique" size="10" isBold="true" isItalic="true" isUnderline="true" isStrikeThrough="false" />
 					</textElement>
-				<text><![CDATA[R E E M B O L S O]]></text>
+				<text><![CDATA[R E E M B O L S O S   Y   P A G O S]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -153,9 +154,9 @@ WHERE R.ID=$P{ID}]]></queryString>
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="121"
-						y="37"
-						width="72"
+						x="6"
+						y="40"
+						width="53"
 						height="13"
 						forecolor="#000000"
 						backcolor="#000000"
@@ -170,9 +171,9 @@ WHERE R.ID=$P{ID}]]></queryString>
 				</staticText>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="193"
-						y="37"
-						width="98"
+						x="62"
+						y="40"
+						width="81"
 						height="13"
 						forecolor="#333333"
 						key="textField-30"/>
@@ -180,7 +181,7 @@ WHERE R.ID=$P{ID}]]></queryString>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-BoldOblique" size="8" isBold="true" isItalic="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{nombre}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{sucursal}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
@@ -219,7 +220,7 @@ WHERE R.ID=$P{ID}]]></queryString>
 						mode="Transparent"
 						x="6"
 						y="56"
-						width="62"
+						width="53"
 						height="13"
 						forecolor="#000000"
 						backcolor="#000000"
@@ -235,9 +236,9 @@ WHERE R.ID=$P{ID}]]></queryString>
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="148"
+						x="158"
 						y="56"
-						width="84"
+						width="74"
 						height="13"
 						forecolor="#000000"
 						backcolor="#000000"
@@ -299,8 +300,8 @@ WHERE R.ID=$P{ID}]]></queryString>
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="6"
-						y="37"
+						x="8"
+						y="19"
 						width="39"
 						height="13"
 						forecolor="#000000"
@@ -316,8 +317,8 @@ WHERE R.ID=$P{ID}]]></queryString>
 				</staticText>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="50"
-						y="37"
+						x="51"
+						y="19"
 						width="50"
 						height="13"
 						forecolor="#333333"
@@ -330,9 +331,9 @@ WHERE R.ID=$P{ID}]]></queryString>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="68"
+						x="62"
 						y="56"
-						width="70"
+						width="91"
 						height="13"
 						key="textField"/>
 					<box></box>
@@ -372,6 +373,38 @@ WHERE R.ID=$P{ID}]]></queryString>
 						<font pdfFontName="Helvetica-BoldOblique" size="8" isBold="true" isItalic="true"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{comentario}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						mode="Transparent"
+						x="148"
+						y="40"
+						width="50"
+						height="13"
+						forecolor="#000000"
+						backcolor="#000000"
+						key="staticText-75"/>
+					<box>					<bottomPen lineWidth="1.75" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<rightPen lineWidth="1.75" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None">
+						<font pdfFontName="Helvetica" size="8" isBold="false"/>
+					</textElement>
+				<text><![CDATA[A FAVOR :]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="202"
+						y="40"
+						width="201"
+						height="13"
+						forecolor="#333333"
+						key="textField-52"/>
+					<box></box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-BoldOblique" size="8" isBold="true" isItalic="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{afavor}]]></textFieldExpression>
 				</textField>
 			</band>
 		</pageHeader>

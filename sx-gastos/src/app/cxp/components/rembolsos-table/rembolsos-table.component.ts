@@ -29,6 +29,8 @@ export class RembolsosTableComponent implements OnInit, OnChanges {
 
   displayColumns = [
     'folio',
+    'concepto',
+    'sucursal',
     'nombre',
     'fecha',
     'fechaDePago',

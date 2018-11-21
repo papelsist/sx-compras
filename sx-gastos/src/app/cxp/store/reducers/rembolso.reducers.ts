@@ -13,7 +13,13 @@ export interface State extends EntityState<Rembolso> {
   term: string;
 }
 
-export const adapter: EntityAdapter<Rembolso> = createEntityAdapter<Rembolso>();
+export function sortByIdDesc(a: Rembolso, b: Rembolso): number {
+  return b.id > a.id ? 1 : b.id <= a.id ? -1 : 0;
+}
+
+export const adapter: EntityAdapter<Rembolso> = createEntityAdapter<Rembolso>({
+  sortComparer: sortByIdDesc
+});
 
 export const initialState: State = adapter.getInitialState({
   loading: false,

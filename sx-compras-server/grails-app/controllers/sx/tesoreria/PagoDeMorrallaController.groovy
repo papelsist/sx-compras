@@ -54,6 +54,24 @@ class PagoDeMorrallaController extends RestfulController<PagoDeMorralla> {
         pagoDeMorrallaService.delete(resource.id)
     }
 
+    def pendientes() {
+        /*
+
+        def criteria = new DetachedCriteria(Morralla).build {
+            gt('fecha', Date.parse('dd/MM/yyyy', '31/12/2017'))
+            lt('importe', 0)
+        }
+        respond criteria.list([sort: 'fecha', order: 'asc'])
+        */
+        respond Morralla
+                .findAll("""
+            from Morralla m 
+            where m.importe > 0 
+            and date(m.fecha) > ? 
+            and  m not in (select p from PagoDeMorralla m join m.partidas p) 
+            order by m.fecha""", [Date.parse("dd/MM/yyyy", "31/12/2017")])
+    }
+
     def handleException(Exception e) {
         String message = ExceptionUtils.getRootCauseMessage(e)
         e.printStackTrace()

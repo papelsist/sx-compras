@@ -20,46 +20,47 @@ abstract class PagoDeMorrallaService implements  LogUser{
 
     PagoDeMorralla registrar(PagoDeMorralla pagoDeMorralla) {
         logEntity(pagoDeMorralla)
-        egresos(pagoDeMorralla)
-        ingreso(pagoDeMorralla)
+        generarIngresos(pagoDeMorralla)
+        generarEgreso(pagoDeMorralla)
         return save(pagoDeMorralla)
     }
 
-    def egresos(PagoDeMorralla pago){
+    def generarIngresos(PagoDeMorralla pago){
         pago.partidas.each { Morralla m ->
-            MovimientoDeCuenta egreso = new MovimientoDeCuenta()
-            egreso.cuenta = pago.cuentaEgreso
-            egreso.fecha = pago.fecha
-            egreso.tipo = 'MORRALLA'
-            egreso.concepto = 'CARGO_MORRALLA'
-            egreso.moneda = MonedaUtils.PESOS
-            egreso.tipoDeCambio = 1.0
-            egreso.importe = m.importe * -1
-            egreso.comentario = m.comentario
-            egreso.formaDePago = pago.formaDePago
-            egreso.referencia = pago.referencia
-            egreso.afavor = pago.proveedor.nombre
-            logEntity(egreso)
-            m.egreso = egreso
+            MovimientoDeCuenta ingreso = new MovimientoDeCuenta()
+            ingreso.cuenta = pago.cuentaIngreso
+            ingreso.fecha = m.fecha
+            ingreso.tipo = 'MORRALLA'
+            ingreso.concepto = 'ABONO_MORRALLA'
+            ingreso.moneda = MonedaUtils.PESOS
+            ingreso.tipoDeCambio = 1.0
+            ingreso.importe = m.importe.abs()
+            ingreso.comentario = m.comentario
+            ingreso.formaDePago = pago.formaDePago
+            ingreso.referencia = pago.referencia
+            ingreso.afavor = pago.proveedor.nombre
+            pago.addToMovimientos(ingreso)
+            logEntity(ingreso)
 
         }
     }
 
 
 
-    MovimientoDeCuenta ingreso( PagoDeMorralla comision) {
+    MovimientoDeCuenta generarEgreso( PagoDeMorralla pago) {
         MovimientoDeCuenta egreso = new MovimientoDeCuenta()
-        egreso.cuenta = comision.cuentaIngreso
-        egreso.fecha = comision.fecha
+        egreso.cuenta = pago.cuentaEgreso
+        egreso.fecha = pago.fecha
         egreso.tipo = 'MORRALLA'
-        egreso.concepto = 'ABONO_MORRALLA'
+        egreso.concepto = 'CARGO_MORRALLA'
         egreso.moneda =  MonedaUtils.PESOS
         egreso.tipoDeCambio = 1.0
-        egreso.importe = comision.importe
-        egreso.comentario = comision.comentario
-        egreso.formaDePago = comision.formaDePago
-        egreso.referencia = comision.referencia
+        egreso.importe = pago.importe.abs() * -1
+        egreso.comentario = pago.comentario
+        egreso.formaDePago = pago.formaDePago
+        egreso.referencia = pago.referencia
         egreso.afavor = Empresa.first().nombre
+        pago.egreso = egreso
         logEntity(egreso)
         return egreso
     }

@@ -4,4 +4,17 @@ model {
 	PagoDeMorralla pagoDeMorralla
 }
 
-json tmpl.pagoDeMorralla(pagoDeMorralla)
+json g.render(pagoDeMorralla, [excludes: ['movimientos', 'partidas', 'cuentaEgreso'], resolveTemplate: false]) {
+	cuentaEgreso g.render(pagoDeMorralla.cuentaEgreso)
+	cuentaIngreso g.render(pagoDeMorralla.cuentaIngreso)
+	proveedor {
+		id pagoDeMorralla.proveedor.id
+		nombre pagoDeMorralla.proveedor.nombre
+		tipo pagoDeMorralla.proveedor.tipo
+	}
+	origen "${pagoDeMorralla.cuentaEgreso.descripcion} (${pagoDeMorralla.cuentaEgreso.numero})"
+	destino "${pagoDeMorralla.cuentaIngreso.descripcion} (${pagoDeMorralla.cuentaIngreso.numero})"
+	partidas g.render(pagoDeMorralla.partidas)
+	movimientos g.render(pagoDeMorralla.movimientos)
+}
+

@@ -42,6 +42,11 @@ import { PagoNominaImportarDialogComponent } from './pago-nomina-importar/pago-n
 import { PagoDeNominaDialogComponent } from './pago-nomina-dialog/pago-nomina-dialog.component';
 import { PagoDeNominaBtnComponent } from './pago-nomina-dialog/pago-nomina-dialog-btn.component';
 import { PagoDeNominaFormComponent } from './pago-nomina-form/pago-de-nomina-form.component';
+import { PagoMorrallasTableComponent } from './pago-morrallas-table/pago-morrallas-table.component';
+import { PagoMorrallaFormComponent } from './pago-morralla-form/pago-morralla-form.component';
+import { MorrallasTableComponent } from './selector-morralla/morrallas-table.component';
+import { SelectorMorrallaComponent } from './selector-morralla/selector-morralla.component';
+import { SelectorMorrallaBtnComponent } from './selector-morralla/selector-morralla-btn.component';
 
 export const components: any[] = [
   RequisicionesTableComponent,
@@ -87,7 +92,14 @@ export const components: any[] = [
   PagoNominaImportarDialogComponent,
   PagoDeNominaDialogComponent,
   PagoDeNominaBtnComponent,
-  PagoDeNominaFormComponent
+  PagoDeNominaFormComponent,
+
+  // Morrallas
+  PagoMorrallasTableComponent,
+  PagoMorrallaFormComponent,
+  MorrallasTableComponent,
+  SelectorMorrallaComponent,
+  SelectorMorrallaBtnComponent
 ];
 
 export const entryComponents: any[] = [
@@ -101,7 +113,10 @@ export const entryComponents: any[] = [
   CompraMonedaFormComponent,
   // Pago de nomina
   PagoNominaImportarDialogComponent,
-  PagoDeNominaDialogComponent
+  PagoDeNominaDialogComponent,
+
+  // Morralla
+  SelectorMorrallaComponent
 ];
 
 export * from './requisiciones-table/requisiciones-table.component';
@@ -149,3 +164,10 @@ export * from './pago-nomina-importar/pago-nomina-importar-dialog.component';
 export * from './pago-nomina-dialog/pago-nomina-dialog.component';
 export * from './pago-nomina-dialog/pago-nomina-dialog-btn.component';
 export * from './pago-nomina-form/pago-de-nomina-form.component';
+
+// Morrallas
+export * from './pago-morrallas-table/pago-morrallas-table.component';
+export * from './pago-morralla-form/pago-morralla-form.component';
+export * from './pago-morrallas-table/pago-morrallas-table.component';
+export * from './selector-morralla/selector-morralla.component';
+export * from './selector-morralla/selector-morralla-btn.component';

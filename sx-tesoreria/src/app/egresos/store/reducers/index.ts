@@ -6,6 +6,7 @@ import * as fromCheques from './cheques.reducer';
 import * as fromRembolsos from './rembolso.reducers';
 import * as fromCompraMoneda from './compra-moneda.reducer';
 import * as fromPagoDeNomina from './pago-nomina.reducer';
+import * as fromPagosMorralla from './pago-morralla.reducer';
 
 export interface State {
   gastos: fromGastos.State;
@@ -14,6 +15,7 @@ export interface State {
   rembolsos: fromRembolsos.State;
   compraMonedas: fromCompraMoneda.State;
   pagoNominas: fromPagoDeNomina.State;
+  morrallas: fromPagosMorralla.State;
 }
 
 export const reducers: ActionReducerMap<State> = {
@@ -22,7 +24,8 @@ export const reducers: ActionReducerMap<State> = {
   cheques: fromCheques.reducer,
   rembolsos: fromRembolsos.reducer,
   compraMonedas: fromCompraMoneda.reducer,
-  pagoNominas: fromPagoDeNomina.reducer
+  pagoNominas: fromPagoDeNomina.reducer,
+  morrallas: fromPagosMorralla.reducer
 };
 
 export const getState = createFeatureSelector<State>('egresos');

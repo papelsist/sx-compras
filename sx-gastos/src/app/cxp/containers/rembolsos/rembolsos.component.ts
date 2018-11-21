@@ -16,6 +16,7 @@ import { Rembolso, RembolsosFilter } from '../../model';
       <sx-search-title title="Rembolsos a sucursales" (search)="search = $event">
         <sx-rembolsos-filter-btn [filter]="filter$ | async" class="options"
           (change)="onFilter($event)"></sx-rembolsos-filter-btn>
+      <button mat-button color="primary" (click)="reload()" class="actions"><mat-icon>refresh</mat-icon> Refrescar</button>
       </sx-search-title>
       <mat-divider></mat-divider>
       <div class="table-panel">
@@ -73,4 +74,8 @@ export class RembolsosComponent implements OnInit {
   }
 
   onPrint(event: Rembolso) {}
+
+  reload() {
+    this.store.dispatch(new fromStore.LoadRembolsos());
+  }
 }

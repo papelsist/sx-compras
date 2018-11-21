@@ -4,10 +4,17 @@ model {
 	Rembolso rembolso
 }
 
-json g.render(rembolso, [excludes: ['partidas', 'sucursal']]) {
+json g.render(rembolso, [excludes: ['partidas', 'sucursal', 'proveedor']]) {
 	partidas g.render(rembolso.partidas)
 	sucursal {
 		id rembolso.sucursal.id
+		nombre rembolso.sucursal.nombre
+	}
+	proveedor {
+		id rembolso?.proveedor?.id
+		nombre rembolso?.proveedor?.nombre
+		clave rembolso?.proveedor?.clave
+		tipo rembolso?.proveedor?.tipo
 	}
 	egreso g.render(rembolso.egreso, [excludes: ['moneda', 'cheque']]) {
 		cheque g.render(rembolso.egreso.cheque)

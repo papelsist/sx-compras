@@ -118,11 +118,13 @@ class MovimientoDeCuentaService implements  LogUser{
 
         // Datos del pago
         egreso.referencia = referencia
-        egreso.afavor = Empresa.first().nombre
+        egreso.afavor = rembolso.nombre
         egreso.cuenta = cuenta
         logEntity(egreso)
-        generarCheque(egreso)
-        egreso.referencia = egreso.cheque.folio.toString()
+        if(egreso.formaDePago == 'CHEQUE'){
+            generarCheque(egreso)
+            egreso.referencia = egreso.cheque.folio.toString()
+        }
         return egreso
 
     }

@@ -94,7 +94,8 @@ export class ProveedorFieldComponent implements OnInit, ControlValueAccessor {
     if (!proveedor) {
       return '';
     }
-    return `${proveedor.nombre} (${proveedor.tipo})`;
+    // return `${proveedor.nombre} (${proveedor.tipo})`;
+    return `${proveedor.nombre} `;
   }
 
   writeValue(obj: any): void {

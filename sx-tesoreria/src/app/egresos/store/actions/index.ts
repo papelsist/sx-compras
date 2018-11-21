@@ -5,3 +5,4 @@ export * from './pagoDeRequisicion.actions';
 export * from './rembolso.actions';
 export * from './compra-moneda.actions';
 export * from './pago-nomina.actions';
+export * from './pago-morralla.actions';

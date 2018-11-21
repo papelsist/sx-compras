@@ -1,11 +1,14 @@
 import { Periodo } from '../../_core/models/periodo';
 import { RembolsoDet } from './rembolsoDet';
 import { Sucursal } from 'app/models';
+import { Proveedor } from 'app/proveedores/models/proveedor';
 
 export interface Rembolso {
   id: number;
   sucursal: { id: string };
+  proveedor: Partial<Proveedor>;
   nombre: string;
+  conceto: string;
   moneda: string;
   tipoDeCambio: number;
   fecha: string;

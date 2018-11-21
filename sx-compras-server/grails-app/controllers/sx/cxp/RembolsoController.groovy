@@ -6,7 +6,7 @@ import grails.rest.*
 import grails.validation.Validateable
 import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
-
+import sx.core.Empresa
 import sx.reports.ReportService
 import sx.tesoreria.CuentaDeBanco
 import sx.tesoreria.PagoDeRembolsoService
@@ -54,7 +54,12 @@ class RembolsoController extends RestfulController {
     protected Object createResource() {
         Rembolso instance = new Rembolso()
         bindData instance, getObjectToBind()
-        instance.nombre = instance.sucursal.nombre // Empresa.first().nombre
+        if(!instance.proveedor && !instance.nombre) {
+            instance.nombre = Empresa.first().nombre
+        }
+        if(instance.proveedor && !instance.nombre) {
+            instance.nombre = instance.proveedor.nombre
+        }
         if (isLoggedIn()) {
             String username = getPrincipal().username
             instance.createUser = username

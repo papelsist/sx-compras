@@ -27,8 +27,8 @@ export class EgresosPageComponent implements OnInit {
     },
     {
       route: 'rembolsos',
-      title: 'Rembolsos',
-      description: 'Mto de rembolsos',
+      title: 'Pagos diversos',
+      description: 'Rembolos y otros pagos',
       icon: 'settings_backup_restore'
     },
     {
@@ -42,6 +42,12 @@ export class EgresosPageComponent implements OnInit {
       title: 'Nóminas',
       description: 'Pago de Nóminas',
       icon: 'people'
+    },
+    {
+      route: 'pagoMorralla',
+      title: 'Morralla',
+      description: 'Pago de morralla',
+      icon: 'device_hub'
     },
     {
       route: 'cheques',

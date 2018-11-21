@@ -3,6 +3,7 @@ package sx.cxp
 import grails.compiler.GrailsCompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
+import sx.core.Proveedor
 import sx.core.Sucursal
 import sx.tesoreria.MovimientoDeCuenta
 
@@ -13,7 +14,11 @@ class Rembolso {
 
     Sucursal sucursal
 
+    Proveedor proveedor
+
     String nombre
+
+    String concepto
 
     String moneda = 'MXN'
 
@@ -58,6 +63,8 @@ class Rembolso {
         egreso nullable: true
         comision nullable: true
         pago nullable: true
+        proveedor nullable: true
+        concepto inList: ['REMBOLSO', 'PAGO_TARJETA', 'PAGO_CONTABLE', 'PRESTAMO_CHOFER', 'PRESTAMO_EMPLEADO']
     }
 
     static mapping = {

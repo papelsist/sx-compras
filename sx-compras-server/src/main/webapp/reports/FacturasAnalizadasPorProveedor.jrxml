@@ -35,8 +35,7 @@
 ,SUM((A.CANTIDAD/(case when z.unidad='MIL' then 1000 else 1 end)*A.costo_unitario)*C.tipo_de_cambio)*1.16 AS TOT_ANALISIS
 ,IFNULL((SELECT SUM((A.CANTIDAD/(case when z.unidad='MIL' then 1000 else 1 end)*A.costo_unitario)*C.tipo_de_cambio) FROM inventario IC JOIN recepcion_de_compra_det R on(R.inventario_id=IC.id) JOIN analisis_de_factura_det A ON(R.id=A.com_id)  join analisis_de_factura y on(y.id=a.ANALISIS_ID)
 	JOIN cuenta_por_pagar X ON(X.id=Y.factura_id) WHERE DATE(IC.FECHA) BETWEEN $P{FECHA_INI} AND $P{FECHA_FIN} AND X.ID=C.ID),0) AS IMP_TOT_ANALISIS
-,ROUND(	(C.sub_total*C.tipo_de_cambio - IFNULL((SELECT SUM((A.CANTIDAD/(case when z.unidad='MIL' then 1000 else 1 end)*A.costo_unitario)*C.tipo_de_cambio) FROM inventario IC JOIN recepcion_de_compra_det R on(R.inventario_id=IC.id) JOIN analisis_de_factura_det A ON(R.id=A.com_id)  join analisis_de_factura y on(y.id=a.ANALISIS_ID)
-	JOIN cuenta_por_pagar X ON(X.id=Y.factura_id) WHERE DATE(IC.FECHA) BETWEEN $P{FECHA_INI} AND $P{FECHA_FIN} AND X.ID=C.ID),0) 	) 	,2) AS IMP_DIF
+,ROUND( (C.sub_total*C.tipo_de_cambio - ((x.importe+x.importe_flete)*C.tipo_de_cambio) ) ,2) AS IMP_DIF
 ,(SELECT SUM(X.IMPORTE*X.tipo_de_cambio) FROM cuenta_por_pagar X WHERE  X.MONEDA=C.MONEDA AND X.proveedor_id=C.proveedor_id AND X.ID IN(
 	SELECT   Y.factura_id FROM analisis_de_factura_det A JOIN recepcion_de_compra_det R on(r.id=A.com_id) join recepcion_de_compra e on(r.recepcion_id=e.id) join inventario IC ON(R.inventario_id=IC.id)  join analisis_de_factura y on(y.id=a.ANALISIS_ID)  
 	WHERE DATE(IC.FECHA) BETWEEN $P{FECHA_INI} AND $P{FECHA_FIN} and e.proveedor_id=c.proveedor_id )) AS IMP_MON
@@ -311,7 +310,7 @@ ORDER BY p.CLAVE]]></queryString>
 					<reportElement
 						x="306"
 						y="69"
-						width="128"
+						width="118"
 						height="14"
 						key="staticText-1"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -358,11 +357,11 @@ ORDER BY p.CLAVE]]></queryString>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$P{COMPANY}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" pattern="dd-MMM-yy" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="434"
+						x="424"
 						y="69"
-						width="51"
+						width="56"
 						height="14"
 						key="textField"/>
 					<box>					<pen lineWidth="0.25" lineStyle="Solid" lineColor="#CCCCCC"/>
@@ -378,7 +377,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</textField>
 				<staticText>
 					<reportElement
-						x="485"
+						x="480"
 						y="69"
 						width="14"
 						height="14"
@@ -393,11 +392,11 @@ ORDER BY p.CLAVE]]></queryString>
 					</textElement>
 				<text><![CDATA[AL]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" pattern="dd-MMM-yy" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="499"
+						x="494"
 						y="69"
-						width="51"
+						width="56"
 						height="14"
 						key="textField-16"/>
 					<box>					<pen lineWidth="0.25" lineStyle="Solid" lineColor="#CCCCCC"/>
@@ -406,7 +405,7 @@ ORDER BY p.CLAVE]]></queryString>
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
 </box>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
+					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="8" isBold="true" isUnderline="true"/>
 					</textElement>
 				<textFieldExpression   class="java.util.Date"><![CDATA[$P{FECHA_FIN}]]></textFieldExpression>
@@ -415,7 +414,7 @@ ORDER BY p.CLAVE]]></queryString>
 					<reportElement
 						x="62"
 						y="69"
-						width="20"
+						width="29"
 						height="14"
 						key="textField-17"/>
 					<box></box>
@@ -443,7 +442,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</staticText>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="84"
+						x="91"
 						y="69"
 						width="202"
 						height="14"

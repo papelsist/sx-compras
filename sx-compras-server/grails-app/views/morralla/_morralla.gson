@@ -1,0 +1,12 @@
+import sx.tesoreria.Morralla
+
+model {
+    Morralla morralla
+}
+
+json g.render(morralla, [excludes: ['sucursal'], resolveTemplate: false]) {
+    sucursal {
+        id morralla.sucursal.id
+        nombre morralla.sucursal.nombre
+    }
+}

@@ -56,6 +56,20 @@ const routes: Routes = [
         component: fromContainers.PagoDeNominaComponent
       },
       {
+        path: 'pagoMorralla',
+        canActivate: [fromGuards.PagoMorrallasGuard],
+        component: fromContainers.PagoMorrallasComponent
+      },
+      {
+        path: 'pagoMorralla/create',
+        component: fromContainers.PagoDeMorrallaComponent
+      },
+      {
+        path: 'pagoMorralla/:pagoId',
+        canActivate: [fromGuards.PagoMorrallaExistsGuard],
+        component: fromContainers.PagoDeMorrallaComponent
+      },
+      {
         path: 'cheques',
         canActivate: [fromGuards.ChequesGuard],
         children: [{ path: '', component: fromContainers.ChequesComponent }]

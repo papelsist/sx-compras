@@ -15,10 +15,6 @@ class PagoDeMorralla {
 
     Date fecha
 
-    Date fechaInicial
-
-    Date fechaFinal
-
     Proveedor proveedor
 
     String formaDePago
@@ -29,9 +25,11 @@ class PagoDeMorralla {
 
     String comentario
 
-    MovimientoDeCuenta ingreso
+    MovimientoDeCuenta egreso
 
     List<Morralla> partidas
+
+    Set<MovimientoDeCuenta> movimientos
 
     Date dateCreated
     Date lastUpdated
@@ -42,7 +40,9 @@ class PagoDeMorralla {
     static hasMany = [partidas: Morralla]
 
     static constraints = {
-        ingreso nullable: true
+        referencia nullable: true
+        comentario nullable: true
+        egreso nullable: true
         createUser nullable: true
         updateUser nullable: true
 
@@ -50,9 +50,7 @@ class PagoDeMorralla {
 
     static mapping ={
         fecha type:'date'
-        fechaInicial type: 'date'
-        fechaFinal type: 'date'
-        // partidas cascade: "all-delete-orphan"
+        movimientos cascade: "all-delete-orphan"
     }
 
 }
