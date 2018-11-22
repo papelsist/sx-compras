@@ -6,6 +6,7 @@ import { RembolsoService } from './rembolso.service';
 import { CompraMonedaService } from './compra-moneda.service';
 import { PagoDeNominaService } from './pago-de-nomina.service';
 import { PagoDeMorrallaService } from './pago-morralla.service';
+import { DevolucionClienteService } from './devolucion-cliente.service';
 
 export const services: any[] = [
   GastosService,
@@ -15,7 +16,8 @@ export const services: any[] = [
   RembolsoService,
   CompraMonedaService,
   PagoDeNominaService,
-  PagoDeMorrallaService
+  PagoDeMorrallaService,
+  DevolucionClienteService
 ];
 
 export * from './gastos.service';
@@ -26,3 +28,4 @@ export * from './rembolso.service';
 export * from './compra-moneda.service';
 export * from './pago-de-nomina.service';
 export * from './pago-morralla.service';
+export * from './devolucion-cliente.service';

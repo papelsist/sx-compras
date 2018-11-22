@@ -5,3 +5,4 @@ export * from './rembolso.selectors';
 export * from './compra-moneda.selectors';
 export * from './pago-nomina.selectors';
 export * from './pago-morralla.selectors';
+export * from './devolucion-cliente.selectors';

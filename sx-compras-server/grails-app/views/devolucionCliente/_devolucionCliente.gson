@@ -1,0 +1,7 @@
+import sx.tesoreria.DevolucionCliente
+
+model {
+	DevolucionCliente devolucionCliente
+}
+
+json g.render(devolucionCliente, [resolveTemplate: false])

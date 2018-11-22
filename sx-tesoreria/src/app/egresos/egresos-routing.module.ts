@@ -70,6 +70,15 @@ const routes: Routes = [
         component: fromContainers.PagoDeMorrallaComponent
       },
       {
+        path: 'devoluciones',
+        canActivate: [fromGuards.DevolucionesGuard],
+        component: fromContainers.DevolucionesComponent
+      },
+      {
+        path: 'devoluciones/create',
+        component: fromContainers.DevolucionComponent
+      },
+      {
         path: 'cheques',
         canActivate: [fromGuards.ChequesGuard],
         children: [{ path: '', component: fromContainers.ChequesComponent }]

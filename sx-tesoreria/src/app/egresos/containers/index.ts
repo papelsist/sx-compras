@@ -14,6 +14,8 @@ import { PagoNominasComponent } from './pago-nominas/pago-nominas.component';
 import { PagoDeNominaComponent } from './pago-nomina/pago-de-nomina.component';
 import { PagoMorrallasComponent } from './pago-morrallas/pago-morrallas.component';
 import { PagoDeMorrallaComponent } from './pago-morralla/pago-de-morralla.component';
+import { DevolucionesComponent } from './devoluciones/devoluciones.component';
+import { DevolucionComponent } from './devolucion/devolucion.component';
 
 export const containers = [
   EgresosPageComponent,
@@ -28,7 +30,9 @@ export const containers = [
   PagoNominasComponent,
   PagoDeNominaComponent,
   PagoMorrallasComponent,
-  PagoDeMorrallaComponent
+  PagoDeMorrallaComponent,
+  DevolucionesComponent,
+  DevolucionComponent
 ];
 
 export * from './egresos-page/egresos-page.component';
@@ -48,3 +52,6 @@ export * from './pago-nomina/pago-de-nomina.component';
 
 export * from './pago-morrallas/pago-morrallas.component';
 export * from './pago-morralla/pago-de-morralla.component';
+
+export * from './devoluciones/devoluciones.component';
+export * from './devolucion/devolucion.component';
