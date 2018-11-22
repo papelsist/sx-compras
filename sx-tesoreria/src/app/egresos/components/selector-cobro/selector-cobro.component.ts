@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 
-import { Morralla } from 'app/egresos/models/morralla';
 import {
   PagoDeMorrallaService,
   DevolucionClienteService
@@ -9,7 +8,7 @@ import { Observable } from 'rxjs';
 import { Cobro } from 'app/ingresos/models';
 
 @Component({
-  selector: 'sx-selector-morralla',
+  selector: 'sx-selector-cobro',
   template: `
     <div layout>
       <span>
@@ -17,6 +16,9 @@ import { Cobro } from 'app/ingresos/models';
         <span *ngIf="selected">
           Seleccionado: {{selected.importe | currency}}
         </span>
+        <mat-form-field class="pad-left">
+          <input matInput placeholder="folio" autocomplete="off">
+        </mat-form-field>
       </span>
     </div>
     <mat-divider></mat-divider>
