@@ -29,6 +29,7 @@ class UrlMappings {
         // "/api/tesoreria/cuentas/$id/movimientos"(controller: 'cuentaDeBanco', action: 'movimientos', method: 'GET')
         "/api/tesoreria/cuentas/$id/movimientos/$ejercicio/$mes"(controller: 'cuentaDeBanco', action: 'movimientos', method: 'GET')
         "/api/tesoreria/cuentas/$id/saldos"(controller: 'cuentaDeBanco', action: 'saldos', method: 'GET')
+        "/api/tesoreria/cuentas/estadoDeCuenta"(controller: 'cuentaDeBanco', action: 'estadoDeCuenta', method: 'GET')
 
 
         "/api/tesoreria/cheques"(resources: 'cheque')
@@ -74,7 +75,7 @@ class UrlMappings {
         "/api/tesoreria/pagoDeMorralla/pendientes"(controller: 'pagoDeMorralla', action: 'pendientes', method: 'GET')
 
         "/api/tesoreria/devoluciones"(resources: 'devolucionCliente', excludes:['create', 'edit','patch', 'update'] )
-        "/api/tesoreria/devoluciones/cobros"(controller: 'devolucionCliente', action: 'cobros', method: 'GET')
+        "/api/tesoreria/devoluciones/cobros/$id"(controller: 'devolucionCliente', action: 'cobros', method: 'GET')
         "/api/tesoreria/devolucionCliente/generarCheque/$id"(controller: 'devolucionCliente', action: 'generarCheque', method: 'PUT')
 
         "/api/cxc/cobros"(resources: 'cobro')

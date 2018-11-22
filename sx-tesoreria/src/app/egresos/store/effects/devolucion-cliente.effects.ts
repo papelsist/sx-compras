@@ -97,7 +97,7 @@ export class DevolucionClienteEffects {
     ofType<fromActions.DeleteDevolucionClienteSuccess>(
       DevolucionClienteActionTypes.DeleteDevolucionClienteSuccess
     ),
-    map(() => new fromRoot.Go({ path: ['egresos/devolucionCliente'] }))
+    map(() => new fromRoot.Go({ path: ['egresos/devoluciones'] }))
   );
 
   @Effect()
@@ -117,7 +117,7 @@ export class DevolucionClienteEffects {
     ),
     map(
       devolucion =>
-        new fromRoot.Go({ path: ['egresos/pagoMorralla', devolucion.id] })
+        new fromRoot.Go({ path: ['egresos/devoluciones', devolucion.id] })
     )
   );
 

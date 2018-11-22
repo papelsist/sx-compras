@@ -2,19 +2,17 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material';
 
 import { Cobro } from 'app/ingresos/models';
+import { Cliente } from 'app/models';
 
 @Component({
   selector: 'sx-selector-cobros',
   template: `
     <div layout>
       <span>
-        <span mat-dialog-title>Cobros registrados</span>
+        <span mat-dialog-title>Cobros registrados ({{cliente.nombre}})</span>
         <span *ngIf="selected">
           Seleccionado: {{ selected.length}}
         </span>
-        <mat-form-field class="pad-left">
-          <input matInput placeholder="folio" autocomplete="off">
-        </mat-form-field>
       </span>
     </div>
     <mat-divider></mat-divider>
@@ -39,9 +37,11 @@ import { Cobro } from 'app/ingresos/models';
 export class SelectorCobrosComponent implements OnInit {
   cobros: Cobro[];
   selected: Cobro[];
+  cliente: Cliente;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any) {
     this.cobros = data.cobros;
+    this.cliente = data.cliente;
   }
 
   ngOnInit() {}

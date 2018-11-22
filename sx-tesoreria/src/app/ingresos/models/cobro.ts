@@ -29,6 +29,7 @@ export interface Cobro {
   pendientesDeAplicar?: Array<any>;
   bancoOrigen?: string;
   selected?: boolean;
+  saldo?: number;
 }
 
 export interface CobroTarjeta {

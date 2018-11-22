@@ -47,6 +47,7 @@ export class DevolucionesTableComponent implements OnInit, OnChanges {
     'id',
     'formaDePago',
     'fecha',
+    'concepto',
     'afavor',
     'cuenta',
     'cobro',

@@ -26,12 +26,12 @@ import { Cobro } from 'app/ingresos/models';
     </ng-container>
     <ng-container matColumnDef="sucursalNombre">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal</th>
-      <td mat-cell *matCellDef="let row">{{ row.sucursaNombre }}</td>
+      <td mat-cell *matCellDef="let row">{{ row.sucursalNombre }}</td>
       <td mat-footer-cell *matFooterCellDef></td>
     </ng-container>
     <ng-container matColumnDef="nombre">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Cliente</th>
-      <td mat-cell *matCellDef="let row">{{ row.nombreNombre }}</td>
+      <td mat-cell *matCellDef="let row">{{ row.nombre }}</td>
       <td mat-footer-cell *matFooterCellDef></td>
     </ng-container>
     <ng-container matColumnDef="fecha">
@@ -50,6 +50,16 @@ import { Cobro } from 'app/ingresos/models';
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
       <td mat-cell *matCellDef="let row">{{ row.importe | currency }}</td>
       <td mat-footer-cell *matFooterCellDef>{{getTotal('importe') | currency}}</td>
+    </ng-container>
+    <ng-container matColumnDef="aplicado">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Aplicado</th>
+      <td mat-cell *matCellDef="let row">{{ row.importe | currency }}</td>
+      <td mat-footer-cell *matFooterCellDef>{{getTotal('aplicado') | currency}}</td>
+    </ng-container>
+    <ng-container matColumnDef="saldo">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Disponible</th>
+      <td mat-cell *matCellDef="let row">{{ row.saldo | currency }}</td>
+      <td mat-footer-cell *matFooterCellDef>{{getTotal('saldo') | currency}}</td>
     </ng-container>
     <ng-container matColumnDef="referencia">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Referencia</th>
@@ -95,10 +105,12 @@ export class CobrosTableComponent implements OnInit, OnChanges {
   displayColumns = [
     'tipo',
     'sucursalNombre',
-    'nombre',
+    // 'nombre',
     'fecha',
     'formaDePago',
     'importe',
+    'aplicado',
+    'saldo',
     'referencia'
   ];
 

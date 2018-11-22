@@ -79,6 +79,11 @@ const routes: Routes = [
         component: fromContainers.DevolucionComponent
       },
       {
+        path: 'devoluciones/:devoId',
+        canActivate: [fromGuards.DevolucionExistsGuard],
+        component: fromContainers.DevolucionComponent
+      },
+      {
         path: 'cheques',
         canActivate: [fromGuards.ChequesGuard],
         children: [{ path: '', component: fromContainers.ChequesComponent }]

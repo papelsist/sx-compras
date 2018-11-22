@@ -8,6 +8,7 @@ import { ConfigService } from '../../utils/config.service';
 
 import { PeriodoFilter } from 'app/models';
 import { DevolucionCliente } from '../models';
+import { Cobro } from 'app/ingresos/models';
 
 @Injectable()
 export class DevolucionClienteService {
@@ -49,8 +50,8 @@ export class DevolucionClienteService {
       .pipe(catchError((error: any) => throwError(error)));
   }
 
-  cobros(): Observable<any[]> {
-    const url = `${this.apiUrl}/cobros`;
+  cobros(clienteId: string): Observable<Cobro[]> {
+    const url = `${this.apiUrl}/cobros/${clienteId}`;
     return this.http
       .get<any[]>(url)
       .pipe(catchError((error: any) => throwError(error)));

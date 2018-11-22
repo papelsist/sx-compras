@@ -3,6 +3,7 @@ package sx.tesoreria
 
 import grails.compiler.GrailsCompileStatic
 import grails.gorm.DetachedCriteria
+import grails.gorm.transactions.Transactional
 import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.*
 import groovy.transform.CompileDynamic
@@ -46,21 +47,24 @@ class DevolucionClienteController extends RestfulController<DevolucionCliente> {
 
     @Override
     protected DevolucionCliente saveResource(DevolucionCliente resource) {
-        return devolucionClienteService.registrar(resource)
+        resource = devolucionClienteService.registrar(resource)
+        resource = devolucionClienteService.generarCheque(resource)
+        return resource
     }
 
     @Override
     @CompileDynamic
     protected void deleteResource(DevolucionCliente resource) {
-        devolucionClienteService.delete(resource.id)
+        devolucionClienteService.cancelar(resource)
+        // devolucionClienteService.delete(resource.id)
     }
 
-    def cobros(CobrosFindCommand command) {
-        if(command == null) {
+    def cobros(Cliente cliente) {
+        if(cliente == null) {
             notFound()
             return
         }
-        def cobros = Cobro.where{cliente == command && saldo > 0}.list()
+        def cobros = Cobro.where{cliente == cliente && saldo > 0}.list()
         respond cobros
 
     }

@@ -1,9 +1,11 @@
-<td-layout-nav-list #navList [opened]="media.registerQuery('gt-sm') | async" [mode]="(media.registerQuery('gt-sm') | async) ? 'side' : 'over'"
-  [sidenavWidth]="(media.registerQuery('gt-xs') | async) ? '275px' : '100%'">
+<td-layout-nav-list
+  #navList
+  [opened]="media.registerQuery('gt-sm') | async"
+  [mode]="(media.registerQuery('gt-sm') | async) ? 'side' : 'over'"
+  [sidenavWidth]="(media.registerQuery('gt-xs') | async) ? '275px' : '100%'"
+>
   <div td-sidenav-toolbar-content layout="row" layout-align="start center">
-    <button mat-icon-button tdLayoutToggle>
-      <mat-icon>menu</mat-icon>
-    </button>
+    <button mat-icon-button tdLayoutToggle><mat-icon>menu</mat-icon></button>
     <span [routerLink]="['/']" class="cursor-pointer">SX Tesorería</span>
   </div>
   <div td-toolbar-content layout="row" layout-align="start center" flex>
@@ -12,13 +14,18 @@
     </button>
     <span tdLayoutNavListToggle class="cursor-pointer">Ingresos</span>
     <span flex></span>
+    <sx-estado-de-cuenta-btn></sx-estado-de-cuenta-btn>
   </div>
-  <mat-nav-list dense td-sidenav-content [tdLayoutNavListClose]="!media.query('gt-sm')">
+  <mat-nav-list
+    dense
+    td-sidenav-content
+    [tdLayoutNavListClose]="!media.query('gt-sm')"
+  >
     <ng-template let-item let-last="last" ngFor [ngForOf]="navmenu">
       <a mat-list-item [routerLink]="[item.route]" routerLinkActive="active">
-        <mat-icon matListAvatar>{{item.icon}}</mat-icon>
-        <h3 matLine> {{item.title}} </h3>
-        <p matLine> {{item.description}} </p>
+        <mat-icon matListAvatar>{{ item.icon }}</mat-icon>
+        <h3 matLine>{{ item.title }}</h3>
+        <p matLine>{{ item.description }}</p>
       </a>
       <mat-divider [inset]="true" *ngIf="!last"></mat-divider>
     </ng-template>
@@ -27,23 +34,20 @@
     <h3 matSubheader>Reportes</h3>
     <a mat-list-item (click)="reporteDeCobros()">
       <mat-icon matListAvatar>picture_as_pdf</mat-icon>
-      <h3 matLine> Pagos </h3>
+      <h3 matLine>Pagos</h3>
       <p matLine>Relación de pagos</p>
     </a>
     <mat-divider></mat-divider>
 
     <mat-list-item (click)="comisionesTarjeta()">
       <mat-icon matListIcon>poll</mat-icon>
-      <h3 matLine> Comisiones tarjeta</h3>
-      <p matLine> Reporte de comisiones</p>
+      <h3 matLine>Comisiones tarjeta</h3>
+      <p matLine>Reporte de comisiones</p>
     </mat-list-item>
     <mat-divider></mat-divider>
-
   </mat-nav-list>
 
   <router-outlet></router-outlet>
 
-  <td-layout-footer>
-    <sx-footer></sx-footer>
-  </td-layout-footer>
+  <td-layout-footer> <sx-footer></sx-footer> </td-layout-footer>
 </td-layout-nav-list>

@@ -3,8 +3,11 @@ package sx.tesoreria
 
 import grails.compiler.GrailsCompileStatic
 import grails.gorm.services.Service
-
+import grails.gorm.transactions.Transactional
 import groovy.util.logging.Slf4j
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.transaction.annotation.Propagation
 import sx.core.Empresa
 import sx.core.LogUser
 import sx.utils.MonedaUtils
@@ -14,6 +17,9 @@ import sx.utils.MonedaUtils
 @Service(DevolucionCliente)
 abstract class DevolucionClienteService implements  LogUser{
 
+
+    @Autowired
+    @Qualifier('movimientoDeCuentaService')
     MovimientoDeCuentaService movimientoDeCuentaService
 
     abstract  DevolucionCliente save(DevolucionCliente devolucion)
@@ -50,9 +56,22 @@ abstract class DevolucionClienteService implements  LogUser{
             MovimientoDeCuenta egreso = devolucion.egreso
             movimientoDeCuentaService.generarCheque(egreso)
             devolucion.referencia = devolucion.egreso.cheque.folio
-            devolucion = devolucion.save flush: true
+            // devolucion = devolucion.save flush: true
         }
         return devolucion
+    }
+
+    // @Transactional( propagation =  Propagation.REQUIRES_NEW)
+    DevolucionCliente cancelar(DevolucionCliente devolucionCliente) {
+        if(devolucionCliente.egreso.cheque) {
+            MovimientoDeCuenta egreso = devolucionCliente.egreso
+            log.info('Cancelando referencia de cheque')
+            Cheque cheque = egreso.cheque
+            egreso.cheque = null
+            // egreso.save flush: true
+        }
+        devolucionCliente.delete flush: true
+        return devolucionCliente
     }
 
 

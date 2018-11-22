@@ -60,6 +60,8 @@ class DevolucionCliente {
     String updateUser
 
     static constraints = {
+        comentario nullable: true
+        referencia nullable: true
         egreso nullable: true
         createUser nullable: true
         updateUser nullable: true

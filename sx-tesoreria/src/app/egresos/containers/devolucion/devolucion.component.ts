@@ -8,23 +8,23 @@ import * as fromStore from '../../store';
 import * as fromActions from '../../store/actions/devolucion-cliente.actions';
 
 import { DevolucionCliente } from '../../models';
+import { TdDialogService } from '@covalent/core';
 
 @Component({
   selector: 'sx-devolucion',
   template: `
   <ng-template tdLoading [tdLoadingUntil]="!(loading$ | async)"  tdLoadingStrategy="overlay" >
     <div layout>
-      <sx-devolucion-form flex="50"
+      <sx-devolucion-form flex="70"
         [devolucion]="devolucion$ | async"
         (save)="onSave($event)"
-        (cancel)="onCancel($event)">
-        <!--
-        <sx-cancelar-pago [requisicion]="requisicion" (cancelar)="onCancelarPago($event)"></sx-cancelar-pago>
-        <sx-generar-cheque-btn [requisicion]="requisicion" (generar)="onGenerarCheque($event)"></sx-generar-cheque-btn>
-        <sx-cancelar-cheque [requisicion]="requisicion" (cancelar)="onCancelarCheque($event)"></sx-cancelar-cheque>
-        <sx-print-cheque [egreso]="requisicion.egreso"></sx-print-cheque>
-        <sx-poliza-cheque [egreso]="requisicion.egreso"></sx-poliza-cheque>
-        -->
+        (cancelar)="onCancel()"
+        (delete)="onDelete($event)">
+        <ng-container *ngIf="devolucion$ | async as devolucion">
+          <sx-print-cheque [egreso]="devolucion.egreso"></sx-print-cheque>
+          <sx-poliza-cheque [egreso]="devolucion.egreso" ></sx-poliza-cheque>
+        </ng-container>
+
       </sx-devolucion-form>
     </div>
   </ng-template>
@@ -35,7 +35,10 @@ export class DevolucionComponent implements OnInit {
   loading$: Observable<boolean>;
   subscription: Subscription;
 
-  constructor(private store: Store<fromStore.State>) {}
+  constructor(
+    private store: Store<fromStore.State>,
+    private _dialogService: TdDialogService
+  ) {}
 
   ngOnInit() {
     this.devolucion$ = this.store.pipe(
@@ -59,13 +62,22 @@ export class DevolucionComponent implements OnInit {
       new fromActions.DeleteDevolucionCliente({ devolucion: event })
     );
   }
-  /*
-  onCancelarCheque(cancelacion: CancelacionDeCheque) {
-    this.store.dispatch(new fromStore.CancelarCheque({ cancelacion }));
-  }
-  */
 
-  onGenerarCheque(devolucion: DevolucionCliente) {
-    // this.store.dispatch(new fromStore.GenerarCheque({ requisicion }));
+  onDelete(event: DevolucionCliente) {
+    this._dialogService
+      .openConfirm({
+        title: `Eliminación de devolución del cliente`,
+        message: `Folio: ${event.id}`,
+        acceptButton: 'ELIMINAR',
+        cancelButton: 'CANCELAR'
+      })
+      .afterClosed()
+      .subscribe(res => {
+        if (res) {
+          this.store.dispatch(
+            new fromActions.DeleteDevolucionCliente({ devolucion: event })
+          );
+        }
+      });
   }
 }

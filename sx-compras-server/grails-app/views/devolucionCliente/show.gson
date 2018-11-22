@@ -4,4 +4,9 @@ model {
 	DevolucionCliente devolucionCliente
 }
 
-json tmpl.devolucionCliente(devolucionCliente)
+json g.render(devolucionCliente, [ excludes: ['cliente', 'cuenta', 'cobro', 'egreso'], resolveTemplate: false]) {
+	cuenta  g.render(devolucionCliente.cuenta)
+	cobro g.render(devolucionCliente.cobro, [includes: ['id', 'importe', 'saldo', 'disponible', 'fecha']])
+	cliente g.render(devolucionCliente.cliente)
+	egreso g.render(devolucionCliente.egreso)
+}
