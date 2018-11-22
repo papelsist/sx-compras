@@ -49,6 +49,9 @@ import { SelectorMorrallaComponent } from './selector-morralla/selector-morralla
 import { SelectorMorrallaBtnComponent } from './selector-morralla/selector-morralla-btn.component';
 import { DevolucionesTableComponent } from './devoluciones-table/devoluciones-table.component';
 import { DevolucionFormComponent } from './devolucion-form/devolucion-form.component';
+import { CobrosTableComponent } from './selector-cobro/cobros-table.component';
+import { SelectorCobrosComponent } from './selector-cobro/selector-cobros.component';
+import { SelectorCobrosBtnComponent } from './selector-cobro/selector-cobros-btn.component';
 
 export const components: any[] = [
   RequisicionesTableComponent,
@@ -105,7 +108,10 @@ export const components: any[] = [
 
   // Devoluciones
   DevolucionesTableComponent,
-  DevolucionFormComponent
+  DevolucionFormComponent,
+  CobrosTableComponent,
+  SelectorCobrosComponent,
+  SelectorCobrosBtnComponent
 ];
 
 export const entryComponents: any[] = [
@@ -122,7 +128,10 @@ export const entryComponents: any[] = [
   PagoDeNominaDialogComponent,
 
   // Morralla
-  SelectorMorrallaComponent
+  SelectorMorrallaComponent,
+
+  // Devoluciones a clientes
+  SelectorCobrosComponent
 ];
 
 export * from './requisiciones-table/requisiciones-table.component';
@@ -181,3 +190,6 @@ export * from './selector-morralla/selector-morralla-btn.component';
 // Devoluciones
 export * from './devoluciones-table/devoluciones-table.component';
 export * from './devolucion-form/devolucion-form.component';
+export * from './selector-cobro/cobros-table.component';
+export * from './selector-cobro/selector-cobros.component';
+export * from './selector-cobro/selector-cobros-btn.component';

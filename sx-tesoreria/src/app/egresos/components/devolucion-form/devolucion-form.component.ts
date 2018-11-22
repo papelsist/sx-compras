@@ -20,6 +20,8 @@ import {
 
 import { DevolucionCliente } from '../../models';
 
+import { switchMap } from 'rxjs/operators';
+
 import * as _ from 'lodash';
 import * as moment from 'moment';
 
@@ -65,6 +67,7 @@ import * as moment from 'moment';
         <button mat-button [disabled]="form.invalid || form.pristine" (click)="submit()" *ngIf="!form.disabled">
           <mat-icon>save</mat-icon> Salvar
         </button>
+        <sx-selector-cobros-btn></sx-selector-cobros-btn>
         <button mat-button color="warn" (click)="delete.emit(devolucion)" *ngIf="devolucion"><mat-icon >delete</mat-icon> Eliminar</button>
         <ng-content></ng-content>
       </mat-card-actions>
@@ -89,10 +92,13 @@ export class DevolucionFormComponent implements OnInit, OnChanges {
 
   constructor(private fb: FormBuilder) {}
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges) {}
+
+  ngOnInit() {
     this.buildForm();
-    if (changes.devolucion && changes.devolucion.currentValue) {
-      console.log('Editando devolucion: ', changes.devolucion.currentValue);
+    this.clienteListener();
+    if (this.devolucion) {
+      console.log('Editando devolucion: ', this.devolucion);
       this.form.patchValue(this.devolucion);
       this.form.disable();
     } else {
@@ -102,8 +108,6 @@ export class DevolucionFormComponent implements OnInit, OnChanges {
       });
     }
   }
-
-  ngOnInit() {}
 
   private buildForm() {
     this.form = this.fb.group({
@@ -117,6 +121,17 @@ export class DevolucionFormComponent implements OnInit, OnChanges {
       comentario: [],
       partidas: this.fb.array([])
     });
+  }
+
+  clienteListener() {
+    if (!this.devolucion) {
+      const ref$ = this.form.get('cliente').valueChanges.pipe(
+        switchMap(value => {
+          return 'Cobros detectados : ' + value;
+        })
+      );
+      ref$.subscribe(val => console.log(val));
+    }
   }
 
   submit() {

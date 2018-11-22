@@ -12,10 +12,10 @@ import {
 import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 
 import * as _ from 'lodash';
-import { Morralla } from 'app/egresos/models/morralla';
+import { Cobro } from 'app/ingresos/models';
 
 @Component({
-  selector: 'sx-morrallas-table',
+  selector: 'sx-cobros-table',
   // changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
   <table mat-table [dataSource]="dataSource" matSort>
@@ -24,9 +24,14 @@ import { Morralla } from 'app/egresos/models/morralla';
       <td mat-cell *matCellDef="let row">{{ row.tipo }}</td>
       <td mat-footer-cell *matFooterCellDef></td>
     </ng-container>
-    <ng-container matColumnDef="sucursal">
+    <ng-container matColumnDef="sucursalNombre">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal</th>
-      <td mat-cell *matCellDef="let row">{{ row.sucursal.nombre }}</td>
+      <td mat-cell *matCellDef="let row">{{ row.sucursaNombre }}</td>
+      <td mat-footer-cell *matFooterCellDef></td>
+    </ng-container>
+    <ng-container matColumnDef="nombre">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Cliente</th>
+      <td mat-cell *matCellDef="let row">{{ row.nombreNombre }}</td>
       <td mat-footer-cell *matFooterCellDef></td>
     </ng-container>
     <ng-container matColumnDef="fecha">
@@ -36,14 +41,19 @@ import { Morralla } from 'app/egresos/models/morralla';
       </td>
       <td mat-footer-cell *matFooterCellDef> Total</td>
     </ng-container>
+    <ng-container matColumnDef="formaDePago">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>F. Pago</th>
+      <td mat-cell *matCellDef="let row">{{ row.formaDePago }}</td>
+      <td mat-footer-cell *matFooterCellDef></td>
+    </ng-container>
     <ng-container matColumnDef="importe">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
       <td mat-cell *matCellDef="let row">{{ row.importe | currency }}</td>
       <td mat-footer-cell *matFooterCellDef>{{getTotal('importe') | currency}}</td>
     </ng-container>
-    <ng-container matColumnDef="comentario">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Comentario</th>
-      <td mat-cell *matCellDef="let row">{{ row.comentario }}</td>
+    <ng-container matColumnDef="referencia">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Referencia</th>
+      <td mat-cell *matCellDef="let row">{{ row.referencia }}</td>
       <td mat-footer-cell *matFooterCellDef></td>
     </ng-container>
 
@@ -73,16 +83,24 @@ import { Morralla } from 'app/egresos/models/morralla';
     `
   ]
 })
-export class MorrallasTableComponent implements OnInit, OnChanges {
+export class CobrosTableComponent implements OnInit, OnChanges {
   @Input()
-  morrallas: Morralla[] = [];
+  cobros: Cobro[] = [];
 
   @Input()
   multipleSelection = true;
 
-  dataSource = new MatTableDataSource<Morralla>([]);
+  dataSource = new MatTableDataSource<Cobro>([]);
 
-  displayColumns = ['sucursal', 'tipo', 'fecha', 'importe', 'comentario'];
+  displayColumns = [
+    'tipo',
+    'sucursalNombre',
+    'nombre',
+    'fecha',
+    'formaDePago',
+    'importe',
+    'referencia'
+  ];
 
   @ViewChild(MatSort)
   sort: MatSort;
@@ -99,19 +117,19 @@ export class MorrallasTableComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.morrallas && changes.morrallas.currentValue) {
-      this.dataSource.data = changes.morrallas.currentValue;
+    if (changes.cobros && changes.cobros.currentValue) {
+      this.dataSource.data = changes.cobros.currentValue;
     }
   }
 
-  toogleSelect(event: Morralla) {
+  toogleSelect(event: Cobro) {
     if (this.multipleSelection) {
       event.selected = !event.selected;
-      const data = this.morrallas.filter(item => item.selected);
+      const data = this.cobros.filter(item => item.selected);
       this.select.emit([...data]);
     } else {
       event.selected = !event.selected;
-      this.morrallas.forEach(item => {
+      this.cobros.forEach(item => {
         if (item.id !== event.id) {
           item.selected = false;
         }

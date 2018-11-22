@@ -9,7 +9,8 @@ import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
 
 import org.apache.commons.lang3.exception.ExceptionUtils
-
+import sx.core.Cliente
+import sx.cxc.Cobro
 import sx.reports.ReportService
 import sx.utils.Periodo
 
@@ -54,7 +55,14 @@ class DevolucionClienteController extends RestfulController<DevolucionCliente> {
         devolucionClienteService.delete(resource.id)
     }
 
-    def cobros() {
+    def cobros(CobrosFindCommand command) {
+        if(command == null) {
+            notFound()
+            return
+        }
+        def cobros = Cobro.where{cliente == command && saldo > 0}.list()
+        respond cobros
+
     }
 
     def generarCheque(DevolucionCliente devolucionCliente) {
@@ -74,4 +82,9 @@ class DevolucionClienteController extends RestfulController<DevolucionCliente> {
         log.error(message, ExceptionUtils.getRootCause(e))
         respond([message: message], status: 500)
     }
+}
+
+class CobrosFindCommand {
+    Cliente cliente
+    BigDecimal importe
 }

@@ -28,6 +28,7 @@ export interface Cobro {
   comentario?: string;
   pendientesDeAplicar?: Array<any>;
   bancoOrigen?: string;
+  selected?: boolean;
 }
 
 export interface CobroTarjeta {

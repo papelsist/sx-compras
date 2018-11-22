@@ -1,20 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA } from '@angular/material';
 
-import {
-  PagoDeMorrallaService,
-  DevolucionClienteService
-} from 'app/egresos/services';
-import { Observable } from 'rxjs';
 import { Cobro } from 'app/ingresos/models';
 
 @Component({
-  selector: 'sx-selector-cobro',
+  selector: 'sx-selector-cobros',
   template: `
     <div layout>
       <span>
         <span mat-dialog-title>Cobros registrados</span>
         <span *ngIf="selected">
-          Seleccionado: {{selected.importe | currency}}
+          Seleccionado: {{ selected.length}}
         </span>
         <mat-form-field class="pad-left">
           <input matInput placeholder="folio" autocomplete="off">
@@ -23,7 +19,8 @@ import { Cobro } from 'app/ingresos/models';
     </div>
     <mat-divider></mat-divider>
     <div class="facturas-table-panel">
-      <sx-morrallas-table [morrallas]="cobros$ | async" (select)="onSelection($event)" #table></sx-morrallas-table>
+      <sx-cobros-table [cobros]="cobros" (select)="onSelection($event)" #table>
+      </sx-cobros-table>
     </div>
     <mat-dialog-actions>
       <button mat-button mat-dialog-close type="button">Cancelar</button>
@@ -39,21 +36,17 @@ import { Cobro } from 'app/ingresos/models';
     `
   ]
 })
-export class SelectorCobroComponent implements OnInit {
-  cobros$: Observable<Cobro[]>;
-  selected: Cobro;
-  url;
-  constructor(private service: DevolucionClienteService) {}
+export class SelectorCobrosComponent implements OnInit {
+  cobros: Cobro[];
+  selected: Cobro[];
 
-  ngOnInit() {
-    this.buscar();
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any) {
+    this.cobros = data.cobros;
   }
 
-  onSelection(event: Cobro) {
+  ngOnInit() {}
+
+  onSelection(event: Cobro[]) {
     this.selected = event;
-  }
-
-  buscar() {
-    this.cobros$ = this.service.cobros();
   }
 }
