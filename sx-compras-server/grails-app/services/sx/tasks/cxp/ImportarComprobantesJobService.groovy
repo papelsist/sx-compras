@@ -9,7 +9,7 @@ import org.springframework.scheduling.annotation.Scheduled
 import sx.cxp.ComprobanteFiscalService
 
 @Slf4j
-@CompileStatic
+//@CompileStatic
 class ImportarComprobantesJobService {
 
     boolean lazyInit = false
@@ -17,15 +17,19 @@ class ImportarComprobantesJobService {
 
     @Scheduled(fixedDelay = 120000L, initialDelay = 120000L)
     void importarComprobantesDeCompras() {
-        if(Environment.current == Environment.DEVELOPMENT)
-            return
-        log.info('Importando CFDIS de COMPRAS  desde {} , {}', comprobanteFiscalService.cfdiDir, new Date().format("dd/MM/yyyy hh:mm:ss"))
-        try{
-            int rows = comprobanteFiscalService.importacionLocal('COMPRAS', true)
-            log.info('Comprobantes importados: {}', rows)
-        } catch (Exception ex) {
-            String message = ExceptionUtils.getRootCauseMessage(ex)
-            log.error(message)
+
+        Environment.executeForCurrentEnvironment {
+            production {
+                log.info('Importando CFDIS de COMPRAS  desde {} , {}', comprobanteFiscalService.cfdiDir, new Date().format("dd/MM/yyyy hh:mm:ss"))
+                try{
+                    int rows = comprobanteFiscalService.importacionLocal('COMPRAS', true)
+                    log.info('Comprobantes importados: {}', rows)
+                } catch (Exception ex) {
+                    String message = ExceptionUtils.getRootCauseMessage(ex)
+                    log.error(message)
+                }
+            }
         }
+
     }
 }

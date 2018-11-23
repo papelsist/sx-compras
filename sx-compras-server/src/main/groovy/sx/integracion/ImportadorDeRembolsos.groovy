@@ -3,9 +3,8 @@ package sx.integracion
 import groovy.sql.Sql
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.exception.ExceptionUtils
-import sx.core.Proveedor
-import sx.core.Sucursal
 
+import sx.core.Sucursal
 import sx.cxp.Rembolso
 import sx.tesoreria.Cheque
 import sx.tesoreria.CuentaDeBanco

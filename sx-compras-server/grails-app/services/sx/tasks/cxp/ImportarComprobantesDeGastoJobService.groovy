@@ -9,25 +9,28 @@ import org.springframework.scheduling.annotation.Scheduled
 import sx.cxp.ComprobanteFiscalService
 
 @Slf4j
-@CompileStatic
+// @CompileStatic
 class ImportarComprobantesDeGastoJobService {
 
     boolean lazyInit = false
     ComprobanteFiscalService comprobanteFiscalService
 
-    @Scheduled(fixedDelay = 120000L, initialDelay = 120000L)
+    @Scheduled(fixedDelay = 120000L, initialDelay = 60000L)
     void importarComprobantesDeCompras() {
 
-        Environment.executeForEnvironment(Environment.getEnvironment('tesoreria'), {
-            log.info('Importando CFDIS de GASTOS  desde {} , {}', comprobanteFiscalService.gastosDir, new Date().format("dd/MM/yyyy hh:mm:ss"))
-            try{
-                int rows = comprobanteFiscalService.importacionLocal('GASTOS', true)
-                log.info('Comprobantes importados: {}', rows)
-            } catch (Exception ex) {
-                String message = ExceptionUtils.getRootCauseMessage(ex)
-                log.error(message)
+        Environment.executeForCurrentEnvironment {
+            tesoreria {
+                File dir = new File(comprobanteFiscalService.gastosDir)
+                // log.info('Importando CFDIS de GASTOS  desde {} , {}', comprobanteFiscalService.gastosDir, new Date().format("dd/MM/yyyy hh:mm:ss"))
+                try{
+                    comprobanteFiscalService.importarDirectorio(dir, 'GASTOS', true)
+                    log.info('Comprobantes  importados desde Dir: {}', dir.path)
+                } catch (Exception ex) {
+                    String message = ExceptionUtils.getRootCauseMessage(ex)
+                    log.error(message)
+                }
             }
-        })
+        }
 
     }
 }
