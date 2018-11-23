@@ -1,0 +1,62 @@
+<form [formGroup]="form">
+  <div layout>
+    <span mat-dialog-title>Cuenta por pagar</span> <span flex></span>
+  </div>
+  <div layout>
+    <mat-form-field flex>
+      <input
+        matInput
+        placeholder="Factura"
+        value="{{cxp.serie}} {{cxp.folio}}"
+        [disabled]="true"
+      />
+    </mat-form-field>
+
+    <mat-form-field flex class="pad-left pad-right">
+      <input
+        matInput
+        placeholder="UUID"
+        [value]="cxp.uuid.substr(-12, 12)"
+        [disabled]="true"
+      />
+    </mat-form-field>
+    <mat-form-field flex>
+      <input
+        matInput
+        placeholder="Fecha"
+        value="{{cxp.fecha | date: 'dd/MM/yyyy'}}"
+        [disabled]="true"
+      />
+    </mat-form-field>
+  </div>
+  <div layout>
+    <mat-form-field flex>
+      <input
+        matInput
+        placeholder="Total"
+        value="{{cxp.total | currency }}"
+        [disabled]="true"
+      />
+    </mat-form-field>
+    <mat-form-field flex class="pad-left">
+      <input
+        matInput
+        placeholder="Apagar"
+        formControlName="importePorPagar"
+        autocomplete="off"
+        type="number"
+      />
+    </mat-form-field>
+  </div>
+
+  <mat-dialog-actions>
+    <button
+      mat-button
+      [mat-dialog-close]="form.value"
+      [disabled]="form.invalid"
+    >
+      Aceptar
+    </button>
+    <button mat-button mat-dialog-close type="button">Cancelar</button>
+  </mat-dialog-actions>
+</form>

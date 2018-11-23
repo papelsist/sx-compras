@@ -1,0 +1,22 @@
+table {
+  width: 100%;
+  overflow: auto;
+}
+.mat-cell {
+  font-size: 11px;
+}
+.mat-row {
+  height: 30px;
+}
+
+.mat-column-precioNeto, .mat-column-precioBruto, .mat-column-precioAnterior {
+  width: 100px;
+}
+.mat-column-desc1, .mat-column-desc2, .mat-column-desc3, .mat-column-desc4 {
+  width: 80px;
+  padding: 0px;
+}
+table td input {
+  width: 90%;
+  height:100%;
+}
