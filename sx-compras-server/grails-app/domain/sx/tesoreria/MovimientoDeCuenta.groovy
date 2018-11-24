@@ -53,7 +53,8 @@ class MovimientoDeCuenta {
             movimientoDeTesoreria: MovimientoDeTesoreria,
             requisicion: Requisicion,
             pagoNomina: PagoDeNomina,
-            pagoDeMorralla: PagoDeMorralla
+            pagoDeMorralla: PagoDeMorralla,
+            devolucionCliente: DevolucionCliente
     ]
     static mappedBy = [ pagoDeMorralla: "none"]
 
@@ -76,6 +77,7 @@ class MovimientoDeCuenta {
         requisicion nullable: true
         pagoNomina nullable: true
         pagoDeMorralla nullable: true
+        devolucionCliente nullable: true
     }
 
     static mapping ={

@@ -1,0 +1,8 @@
+import sx.tesoreria.DevolucionCliente
+
+model {
+	Iterable<DevolucionCliente> devolucionClienteList
+}
+
+json tmpl.devolucionCliente(devolucionClienteList ?: [])
+

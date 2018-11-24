@@ -50,6 +50,12 @@ export class EgresosPageComponent implements OnInit {
       icon: 'device_hub'
     },
     {
+      route: 'devoluciones',
+      title: 'Devoluciones',
+      description: 'Devoluciones a clientes',
+      icon: 'backspace'
+    },
+    {
       route: 'cheques',
       title: 'Cheques',
       description: 'Pagos con cheque',

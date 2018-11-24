@@ -9,3 +9,4 @@ export * from './pagoDeRembolso';
 export * from './compraMoneda';
 export * from './pago-nomina';
 export * from './pago-morralla';
+export * from './devolucion-cliente';

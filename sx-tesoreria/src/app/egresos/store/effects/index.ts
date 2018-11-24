@@ -6,6 +6,7 @@ import { RembolsosEffects } from './rembolsos.effects';
 import { CompraMonedaEffects } from './compra-moneda.effects';
 import { PagoDeNominaEffects } from './pago-nomina.effects';
 import { PagoDeMorrallasEffects } from './pago-morralla.effects';
+import { DevolucionClienteEffects } from './devolucion-cliente.effects';
 
 export const effects: any[] = [
   GastosEffects,
@@ -15,7 +16,8 @@ export const effects: any[] = [
   RembolsosEffects,
   CompraMonedaEffects,
   PagoDeNominaEffects,
-  PagoDeMorrallasEffects
+  PagoDeMorrallasEffects,
+  DevolucionClienteEffects
 ];
 
 export * from './gastos.effect';
@@ -26,3 +28,4 @@ export * from './rembolsos.effects';
 export * from './compra-moneda.effects';
 export * from './pago-nomina.effects';
 export * from './pago-morralla.effects';
+export * from './devolucion-cliente.effects';

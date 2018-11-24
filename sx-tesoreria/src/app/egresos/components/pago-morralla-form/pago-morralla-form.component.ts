@@ -46,8 +46,11 @@ import { Morralla } from 'app/egresos/models/morralla';
         </div>
 
         <div layout>
+          <mat-form-field>
+            <input matInput formControlName="importe" placeholder="Importe" type="number" autocomplete="off">
+          </mat-form-field>
 
-          <mat-form-field  >
+          <mat-form-field  class="pad-left">
             <mat-select placeholder="Forma de pago" formControlName="formaDePago">
               <mat-option *ngFor="let f of ['TRANSFERENCIA']"
                   [value]="f">{{ f }}
