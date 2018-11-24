@@ -1,0 +1,13 @@
+import sx.tesoreria.DevolucionCliente
+
+model {
+	DevolucionCliente devolucionCliente
+}
+
+json g.render(devolucionCliente, [ excludes: ['cuenta', 'cobro'], resolveTemplate: false]) {
+	cuenta  {
+		id devolucionCliente.cuenta.id
+		descripcion devolucionCliente.cuenta.descripcion
+	}
+	cobro g.render(devolucionCliente.cobro, [includes: ['id', 'importe', 'saldo', 'fecha']])
+}

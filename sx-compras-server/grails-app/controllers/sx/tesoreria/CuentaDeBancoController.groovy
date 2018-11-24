@@ -4,6 +4,7 @@ import grails.compiler.GrailsCompileStatic
 import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.RestfulController
 import groovy.transform.CompileDynamic
+import org.apache.commons.lang3.exception.ExceptionUtils
 import sx.reports.ReportService
 import sx.utils.Periodo
 
@@ -83,4 +84,29 @@ class CuentaDeBancoController extends RestfulController {
         List<SaldoPorCuentaDeBanco> res = SaldoPorCuentaDeBanco.where {cuenta == cuenta}.list(params)
         respond res
     }
+
+    def estadoDeCuenta(EstadoDeCuentaCommand command) {
+
+        Map repParams = [:]
+        repParams.FECHA_INICIAL = command.fechaIni
+        repParams.FECHA_FINAL = command.fechaFin
+        repParams.CUENTA_ID = command.cuenta.id
+
+        def pdf =  reportService.run('EstadoDeCuentaBancario.jrxml', repParams)
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'EstadoDecuentaBancario.pdf')
+
+    }
+
+    def handleException(Exception e) {
+        String message = ExceptionUtils.getRootCauseMessage(e)
+        e.printStackTrace()
+        log.error(message, ExceptionUtils.getRootCause(e))
+        respond([message: message], status: 500)
+    }
+}
+
+class EstadoDeCuentaCommand {
+    CuentaDeBanco cuenta
+    Date fechaIni
+    Date fechaFin
 }

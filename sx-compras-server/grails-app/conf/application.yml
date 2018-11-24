@@ -140,8 +140,8 @@ environments:
     tesoreria:
             dataSource:
                 dbCreate: update
-                #url: jdbc:mysql://10.10.1.229/siipapx?autoReconnect=false
                 url: jdbc:mysql://${JDBC_CONNECTION_STRING}?autoReconnect=true
+                #url: jdbc:mysql://10.10.1.229/siipapx_dev?autoReconnect=true
                 username: root
                 password: sys
                 properties:
@@ -193,8 +193,8 @@ environments:
         server:
             port: 9290
     tesoreria:
-            server:
-                port: 9490
+        server:
+            port: 9490
 
 ---
 grails:
@@ -208,6 +208,11 @@ environments:
         cfdisDir: /Users/rubencancino/Documents/cfdis-carga/compras
         gastosDir: /Users/rubencancino/Documents/cfdis-carga/gastos
   production:
+    siipapx:
+      cxp:
+        cfdisDir: /home/cfdProv
+        gastosDir: /home/cfdGastos
+  tesoreria:
     siipapx:
       cxp:
         cfdisDir: /home/cfdProv

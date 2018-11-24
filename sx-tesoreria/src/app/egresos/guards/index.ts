@@ -10,6 +10,8 @@ import { PagoNominasGuard } from './pago-nominas.guard';
 import { PagoNominaExistsGuard } from './pago-nomina-exists.guard';
 import { PagoMorrallasGuard } from './pago-morrallas.guard';
 import { PagoMorrallaExistsGuard } from './pago-morralla-exists.guard';
+import { DevolucionesGuard } from './devoluciones.guard';
+import { DevolucionExistsGuard } from './devolucion-exists.guard';
 
 export const guards: any[] = [
   GastosGuard,
@@ -23,7 +25,9 @@ export const guards: any[] = [
   PagoNominasGuard,
   PagoNominaExistsGuard,
   PagoMorrallasGuard,
-  PagoMorrallaExistsGuard
+  PagoMorrallaExistsGuard,
+  DevolucionesGuard,
+  DevolucionExistsGuard
 ];
 
 export * from './gastos.guard';
@@ -38,3 +42,5 @@ export * from './pago-nominas.guard';
 export * from './pago-nomina-exists.guard';
 export * from './pago-morrallas.guard';
 export * from './pago-morralla-exists.guard';
+export * from './devoluciones.guard';
+export * from './devolucion-exists.guard';
