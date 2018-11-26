@@ -11,10 +11,10 @@ import { Update } from '@ngrx/entity';
 
 @Injectable()
 export class CobradorService {
-  private apiUrl: string;
+  private _apiUrl: string;
 
-  constructor(private http: HttpClient, configService: ConfigService) {
-    this.apiUrl = configService.buildApiUrl('cobradores');
+  constructor(private http: HttpClient, private config: ConfigService) {
+    // this.apiUrl = configService.buildApiUrl('cobradores');
   }
 
   list(): Observable<Cobrador[]> {
@@ -52,5 +52,12 @@ export class CobradorService {
     return this.http
       .put<Cobrador>(url, update.changes)
       .pipe(catchError((error: any) => throwError(error)));
+  }
+
+  get apiUrl() {
+    if (!this._apiUrl) {
+      this._apiUrl = this.config.buildApiUrl('cobradores');
+    }
+    return this._apiUrl;
   }
 }
