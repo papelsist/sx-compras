@@ -6,8 +6,6 @@ import sx.sat.CuentaSat
 @EqualsAndHashCode(includes='clave')
 class CuentaContable {
 
-    String id
-
     String clave
 
     String descripcion
@@ -15,6 +13,10 @@ class CuentaContable {
     String tipo
 
     CuentaContable padre
+
+    Integer nivel
+
+    String subTipo
 
     CuentaSat cuentaSat
 
@@ -34,7 +36,7 @@ class CuentaContable {
 
     boolean suspendida
 
-    Set<CuentaSat> subcuentas
+    Set<CuentaContable> subcuentas
 
     Date dateCreated
 
@@ -45,19 +47,19 @@ class CuentaContable {
     static constraints = {
         clave nullable:true,maxSize:100 , unique:true
         descripcion blank:false,maxSize:300
-        tipo inList:['ACTIVO','PASIVO','CAPITAL','ORDEN', 'OTRA']
-        naturaleza inList:['DEUDORA','ACREEDORA', 'MIXTA', 'OTRA']
+        tipo inList:['ACTIVO','PASIVO','CAPITAL','ORDEN']
+        subTipo inList: ['CIRCULANTE', 'FIJO', 'DIFERIDO', 'CORTO_PLAZO', 'CAPITAL', 'ORDEN']
+        naturaleza inList:['DEUDORA','ACREEDORA']
         cuentaSat nullable:true
     }
 
     static mapping ={
-        id generator:'uuid'
         subcuentas cascade: "all-delete-orphan", batchSize: 10
 
     }
 
     String toString(){
-        return clave+" "+descripcion
+        return "${clave} ${descripcion}"
     }
 
     static CuentaContable buscarPorClave(String clave){
