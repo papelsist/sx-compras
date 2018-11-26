@@ -26,6 +26,7 @@ import { ConfigService } from './utils/config.service';
 import { environment } from 'environments/environment.prod';
 import { ProveedoresModule } from './proveedores/proveedores.module';
 import { AuthModule } from './auth/auth.module';
+import { reducers, metaReducers } from './reducers';
 
 export const metaReducers: MetaReducer<any>[] = !environment.production
   ? [storeFreeze]
