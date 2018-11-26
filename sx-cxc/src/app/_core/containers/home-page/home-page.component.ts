@@ -21,10 +21,10 @@ export class HomePageComponent implements OnInit {
   constructor(private store: Store<fromAuth.AuthState>) {}
 
   ngOnInit() {
-    this.header$ = observableOf('SX Gastos');
+    this.header$ = observableOf('SX CXC');
     this.application$ = observableOf({
-      name: 'SX GASTOS',
-      description: 'SIIPAPX sistema de control de gastos y adquisiciones',
+      name: 'SX CXC',
+      description: 'SIIPAPX módulo de gestión de cuentas por cobrar',
       image: '/assets/images/logo_papelsa.jpg'
     });
     this.session$ = this.store.pipe(select(fromAuth.getSession));

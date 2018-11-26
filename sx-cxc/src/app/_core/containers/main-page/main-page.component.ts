@@ -49,12 +49,12 @@ export class MainPageComponent implements OnInit {
   constructor(private store: Store<fromStore.State>) {}
 
   ngOnInit() {
-    this.modulo$ = of('SX Gastos');
+    this.modulo$ = of('SX CxC');
     this.store.dispatch(new fromAuth.LoadUserSession());
 
     this.expiration$ = this.store.pipe(select(fromAuth.getSessionExpiration));
     this.apiInfo$ = this.store.pipe(select(fromAuth.getApiInfo));
-    
+
     this.store.pipe(select(fromAuth.getUser)).subscribe(u => (this.user = u));
   }
 
