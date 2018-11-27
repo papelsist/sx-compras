@@ -29,6 +29,8 @@ class MovimientoDeTesoreria {
 
     String comentario
 
+    String cuentaContable
+
     Date dateCreated
     Date lastUpdated
 
@@ -43,6 +45,7 @@ class MovimientoDeTesoreria {
         createUser nullable: true
         updateUser nullable: true
         sw2 nullable: true
+        cuentaContable nullable: true
     }
 
     static mapping = {
