@@ -42,6 +42,10 @@ class CuentaContable {
 
     Date lastUpdated
 
+    String createUser
+
+    String updateUser
+
     static hasMany = [subcuentas:CuentaContable]
 
     static constraints = {
@@ -51,6 +55,8 @@ class CuentaContable {
         subTipo inList: ['CIRCULANTE', 'FIJO', 'DIFERIDO', 'CORTO_PLAZO', 'CAPITAL', 'ORDEN']
         naturaleza inList:['DEUDORA','ACREEDORA']
         cuentaSat nullable:true
+        createUser nullable: true
+        updateUser nullable: true
     }
 
     static mapping ={

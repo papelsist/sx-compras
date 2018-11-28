@@ -41,7 +41,7 @@ abstract class DevolucionClienteService implements  LogUser{
         egreso.concepto = devolucion.concepto
         egreso.moneda =  devolucion.cobro.moneda
         egreso.tipoDeCambio = devolucion.cobro.tipoDeCambio
-        egreso.importe = devolucion.cobro.importe.abs() * -1
+        egreso.importe = devolucion.importe.abs() * -1
         egreso.comentario = devolucion.comentario
         egreso.afavor = devolucion.afavor
         egreso.formaDePago = devolucion.formaDePago

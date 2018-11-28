@@ -27,18 +27,23 @@ class CuentaContableController extends RestfulController <CuentaContable>{
     }
 
     @Override
-    protected List listAllResources(Map params) {
+    @Secured("IS_AUTHENTICATED_ANONYMOUSLY")
+    def index(Integer max) {
+        params.max = max?: 5000
         params.sort = params.sort ?:'lastUpdated'
         params.order = params.order ?:'desc'
-        params.max = 2000
         log.debug('List : {}', params)
-        return CuentaContable.list(params)
+        def rows = CuentaContable.createCriteria().list {
+            order('clave', 'asc')
+        }
+        respond rows, model: [("${resourceName}Count".toString()): countResources()]
+        //respond CuentaContable.list(params), model: [("${resourceName}Count".toString()): countResources()]
     }
 
 
     @Override
     protected CuentaContable saveResource(CuentaContable resource) {
-        return cuentaContableService.save(resource)
+        return cuentaContableService.salvarCuenta(resource)
     }
 
     @Override
