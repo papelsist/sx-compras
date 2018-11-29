@@ -4,6 +4,7 @@ model {
 	CuentaContable cuentaContable
 }
 
-json g.render(cuentaContable, [ excludes: ['cuentaSat'], resolveTemplate: false]){
+json g.render(cuentaContable, [ excludes: ['cuentaSat', 'padre'], resolveTemplate: false]){
 	cuentaSat g.render(cuentaContable.cuentaSat)
+	padre g.render(cuentaContable.padre)
 }

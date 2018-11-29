@@ -22,7 +22,7 @@ class PolizaFolio {
     static constraints = {
         subTipo maxSize:50
         mes inList:(1..13)
-        folio nullable:false,unique:['subTipo','mes','ejercicio']
+        folio nullable:false, unique:['subTipo','mes','ejercicio']
     }
 
     static  mapping = {}

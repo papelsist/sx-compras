@@ -19,8 +19,8 @@ class ImportadorDeRembolsos {
 
     ImportadorDeRembolsos importar(Periodo periodo) {
         def select = """
-    	select c.sucursal_id, c.tipo as gtipo, t.*,d.documento,pp.rfc as rfc2, 
-    	c.proveedor_id as prov , pp.nombre as provNombre
+    	select c.sucursal_id, c.tipo as gtipo, t.*, d.documento,pp.rfc as rfc2, 
+    	c.proveedor_id as prov , pp.nombre as provNombre, 
         from sw_trequisicion t 
         join sw_trequisiciondet d on(t.requisicion_id = d.requisicion_id)
         join sx_gas_facxreq2 g on(g.requisicionesdet_id = d.requisicionde_id)
@@ -52,6 +52,7 @@ class ImportadorDeRembolsos {
         }
         Rembolso rembolso = new Rembolso()
         rembolso.with {
+            formaDePago = row.forma_de_pago
             sw2 = row.REQUISICION_ID
             sucursal = Sucursal.where{ sw2 == row.sucursal_id}.find()
             concepto = 'REMBOLSO'
@@ -92,9 +93,39 @@ class ImportadorDeRembolsos {
 
         }
         db.close()
-
-
         return this
+    }
+
+
+
+    def findEgreso(Sql db, Rembolso row) {
+        def SQL = """
+    	select * from sw_bcargoabono 
+         where cargoabono_id = (select cargoabono_id from sw_trequisicion where requisicion_id = ?)
+        """
+        return db.firstRow(SQL,[row.sw2])
+    }
+
+    MovimientoDeCuenta importarEgreso(def row, Rembolso rembolso) {
+        def cuenta = CuentaDeBanco.where{sw2 == row.cuenta_id}.find()
+        MovimientoDeCuenta egreso = new MovimientoDeCuenta()
+        egreso.tipo = 'GASTO'
+        egreso.importe = row.importe
+        egreso.fecha = row.fecha
+        egreso.concepto = 'REMBOLSO'
+        egreso.moneda = Currency.getInstance(row.moneda)
+        egreso.tipoDeCambio = row.tc
+        egreso.comentario = row.comentario
+        egreso.formaDePago = rembolso.formaDePago
+        egreso.referencia = row.referencia
+        egreso.afavor = row.afavor
+        egreso.cuenta = cuenta
+        egreso.createUser = 'admin'
+        egreso.updateUser = 'admin'
+        egreso.sw2 = row.cargoabono_id
+        // requisicionDeGastos.save(flush: true)
+        // egreso.save failOnError: true, flush: true
+        return egreso
     }
 
     ImportadorDeRembolsos importarCheques(Periodo periodo) {
@@ -134,38 +165,6 @@ class ImportadorDeRembolsos {
         }
         db.close()
         return this
-    }
-
-
-
-    def findEgreso(Sql db, Rembolso row) {
-        def SQL = """
-    	select * from sw_bcargoabono 
-         where cargoabono_id = (select cargoabono_id from sw_trequisicion where requisicion_id = ?)
-        """
-        return db.firstRow(SQL,[row.sw2])
-    }
-
-    MovimientoDeCuenta importarEgreso(def row, Rembolso rembolso) {
-        def cuenta = CuentaDeBanco.where{sw2 == row.cuenta_id}.find()
-        MovimientoDeCuenta egreso = new MovimientoDeCuenta()
-        egreso.tipo = 'GASTO'
-        egreso.importe = row.importe
-        egreso.fecha = row.fecha
-        egreso.concepto = 'REMBOLSO'
-        egreso.moneda = Currency.getInstance(row.moneda)
-        egreso.tipoDeCambio = row.tc
-        egreso.comentario = row.comentario
-        egreso.formaDePago = rembolso.formaDePago
-        egreso.referencia = row.referencia
-        egreso.afavor = row.afavor
-        egreso.cuenta = cuenta
-        egreso.createUser = 'admin'
-        egreso.updateUser = 'admin'
-        egreso.sw2 = row.cargoabono_id
-        // requisicionDeGastos.save(flush: true)
-        // egreso.save failOnError: true, flush: true
-        return egreso
     }
 
 

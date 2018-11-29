@@ -70,6 +70,7 @@ if (Environment.isDevelopmentMode() && targetDir != null) {
     logger("sx.integracion", DEBUG, ['STDOUT'], false)
     logger("sx.bi", DEBUG, ['STDOUT'], false)
     logger("sx.cxc", DEBUG, ['STDOUT'], false)
+    logger("sx.contabilidad", DEBUG, ['STDOUT'], false)
 
 
     // Log Listeners

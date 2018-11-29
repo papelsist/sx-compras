@@ -17,17 +17,17 @@ class Poliza {
 
     String subtipo
 
-    Integer folio = 0
+    Integer folio
 
     Date fecha
 
     String concepto
 
-    BigDecimal debe=0.0
+    BigDecimal debe = 0.0
 
-    BigDecimal haber=0.0
+    BigDecimal haber = 0.0
 
-    Boolean manual = false
+    boolean manual = false
 
     List partidas=[]
 
@@ -41,12 +41,12 @@ class Poliza {
     static constraints = {
         ejercicio inList:(2014..2018)
         mes inList:(1..13)
-        tipo(inList:['INGRESO','EGRESO','DIARIO'])
-        subtipo minSize:5,maxSize:30
+        tipo inList:['INGRESO','EGRESO','DIARIO']
+        subtipo minSize:5,maxSize:50
         folio unique:['ejercicio','mes','subtipo']
-        debe(scale:6)
-        haber(scale:6)
-        concepto(maxSize:300)
+        debe scale:6
+        haber scale:6
+        concepto maxSize:300
         cierre nullable:true
         fecha validator:{ val, obj ->
             int year = val.getAt(Calendar.YEAR)
@@ -57,7 +57,6 @@ class Poliza {
             return 'fechaFueraDeEjercicio'
         }
     }
-
 
     static mapping ={
         partidas cascade: "all-delete-orphan"
@@ -71,8 +70,8 @@ class Poliza {
     }
 
     def actualizar(){
-        debe=partidas.sum (0.0,{it.debe})
-        haber=partidas.sum(0.0,{it.haber})
+        debe = partidas.sum (0.0,{it.debe})
+        haber = partidas.sum(0.0,{it.haber})
     }
 
     def beforeInsert(){
@@ -81,6 +80,36 @@ class Poliza {
 
     def beforeUpdate(){
         actualizar()
+    }
+
+    static enum SubtipoIngreso {
+        COBRANZA_CON,
+        COBRANZA_COD,
+        COBRANZA_CRE,
+        COBRANZA_CHE,
+        COBRANZA_JUR,
+        INTERESES_PRESTAMO_CHOFERES,
+        DEPOSITOS_TESORERIA,
+    }
+
+    static enum SubtipoEgreso {
+        CHEQUE,
+        TRANSFERENCIA,
+        TARJETA
+    }
+
+    static enum SuttipoDiario {
+        VENTAS,
+        NOTAS_DE_CARGO,
+        NOTAS_DE_CREDITO,
+        ANTICIPOS,
+        COMPRAS,
+        DESCUENTOS_COMPRAS,
+        INVENTARIOS,
+        ACTIVO_FIJO,
+        CHEQUES_EN_TRANSITO,
+        DEPOSITOS_EN_TRANSITO,
+        TESORERIA
     }
 
 }

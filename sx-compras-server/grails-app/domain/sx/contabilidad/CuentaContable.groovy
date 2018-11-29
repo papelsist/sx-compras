@@ -52,7 +52,7 @@ class CuentaContable {
         clave nullable:true,maxSize:100 , unique:true
         descripcion blank:false,maxSize:300
         tipo inList:['ACTIVO','PASIVO','CAPITAL','ORDEN']
-        subTipo inList: ['CIRCULANTE', 'FIJO', 'DIFERIDO', 'CORTO_PLAZO', 'CAPITAL', 'ORDEN']
+        subTipo inList: ['CIRCULANTE', 'FIJO', 'DIFERIDO', 'CORTO_PLAZO', 'LARGO_PLAZO', 'CAPITAL', 'ORDEN']
         naturaleza inList:['DEUDORA','ACREEDORA']
         cuentaSat nullable:true
         createUser nullable: true
