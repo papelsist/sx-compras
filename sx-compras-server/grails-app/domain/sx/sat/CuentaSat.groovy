@@ -5,7 +5,7 @@ import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.*
 import groovy.transform.EqualsAndHashCode
 
-@Resource(uri='/api/sat/cuentas', formats=['json'])
+// @Resource(uri='/api/sat/cuentas', formats=['json'])
 @GrailsCompileStatic
 @Secured("IS_AUTHENTICATED_ANONYMOUSLY")
 @EqualsAndHashCode(includes='codigo')

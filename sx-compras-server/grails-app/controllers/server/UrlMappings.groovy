@@ -210,6 +210,7 @@ class UrlMappings {
 
         //Contabilidad
         "/api/contabilidad/cuentas"(resources: 'cuentaContable', excludes:['create', 'edit','patch'])
+        "/api/sat/cuentas"(resources: 'cuentaSat', excludes: ['create', 'edit', 'patch'])
 
         "/"(controller: 'application', action:'index')
         "/api/session"(controller: 'application', action: 'session')

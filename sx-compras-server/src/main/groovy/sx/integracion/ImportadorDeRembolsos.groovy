@@ -19,8 +19,14 @@ class ImportadorDeRembolsos {
 
     ImportadorDeRembolsos importar(Periodo periodo) {
         def select = """
-    	select c.sucursal_id, c.tipo as gtipo, t.*, d.documento,pp.rfc as rfc2, 
-    	c.proveedor_id as prov , pp.nombre as provNombre, 
+    	select
+    	t.*, 
+    	c.sucursal_id, 
+    	c.tipo as gtipo,
+    	d.documento,
+    	pp.rfc as rfc2, 
+    	c.proveedor_id as prov , 
+    	pp.nombre as provNombre
         from sw_trequisicion t 
         join sw_trequisiciondet d on(t.requisicion_id = d.requisicion_id)
         join sx_gas_facxreq2 g on(g.requisicionesdet_id = d.requisicionde_id)
@@ -37,7 +43,7 @@ class ImportadorDeRembolsos {
             }catch(Exception ex) {
                 ex.printStackTrace()
                 def message = ExceptionUtils.getRootCauseMessage(ex)
-                log.error('Error importando {} {}', row.requsicion_id, message)
+                log.error('Error importando {} {}', row.REQUISICION_ID, message)
             }
         }
         return this
@@ -52,7 +58,7 @@ class ImportadorDeRembolsos {
         }
         Rembolso rembolso = new Rembolso()
         rembolso.with {
-            formaDePago = row.forma_de_pago
+            formaDePago = row.FORMADEPAGO == 1 ? 'CHEQUE' : 'TRANSFERENCIA'
             sw2 = row.REQUISICION_ID
             sucursal = Sucursal.where{ sw2 == row.sucursal_id}.find()
             concepto = 'REMBOLSO'
@@ -65,7 +71,7 @@ class ImportadorDeRembolsos {
             createUser = 'ADMIN'
             updateUser = 'ADMIN'
         }
-        rembolso = rembolso.save flush: true
+        rembolso = rembolso.save failOnError: true, flush: true
         log.info("Rembolso importado {}", rembolso.id)
     }
 

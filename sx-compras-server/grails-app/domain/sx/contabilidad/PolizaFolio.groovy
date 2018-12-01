@@ -11,26 +11,26 @@ class PolizaFolio {
 
     Integer mes
 
-    String subTipo
+    String tipo
 
-    Long folio = 0
+    String subtipo
+
+    Integer folio = 0
 
     Date dateCreated
 
     Date lastUpdated
 
     static constraints = {
-        subTipo maxSize:50
+        subtipo maxSize:50
+        tipo maxSize:50
         mes inList:(1..13)
-        folio nullable:false, unique:['subTipo','mes','ejercicio']
+        folio nullable:false, unique:['tipo', 'subtipo','mes','ejercicio']
     }
 
     static  mapping = {}
 
-    Long next(){
-        folio++
-        return folio
-    }
+
 
 }
 

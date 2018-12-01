@@ -36,6 +36,9 @@ class Poliza {
     Date dateCreated
     Date lastUpdated
 
+    String createUser
+    String updateUser
+
     static hasMany = [partidas:PolizaDet]
 
     static constraints = {
@@ -56,6 +59,8 @@ class Poliza {
             }
             return 'fechaFueraDeEjercicio'
         }
+        createUser nullable: true
+        updateUser nullable: true
     }
 
     static mapping ={
@@ -109,7 +114,10 @@ class Poliza {
         ACTIVO_FIJO,
         CHEQUES_EN_TRANSITO,
         DEPOSITOS_EN_TRANSITO,
-        TESORERIA
+        TESORERIA,
+        PROVISION_DE_GASTOS,
+        PROVISION_DE_CARGA_SOCIAL,
+        CIERRE_ANUAL
     }
 
 }
