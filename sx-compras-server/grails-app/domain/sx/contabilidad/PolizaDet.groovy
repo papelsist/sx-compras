@@ -35,11 +35,7 @@ class PolizaDet {
     String sucursal
 
     Date dateCreated
-
     Date lastUpdated
-
-    String updateUser
-    String createUser
 
 
     static belongsTo = [poliza:Poliza]
@@ -49,18 +45,20 @@ class PolizaDet {
     static constraints = {
         concepto nullable:true
         descripcion nullable:true
-        asiento nullable:true, maxSize:20
+        asiento nullable:true
         referencia nullable:true
         referencia2 nullable:true
-        origen nullable:true, maxSize:20
-        entidad nullable:true, maxSize:50
-        documento nullable:true, maxSize:50
-        documentoTipo nullable:true, maxSize:50
+        origen nullable:true
+        entidad nullable:true
+        documento nullable:true
+        documentoTipo nullable:true
         documentoFecha nullable:true
 
         //cheque(nullable:true)
         //transferencia(nullable:true)
         //compraNal nullable:true
+
+
     }
 
     static  mapping = {

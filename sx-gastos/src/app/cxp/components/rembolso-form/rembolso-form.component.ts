@@ -61,7 +61,8 @@ export class RembolsoFormComponent implements OnInit, OnChanges, OnDestroy {
     'PAGO_TARJETA',
     'PAGO_CONTABLE',
     'PRESTAMO_CHOFER',
-    'PRESTAMO_EMPLEADO'
+    'PRESTAMO_EMPLEADO',
+    'CARGA_SOCIAL'
   ];
 
   constructor(private fb: FormBuilder, private dialog: MatDialog) {}

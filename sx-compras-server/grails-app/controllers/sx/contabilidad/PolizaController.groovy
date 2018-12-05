@@ -1,7 +1,7 @@
 package sx.contabilidad
 
 import grails.compiler.GrailsCompileStatic
-
+import grails.core.GrailsApplication
 import grails.gorm.DetachedCriteria
 import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.*
@@ -24,6 +24,8 @@ class PolizaController extends RestfulController<Poliza> {
 
     ReportService reportService
 
+    GrailsApplication grailsApplication
+
     PolizaController() {
         super(Poliza)
     }
@@ -32,35 +34,74 @@ class PolizaController extends RestfulController<Poliza> {
     protected List<Poliza> listAllResources(Map params) {
         params.sort = params.sort ?:'lastUpdated'
         params.order = params.order ?:'desc'
-        // params.max = 500
-
-        Periodo periodo = (Periodo)params.periodo
+        params.max = 500
         params.ejercicio = params.ejercicio?: Periodo.currentYear()
-        params.mes = params.ejericio?: Periodo.currentMes()
+        params.mes = params.mes?: Periodo.currentMes()
         log.debug('List : {}', params)
+
         def criteria = new DetachedCriteria(Poliza).build {
-            eq('ejercicio', params.ejericio)
-            eq('mes', params.mes)
+            eq('ejercicio', this.params.getInt('ejercicio'))
+            eq('mes', this.params.getInt('mes'))
             eq('tipo', params.tipo)
             eq('subtipo', params.subtipo)
         }
         return criteria.list(params)
     }
 
-    @Override
-    protected Poliza saveResource(Poliza resource) {
-        return polizaService.salvarPolza(resource)
+
+    def save(PolizaCreateCommand command) {
+        if(command == null) {
+            notFound()
+            return
+        }
+        Poliza poliza = new Poliza()
+        poliza.properties = command
+
+        String pname = polizaService.resolverProcesador(poliza)
+        ProcesadorDePoliza procesador = (ProcesadorDePoliza)grailsApplication.mainContext.getBean(pname)
+        poliza.concepto = procesador.definirConcepto(poliza)
+
+        poliza = polizaService.salvarPolza(poliza)
+        respond poliza
+
     }
+
 
     @Override
     protected Poliza updateResource(Poliza resource) {
-        return super.updateResource(resource)
+        ProcesadorDePoliza procesador = getProcesador(resource)
+        resource.partidas.clear()
+        resource = procesador.recalcular(resource)
+        return polizaService.updatePoliza(resource)
     }
 
     def handleException(Exception e) {
         String message = ExceptionUtils.getRootCauseMessage(e)
-        e.printStackTrace()
-        log.error(message, ExceptionUtils.getRootCause(e))
+        // e.printStackTrace()
+        log.error(message, e)
         respond([message: message], status: 500)
     }
+
+    ProcesadorDePoliza getProcesador(Poliza poliza) {
+        String pname = polizaService.resolverProcesador(poliza)
+        ProcesadorDePoliza procesador = (ProcesadorDePoliza)grailsApplication.mainContext.getBean(pname)
+        return procesador
+    }
+
+
+}
+
+class PolizaCreateCommand  {
+
+    Integer ejercicio
+    Integer mes
+    String tipo
+    String subtipo
+    Integer folio
+    Date fecha
+
+    static constraints = {
+        importFrom Poliza
+    }
+
 }

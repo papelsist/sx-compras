@@ -75,8 +75,8 @@ class Poliza {
     }
 
     def actualizar(){
-        debe = partidas.sum (0.0,{it.debe})
-        haber = partidas.sum(0.0,{it.haber})
+        debe = partidas.sum(0.0, {it.debe})
+        haber = partidas.sum(0.0, {it.haber})
     }
 
     def beforeInsert(){
@@ -105,7 +105,7 @@ class Poliza {
 
     static enum SuttipoDiario {
         VENTAS,
-        NOTAS_DE_CARGO,
+        CARGOS,
         NOTAS_DE_CREDITO,
         ANTICIPOS,
         COMPRAS,

@@ -1,0 +1,9 @@
+import sx.contabilidad.PolizaDet
+
+model {
+	PolizaDet polizaDet
+}
+
+json g.render(polizaDet, [resolveTemplate: false]) {
+	clave polizaDet.cuenta.clave
+}
