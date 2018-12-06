@@ -50,6 +50,7 @@ class SaldoPorCuentaListenerService {
     }
 
     private actualizarSaldo(MovimientoDeCuenta mov) {
+        /*
         SaldoPorCuentaDeBanco.withNewSession {
             try {
                 saldoPorCuentaDeBancoService.actualizarSaldo(mov.cuenta.id)
@@ -58,6 +59,7 @@ class SaldoPorCuentaListenerService {
                 log.error("Error al tratar de actualizar saldo por cuenta de banco", message)
             }
         }
+        */
 
     }
 }

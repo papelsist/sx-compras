@@ -32,6 +32,7 @@ class FichaService {
         mov.moneda = mov.cuenta.moneda
         mov.concepto = 'VENTAS'
         mov.sucursal = ficha.sucursal.nombre
+        generarConceptoDeReporte(mov)
         mov.save failOnError: true, flush: true
         ficha.ingreso = mov
         ficha.save flush: true
@@ -142,5 +143,15 @@ class FichaService {
             ingreso.delete flush: true
         }
         ficha.delete flush: true
+    }
+
+    /**
+     * Genera la descripcion adecuada para el estado de cuenta
+     *
+     * @param ingreso
+     */
+    def generarConceptoDeReporte(MovimientoDeCuenta ingreso) {
+       String c = "Deposito suc: ${ingreso.sucursal}"
+        ingreso.conceptoReporte = c
     }
 }

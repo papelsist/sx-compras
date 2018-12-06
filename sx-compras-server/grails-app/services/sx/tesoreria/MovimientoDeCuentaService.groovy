@@ -6,6 +6,9 @@ import grails.gorm.transactions.Transactional
 import groovy.util.logging.Slf4j
 import sx.core.Empresa
 import sx.core.LogUser
+import sx.cxc.Cobro
+import sx.cxc.CobroDeposito
+import sx.cxc.CobroTransferencia
 import sx.cxp.Rembolso
 import sx.cxp.Requisicion
 import sx.cxp.RequisicionDeCompras
@@ -127,6 +130,74 @@ class MovimientoDeCuentaService implements  LogUser{
         }
         return egreso
 
+    }
+
+    /**
+     * Temporal debe ir en CobroServies
+     *
+     * @param deposito
+     * @return
+     */
+    MovimientoDeCuenta generarIngresoPorDepositoBancario(CobroDeposito deposito) {
+        Cobro cobro = deposito.cobro
+        String sucursal = cobro.sucursal.nombre
+        MovimientoDeCuenta mov = new MovimientoDeCuenta()
+        mov.sucursal = sucursal
+        mov.referencia = "Deposito: ${deposito.folio} "
+        mov.tipo = cobro.tipo
+        if(['CRE','JUR','CHE'].contains(mov.tipo)) {
+            mov.fecha = cobro.fecha
+        } else {
+            if(cobro.primeraAplicacion == null)
+                return null
+            mov.fecha = cobro.primeraAplicacion
+        }
+        mov.formaDePago = cobro.formaDePago
+        mov.comentario = "Deposito ${cobro.tipo} ${cobro.sucursal.nombre} "
+        mov.conceptoReporte = "Deposito suc: ${sucursal}"
+        mov.cuenta = deposito.cuentaDestino
+        mov.afavor = Empresa.first().nombre
+        mov.importe = cobro.importe
+        mov.moneda = deposito.cuentaDestino.moneda
+        mov.concepto = 'VENTAS'
+        mov.save failOnError: true, flush: true
+        deposito.ingreso = mov
+        cobro.save flush: true
+        return mov
+    }
+
+    /**
+     * Temporal debe ir en CobroServies
+     *
+     * @param deposito
+     * @return
+     */
+    MovimientoDeCuenta generarIngresoPorTransferencia(CobroTransferencia deposito) {
+        Cobro cobro = deposito.cobro
+        String sucursal = cobro.sucursal.nombre
+        MovimientoDeCuenta mov = new MovimientoDeCuenta()
+        mov.sucursal = sucursal
+        mov.referencia = "Deposito: ${deposito.folio} "
+        mov.tipo = cobro.tipo
+        if(['CRE','JUR','CHE'].contains(mov.tipo)) {
+            mov.fecha = cobro.fecha
+        } else {
+            if(cobro.primeraAplicacion == null)
+                return null
+            mov.fecha = cobro.primeraAplicacion
+        }
+        mov.formaDePago = cobro.formaDePago
+        mov.comentario = "Deposito ${cobro.tipo} ${cobro.sucursal.nombre} "
+        mov.conceptoReporte = "Deposito suc: ${sucursal}"
+        mov.cuenta = deposito.cuentaDestino
+        mov.afavor = Empresa.first().nombre
+        mov.importe = cobro.importe
+        mov.moneda = deposito.cuentaDestino.moneda
+        mov.concepto = 'VENTAS'
+        mov.save failOnError: true, flush: true
+        deposito.ingreso = mov
+        cobro.save flush: true
+        return mov
     }
 }
 

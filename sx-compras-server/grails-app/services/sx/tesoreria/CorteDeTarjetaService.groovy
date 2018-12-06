@@ -189,7 +189,7 @@ class CorteDeTarjetaService implements  LogUser{
                     importe = importe * -1
                     break
                 case TipoDeAplicacion.DEBITO_COMISON_IVA:
-                    comentario = "IVA Comision tarjeta DEBITO}"
+                    comentario = "IVA Comision tarjeta DEBITO"
                     importe = importe * -1
                     break
                 case TipoDeAplicacion.CREDITO_COMISION_IVA:
@@ -200,6 +200,7 @@ class CorteDeTarjetaService implements  LogUser{
             }
             MovimientoDeCuenta mov = new MovimientoDeCuenta()
             mov.referencia = "${aplicacion.tipo}"
+            mov.sucursal = corte.sucursal.nombre
             mov.tipo = aplicacion.visaMaster ? 'VISA-MASTERCARD' : 'AMEX'
             mov.fecha = corte.corte
             mov.formaDePago = 'TARJETA'
@@ -209,7 +210,9 @@ class CorteDeTarjetaService implements  LogUser{
             mov.importe = importe
             mov.moneda = mov.cuenta.moneda
             mov.concepto = 'VENTAS'
+            mov.conceptoReporte = "Deposito suc: ${mov.sucursal}"
             mov.sucursal = corte.sucursal.nombre
+            generarConceptoDeReporte(aplicacion, mov)
             logEntity(mov)
             mov.save failOnError: true, flush: true
             aplicacion.ingreso = mov;
@@ -240,6 +243,35 @@ class CorteDeTarjetaService implements  LogUser{
             }
         } else {
             tarjeta.comision = 3.80
+        }
+    }
+
+    def generarConceptoDeReporte(CorteDeTarjetaAplicacion it, MovimientoDeCuenta ingreso) {
+        switch (it.tipo) {
+            case TipoDeAplicacion.VISAMASTER_INGRESO:
+            case TipoDeAplicacion.AMEX_INGRESO:
+                ingreso.conceptoReporte = "Deposito suc: ${ingreso.sucursal}"
+                break
+            case TipoDeAplicacion.AMEX_COMISION:
+                ingreso.conceptoReporte = "Comision por tarjeta Amex"
+                break
+            case TipoDeAplicacion.DEBITO_COMISON:
+                ingreso.conceptoReporte = "Comision por tarjeta debito"
+                break
+            case TipoDeAplicacion.CREDITO_COMISION:
+                ingreso.conceptoReporte = "Comision por tarjeta credito"
+                break
+            case TipoDeAplicacion.AMEX_COMISION_IVA:
+                ingreso.conceptoReporte = ""
+                break
+            case TipoDeAplicacion.CREDITO_COMISION_IVA:
+                ingreso.conceptoReporte = ""
+                break
+            case TipoDeAplicacion.DEBITO_COMISON_IVA:
+                ingreso.conceptoReporte = ""
+                break
+            default:
+                break
         }
     }
 }
