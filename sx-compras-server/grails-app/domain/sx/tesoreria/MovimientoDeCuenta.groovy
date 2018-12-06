@@ -36,6 +36,8 @@ class MovimientoDeCuenta {
 
     String comentario
 
+    String conceptoReporte
+
     Long sw2
 
     Date dateCreated
@@ -78,6 +80,7 @@ class MovimientoDeCuenta {
         pagoNomina nullable: true
         pagoDeMorralla nullable: true
         devolucionCliente nullable: true
+        conceptoReporte nullable: true
     }
 
     static mapping ={

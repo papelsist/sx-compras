@@ -29,6 +29,13 @@ trait ProcesadorDePoliza {
         return poliza
     }
 
+    CuentaContable buscarCuenta(String clave) {
+        CuentaContable cuenta = CuentaContable.where{clave == clave}.find()
+        if(!cuenta)
+            throw new RuntimeException("No eixste cuenta contable ${clave}")
+        return cuenta
+    }
+
     List getAllRows(String sql,List params){
         Sql db = getSql()
         try {

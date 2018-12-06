@@ -5,12 +5,15 @@ import grails.core.GrailsApplication
 import grails.gorm.DetachedCriteria
 import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.*
-
+import grails.transaction.NotTransactional
+import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.exception.ExceptionUtils
 import sx.reports.ReportService
 import sx.utils.Periodo
 
+import static org.springframework.http.HttpStatus.NO_CONTENT
+import static org.springframework.http.HttpStatus.OK
 
 
 @Slf4j
@@ -66,6 +69,23 @@ class PolizaController extends RestfulController<Poliza> {
 
     }
 
+    @Override
+    @NotTransactional
+    @CompileDynamic
+    def update() {
+        Poliza poliza = Poliza.get(params.id)
+        if (poliza == null) {
+            notFound()
+            return
+        }
+        poliza.properties = getObjectToBind()
+        poliza.partidas.clear()
+        ProcesadorDePoliza procesador = getProcesador(poliza)
+        poliza = procesador.recalcular(poliza)
+        poliza = poliza.save flush: true
+        respond poliza, [status: OK, view:'show']
+
+    }
 
     @Override
     protected Poliza updateResource(Poliza resource) {
@@ -75,11 +95,31 @@ class PolizaController extends RestfulController<Poliza> {
         return polizaService.updatePoliza(resource)
     }
 
+
+
+    def recalcular(Poliza poliza) {
+        if(poliza == null){
+            notFound()
+            return
+        }
+        ProcesadorDePoliza procesador = getProcesador(poliza)
+        poliza = procesador.recalcular(poliza)
+        poliza = polizaService.save(poliza)
+        respond poliza, [ view:'show']
+    }
+
     def handleException(Exception e) {
         String message = ExceptionUtils.getRootCauseMessage(e)
         // e.printStackTrace()
         log.error(message, e)
         respond([message: message], status: 500)
+    }
+
+    def print( ) {
+        Map repParams = [ID: params.getLong('id')]
+        // repParams.ORDEN = ''
+        def pdf =  reportService.run('contabilidad/Poliza.jrxml', repParams)
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'Poliza.pdf')
     }
 
     ProcesadorDePoliza getProcesador(Poliza poliza) {

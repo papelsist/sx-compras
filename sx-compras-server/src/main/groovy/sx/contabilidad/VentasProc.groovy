@@ -48,20 +48,19 @@ class VentasProc implements  ProcesadorDePoliza{
 
     @Override
     Poliza recalcular(Poliza poliza) {
-        log.info('Actualizando el calculo de la poliza  {}', poliza)
         String select = QUERY.replaceAll('@FECHA', toSqlDate(poliza.fecha))
         List rows = getAllRows(select, [])
+        log.info('Actualizando poliza {} procesando {} registros', poliza.id, rows.size())
         rows.each { row ->
-            log.info('Procesando: {}', row)
             cargoClientes(poliza, row)
             abonoVentas(poliza, row)
+            abonoIvaNoTrasladado(poliza, row)
         }
-        log.info('Procesando {} registros', rows.size())
+
         return poliza
     }
 
     def cargoClientes(Poliza poliza, def row) {
-        log.info('Abono a clientes ')
         CuentaDeudoraMapeo mapeo = CuentaDeudoraMapeo
                 .where {contexto == 'CLIENTES' && deudor == row.cliente}
                 .find()
@@ -69,7 +68,6 @@ class VentasProc implements  ProcesadorDePoliza{
             throw new RuntimeException("No eixste cuenta en Clienes para ${row}")
         }
         CuentaContable cuenta = mapeo.cuenta
-        log.info('Cuenta: {}', cuenta)
         String descripcion  = !row.origen ?
                 "${row.asiento}":
                 "F: ${row.documento} ${row.fecha.format('dd/MM/yyyy')} ${row.documentoTipo} ${row.sucursal}"
@@ -87,28 +85,27 @@ class VentasProc implements  ProcesadorDePoliza{
             documentoFecha: row.fecha,
             sucursal: row.sucursal,
             haber: 0.0,
-            debe: row.subtotal
+            debe: row.total
         )
         poliza.addToPartidas(det)
     }
 
-    def abonoVentas(Poliza polizam, def row) {
+    def abonoVentas(Poliza poliza, def row) {
 
         String tipo = row.documentoTipo
-        String sucursal = row.sucursal
         CuentaContable cuenta = null
-        CuentaContable mayor = CuentaContable.where{clave == '401-0000-0000-0000'}.find()
+        CuentaContable mayor = buscarCuenta('401-0000-0000-0000')
         switch (tipo) {
             case 'CON':
-                CuentaContable subcta = mayor.subcuentas.find {it.clave == '401-0005-0000-0000'}
-                cuenta = subcta.subcuentas.find {it.descripcion == row.sucursal}
-                break
-            case 'COD':
                 CuentaContable subcta = mayor.subcuentas.find {it.clave == '401-0001-0000-0000'}
                 cuenta = subcta.subcuentas.find {it.descripcion == row.sucursal}
                 break
-            case 'CRE':
+            case 'COD':
                 CuentaContable subcta = mayor.subcuentas.find {it.clave == '401-0002-0000-0000'}
+                cuenta = subcta.subcuentas.find {it.descripcion == row.sucursal}
+                break
+            case 'CRE':
+                CuentaContable subcta = mayor.subcuentas.find {it.clave == '401-0003-0000-0000'}
                 cuenta = subcta.subcuentas.find {it.descripcion == row.sucursal}
                 break
         }
@@ -130,8 +127,32 @@ class VentasProc implements  ProcesadorDePoliza{
                 documentoTipo: row.documentoTipo,
                 documentoFecha: row.fecha,
                 sucursal: row.sucursal,
-                haber: 0.0,
-                debe: row.subtotal
+                haber: row.subtotal,
+                debe: 0.0
+        )
+        poliza.addToPartidas(det)
+    }
+
+    def abonoIvaNoTrasladado(Poliza poliza, def row) {
+        CuentaContable cuenta = buscarCuenta('209-0001-0000-0000')
+        String descripcion  = !row.origen ?
+                "${row.asiento}":
+                "F: ${row.documento} ${row.fecha.format('dd/MM/yyyy')} ${row.documentoTipo} ${row.sucursal}"
+        PolizaDet det = new PolizaDet(
+                cuenta: cuenta,
+                concepto: cuenta.descripcion,
+                descripcion: descripcion,
+                asiento: row.asiento,
+                referencia: row.referencia2,
+                referencia2: row.referencia2,
+                origen: row.origen,
+                entidad: 'CuentaPorCobrar',
+                documento: row.documento,
+                documentoTipo: row.documentoTipo,
+                documentoFecha: row.fecha,
+                sucursal: row.sucursal,
+                haber: row.impuesto,
+                debe: 0.0
         )
         poliza.addToPartidas(det)
     }

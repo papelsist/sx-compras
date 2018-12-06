@@ -29,7 +29,7 @@ class Poliza {
 
     boolean manual = false
 
-    List partidas=[]
+    List<PolizaDet> partidas=[]
 
     Date cierre
 
@@ -39,7 +39,7 @@ class Poliza {
     String createUser
     String updateUser
 
-    static hasMany = [partidas:PolizaDet]
+    static hasMany = [partidas: PolizaDet]
 
     static constraints = {
         ejercicio inList:(2014..2018)
@@ -74,18 +74,6 @@ class Poliza {
         return MonedaUtils.round(debe-haber)
     }
 
-    def actualizar(){
-        debe = partidas.sum(0.0, {it.debe})
-        haber = partidas.sum(0.0, {it.haber})
-    }
-
-    def beforeInsert(){
-        actualizar()
-    }
-
-    def beforeUpdate(){
-        actualizar()
-    }
 
     static enum SubtipoIngreso {
         COBRANZA_CON,
