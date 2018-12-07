@@ -39,6 +39,7 @@ abstract  class MovimientoDeTesoreriaService implements  LogUser{
         egreso.referencia = m.referencia
         egreso.afavor = Empresa.first().nombre
         egreso.cuenta = m.cuenta
+        egreso.conceptoReporte = m.concepto
         logEntity(egreso)
         return egreso
 

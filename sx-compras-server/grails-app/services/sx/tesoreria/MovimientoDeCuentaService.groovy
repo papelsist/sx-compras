@@ -43,6 +43,7 @@ class MovimientoDeCuentaService implements  LogUser{
         // Datos del pago
         egreso.referencia = referencia
         egreso.afavor = requisicion.nombre
+        egreso.conceptoReporte = egreso.afavor
         egreso.cuenta = cuenta
         logEntity(egreso)
 
@@ -89,6 +90,7 @@ class MovimientoDeCuentaService implements  LogUser{
             comision.importe = importe * -1
             comision.fecha = requisicion.fechaDePago
             comision.concepto = 'COMISION_POR_TRANSFERENCIA'
+            comision.conceptoReporte = 'COMISION_POR_TRANSFERENCIA'
             comision.moneda = Currency.getInstance(requisicion.moneda)
             comision.tipoDeCambio = requisicion.tipoDeCambio
             comision.comentario = requisicion.comentario
@@ -122,6 +124,7 @@ class MovimientoDeCuentaService implements  LogUser{
         // Datos del pago
         egreso.referencia = referencia
         egreso.afavor = rembolso.nombre
+        egreso.conceptoReporte = egreso.afavor
         egreso.cuenta = cuenta
         logEntity(egreso)
         if(egreso.formaDePago == 'CHEQUE'){

@@ -58,6 +58,7 @@ abstract class PagoDeNominaService implements  LogUser{
         // Datos del pago
         egreso.referencia = referencia
         egreso.afavor = pago.afavor
+        egreso.conceptoReporte = pago.afavor
         logEntity(egreso)
         return egreso
     }

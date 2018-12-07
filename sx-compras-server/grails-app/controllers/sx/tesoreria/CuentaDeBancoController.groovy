@@ -85,12 +85,39 @@ class CuentaDeBancoController extends RestfulController {
         respond res
     }
 
+    @CompileDynamic
     def estadoDeCuenta(EstadoDeCuentaCommand command) {
 
         Map repParams = [:]
         repParams.FECHA_INICIAL = command.fechaIni
         repParams.FECHA_FINAL = command.fechaFin
         repParams.CUENTA_ID = command.cuenta.id
+
+        Date fechaInicial = command.fechaIni
+        Calendar cal = Calendar.getInstance()
+        cal.setTime(fechaInicial)
+        cal.set(Calendar.DATE,1)
+        Date inicioDeMes = cal.getTime()
+
+        BigDecimal inicial = MovimientoDeCuenta
+                .findAll("select sum(m.importe) from MovimientoDeCuenta m where date(m.fecha) < ? ",
+                [fechaInicial])[0]?: 0.0 as BigDecimal
+
+        BigDecimal cargos = MovimientoDeCuenta
+                .findAll("select sum(m.importe) from MovimientoDeCuenta m where date(m.fecha) between ? and ? and m.importe < 0",
+                [inicioDeMes, fechaInicial])[0]?: 0.0 as BigDecimal
+
+        BigDecimal abonos = MovimientoDeCuenta
+                .findAll("select sum(m.importe) from MovimientoDeCuenta m where date(m.fecha) between ? and ? and m.importe > 0",
+                [inicioDeMes, fechaInicial])[0]?: 0.0 as BigDecimal
+
+        BigDecimal saldo = inicial + cargos + abonos
+
+        repParams.INICIAL = inicial
+        repParams.CARGOS = cargos
+        repParams.ABONOS = abonos
+        repParams.FINAl = saldo
+
 
         def pdf =  reportService.run('EstadoDeCuentaBancario.jrxml', repParams)
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'EstadoDecuentaBancario.pdf')

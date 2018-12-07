@@ -5,6 +5,10 @@ import sx.cxc.ChequeDevuelto
 import sx.cxc.Cobro
 import sx.cxc.CobroDeposito
 import sx.cxc.CobroTransferencia
+import sx.cxp.PagoDeRembolso
+import sx.cxp.Rembolso
+import sx.cxp.RequisicionDeCompras
+import sx.cxp.RequisicionDeGastos
 import sx.tesoreria.CorteDeTarjetaAplicacion
 import sx.tesoreria.MovimientoDeCuenta
 import sx.tesoreria.MovimientoDeCuentaService
@@ -149,8 +153,51 @@ class AjustesDeIngresosBancarios {
                 [f1, f2])
         rows.each {
             MovimientoDeCuenta egreso = it.egreso
-            egreso.conceptoReporte = "Cargo por cheque dev. ${it.fecha.format('dd/MM/yyyy')}"
+            egreso.conceptoReporte = "Cargo por cheque devuelto suc: ${it.cxc.sucursal.nombre}"
             egreso = egreso.save flush: true
+        }
+    }
+
+    def ajustarPagosDeCompras() {
+        List<RequisicionDeCompras> compras = RequisicionDeCompras.findAll("from RequisicionDeCompras r where r.egreso is not null")
+        compras.each {
+            MovimientoDeCuenta egreso = it.egreso
+            egreso.conceptoReporte = egreso.afavor
+            egreso.save flush: true
+        }
+
+    }
+
+    /*
+    def ajustarPagosDeGastos() {
+        List<RequisicionDeGastos> gastos = RequisicionDeGastos.findAll("from RequisicionDeGastos r where r.egreso is not null")
+        gastos.each {
+            MovimientoDeCuenta egreso = it.egreso
+            egreso.conceptoReporte = egreso.afavor
+            egreso.save flush: true
+        }
+
+    }
+
+    def ajustarRembolsos() {
+        List<Rembolso> pagos = Rembolso.where{egreso != null}.list()
+        pagos.each {
+            MovimientoDeCuenta egreso = it.egreso
+            if(egreso.cheque) {
+                it.egreso.conceptoReporte = "${egreso.afavor}"
+            }
+            it.save flush: true
+        }
+    }
+    */
+
+    def ajustarEgresosEnGeneral() {
+        List<MovimientoDeCuenta> egresos = MovimientoDeCuenta.where {importe < 0}.list()
+        egresos.each {
+            if(it.cheque || it.formaDePago == 'TRANSFERENCIA') {
+                it.conceptoReporte = "${it.afavor}"
+                it.save flush: true
+            }
         }
     }
 }
