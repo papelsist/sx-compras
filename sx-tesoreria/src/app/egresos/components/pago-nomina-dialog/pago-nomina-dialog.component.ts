@@ -112,7 +112,7 @@ export class PagoDeNominaDialogComponent implements OnInit, OnDestroy {
   private buildForm() {
     this.form = this.fb.group({
       pagoDeNomina: this.nomina.id,
-      fecha: [{ value: this.pago, disabled: true }, [Validators.required]],
+      fecha: [{ value: this.pago, disabled: false }, [Validators.required]],
       cuenta: [null, Validators.required],
       referencia: [null, Validators.required],
       comision: [{ value: 0.0, disabled: false }],

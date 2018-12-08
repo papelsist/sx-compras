@@ -13,7 +13,7 @@ import { Rembolso, RembolsosFilter } from '../../model';
   template: `
   <ng-template tdLoading [tdLoadingUntil]="!(loading$ | async)" tdLoadingStrategy="overlay">
     <mat-card >
-      <sx-search-title title="Rembolsos a sucursales" (search)="search = $event">
+      <sx-search-title title="Rembolsos y pagos diversos" (search)="search = $event">
         <sx-rembolsos-filter-btn [filter]="filter$ | async" class="options"
           (change)="onFilter($event)"></sx-rembolsos-filter-btn>
       <button mat-button color="primary" (click)="reload()" class="actions"><mat-icon>refresh</mat-icon> Refrescar</button>

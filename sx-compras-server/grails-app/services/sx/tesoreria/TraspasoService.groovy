@@ -30,6 +30,7 @@ abstract class TraspasoService implements  LogUser{
                 traspaso.fecha,
                 traspaso.importe * -1, 'TRASPASO', 'RETIRO',
                 traspaso.cuentaOrigen, traspaso.referencia )
+        egreso.conceptoReporte = "TRASPASO A ${traspaso.cuentaDestino.bancoSat.nombreCorto} ${traspaso.cuentaDestino.numero}"
         logEntity(egreso)
         traspaso.addToMovimientos(egreso)
     }
@@ -40,6 +41,7 @@ abstract class TraspasoService implements  LogUser{
                 traspaso.importe, 'TRASPASO', 'DEPOSITO',
                 traspaso.cuentaDestino,
                 traspaso.referencia)
+        ingreso.conceptoReporte = "TRASPASO DE ${traspaso.cuentaOrigen.bancoSat.nombreCorto} ${traspaso.cuentaOrigen.numero}"
         logEntity(ingreso)
         traspaso.addToMovimientos(ingreso)
     }
@@ -51,6 +53,7 @@ abstract class TraspasoService implements  LogUser{
                     traspaso.comision * -1, 'TRASPASO', 'COMISION',
                     traspaso.cuentaOrigen,
                     traspaso.referencia)
+            comision.conceptoReporte = "COMISION DE TRASPASO"
             traspaso.addToMovimientos(comision)
             logEntity(comision)
             if(traspaso.impuesto) {
@@ -59,6 +62,7 @@ abstract class TraspasoService implements  LogUser{
                         traspaso.impuesto * -1, 'TRASPASO', 'IVA',
                         traspaso.cuentaOrigen,
                         traspaso.referencia )
+                iva.conceptoReporte = "IVA COMISION DE TRASPASO"
                 logEntity(iva)
                 traspaso.addToMovimientos(iva)
             }

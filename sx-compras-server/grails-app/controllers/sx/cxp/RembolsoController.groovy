@@ -92,7 +92,6 @@ class RembolsoController extends RestfulController {
     @Override
     protected Object updateResource(Object resource) {
         logUser(resource)
-        resource.nombre = resource.sucursal.nombre
         resource.save flush: true
     }
 

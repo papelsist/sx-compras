@@ -29,6 +29,7 @@ export interface PagoDeNomina {
 export interface PagoDeNominaCommand {
   pagoDeNomina: number;
   cuenta: string;
+  fecha: Date;
   referencia: string;
   importe?: number;
 }

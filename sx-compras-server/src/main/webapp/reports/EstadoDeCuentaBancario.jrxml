@@ -14,7 +14,7 @@
 		 rightMargin="28"
 		 topMargin="20"
 		 bottomMargin="20"
-		 whenNoDataType="NoPages"
+		 whenNoDataType="AllSectionsNoDetail"
 		 isTitleNewPage="false"
 		 isSummaryNewPage="false">
 	<property name="ireport.scriptlethandling" value="0" />
@@ -47,8 +47,9 @@
 ,m.date_created
 ,SUBSTRING(m.tipo,1,3) AS origen
 FROM movimiento_de_cuenta m  join cuenta_de_banco c on (m.cuenta_id=c.id) left join saldo_por_cuenta_de_banco s on (s.cuenta_id=c.id)
-where date(fecha) BETWEEN  $P{FECHA_INICIAL} and $P{FECHA_FINAL} and  s.mes = month(fecha) and ejercicio = year(fecha) 
+where date(fecha) BETWEEN  $P{FECHA_INICIAL} and $P{FECHA_FINAL}
 and m.cuenta_id= $P{CUENTA_ID}
+and m.por_identificar is false
 order by 1,17,18]]></queryString>
 
 	<field name="dia" class="java.lang.Long"/>

@@ -90,8 +90,8 @@ export class ComisionFormComponent implements OnInit, OnDestroy {
     'CHEQUE_CERTIFICADO',
     'COBU',
     'ANUALIDAD',
-    'EXEC_PAQ',
-    'IN_MDIA',
+    'EXC_PAQ',
+    'INT_MDIA',
     'SERV_BCA',
     'TRANS_FONDOS',
     'OTROS'

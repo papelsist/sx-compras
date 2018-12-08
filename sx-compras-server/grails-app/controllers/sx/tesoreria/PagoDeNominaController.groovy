@@ -69,7 +69,7 @@ class PagoDeNominaController extends RestfulController<PagoDeNomina> {
             return
         }
 
-        PagoDeNomina pagoDeNomina =   pagoDeNominaService.pagar(pago.pagoDeNomina, pago.cuenta, pago.referencia)
+        PagoDeNomina pagoDeNomina =   pagoDeNominaService.pagar(pago.pagoDeNomina, pago.fecha, pago.cuenta, pago.referencia)
         respond pagoDeNomina
     }
 
@@ -94,6 +94,7 @@ class PagoDeNominaCommand {
     PagoDeNomina pagoDeNomina
     CuentaDeBanco cuenta
     String referencia
+    Date fecha
 
     static constraints = {
         referencia nullable: true

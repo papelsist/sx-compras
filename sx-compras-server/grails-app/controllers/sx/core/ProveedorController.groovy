@@ -19,7 +19,7 @@ class ProveedorController extends RestfulController<Proveedor> {
         params.max = 1000
 
         String tipo = params.tipo?: 'COMPRAS'
-        def query = Proveedor.where{tipo == tipo}
+        def query = Proveedor.where{tipo == tipo || tipo == 'MIXTO'}
 
         if(tipo != 'COMPRAS')
             params.max = 500

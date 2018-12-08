@@ -34,6 +34,7 @@ abstract class ComisionBancariaService implements  LogUser{
        egreso.tipoDeCambio = 1.0
        egreso.importe = comision.comision.abs() * -1
        egreso.comentario = comision.comentario
+       egreso.conceptoReporte = "Comision ${comision.concepto}"
        egreso.formaDePago = 'TRANSFERENCIA'
        egreso.referencia = comision.referencia
        egreso.afavor = Empresa.first().nombre
@@ -51,6 +52,7 @@ abstract class ComisionBancariaService implements  LogUser{
         iva.tipoDeCambio = 1.0
         iva.importe = comision.impuesto.abs() * -1
         iva.comentario = comision.comentario
+        iva.conceptoReporte = iva.tipo
         iva.formaDePago = 'TRANSFERENCIA'
         iva.referencia = comision.referencia
         iva.afavor = Empresa.first().nombre

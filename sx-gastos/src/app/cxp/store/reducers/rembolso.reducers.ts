@@ -102,7 +102,8 @@ export function reducer(state = initialState, action: RembolsoActions): State {
     case RembolsoActionTypes.DeleteRembolsoSuccess: {
       const rembolso = action.payload.rembolso;
       return adapter.removeOne(rembolso.id, {
-        ...state
+        ...state,
+        loading: false
       });
     }
 

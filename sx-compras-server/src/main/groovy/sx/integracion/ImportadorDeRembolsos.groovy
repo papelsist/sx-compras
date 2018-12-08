@@ -115,13 +115,14 @@ class ImportadorDeRembolsos {
     MovimientoDeCuenta importarEgreso(def row, Rembolso rembolso) {
         def cuenta = CuentaDeBanco.where{sw2 == row.cuenta_id}.find()
         MovimientoDeCuenta egreso = new MovimientoDeCuenta()
-        egreso.tipo = 'GASTO'
+        egreso.tipo = 'REMBOLSO'
         egreso.importe = row.importe
         egreso.fecha = row.fecha
         egreso.concepto = 'REMBOLSO'
         egreso.moneda = Currency.getInstance(row.moneda)
         egreso.tipoDeCambio = row.tc
         egreso.comentario = row.comentario
+        egreso.conceptoReporte = row.afavor
         egreso.formaDePago = rembolso.formaDePago
         egreso.referencia = row.referencia
         egreso.afavor = row.afavor
@@ -155,7 +156,7 @@ class ImportadorDeRembolsos {
                 cheque.fecha = egreso.fecha
                 cheque.folio = egreso.referencia.toLong()
                 cheque.importe = egreso.importe.abs()
-                cheque.egreso = egreso
+                // cheque.egreso = egreso
                 cheque.impresion = row.impreso
                 cheque.cobrado = row.FECHACOBRADO
 

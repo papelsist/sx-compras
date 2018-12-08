@@ -28,11 +28,11 @@ abstract class PagoDeNominaService implements  LogUser{
         return save(pagoDeNomina)
     }
 
-    PagoDeNomina pagar(PagoDeNomina pagoDeNomina, CuentaDeBanco cuenta, String referencia) {
+    PagoDeNomina pagar(PagoDeNomina pagoDeNomina, Date fecha, CuentaDeBanco cuenta, String referencia) {
         log.info("Pagando nomina {}", pagoDeNomina.nomina)
         if(pagoDeNomina.egreso != null)
             throw new RuntimeException("PagoDeNomina ${pagoDeNomina.id} ya pagado Egreso: ${pagoDeNomina.egreso.id}")
-
+        pagoDeNomina.pago = fecha
         MovimientoDeCuenta egreso = generarEgreso(pagoDeNomina, cuenta, referencia)
         pagoDeNomina.egreso = egreso
         pagoDeNomina = save(pagoDeNomina)

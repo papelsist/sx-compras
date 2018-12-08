@@ -51,6 +51,8 @@ class MovimientoDeCuenta {
 
     String sucursal
 
+    boolean porIdentificar = false
+
     static belongsTo = [
             movimientoDeTesoreria: MovimientoDeTesoreria,
             requisicion: Requisicion,
@@ -83,6 +85,7 @@ class MovimientoDeCuenta {
         devolucionCliente nullable: true
         ficha nullable: true
         conceptoReporte nullable: true
+        porIdentificar nullable: true
     }
 
     static mapping ={

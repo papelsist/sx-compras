@@ -14,12 +14,14 @@ class CuentaPorPagarController extends RestfulController<CuentaPorPagar> {
         super(CuentaPorPagar)
     }
 
+
+
     @Override
     protected List<CuentaPorPagar> listAllResources(Map params) {
         log.info('List: {}', params)
         params.sort = 'fecha'
         params.order = 'desc'
-
+        params.max = params.registros ?: 300
 
         def tipo = params.tipo?: 'COMPRAS'
         def query = CuentaPorPagar.where {tipo == tipo}

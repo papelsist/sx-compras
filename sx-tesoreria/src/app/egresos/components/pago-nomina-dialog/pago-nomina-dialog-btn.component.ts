@@ -39,7 +39,8 @@ export class PagoDeNominaBtnComponent implements OnInit {
             pagoDeNomina: command.id,
             referencia: command.referencia,
             cuenta: command.cuenta.id,
-            importe: command.importe ? command.importe : undefined
+            importe: command.importe ? command.importe : undefined,
+            fecha: command.fecha
           };
           this.pagar.emit(pago);
         }

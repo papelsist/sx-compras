@@ -100,23 +100,23 @@ class CuentaDeBancoController extends RestfulController {
         Date inicioDeMes = cal.getTime()
 
         BigDecimal inicial = MovimientoDeCuenta
-                .findAll("select sum(m.importe) from MovimientoDeCuenta m where date(m.fecha) < ? ",
+                .findAll("select sum(m.importe) from MovimientoDeCuenta m where date(m.fecha) < ?  and m.porIdentificar = false",
                 [fechaInicial])[0]?: 0.0 as BigDecimal
 
         BigDecimal cargos = MovimientoDeCuenta
                 .findAll("select sum(m.importe) from MovimientoDeCuenta m where date(m.fecha) between ? and ? and m.importe < 0",
-                [inicioDeMes, fechaInicial])[0]?: 0.0 as BigDecimal
+                [fechaInicial, command.fechaFin])[0]?: 0.0 as BigDecimal
 
         BigDecimal abonos = MovimientoDeCuenta
-                .findAll("select sum(m.importe) from MovimientoDeCuenta m where date(m.fecha) between ? and ? and m.importe > 0",
-                [inicioDeMes, fechaInicial])[0]?: 0.0 as BigDecimal
+                .findAll("select sum(m.importe) from MovimientoDeCuenta m where date(m.fecha) between ? and ? and m.importe > 0 and m.porIdentificar = false",
+                [fechaInicial, command.fechaFin])[0]?: 0.0 as BigDecimal
 
         BigDecimal saldo = inicial + cargos + abonos
 
         repParams.INICIAL = inicial
         repParams.CARGOS = cargos
         repParams.ABONOS = abonos
-        repParams.FINAl = saldo
+        repParams.FINAL = saldo
 
 
         def pdf =  reportService.run('EstadoDeCuentaBancario.jrxml', repParams)

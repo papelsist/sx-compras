@@ -112,7 +112,7 @@ class MovimientoDeCuentaService implements  LogUser{
 
         MovimientoDeCuenta egreso = new MovimientoDeCuenta()
         egreso.tipo = 'REMBOLSO'
-        egreso.concepto = 'REMBOLSO'
+        egreso.concepto = rembolso.concepto
         egreso.sucursal = egreso.sucursal
         egreso.fecha = rembolso.fechaDePago
         egreso.moneda = cuenta.moneda
