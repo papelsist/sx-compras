@@ -4,9 +4,13 @@ import groovy.util.logging.Slf4j
 
 import org.springframework.stereotype.Component
 
+import static sx.contabilidad.Mapeo.*
+
 @Slf4j
 @Component
-class VentasProc implements  ProcesadorDePoliza{
+class VentasProc implements  ProcesadorDePoliza {
+
+    static String IVA_NO_TRASLADADO = "209-0001-0000-0000"
 
     String QUERY = """
          SELECT 
@@ -65,7 +69,7 @@ class VentasProc implements  ProcesadorDePoliza{
                 .where {contexto == 'CLIENTES' && deudor == row.cliente}
                 .find()
         if(mapeo == null) {
-            throw new RuntimeException("No eixste cuenta en Clienes para ${row}")
+            throw new RuntimeException("No eixste mapeo de cuenta deudora para el cliente:  ${row.cliente}")
         }
         CuentaContable cuenta = mapeo.cuenta
         String descripcion  = !row.origen ?
@@ -134,7 +138,8 @@ class VentasProc implements  ProcesadorDePoliza{
     }
 
     def abonoIvaNoTrasladado(Poliza poliza, def row) {
-        CuentaContable cuenta = buscarCuenta('209-0001-0000-0000')
+
+        CuentaContable cuenta = buscarCuenta(IvaNoTrasladadoVentas.clave)
         String descripcion  = !row.origen ?
                 "${row.asiento}":
                 "F: ${row.documento} ${row.fecha.format('dd/MM/yyyy')} ${row.documentoTipo} ${row.sucursal}"

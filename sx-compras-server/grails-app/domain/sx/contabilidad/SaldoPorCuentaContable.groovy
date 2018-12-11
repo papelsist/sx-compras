@@ -9,13 +9,23 @@ import groovy.transform.ToString
 class SaldoPorCuentaContable {
 
     CuentaContable cuenta
-    Integer year
+
+    String clave
+
+    Integer ejercicio
+
     Integer mes
+
     Date fecha
+
     BigDecimal debe
+
     BigDecimal haber
+
     BigDecimal saldoInicial
+
     BigDecimal saldoFinal
+
     Date cierre
 
     Date dateCreated
@@ -30,6 +40,8 @@ class SaldoPorCuentaContable {
         saldoInicial nullable:false, scale:6
         saldoFinal nullable:false, scale:6
         createUser nullable: true
+        updateUser nullable: true
+        cierre nullable: true
     }
 
     static mapping ={

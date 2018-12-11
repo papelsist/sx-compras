@@ -1,9 +1,11 @@
 package sx.contabilidad
 
 import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
 import sx.sat.CuentaSat
 
 @EqualsAndHashCode(includes='clave')
+@ToString(includes='clave, tipo, subtipo, detalle',includeNames=true,includePackage=false)
 class CuentaContable {
 
     String clave

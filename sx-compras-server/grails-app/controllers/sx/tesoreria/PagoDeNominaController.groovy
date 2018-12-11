@@ -36,9 +36,15 @@ class PagoDeNominaController extends RestfulController<PagoDeNomina> {
 
         log.debug('List : {}', params)
         Periodo periodo = (Periodo)params.periodo
+        def pendientes = this.params.getBoolean('pendientes', true)
 
         def criteria = new DetachedCriteria(PagoDeNomina).build {
             between("lastUpdated", periodo.fechaInicial, periodo.fechaFinal)
+        }
+        if(pendientes) {
+            criteria = criteria.build {
+                isNull('egreso')
+            }
         }
         return criteria.list(params)
     }

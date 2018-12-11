@@ -43,7 +43,6 @@ class PolizaDet {
     //static hasOne = [cheque: PolizaCheque, transferencia: TransaccionTransferencia, compraNal: TransaccionCompraNal]
 
     static constraints = {
-        concepto nullable:true
         descripcion nullable:true
         asiento nullable:true
         referencia nullable:true
