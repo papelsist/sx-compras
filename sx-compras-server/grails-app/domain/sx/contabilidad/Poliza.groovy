@@ -51,14 +51,6 @@ class Poliza {
         haber scale:6
         concepto maxSize:300
         cierre nullable:true
-        fecha validator:{ val, obj ->
-            int year = val.getAt(Calendar.YEAR)
-            int month = val.getAt(Calendar.MONTH) + 1
-            if(year == obj.ejercicio && month == obj.mes) {
-                return true
-            }
-            return 'fechaFueraDeEjercicio'
-        }
         createUser nullable: true
         updateUser nullable: true
     }
@@ -110,5 +102,14 @@ class Poliza {
 
 }
 
+/**
+ * fecha validator:{ val, obj ->
+ *             int year = val.getAt(Calendar.YEAR)
+ *             int month = val.getAt(Calendar.MONTH) + 1
+ *             if(year == obj.ejercicio && month == obj.mes) {*                 return true
+ *}
+ *             return 'fechaFueraDe'
+ *         }
+ */
 
 

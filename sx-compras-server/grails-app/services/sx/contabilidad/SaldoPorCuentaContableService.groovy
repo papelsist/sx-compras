@@ -1,5 +1,6 @@
 package sx.contabilidad
 
+import grails.transaction.NotTransactional
 import groovy.util.logging.Slf4j
 
 @Slf4j
@@ -47,7 +48,6 @@ class SaldoPorCuentaContableService {
         SaldoPorCuentaContable saldo = SaldoPorCuentaContable
                 .findOrCreateWhere(cuenta: cuenta, clave: cuenta.clave, ejercicio: ejercicio, mes: mes)
 
-        saldo.fecha = new Date()
         saldo.saldoInicial = saldoInicial
         saldo.debe = debe
         saldo.haber = haber
@@ -55,19 +55,68 @@ class SaldoPorCuentaContableService {
         saldo.save failOnError:true, flush: true
     }
 
-    def mayorizar(SaldoPorCuentaContable saldoDeCuenta) {
-        CuentaContable padre = saldoDeCuenta.cuenta .padre
-        if(padre) {
-            SaldoPorCuentaContable saldo = SaldoPorCuentaContable
-                    .findOrCreateWhere(cuenta: cuenta, clave: cuenta.clave, ejercicio: ejercicio, mes: mes)
+    @NotTransactional
+    void mayorizar(Integer ejercicio, Integer mes) {
+        List<CuentaContable> cuentas = CuentaContable.where{padre == null}.list()
+        cuentas.each {
+            mayorizar(it, ejercicio, mes)
         }
     }
 
-    def findMayor(CuentaContable cuenta) {
-        if(cuenta.padre == null)
-            return cuenta
-        else
-            return findMayor(cuenta.padre)
+    @NotTransactional
+    void mayorizar(CuentaContable cuenta, Integer ejercicio, Integer mes) {
+        def niveles = calcularNiveles(cuenta, 1) - 1
+        (niveles..1).each {
+            mayorizarCuenta(cuenta, it, ejercicio, mes)
+        }
+
+    }
+
+
+    def mayorizarCuenta(CuentaContable cuenta, int nivel, Integer ejercicio, Integer mes) {
+        String clave = cuenta.clave
+        String[] parts = clave.split('-')
+        String ma = parts[0] + '%'
+        List<CuentaContable> subcuentas = CuentaContable.where{clave =~ ma && nivel == nivel}.list()
+        //println "----------------------- Mayorizando ${subcuentas.size()} de nivel $nivel ---------------------"
+        log.info("-- Mayorizando {} de nivel {}", subcuentas.size(), nivel)
+        subcuentas.each {
+            // println it
+            SaldoPorCuentaContable saldo = SaldoPorCuentaContable
+                    .findOrCreateWhere(cuenta: it, clave: cuenta.clave, ejercicio: ejercicio, mes: mes)
+            def row = SaldoPorCuentaContable
+                    .executeQuery("""
+                    select sum(d.saldoInicial),
+                        sum(d.debe),
+                        sum(d.haber), 
+                        sum(d.saldoFinal) 
+                        from SaldoPorCuentaContable d 
+                         where d.cuenta.padre = ? 
+                         and ejercicio = ? 
+                         and mes = ?
+                         """
+                    ,[it, ejercicio, mes])
+            BigDecimal ini = row.get(0)[0]?:0.0
+            BigDecimal debe = row.get(0)[1]?:0.0
+            BigDecimal haber = row.get(0)[2]?:0.0
+            BigDecimal fin = row.get(0)[3]?:0.0
+            saldo.saldoInicial = ini
+            saldo.debe = debe
+            saldo.haber = haber
+            saldo.saldoFinal = fin
+            saldo.save failOnError: true, flush: true
+            log.info("Actualizado: ",saldo)
+
+        }
+
+
+    }
+
+
+    def calcularNiveles(CuentaContable cuenta, int nivel) {
+         if(cuenta.subcuentas)
+             return calcularNiveles(cuenta.subcuentas.first(), nivel + 1)
+         return nivel
     }
 
 

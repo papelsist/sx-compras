@@ -57,8 +57,8 @@ class ComprobanteFiscal {
     Date lastUpdated
 
     static constraints = {
-        serie nullable:true,maxSize:30
-        folio nullable:true,maxSize:30
+        serie nullable:true,maxSize:255
+        folio nullable:true,maxSize:255
         emisorNombre nullable: true
         emisorRfc minSize: 12, maxSize:13
         receptorNombre nullable: true

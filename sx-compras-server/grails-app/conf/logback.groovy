@@ -15,7 +15,7 @@ appender('STDOUT', ConsoleAppender) {
         charset = Charset.forName('UTF-8')
 
         pattern =
-                '%clr(%d{dd-MM-yy HH:mm}){faint} ' + // Date
+                // '%clr(%d{dd-MM-yy HH:mm}){faint} ' + // Date
                         '%clr(%5p) ' + // Log level
                         //'%clr(---){faint} %clr([%15.15t]){faint} ' + // Thread
                         '%clr(%-40.40logger{39}){cyan} %clr(:){faint} ' + // Logger

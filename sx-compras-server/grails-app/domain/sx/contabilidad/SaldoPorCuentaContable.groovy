@@ -4,8 +4,8 @@ import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 
 
-@EqualsAndHashCode(includes='clave')
-@ToString(includes = 'cuenta, ejercicio, mes, saldoFinal', includeNames=true,includePackage=false)
+@EqualsAndHashCode(includes='id, ejercicio, mes, clave')
+@ToString(includes = 'cuenta, ejercicio, mes, saldoInicial, debe, haber, saldoFinal', includeNames=true,includePackage=false)
 class SaldoPorCuentaContable {
 
     CuentaContable cuenta
@@ -15,8 +15,6 @@ class SaldoPorCuentaContable {
     Integer ejercicio
 
     Integer mes
-
-    Date fecha
 
     BigDecimal debe
 
@@ -45,7 +43,6 @@ class SaldoPorCuentaContable {
     }
 
     static mapping ={
-        fecha type: 'date'
         cierre type: 'date'
     }
 
