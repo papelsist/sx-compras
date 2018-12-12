@@ -16,13 +16,13 @@ class SaldoPorCuentaContable {
 
     Integer mes
 
-    BigDecimal debe
+    BigDecimal debe = 0.0
 
-    BigDecimal haber
+    BigDecimal haber = 0.0
 
-    BigDecimal saldoInicial
+    BigDecimal saldoInicial = 0.0
 
-    BigDecimal saldoFinal
+    BigDecimal saldoFinal = 0.0
 
     Date cierre
 

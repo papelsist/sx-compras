@@ -4,4 +4,6 @@ model {
 	Poliza poliza
 }
 
-json g.render(poliza, [resolveTemplate: false])
+json g.render(poliza, [resolveTemplate: false]) {
+	cuadre poliza.debe - poliza.haber
+}

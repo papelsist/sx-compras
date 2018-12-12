@@ -25,17 +25,17 @@ class CargosProc implements  ProcesadorDePoliza{
         x.cliente
         FROM (
         SELECT concat(f.tipo_documento,'_',f.tipo) as asiento,f.id as origen,f.tipo as documentoTipo,f.fecha,f.documento
-        ,f.moneda,f.tipo_de_cambio as tc,f.subtotal,f.impuesto,f.total,c.nombre referencia2,s.nombre sucursal,f.cliente_id as cliente
+        ,f.moneda,f.tipo_de_cambio as tc,f.subtotal,f.impuesto,f.total,c.nombre referencia2,s.nombre as sucursal,f.cliente_id as cliente
         FROM cuenta_por_cobrar f join cliente c on(f.cliente_id=c.id)  
         join sucursal s on(f.sucursal_id=s.id) LEFT join cfdi x on(f.cfdi_id=x.id)
-        where  f.fecha='2018-11-26' and f.tipo_documento in('CHEQUE_DEVUELTO','NOTA_DE_CARGO') and f.sw2 is null and (x.cancelado is false or x.cancelado is null)
+        where  f.fecha='@FECHA' and f.tipo_documento in('CHEQUE_DEVUELTO','NOTA_DE_CARGO') and f.sw2 is null and (x.cancelado is false or x.cancelado is null)
         UNION
         SELECT concat(f.tipo_documento,'_JUR') as asiento,f.id as origen,'JUR' as documentoTipo,f.fecha,f.documento
         ,f.moneda,f.tipo_de_cambio as tc,f.subtotal,f.impuesto,f.total,c.nombre referencia2,s.nombre sucursal,f.cliente_id
         FROM cuenta_por_cobrar f join cliente c on(f.cliente_id=c.id)  
         join sucursal s on(f.sucursal_id=s.id) left  join cfdi x on(f.cfdi_id=x.id)
         join juridico j on(j.cxc_id=f.id)
-        where j.traspaso='2015-10-08'  
+        where j.traspaso='@FECHA'  
         ) as x
         
     """

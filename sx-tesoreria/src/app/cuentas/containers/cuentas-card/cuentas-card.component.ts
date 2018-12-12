@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { Store, select } from '@ngrx/store';
+import * as fromRoot from '../../../store';
 import * as fromStore from '../../store';
 
 import { Observable } from 'rxjs';
@@ -87,6 +88,9 @@ export class CuentasCardComponent implements OnInit {
   }
 
   onSelect(cuenta: CuentaDeBanco) {
-    this.store.dispatch(new fromStore.SetSelectedCuenta({ cuenta }));
+    this.store.dispatch(
+      new fromRoot.Go({ path: ['cuentas/estadoDeCuenta', cuenta.id] })
+    );
+    // this.store.dispatch(new fromStore.SetSelectedCuenta({ cuenta }));
   }
 }
