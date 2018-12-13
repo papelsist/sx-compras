@@ -8,4 +8,7 @@ json g.render(movimientoDeCuenta, [ excludes: ['moneda'], resolveTemplate: false
 	moneda movimientoDeCuenta.moneda.currencyCode
 	banco movimientoDeCuenta.cuenta.descripcion
 	cuentaNumero movimientoDeCuenta.cuenta.numero
+	deposito movimientoDeCuenta.importe > 0 ? movimientoDeCuenta.importe.abs() : 0.0
+	retiro movimientoDeCuenta.importe < 0 ? movimientoDeCuenta.importe.abs(): 0.0
+	porIdentificar movimientoDeCuenta.porIdentificar ? 'X' : ''
 }

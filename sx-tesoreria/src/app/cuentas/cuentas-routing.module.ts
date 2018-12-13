@@ -11,7 +11,8 @@ const routes: Routes = [
     component: fromContainers.CuentasPageComponent
   },
   {
-    path: 'estadoDeCuenta',
+    path: 'estadoDeCuenta/:cuentaId',
+    canActivate: [fromGuards.CuentasGuard],
     component: fromContainers.EstadoDeCuentaComponent
   }
 ];

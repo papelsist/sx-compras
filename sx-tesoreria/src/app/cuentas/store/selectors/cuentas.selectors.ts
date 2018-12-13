@@ -43,10 +43,17 @@ export const getSelectedCuentaId = createSelector(
   fromCuentas.getSelectedCuentaId
 );
 
+export const getSelectedCuenta = createSelector(
+  getCuentasEntities,
+  getSelectedCuentaId,
+  (entities, id) => entities[id]
+);
+
 export const getCurrentCuenta = createSelector(
   getCuentasEntities,
   fromRoot.getRouterState,
   (entities, router): CuentaDeBanco => {
+    // console.log('Router state params: ', router.state.params);
     return router.state && entities[router.state.params.cuentaId];
   }
 );

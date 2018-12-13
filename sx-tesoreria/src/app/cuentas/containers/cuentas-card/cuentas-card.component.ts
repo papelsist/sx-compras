@@ -88,9 +88,9 @@ export class CuentasCardComponent implements OnInit {
   }
 
   onSelect(cuenta: CuentaDeBanco) {
+    this.store.dispatch(new fromStore.SetSelectedCuenta({ cuenta }));
     this.store.dispatch(
       new fromRoot.Go({ path: ['cuentas/estadoDeCuenta', cuenta.id] })
     );
-    // this.store.dispatch(new fromStore.SetSelectedCuenta({ cuenta }));
   }
 }

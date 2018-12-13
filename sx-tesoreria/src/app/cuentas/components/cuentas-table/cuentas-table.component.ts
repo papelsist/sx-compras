@@ -31,14 +31,13 @@ export class CuentasTableComponent implements OnInit, OnChanges {
 
   dataSource = new MatTableDataSource<CuentaDeBanco>([]);
 
+  @Input()
   displayColumns = [
     'numero',
-    // 'clave',
     'descripcion',
     'banco',
     'moneda',
     'lastUpdated',
-    // 'updateUser',
     'operaciones'
   ];
   @ViewChild(MatSort)

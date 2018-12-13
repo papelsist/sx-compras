@@ -3,8 +3,11 @@ package sx.tesoreria
 import grails.compiler.GrailsCompileStatic
 import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.RestfulController
+import grails.web.databinding.WebDataBinding
+import groovy.beans.Bindable
 import groovy.transform.CompileDynamic
 import org.apache.commons.lang3.exception.ExceptionUtils
+
 import sx.reports.ReportService
 import sx.utils.Periodo
 
@@ -87,6 +90,32 @@ class CuentaDeBancoController extends RestfulController {
 
     @CompileDynamic
     def estadoDeCuenta(EstadoDeCuentaCommand command) {
+        Date fechaInicial = command.fechaIni
+        BigDecimal saldoInicial = MovimientoDeCuenta
+                .findAll("select sum(m.importe) from MovimientoDeCuenta m where date(m.fecha) < ?  and m.porIdentificar = false",
+                [fechaInicial])[0]?: 0.0 as BigDecimal
+        List<MovimientoDeCuenta> movimientos = MovimientoDeCuenta
+                .findAll("from MovimientoDeCuenta m where date(m.fecha) between ? and ? order by fecha",
+                [fechaInicial, command.fechaFin])
+        BigDecimal cargos = movimientos.sum 0.0, {it.importe<0 ? it.importe: 0.0}
+        BigDecimal abonos = movimientos.sum 0.0, {it.importe>0 ? it.importe: 0.0}
+        BigDecimal saldoFinal = saldoInicial + cargos + abonos
+
+        EstadoDeCuenta estadoDeCuenta = new EstadoDeCuenta(
+                cuenta: command.cuenta,
+                saldoInicial:saldoInicial,
+                cargos: cargos,
+                abonos: abonos,
+                saldoFinal: saldoFinal,
+                movimientos: movimientos
+        )
+        respond([estadoDeCuenta: estadoDeCuenta])
+        // respond([message: message], status: 500)
+
+    }
+
+    @CompileDynamic
+    def estadoDeCuentaReport(EstadoDeCuentaCommand command) {
 
         Map repParams = [:]
         repParams.FECHA_INICIAL = command.fechaIni
@@ -124,6 +153,51 @@ class CuentaDeBancoController extends RestfulController {
 
     }
 
+    @CompileDynamic
+    def movimientosReport() {
+        log.info('Imprimir movimientos: {}', params)
+        ReporteDeMovimientos command = new ReporteDeMovimientos()
+        command.cuenta = CuentaDeBanco.get(params.cuentaId)
+        command.properties = getObjectToBind()
+        log.info('Cuenta: {}', command.cuenta)
+        log.info('Rows: {}', command.rows.size())
+
+        Map reportParams = [
+                FECHA_INI: command.fechaIni.format('dd/MM/yyyy'),
+                FECHA_FIN: command.fechaFin.format('dd/MM/yyyy')
+        ]
+        /**
+         * <field name="Banco" class="java.lang.String"/>
+         * 	<field name="Cuenta" class="java.lang.Long"/>
+         * 	<field name="Fecha" class="java.util.Date"/>
+         * 	<field name="Concepto" class="java.lang.String"/>
+         * 	<field name="Importe" class="java.math.BigDecimal"/>
+         * 	<field name="TC" class="java.math.BigDecimal"/>
+         * 	<field name="Referencia" class="java.lang.String"/>
+         * 	<field name="Comentario" class="java.lang.String"/>
+         * 	<field name="Origen" class="java.lang.String"/>
+         * 	<field name="Conciliacion" class="java.lang.Boolean"/>
+         * 	<field name="Descripcion" class="java.lang.String"/>
+         */
+        List<MovimientoDeCuenta> data = command.rows.collect { mov ->
+            def res = [
+                    Banco: mov.cuenta.descripcion,
+                    Cuenta: mov.cuenta.numero,
+                    Fecha: mov.fecha,
+                    Importe: mov.importe,
+                    TC: mov.tipoDeCambio,
+                    Referencia: mov.referencia,
+                    Comentario: mov.comentario,
+                    Origen: mov.tipo,
+                    Conciliacion: mov.porIdentificar,
+                    Descripcion: mov.conceptoReporte
+            ]
+            return res
+        }
+        def pdf =  reportService.run('MovimientosDeCuentaBancaria.jrxml', reportParams, data)
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'Movimientos.pdf')
+    }
+
     def handleException(Exception e) {
         String message = ExceptionUtils.getRootCauseMessage(e)
         e.printStackTrace()
@@ -136,4 +210,21 @@ class EstadoDeCuentaCommand {
     CuentaDeBanco cuenta
     Date fechaIni
     Date fechaFin
+}
+
+class EstadoDeCuenta {
+    CuentaDeBanco cuenta
+    BigDecimal saldoInicial
+    BigDecimal cargos
+    BigDecimal abonos
+    BigDecimal saldoFinal
+    List<MovimientoDeCuenta> movimientos
+
+}
+
+class ReporteDeMovimientos implements WebDataBinding {
+    Date fechaIni
+    Date fechaFin
+    CuentaDeBanco cuenta
+    List<MovimientoDeCuenta> rows
 }

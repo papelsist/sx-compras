@@ -1,4 +1,30 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  AfterViewInit,
+  ChangeDetectorRef,
+  ViewChild
+} from '@angular/core';
+
+import { Store, select } from '@ngrx/store';
+import * as fromRoot from '../../../store';
+import * as fromStore from '../../store';
+
+import { Observable, Subject } from 'rxjs';
+
+import { CuentaDeBanco } from 'app/models';
+import { Movimiento } from 'app/cuentas/models/movimiento';
+import { Periodo } from 'app/_core/models/periodo';
+import { MatDialog } from '@angular/material';
+import {
+  SelectorDeCuentasComponent,
+  EstadoDeCuentaTableComponent
+} from 'app/cuentas/components';
+import { EstadoDeCuenta } from 'app/cuentas/models/estado-de-cuenta';
+import { takeUntil } from 'rxjs/operators';
+import { PeriodoDialogComponent } from 'app/_shared/components';
+import { ReportService } from 'app/reportes/services/report.service';
 
 @Component({
   selector: 'sx-estado-de-cuenta',
@@ -9,23 +35,174 @@ import { Component, OnInit } from '@angular/core';
         <mat-icon>menu</mat-icon>
       </button>
       <span class="cursor-pointer">Estado de cuenta </span> <span flex></span>
-      <sx-estado-de-cuenta-btn></sx-estado-de-cuenta-btn>
     </div>
 
-    <div layout-gt-sm="row" tdMediaToggle="gt-xs" [mediaClasses]="['push-sm']">
-      <div flex-gt-sm="50">
-        <sx-cuentas-card></sx-cuentas-card>
-      </div>
+    <div layout>
+      <mat-card flex >
+        <div layout class="mat-title pad-top pad-left pad-right">
+          <span>Cuenta: </span>
+          <span class="cursor-pointer" (click)="seleccionarCuenta(cuentas)" *ngIf="cuentas$ | async as cuentas">
+            <span class="pad-left">{{cuenta.descripcion}}</span>
+            <span class="pad-left">{{cuenta.tipo}}</span>
+            <span class="pad-left">{{cuenta.numero}}</span>
+          </span>
+          <span flex></span>
+          <span>Periodo: </span>
+          <button mat-button *ngIf="periodo" class="pad-left" (click)="cambiarPeriodo()">
+            {{periodo}}
+            <mat-icon>event</mat-icon>
+          </button>
+        </div>
+        <div layout *ngIf="estadoDeCuenta$ | async as estado" class=" pad-left pad-right pad-bottom">
+          <span >S. Inicial:</span>
+          <span class="pad-left">{{estado.saldoInicial | currency}}</span>
+          <span class="pad-left">S. Final:</span>
+          <span class="pad-left">{{estado.saldoFinal | currency}}</span>
+
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="table-panel">
+          <sx-estado-de-cuenta-table class="table" #grid
+            [movimientos]="movimientos$ | async"
+            (totalesChanged)="actualizarTotales($event)"
+            (print)="onPrint($event)">
+          </sx-estado-de-cuenta-table>
+        </div>
+
+        <mat-divider></mat-divider>
+        <mat-card-actions>
+          <div layout>
+            <button mat-button class="text-upper" (click)="regresar()">
+              <mat-icon>arrow_back</mat-icon>
+              Cuentas
+            </button>
+            <button mat-button color="accent" class="text-upper" (click)="load(cuenta, periodo)">
+              <span>Refrescar</span>
+              <mat-icon>refresh</mat-icon>
+            </button>
+            <button mat-button color="primary" (click)="grid.printGrid()">
+              <mat-icon>print</mat-icon> Imprimir
+            </button>
+            <span flex></span>
+            <span>Depósitos: {{depositos | currency}}</span>
+            <span class="pad-left">Retiros: {{retiros | currency}}</span>
+            <span flex></span>
+          </div>
+        </mat-card-actions>
+      </mat-card>
     </div>
     <td-layout-footer>
       <sx-footer></sx-footer>
     </td-layout-footer>
   </td-layout-nav>
-
-  `
+  `,
+  styles: [
+    `
+      .table-panel {
+        height: 700px;
+      }
+    `
+  ]
 })
-export class EstadoDeCuentaComponent implements OnInit {
-  constructor() {}
+export class EstadoDeCuentaComponent
+  implements OnInit, AfterViewInit, OnDestroy {
+  estadoDeCuenta$: Observable<EstadoDeCuenta>;
+  cuentas$: Observable<CuentaDeBanco[]>;
+  loading$: Observable<boolean>;
 
-  ngOnInit() {}
+  destroy$ = new Subject<boolean>();
+  periodo: Periodo;
+  cuenta: CuentaDeBanco;
+
+  depositos = 0.0;
+  retiros = 0.0;
+
+  movimientos$: Observable<Movimiento[]>;
+  periodoStorageKey = 'sx-tesoreria.estadoDeCuenta.periodo';
+
+  @ViewChild('table')
+  table: EstadoDeCuentaTableComponent;
+
+  constructor(
+    private store: Store<fromStore.State>,
+    private dialog: MatDialog,
+    private service: ReportService,
+    private cd: ChangeDetectorRef
+  ) {}
+
+  ngOnInit() {
+    this.periodo = Periodo.fromStorage(
+      this.periodoStorageKey,
+      Periodo.monthToDay()
+    );
+    this.cuentas$ = this.store.pipe(select(fromStore.getAllCuentas));
+    const cta$ = this.store.pipe(select(fromStore.getCurrentCuenta));
+
+    cta$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(cuenta => (this.cuenta = cuenta));
+
+    this.estadoDeCuenta$ = this.store.pipe(select(fromStore.getEstadoDeCuenta));
+    // this.estadoDeCuenta$.subscribe(estado => console.log('Estado: ', estado));
+    // this.loading$ = this.store.pipe(select(fromStore.getEstadoDeCuentaLoading));
+    this.movimientos$ = this.store.pipe(select(fromStore.getMovimientos));
+  }
+
+  ngAfterViewInit() {
+    this.load(this.cuenta, this.periodo);
+  }
+
+  load(cuenta: CuentaDeBanco, periodo: Periodo) {
+    this.store.dispatch(new fromStore.GetEstado({ cuenta, periodo }));
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+  }
+
+  seleccionarCuenta(cuentas: CuentaDeBanco[]) {
+    const ref = this.dialog.open(SelectorDeCuentasComponent, {
+      data: { cuentas },
+      width: '650px'
+    });
+    ref.afterClosed().subscribe((selected: CuentaDeBanco) => {
+      if (selected) {
+        console.log('Nueva cuenta: ', selected);
+      }
+    });
+  }
+
+  regresar() {
+    this.store.dispatch(new fromRoot.Go({ path: ['cuentas'] }));
+  }
+
+  cambiarPeriodo() {
+    this.dialog
+      .open(PeriodoDialogComponent, { data: { periodo: this.periodo } })
+      .afterClosed()
+      .subscribe((periodo: Periodo) => {
+        if (periodo) {
+          Periodo.saveOnStorage(this.periodoStorageKey, periodo);
+          this.periodo = periodo;
+          this.load(this.cuenta, this.periodo);
+        }
+      });
+  }
+
+  actualizarTotales(totales) {
+    this.depositos = totales.depositos;
+    this.retiros = totales.retiros;
+    this.cd.detectChanges();
+  }
+
+  onPrint(event: Array<any>) {
+    console.log('Imprimir: ', event);
+    this.service.runReportWithData(
+      'tesoreria/cuentas/movimientosReport',
+      { cuentaId: this.cuenta.id },
+      { rows: event }
+    );
+  }
 }

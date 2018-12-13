@@ -33,11 +33,12 @@ export class MovimientosTableComponent implements OnInit, OnChanges {
 
   displayColumns = [
     'fecha',
-    'formaDePago',
+    'concepto',
+    'conceptoReporte',
     'importe',
+    'formaDePago',
     'referencia',
     'afavor',
-    'concepto',
     'updateUser'
   ];
   @ViewChild(MatSort)

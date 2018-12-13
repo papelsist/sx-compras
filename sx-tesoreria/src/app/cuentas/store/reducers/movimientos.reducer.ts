@@ -7,10 +7,12 @@ import {
 } from '../actions/movimientos.actions';
 
 import * as moment from 'moment';
+import { Periodo } from 'app/_core/models/periodo';
 
 export interface State extends EntityState<Movimiento> {
   loading: boolean;
   loaded: boolean;
+  periodo: Periodo;
 }
 
 export function sortMovimientos(ob1: Movimiento, ob2: Movimiento): number {
@@ -25,7 +27,8 @@ export const adapter: EntityAdapter<Movimiento> = createEntityAdapter<
 
 export const initialState: State = adapter.getInitialState({
   loading: false,
-  loaded: false
+  loaded: false,
+  periodo: Periodo.monthToDay()
 });
 
 export function reducer(
@@ -68,3 +71,4 @@ export const {
 
 export const getMovimientosLoading = (state: State) => state.loading;
 export const getMovimientosLoaded = (state: State) => state.loaded;
+export const getPeriodoDeMovimientos = (state: State) => state.periodo;
