@@ -30,7 +30,7 @@
 	<parameter name="FECHA_FIN" isForPrompting="false" class="java.lang.String"/>
 
 	<field name="Banco" class="java.lang.String"/>
-	<field name="Cuenta" class="java.lang.Long"/>
+	<field name="Cuenta" class="java.lang.String"/>
 	<field name="Fecha" class="java.util.Date"/>
 	<field name="Concepto" class="java.lang.String"/>
 	<field name="Importe" class="java.math.BigDecimal"/>
@@ -450,7 +450,7 @@ $F{Concepto}.equals( new String(" ") ) ? $F{Descripcion} : $F{Concepto}.concat( 
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="7"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{Cuenta}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{Cuenta}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement

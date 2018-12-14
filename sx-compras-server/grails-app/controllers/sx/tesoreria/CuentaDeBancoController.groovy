@@ -6,6 +6,7 @@ import grails.rest.RestfulController
 import grails.web.databinding.WebDataBinding
 import groovy.beans.Bindable
 import groovy.transform.CompileDynamic
+import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.exception.ExceptionUtils
 
 import sx.reports.ReportService
@@ -13,6 +14,7 @@ import sx.utils.Periodo
 
 @GrailsCompileStatic
 @Secured("IS_AUTHENTICATED_ANONYMOUSLY")
+@Slf4j
 class CuentaDeBancoController extends RestfulController {
 
     static responseFormats = ['json']
@@ -90,15 +92,36 @@ class CuentaDeBancoController extends RestfulController {
 
     @CompileDynamic
     def estadoDeCuenta(EstadoDeCuentaCommand command) {
-        Date fechaInicial = command.fechaIni
+        log.info('Estado de cuenta: {}', params)
+        log.info('F.Ini:{} F.Fin:{} Cta:{} ', command.fechaIni.format('dd/MM/yyyy'), command.fechaFin.format('dd/MM/yyyy'), command.cuenta)
         BigDecimal saldoInicial = MovimientoDeCuenta
-                .findAll("select sum(m.importe) from MovimientoDeCuenta m where date(m.fecha) < ?  and m.porIdentificar = false",
-                [fechaInicial])[0]?: 0.0 as BigDecimal
+                .findAll("""
+                    select sum(m.importe) from MovimientoDeCuenta m
+                     where date(m.fecha) < ?  
+                       and m.cuenta.id = ?
+                       and m.porIdentificar = false
+                """,
+                [command.fechaIni,command.cuenta.id],)[0]?: 0.0 as BigDecimal
+        log.info('Saldo inicial: {}', saldoInicial)
+
         List<MovimientoDeCuenta> movimientos = MovimientoDeCuenta
-                .findAll("from MovimientoDeCuenta m where date(m.fecha) between ? and ? order by fecha",
-                [fechaInicial, command.fechaFin])
-        BigDecimal cargos = movimientos.sum 0.0, {it.importe<0 ? it.importe: 0.0}
-        BigDecimal abonos = movimientos.sum 0.0, {it.importe>0 ? it.importe: 0.0}
+                .findAll("""
+                    from MovimientoDeCuenta m 
+                      where date(m.fecha) between ? and ?
+                        and m.cuenta.id = ? 
+                      order by fecha 
+                """,
+                [command.fechaIni, command.fechaFin, command.cuenta.id])
+        log.info('Movimientos: {}', movimientos.size())
+        /*
+        List<MovimientoDeCuenta> cars = movimientos.findAll{!it.porIdentificar && it.importe < 0}
+        log.info('Cargos {}', cars.size())
+        List<MovimientoDeCuenta> abos = movimientos.findAll{!it.porIdentificar && it.importe > 0}
+        log.info('Abonos {}', abos.size())
+        */
+
+        BigDecimal cargos = movimientos.findAll{!it.porIdentificar}.sum 0.0, {it.importe < 0.0 ? it.importe: 0.0}
+        BigDecimal abonos = movimientos.findAll{!it.porIdentificar}.sum 0.0, {it.importe > 0.0 ? it.importe: 0.0}
         BigDecimal saldoFinal = saldoInicial + cargos + abonos
 
         EstadoDeCuenta estadoDeCuenta = new EstadoDeCuenta(
@@ -109,13 +132,13 @@ class CuentaDeBancoController extends RestfulController {
                 saldoFinal: saldoFinal,
                 movimientos: movimientos
         )
+        log.info("inicial:{}, cargos: {} abonos: {}, saldo:{}", saldoInicial, cargos, abonos, saldoFinal)
         respond([estadoDeCuenta: estadoDeCuenta])
-        // respond([message: message], status: 500)
 
     }
 
     @CompileDynamic
-    def estadoDeCuentaReport(EstadoDeCuentaCommand command) {
+    def estadoDeCuentaReportOld(EstadoDeCuentaCommand command) {
 
         Map repParams = [:]
         repParams.FECHA_INICIAL = command.fechaIni
@@ -154,6 +177,93 @@ class CuentaDeBancoController extends RestfulController {
     }
 
     @CompileDynamic
+    def estadoDeCuentaReport() {
+        log.info('Imprimir estado de cuenta: {}', params)
+        ReporteDeMovimientos command = new ReporteDeMovimientos()
+        command.cuenta = CuentaDeBanco.get(params.cuentaId)
+        command.properties = getObjectToBind()
+
+        log.info('Cuenta: {}', command.cuenta)
+        log.info('Rows: {}', command.rows.size())
+        log.info('Fecha Ini: {}', command.fechaIni)
+
+        log.info('Estado de cuenta')
+        Map repParams = [:]
+        repParams.FECHA_INICIAL = command.fechaIni
+        repParams.FECHA_FINAL = command.fechaFin
+        repParams.CUENTA_ID = command.cuenta.id
+
+        Date fechaInicial = command.fechaIni
+
+        BigDecimal inicial = MovimientoDeCuenta
+                .findAll("select sum(m.importe) from MovimientoDeCuenta m where date(m.fecha) < ?  and m.porIdentificar = false",
+                [fechaInicial])[0]?: 0.0 as BigDecimal
+
+        BigDecimal cargos = MovimientoDeCuenta
+                .findAll("select sum(m.importe) from MovimientoDeCuenta m where date(m.fecha) between ? and ? and m.importe < 0 and m.porIdentificar = false",
+                [fechaInicial, command.fechaFin])[0]?: 0.0 as BigDecimal
+
+        BigDecimal abonos = MovimientoDeCuenta
+                .findAll("select sum(m.importe) from MovimientoDeCuenta m where date(m.fecha) between ? and ? and m.importe > 0 and m.porIdentificar = false",
+                [fechaInicial, command.fechaFin])[0]?: 0.0 as BigDecimal
+
+        BigDecimal saldo = inicial + cargos + abonos
+
+        repParams.INICIAL = inicial
+        repParams.CARGOS = cargos
+        repParams.ABONOS = abonos
+        repParams.FINAL = saldo
+
+        /**
+         * <field name="dia" class="java.lang.Long"/>
+         * 	<field name="fecha" class="java.sql.Date"/>
+         * 	<field name="id" class="java.lang.String"/>
+         * 	<field name="numero" class="java.lang.String"/>
+         * 	<field name="descripcion" class="java.lang.String"/>
+         * 	<field name="concepto" class="java.lang.String"/>
+         * 	<field name="forma_de_pago" class="java.lang.String"/>
+         * 	<field name="saldo_inicial" class="java.math.BigDecimal"/>
+         * 	<field name="saldo_final" class="java.math.BigDecimal"/>
+         * 	<field name="egresos" class="java.math.BigDecimal"/>
+         * 	<field name="ingresos" class="java.math.BigDecimal"/>
+         * 	<field name="referencia" class="java.lang.String"/>
+         * 	<field name="comentario" class="java.lang.String"/>
+         * 	<field name="cargo" class="java.math.BigDecimal"/>
+         * 	<field name="abono" class="java.math.BigDecimal"/>
+         * 	<field name="orden" class="java.lang.String"/>
+         * 	<field name="date_created" class="java.sql.Timestamp"/>
+         * 	<field name="origen" class="java.lang.String"/>
+         */
+        List<MovimientoDeCuenta> data = command.rows.findAll{!it.porIdentificar}.collect { mov ->
+            def res = [
+                    dia: mov.fecha.format('dd').toLong(),
+                    fecha: mov.fecha,
+                    id: mov.id,
+                    numero: mov.cuenta.numero,
+                    descripcion: mov.cuenta.descripcion,
+                    concepto: mov.conceptoReporte,
+                    forma_de_pago: mov.formaDePago,
+                    saldo_inicial: 0.0,
+                    ingresos: 0.0,
+                    ingresos: 0.0,
+                    referencia: mov.referencia,
+                    comentario: mov.comentario,
+                    cargo: mov.importe < 0 ? mov.importe : 0.0,
+                    abono: mov.importe > 0 ? mov.importe : 0.0,
+                    orden: '',
+                    date_created: mov.dateCreated,
+                    origen: mov.tipo.substring(0, 2)
+            ]
+            return res
+
+        }
+
+        def pdf =  reportService.run('EstadoDeCuentaBancario.jrxml', repParams, data)
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'EstadoDecuentaBancario.pdf')
+
+    }
+
+    @CompileDynamic
     def movimientosReport() {
         log.info('Imprimir movimientos: {}', params)
         ReporteDeMovimientos command = new ReporteDeMovimientos()
@@ -161,6 +271,7 @@ class CuentaDeBancoController extends RestfulController {
         command.properties = getObjectToBind()
         log.info('Cuenta: {}', command.cuenta)
         log.info('Rows: {}', command.rows.size())
+        log.info('Fecha Ini: {}', command.fechaIni)
 
         Map reportParams = [
                 FECHA_INI: command.fechaIni.format('dd/MM/yyyy'),
@@ -210,6 +321,7 @@ class EstadoDeCuentaCommand {
     CuentaDeBanco cuenta
     Date fechaIni
     Date fechaFin
+    List<MovimientoDeCuenta> rows
 }
 
 class EstadoDeCuenta {

@@ -14,7 +14,7 @@
 		 rightMargin="28"
 		 topMargin="20"
 		 bottomMargin="20"
-		 whenNoDataType="AllSectionsNoDetail"
+		 whenNoDataType="NoPages"
 		 isTitleNewPage="false"
 		 isSummaryNewPage="false">
 	<property name="ireport.scriptlethandling" value="0" />
@@ -33,24 +33,6 @@
 	<parameter name="ABONOS" isForPrompting="true" class="java.math.BigDecimal"/>
 	<parameter name="FINAL" isForPrompting="true" class="java.math.BigDecimal"/>
 	<parameter name="INICIAL" isForPrompting="true" class="java.math.BigDecimal"/>
-	<queryString><![CDATA[SELECT day(fecha) as dia,fecha,m.id,c.id,c.numero,c.descripcion,m.concepto_reporte as concepto,m.forma_de_pago
-,s.saldo_inicial,saldo_final,egresos,ingresos,referencia
-,comentario
-,case when importe < 0 then importe else 0 end as cargo
-,case when importe > 0 then importe else 0 end as abono 
-,case 
-	when m.forma_de_pago ='TARJETA' then 'C'
-	when importe > 0 then 'A'
-	when importe <0 then 'B'
-	else 'D'
-	end as orden
-,m.date_created
-,SUBSTRING(m.tipo,1,3) AS origen
-FROM movimiento_de_cuenta m  join cuenta_de_banco c on (m.cuenta_id=c.id) left join saldo_por_cuenta_de_banco s on (s.cuenta_id=c.id)
-where date(fecha) BETWEEN  $P{FECHA_INICIAL} and $P{FECHA_FINAL}
-and m.cuenta_id= $P{CUENTA_ID}
-and m.por_identificar is false
-order by 1,17,18]]></queryString>
 
 	<field name="dia" class="java.lang.Long"/>
 	<field name="fecha" class="java.sql.Date"/>

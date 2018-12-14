@@ -67,7 +67,8 @@ import { ReportService } from 'app/reportes/services/report.service';
           <sx-estado-de-cuenta-table class="table" #grid
             [movimientos]="movimientos$ | async"
             (totalesChanged)="actualizarTotales($event)"
-            (print)="onPrint($event)">
+            (print)="onPrint($event)"
+            (printAsEstadoDeCuenta)="onPrintEstadoDeCuenta($event)">
           </sx-estado-de-cuenta-table>
         </div>
 
@@ -84,6 +85,9 @@ import { ReportService } from 'app/reportes/services/report.service';
             </button>
             <button mat-button color="primary" (click)="grid.printGrid()">
               <mat-icon>print</mat-icon> Imprimir
+            </button>
+            <button mat-button color="primary" (click)="grid.printEstadoDeCuenta()">
+              <mat-icon>picture_as_pdf</mat-icon> Estado de cuenta
             </button>
             <span flex></span>
             <span>Depósitos: {{depositos | currency}}</span>
@@ -122,9 +126,6 @@ export class EstadoDeCuentaComponent
   movimientos$: Observable<Movimiento[]>;
   periodoStorageKey = 'sx-tesoreria.estadoDeCuenta.periodo';
 
-  @ViewChild('table')
-  table: EstadoDeCuentaTableComponent;
-
   constructor(
     private store: Store<fromStore.State>,
     private dialog: MatDialog,
@@ -145,7 +146,6 @@ export class EstadoDeCuentaComponent
       .subscribe(cuenta => (this.cuenta = cuenta));
 
     this.estadoDeCuenta$ = this.store.pipe(select(fromStore.getEstadoDeCuenta));
-    // this.estadoDeCuenta$.subscribe(estado => console.log('Estado: ', estado));
     // this.loading$ = this.store.pipe(select(fromStore.getEstadoDeCuentaLoading));
     this.movimientos$ = this.store.pipe(select(fromStore.getMovimientos));
   }
@@ -169,7 +169,8 @@ export class EstadoDeCuentaComponent
     });
     ref.afterClosed().subscribe((selected: CuentaDeBanco) => {
       if (selected) {
-        console.log('Nueva cuenta: ', selected);
+        this.cuenta = selected;
+        this.load(this.cuenta, this.periodo);
       }
     });
   }
@@ -187,6 +188,7 @@ export class EstadoDeCuentaComponent
           Periodo.saveOnStorage(this.periodoStorageKey, periodo);
           this.periodo = periodo;
           this.load(this.cuenta, this.periodo);
+          this.cd.detectChanges();
         }
       });
   }
@@ -198,11 +200,30 @@ export class EstadoDeCuentaComponent
   }
 
   onPrint(event: Array<any>) {
-    console.log('Imprimir: ', event);
     this.service.runReportWithData(
       'tesoreria/cuentas/movimientosReport',
-      { cuentaId: this.cuenta.id },
-      { rows: event }
+      {
+        cuentaId: this.cuenta.id
+      },
+      {
+        rows: event,
+        fechaIni: this.periodo.fechaInicial.toISOString(),
+        fechaFin: this.periodo.fechaFinal.toISOString()
+      }
+    );
+  }
+
+  onPrintEstadoDeCuenta(event: Array<any>) {
+    this.service.runReportWithData(
+      'tesoreria/cuentas/estadoDeCuentaReport',
+      {
+        cuentaId: this.cuenta.id
+      },
+      {
+        rows: event,
+        fechaIni: this.periodo.fechaInicial.toISOString(),
+        fechaFin: this.periodo.fechaFinal.toISOString()
+      }
     );
   }
 }

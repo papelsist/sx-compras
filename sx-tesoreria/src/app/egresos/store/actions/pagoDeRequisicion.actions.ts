@@ -42,7 +42,9 @@ export class PagoRequisicionSuccess implements Action {
 
 export class GenerarCheque implements Action {
   readonly type = PagoRequisicionActionTypes.GenerarCheque;
-  constructor(public payload: { requisicion: Requisicion }) {}
+  constructor(
+    public payload: { requisicion: Requisicion; referencia: string }
+  ) {}
 }
 
 // Cancelar pago

@@ -123,7 +123,7 @@ class PagoDeRequisicionService implements  LogUser {
         }
     }
 
-    Requisicion generarCheque( String requisicionId) {
+    Requisicion generarCheque( String requisicionId, String referencia) {
         Requisicion requisicion = Requisicion.get(requisicionId)
 
         if(!requisicion.egreso || requisicion.egreso.formaDePago != 'CHEQUE') {
@@ -131,11 +131,11 @@ class PagoDeRequisicionService implements  LogUser {
         }
 
         MovimientoDeCuenta egreso = requisicion.egreso
-        log.info('Generando cheque para egreso: {}', egreso)
+        egreso.referencia = referencia
         movimientoDeCuentaService.generarCheque(egreso)
         logEntity(egreso)
-        egreso.save flush: true
-
+        egreso.save failOnError: true, flush: true
+        log.info('Cheque: {} genewrado paraa egreso: {}', egreso.cheque, egreso.id)
         requisicion.refresh()
         return requisicion
 

@@ -38,6 +38,9 @@ import { DatePipe } from '@angular/common';
         [floatingFilter]="true"
         [enableColResize]="true"
         [animateRows]="true"
+        [paginationAutoPageSize]="true"
+        [pagination]="true"
+        [localeText]="localeText"
         (firstDataRendered)="onFirstDataRendered($event)"
         (gridReady)="onGridReady($event)"
         (modelUpdated)="onModelUpdate($event)">
@@ -85,6 +88,11 @@ export class EstadoDeCuentaTableComponent implements OnInit, OnChanges {
   @Output()
   print = new EventEmitter();
 
+  @Output()
+  printAsEstadoDeCuenta = new EventEmitter();
+
+  localeText;
+
   constructor(
     private cd: ChangeDetectorRef,
     @Inject(LOCALE_ID) private locale: string
@@ -98,6 +106,7 @@ export class EstadoDeCuentaTableComponent implements OnInit, OnChanges {
     };
 
     this.gridOptions.onFilterChanged = this.onFilter;
+    this.buildLocalText();
   }
 
   ngOnInit() {}
@@ -129,7 +138,7 @@ export class EstadoDeCuentaTableComponent implements OnInit, OnChanges {
     if (this.gridApi) {
       let depositos = 0.0;
       let retiros = 0.0;
-      this.gridApi.forEachNodeAfterFilter((rowNode, index) => {
+      this.gridApi.forEachNodeAfterFilterAndSort((rowNode, index) => {
         depositos += rowNode.data.deposito;
         retiros += rowNode.data.retiro;
       });
@@ -139,10 +148,18 @@ export class EstadoDeCuentaTableComponent implements OnInit, OnChanges {
 
   printGrid() {
     const data = [];
-    this.gridApi.forEachNodeAfterFilter((rowNode, index) => {
+    this.gridApi.forEachNodeAfterFilterAndSort((rowNode, index) => {
       data.push(rowNode.data);
     });
     this.print.emit(data);
+  }
+
+  printEstadoDeCuenta() {
+    const data = [];
+    this.gridApi.forEachNodeAfterFilterAndSort((rowNode, index) => {
+      data.push(rowNode.data);
+    });
+    this.printAsEstadoDeCuenta.emit(data);
   }
 
   private buildColsDef() {
@@ -167,12 +184,14 @@ export class EstadoDeCuentaTableComponent implements OnInit, OnChanges {
         headerName: 'Depósito',
         field: 'deposito',
         width: 80,
+        filter: 'agNumberColumnFilter',
         cellRenderer: params => this.transformCurrency(params.value)
       },
       {
         headerName: 'Retiro',
         field: 'retiro',
         width: 80,
+        filter: 'agNumberColumnFilter',
         cellRenderer: params => this.transformCurrency(params.value)
       },
       {
@@ -218,5 +237,32 @@ export class EstadoDeCuentaTableComponent implements OnInit, OnChanges {
   }
   transformCurrency(data) {
     return formatCurrency(data, this.locale, '');
+  }
+
+  buildLocalText() {
+    this.localeText = {
+      page: 'página',
+      more: 'mas',
+      to: 'a',
+      of: 'de',
+      next: 'siguiente',
+      last: 'ultimo',
+      first: 'primero',
+      previous: 'anterior',
+      loadingOoo: 'cargando...',
+      applyFilter: 'Aplicar...',
+      equals: 'igual',
+      notEqual: 'diferente a',
+      lessThan: 'menor que',
+      greaterThan: 'mayor que',
+      lessThanOrEqual: 'menor o igual',
+      greaterThanOrEqual: 'mayor o igual',
+      inRange: 'rango',
+      contains: 'contiene',
+      notContains: 'no contiene',
+      startsWith: 'inicia con',
+      endsWith: 'termina con',
+      filters: 'filtros'
+    };
   }
 }

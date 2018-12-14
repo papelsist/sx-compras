@@ -29,8 +29,8 @@ class UrlMappings {
         // "/api/tesoreria/cuentas/$id/movimientos"(controller: 'cuentaDeBanco', action: 'movimientos', method: 'GET')
         "/api/tesoreria/cuentas/$id/movimientos/$ejercicio/$mes"(controller: 'cuentaDeBanco', action: 'movimientos', method: 'GET')
         "/api/tesoreria/cuentas/$id/saldos"(controller: 'cuentaDeBanco', action: 'saldos', method: 'GET')
-        "/api/tesoreria/cuentas/estadoDeCuentaReport"(controller: 'cuentaDeBanco', action: 'estadoDeCuenta', method: 'GET')
         "/api/tesoreria/cuentas/estadoDeCuenta"(controller: 'cuentaDeBanco', action: 'estadoDeCuenta', method: 'GET')
+        "/api/tesoreria/cuentas/estadoDeCuentaReport"(controller: 'cuentaDeBanco', action: 'estadoDeCuentaReport', method: 'PUT')
         "/api/tesoreria/cuentas/movimientosReport"(controller: 'cuentaDeBanco', action: 'movimientosReport', method: 'PUT')
 
 

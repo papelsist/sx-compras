@@ -21,7 +21,7 @@ export class GenerarChequeBtnComponent implements OnInit {
   @Input()
   requisicion: Requisicion;
   @Output()
-  generar = new EventEmitter<Requisicion>();
+  generar = new EventEmitter<{ requisicion: Requisicion; data: any }>();
 
   constructor(private dialog: MatDialog) {}
 
@@ -36,7 +36,11 @@ export class GenerarChequeBtnComponent implements OnInit {
       .afterClosed()
       .subscribe(command => {
         if (command) {
-          this.generar.emit(this.requisicion);
+          const data = {
+            requisicion: this.requisicion,
+            ...command
+          };
+          this.generar.emit(data);
         }
       });
   }

@@ -60,7 +60,7 @@ export class GastoComponent implements OnInit {
     this.store.dispatch(new fromStore.CancelarCheque({ cancelacion }));
   }
 
-  onGenerarCheque(requisicion: Requisicion) {
-    this.store.dispatch(new fromStore.GenerarCheque({ requisicion }));
+  onGenerarCheque(event: { requisicion: Requisicion; referencia: string }) {
+    this.store.dispatch(new fromStore.GenerarCheque(event));
   }
 }

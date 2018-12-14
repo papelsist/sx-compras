@@ -162,7 +162,7 @@ class CorteDeTarjetaService implements  LogUser{
     def aplicar(CorteDeTarjeta corte){
         log.debug('Aplicando corte: {}',corte.id)
         Empresa empresa = Empresa.first()
-        corte.aplicaciones.each { CorteDeTarjetaAplicacion aplicacion ->
+        corte.aplicaciones.findAll{ it.ingreso == null}.each { CorteDeTarjetaAplicacion aplicacion ->
             String comentario = ''
             BigDecimal importe = aplicacion.importe
             switch (aplicacion.tipo) {
@@ -173,11 +173,11 @@ class CorteDeTarjetaService implements  LogUser{
                     comentario = "Corte por tarjeta Visa/Mastercard ${corte.corte.format('dd/MM/yyyy')} ${corte.sucursal.nombre}"
                     break
                 case TipoDeAplicacion.AMEX_COMISION:
-                    comentario = "Comisión por tarjeta AMEX "
+                    comentario = "Comision por tarjeta AMEX "
                     importe = importe * -1
                     break
                 case TipoDeAplicacion.CREDITO_COMISION:
-                    comentario = "Comisión por tarjeta CREDITO "
+                    comentario = "Comision por tarjeta CREDITO "
                     importe = importe * -1
                     break
                 case TipoDeAplicacion.DEBITO_COMISON:
@@ -185,7 +185,7 @@ class CorteDeTarjetaService implements  LogUser{
                     importe = importe * -1
                     break
                 case TipoDeAplicacion.AMEX_COMISION_IVA:
-                    comentario = "IVA Comision tarjeta AMEX}"
+                    comentario = "IVA Comision tarjeta AMEX"
                     importe = importe * -1
                     break
                 case TipoDeAplicacion.DEBITO_COMISON_IVA:
@@ -193,7 +193,7 @@ class CorteDeTarjetaService implements  LogUser{
                     importe = importe * -1
                     break
                 case TipoDeAplicacion.CREDITO_COMISION_IVA:
-                    comentario = "IVA Comision tarjeta CREDITO}"
+                    comentario = "IVA Comision tarjeta CREDITO"
                     importe = importe * -1
                     break
 
@@ -212,10 +212,10 @@ class CorteDeTarjetaService implements  LogUser{
             mov.concepto = 'VENTAS'
             mov.conceptoReporte = "Deposito suc: ${mov.sucursal}"
             mov.sucursal = corte.sucursal.nombre
-            generarConceptoDeReporte(aplicacion, mov)
+            generarConceptoDeReporte(aplicacion.tipo, mov)
             logEntity(mov)
             mov.save failOnError: true, flush: true
-            aplicacion.ingreso = mov;
+            aplicacion.ingreso = mov
 
         }
         corte.save flush: true
@@ -246,8 +246,9 @@ class CorteDeTarjetaService implements  LogUser{
         }
     }
 
-    def generarConceptoDeReporte(CorteDeTarjetaAplicacion it, MovimientoDeCuenta ingreso) {
-        switch (it.tipo) {
+    def generarConceptoDeReporte(TipoDeAplicacion it, MovimientoDeCuenta ingreso) {
+
+        switch (it) {
             case TipoDeAplicacion.VISAMASTER_INGRESO:
             case TipoDeAplicacion.AMEX_INGRESO:
                 ingreso.conceptoReporte = "Deposito suc: ${ingreso.sucursal}"
@@ -262,13 +263,13 @@ class CorteDeTarjetaService implements  LogUser{
                 ingreso.conceptoReporte = "Comision por tarjeta credito"
                 break
             case TipoDeAplicacion.AMEX_COMISION_IVA:
-                ingreso.conceptoReporte = ""
+                ingreso.conceptoReporte = "IVA comision tarjeta Amex"
                 break
             case TipoDeAplicacion.CREDITO_COMISION_IVA:
-                ingreso.conceptoReporte = ""
+                ingreso.conceptoReporte = "IVA comision tarjeta credito"
                 break
             case TipoDeAplicacion.DEBITO_COMISON_IVA:
-                ingreso.conceptoReporte = ""
+                ingreso.conceptoReporte = "IVA comision tarjeta debito"
                 break
             default:
                 break
