@@ -72,6 +72,7 @@ class UrlMappings {
         "/api/tesoreria/pagoDeNomina"(resources: 'pagoDeNomina', excludes:['create', 'edit','patch', 'update'] )
         "/api/tesoreria/pagoDeNomina/importar"(controller: 'pagoDeNomina', action: 'importar', method: 'POST')
         "/api/tesoreria/pagoDeNomina/pagar"(controller: 'pagoDeNomina', action: 'pagar', method: 'POST')
+        "/api/tesoreria/pagoDeNomina/generarCheque/$id"(controller: 'pagoDeNomina', action: 'generarCheque', method: 'POST')
 
         "/api/tesoreria/pagoDeMorralla"(resources: 'pagoDeMorralla', excludes:['create', 'edit','patch', 'update'] )
         "/api/tesoreria/pagoDeMorralla/pendientes"(controller: 'pagoDeMorralla', action: 'pendientes', method: 'GET')

@@ -24,6 +24,7 @@ import { PagoDeNominaDialogComponent } from 'app/egresos/components';
         </button>
         <sx-print-cheque [egreso]="pago.egreso" ></sx-print-cheque>
         <sx-poliza-cheque [egreso]="pago.egreso"></sx-poliza-cheque>
+        <sx-generar-cheque-nomina-btn [pago]="pago" (generar)="onGenerarCheque($event)"></sx-generar-cheque-nomina-btn>
         <!--
         <sx-cancelar-pago [pago]="pago" (cancelar)="onCancelarPago($event)"></sx-cancelar-pago>
         <sx-generar-cheque-btn [pago]="pago" (generar)="onGenerarCheque($event)"></sx-generar-cheque-btn>
@@ -71,10 +72,15 @@ export class PagoDeNominaComponent implements OnInit {
   onCancelarPago(event: PagoDeNomina) {}
 
   onCancelarCheque(cancelacion: CancelacionDeCheque) {
-    this.store.dispatch(new fromStore.CancelarCheque({ cancelacion }));
+    // this.store.dispatch(new fromActions.CancelarCheque({ cancelacion }));
   }
 
-  onGenerarCheque(pago: PagoDeNomina) {
-    // this.store.dispatch(new fromStore.GenerarCheque({ pago }));
+  onGenerarCheque(event: { pago: PagoDeNomina; referencia: string }) {
+    this.store.dispatch(
+      new fromActions.GenerarChequeDePago({
+        pagoId: event.pago.id,
+        referencia: event.referencia
+      })
+    );
   }
 }

@@ -64,7 +64,13 @@ class Rembolso {
         comision nullable: true
         pago nullable: true
         proveedor nullable: true
-        concepto inList: ['REMBOLSO', 'PAGO_TARJETA', 'PAGO_CONTABLE', 'CARGA_SOCIAL', 'PRESTAMO_CHOFER', 'PRESTAMO_EMPLEADO']
+        concepto inList: ['REMBOLSO',
+                          'PAGO_TARJETA',
+                          'PAGO_CONTABLE',
+                          'CARGA_SOCIAL',
+                          'PRESTAMO_CHOFER',
+                          'PRESTAMO_EMPLEADO',
+                          'PAGO_CHOFER']
     }
 
     static mapping = {

@@ -55,6 +55,17 @@ export class PagoDeNominaService {
       .pipe(catchError((error: any) => throwError(error)));
   }
 
+  generarCheque(pagoId: number, referencia: string): Observable<PagoDeNomina> {
+    const url = `${this.apiUrl}/generarCheque/${pagoId.toString()}`;
+    return this.http
+      .post<PagoDeNomina>(
+        url,
+        {},
+        { params: new HttpParams().set('referencia', referencia) }
+      )
+      .pipe(catchError((error: any) => throwError(error)));
+  }
+
   delete(pago: PagoDeNomina) {
     const url = `${this.apiUrl}/${pago.id}`;
     return this.http

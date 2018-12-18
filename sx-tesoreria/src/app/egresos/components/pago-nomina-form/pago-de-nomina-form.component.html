@@ -1,4 +1,4 @@
-<mat-card flex="50">
+<mat-card flex="70">
   <mat-card-title>
     <div layout>
       <span class="pad-right">
@@ -16,10 +16,17 @@
     <span *ngIf="pagoNomina?.egreso">
       <span>Pagada </span>
       <span>{{ pagoNomina.egreso.fecha | date: 'dd/MM/yyyy' }}</span>
-      <span class="pad-left" *ngIf="pagoNomina?.egreso?.cheque">
-        Cheque: {{ pagoNomina.egreso.cheque.folio }} ({{
-          pagoNomina.egreso.cheque.banco
-        }})
+      <span class="pad-left" *ngIf="pagoNomina.formaDePago === 'CHEQUE'">
+        <span>Cheque: </span>
+        <span
+          *ngIf="pagoNomina.egreso && pagoNomina.egreso.cheque; else: pendiente"
+          class="pad-left"
+        >
+          {{ pagoNomina?.egreso?.cheque?.folio }} ({{
+            pagoNomina?.egreso?.cheque?.banco
+          }})
+        </span>
+        <ng-template #pendiente> <span>PENDIENTE</span> </ng-template>
       </span>
     </span>
     <ng-container

@@ -50,6 +50,7 @@ export function reducer(
       };
     }
 
+    case PagoDeNominaActionTypes.GenerarChequeDePago:
     case PagoDeNominaActionTypes.DeletePagoDeNomina:
     case PagoDeNominaActionTypes.ImportarPagosDeNomina:
     case PagoDeNominaActionTypes.PagarNomina:
@@ -90,6 +91,7 @@ export function reducer(
       });
     }
 
+    case PagoDeNominaActionTypes.GenerarChequeDePagoSuccess:
     case PagoDeNominaActionTypes.PagarNominaSuccess: {
       return adapter.upsertOne(action.payload.pago, {
         ...state,

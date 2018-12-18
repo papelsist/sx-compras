@@ -94,14 +94,17 @@ class CuentaDeBancoController extends RestfulController {
     def estadoDeCuenta(EstadoDeCuentaCommand command) {
         log.info('Estado de cuenta: {}', params)
         log.info('F.Ini:{} F.Fin:{} Cta:{} ', command.fechaIni.format('dd/MM/yyyy'), command.fechaFin.format('dd/MM/yyyy'), command.cuenta)
+        Date inicioOperativo = Date.parse('dd/MM/yyyy', '31/12/2017')
+
         BigDecimal saldoInicial = MovimientoDeCuenta
                 .findAll("""
                     select sum(m.importe) from MovimientoDeCuenta m
                      where date(m.fecha) < ?  
+                       and date(m.fecha) >= ?
                        and m.cuenta.id = ?
                        and m.porIdentificar = false
                 """,
-                [command.fechaIni,command.cuenta.id],)[0]?: 0.0 as BigDecimal
+                [command.fechaIni, inicioOperativo, command.cuenta.id],)[0]?: 0.0 as BigDecimal
         log.info('Saldo inicial: {}', saldoInicial)
 
         List<MovimientoDeCuenta> movimientos = MovimientoDeCuenta
@@ -113,12 +116,6 @@ class CuentaDeBancoController extends RestfulController {
                 """,
                 [command.fechaIni, command.fechaFin, command.cuenta.id])
         log.info('Movimientos: {}', movimientos.size())
-        /*
-        List<MovimientoDeCuenta> cars = movimientos.findAll{!it.porIdentificar && it.importe < 0}
-        log.info('Cargos {}', cars.size())
-        List<MovimientoDeCuenta> abos = movimientos.findAll{!it.porIdentificar && it.importe > 0}
-        log.info('Abonos {}', abos.size())
-        */
 
         BigDecimal cargos = movimientos.findAll{!it.porIdentificar}.sum 0.0, {it.importe < 0.0 ? it.importe: 0.0}
         BigDecimal abonos = movimientos.findAll{!it.porIdentificar}.sum 0.0, {it.importe > 0.0 ? it.importe: 0.0}
@@ -134,45 +131,6 @@ class CuentaDeBancoController extends RestfulController {
         )
         log.info("inicial:{}, cargos: {} abonos: {}, saldo:{}", saldoInicial, cargos, abonos, saldoFinal)
         respond([estadoDeCuenta: estadoDeCuenta])
-
-    }
-
-    @CompileDynamic
-    def estadoDeCuentaReportOld(EstadoDeCuentaCommand command) {
-
-        Map repParams = [:]
-        repParams.FECHA_INICIAL = command.fechaIni
-        repParams.FECHA_FINAL = command.fechaFin
-        repParams.CUENTA_ID = command.cuenta.id
-
-        Date fechaInicial = command.fechaIni
-        Calendar cal = Calendar.getInstance()
-        cal.setTime(fechaInicial)
-        cal.set(Calendar.DATE,1)
-        Date inicioDeMes = cal.getTime()
-
-        BigDecimal inicial = MovimientoDeCuenta
-                .findAll("select sum(m.importe) from MovimientoDeCuenta m where date(m.fecha) < ?  and m.porIdentificar = false",
-                [fechaInicial])[0]?: 0.0 as BigDecimal
-
-        BigDecimal cargos = MovimientoDeCuenta
-                .findAll("select sum(m.importe) from MovimientoDeCuenta m where date(m.fecha) between ? and ? and m.importe < 0",
-                [fechaInicial, command.fechaFin])[0]?: 0.0 as BigDecimal
-
-        BigDecimal abonos = MovimientoDeCuenta
-                .findAll("select sum(m.importe) from MovimientoDeCuenta m where date(m.fecha) between ? and ? and m.importe > 0 and m.porIdentificar = false",
-                [fechaInicial, command.fechaFin])[0]?: 0.0 as BigDecimal
-
-        BigDecimal saldo = inicial + cargos + abonos
-
-        repParams.INICIAL = inicial
-        repParams.CARGOS = cargos
-        repParams.ABONOS = abonos
-        repParams.FINAL = saldo
-
-
-        def pdf =  reportService.run('EstadoDeCuentaBancario.jrxml', repParams)
-        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'EstadoDecuentaBancario.pdf')
 
     }
 
@@ -194,18 +152,37 @@ class CuentaDeBancoController extends RestfulController {
         repParams.CUENTA_ID = command.cuenta.id
 
         Date fechaInicial = command.fechaIni
+        Date inicioOperativo = Date.parse('dd/MM/yyyy', '31/12/2017')
 
         BigDecimal inicial = MovimientoDeCuenta
-                .findAll("select sum(m.importe) from MovimientoDeCuenta m where date(m.fecha) < ?  and m.porIdentificar = false",
-                [fechaInicial])[0]?: 0.0 as BigDecimal
+                .findAll("""
+                    select sum(m.importe) from MovimientoDeCuenta m 
+                     where m.cuenta.id=? 
+                       and date(m.fecha) < ? 
+                       and date(m.fecha) >= ? 
+                       and m.porIdentificar = false
+                """,
+                [command.cuenta.id, fechaInicial, inicioOperativo])[0]?: 0.0 as BigDecimal
 
-        BigDecimal cargos = MovimientoDeCuenta
-                .findAll("select sum(m.importe) from MovimientoDeCuenta m where date(m.fecha) between ? and ? and m.importe < 0 and m.porIdentificar = false",
-                [fechaInicial, command.fechaFin])[0]?: 0.0 as BigDecimal
+        BigDecimal cargos = MovimientoDeCuenta.findAll(
+                """
+                select sum(m.importe) from MovimientoDeCuenta m 
+                 where m.cuenta.id = ? 
+                    and date(m.fecha) between ? and ? 
+                    and m.importe < 0 
+                    and m.porIdentificar = false
+                """,
+                [command.cuenta.id, fechaInicial, command.fechaFin])[0]?: 0.0 as BigDecimal
 
-        BigDecimal abonos = MovimientoDeCuenta
-                .findAll("select sum(m.importe) from MovimientoDeCuenta m where date(m.fecha) between ? and ? and m.importe > 0 and m.porIdentificar = false",
-                [fechaInicial, command.fechaFin])[0]?: 0.0 as BigDecimal
+        BigDecimal abonos = MovimientoDeCuenta.findAll(
+                """
+                    select sum(m.importe) from MovimientoDeCuenta m 
+                     where m.cuenta.id = ? 
+                      and date(m.fecha) between ? and ? 
+                      and m.importe > 0 
+                      and m.porIdentificar = false
+                """,
+                [command.cuenta.id, fechaInicial, command.fechaFin])[0]?: 0.0 as BigDecimal
 
         BigDecimal saldo = inicial + cargos + abonos
 

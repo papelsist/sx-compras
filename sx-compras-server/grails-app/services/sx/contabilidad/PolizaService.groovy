@@ -36,7 +36,8 @@ abstract class PolizaService implements  LogUser{
                 ejercicio: poliza.ejercicio,
                 mes: poliza.mes,
                 tipo: poliza.tipo,
-                subtipo: poliza.subtipo
+                subtipo: poliza.subtipo,
+                folio: 1
         )
         poliza.folio = folio.folio++
         folio.save()
