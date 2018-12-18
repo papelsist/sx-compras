@@ -63,7 +63,7 @@ class CargosProc implements  ProcesadorDePoliza{
 
     @Override
     String definirConcepto(Poliza poliza) {
-        return "Ventas"
+        return "CARGOS"
     }
 
     @Override
