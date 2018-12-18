@@ -32,7 +32,7 @@ trait ProcesadorDePoliza {
     CuentaContable buscarCuenta(String clave) {
         CuentaContable cuenta = CuentaContable.where{clave == clave}.find()
         if(!cuenta)
-            throw new RuntimeException("No eixste cuenta contable ${clave}")
+            throw new RuntimeException("No existe cuenta contable ${clave}")
         return cuenta
     }
 

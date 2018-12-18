@@ -8,7 +8,7 @@ import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
 
 import sx.core.LogUser
-
+ 
 @Slf4j
 @GrailsCompileStatic
 @Service(Poliza)
