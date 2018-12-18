@@ -1,6 +1,10 @@
 import { Action } from '@ngrx/store';
 
-import { PagoDeNomina, PagoDeNominaCommand } from '../../models';
+import {
+  PagoDeNomina,
+  PagoDeNominaCommand,
+  PagosDeNominaFilter
+} from '../../models';
 import { Update } from '@ngrx/entity';
 import { PeriodoFilter } from 'app/models';
 
@@ -27,7 +31,7 @@ export enum PagoDeNominaActionTypes {
 // Filters
 export class SetPagoDeNominasFilter implements Action {
   readonly type = PagoDeNominaActionTypes.SetPagoDeNominasFilter;
-  constructor(public payload: { filter: PeriodoFilter }) {}
+  constructor(public payload: { filter: PagosDeNominaFilter }) {}
 }
 
 // Load

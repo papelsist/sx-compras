@@ -1,0 +1,9 @@
+import sx.cfdi.CfdiCancelado
+
+model {
+	CfdiCancelado cfdiCancelado
+}
+
+json g.render(cfdiCancelado, [excludes: ['cfdi'], resolveTemplate: false]) {
+	cfdi g.render(cfdiCancelado.cfdi)
+}

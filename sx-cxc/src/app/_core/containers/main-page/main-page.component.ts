@@ -20,14 +20,9 @@ export class MainPageComponent implements OnInit {
       title: 'Inicio'
     },
     {
-      icon: 'people',
-      route: '/proveedores',
-      title: 'Proveedores'
-    },
-    {
       icon: 'my_library_books',
-      route: '/cxp',
-      title: 'Cuentas por pagar (CXP)'
+      route: '/cfdis',
+      title: 'Control de CFDIs'
     }
   ];
 

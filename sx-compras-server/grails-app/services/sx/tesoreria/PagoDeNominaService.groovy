@@ -68,6 +68,7 @@ abstract class PagoDeNominaService implements  LogUser{
         if(!egreso.cheque) {
             log.info('Generando cheque para egreso: {} Para: {}', egreso.id, egreso.afavor)
             movimientoDeCuentaService.generarCheque(egreso)
+            egreso.save failOnError: true, flush: true
         }
     }
 

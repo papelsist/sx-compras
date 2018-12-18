@@ -33,3 +33,10 @@ export interface PagoDeNominaCommand {
   referencia: string;
   importe?: number;
 }
+
+export class PagosDeNominaFilter {
+  fechaInicial?: Date;
+  fechaFinal?: Date;
+  registros?: number;
+  pendientes: boolean;
+}

@@ -36,7 +36,7 @@ class PagoDeNomina {
     String updateUser
 
     static constraints = {
-        nominaEmpleado nullable: true
+        nominaEmpleado unique: ['tipo', 'pensionAlimenticia']
         empleadoId nullable: true
         egreso nullable: true
         createUser nullable: true

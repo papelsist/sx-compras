@@ -1,0 +1,8 @@
+import sx.cfdi.Cfdi
+
+model {
+	Iterable<Cfdi> cfdiList
+}
+
+json tmpl.cfdi(cfdiList ?: [])
+

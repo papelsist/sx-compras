@@ -218,6 +218,11 @@ class UrlMappings {
 
         "/api/sat/cuentas"(resources: 'cuentaSat', excludes: ['create', 'edit', 'patch'])
 
+        // Cfdis
+        "/api/cfdi"(resources: 'cfdi', excludes:['create', 'edit', 'patch', 'update', 'save', 'delete'])
+        "/api/cfdiCancelado"(resources: 'cfdiCancelado', excludes:['create', 'edit','patch'])
+        "/api/cfdiCancelado/pendientes"(controller: 'cfdiCancelado', action: 'pendientes')
+
 
         "/"(controller: 'application', action:'index')
         "/api/session"(controller: 'application', action: 'session')

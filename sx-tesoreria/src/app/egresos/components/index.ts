@@ -52,6 +52,9 @@ import { DevolucionFormComponent } from './devolucion-form/devolucion-form.compo
 import { CobrosTableComponent } from './selector-cobro/cobros-table.component';
 import { SelectorCobrosComponent } from './selector-cobro/selector-cobros.component';
 import { SelectorCobrosBtnComponent } from './selector-cobro/selector-cobros-btn.component';
+import { PagosDeNominaFilterComponent } from './pagos-de-nomina-filter/pagos-de-nomina-filter.component';
+import { PagosDeNominaFilterBtnComponent } from './pagos-de-nomina-filter/pagos-de-nomina-filter-btn.component';
+import { PagosDeNominaFilterLabelComponent } from './pagos-de-nomina-filter/pagos-de-nomina-filter-label.component';
 
 export const components: any[] = [
   RequisicionesTableComponent,
@@ -98,6 +101,9 @@ export const components: any[] = [
   PagoDeNominaDialogComponent,
   PagoDeNominaBtnComponent,
   PagoDeNominaFormComponent,
+  PagosDeNominaFilterComponent,
+  PagosDeNominaFilterBtnComponent,
+  PagosDeNominaFilterLabelComponent,
 
   // Morrallas
   PagoMorrallasTableComponent,
@@ -131,7 +137,10 @@ export const entryComponents: any[] = [
   SelectorMorrallaComponent,
 
   // Devoluciones a clientes
-  SelectorCobrosComponent
+  SelectorCobrosComponent,
+
+  // Nomina
+  PagosDeNominaFilterComponent
 ];
 
 export * from './requisiciones-table/requisiciones-table.component';
@@ -179,6 +188,9 @@ export * from './pago-nomina-importar/pago-nomina-importar-dialog.component';
 export * from './pago-nomina-dialog/pago-nomina-dialog.component';
 export * from './pago-nomina-dialog/pago-nomina-dialog-btn.component';
 export * from './pago-nomina-form/pago-de-nomina-form.component';
+export * from './pagos-de-nomina-filter/pagos-de-nomina-filter.component';
+export * from './pagos-de-nomina-filter/pagos-de-nomina-filter-btn.component';
+export * from './pagos-de-nomina-filter/pagos-de-nomina-filter-label.component';
 
 // Morrallas
 export * from './pago-morrallas-table/pago-morrallas-table.component';

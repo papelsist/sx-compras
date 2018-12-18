@@ -1,0 +1,7 @@
+import sx.cfdi.CfdiCancelado
+
+model {
+	CfdiCancelado cfdiCancelado
+}
+
+json tmpl.cfdiCancelado(cfdiCancelado)

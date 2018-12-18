@@ -17,12 +17,8 @@ const routes: Routes = [
         loadChildren: './productos/productos.module#ProductosModule'
       },
       {
-        path: 'cxp',
-        loadChildren: './cxp/cxp.module#CxpModule'
-      },
-      {
-        path: 'proveedores',
-        loadChildren: './proveedores/proveedores.module#ProveedoresModule'
+        path: 'cfdis',
+        loadChildren: './cfdis/cfdis.module#CfdisModule'
       }
     ]
   }
