@@ -39,7 +39,7 @@ import { DatePipe } from '@angular/common';
         [enableColResize]="true"
         [animateRows]="true"
         [paginationAutoPageSize]="true"
-        [pagination]="true"
+        [pagination]="false"
         [localeText]="localeText"
         (firstDataRendered)="onFirstDataRendered($event)"
         (gridReady)="onGridReady($event)"
@@ -222,6 +222,11 @@ export class EstadoDeCuentaTableComponent implements OnInit, OnChanges {
       {
         headerName: 'x Ident',
         field: 'porIdentificar',
+        width: 50
+      },
+      {
+        headerName: 'CTar',
+        field: 'orden',
         width: 50
       },
       {

@@ -214,6 +214,7 @@ class UrlMappings {
         //Contabilidad
         "/api/contabilidad/cuentas"(resources: 'cuentaContable', excludes:['create', 'edit','patch'])
         "/api/contabilidad/polizas"(resources: 'poliza', excludes: ['create', 'edit', 'patch'])
+        "/api/contabilidad/polizas/generarPolizasEgreso"(controller: 'poliza', action: 'generarPolizasEgreso', method: 'POST')
         "/api/contabilidad/polizas/recalcular/$id"(controller: 'poliza', action: 'recalcular', method: 'PUT')
         "/api/contabilidad/polizas/print/$id"(controller: 'poliza', action: 'print')
 

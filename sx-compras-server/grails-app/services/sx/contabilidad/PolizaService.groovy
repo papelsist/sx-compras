@@ -19,11 +19,21 @@ abstract class PolizaService implements  LogUser{
     abstract void delete(Serializable id)
 
     Poliza salvarPolza(Poliza poliza) {
-        if(! poliza.id) {
-            asignarFolio(poliza)
-        }
+        /*
+        PolizaFolio folio = findFolio(poliza)
+        poliza.folio = folio.folio
+
+        folio.folio = folio.folio + 1
+        */
+
+        asignarFolio(poliza)
         logEntity(poliza)
-        return save(poliza)
+        // poliza = poliza.save flush: true
+        // folio.save flush: true
+        poliza =  save(poliza)
+        // folio.save flush: true
+        return poliza
+
     }
 
     Poliza updatePoliza(Poliza poliza) {
@@ -32,15 +42,31 @@ abstract class PolizaService implements  LogUser{
     }
 
     void asignarFolio(Poliza poliza){
+        PolizaFolio folio = PolizaFolio.where {
+            ejercicio == poliza.ejercicio && mes == poliza.mes && tipo == poliza.tipo && subtipo == poliza.subtipo
+        }.find()
+        if(!folio){
+            folio = new PolizaFolio(
+                    ejercicio: poliza.ejercicio,
+                    mes: poliza.mes,
+                    tipo: poliza.tipo,
+                    subtipo: poliza.subtipo)
+            folio.folio = 0
+        }
+        Integer next = folio.folio + 1
+        poliza.folio = next
+        folio.folio = next
+        folio.save flush: true
+    }
+
+    PolizaFolio findFolio(Poliza poliza){
         PolizaFolio folio = PolizaFolio.findOrSaveWhere(
                 ejercicio: poliza.ejercicio,
                 mes: poliza.mes,
                 tipo: poliza.tipo,
-                subtipo: poliza.subtipo,
-                folio: 1
+                subtipo: poliza.subtipo
         )
-        poliza.folio = folio.folio++
-        folio.save()
+        return folio
     }
 
     @CompileDynamic

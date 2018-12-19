@@ -51,6 +51,8 @@ class MovimientoDeCuenta {
 
     String sucursal
 
+    Long orden
+
     boolean porIdentificar = false
 
     static belongsTo = [
@@ -62,6 +64,8 @@ class MovimientoDeCuenta {
             ficha: Ficha
     ]
     static mappedBy = [ pagoDeMorralla: "none"]
+
+    static transients = ['orden']
 
 
     static constraints = {

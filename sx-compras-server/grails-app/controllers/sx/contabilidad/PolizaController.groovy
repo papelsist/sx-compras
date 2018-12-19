@@ -6,7 +6,9 @@ import grails.gorm.DetachedCriteria
 import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.*
 import grails.transaction.NotTransactional
+import grails.web.databinding.WebDataBinding
 import groovy.transform.CompileDynamic
+import groovy.transform.ToString
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.exception.ExceptionUtils
 import sx.reports.ReportService
@@ -28,6 +30,8 @@ class PolizaController extends RestfulController<Poliza> {
     ReportService reportService
 
     GrailsApplication grailsApplication
+
+    PolizaDeEgresoService polizaDeEgresoService
 
     PolizaController() {
         super(Poliza)
@@ -61,12 +65,23 @@ class PolizaController extends RestfulController<Poliza> {
         poliza.properties = command
 
         String pname = polizaService.resolverProcesador(poliza)
+        log.info("Generando poliza(s) con procesador: {}", pname)
         ProcesadorDePoliza procesador = (ProcesadorDePoliza)grailsApplication.mainContext.getBean(pname)
         poliza.concepto = procesador.definirConcepto(poliza)
 
         poliza = polizaService.salvarPolza(poliza)
         respond poliza
 
+    }
+
+    @CompileDynamic
+    def generarPolizasEgreso(){
+        PolizaCreateCommand command = new PolizaCreateCommand()
+        command.properties = getObjectToBind()
+        log.info('Generando polizas de egreso para {}', command)
+        List<Poliza> polizas = polizaDeEgresoService
+                .generarPolizas(command.subtipo, command.ejercicio, command.mes, command.fecha)
+        respond polizas
     }
 
     @Override
@@ -94,7 +109,6 @@ class PolizaController extends RestfulController<Poliza> {
         resource = procesador.recalcular(resource)
         return polizaService.updatePoliza(resource)
     }
-
 
 
     def recalcular(Poliza poliza) {
@@ -131,7 +145,8 @@ class PolizaController extends RestfulController<Poliza> {
 
 }
 
-class PolizaCreateCommand  {
+@ToString
+class PolizaCreateCommand implements  WebDataBinding {
 
     Integer ejercicio
     Integer mes

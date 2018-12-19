@@ -115,6 +115,12 @@ class CuentaDeBancoController extends RestfulController {
                       order by fecha 
                 """,
                 [command.fechaIni, command.fechaFin, command.cuenta.id])
+        Long row = 1
+        movimientos.each {
+            if(it.formaDePago == 'TARJETA') {
+                it.orden = row++
+            }
+        }
         log.info('Movimientos: {}', movimientos.size())
 
         BigDecimal cargos = movimientos.findAll{!it.porIdentificar}.sum 0.0, {it.importe < 0.0 ? it.importe: 0.0}

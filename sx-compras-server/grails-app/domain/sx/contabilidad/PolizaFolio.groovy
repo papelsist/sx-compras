@@ -15,7 +15,7 @@ class PolizaFolio {
 
     String subtipo
 
-    Integer folio = 0
+    Integer folio = 1
 
     Date dateCreated
 

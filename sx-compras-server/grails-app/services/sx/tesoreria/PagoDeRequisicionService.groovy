@@ -52,7 +52,7 @@ class PagoDeRequisicionService implements  LogUser {
             // throw new PagoDeRequisicionException("Requisicion ${requisicion.folio} no no esta cerrada")
         }
 
-        String tipo  = requisicion.instanceOf(RequisicionDeCompras) ? 'COMRA' : 'GASTO'
+        String tipo  = requisicion.instanceOf(RequisicionDeCompras) ? 'COMPRA' : 'GASTO'
         if(command.importe > 0) {
             requisicion.comentario = "PAGO MODIFICADO ORIGINAL DE:${requisicion.apagar}"
             requisicion.apagar = command.importe

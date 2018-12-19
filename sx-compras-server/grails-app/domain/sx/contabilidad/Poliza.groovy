@@ -33,6 +33,8 @@ class Poliza {
 
     Date cierre
 
+    String egreso
+
     Date dateCreated
     Date lastUpdated
 
@@ -53,6 +55,7 @@ class Poliza {
         cierre nullable:true
         createUser nullable: true
         updateUser nullable: true
+        egreso nullable: true
     }
 
     static mapping ={

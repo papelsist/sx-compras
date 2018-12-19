@@ -25,6 +25,7 @@ class ImportadorCfdi32{
 
         def data = xml.attributes()
 
+
         def receptorNode = xml.breadthFirst().find { it.name() == 'Receptor'}
         def receptorNombre = receptorNode.attributes()['nombre']
         def receptorRfc = receptorNode.attributes()['rfc']
@@ -69,9 +70,9 @@ class ImportadorCfdi32{
             break
         }
 
-        def moneda = data['Moneda']
-        def tipoDeCamio = data['TipoCambio'] as BigDecimal
-             def comprobanteFiscal=ComprobanteFiscal.findByUuid(uuid)
+        def moneda = data['Moneda'] ?: 'MXN'
+        def tipoDeCamio = data['TipoCambio'] as BigDecimal ?: 0.0
+        def comprobanteFiscal = ComprobanteFiscal.findByUuid(uuid)
 
         if(comprobanteFiscal){
             return comprobanteFiscal
