@@ -6,7 +6,7 @@ export interface CfdiCancelado {
   serie: string;
   folio: string;
   comentario: string;
-  aka: any;
+  ack: any;
   statusSat: string;
   dateCreated: string;
   lastUpdated: string;

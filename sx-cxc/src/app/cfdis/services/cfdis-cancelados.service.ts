@@ -51,4 +51,11 @@ export class CfdisCanceladosService {
       .get<Cfdi[]>(url)
       .pipe(catchError((error: any) => throwError(error)));
   }
+
+  cancelar(cfdi: Cfdi): Observable<CfdiCancelado> {
+    const url = `${this.apiUrl}/cancelar/${cfdi.id}`;
+    return this.http
+      .put<CfdiCancelado>(url, {})
+      .pipe(catchError((error: any) => throwError(error)));
+  }
 }

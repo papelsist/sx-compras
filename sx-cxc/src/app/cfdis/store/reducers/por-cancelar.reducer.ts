@@ -24,13 +24,14 @@ export function reducer(
   action: PorCancelarActions
 ): State {
   switch (action.type) {
+    case PorCancelarActionTypes.CancelarCfdi:
     case PorCancelarActionTypes.LoadCfdisPorCancelar: {
       return {
         ...state,
         loading: true
       };
     }
-
+    case PorCancelarActionTypes.CancelarCfdiFail:
     case PorCancelarActionTypes.LoadCfdisPorCancelarFail: {
       return {
         ...state,
@@ -43,6 +44,12 @@ export function reducer(
         ...state,
         loading: false,
         loaded: true
+      });
+    }
+    case PorCancelarActionTypes.CancelarCfdiSuccess: {
+      return adapter.removeOne(action.payload.cancelacion.cfdi.id, {
+        ...state,
+        loading: false
       });
     }
     default: {

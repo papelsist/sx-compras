@@ -12,13 +12,13 @@ class CancelacionDeCfdi {
 
     String uuid
 
-    byte[] aka
+    byte[] ack
 
     String statusCode
 
     String status
 
-    Boolean isCancelable
+    String isCancelable
 
     String cancelStatus
 
@@ -34,7 +34,7 @@ class CancelacionDeCfdi {
     static constraints = {
         uuid unique:true
         comentario nullable:true
-        aka maxSize:(1024 * 1024)  // 100kb para almacenar el xml
+        ack maxSize:(1024 * 1024)  // 100kb para almacenar el xml
         statusCode maxSize: 200, nullable: true
         isCancelable nullable: true
         cancelStatus nullable: true

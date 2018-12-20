@@ -4,7 +4,7 @@ import grails.compiler.GrailsCompileStatic
 import grails.gorm.DetachedCriteria
 import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.*
-import groovy.transform.CompileDynamic
+
 import groovy.util.logging.Slf4j
 
 import sx.reports.ReportService
@@ -14,7 +14,7 @@ import sx.utils.Periodo
 @Secured(['ROLE_CXC', 'ROLE_GASTOS', 'ROLE_TESORERIA'])
 @GrailsCompileStatic
 @Slf4j
-class CfdiCanceladoController extends RestfulController<CancelacionDeCfdi> {
+class CancelacionDeCfdiController extends RestfulController<CancelacionDeCfdi> {
 
     static responseFormats = ['json']
 
@@ -22,7 +22,9 @@ class CfdiCanceladoController extends RestfulController<CancelacionDeCfdi> {
 
     CfdiCanceladoService cfdiCanceladoService
 
-    CfdiCanceladoController() {
+    CancelacionService cancelacionService
+
+    CancelacionDeCfdiController() {
         super(CancelacionDeCfdi)
     }
 
@@ -54,5 +56,15 @@ class CfdiCanceladoController extends RestfulController<CancelacionDeCfdi> {
             eq('status', 'CANCELACION_PENDIENTE')
         }
         respond criteria.list([sort:'lastUpdated', order: 'asc'])
+    }
+
+    def cancelar(Cfdi cfdi) {
+        log.info('Cancelando cfdi: ', cfdi)
+        if(cfdi == null){
+            notFound()
+            return
+        }
+        CancelacionDeCfdi cancelacionDeCfdi = cancelacionService.cancelarCfdi(cfdi)
+        respond cancelacionDeCfdi
     }
 }
