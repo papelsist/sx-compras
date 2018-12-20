@@ -14,7 +14,7 @@ export class CfdisCanceladosService {
   private apiUrl: string;
 
   constructor(private http: HttpClient, private configService: ConfigService) {
-    this.apiUrl = configService.buildApiUrl('cfdiCancelado');
+    this.apiUrl = configService.buildApiUrl('cfdi/cancelacion');
   }
 
   get(id: string): Observable<CfdiCancelado> {
