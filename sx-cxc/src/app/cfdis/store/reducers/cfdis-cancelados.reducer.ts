@@ -56,6 +56,7 @@ export function reducer(
       const filter = action.payload.filter;
       return {
         ...state,
+        loading: false,
         filter
       };
     }

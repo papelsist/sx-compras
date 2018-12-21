@@ -2,6 +2,7 @@ package sx.cfdi
 
 import grails.compiler.GrailsCompileStatic
 import grails.gorm.transactions.Transactional
+import grails.transaction.NotTransactional
 import groovy.transform.CompileDynamic
 
 import groovy.util.logging.Slf4j
@@ -178,30 +179,37 @@ class CancelacionService implements  LogUser{
         return pendientes
     }
 
-    void generarSolicitudesDeCancelacion() {
+    int generarSolicitudesDeCancelacion() {
         List<Cfdi> pendientes = buscarPendientes()
-        log.info("**** {} CFDIs pendientes de solicitar cancelacion", pendientes.size())
+        log.info("{} Cancelaciones de CFDIs pendientes de SOLICITAR", pendientes.size())
+        int solicitudes = 0
         pendientes.each {
             try {
                 cancelarCfdi(it)
+                solicitudes++
             }catch(Exception ex) {
                 String msg = ExceptionUtils.getRootCauseMessage(ex)
                 log.error("Error mandando cancelar cfdi {} Err: {}", it.uuid, msg)
             }
         }
+        return solicitudes
     }
 
-    void actualizarSolicitudesDeCancelacion() {
+    @NotTransactional
+    int actualizarSolicitudesDeCancelacion() {
         List<CancelacionDeCfdi> pendientes = CancelacionDeCfdi.where{status != 'Cancelado'}.list()
-        log.info("**** {} Cancelaciones de CFDI pendientes de Cancelacion definitiva", pendientes.size())
+        log.info("**** {} Cancelaciones de CFDI pendientes de ACTUALIZAR", pendientes.size())
+        int updates = 0
         pendientes.each {
             try {
                 actualizarStatus(it)
+                updates++
             }catch(Exception ex) {
                 String msg = ExceptionUtils.getRootCauseMessage(ex)
                 log.error("Error mandando actualizar  solicitud de cancelacion para cfdi {} Err: {}", it.uuid, msg)
             }
         }
+        return updates
     }
 
 

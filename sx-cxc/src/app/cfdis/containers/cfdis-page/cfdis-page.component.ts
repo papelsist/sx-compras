@@ -62,6 +62,27 @@ import { User } from 'app/auth/models/user';
           <p matLine>CFDI's pendientes de cancelación</p>
         </a>
         <mat-divider></mat-divider>
+
+        <a mat-list-item>
+          <mat-icon matListAvatar>picture_as_pdf</mat-icon>
+          <h3 matLine>Rep 2</h3>
+          <p matLine>Desc 2</p>
+        </a>
+        <mat-divider></mat-divider>
+
+        <a mat-list-item>
+          <mat-icon matListAvatar>picture_as_pdf</mat-icon>
+          <h3 matLine>Rep 3</h3>
+          <p matLine>Desc 3</p>
+        </a>
+        <mat-divider></mat-divider>
+
+        <a mat-list-item>
+          <mat-icon matListAvatar>picture_as_pdf</mat-icon>
+          <h3 matLine>Rep 4</h3>
+          <p matLine>Desc 4</p>
+        </a>
+        <mat-divider></mat-divider>
       </mat-nav-list>
 
       <router-outlet></router-outlet>
