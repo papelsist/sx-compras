@@ -7,6 +7,9 @@ import * as fromCfdis from '../../store/actions/por-cancelar.actions';
 import { Observable } from 'rxjs';
 
 import { Cfdi, CfdisFilter } from '../../models';
+import { TdDialogService } from '@covalent/core';
+
+import * as moment from 'moment';
 
 @Component({
   selector: 'sx-cancelaciones-pendientes',
@@ -29,11 +32,18 @@ import { Cfdi, CfdisFilter } from '../../models';
         </button>
       </div>
       <mat-divider></mat-divider>
-      <sx-cfdis-table
-        [comprobantes]="cfdis$ | async"
-        [filter]="search"
-        (select)="onSelect($event)"
-      ></sx-cfdis-table>
+      <ng-template
+        tdLoading
+        [tdLoadingUntil]="!(loading$ | async)"
+        tdLoadingStrategy="overlay"
+      >
+        <sx-cfdis-por-cancelar-table
+          [comprobantes]="cfdis$ | async"
+          [filter]="search"
+          (select)="onSelect($event)"
+          (cancelar)="onCancelar($event)"
+        ></sx-cfdis-por-cancelar-table>
+      </ng-template>
     </mat-card>
   `,
   styles: [
@@ -47,12 +57,17 @@ import { Cfdi, CfdisFilter } from '../../models';
 })
 export class CancelacionesPendientesComponent implements OnInit {
   cfdis$: Observable<Cfdi[]>;
+  loading$: Observable<boolean>;
 
   search: string;
 
-  constructor(private store: Store<fromStore.State>) {}
+  constructor(
+    private store: Store<fromStore.State>,
+    private dialogService: TdDialogService
+  ) {}
 
   ngOnInit() {
+    this.loading$ = this.store.pipe(select(fromStore.getPorCancelarLoading));
     this.cfdis$ = this.store.pipe(select(fromStore.getAllPorCancelar));
   }
 
@@ -65,6 +80,25 @@ export class CancelacionesPendientesComponent implements OnInit {
   }
 
   onSelect(event: Cfdi[]) {
-    console.log('Selected: ', event[0]);
+    // console.log('Selected: ', event[0]);
+  }
+
+  onCancelar(cfdi: Cfdi) {
+    this.dialogService
+      .openConfirm({
+        message: `Cfdi Fecha: ${moment(cfdi.fecha).format(
+          'DD/MM/YYYY'
+        )}, Total: ${cfdi.total} (Operación irreversible)`,
+        title: `Cancelación de CFDI: ${cfdi.serie}-${cfdi.folio} `,
+        cancelButton: 'ABORTAR',
+        acceptButton: 'CANCELAR CFDI',
+        width: '650px'
+      })
+      .afterClosed()
+      .subscribe(res => {
+        if (res) {
+          this.store.dispatch(new fromStore.CancelarCfdi({ cfdi }));
+        }
+      });
   }
 }

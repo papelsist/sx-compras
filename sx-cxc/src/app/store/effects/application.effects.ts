@@ -94,7 +94,8 @@ export class ApplicationsEffects {
       this.dialogService.openAlert({
         message: `${response.status} ${message}`,
         title: `Error ${response.status}`,
-        closeButton: 'Cerrar'
+        closeButton: 'Cerrar',
+        minWidth: '550px'
       });
     })
   );

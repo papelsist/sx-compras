@@ -4,7 +4,7 @@ import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 
 
-@ToString(includeNames=true,includePackage=false, excludes = ['dateCreated', 'lastUpdated'])
+@ToString(includeNames=true,includePackage=false, excludes = ['dateCreated', 'lastUpdated', 'ack'])
 @EqualsAndHashCode(includeFields = true, includes = ['uuid', 'id'])
 class CancelacionDeCfdi {
 

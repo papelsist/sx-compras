@@ -1,6 +1,6 @@
 import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 
-import { CfdiCancelado, CfdisFilter, createDefaultFilter } from '../../models';
+import { CfdiCancelado, CfdisFilter, monthToDayFilter } from '../../models';
 
 import {
   CfdiCanceladoActions,
@@ -21,7 +21,7 @@ export const adapter: EntityAdapter<CfdiCancelado> = createEntityAdapter<
 export const initialState: State = adapter.getInitialState({
   loading: false,
   loaded: false,
-  filter: createDefaultFilter(),
+  filter: monthToDayFilter(),
   searchTerm: ''
 });
 

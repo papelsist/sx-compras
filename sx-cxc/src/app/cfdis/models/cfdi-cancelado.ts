@@ -7,7 +7,10 @@ export interface CfdiCancelado {
   folio: string;
   comentario: string;
   ack: any;
-  statusSat: string;
+  status: string;
+  statusCode: string;
+  isCancelable: string;
+  cancelStatus: string;
   dateCreated: string;
   lastUpdated: string;
   createUser: string;

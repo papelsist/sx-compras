@@ -45,6 +45,15 @@ export class CfdisCanceladosEffects {
     })
   );
 
+  @Effect({ dispatch: false })
+  mostrarAcuse$ = this.actions$.pipe(
+    ofType<fromActions.MostrarAcuseDeCancelacion>(
+      CfdiCanceladoActionTypes.MostrarAcuseDeCancelacion
+    ),
+    map(action => action.payload.cancelacion),
+    tap(cancelacion => this.service.mostrarAcuse(cancelacion))
+  );
+
   @Effect()
   getFail$ = this.actions$.pipe(
     ofType<fromActions.LoadCfdisCanceladosFail>(

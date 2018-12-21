@@ -58,4 +58,35 @@ export class CfdisCanceladosService {
       .put<CfdiCancelado>(url, {})
       .pipe(catchError((error: any) => throwError(error)));
   }
+
+  mostrarAcuse(cancelacion: Partial<CfdiCancelado>) {
+    const url = `${this.apiUrl}/mostrarAcuse/${cancelacion.id}`;
+    const headers = new HttpHeaders().set('Content-type', 'text/xml');
+    this.http
+      .get(url, {
+        headers: headers,
+        responseType: 'blob'
+      })
+      .subscribe(
+        res => {
+          const blob = new Blob([res], {
+            type: 'text/xml'
+          });
+          const fileURL = window.URL.createObjectURL(blob);
+          window.open(fileURL, '_blank');
+        },
+        error => console.error('Error mostrando acuse ', error)
+      );
+  }
+
+  descargarAcuse(cancelacion: Partial<CfdiCancelado>): Observable<any> {
+    const url = `${this.apiUrl}/descargarAcuse/${cancelacion.id}`;
+    const headers = new HttpHeaders().set('Content-type', 'text/xml');
+    return this.http
+      .get(url, {
+        headers: headers,
+        responseType: 'blob'
+      })
+      .pipe(catchError((error: any) => throwError(error)));
+  }
 }

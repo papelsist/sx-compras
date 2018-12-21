@@ -224,7 +224,9 @@ class UrlMappings {
         "/api/cfdi"(resources: 'cfdi', excludes:['create', 'edit', 'patch', 'update', 'save', 'delete'])
         "/api/cfdi/cancelacion"(resources: 'cancelacionDeCfdi', excludes:['create', 'edit','patch', 'save'])
         "/api/cfdi/cancelacion/pendientes"(controller: 'cancelacionDeCfdi', action: 'pendientes')
-        "/api/cfdi/cancelacion/cancelar"(controller: 'cancelacionDeCfdi', action: 'cancelar', method: 'PUT')
+        "/api/cfdi/cancelacion/cancelar/$id"(controller: 'cancelacionDeCfdi', action: 'cancelar', method: 'PUT')
+        "/api/cfdi/cancelacion/mostrarAcuse/$id?"(controller:"cancelacionDeCfdi", action:"mostrarAcuse")
+        "/api/cfdi/cancelacion/descargarAcuse/$id?"(controller:"cancelacionDeCfdi", action:"descargarAcuse", method: 'GET')
 
 
         "/"(controller: 'application', action:'index')

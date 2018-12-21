@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 
 import { Store, select } from '@ngrx/store';
 import * as fromStore from '../../store';
-import * as fromCfdis from '../../store/actions/cfdis.actions';
+import * as fromCancelaciones from '../../store/actions/cancelados.actions';
 
 import { Observable } from 'rxjs';
 
-import { Cfdi, CfdisFilter } from '../../models';
+import { CfdisFilter, CfdiCancelado } from '../../models';
+import { CfdisCanceladosService } from 'app/cfdis/services';
 
 @Component({
   selector: 'sx-cfdis-cancelados',
@@ -14,9 +15,7 @@ import { Cfdi, CfdisFilter } from '../../models';
     <mat-card>
       <div layout="row" layout-align="start center" class="pad-left pad-right">
         <span class="push-left-sm">
-          <span class="mat-title"
-            >Cancelaciones de comprobantes fiscales (CFDI's)</span
-          >
+          <span class="mat-title">Cancelaciones de CFDIs registradas </span>
         </span>
         <span flex></span>
         <td-search-box
@@ -30,13 +29,17 @@ import { Cfdi, CfdisFilter } from '../../models';
         <button mat-icon-button (click)="load()">
           <mat-icon>refresh</mat-icon>
         </button>
+        <sx-cfdis-filter-btn
+          (change)="onFilterChanged($event)"
+          [filter]="filter$ | async"
+        ></sx-cfdis-filter-btn>
       </div>
       <mat-divider></mat-divider>
-
-      <mat-tab-group>
-        <mat-tab label="PENDIENTES"> </mat-tab>
-        <mat-tab label="CANCELADOS"> </mat-tab>
-      </mat-tab-group>
+      <sx-cancelaciones-table
+        [cancelaciones]="cancelaciones$ | async"
+        (ack)="onAcuse($event)"
+        (download)="onDownload($event)"
+      ></sx-cancelaciones-table>
     </mat-card>
   `,
   styles: [
@@ -49,36 +52,53 @@ import { Cfdi, CfdisFilter } from '../../models';
   ]
 })
 export class CancelacionesComponent implements OnInit {
-  cfdis$: Observable<Cfdi[]>;
+  cancelaciones$: Observable<CfdiCancelado[]>;
   filter$: Observable<CfdisFilter>;
   search$: Observable<string>;
 
-  constructor(private store: Store<fromStore.State>) {}
+  constructor(
+    private store: Store<fromStore.State>,
+    private service: CfdisCanceladosService
+  ) {}
 
   ngOnInit() {
-    this.cfdis$ = this.store.pipe(select(fromStore.getAllCfdis));
-    this.filter$ = this.store.pipe(select(fromStore.getCfdisFilter));
-    this.search$ = this.store.pipe(select(fromStore.getCfdisSearchTerm));
+    this.cancelaciones$ = this.store.pipe(
+      select(fromStore.getAllCfdisCancelados)
+    );
+    this.filter$ = this.store.pipe(select(fromStore.getCfdisCanceladosFilter));
+    this.search$ = this.store.pipe(
+      select(fromStore.getCfdisCanceladosSearchTerm)
+    );
   }
 
   filter(term: string) {
-    this.store.dispatch(new fromCfdis.SetCfdisSearchTerm({ term }));
+    // this.store.dispatch(new fromCfdis.SetCfdisSearchTerm({ term }));
   }
 
-  onPdf(event: Cfdi) {
-    this.store.dispatch(new fromCfdis.ImprimirCfdi(event.id));
+  onAcuse(cancelacion: CfdiCancelado) {
+    this.store.dispatch(
+      new fromCancelaciones.MostrarAcuseDeCancelacion({ cancelacion })
+    );
   }
 
-  onXml(cfdi: Cfdi) {
-    this.store.dispatch(new fromCfdis.MostrarXmlCfdi({ cfdi }));
-  }
-
-  onSelect(event: Cfdi[]) {
-    const ids = event.map(item => item.id);
-    // this.store.dispatch(new fromCfdis.SelectCfdis({ ids }));
-  }
+  onSelect(event: CfdiCancelado[]) {}
 
   load() {
-    this.store.dispatch(new fromCfdis.LoadCfdis());
+    this.store.dispatch(new fromCancelaciones.LoadCfdisCancelados());
+  }
+
+  onFilterChanged(event: CfdisFilter) {
+    console.log('Filtro: ', event);
+  }
+
+  onDownload(event: CfdiCancelado) {
+    this.service.descargarAcuse(event).subscribe(data => {
+      const blob = new Blob([data], { type: 'text/xml' });
+      const downloadURL = window.URL.createObjectURL(data);
+      const link = document.createElement('a');
+      link.href = downloadURL;
+      link.download = `ACK_CANCEL_${event.serie}-${event.folio}`;
+      link.click();
+    });
   }
 }

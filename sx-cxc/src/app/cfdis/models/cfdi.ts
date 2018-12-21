@@ -37,9 +37,22 @@ export class CfdisFilter {
   registros: number;
 }
 
-export function createDefaultFilter(): CfdisFilter {
-  const { fechaInicial, fechaFinal } = Periodo.fromNow(5);
-  const registros = 100;
+export function createDefaultFilter(
+  dias: number = 5,
+  rows: number = 100
+): CfdisFilter {
+  const { fechaInicial, fechaFinal } = Periodo.fromNow(dias);
+  const registros = rows;
+  return {
+    fechaInicial,
+    fechaFinal,
+    registros
+  };
+}
+
+export function monthToDayFilter(rows: number = 100): CfdisFilter {
+  const { fechaInicial, fechaFinal } = Periodo.monthToDay();
+  const registros = rows;
   return {
     fechaInicial,
     fechaFinal,

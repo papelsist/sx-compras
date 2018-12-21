@@ -7,7 +7,8 @@ export enum CfdiCanceladoActionTypes {
   LoadCfdisCanceladosFail = '[CfdiCancelados API] Load CfdiCancelados fail',
   LoadCfdisCanceladosSuccess = '[CfdiCancelados API] Load CfdiCancelados Success',
   SetCfdisCanceladosFilter = '[CfdiCancelados component] Set CfdiCancelados Filter',
-  SetCfdisCanceladosSearchTerm = '[CfdiCancelado component] CFDIs cancelado SearchTerm'
+  SetCfdisCanceladosSearchTerm = '[CfdiCancelado component] CFDIs cancelado SearchTerm',
+  MostrarAcuseDeCancelacion = '[CfdiCancelados component] Mostrar Acuse de cancelacion'
 }
 
 export class LoadCfdisCancelados implements Action {
@@ -32,9 +33,15 @@ export class SetCfdisCanceladosSearchTerm implements Action {
   constructor(public payload: { term: string }) {}
 }
 
+export class MostrarAcuseDeCancelacion implements Action {
+  readonly type = CfdiCanceladoActionTypes.MostrarAcuseDeCancelacion;
+  constructor(public payload: { cancelacion: CfdiCancelado }) {}
+}
+
 export type CfdiCanceladoActions =
   | LoadCfdisCancelados
   | LoadCfdisCanceladosFail
   | LoadCfdisCanceladosSuccess
   | SetCfdisCanceladosFilter
-  | SetCfdisCanceladosSearchTerm;
+  | SetCfdisCanceladosSearchTerm
+  | MostrarAcuseDeCancelacion;
