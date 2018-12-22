@@ -1,0 +1,8 @@
+import sx.contabilidad.SaldoPorCuentaContable
+
+model {
+	Iterable<SaldoPorCuentaContable> saldoPorCuentaContableList
+}
+
+json tmpl.saldoPorCuentaContable(saldoPorCuentaContableList ?: [])
+

@@ -56,9 +56,14 @@ class PagoDeRembolsoService implements  LogUser {
 
         MovimientoDeCuenta egreso = movimientoDeCuentaService.generarEgreso(rembolso, cuenta, referencia)
         rembolso.egreso = egreso
-        log.info('Egreso generado {}', egreso.importe)
+        if(egreso.formaDePago == 'CHEQUE'){
+            generarCheque(rembolso)
+        }
         egreso.save(flush: true)
-        rembolso.save flush: true
+        log.info('Egreso generado {}', egreso.importe)
+        logEntity(rembolso)
+        rembolso = rembolso.save flush: true
+        return rembolso
 
     }
 
@@ -78,16 +83,13 @@ class PagoDeRembolsoService implements  LogUser {
         return rembolso
     }
 
-
-
     Rembolso generarCheque( Rembolso rembolso) {
         MovimientoDeCuenta egreso = rembolso.egreso
         if(!egreso.cheque) {
             log.info('Generando cheque para egreso: {}', egreso)
             movimientoDeCuentaService.generarCheque(egreso)
             logEntity(egreso)
-            egreso.save flush: true
-            rembolso.refresh()
+            egreso.save()
         }
         return rembolso
 
