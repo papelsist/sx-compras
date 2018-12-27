@@ -217,3 +217,7 @@ environments:
       cxp:
         cfdisDir: /home/cfdProv
         gastosDir: /home/cfdGastos
+---
+quartz:
+    autoStartup: false
+---

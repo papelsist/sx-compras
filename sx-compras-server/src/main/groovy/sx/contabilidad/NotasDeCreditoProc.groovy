@@ -69,7 +69,7 @@ class NotasDeCreditoProc implements  ProcesadorDePoliza{
         List rows = getAllRows(select, [])
         log.info('Procesando poliza {}  {} registros', poliza.tipo, poliza.subtipo)
 
-        poliza.partidas.clear()
+        
 
         rows.each { row ->
                 cargoNotas(poliza,row)
