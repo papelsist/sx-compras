@@ -4,7 +4,7 @@ import grails.compiler.GrailsCompileStatic
 import grails.gorm.DetachedCriteria
 import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.*
-
+import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.exception.ExceptionUtils
 import sx.reports.ReportService
@@ -29,23 +29,38 @@ class CancelacionDeCfdiController extends RestfulController<CancelacionDeCfdi> {
     }
 
     @Override
-    // @CompileDynamic
+    @CompileDynamic
     protected List listAllResources(Map params) {
+
         params.sort = 'lastUpdated'
         params.order = 'desc'
-        params.max = params.registros?: 50
-
+        params.max = params.max?: 50
         log.info('List: {}', params)
 
-        def receptor = params.receptor?: '%'
-        def criteria = new DetachedCriteria(CancelacionDeCfdi).build {
 
-        }
-        if(params.periodo) {
-            Periodo periodo = (Periodo)params.periodo
+        def criteria = new DetachedCriteria(CancelacionDeCfdi).build {}
+
+        if(params.receptor) {
+            def receptor = "${params.receptor}%"
+            log.info('List por receptor: {}', receptor)
             criteria = criteria.build {
-                // between('dateCreado', periodo.fechaInicial, periodo.fechaFinal)
+                cfdi {
+                    ilike('receptor', receptor)
+                }
             }
+        }
+
+        else if(params.periodo) {
+            Periodo periodo = (Periodo)params.periodo
+            return CancelacionDeCfdi.findAll(
+                    "from CancelacionDeCfdi c where date(c.cfdi.fecha) between ? and ? order by c.lastUpdated ",
+            [periodo.fechaInicial, periodo.fechaFinal])
+
+            /*
+            return CancelacionDeCfdi.where{
+                cfdi.fecha >= periodo.fechaInicial && cfdi.fecha <= periodo.fechaFinal
+            }.list(params)
+            */
         }
         return criteria.list(params)
     }

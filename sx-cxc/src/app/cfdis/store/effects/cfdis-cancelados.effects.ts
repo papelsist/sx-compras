@@ -27,6 +27,12 @@ export class CfdisCanceladosEffects {
   ) {}
 
   @Effect()
+  setFilter$ = this.actions$.pipe(
+    ofType(CfdiCanceladoActionTypes.SetCfdisCanceladosFilter),
+    map(action => new fromActions.LoadCfdisCancelados())
+  );
+
+  @Effect()
   loadCfdis$ = this.actions$.pipe(
     ofType(CfdiCanceladoActionTypes.LoadCfdisCancelados),
     switchMap(() => {

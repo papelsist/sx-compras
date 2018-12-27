@@ -9,7 +9,7 @@ import { CfdisFilter } from '../../models';
       layout-align="center center"
       class="pad-bottom text-sm tc-indigo-500"
     >
-      <span *ngIf="filter.receptor">{{ filter.receptor }}</span>
+      <span *ngIf="filter.receptor">Receptor: {{ filter.receptor }}</span>
       <span *ngIf="filter.fechaInicial" class="pad-left"
         >Del: {{ filter.fechaInicial | date: 'dd/MM/yyyy' }}</span
       >

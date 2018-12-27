@@ -14,6 +14,7 @@ import sx.cxp.ComprobanteFiscal
 
 
 @Component
+@Slf4j
 class ImportadorCfdi32{
 
     
@@ -24,7 +25,7 @@ class ImportadorCfdi32{
         String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss"
 
         def data = xml.attributes()
-
+        log.info('CFDI version 3.2')
 
         def receptorNode = xml.breadthFirst().find { it.name() == 'Receptor'}
         def receptorNombre = receptorNode.attributes()['nombre']
@@ -71,6 +72,10 @@ class ImportadorCfdi32{
         }
 
         def moneda = data['Moneda'] ?: 'MXN'
+        if(moneda == 'PESOS M.N.') {
+            moneda = 'MXN'
+        }
+        log.info('Moneda: {}', moneda)
         def tipoDeCamio = data['TipoCambio'] as BigDecimal ?: 0.0
         def comprobanteFiscal = ComprobanteFiscal.findByUuid(uuid)
 
@@ -102,7 +107,7 @@ class ImportadorCfdi32{
             tipoDeCambio: tipoDeCamio?: 1.0,
             tipo: origen)
         comprobanteFiscal = comprobanteFiscal.save failOnError: true, flush: true
-        println 'Comprobante: ' + comprobanteFiscal.id
+
 
         return comprobanteFiscal
 

@@ -35,11 +35,27 @@ import { CfdisCanceladosService } from 'app/cfdis/services';
         ></sx-cfdis-filter-btn>
       </div>
       <mat-divider></mat-divider>
-      <sx-cancelaciones-table
-        [cancelaciones]="cancelaciones$ | async"
-        (ack)="onAcuse($event)"
-        (download)="onDownload($event)"
-      ></sx-cancelaciones-table>
+      <ng-template
+        tdLoading
+        [tdLoadingUntil]="!(loading$ | async)"
+        tdLoadingStrategy="overlay"
+      >
+        <sx-cancelaciones-table
+          [cancelaciones]="cancelaciones$ | async"
+          (ack)="onAcuse($event)"
+          (download)="onDownload($event)"
+        ></sx-cancelaciones-table>
+      </ng-template>
+      <mat-card-footer>
+        <div layout>
+          <span flex></span>
+          <sx-cfdis-filter-label
+            flex
+            [filter]="filter$ | async"
+          ></sx-cfdis-filter-label>
+          <span flex></span>
+        </div>
+      </mat-card-footer>
     </mat-card>
   `,
   styles: [
@@ -55,6 +71,7 @@ export class CancelacionesComponent implements OnInit {
   cancelaciones$: Observable<CfdiCancelado[]>;
   filter$: Observable<CfdisFilter>;
   search$: Observable<string>;
+  loading$: Observable<boolean>;
 
   constructor(
     private store: Store<fromStore.State>,
@@ -62,6 +79,9 @@ export class CancelacionesComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.loading$ = this.store.pipe(
+      select(fromStore.getCfdisCanceladosLoading)
+    );
     this.cancelaciones$ = this.store.pipe(
       select(fromStore.getAllCfdisCancelados)
     );
@@ -88,7 +108,9 @@ export class CancelacionesComponent implements OnInit {
   }
 
   onFilterChanged(event: CfdisFilter) {
-    console.log('Filtro: ', event);
+    this.store.dispatch(
+      new fromCancelaciones.SetCfdisCanceladosFilter({ filter: event })
+    );
   }
 
   onDownload(event: CfdiCancelado) {
