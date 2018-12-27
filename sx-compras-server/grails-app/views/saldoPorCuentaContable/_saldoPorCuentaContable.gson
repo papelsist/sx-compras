@@ -4,4 +4,10 @@ model {
 	SaldoPorCuentaContable saldoPorCuentaContable
 }
 
-json g.render(saldoPorCuentaContable, [resolveTemplate: false])
+json g.render(saldoPorCuentaContable, [resolveTemplate: false]){
+    descripcion saldoPorCuentaContable.cuenta.descripcion
+    nivel saldoPorCuentaContable.cuenta.nivel
+    if(saldoPorCuentaContable.cuenta.padre) {
+        descripcion  "${saldoPorCuentaContable.cuenta.padre.descripcion} / ${saldoPorCuentaContable.cuenta.descripcion}"
+    }
+}
