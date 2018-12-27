@@ -21,7 +21,7 @@ class CancelacionDeCfdisJobService {
 
         Environment.executeForCurrentEnvironment {
             development {
-               // this.cancelacionService.cancelarPendientes()
+                this.cancelacionService.cancelarPendientes()
             }
         }
 
