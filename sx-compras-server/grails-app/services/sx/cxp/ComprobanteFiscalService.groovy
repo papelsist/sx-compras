@@ -52,8 +52,6 @@ class ComprobanteFiscalService implements  LogUser{
         log.info('CFDI version {}', version)
 
         if(version == '3.2'){
-            // return null
-            log.debug('Importando cfdi con ver 3.2 ')
             return importadorCfdi32.buildFromXml32(xml, xmlFile.bytes ,fileName, tipo)
 
         }

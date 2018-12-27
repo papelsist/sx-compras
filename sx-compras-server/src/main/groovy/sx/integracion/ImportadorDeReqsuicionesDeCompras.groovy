@@ -22,9 +22,10 @@ class ImportadorDeReqsuicionesDeCompras {
         List<Map> rows = getRows("""
         select * from sw_bcargoabono 
         where origen = 'COMPRAS' 
-        and year(fecha) > ?  and month(fecha) = ? 
+        and year(fecha) = ?  and month(fecha) = ? 
         order by fecha asc
         """, ejercicio, mes)
+        log.info('Egresos a importar: {}', rows.size())
 
         Sql db = getSql()
 
@@ -42,17 +43,17 @@ class ImportadorDeReqsuicionesDeCompras {
                         Cheque cheque = findCheque(egreso, row)
                         egreso.cheque = cheque
                         cheque.save failOnError: true, flush: true
-                        egreso.save
+                        egreso.save()
                     }
                     log.info('Requisicion importada {}', requisicion)
                 }
 
             }catch(Exception ex) {
+                ex.printStackTrace()
                 def message = ExceptionUtils.getRootCauseMessage(ex)
-                log.error('Error importando {} {}', row ,message)
+                log.error('Error: {} importando cargoabono: {}', message, row['cargoabono_id'])
             }
         }
-
         db.close()
         return this
 
@@ -68,12 +69,18 @@ class ImportadorDeReqsuicionesDeCompras {
 
         RequisicionDeCompras found = RequisicionDeCompras.where{sw2 == row.requisicion_id}.find()
         if(found){
-            log.info('Req ya iportada: {} ', row.sw2)
+            log.info('Req ya iportada: {} ', row.requisicion_id)
             return null
+        }
+        Proveedor proveedor = Proveedor.where{rfc == row.rfc}.find()
+        if(!proveedor) {
+            proveedor = Proveedor.where{nombre =~ "${row.afavor}%"}.find()
+            if(!proveedor)
+                throw new RuntimeException("No existe el proveedor RFC: ${row.rfc}  ${row.afavor}")
         }
         RequisicionDeCompras req = new RequisicionDeCompras()
         req.folio = row.requisicion_id
-        req.proveedor = Proveedor.where{rfc == row.rfc2}.find()
+        req.proveedor = proveedor
         req.nombre = row.afavor
         req.moneda = row.MONEDA
         req.tipoDeCambio = row.tc

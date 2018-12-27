@@ -22,7 +22,7 @@ class ActualizacionDeCancelacionesJobService {
 
         Environment.executeForCurrentEnvironment {
             contabilidad {
-                int updates = 0 //this.cancelacionService.actualizarSolicitudesDeCancelacion()
+                int updates = this.cancelacionService.actualizarSolicitudesDeCancelacion()
                 log.info("Actualizaciones de solicitudes: {}", updates)
             }
         }

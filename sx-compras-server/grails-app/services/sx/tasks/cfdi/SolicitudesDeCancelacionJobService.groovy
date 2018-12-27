@@ -33,7 +33,7 @@ class SolicitudesDeCancelacionJobService {
 
         Environment.executeForCurrentEnvironment {
             contabilidad {
-                int solicitudes = 0 //this.cancelacionService.generarSolicitudesDeCancelacion()
+                int solicitudes = this.cancelacionService.generarSolicitudesDeCancelacion()
                 log.info("Solicitudes de cancelacion generadas: {}", solicitudes)
             }
         }
