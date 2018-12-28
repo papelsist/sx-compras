@@ -29,18 +29,14 @@ class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaC
         params.order = params.order ?:'asc'
         params.max = 5000
 
-        log.debug('List : {}', params)
-
         Integer ejercicio = this.params.getInt('ejercicio')?: Periodo.currentYear()
-        Integer mes = this.params.getInt('ejercicio')?: Periodo.currentMes()
-        Integer nivel = this.params.getInt('nivel')?: 1
+        Integer mes = this.params.getInt('mes')?: Periodo.currentMes()
+
+        log.info('List {} {}', ejercicio, mes)
 
         def criteria = new DetachedCriteria(SaldoPorCuentaContable).build {
             eq('ejercicio', ejercicio)
             eq('mes', mes)
-            cuenta {
-                eq('nivel', nivel)
-            }
         }
         return criteria.list(params)
     }
