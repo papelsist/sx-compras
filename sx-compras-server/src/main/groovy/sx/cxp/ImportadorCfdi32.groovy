@@ -25,7 +25,7 @@ class ImportadorCfdi32{
         String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss"
 
         def data = xml.attributes()
-        log.info('CFDI version 3.2')
+        log.info('Building CFDI 3.2 con File: {} Tipo: {}', fileName, origen)
 
         def receptorNode = xml.breadthFirst().find { it.name() == 'Receptor'}
         def receptorNombre = receptorNode.attributes()['nombre']
@@ -75,7 +75,7 @@ class ImportadorCfdi32{
         if(moneda == 'PESOS M.N.') {
             moneda = 'MXN'
         }
-        log.info('Moneda: {}', moneda)
+
         def tipoDeCamio = data['TipoCambio'] as BigDecimal ?: 0.0
         def comprobanteFiscal = ComprobanteFiscal.findByUuid(uuid)
 

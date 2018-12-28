@@ -49,11 +49,13 @@ class ComprobanteFiscalService implements  LogUser{
             throw new ComprobanteFiscalException(message:"${fileName} no es un CFDI valido")
         def version = data.Version ?: data.version
 
-        log.info('CFDI version {}', version)
+
 
         if(version == '3.2'){
             return importadorCfdi32.buildFromXml32(xml, xmlFile.bytes ,fileName, tipo)
 
+        } else {
+            log.info('Building CFDI 3.3 con File: {} Tipo: {}', fileName, tipo)
         }
 
         def receptorNode = xml.breadthFirst().find { it.name() == 'Receptor'}
@@ -174,7 +176,7 @@ class ComprobanteFiscalService implements  LogUser{
         return importarDirectorio(dir, tipo, deleteFiles)
     }
 
-    int importarDirectorio(File dir, String tipo, boolean  deleteFiles) {
+    int importarDirectorioOld(File dir, String tipo, boolean  deleteFiles) {
         int rows = 0
         dir.eachFile { File it ->
             if(it.isDirectory())
@@ -200,10 +202,33 @@ class ComprobanteFiscalService implements  LogUser{
         return rows
     }
 
+    int importarDirectorio(File dir, String tipo, boolean  deleteFiles) {
+        int rows = 0
+        dir.eachFile { File it ->
+
+            if(it.name.toLowerCase().endsWith('.xml')) {
+                try{
+                    ComprobanteFiscal cf = importar(it, tipo)
+                    rows = rows + 1
+                }catch (Exception ex) {
+                    String m = ExceptionUtils.getRootCauseMessage(ex)
+                    log.error("Error importando ${it.name}: ${m}", ex)
+                }
+                // Eliminar los archivos
+                if(deleteFiles)
+                    cleanFile(it)
+            }
+
+
+        }
+        return rows
+    }
+
 
     @Transactional
     ComprobanteFiscal importar(File xmlFile, String tipo) {
         ComprobanteFiscal cf = buildFromXml(xmlFile, xmlFile.name, tipo)
+        log.info('CFDI Generado: {}', cf)
         if(cf == null){
             cleanFile(xmlFile)
             return null
@@ -220,7 +245,8 @@ class ComprobanteFiscalService implements  LogUser{
             if(pdf.exists() && pdf.isFile() && pdf.size() < maxSize) {
                 cf.pdf = pdf.bytes
             }
-            cf.save failOnError: true, flush: true
+            cf = cf.save failOnError: true, flush: true
+            log.info('****** Entity CFDI generada {}', cf.id)
             if (cf.tipoDeComprobante == 'I'){
                 CuentaPorPagar cxp = this.generarCuentaPorPagar(cf, tipo)
                 cxp.comprobanteFiscal = cf
@@ -233,6 +259,7 @@ class ComprobanteFiscalService implements  LogUser{
             return cf
 
         } else {
+            log.info('-----------* EL CFDI {} YA EXISTIA CON EL ID:{}', found.uuid, found.id)
             return null
         }
     }
