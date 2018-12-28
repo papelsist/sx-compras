@@ -17,7 +17,7 @@ class SaldoPorCuentaContableService {
 
     SaldoPorCuentaContable actualizarSaldoCuentaDetalle(CuentaContable cuenta, Integer ejercicio, Integer mes){
         if(!cuenta.detalle)
-            throw new RuntimeException("Cuenta acumulativa no de detalle {}", cuenta)
+            throw new RuntimeException("Cuenta acumulativa no de detalle ${cuenta}")
         log.info("Actualizando cuenta {} Ejercicio: {}/{}",cuenta.clave, ejercicio, mes )
 
         BigDecimal saldoInicial = 0.0
@@ -123,9 +123,6 @@ class SaldoPorCuentaContableService {
     @NotTransactional
     void cierreMensual(Integer ejercicio, Integer mes) {
 
-        // Cacelamos el cierre de existir con anterioridad
-        cancelarCierreMensual(ejercicio, mes)
-
         Integer nextMes = mes + 1
         Integer nextEjercicio = ejercicio
         if(mes == 13) {
@@ -133,6 +130,8 @@ class SaldoPorCuentaContableService {
             nextMes = 1
         }
         log.info("Cierre mensual {}/{} trasladando saldos a {},{}", ejercicio, mes, nextEjercicio, nextMes)
+        // Cacelamos el cierre de existir con anterioridad
+        //cancelarCierreMensual(nextEjercicio, nextMes)
 
 
         List<SaldoPorCuentaContable> saldos = SaldoPorCuentaContable.where{ejercicio == ejercicio && mes == mes}.list()
@@ -166,6 +165,25 @@ class SaldoPorCuentaContableService {
     def cancelarCierreMensual(Integer ejercicio, Integer mes) {
         return SaldoPorCuentaContable
                 .executeUpdate("delete SaldoPorCuentaContable s where s.ejercicio = ? and s.mes= ?", [ejercicio, mes])
+    }
+
+    def actualizarSaldos(Poliza poliza) {
+        Map<String, CuentaContable> cuentas = [:]
+        poliza.partidas.each {
+            cuentas.put(it.cuenta.clave, it.cuenta)
+        }
+        cuentas.each{
+            CuentaContable cuenta = it.value
+            Integer ejercicio = poliza.ejercicio
+            Integer mes = poliza.mes
+            SaldoPorCuentaContable saldo = actualizarSaldoCuentaDetalle(cuenta, ejercicio, mes)
+            log.info('Saldo {}: {}', saldo.cuenta.clave, saldo.saldoFinal)
+        }
+        log.info('Mayorizando...')
+        cuentas.each {
+            mayorizar(it.value, poliza.ejercicio, poliza.mes)
+        }
+
     }
 
 

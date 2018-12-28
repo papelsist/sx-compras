@@ -213,10 +213,12 @@ class ComprobanteFiscalService implements  LogUser{
                 }catch (Exception ex) {
                     String m = ExceptionUtils.getRootCauseMessage(ex)
                     log.error("Error importando ${it.name}: ${m}", ex)
+                } finally {
+                    // Eliminar los archivos
+                    if(deleteFiles)
+                        cleanFile(it)
                 }
-                // Eliminar los archivos
-                if(deleteFiles)
-                    cleanFile(it)
+
             }
 
 

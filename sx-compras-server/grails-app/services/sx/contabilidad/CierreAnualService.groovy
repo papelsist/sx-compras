@@ -8,7 +8,7 @@ class CierreAnualService implements ProcesadorDePoliza{
 
     Poliza generarPolizaDeCierreAnual(Integer ejercicio) {
         Poliza poliza = Poliza.where{
-            tipo == 'DIARIO' && concepto == 'CIERRE_ANUAL' &&
+            tipo == 'DIARIO' && subtipo == 'CIERRE_ANUAL' &&
                     ejercicio == ejercicio && mes == 13}.find()
         if(!poliza) {
             poliza = new Poliza(
@@ -81,7 +81,7 @@ class CierreAnualService implements ProcesadorDePoliza{
             }
         }
         BigDecimal resultado = cargos - abonos
-        String clave = "304-" + poliza.ejercicio.toString()
+        String clave = "304-${poliza.ejercicio.toString()}-0000-0000"
         CuentaContable cuenta = buscarCuenta(clave)
         if(resultado){
             poliza.addToPartidas(
