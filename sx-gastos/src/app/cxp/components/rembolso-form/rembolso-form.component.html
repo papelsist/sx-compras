@@ -128,7 +128,8 @@
       >
         <mat-icon>save</mat-icon> Salvar
       </button>
-      <ng-container *ngIf="!rembolso?.egreso">
+      <!-- <ng-container *ngIf="!rembolso?.egreso"></ng-container> -->
+      <ng-container >
         <sx-selector-cxp-rembolso-btn (select)="onAgregarFactura($event)">
         </sx-selector-cxp-rembolso-btn>
         <button
