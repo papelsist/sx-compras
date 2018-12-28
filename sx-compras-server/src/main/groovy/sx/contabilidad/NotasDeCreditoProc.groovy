@@ -42,7 +42,7 @@ class NotasDeCreditoProc implements  ProcesadorDePoliza{
 		FROM cobro f join cliente c on(f.cliente_id=c.id)  
 		join nota_de_credito n on(f.id=n.cobro_id) left join nota_de_credito_det d on(d.nota_id=n.id)  join sucursal s on(d.sucursal=s.nombre)
 		join cfdi x on(n.cfdi_id=x.id)
-		where  f.fecha = '2018-04-18' and F.forma_de_pago in('BONIFICACION') and n.sw2 is null and (x.cancelado is false or x.cancelado is null)		
+		where  f.fecha = '@FECHA' and F.forma_de_pago in('BONIFICACION') and n.sw2 is null and (x.cancelado is false or x.cancelado is null)		
 		union
 		SELECT n.importe subtotal ,n.impuesto,n.total,y.fecha as fecha_documento,y.documento,s.nombre as sucursal ,f.fecha,f.moneda,f.tipo_de_cambio  tc ,n.folio,n.total,f.tipo as documentoTipo,
 		concat('NOTA_',substr(f.forma_de_pago,1,3),'_',f.tipo) as asiento,c.nombre referencia2,n.id as origen ,f.cliente_id as cliente,
@@ -52,7 +52,7 @@ class NotasDeCreditoProc implements  ProcesadorDePoliza{
 				else 'no_cta' end),'-0000') as cta_cliente,0,0	
 		FROM cobro f join cliente c on(f.cliente_id=c.id)  join sucursal s on(f.sucursal_id=s.id) join nota_de_credito n on(f.id=n.cobro_id) 
 		join cfdi x on(n.cfdi_id=x.id)  join devolucion_de_venta d on(d.cobro_id=f.id)  join venta v on(d.venta_id=v.id) join cuenta_por_cobrar y on(v.cuenta_por_cobrar_id=y.id)
-		where  f.fecha = '2018-11-29' and F.forma_de_pago in('DEVOLUCION') and n.sw2 is null and (x.cancelado is false or x.cancelado is null)  		                      
+		where  f.fecha = '@FECHA' and F.forma_de_pago in('DEVOLUCION') and n.sw2 is null and (x.cancelado is false or x.cancelado is null)  		                      
         ) as x
     """
 

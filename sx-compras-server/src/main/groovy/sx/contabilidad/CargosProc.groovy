@@ -34,21 +34,21 @@ class CargosProc implements  ProcesadorDePoliza{
         ,concat('105-0002-',(case when s.clave>9 then concat('00',s.clave) else concat('000',s.clave) end),'-0000') as cta_cliente        
         FROM cuenta_por_cobrar f join cliente c on(f.cliente_id=c.id)  
         join sucursal s on(f.sucursal_id=s.id) LEFT join cfdi x on(f.cfdi_id=x.id)
-        where  f.fecha='2018-11-26' and f.tipo_documento in('NOTA_DE_CARGO') and f.tipo='COD' and f.sw2 is null and (x.cancelado is false or x.cancelado is null)         
+        where  f.fecha='@FECHA' and f.tipo_documento in('NOTA_DE_CARGO') and f.tipo='COD' and f.sw2 is null and (x.cancelado is false or x.cancelado is null)         
         UNION        
         SELECT concat(f.tipo_documento,'_',f.tipo) as asiento,f.id as origen,f.tipo as documentoTipo,f.fecha,n.folio documento
         ,f.moneda,f.tipo_de_cambio as tc,f.subtotal,f.impuesto,f.total,c.nombre referencia2,s.nombre as sucursal,f.cliente_id as cliente
         ,concat('105-0003-',(SELECT x.cuenta_operativa FROM cuenta_operativa_cliente x where x.cliente_id=c.id ),'-0000') as cta_cliente
         FROM cuenta_por_cobrar f join cliente c on(f.cliente_id=c.id)  
         join sucursal s on(f.sucursal_id=s.id) LEFT join cfdi x on(f.cfdi_id=x.id) join nota_de_cargo n on(n.cuenta_por_cobrar_id=f.id)
-        where  f.fecha='2018-11-26' and f.tipo_documento in('NOTA_DE_CARGO') and f.tipo='CRE' and f.sw2 is null and (x.cancelado is false or x.cancelado is null)        
+        where  f.fecha='@FECHA' and f.tipo_documento in('NOTA_DE_CARGO') and f.tipo='CRE' and f.sw2 is null and (x.cancelado is false or x.cancelado is null)        
         UNION
         SELECT concat(f.tipo_documento,'_',f.tipo) as asiento,f.id as origen,f.tipo as documentoTipo,f.fecha,f.documento
         ,f.moneda,f.tipo_de_cambio as tc,f.subtotal,f.impuesto,f.total,c.nombre referencia2,s.nombre as sucursal,f.cliente_id as cliente
         ,concat('106-0001-',(SELECT x.cuenta_operativa FROM cuenta_operativa_cliente x where x.cliente_id=c.id ),'-0000') as cta_cliente
         FROM cuenta_por_cobrar f join cliente c on(f.cliente_id=c.id)  
         join sucursal s on(f.sucursal_id=s.id) LEFT join cfdi x on(f.cfdi_id=x.id)
-        where  f.fecha='2018-11-30' and f.tipo_documento in('CHEQUE_DEVUELTO') and f.sw2 is null and (x.cancelado is false or x.cancelado is null)        
+        where  f.fecha='@FECHA' and f.tipo_documento in('CHEQUE_DEVUELTO') and f.sw2 is null and (x.cancelado is false or x.cancelado is null)        
         UNION        
         SELECT concat('TRASPASO_JUR') as asiento,f.id as origen,f.tipo as documentoTipo,f.fecha,f.documento
         ,f.moneda,f.tipo_de_cambio as tc,f.subtotal,f.impuesto,f.total,c.nombre referencia2,s.nombre sucursal,f.cliente_id
@@ -56,7 +56,7 @@ class CargosProc implements  ProcesadorDePoliza{
         FROM cuenta_por_cobrar f join cliente c on(f.cliente_id=c.id)  
         join sucursal s on(f.sucursal_id=s.id) left  join cfdi x on(f.cfdi_id=x.id)
         join juridico j on(j.cxc_id=f.id)
-        where j.traspaso='2015-09-28'          
+        where j.traspaso='@FECHA'          
         ) as x
         
     """
