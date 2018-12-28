@@ -4,8 +4,6 @@ import groovy.util.logging.Slf4j
 import org.springframework.stereotype.Component
 import sx.core.Cliente
 import sx.core.Sucursal
-import sx.tesoreria.CorteDeTarjeta
-import sx.tesoreria.CorteDeTarjetaAplicacion
 import static sx.contabilidad.Mapeo.*
 
 
@@ -42,7 +40,7 @@ class CobranzaCreProc implements  ProcesadorDePoliza{
         ,(case when m.por_identificar is true then '208-0003-0000-0000' else '000-0000-0000-0000' end) cta_iva
         FROM ficha f join movimiento_de_cuenta m on(f.ingreso_id=m.id) join cuenta_de_banco z on(m.cuenta_id=z.id)
         join sucursal s on(f.sucursal_id=s.id) left join cobro_cheque x on(x.ficha_id=f.id) left join cobro b on(x.cobro_id=b.id)  
-        where f.fecha='2018-02-28' and f.origen in('CRE')   
+        where f.fecha='@FECHA' and f.origen in('CRE')   
         GROUP BY F.ID                    
         UNION                        
         SELECT concat('COB_','DEP_',f.tipo,(case when m.por_identificar is true then '_xIDENT' else '' end)) as asiento,f.id origen,f.tipo documentoTipo,f.primera_aplicacion,x.folio documento,f.moneda,f.tipo_de_cambio tc 
@@ -50,14 +48,14 @@ class CobranzaCreProc implements  ProcesadorDePoliza{
         ,(case when m.por_identificar is true then '208-0003-0000-0000' else '000-0000-0000-0000' end) cta_iva
         FROM cobro f join cobro_deposito x on(x.cobro_id=f.id) join movimiento_de_cuenta m on(x.ingreso_id=m.id) join cuenta_de_banco z on(m.cuenta_id=z.id)
         join sucursal s on(f.sucursal_id=s.id) join cliente c on(f.cliente_id=c.id)
-        where f.primera_aplicacion='2018-02-28' and f.tipo in('CRE')                
+        where f.primera_aplicacion='@FECHA' and f.tipo in('CRE')                
         UNION        
         SELECT concat('COB_','TRANSF_',f.tipo,(case when m.por_identificar is true then '_xIDENT' else '' end)) as asiento,f.id origen,f.tipo documentoTipo,f.primera_aplicacion,x.folio documento,f.moneda,f.tipo_de_cambio tc 
         ,f.importe,c.nombre referencia2,s.nombre sucursal, s.clave as suc,z.descripcion banco,concat((case when M.por_identificar is true then '205-0002-' else '102-0001-' end),z.sub_cuenta_operativa,'-0000') as cta_contable
         ,(case when m.por_identificar is true then '208-0003-0000-0000' else '000-0000-0000-0000' end) cta_iva
         FROM cobro f join cobro_transferencia x on(x.cobro_id=f.id) join movimiento_de_cuenta m on(x.ingreso_id=m.id) join cuenta_de_banco z on(m.cuenta_id=z.id)
         join sucursal s on(f.sucursal_id=s.id) join cliente c on(f.cliente_id=c.id)
-        where f.primera_aplicacion='2018-02-28' and f.tipo in('CRE')                         
+        where f.primera_aplicacion='@FECHA' and f.tipo in('CRE')                         
         ) as x  
     """
 
@@ -89,10 +87,10 @@ class CobranzaCreProc implements  ProcesadorDePoliza{
         ,f.id as origen,f.tipo documentoTipo,f.fecha,f.documento
         ,f.moneda,f.tipo_de_cambio tc,sum(round(a.importe/1.16,2)) subtotal,sum(a.importe-round(a.importe/1.16,2)) impuesto,sum(a.importe) total,c.nombre referencia2,s.nombre sucursal, s.clave as suc
         ,c.id cliente
-        ,concat('105-0003-',(SELECT x.cuenta_operativa FROM cuenta_operativa_cliente x where x.cliente_id=c.id ),'-0000') as cta_contable,'209-0001-0000-0000' as cta_iva     
+        ,case when c.id='402880fc5e4ec411015e4ec7a46701de' then '105-0004-0266-0000' else concat('105-0003-' ,(SELECT x.cuenta_operativa FROM cuenta_operativa_cliente x where x.cliente_id=c.id ),'-0000') end as cta_contable,'209-0001-0000-0000' as cta_iva     
         FROM cuenta_por_cobrar f join cliente c on(f.cliente_id=c.id)   join aplicacion_de_cobro a on(a.cuenta_por_cobrar_id=f.id)
         join sucursal s on(f.sucursal_id=s.id) join cfdi x on(f.cfdi_id=x.id) join cobro b on(a.cobro_id=b.id)
-        where f.fecha='2018-02-01' and f.tipo in('CRE') and f.tipo_documento='VENTA' and f.cancelada is null and f.sw2 is null
+        where a.fecha='@FECHA' and f.tipo in('CRE')  and f.cancelada is null and f.sw2 is null
         and b.forma_de_pago not in('PAGO_DIF','DEVOLUCION','BONIFICACION') and a.fecha=b.primera_aplicacion  and b.forma_de_pago not like 'TARJ%'   
         group by f.fecha,f.id,c.id,f.moneda,f.tipo_de_cambio ,
         			concat('COB_',(case 	when b.forma_de_pago in('EFECTIVO','CHEQUE') then 'FICHA'when b.forma_de_pago like 'TARJETA%' then 'TARJ'        				
@@ -132,7 +130,7 @@ class CobranzaCreProc implements  ProcesadorDePoliza{
         ,'205-0001-0003-0000' as cta_contable,'208-0004-0000-0000' as cta_iva        
         FROM cuenta_por_cobrar f join cliente c on(f.cliente_id=c.id)   join aplicacion_de_cobro a on(a.cuenta_por_cobrar_id=f.id)
         join sucursal s on(f.sucursal_id=s.id) join cfdi x on(f.cfdi_id=x.id) join cobro b on(a.cobro_id=b.id)
-        where f.fecha='2018-02-28' and f.tipo in('CRE') and f.tipo_documento='VENTA' and f.cancelada is null and f.sw2 is null
+        where a.fecha='@FECHA' and f.tipo in('CRE')  and f.cancelada is null and f.sw2 is null
         and b.forma_de_pago not in('PAGO_DIF','DEVOLUCION','BONIFICACION') and a.fecha=b.primera_aplicacion        
         group by b.id,s.id,f.moneda,f.tipo_de_cambio ,
         			concat('COB_',(case 	when b.forma_de_pago in('EFECTIVO','CHEQUE') then 'FICHA'when b.forma_de_pago like 'TARJETA%' then 'TARJ'        				
@@ -174,7 +172,7 @@ class CobranzaCreProc implements  ProcesadorDePoliza{
         ,'704-0003-0000-0000' as cta_contable,'208-0004-0000-0000' as cta_iva   
         FROM cuenta_por_cobrar f join cliente c on(f.cliente_id=c.id)   join aplicacion_de_cobro a on(a.cuenta_por_cobrar_id=f.id)
         join sucursal s on(f.sucursal_id=s.id) join cfdi x on(f.cfdi_id=x.id) join cobro b on(a.cobro_id=b.id)
-        where b.diferencia_fecha='2018-03-22' and f.tipo in('CRE') and f.tipo_documento='VENTA' and f.cancelada is null and f.sw2 is null
+        where b.diferencia_fecha='@FECHA' and f.tipo in('CRE') and f.cancelada is null and f.sw2 is null
         and b.forma_de_pago not in('PAGO_DIF') and b.diferencia<>0     
         group by b.id,s.id,f.moneda,f.tipo_de_cambio ,
         			concat('COB_',(case 	when b.forma_de_pago in('EFECTIVO','CHEQUE') then 'FICHA'when b.forma_de_pago like 'TARJETA%' then 'TARJ'        				
@@ -210,7 +208,7 @@ class CobranzaCreProc implements  ProcesadorDePoliza{
         ,c.id cliente,c.nombre,'703-0001-0000-0000' as cta_contable,'209-0001-0000-0000' as cta_iva
         FROM cuenta_por_cobrar f join cliente c on(f.cliente_id=c.id)   join aplicacion_de_cobro a on(a.cuenta_por_cobrar_id=f.id)
         join sucursal s on(f.sucursal_id=s.id) join cfdi x on(f.cfdi_id=x.id) join cobro b on(a.cobro_id=b.id)
-        where b.forma_de_pago='PAGO_DIF'  and a.fecha='2018-03-23' and f.tipo in('CRE')        
+        where b.forma_de_pago='PAGO_DIF'  and a.fecha='@FECHA' and f.tipo in('CRE')        
         ) as x
     
     """
@@ -275,44 +273,6 @@ class CobranzaCreProc implements  ProcesadorDePoliza{
         return poliza
     }
 
-    def cargoAbonoBancoAmex(Poliza poliza,def row,boolean cargo){
-
-
-        CuentaContable cuenta = buscarCuenta("107-0001-0001-0000")
-
-        if(!cuenta)
-            throw new RuntimeException("No existe cuenta contable para el abono a ventas del reg: ${row}")
-
-        String descripcion  = !row.origen ?
-                "${row.asiento}":
-                "F: ${row.documento} ${row.fecha.format('dd/MM/yyyy')} ${row.documentoTipo} ${row.sucursal}"
-
-        PolizaDet det = new PolizaDet(
-                cuenta: cuenta,
-                concepto: cuenta.descripcion,
-                descripcion: descripcion,
-                asiento: row.asiento,
-                referencia: row.referencia2,
-                referencia2: row.referencia2,
-                origen: row.origen,
-                entidad: 'CuentaPorCobrar',
-                documento: row.documento,
-                documentoTipo: row.documentoTipo,
-                documentoFecha: row.fecha,
-                sucursal: row.sucursal,
-                haber: 0.0,
-                debe: Math.abs(row.total)
-        )
-
-        if(!cargo){
-            det.haber = Math.abs(row.total)
-            det.debe = 0.0
-        }
-
-        poliza.addToPartidas(det)
-
-
-    }
 
     def cargoBanco(Poliza poliza,def row){
 
@@ -343,100 +303,11 @@ class CobranzaCreProc implements  ProcesadorDePoliza{
         )
             if(row.asiento.contains('xIDENT')) 
                 det.debe = row.subtotal
-            
-            if(!row.referencia2.contains('AMEX') && (row.referencia2.contains('COMISION') || row.referencia2.contains('COMISION_IVA') )){
-                det.haber = Math.abs(row.total)
-                det.debe = 0.0
-            }
-
-             if(row.referencia2.contains('AMEX_INGRESO') ){
-
-                CorteDeTarjeta corte = CorteDeTarjeta.get(row.origen) 
-
-                CorteDeTarjetaAplicacion aplicacionComision= CorteDeTarjetaAplicacion.findByCorteAndTipo(corte,'AMEX_COMISION')
-                CorteDeTarjetaAplicacion aplicacionIva= CorteDeTarjetaAplicacion.findByCorteAndTipo(corte,'AMEX_COMISION_IVA')
-
-                det.haber = 0.0
-                det.debe = Math.abs(row.total)-aplicacionComision.importe-aplicacionIva.importe
-            }
-            
-
-        
+               
         poliza.addToPartidas(det)
     }
 
 
-
-    def cargoComisionBancaria(Poliza poliza,def row){
-
-        def claveSuc = ''
-        if( new Integer(row.suc).intValue() < 10){
-            claveSuc = "000"+row.suc
-        }else{
-            claveSuc = "00"+row.suc
-        }
-
-        CuentaContable cuenta = buscarCuenta("600-0014-${claveSuc}-0000")
-    
-
-        if(!cuenta)
-            throw new RuntimeException("No existe cuenta contable para el abono a ventas del reg: ${row}")
-
-        String descripcion  = !row.origen ?
-                "${row.asiento}":
-                "F: ${row.documento} ${row.fecha.format('dd/MM/yyyy')} ${row.documentoTipo} ${row.sucursal}"
-
-        PolizaDet det = new PolizaDet(
-                cuenta: cuenta,
-                concepto: cuenta.descripcion,
-                descripcion: descripcion,
-                asiento: row.asiento,
-                referencia: row.referencia2,
-                referencia2: row.referencia2,
-                origen: row.origen,
-                entidad: 'CuentaPorCobrar',
-                documento: row.documento,
-                documentoTipo: row.documentoTipo,
-                documentoFecha: row.fecha,
-                sucursal: row.sucursal,
-                haber: 0.0,
-                debe: Math.abs(row.total)
-        )
-        
-        poliza.addToPartidas(det)
-    }
-
-    def cargoIvaComisionBancaria(Poliza poliza,def row){
-
-        CuentaContable cuenta = buscarCuenta("118-0002-0000-0000")
-    
-
-        if(!cuenta)
-            throw new RuntimeException("No existe cuenta contable para el abono a ventas del reg: ${row}")
-
-        String descripcion  = !row.origen ?
-                "${row.asiento}":
-                "F: ${row.documento} ${row.fecha.format('dd/MM/yyyy')} ${row.documentoTipo} ${row.sucursal}"
-
-        PolizaDet det = new PolizaDet(
-                cuenta: cuenta,
-                concepto: cuenta.descripcion,
-                descripcion: descripcion,
-                asiento: row.asiento,
-                referencia: row.referencia2,
-                referencia2: row.referencia2,
-                origen: row.origen,
-                entidad: 'CuentaPorCobrar',
-                documento: row.documento,
-                documentoTipo: row.documentoTipo,
-                documentoFecha: row.fecha,
-                sucursal: row.sucursal,
-                haber: 0.0,
-                debe: Math.abs(row.total)
-        )
-        
-        poliza.addToPartidas(det)
-    }
 
     def cargoIvaxIdent(Poliza poliza,def row){
 
@@ -536,7 +407,7 @@ class CobranzaCreProc implements  ProcesadorDePoliza{
         String descripcion  = !row.origen ?
                 "${row.asiento}":
                 "F: ${row.documento} ${row.fecha.format('dd/MM/yyyy')} ${row.documentoTipo} ${row.sucursal}"
-
+       
         PolizaDet det = new PolizaDet(
                 cuenta: cuenta,
                 concepto: cuenta.descripcion,

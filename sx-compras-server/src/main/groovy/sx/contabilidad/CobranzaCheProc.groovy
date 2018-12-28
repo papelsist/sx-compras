@@ -10,12 +10,12 @@ import static sx.contabilidad.Mapeo.*
 
 @Slf4j
 @Component
-class CobranzaCodProc implements  ProcesadorDePoliza{
+class CobranzaCheProc implements  ProcesadorDePoliza{
 
        static String IVA_NO_TRASLADADO = "209-0001-0000-0000"
 
     String DebeBanco = """    
-      SELECT          
+        SELECT          
         'DEBE_BANCO' tipo,
         round(x.total/1.16,2) subtotal,
         x.total-round(x.total/1.16,2) impuesto,
@@ -39,24 +39,23 @@ class CobranzaCodProc implements  ProcesadorDePoliza{
         ,(case when m.por_identificar is true then '208-0003-0000-0000' else '000-0000-0000-0000' end) cta_iva
         FROM ficha f join movimiento_de_cuenta m on(f.ingreso_id=m.id) join cuenta_de_banco z on(m.cuenta_id=z.id)
         join sucursal s on(f.sucursal_id=s.id) left join cobro_cheque x on(x.ficha_id=f.id) left join cobro b on(x.cobro_id=b.id)  
-        where f.fecha='@FECHA' and f.origen in('COD')                       
+        where f.fecha='@FECHA' and f.origen in('CHE')   
+        GROUP BY F.ID                    
         UNION                        
         SELECT concat('COB_','DEP_',f.tipo,(case when m.por_identificar is true then '_xIDENT' else '' end)) as asiento,f.id origen,f.tipo documentoTipo,f.primera_aplicacion,x.folio documento,f.moneda,f.tipo_de_cambio tc 
         ,f.importe,c.nombre referencia2,s.nombre sucursal, s.clave as suc,z.descripcion banco,concat((case when M.por_identificar is true then '205-0002-' else '102-0001-' end),z.sub_cuenta_operativa,'-0000') as cta_contable
         ,(case when m.por_identificar is true then '208-0003-0000-0000' else '000-0000-0000-0000' end) cta_iva
         FROM cobro f join cobro_deposito x on(x.cobro_id=f.id) join movimiento_de_cuenta m on(x.ingreso_id=m.id) join cuenta_de_banco z on(m.cuenta_id=z.id)
         join sucursal s on(f.sucursal_id=s.id) join cliente c on(f.cliente_id=c.id)
-        where f.primera_aplicacion='@FECHA' and f.tipo in('COD')                
+        where f.primera_aplicacion='@FECHA' and f.tipo in('CHE')                
         UNION        
         SELECT concat('COB_','TRANSF_',f.tipo,(case when m.por_identificar is true then '_xIDENT' else '' end)) as asiento,f.id origen,f.tipo documentoTipo,f.primera_aplicacion,x.folio documento,f.moneda,f.tipo_de_cambio tc 
         ,f.importe,c.nombre referencia2,s.nombre sucursal, s.clave as suc,z.descripcion banco,concat((case when M.por_identificar is true then '205-0002-' else '102-0001-' end),z.sub_cuenta_operativa,'-0000') as cta_contable
         ,(case when m.por_identificar is true then '208-0003-0000-0000' else '000-0000-0000-0000' end) cta_iva
         FROM cobro f join cobro_transferencia x on(x.cobro_id=f.id) join movimiento_de_cuenta m on(x.ingreso_id=m.id) join cuenta_de_banco z on(m.cuenta_id=z.id)
         join sucursal s on(f.sucursal_id=s.id) join cliente c on(f.cliente_id=c.id)
-        where f.primera_aplicacion='@FECHA' and f.tipo in('COD')                         
-        ) as x       
-        
-	   
+        where f.primera_aplicacion='@FECHA' and f.tipo in('CHE')                         
+        ) as x     
     """
 
     String HaberVenta = """
@@ -84,15 +83,15 @@ class CobranzaCodProc implements  ProcesadorDePoliza{
         				(case when  b.forma_de_pago like 'DEPOSIT%' and (SELECT m.por_identificar FROM cobro_deposito xx join movimiento_de_cuenta m on(xx.ingreso_id=m.id) where xx.cobro_id=b.id)=true then '_xIDENT'
         				when  b.forma_de_pago in('TRANSFERENCIA') and (SELECT m.por_identificar FROM cobro_transferencia xx join movimiento_de_cuenta m on(xx.ingreso_id=m.id)  where xx.cobro_id=b.id)=true then '_xIDENT'
         				else '' end)) as asiento
-        ,null as origen,f.tipo documentoTipo,f.fecha,null documento
-        ,f.moneda,f.tipo_de_cambio tc,sum(round(a.importe/1.16,2)) subtotal,sum(a.importe-round(a.importe/1.16,2)) impuesto,sum(a.importe) total,s.nombre referencia2,s.nombre sucursal, s.clave as suc
-        ,concat(s.nombre,"_",f.tipo_documento,"_",f.tipo) cliente
-        ,concat('105-0002-',(case when s.clave>9 then '00' else '000' end),s.clave,'-0000') as cta_contable,'209-0001-0000-0000' as cta_iva     
+        ,f.id as origen,f.tipo documentoTipo,f.fecha,f.documento
+        ,f.moneda,f.tipo_de_cambio tc,sum(round(a.importe/1.16,2)) subtotal,sum(a.importe-round(a.importe/1.16,2)) impuesto,sum(a.importe) total,c.nombre referencia2,s.nombre sucursal, s.clave as suc
+        ,c.id cliente
+        ,concat('106-0001-',(SELECT x.cuenta_operativa FROM cuenta_operativa_cliente x where x.cliente_id=c.id ),'-0000') as cta_contable,'209-0001-0000-0000' as cta_iva     
         FROM cuenta_por_cobrar f join cliente c on(f.cliente_id=c.id)   join aplicacion_de_cobro a on(a.cuenta_por_cobrar_id=f.id)
-        join sucursal s on(f.sucursal_id=s.id) join cfdi x on(f.cfdi_id=x.id) join cobro b on(a.cobro_id=b.id)
-        where a.fecha='@FECHA' and f.tipo in('COD') and f.tipo_documento='VENTA' and f.cancelada is null and f.sw2 is null
+        join sucursal s on(f.sucursal_id=s.id) join cobro b on(a.cobro_id=b.id) 
+        where a.fecha='@FECHA' and b.tipo in('CHE')
         and b.forma_de_pago not in('PAGO_DIF','DEVOLUCION','BONIFICACION') and a.fecha=b.primera_aplicacion  and b.forma_de_pago not like 'TARJ%'   
-        group by f.fecha,s.id,f.moneda,f.tipo_de_cambio ,
+        group by f.fecha,f.id,c.id,f.moneda,f.tipo_de_cambio ,
         			concat('COB_',(case 	when b.forma_de_pago in('EFECTIVO','CHEQUE') then 'FICHA'when b.forma_de_pago like 'TARJETA%' then 'TARJ'        				
         				when b.forma_de_pago in('TRANSFERENCIA') then 'TRANSF' else substr(b.forma_de_pago,1,3) end),'_',f.tipo,
         				(case when  b.forma_de_pago like 'DEPOSIT%' and (SELECT m.por_identificar FROM cobro_deposito xx join movimiento_de_cuenta m on(xx.ingreso_id=m.id) where xx.cobro_id=b.id)=true then '_xIDENT'
@@ -100,8 +99,7 @@ class CobranzaCodProc implements  ProcesadorDePoliza{
         				else '' end))       				        				       					    	   			           
         ) as x
     """
-
-    String HaberSaf = """
+    String HaberSaf = """   
         SELECT  'HABER_SAF' tipo,
         x.total-round(x.total/1.16,2) subtotal,
         round(x.total/1.16,2) impuesto,
@@ -119,31 +117,31 @@ class CobranzaCodProc implements  ProcesadorDePoliza{
         x.cliente,
         x.cta_contable,
         x.cta_iva
-        FROM (        
+        FROM (                
         SELECT concat('COB_',(case 	when b.forma_de_pago in('EFECTIVO','CHEQUE') then 'FICHA'when b.forma_de_pago like 'TARJETA%' then 'TARJ'        				
         				when b.forma_de_pago in('TRANSFERENCIA') then 'TRANSF' else substr(b.forma_de_pago,1,3) end),'_',f.tipo,
         				(case when  b.forma_de_pago like 'DEPOSIT%' and (SELECT m.por_identificar FROM cobro_deposito xx join movimiento_de_cuenta m on(xx.ingreso_id=m.id) where xx.cobro_id=b.id)=true then '_xIDENT'
         				when  b.forma_de_pago in('TRANSFERENCIA') and (SELECT m.por_identificar FROM cobro_transferencia xx join movimiento_de_cuenta m on(xx.ingreso_id=m.id)  where xx.cobro_id=b.id)=true then '_xIDENT'
         				else '' end),'_SAF') as asiento
         ,b.id as origen,f.tipo documentoTipo,f.fecha,referencia documento
-        ,f.moneda,f.tipo_de_cambio tc ,b.importe,b.diferencia,b.importe-b.diferencia-sum( ifnull((SELECT sum(y.importe) FROM aplicacion_de_cobro y where y.cobro_id=b.id),0)) total
-        ,s.nombre referencia2,s.nombre sucursal, s.clave as suc,concat(s.nombre,"_",f.tipo_documento,"_",f.tipo) cliente
-        ,'205-0001-0002-0000' as cta_contable,'208-0004-0000-0000' as cta_iva        
+        ,f.moneda,f.tipo_de_cambio tc ,b.importe,b.diferencia,b.importe-b.diferencia-( ifnull((SELECT sum(y.importe) FROM aplicacion_de_cobro y where y.cobro_id=b.id),0)) total
+        ,c.nombre referencia2,s.nombre sucursal, s.clave as suc,c.id cliente
+        ,'205-0001-0003-0000' as cta_contable,'208-0004-0000-0000' as cta_iva        
         FROM cuenta_por_cobrar f join cliente c on(f.cliente_id=c.id)   join aplicacion_de_cobro a on(a.cuenta_por_cobrar_id=f.id)
-        join sucursal s on(f.sucursal_id=s.id) join cfdi x on(f.cfdi_id=x.id) join cobro b on(a.cobro_id=b.id)
-        where a.fecha='@FECHA' and f.tipo in('COD') and f.tipo_documento='VENTA' and f.cancelada is null and f.sw2 is null
+        join sucursal s on(f.sucursal_id=s.id)  join cobro b on(a.cobro_id=b.id)
+        where a.fecha='@FECHA' and f.tipo in('CHE') 
         and b.forma_de_pago not in('PAGO_DIF','DEVOLUCION','BONIFICACION') and a.fecha=b.primera_aplicacion        
         group by b.id,s.id,f.moneda,f.tipo_de_cambio ,
         			concat('COB_',(case 	when b.forma_de_pago in('EFECTIVO','CHEQUE') then 'FICHA'when b.forma_de_pago like 'TARJETA%' then 'TARJ'        				
         				when b.forma_de_pago in('TRANSFERENCIA') then 'TRANSF' else substr(b.forma_de_pago,1,3) end),'_',f.tipo,
         				(case when  b.forma_de_pago like 'DEPOSIT%' and (SELECT m.por_identificar FROM cobro_deposito xx join movimiento_de_cuenta m on(xx.ingreso_id=m.id) where xx.cobro_id=b.id)=true then '_xIDENT'
         				when  b.forma_de_pago in('TRANSFERENCIA') and (SELECT m.por_identificar FROM cobro_transferencia xx join movimiento_de_cuenta m on(xx.ingreso_id=m.id)  where xx.cobro_id=b.id)=true then '_xIDENT'
-        				else '' end),'_SAF') having (b.importe-b.diferencia-sum( ifnull((SELECT sum(y.importe) FROM aplicacion_de_cobro y where y.cobro_id=b.id),0)))<>0        
-        ) as x  
+        				else '' end),'_SAF') having (b.importe-b.diferencia-( ifnull((SELECT sum(y.importe) FROM aplicacion_de_cobro y where y.cobro_id=b.id),0)))<>0               
+        ) as x   
     """
 
     String HaberOprd = """
-	   SELECT  'HABER_OPRD' tipo,
+	   'HABER_OPRD' tipo,
         x.subtotal,
         x.impuesto,
         x.total,
@@ -168,11 +166,11 @@ class CobranzaCodProc implements  ProcesadorDePoliza{
         				else '' end),'_OPRD') as asiento
         ,b.id as origen,f.tipo documentoTipo,f.fecha,referencia documento
         ,f.moneda,f.tipo_de_cambio tc ,round(b.diferencia/1.16,2) subtotal,b.diferencia-round(b.diferencia/1.16,2) impuesto,b.diferencia total
-        ,s.nombre referencia2,s.nombre sucursal, s.clave as suc,concat(s.nombre,"_",f.tipo_documento,"_",f.tipo) cliente
-        ,'704-0002-0000-0000' as cta_contable,'208-0004-0000-0000' as cta_iva   
+        ,c.nombre referencia2,s.nombre sucursal, s.clave as suc,c.id cliente
+        ,'704-0004-0000-0000' as cta_contable,'208-0004-0000-0000' as cta_iva   
         FROM cuenta_por_cobrar f join cliente c on(f.cliente_id=c.id)   join aplicacion_de_cobro a on(a.cuenta_por_cobrar_id=f.id)
-        join sucursal s on(f.sucursal_id=s.id) join cfdi x on(f.cfdi_id=x.id) join cobro b on(a.cobro_id=b.id)
-        where b.diferencia_fecha='2018-02-01' and f.tipo in('COD') and f.tipo_documento='VENTA' and f.cancelada is null and f.sw2 is null
+        join sucursal s on(f.sucursal_id=s.id) join cobro b on(a.cobro_id=b.id)
+        where b.diferencia_fecha='@FECHA' and b.tipo in('CHE') 
         and b.forma_de_pago not in('PAGO_DIF') and b.diferencia<>0     
         group by b.id,s.id,f.moneda,f.tipo_de_cambio ,
         			concat('COB_',(case 	when b.forma_de_pago in('EFECTIVO','CHEQUE') then 'FICHA'when b.forma_de_pago like 'TARJETA%' then 'TARJ'        				
@@ -181,7 +179,6 @@ class CobranzaCodProc implements  ProcesadorDePoliza{
         				when  b.forma_de_pago in('TRANSFERENCIA') and (SELECT m.por_identificar FROM cobro_transferencia xx join movimiento_de_cuenta m on(xx.ingreso_id=m.id)  where xx.cobro_id=b.id)=true then '_xIDENT'
         				else '' end),'_OPRD') 
         ) as x 
-	   
     """
 
     String DebeOgst = """
@@ -205,17 +202,16 @@ class CobranzaCodProc implements  ProcesadorDePoliza{
         FROM (                 
         SELECT concat('COB_','PAGO_DIF_',f.tipo) as asiento,f.id origen,f.tipo documentoTipo,a.fecha,f.documento,f.moneda,f.tipo_de_cambio tc 
         ,round(a.importe/1.16,2) subtotal,a.importe-round(a.importe/1.16,2) impuesto,a.importe total,c.nombre referencia2,s.nombre sucursal, s.clave as suc
-        ,concat(s.nombre,"_",f.tipo_documento,"_",f.tipo) cliente,c.nombre,'703-0001-0000-0000' as cta_contable,'209-0001-0000-0000' as cta_iva
+        ,c.id cliente,c.nombre,'703-0001-0000-0000' as cta_contable,'209-0001-0000-0000' as cta_iva
         FROM cuenta_por_cobrar f join cliente c on(f.cliente_id=c.id)   join aplicacion_de_cobro a on(a.cuenta_por_cobrar_id=f.id)
-        join sucursal s on(f.sucursal_id=s.id) join cfdi x on(f.cfdi_id=x.id) join cobro b on(a.cobro_id=b.id)
-        where b.forma_de_pago='PAGO_DIF'  and a.fecha='@FECHA' and f.tipo in('COD')        
+        join sucursal s on(f.sucursal_id=s.id)  join cobro b on(a.cobro_id=b.id)
+        where b.forma_de_pago='PAGO_DIF'  and a.fecha='@FECHA' and f.tipo in('CHE')        
         ) as x
-    
     """
 
     @Override
     String definirConcepto(Poliza poliza) {
-        return "COBRANZA COD"
+        return "COBRANZA CHEQUES DEVUELTOS"
     }
 
     @Override
@@ -240,7 +236,8 @@ class CobranzaCodProc implements  ProcesadorDePoliza{
         rows.each{ row ->
             if(row.tipo == 'DEBE_BANCO'){
 
-                cargoBanco(poliza,row)
+             
+                    cargoBanco(poliza,row)
                 
                 
                 if(row.asiento.contains('xIDENT')){
@@ -302,9 +299,10 @@ class CobranzaCodProc implements  ProcesadorDePoliza{
         )
             if(row.asiento.contains('xIDENT')) 
                 det.debe = row.subtotal
-    
+
         poliza.addToPartidas(det)
     }
+
 
 
     def cargoIvaxIdent(Poliza poliza,def row){
@@ -405,7 +403,7 @@ class CobranzaCodProc implements  ProcesadorDePoliza{
         String descripcion  = !row.origen ?
                 "${row.asiento}":
                 "F: ${row.documento} ${row.fecha.format('dd/MM/yyyy')} ${row.documentoTipo} ${row.sucursal}"
-
+        
         PolizaDet det = new PolizaDet(
                 cuenta: cuenta,
                 concepto: cuenta.descripcion,
