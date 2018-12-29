@@ -33,6 +33,8 @@ class PolizaController extends RestfulController<Poliza> {
 
     PolizaDeEgresoService polizaDeEgresoService
 
+    SaldoPorCuentaContableService saldoPorCuentaContableService
+
     PolizaController() {
         super(Poliza)
     }
@@ -95,8 +97,26 @@ class PolizaController extends RestfulController<Poliza> {
         }
         poliza.properties = getObjectToBind()
         poliza.partidas.clear()
-        ProcesadorDePoliza procesador = getProcesador(poliza)
-        poliza = procesador.recalcular(poliza)
+        if(poliza.manual) {
+            ProcesadorDePoliza procesador = getProcesador(poliza)
+            poliza = procesador.recalcular(poliza)
+            poliza = poliza.save flush: true
+        } else {
+            poliza = polizaService.updatePoliza(poliza)
+        }
+        respond poliza, [status: OK, view:'show']
+
+    }
+
+    @CompileDynamic
+    def cerrar() {
+        Poliza poliza = Poliza.get(params.id)
+        if (poliza == null) {
+            notFound()
+            return
+        }
+        saldoPorCuentaContableService.actualizarSaldos(poliza)
+        poliza.cierre = new Date()
         poliza = poliza.save flush: true
         respond poliza, [status: OK, view:'show']
 

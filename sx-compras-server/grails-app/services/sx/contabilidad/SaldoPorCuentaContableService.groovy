@@ -13,6 +13,7 @@ class SaldoPorCuentaContableService {
             log.info('Actualizano cuenta: {}', c)
             actualizarSaldoCuentaDetalle(c, ejercicio, mes)
         }
+        mayorizar(ejercicio, mes)
     }
 
     SaldoPorCuentaContable actualizarSaldoCuentaDetalle(CuentaContable cuenta, Integer ejercicio, Integer mes){

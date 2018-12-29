@@ -36,8 +36,11 @@ abstract class PolizaService implements  LogUser{
 
     }
 
+    @CompileDynamic
     Poliza updatePoliza(Poliza poliza) {
         logEntity(poliza)
+        poliza.debe = poliza.partidas.sum 0.0, {it.debe}
+        poliza.haber = poliza.partidas.sum 0.0, {it.haber}
         return save(poliza)
     }
 
