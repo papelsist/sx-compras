@@ -212,6 +212,33 @@ class CancelacionService implements  LogUser{
         return updates
     }
 
+    @NotTransactional
+    def cancelacionManual(String emisorRfc, String receptorRfc, String uuid, BigDecimal total) {
+        log.info('Cancelacion manual de cfdi {}', uuid)
+        boolean isTest = false
+        Empresa empresa = Empresa.first()
+        String url = 'http://cfdi.service.ediwinws.edicom.com'
+        SOAPResponse response = client.send(SOAPAction: url, sslTrustAllCerts:true){
+            body('xmlns:cfdi': 'http://cfdi.service.ediwinws.edicom.com') {
+                cancelCFDiAsync {
+                    user empresa.usuarioPac
+                    password empresa.passwordPac
+                    rfcE emisorRfc
+                    rfcR receptorRfc
+                    uuid uuid
+                    total total
+                    pfx(empresa.getCertificadoDigitalPfx().encodeBase64())
+                    pfxPassword('pfxfilepapel')
+                    test isTest
+                }
+            }
+        }
+
+        Map responseData = procesaResponse(response)
+        return responseData
+
+    }
+
 
 }
 

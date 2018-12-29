@@ -47,7 +47,7 @@ class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaC
     def actualizarSaldos(Integer ejercicio, Integer mes) {
         log.info('Actualizando saldos {} - {}', ejercicio, mes)
         saldoPorCuentaContableService.actualizarSaldos(ejercicio, mes)
-        redirect action: 'index'
+        respond listAllResources(params)
     }
 
     def cierreMensual(Integer ejercicio, Integer mes) {

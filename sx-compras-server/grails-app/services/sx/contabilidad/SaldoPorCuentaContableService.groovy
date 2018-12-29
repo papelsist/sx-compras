@@ -84,7 +84,7 @@ class SaldoPorCuentaContableService {
         subcuentas.each {
             // println it
             SaldoPorCuentaContable saldo = SaldoPorCuentaContable
-                    .findOrCreateWhere(cuenta: it, clave: cuenta.clave, ejercicio: ejercicio, mes: mes)
+                    .findOrCreateWhere(cuenta: it, clave: it.clave, ejercicio: ejercicio, mes: mes)
             def row = SaldoPorCuentaContable
                     .executeQuery("""
                     select sum(d.saldoInicial),
