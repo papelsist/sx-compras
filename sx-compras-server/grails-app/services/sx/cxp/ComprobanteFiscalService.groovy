@@ -262,6 +262,17 @@ class ComprobanteFiscalService implements  LogUser{
 
         } else {
             log.info('-----------* EL CFDI {} YA EXISTIA CON EL ID:{}', found.uuid, found.id)
+            if(cf.tipoDeComprobante == 'I') {
+                CuentaPorPagar cxp = CuentaPorPagar.where{comprobanteFiscal == cf}.find()
+                if(!cxp){
+                    cxp = this.generarCuentaPorPagar(cf, tipo)
+                    cxp.comprobanteFiscal = cf
+                    cxp = cxp.save failOnError: true, flush: true
+                    log.info('****** CXP generada {}', cxp.id)
+                } else {
+                    log.info("---------- TAMBIEN CXP EXISTE CON ID: {}", cxp.id)
+                }
+            }
             return null
         }
     }

@@ -213,8 +213,8 @@ class CancelacionService implements  LogUser{
     }
 
     @NotTransactional
-    def cancelacionManual(String emisorRfc, String receptorRfc, String uuid, BigDecimal total) {
-        log.info('Cancelacion manual de cfdi {}', uuid)
+    def cancelacionManual(String emisorRfc, String receptorRfc, String uuidTarget, BigDecimal totalTarget) {
+        log.info('Cancelacion manual de cfdi {}', uuidTarget)
         boolean isTest = false
         Empresa empresa = Empresa.first()
         String url = 'http://cfdi.service.ediwinws.edicom.com'
@@ -225,8 +225,8 @@ class CancelacionService implements  LogUser{
                     password empresa.passwordPac
                     rfcE emisorRfc
                     rfcR receptorRfc
-                    uuid uuid
-                    total total
+                    uuid uuidTarget
+                    total totalTarget
                     pfx(empresa.getCertificadoDigitalPfx().encodeBase64())
                     pfxPassword('pfxfilepapel')
                     test isTest
