@@ -235,6 +235,10 @@ class CancelacionService implements  LogUser{
         }
 
         Map responseData = procesaResponse(response)
+        File file = new File("")
+        file.write(new String(responseData.ack, 'UTF-8'))
+        file.write(new String(responseData.ack))
+
         return responseData
 
     }
