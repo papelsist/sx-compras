@@ -40,8 +40,19 @@ class ImportadorCfdi32{
           
 
         def proveedor = Proveedor.findByRfc(emisorRfc)
-        if(!proveedor)
-            throw new ComprobanteFiscalException(message:"El proveedor de RFC: ${emisorRfc} / ${emisorNombre} no esta dado de alta en el sistema")
+        if(!proveedor){
+            if(origen == 'GASTOS') {
+                proveedor = new Proveedor(nombre: emisorNombre, rfc: emisorRfc, tipo: origen)
+                proveedor.clave = "GS${emisorRfc[0..-4]}"
+                proveedor.save(failOnError: true, flush: true)
+                log.info('Nuevo proveedor registrado {}  ', emisorRfc)
+            } else {
+                throw new ComprobanteFiscalException(
+                        message:"El proveedor de RFC: ${emisorRfc} / ${emisorNombre} no esta dado de alta en el sistema")
+
+            }
+        }
+
 
 
         def serie = xml.attributes()['serie']
@@ -59,7 +70,10 @@ class ImportadorCfdi32{
 
         def formaDePago = data['formaDePago']
 
-        def metodoDePago = data['metodoDePago']
+        String metodoDePago = data['metodoDePago'] as String
+        if(metodoDePago && metodoDePago.length() > 2) {
+            metodoDePago = '99'
+        }
         def tipoDeComp =  data['tipoDeComprobante']
         def tipo='I'
         switch(tipoDeComp) {
