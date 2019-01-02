@@ -96,14 +96,7 @@ class PolizaController extends RestfulController<Poliza> {
             return
         }
         poliza.properties = getObjectToBind()
-        poliza.partidas.clear()
-        if(poliza.manual) {
-            ProcesadorDePoliza procesador = getProcesador(poliza)
-            poliza = procesador.recalcular(poliza)
-            poliza = poliza.save flush: true
-        } else {
-            poliza = polizaService.updatePoliza(poliza)
-        }
+        poliza = polizaService.updatePoliza(poliza)
         respond poliza, [status: OK, view:'show']
 
     }
@@ -122,19 +115,14 @@ class PolizaController extends RestfulController<Poliza> {
 
     }
 
-    @Override
-    protected Poliza updateResource(Poliza resource) {
-        ProcesadorDePoliza procesador = getProcesador(resource)
-        resource.partidas.clear()
-        resource = procesador.recalcular(resource)
-        return polizaService.updatePoliza(resource)
-    }
-
 
     def recalcular(Poliza poliza) {
         if(poliza == null){
             notFound()
             return
+        }
+        if(poliza.manual) {
+            throw new RuntimeException("Poliza ${poliza.id} es MANUAL no se puede recaluclar de manera automatica")
         }
         ProcesadorDePoliza procesador = getProcesador(poliza)
         poliza = procesador.recalcular(poliza)
@@ -145,7 +133,7 @@ class PolizaController extends RestfulController<Poliza> {
     def handleException(Exception e) {
         String message = ExceptionUtils.getRootCauseMessage(e)
         // e.printStackTrace()
-        log.error(message, e)
+        log.error(message)
         respond([message: message], status: 500)
     }
 
