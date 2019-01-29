@@ -23,4 +23,5 @@ export interface Movimiento {
   cheque?: any;
   deposito?: number;
   retiro?: number;
+  fechaDeposito?: string;
 }

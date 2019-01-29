@@ -86,9 +86,11 @@ class ImportadorCfdi32{
         }
 
         def moneda = data['Moneda'] ?: 'MXN'
-        if(moneda == 'PESOS M.N.') {
+
+        if(moneda != 'MXN' || moneda != 'USD') {
             moneda = 'MXN'
         }
+
 
         def tipoDeCamio = data['TipoCambio'] as BigDecimal ?: 0.0
         def comprobanteFiscal = ComprobanteFiscal.findByUuid(uuid)

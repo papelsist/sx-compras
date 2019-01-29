@@ -6,7 +6,7 @@ import groovy.transform.ToString
 import sx.utils.MonedaUtils
 
 @EqualsAndHashCode(includes='ejercicio,mes,tipo,folio')
-@ToString(includes='ejercicio,mes,tipo,subtipo,folio,debe,haber,fecha',includeNames=true,includePackage=false)
+@ToString(includes='ejercicio,mes,tipo,subtipo,folio,debe,haber,fecha, sucursal',includeNames=true,includePackage=false)
 class Poliza {
 
     Integer ejercicio
@@ -35,6 +35,8 @@ class Poliza {
 
     String egreso
 
+    String sucursal  = 'OFICINAS'
+
     Date dateCreated
     Date lastUpdated
 
@@ -44,7 +46,7 @@ class Poliza {
     static hasMany = [partidas: PolizaDet]
 
     static constraints = {
-        ejercicio inList:(2014..2018)
+        ejercicio inList:(2014..2030)
         mes inList:(1..13)
         tipo inList:['INGRESO','EGRESO','DIARIO']
         subtipo minSize:5,maxSize:50
@@ -56,6 +58,7 @@ class Poliza {
         createUser nullable: true
         updateUser nullable: true
         egreso nullable: true
+        sucursal nullable: true
     }
 
     static mapping ={
@@ -101,6 +104,14 @@ class Poliza {
         PROVISION_DE_GASTOS,
         PROVISION_DE_CARGA_SOCIAL,
         CIERRE_ANUAL
+    }
+
+    BigDecimal getTotalNacionales() {
+        return partidas*.getTotalNacionales().sum()
+    }
+
+    BigDecimal getTotalExtranjeros() {
+        return partidas*.getTotalExtranjeros().sum()
     }
 
 }

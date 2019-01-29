@@ -113,7 +113,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 </box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Oblique" size="10" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" />
+						<font pdfFontName="Helvetica-Oblique" size="9" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" />
 					</textElement>
 				<text><![CDATA[P E R I O D O   D E L :]]></text>
 				</staticText>
@@ -130,7 +130,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 </box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Oblique" size="10" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" />
+						<font pdfFontName="Helvetica-Oblique" size="9" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" />
 					</textElement>
 				<text><![CDATA[I N I C I A L  :]]></text>
 				</staticText>
@@ -147,7 +147,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 </box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Oblique" size="10" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" />
+						<font pdfFontName="Helvetica-Oblique" size="9" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" />
 					</textElement>
 				<text><![CDATA[C A R G O S  :]]></text>
 				</staticText>
@@ -164,7 +164,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 </box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Oblique" size="10" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" />
+						<font pdfFontName="Helvetica-Oblique" size="9" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" />
 					</textElement>
 				<text><![CDATA[A B O N O S  :]]></text>
 				</staticText>
@@ -181,7 +181,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 </box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font pdfFontName="Courier-Oblique" size="10" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" />
+						<font pdfFontName="Courier-Oblique" size="9" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" />
 					</textElement>
 				<text><![CDATA[S A L D O  :]]></text>
 				</staticText>
@@ -212,7 +212,7 @@
 						key="textField-11"/>
 					<box></box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-BoldOblique" size="10" isBold="true" isItalic="true" isUnderline="false" isStrikeThrough="false" />
+						<font pdfFontName="Helvetica-BoldOblique" size="9" isBold="true" isItalic="true" isUnderline="false" isStrikeThrough="false" />
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[new String("CUENTA : ").concat($F{numero}).concat("  ").concat($F{descripcion})]]></textFieldExpression>
 				</textField>
@@ -225,7 +225,7 @@
 						key="textField"/>
 					<box></box>
 					<textElement>
-						<font/>
+						<font size="9"/>
 					</textElement>
 				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$P{INICIAL}]]></textFieldExpression>
 				</textField>
@@ -238,7 +238,7 @@
 						key="textField"/>
 					<box></box>
 					<textElement>
-						<font/>
+						<font size="9"/>
 					</textElement>
 				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$P{FINAL}]]></textFieldExpression>
 				</textField>
@@ -251,7 +251,7 @@
 						key="textField"/>
 					<box></box>
 					<textElement>
-						<font/>
+						<font size="9"/>
 					</textElement>
 				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$P{CARGOS}]]></textFieldExpression>
 				</textField>
@@ -264,7 +264,7 @@
 						key="textField"/>
 					<box></box>
 					<textElement>
-						<font/>
+						<font size="9"/>
 					</textElement>
 				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$P{ABONOS}]]></textFieldExpression>
 				</textField>
@@ -281,7 +281,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 </box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Oblique" size="10" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" />
+						<font pdfFontName="Helvetica-Oblique" size="9" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" />
 					</textElement>
 				<text><![CDATA[A L]]></text>
 				</staticText>
@@ -298,7 +298,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 </box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Oblique" size="10" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" />
+						<font pdfFontName="Helvetica-Oblique" size="9" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" />
 					</textElement>
 				<textFieldExpression   class="java.util.Date"><![CDATA[$P{FECHA_INICIAL}]]></textFieldExpression>
 				</textField>
@@ -315,7 +315,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 </box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Oblique" size="10" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" />
+						<font pdfFontName="Helvetica-Oblique" size="9" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" />
 					</textElement>
 				<textFieldExpression   class="java.util.Date"><![CDATA[$P{FECHA_FINAL}]]></textFieldExpression>
 				</textField>
@@ -339,7 +339,7 @@
 						key="staticText-9"/>
 					<box></box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica" size="10" isBold="false"/>
+						<font pdfFontName="Helvetica" size="9" isBold="false"/>
 					</textElement>
 				<text><![CDATA[DIA]]></text>
 				</staticText>
@@ -355,30 +355,30 @@
 						key="staticText-10"/>
 					<box></box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica" size="10" isBold="false"/>
+						<font pdfFontName="Helvetica" size="9" isBold="false"/>
 					</textElement>
 				<text><![CDATA[CONCEPTO]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="399"
+						x="405"
 						y="3"
-						width="69"
+						width="77"
 						height="13"
 						forecolor="#000000"
 						backcolor="#666666"
 						key="staticText-11"/>
 					<box></box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica" size="10" isBold="false"/>
+						<font pdfFontName="Helvetica" size="9" isBold="false"/>
 					</textElement>
 				<text><![CDATA[RETIROS]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="255"
+						x="253"
 						y="3"
 						width="75"
 						height="13"
@@ -387,14 +387,14 @@
 						key="staticText-12"/>
 					<box></box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica" size="10" isBold="false"/>
+						<font pdfFontName="Helvetica" size="9" isBold="false"/>
 					</textElement>
 				<text><![CDATA[REFERENCIA]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="468"
+						x="480"
 						y="3"
 						width="75"
 						height="13"
@@ -403,7 +403,7 @@
 						key="staticText-13"/>
 					<box></box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica" size="10" isBold="false"/>
+						<font pdfFontName="Helvetica" size="9" isBold="false"/>
 					</textElement>
 				<text><![CDATA[ACUMULADO]]></text>
 				</staticText>
@@ -434,16 +434,16 @@
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="330"
+						x="328"
 						y="3"
-						width="69"
+						width="77"
 						height="13"
 						forecolor="#000000"
 						backcolor="#666666"
 						key="staticText-14"/>
 					<box></box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica" size="10" isBold="false"/>
+						<font pdfFontName="Helvetica" size="9" isBold="false"/>
 					</textElement>
 				<text><![CDATA[DEPOSITOS]]></text>
 				</staticText>
@@ -452,14 +452,14 @@
 						mode="Transparent"
 						x="226"
 						y="3"
-						width="29"
+						width="27"
 						height="13"
 						forecolor="#000000"
 						backcolor="#666666"
 						key="staticText-15"/>
 					<box></box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica" size="10" isBold="false"/>
+						<font pdfFontName="Helvetica" size="9" isBold="false"/>
 					</textElement>
 				<text><![CDATA[ORI]]></text>
 				</staticText>
@@ -476,20 +476,20 @@
 						key="textField"/>
 					<box></box>
 					<textElement>
-						<font/>
+						<font size="10"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{dia}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="255"
+						x="253"
 						y="1"
 						width="75"
 						height="13"
 						key="textField"/>
 					<box></box>
 					<textElement>
-						<font/>
+						<font size="10"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{referencia}]]></textFieldExpression>
 				</textField>
@@ -502,7 +502,7 @@
 						key="textField"/>
 					<box></box>
 					<textElement>
-						<font/>
+						<font size="10"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{concepto}]]></textFieldExpression>
 				</textField>
@@ -510,51 +510,55 @@
 					<reportElement
 						x="226"
 						y="1"
-						width="29"
+						width="27"
 						height="13"
 						key="textField"/>
 					<box></box>
 					<textElement>
-						<font/>
+						<font size="10"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{origen}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="330"
+						x="328"
 						y="1"
-						width="69"
+						width="77"
 						height="13"
-						key="textField"/>
+						key="textField">
+							<printWhenExpression><![CDATA[new  Boolean($F{abono}.doubleValue() != 0.00)]]></printWhenExpression>
+						</reportElement>
 					<box></box>
 					<textElement textAlignment="Right">
-						<font/>
+						<font size="10"/>
 					</textElement>
 				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{abono}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="399"
+						x="405"
 						y="1"
-						width="69"
+						width="77"
 						height="13"
-						key="textField"/>
+						key="textField">
+							<printWhenExpression><![CDATA[new  Boolean($F{cargo}.doubleValue() != 0.00)]]></printWhenExpression>
+						</reportElement>
 					<box></box>
 					<textElement textAlignment="Right">
-						<font/>
+						<font size="10"/>
 					</textElement>
 				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{cargo}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="468"
+						x="480"
 						y="1"
 						width="75"
 						height="13"
 						key="textField"/>
 					<box></box>
 					<textElement textAlignment="Right">
-						<font/>
+						<font size="10"/>
 					</textElement>
 				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$P{INICIAL}.add($V{ACUMULADO})]]></textFieldExpression>
 				</textField>

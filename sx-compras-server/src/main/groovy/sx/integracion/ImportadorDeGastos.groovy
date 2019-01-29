@@ -39,7 +39,7 @@ class ImportadorDeGastos {
         """
         Sql db = getSql()
         Map row = db.firstRow(select,[id])
-        log.info('Importando requisicion: {}', id)
+        log.info('Importando requisicion: {}, con Reg:{} ', id, row)
         RequisicionDeGastos req = importarRegistro(row)
         if(!req.egreso){
             Map egresoRow = findEgreso(db, req)

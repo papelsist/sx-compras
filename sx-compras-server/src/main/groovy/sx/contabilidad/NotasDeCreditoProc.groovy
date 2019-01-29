@@ -2,74 +2,33 @@ package sx.contabilidad
 
 import groovy.util.logging.Slf4j
 import org.springframework.stereotype.Component
-import sx.core.Cliente
+
 import sx.core.Sucursal
 import static sx.contabilidad.Mapeo.*
 
 
 @Slf4j
 @Component
-class NotasDeCreditoProc implements  ProcesadorDePoliza{
+abstract class NotasDeCreditoProc implements  ProcesadorDePoliza {
 
-    String QUERY = """
-        SELECT 
-        x.subtotal,
-        x.impuesto,
-        x.total_det,
-        x.fecha_documento,
-        x.documento,
-        x.sucursal,
-        x.fecha,
-        x.moneda,
-        x.tc,
-        x.folio,
-        x.total,        
-        x.documentoTipo,
-        x.asiento,
-        x.referencia2,
-        x.origen,
-        x.cliente,
-        x.cta_cliente,
-        x.partidas_idx,
-        x.max
-        FROM (                
-          SELECT round((d.importe/1.16),2) subtotal ,d.importe-round((d.importe/1.16),2) impuesto,d.importe total_det,d.fecha_documento,d.documento,d.sucursal,f.fecha,f.moneda,f.tipo_de_cambio  tc ,n.folio,n.total ,f.tipo as documentoTipo,
-		concat('NOTA_',substr(f.forma_de_pago,1,3),'_',f.tipo) as asiento,c.nombre referencia2,n.id as origen,f.cliente_id as cliente,
-		concat((case when f.tipo='CRE' then concat('105-0003-', (SELECT x.cuenta_operativa FROM cuenta_operativa_cliente x where x.cliente_id=c.id )) 
-				when f.tipo='CON' then (case when s.clave>9 then concat('105-0001-00',s.clave) else concat('105-0001-000',s.clave) end)
-				when f.tipo='COD' then (case when s.clave>9 then concat('105-0002-00',s.clave) else concat('105-0002-000',s.clave) end)
-				else 'no_cta' end),'-0000') as cta_cliente,d.partidas_idx,(select max(partidas_idx) from nota_de_credito_det y  where y.nota_id=n.id) as max
-		FROM cobro f join cliente c on(f.cliente_id=c.id)  
-		join nota_de_credito n on(f.id=n.cobro_id) left join nota_de_credito_det d on(d.nota_id=n.id)  join sucursal s on(d.sucursal=s.nombre)
-		join cfdi x on(n.cfdi_id=x.id)
-		where  f.fecha = '@FECHA' and F.forma_de_pago in('BONIFICACION') and n.sw2 is null and (x.cancelado is false or x.cancelado is null)		
-		union
-		SELECT n.importe subtotal ,n.impuesto,n.total,y.fecha as fecha_documento,y.documento,s.nombre as sucursal ,f.fecha,f.moneda,f.tipo_de_cambio  tc ,n.folio,n.total,f.tipo as documentoTipo,
-		concat('NOTA_',substr(f.forma_de_pago,1,3),'_',f.tipo) as asiento,c.nombre referencia2,n.id as origen ,f.cliente_id as cliente,
-		concat((case when f.tipo='CRE' then concat('105-0003-', (SELECT x.cuenta_operativa FROM cuenta_operativa_cliente x where x.cliente_id=c.id )) 
-				when f.tipo='CON' then (case when s.clave>9 then concat('105-0001-00',s.clave) else concat('105-0001-000',s.clave) end)
-				when f.tipo='COD' then (case when s.clave>9 then concat('105-0002-00',s.clave) else concat('105-0002-000',s.clave) end)
-				else 'no_cta' end),'-0000') as cta_cliente,0,0	
-		FROM cobro f join cliente c on(f.cliente_id=c.id)  join sucursal s on(f.sucursal_id=s.id) join nota_de_credito n on(f.id=n.cobro_id) 
-		join cfdi x on(n.cfdi_id=x.id)  join devolucion_de_venta d on(d.cobro_id=f.id)  join venta v on(d.venta_id=v.id) join cuenta_por_cobrar y on(v.cuenta_por_cobrar_id=y.id)
-		where  f.fecha = '@FECHA' and F.forma_de_pago in('DEVOLUCION') and n.sw2 is null and (x.cancelado is false or x.cancelado is null)  		                      
-        ) as x
-    """
+    abstract String getTipo()
+
+    abstract String getTipoLabel()
 
     @Override
     String definirConcepto(Poliza poliza) {
-        return "Notas de credito"
+        return  " ${this.getTipoLabel()}"
     }
 
     @Override
     Poliza recalcular(Poliza poliza) {
 
         poliza.partidas.clear()
-        String select = QUERY.replaceAll('@FECHA', toSqlDate(poliza.fecha))
+        String select = getSelect().replaceAll('@FECHA', toSqlDate(poliza.fecha))
+        // log.info('Select: {}', select)
         List rows = getAllRows(select, [])
+        rows = rows.findAll {it.asiento.startsWith( this.getTipo())}
         log.info('Procesando poliza {}  {} registros', poliza.tipo, poliza.subtipo)
-
-        
 
         rows.each { row ->
                 cargoNotas(poliza,row)
@@ -77,11 +36,6 @@ class NotasDeCreditoProc implements  ProcesadorDePoliza{
                 if(row.partidas_idx == row.max)
                     abonoCliente(poliza,row)
         }
-
-   
-            
-
-
 
         return poliza
     }
@@ -96,8 +50,8 @@ class NotasDeCreditoProc implements  ProcesadorDePoliza{
         if(row.asiento.startsWith('NOTA_DEV')){
               ctaPrimero = '402'
         }
+
         if(row.asiento.startsWith('NOTA_BON')){
-            
                ctaPrimero = '403'
         }
 
@@ -112,6 +66,9 @@ class NotasDeCreditoProc implements  ProcesadorDePoliza{
                 break
             case 'CRE':
                 ctaSegundo= '-0003-'
+                if(row.cliente == '402880fc5e4ec411015e4ec7a46701de') { // PAPELSA BAJIO
+                    ctaSegundo = '-0004-'
+                }
                 break
         }
 
@@ -132,7 +89,7 @@ class NotasDeCreditoProc implements  ProcesadorDePoliza{
             throw new RuntimeException("No existe cuenta contable para el cargo a notas del reg: ${row}")
         String descripcion  = !row.origen ?
                 "${row.asiento}":
-                "F: ${row.documento} ${row.fecha.format('dd/MM/yyyy')} ${row.documentoTipo} ${row.sucursal}"
+                "NC: ${row.folio} F:${row.documento} ${row.fecha_documento.format('dd/MM/yyyy')} ${row.documentoTipo} ${row.sucursal}"
         PolizaDet det = new PolizaDet(
                 cuenta: cuenta,
                 concepto: cuenta.descripcion,
@@ -158,7 +115,8 @@ class NotasDeCreditoProc implements  ProcesadorDePoliza{
         CuentaContable cuenta = buscarCuenta(IvaNoTrasladadoVentas.clave)
         String descripcion  = !row.origen ?
                 "${row.asiento}":
-                "F: ${row.documento} ${row.fecha.format('dd/MM/yyyy')} ${row.documentoTipo} ${row.sucursal}"
+                // "F: ${row.documento} ${row.fecha.format('dd/MM/yyyy')} ${row.documentoTipo} ${row.sucursal}"
+                "NC: ${row.folio} F:${row.documento} ${row.fecha_documento.format('dd/MM/yyyy')} ${row.documentoTipo} ${row.sucursal}"
         PolizaDet det = new PolizaDet(
                 cuenta: cuenta,
                 concepto: cuenta.descripcion,
@@ -184,10 +142,11 @@ class NotasDeCreditoProc implements  ProcesadorDePoliza{
             throw new RuntimeException("No existe cuenta para el cliente:  ${row.cliente}")
         }
 
-        CuentaContable cuenta = CuentaContable.findByClave(row.cta_cliente)
+        CuentaContable cuenta = buscarCuenta(row.cta_cliente)
         String descripcion  = !row.origen ?
                 "${row.asiento}":
-                "F: ${row.documento} ${row.fecha.format('dd/MM/yyyy')} ${row.documentoTipo} ${row.sucursal}"
+                // "F: ${row.documento} ${row.fecha.format('dd/MM/yyyy')} ${row.documentoTipo} ${row.sucursal}"
+                "NC: ${row.folio} F:${row.documento} ${row.fecha_documento.format('dd/MM/yyyy')} ${row.documentoTipo} ${row.sucursal}"
         PolizaDet det = new PolizaDet(
             cuenta: cuenta,
             concepto: cuenta.descripcion,
@@ -204,7 +163,64 @@ class NotasDeCreditoProc implements  ProcesadorDePoliza{
             haber: row.total,
             debe: 0.0
         )
+        // Comprobante nacional para el SAT
+        def comprobante = new SatComprobanteNac(uuidcfdi: row.uuid, rfc: row.rfc, montoTotal: row.total)
+        if(row.moneda != 'MXN') {
+            comprobante.moneda = row.moneda
+            comprobante.tipCamb = row.tc
+        }
+        det.nacionales.add(comprobante)
         poliza.addToPartidas(det)
+    }
+
+    String getSelect() {
+        String QUERY = """
+        SELECT 
+        x.subtotal,
+        x.impuesto,
+        x.total_det,
+        x.fecha_documento,
+        x.documento,
+        x.sucursal,
+        x.fecha,
+        x.moneda,
+        x.tc,
+        x.folio,
+        x.total,        
+        x.documentoTipo,
+        x.asiento,
+        x.referencia2,
+        x.origen,
+        x.cliente,
+        x.cta_cliente,
+        x.partidas_idx,
+        x.max,
+        x.rfc,
+        x.uuid
+        FROM (                
+          SELECT round((d.importe/1.16),2) subtotal ,d.importe-round((d.importe/1.16),2) impuesto,d.importe total_det,d.fecha_documento,d.documento,d.sucursal,f.fecha,f.moneda,f.tipo_de_cambio  tc ,n.folio,n.total ,f.tipo as documentoTipo,
+		concat('NOTA_',substr(f.forma_de_pago,1,3),'_',f.tipo) as asiento,c.nombre referencia2,n.id as origen,f.cliente_id as cliente,
+		concat((case when f.tipo='CRE' then concat('105-',(SELECT concat(case when x.cuenta_operativa='0266' then concat('0004-',x.cuenta_operativa) else concat('0003-',x.cuenta_operativa) end) FROM cuenta_operativa_cliente x where x.cliente_id=c.id ))
+				when f.tipo='CON' then (case when s.clave>9 then concat('105-0001-00',s.clave) else concat('105-0001-000',s.clave) end)
+				when f.tipo='COD' then (case when s.clave>9 then concat('105-0002-00',s.clave) else concat('105-0002-000',s.clave) end)
+				else 'no_cta' end),'-0000') as cta_cliente,d.partidas_idx,(select max(partidas_idx) from nota_de_credito_det y  where y.nota_id=n.id) as max, c.rfc, x.uuid
+		FROM cobro f join cliente c on(f.cliente_id=c.id)  
+		join nota_de_credito n on(f.id=n.cobro_id) left join nota_de_credito_det d on(d.nota_id=n.id)  join sucursal s on(d.sucursal=s.nombre)
+		join cfdi x on(n.cfdi_id=x.id)
+		where  n.fecha = '@FECHA' and F.forma_de_pago in('BONIFICACION') and n.sw2 is null and (x.cancelado is false or x.cancelado is null)		
+		union
+		SELECT n.importe subtotal ,n.impuesto,n.total,y.fecha as fecha_documento,y.documento,s.nombre as sucursal ,f.fecha,f.moneda,f.tipo_de_cambio  tc ,n.folio,n.total,f.tipo as documentoTipo,
+		concat('NOTA_',substr(f.forma_de_pago,1,3),'_',f.tipo) as asiento,c.nombre referencia2,n.id as origen ,f.cliente_id as cliente,
+		concat((case when f.tipo='CRE' then concat('105-',(SELECT concat(case when x.cuenta_operativa='0266' then concat('0004-',x.cuenta_operativa) else concat('0003-',x.cuenta_operativa) end) FROM cuenta_operativa_cliente x where x.cliente_id=c.id ))  
+				when f.tipo='CON' then (case when s.clave>9 then concat('105-0001-00',s.clave) else concat('105-0001-000',s.clave) end)
+				when f.tipo='COD' then (case when s.clave>9 then concat('105-0002-00',s.clave) else concat('105-0002-000',s.clave) end)
+				else 'no_cta' end),'-0000') as cta_cliente,0,0, c.rfc, x.uuid
+		FROM cobro f join cliente c on(f.cliente_id=c.id)  join sucursal s on(f.sucursal_id=s.id) join nota_de_credito n on(f.id=n.cobro_id) 
+		join cfdi x on(n.cfdi_id=x.id)  join devolucion_de_venta d on(d.cobro_id=f.id)  join venta v on(d.venta_id=v.id) join cuenta_por_cobrar y on(v.cuenta_por_cobrar_id=y.id)
+		where  n.fecha = '@FECHA' and F.forma_de_pago in('DEVOLUCION') and n.sw2 is null and (x.cancelado is false or x.cancelado is null)  		                      
+        ) as x
+        """
+        return QUERY
     }
 
 }

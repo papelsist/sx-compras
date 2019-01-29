@@ -14,7 +14,7 @@
 		 rightMargin="30"
 		 topMargin="20"
 		 bottomMargin="20"
-		 whenNoDataType="NoPages"
+		 whenNoDataType="AllSectionsNoDetail"
 		 isTitleNewPage="false"
 		 isSummaryNewPage="false">
 	<property name="ireport.scriptlethandling" value="0" />
@@ -29,15 +29,16 @@
 	<parameter name="NomReporte" isForPrompting="false" class="java.lang.String">
 		<defaultValueExpression ><![CDATA["FACTURAS CON SOLICITUD DE CANCELACION (OP.CXC)"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="FECHA" isForPrompting="true" class="java.lang.String"/>
+	<parameter name="FECHA" isForPrompting="true" class="java.util.Date"/>
 	<queryString><![CDATA[SELECT C.TIPO,F.FOLIO,C.FECHA AS FECHA_FAC,C.CANCELADA,l.CLAVE,l.NOMBRE,S.CLAVE AS SUC,S.NOMBRE AS NOM_SUC
 ,CASE WHEN C.TIPO IN('COD','CON') THEN 'CONTADO' WHEN C.TIPO='CRE' THEN 'CREDITO' ELSE 'SIN CLASIF' END AS ORIGEN
 ,C.forma_de_pago AS FPAGO,F.TOTAL,C.TOTAL TOT_CXC,C.TIPO_DOCUMENTO,V.date_created CREADO,V.last_updated MODIFICADO
 ,CONCAT(' ',C.forma_de_pago,' - ',C.CANCELACION_MOTIVO) AS MOTI_CANCE,V.CANCEL_STATUS,V.STATUS,V.IS_CANCELABLE,V.STATUS_CODE
 FROM cancelacion_de_cfdi V JOIN CFDI F ON(V.CFDI_ID=F.ID) JOIN cuenta_por_cobrar C ON(C.CFDI_ID=F.ID)
 JOIN SUCURSAL S ON (S.ID=C.SUCURSAL_ID) join cliente l on  (C.cliente_id=l.id)
-WHERE DATE(F.date_created)=$P{FECHA} AND C.TIPO_DOCUMENTO='VENTA'
-]]></queryString>
+WHERE C.FECHA=$P{FECHA} AND C.cancelada IS NOT NULL
+AND C.tipo_documento='VENTA' 
+order by C.TIPO,C.DOCUMENTO]]></queryString>
 
 	<field name="TIPO" class="java.lang.String"/>
 	<field name="FOLIO" class="java.lang.String"/>
@@ -560,21 +561,21 @@ WHERE DATE(F.date_created)=$P{FECHA} AND C.TIPO_DOCUMENTO='VENTA'
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="45"
+						x="63"
 						y="17"
-						width="680"
+						width="662"
 						height="13"
 						key="textField-13"/>
 					<box></box>
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{CANCEL_STATUS}.concat(".  ").concat($F{STATUS}).concat(".  ").concat($F{IS_CANCELABLE}).concat(".  ").concat($F{STATUS_CODE})]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{STATUS}.concat(".  ").concat($F{CANCEL_STATUS}).concat(".  ").concat($F{IS_CANCELABLE}).concat(".  ").concat($F{STATUS_CODE})]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
 						mode="Opaque"
-						x="5"
+						x="23"
 						y="17"
 						width="40"
 						height="13"
@@ -617,6 +618,15 @@ WHERE DATE(F.date_created)=$P{FECHA} AND C.TIPO_DOCUMENTO='VENTA'
 					</textElement>
 				<textFieldExpression   class="java.util.Date"><![CDATA[$F{CREADO}]]></textFieldExpression>
 				</textField>
+				<rectangle>
+					<reportElement
+						x="8"
+						y="17"
+						width="13"
+						height="13"
+						key="rectangle-1"/>
+					<graphicElement stretchType="NoStretch"/>
+				</rectangle>
 			</band>
 		</detail>
 		<columnFooter>

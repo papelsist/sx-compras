@@ -68,6 +68,7 @@ if (Environment.isDevelopmentMode() && targetDir != null) {
     logger("sx.bi", DEBUG, ['STDOUT'], false)
     logger("sx.cxc", DEBUG, ['STDOUT'], false)
     logger("sx.contabilidad", DEBUG, ['STDOUT'], false)
+    logger("sx.sat", DEBUG, ['STDOUT'], false)
     logger("sx.cfdi", DEBUG, ['STDOUT'], false)
 
 

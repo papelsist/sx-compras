@@ -2,26 +2,30 @@ package sx.tesoreria
 
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
+import groovy.transform.TupleConstructor
 
-@ToString(includes = ['ejercicio,mes,cuenta','saldoFinal'],includeNames=true,includePackage=false)
-@EqualsAndHashCode(includeFields = true,includes = ['id'])
+@ToString(includes = 'ejercicio, mes, cuenta, saldoInicial, ingresos, egresos, saldoFinal', includeNames=true,includePackage=false)
+@EqualsAndHashCode(includeFields = true,includes = ['id, cuenta, ejercicio, mes'])
+@TupleConstructor(excludes = 'id, dateCreated, lastUpdated, createUser, updateUser')
 class SaldoPorCuentaDeBanco {
 
-	String id
+    Integer ejercicio
+
+    Integer mes
 
 	CuentaDeBanco cuenta
 
+    String numero
+
+    String descripcion
+
 	BigDecimal saldoInicial
 
-	BigDecimal ingresos = 0.0
+	BigDecimal ingresos
 
-	BigDecimal egresos = 0.0
+	BigDecimal egresos
 
-	BigDecimal saldoFinal = 0.0
-
-	Integer ejercicio 
-
-	Integer mes
+	BigDecimal saldoFinal
 
 	Date cierre
 	
@@ -29,17 +33,18 @@ class SaldoPorCuentaDeBanco {
 
 	Date lastUpdated
 
+	String createUser
+
+	String updateUser
+
+
     static constraints = {
-    	ejercicio inList:(2014..2018)
     	mes inList:(1..12)
     	cuenta unique:['ejercicio','mes']
-		cierre(nullable:true)
+		cierre nullable:true
+		createUser nullable: true
+		updateUser nullable: true
     }
-
-	static mapping = {
-		id generator: 'uuid'
-	}
-
 
     
 }

@@ -136,7 +136,7 @@ export class InversionFormComponent implements OnInit, OnDestroy {
         fecha: new Date(),
         tasa: 5.65,
         plazo: 1,
-        isr: 0.46
+        isr: 1.04
       });
     }
   }
@@ -145,7 +145,9 @@ export class InversionFormComponent implements OnInit, OnDestroy {
     this.form
       .get('cuentaDestino')
       .valueChanges.pipe(takeUntil(this.destroy$))
-      .subscribe(cuenta => console.log('Inversion: ', cuenta));
+      .subscribe(cuenta => {
+        this.form.patchValue({tasa: cuenta.rendimientoTasa, isr: cuenta.tasaIsr});
+      });
   }
 
   private rendimientoListener() {

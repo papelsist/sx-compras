@@ -11,6 +11,8 @@ import org.apache.commons.lang3.exception.ExceptionUtils
 
 
 import java.sql.SQLException
+import java.text.DecimalFormat
+import java.text.NumberFormat
 
 @Slf4j
 // @GrailsCompileStatic
@@ -19,6 +21,8 @@ trait ProcesadorDePoliza {
     @Autowired
     @Qualifier('dataSource')
     def dataSource
+
+    DecimalFormat tipoDeCambioFormat
 
     String definirConcepto(Poliza poliza){
         return "${poliza.tipo} ${poliza.subtipo} ${poliza.fecha.format('dd/MM/yyyy')}"
@@ -70,6 +74,20 @@ trait ProcesadorDePoliza {
 
     Sql getSql(){
         return new Sql(dataSource)
+    }
+
+    String formatTipoDeCambio(def tc){
+        return getTcFormat().format(tc)
+    }
+
+    DecimalFormat getTcFormat() {
+        if(!this.tipoDeCambioFormat) {
+            tipoDeCambioFormat = new DecimalFormat()
+            tipoDeCambioFormat.setMaximumFractionDigits(4)
+            tipoDeCambioFormat.setMinimumFractionDigits(0)
+            tipoDeCambioFormat.setGroupingUsed(false)
+        }
+        return this.tipoDeCambioFormat
     }
 
 }

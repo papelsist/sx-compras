@@ -19,21 +19,10 @@ abstract class PolizaService implements  LogUser{
     abstract void delete(Serializable id)
 
     Poliza salvarPolza(Poliza poliza) {
-        /*
-        PolizaFolio folio = findFolio(poliza)
-        poliza.folio = folio.folio
-
-        folio.folio = folio.folio + 1
-        */
-
         asignarFolio(poliza)
         logEntity(poliza)
-        // poliza = poliza.save flush: true
-        // folio.save flush: true
         poliza =  save(poliza)
-        // folio.save flush: true
         return poliza
-
     }
 
     @CompileDynamic
@@ -41,6 +30,9 @@ abstract class PolizaService implements  LogUser{
         logEntity(poliza)
         poliza.debe = poliza.partidas.sum 0.0, {it.debe}
         poliza.haber = poliza.partidas.sum 0.0, {it.haber}
+        poliza.partidas.each {
+            it.concepto = concatenar(it.cuenta)
+        }
         return save(poliza)
     }
 
@@ -75,10 +67,40 @@ abstract class PolizaService implements  LogUser{
     @CompileDynamic
     @NotTransactional
     String resolverProcesador(Poliza poliza) {
+        /*
         String name = poliza.subtipo.toLowerCase()
                 .replaceAll( "(_)([A-Za-z0-9])", { Object[] it -> it[2].toUpperCase() } )
         return "${name}Proc"
+        */
+        return resolverProcesador(poliza.subtipo)
 
+    }
+
+    @CompileDynamic
+    @NotTransactional
+    String resolverProcesador(String subtipo) {
+        String name = subtipo.toLowerCase()
+                .replaceAll( "(_)([A-Za-z0-9])", { Object[] it -> it[2].toUpperCase() } )
+        return "${name}Proc"
+
+    }
+
+    @NotTransactional
+    def concatenar(CuentaContable cta) {
+        String cto = cta.descripcion
+        def p1 = cta.padre
+        if(p1) {
+            cto = p1.descripcion + " " + cto
+            def p2 = p1.padre
+            if(p2) {
+                cto = p2.descripcion + " " + cto
+                def p3 = p2.padre
+                if(p3) {
+                    cto = p3.descripcion + " " + cto
+                }
+            }
+        }
+        return cto
     }
 
 

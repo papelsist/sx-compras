@@ -14,4 +14,8 @@ json g.render(movimientoDeCuenta, [ excludes: ['moneda'], resolveTemplate: false
 	if(movimientoDeCuenta.formaDePago == 'TARJETA') {
 		orden movimientoDeCuenta.orden
 	}
+    if(movimientoDeCuenta.importe > 0 ) {
+        fechaDeposito movimientoDeCuenta.fechaDeposito
+    }
+
 }

@@ -10,7 +10,7 @@ import static sx.contabilidad.Mapeo.*
 
 @Slf4j
 @Component
-class CobranzaCreProc implements  ProcesadorDePoliza{
+class CobranzaCreProc implements  ProcesadorMultipleDePolizas{
 
        static String IVA_NO_TRASLADADO = "209-0001-0000-0000"
 
@@ -485,8 +485,38 @@ class CobranzaCreProc implements  ProcesadorDePoliza{
         poliza.addToPartidas(det)
     }
 
-    
 
+    List<Poliza> generarPolizas(PolizaCreateCommand command) {
+        // log.info('Generando polizas  para {}', command)
+        List<Sucursal> sucursals = getSucursales()
+        // log.info("Generando polizas de ventas {} para {} sucursales", getTipoLabel(), sucursals.size())
+
+        List<Poliza> polizas = []
+        sucursals.each {
+            String suc = it.nombre
+            Poliza p = Poliza.where{
+                ejercicio == command.ejercicio &&
+                        mes == command.mes &&
+                        subtipo == command.subtipo &&
+                        tipo == command.tipo &&
+                        fecha == command.fecha &&
+                        sucursal == suc
+            }.find()
+
+            if(p == null) {
+
+                p = new Poliza(ejercicio: command.ejercicio, mes: command.mes, subtipo: command.subtipo, tipo: command.tipo)
+                p.concepto = "COBRANZA CREDITO  ${it.nombre}"
+                p.fecha = command.fecha
+                p.sucursal = it.nombre
+                log.info('Agregando poliza: {}', it)
+                polizas << p
+            } else
+                log.info('Poliza ya existente  {}', p)
+
+        }
+        return polizas
+    }
 
 
 

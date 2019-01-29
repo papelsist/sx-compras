@@ -20,7 +20,7 @@
   <div layout layout-margin>
     <td-data-table [columns]="columns" [data]="corte.aplicaciones">
       <ng-template tdDataTableTemplate="importe" let-value="value" let-row="row">
-        {{value | currency: 'USD': 1.2-2}}
+        {{value | currency}}
       </ng-template>
     </td-data-table>
   </div>

@@ -8,13 +8,13 @@
 		 orientation="Portrait"
 		 pageWidth="612"
 		 pageHeight="792"
-		 columnWidth="556"
+		 columnWidth="584"
 		 columnSpacing="0"
-		 leftMargin="28"
-		 rightMargin="28"
+		 leftMargin="14"
+		 rightMargin="14"
 		 topMargin="20"
 		 bottomMargin="20"
-		 whenNoDataType="NoPages"
+		 whenNoDataType="AllSectionsNoDetail"
 		 isTitleNewPage="false"
 		 isSummaryNewPage="false">
 	<property name="ireport.scriptlethandling" value="0" />
@@ -27,37 +27,23 @@
 		<defaultValueExpression ><![CDATA["PAPEL S.A. DE C.V."]]></defaultValueExpression>
 	</parameter>
 	<parameter name="ID" isForPrompting="true" class="java.lang.Long"/>
-	<parameter name="ORDEN" isForPrompting="true" class="java.lang.String">
-		<defaultValueExpression ><![CDATA[$F{CLASE}.equals( "Compras" ) ? "ORDER BY 7,D.origen,D.RENGLON" :
-$F{CLASE}.equals( "VENTAS" ) ? "ORDER BY D.REFERENCIA2,D.RENGLON" : 
-$F{CLASE}.equals( "CXC CREDITO" ) ? "3 ASC" :
-$F{CLASE}.equals( "CXC CHEQUES DEVUELTOS" ) ? "3 ASC" :
-$F{CLASE}.equals( "CXC TRAMITE JURIDICO" ) ? "3 ASC" :
-$F{CLASE}.equals( "COMPRAS DESCUENTOS" ) ? "3 ASC" :
-$F{CLASE}.equals( "CXP COMPRAS" ) ? "3 ASC" :
-$F{CLASE}.equals( "POLIZA DE INVENTARIO" ) ? "3 ASC" :
-$F{CLASE}.equals( "Gastos" ) ? "3 ASC" :
-$F{CLASE}.equals( "PROVISION DE GASTOS" ) ? "3 ASC" :
-$F{CLASE}.equals( "ANTICIPOS GASTOS" ) ? "3 ASC" :
-$F{CLASE}.equals( "POLIZA DE TESORERIA" ) ? "3 ASC" :
-$F{CLASE}.equals( "GENERICA" ) ? "3 ASC" : ""]]></defaultValueExpression>
-	</parameter>
-	<queryString><![CDATA[SELECT P.id AS POL_ID,D.id POLIZADET_ID,D.partidas_idx RENGLON,P.folio AS POLIZA,DATE(P.fecha) AS FECHA,D.concepto DESCRIPCION,D.descripcion DESCRIPCION2,P.CONCEPTO,C.CLAVE AS NoCUENTA
-,P.tipo TIPO_ID,P.subtipo CLASE,D.documento_tipo AS ORIGEN,D.SUCURSAL,D.DEBE,D.HABER,P.DEBE AS DEBE_POLIZA,P.HABER AS HABER_POLIZA
+	<queryString><![CDATA[SELECT P.id AS POL_ID,D.id POLIZADET_ID,D.partidas_idx RENGLON,P.folio AS POLIZA,DATE(P.fecha) AS FECHA
+,D.CONCEPTO,D.DESCRIPCION,C.CLAVE AS NoCUENTA,P.CONCEPTO CONCEPTO_POLIZA
+,P.tipo TIPO_ID,P.subtipo CLASE,D.documento_tipo AS ORIGEN,D.SUCURSAL,D.DEBE,D.HABER
+,P.DEBE AS DEBE_POLIZA,P.HABER AS HABER_POLIZA
 ,D.ASIENTO,CASE WHEN D.DEBE<>0 THEN "D" ELSE "T" END AS TIPO
 FROM POLIZA P JOIN POLIZA_DET D ON (P.ID=D.POLIZA_ID) JOIN CUENTA_CONTABLE C ON (D.CUENTA_ID=C.ID)
-WHERE P.ID=$P{ID}
-]]></queryString>
+WHERE P.ID=$P{ID}]]></queryString>
 
 	<field name="POL_ID" class="java.lang.Long"/>
 	<field name="POLIZADET_ID" class="java.lang.Long"/>
 	<field name="RENGLON" class="java.lang.Integer"/>
-	<field name="POLIZA" class="java.lang.Long"/>
+	<field name="POLIZA" class="java.lang.Integer"/>
 	<field name="FECHA" class="java.sql.Date"/>
-	<field name="DESCRIPCION" class="java.lang.String"/>
-	<field name="DESCRIPCION2" class="java.lang.String"/>
 	<field name="CONCEPTO" class="java.lang.String"/>
+	<field name="DESCRIPCION" class="java.lang.String"/>
 	<field name="NoCUENTA" class="java.lang.String"/>
+	<field name="CONCEPTO_POLIZA" class="java.lang.String"/>
 	<field name="TIPO_ID" class="java.lang.String"/>
 	<field name="CLASE" class="java.lang.String"/>
 	<field name="ORIGEN" class="java.lang.String"/>
@@ -67,7 +53,14 @@ WHERE P.ID=$P{ID}
 	<field name="DEBE_POLIZA" class="java.math.BigDecimal"/>
 	<field name="HABER_POLIZA" class="java.math.BigDecimal"/>
 	<field name="ASIENTO" class="java.lang.String"/>
+	<field name="TIPO" class="java.lang.String"/>
 
+	<variable name="DEBE_POL" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
+		<variableExpression><![CDATA[$F{DEBE}]]></variableExpression>
+	</variable>
+	<variable name="HABER_POL" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
+		<variableExpression><![CDATA[$F{HABER}]]></variableExpression>
+	</variable>
 		<background>
 			<band height="0"  isSplitAllowed="true" >
 			</band>
@@ -80,7 +73,7 @@ WHERE P.ID=$P{ID}
 			<band height="65"  isSplitAllowed="true" >
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="340"
+						x="372"
 						y="0"
 						width="208"
 						height="18"
@@ -134,7 +127,7 @@ WHERE P.ID=$P{ID}
 				<staticText>
 					<reportElement
 						mode="Opaque"
-						x="422"
+						x="454"
 						y="47"
 						width="44"
 						height="15"
@@ -162,7 +155,7 @@ WHERE P.ID=$P{ID}
 					<textElement verticalAlignment="Middle">
 						<font size="10"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{POLIZA}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.Integer"><![CDATA[$F{POLIZA}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -175,11 +168,11 @@ WHERE P.ID=$P{ID}
 					<textElement verticalAlignment="Middle">
 						<font/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{CONCEPTO}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{CONCEPTO_POLIZA}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="dd-MMM-yy" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="466"
+						x="498"
 						y="47"
 						width="76"
 						height="15"
@@ -192,7 +185,7 @@ WHERE P.ID=$P{ID}
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="340"
+						x="372"
 						y="18"
 						width="208"
 						height="15"
@@ -243,9 +236,9 @@ WHERE P.ID=$P{ID}
 				<staticText>
 					<reportElement
 						mode="Opaque"
-						x="4"
+						x="2"
 						y="8"
-						width="86"
+						width="94"
 						height="13"
 						forecolor="#000000"
 						key="staticText-4"
@@ -263,9 +256,9 @@ WHERE P.ID=$P{ID}
 				<staticText>
 					<reportElement
 						mode="Opaque"
-						x="90"
+						x="96"
 						y="8"
-						width="278"
+						width="304"
 						height="13"
 						forecolor="#000000"
 						key="staticText-5"
@@ -283,7 +276,7 @@ WHERE P.ID=$P{ID}
 				<staticText>
 					<reportElement
 						mode="Opaque"
-						x="368"
+						x="400"
 						y="8"
 						width="90"
 						height="13"
@@ -303,7 +296,7 @@ WHERE P.ID=$P{ID}
 				<staticText>
 					<reportElement
 						mode="Opaque"
-						x="458"
+						x="490"
 						y="8"
 						width="90"
 						height="13"
@@ -323,9 +316,9 @@ WHERE P.ID=$P{ID}
 				<line direction="TopDown">
 					<reportElement
 						mode="Opaque"
-						x="3"
+						x="0"
 						y="1"
-						width="547"
+						width="584"
 						height="0"
 						forecolor="#666666"
 						backcolor="#FFFFFF"
@@ -335,9 +328,9 @@ WHERE P.ID=$P{ID}
 				<line direction="TopDown">
 					<reportElement
 						mode="Opaque"
-						x="3"
+						x="0"
 						y="27"
-						width="547"
+						width="584"
 						height="0"
 						forecolor="#666666"
 						backcolor="#FFFFFF"
@@ -350,9 +343,9 @@ WHERE P.ID=$P{ID}
 			<band height="27"  isSplitAllowed="true" >
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="4"
+						x="2"
 						y="1"
-						width="86"
+						width="94"
 						height="13"
 						key="textField"/>
 					<box></box>
@@ -363,46 +356,46 @@ WHERE P.ID=$P{ID}
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="90"
+						x="96"
 						y="1"
-						width="278"
+						width="304"
 						height="13"
 						key="textField"/>
 					<box></box>
 					<textElement textAlignment="Left">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{DESCRIPCION}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{CONCEPTO}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="115"
 						y="13"
-						width="171"
+						width="202"
 						height="13"
 						key="textField"/>
 					<box></box>
 					<textElement>
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{DESCRIPCION2}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{DESCRIPCION}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="286"
+						x="317"
 						y="13"
 						width="24"
 						height="13"
 						key="textField"/>
 					<box></box>
-					<textElement textAlignment="Right">
+					<textElement textAlignment="Center">
 						<font size="8" isStrikeThrough="false" />
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{ORIGEN}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="310"
+						x="341"
 						y="13"
 						width="58"
 						height="13"
@@ -415,7 +408,7 @@ WHERE P.ID=$P{ID}
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="368"
+						x="400"
 						y="1"
 						width="90"
 						height="13"
@@ -430,7 +423,7 @@ WHERE P.ID=$P{ID}
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="458"
+						x="490"
 						y="1"
 						width="90"
 						height="13"
@@ -454,9 +447,9 @@ WHERE P.ID=$P{ID}
 				<line direction="TopDown">
 					<reportElement
 						mode="Opaque"
-						x="2"
+						x="0"
 						y="2"
-						width="547"
+						width="584"
 						height="0"
 						forecolor="#666666"
 						backcolor="#FFFFFF"
@@ -486,7 +479,7 @@ WHERE P.ID=$P{ID}
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="212"
+						x="251"
 						y="5"
 						width="48"
 						height="10"
@@ -506,7 +499,7 @@ WHERE P.ID=$P{ID}
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Report" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
-						x="265"
+						x="304"
 						y="5"
 						width="31"
 						height="11"
@@ -526,7 +519,7 @@ WHERE P.ID=$P{ID}
 				<staticText>
 					<reportElement
 						mode="Opaque"
-						x="363"
+						x="395"
 						y="5"
 						width="75"
 						height="12"
@@ -546,7 +539,7 @@ WHERE P.ID=$P{ID}
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
-						x="465"
+						x="497"
 						y="5"
 						width="84"
 						height="12"
@@ -569,7 +562,7 @@ WHERE P.ID=$P{ID}
 			<band height="89"  isSplitAllowed="true" >
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="368"
+						x="400"
 						y="4"
 						width="90"
 						height="14"
@@ -578,11 +571,11 @@ WHERE P.ID=$P{ID}
 					<textElement textAlignment="Right" verticalAlignment="Bottom">
 						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{DEBE_POLIZA}]]></textFieldExpression>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$V{DEBE_POL}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="458"
+						x="484"
 						y="4"
 						width="90"
 						height="14"
@@ -591,13 +584,13 @@ WHERE P.ID=$P{ID}
 					<textElement textAlignment="Right" verticalAlignment="Bottom">
 						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{HABER_POLIZA}]]></textFieldExpression>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$V{HABER_POL}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
 						mode="Opaque"
 						x="3"
-						y="77"
+						y="76"
 						width="75"
 						height="12"
 						forecolor="#666666"
@@ -611,13 +604,13 @@ WHERE P.ID=$P{ID}
 					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Arial" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<text><![CDATA[SIIPAP WIN EX]]></text>
+				<text><![CDATA[SIIPAP RX-sx]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="208"
-						y="77"
+						x="251"
+						y="78"
 						width="48"
 						height="10"
 						forecolor="#666666"
@@ -628,7 +621,7 @@ WHERE P.ID=$P{ID}
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Arial" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA["Página " + $V{PAGE_NUMBER} + " de "]]></textFieldExpression>
@@ -636,7 +629,7 @@ WHERE P.ID=$P{ID}
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Report" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
-						x="261"
+						x="304"
 						y="77"
 						width="31"
 						height="11"
@@ -648,7 +641,7 @@ WHERE P.ID=$P{ID}
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Arial" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
@@ -656,8 +649,8 @@ WHERE P.ID=$P{ID}
 				<staticText>
 					<reportElement
 						mode="Opaque"
-						x="359"
-						y="77"
+						x="391"
+						y="76"
 						width="75"
 						height="12"
 						forecolor="#666666"
@@ -668,7 +661,7 @@ WHERE P.ID=$P{ID}
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Arial" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
 				<text><![CDATA[Fecha de impresión:]]></text>
@@ -676,8 +669,8 @@ WHERE P.ID=$P{ID}
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
-						x="461"
-						y="77"
+						x="493"
+						y="76"
 						width="84"
 						height="12"
 						forecolor="#666666"
@@ -688,7 +681,7 @@ WHERE P.ID=$P{ID}
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
-					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Arial" pdfFontName="Times-Roman" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
 					</textElement>
 				<textFieldExpression   class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
@@ -696,9 +689,9 @@ WHERE P.ID=$P{ID}
 				<line direction="TopDown">
 					<reportElement
 						mode="Opaque"
-						x="2"
+						x="0"
 						y="72"
-						width="547"
+						width="584"
 						height="0"
 						forecolor="#666666"
 						backcolor="#FFFFFF"
@@ -708,9 +701,9 @@ WHERE P.ID=$P{ID}
 				<line direction="TopDown">
 					<reportElement
 						mode="Opaque"
-						x="2"
+						x="0"
 						y="2"
-						width="547"
+						width="584"
 						height="0"
 						forecolor="#666666"
 						backcolor="#FFFFFF"
@@ -720,9 +713,9 @@ WHERE P.ID=$P{ID}
 				<line direction="TopDown">
 					<reportElement
 						mode="Opaque"
-						x="2"
+						x="0"
 						y="27"
-						width="547"
+						width="584"
 						height="0"
 						forecolor="#666666"
 						backcolor="#FFFFFF"
@@ -732,7 +725,7 @@ WHERE P.ID=$P{ID}
 				<staticText>
 					<reportElement
 						mode="Opaque"
-						x="235"
+						x="267"
 						y="4"
 						width="133"
 						height="14"
@@ -747,7 +740,7 @@ WHERE P.ID=$P{ID}
 					<textElement textAlignment="Right" verticalAlignment="Bottom" rotation="None" lineSpacing="Single">
 						<font fontName="SansSerif" pdfFontName="Helvetica-Bold" size="8" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<text><![CDATA[TOTALES =]]></text>
+				<text><![CDATA[TOTALES =  ]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
@@ -764,7 +757,7 @@ WHERE P.ID=$P{ID}
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 </box>
-					<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None" lineSpacing="Single">
+					<textElement textAlignment="Center" verticalAlignment="Bottom" rotation="None" lineSpacing="Single">
 						<font fontName="SansSerif" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
 				<text><![CDATA[HECHO POR:]]></text>
@@ -772,7 +765,7 @@ WHERE P.ID=$P{ID}
 				<staticText>
 					<reportElement
 						mode="Opaque"
-						x="152"
+						x="158"
 						y="37"
 						width="101"
 						height="13"
@@ -784,7 +777,7 @@ WHERE P.ID=$P{ID}
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 </box>
-					<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None" lineSpacing="Single">
+					<textElement textAlignment="Center" verticalAlignment="Bottom" rotation="None" lineSpacing="Single">
 						<font fontName="SansSerif" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
 				<text><![CDATA[REVISADO POR:
@@ -793,7 +786,7 @@ WHERE P.ID=$P{ID}
 				<staticText>
 					<reportElement
 						mode="Opaque"
-						x="302"
+						x="329"
 						y="37"
 						width="101"
 						height="13"
@@ -805,17 +798,17 @@ WHERE P.ID=$P{ID}
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 </box>
-					<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None" lineSpacing="Single">
+					<textElement textAlignment="Center" verticalAlignment="Bottom" rotation="None" lineSpacing="Single">
 						<font fontName="SansSerif" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<text><![CDATA[AUTORIZADO POR]]></text>
+				<text><![CDATA[AUTORIZADO POR:]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
 						mode="Opaque"
-						x="452"
+						x="484"
 						y="37"
-						width="101"
+						width="96"
 						height="13"
 						forecolor="#000000"
 						key="staticText-16"
@@ -825,14 +818,14 @@ WHERE P.ID=$P{ID}
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 </box>
-					<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None" lineSpacing="Single">
+					<textElement textAlignment="Center" verticalAlignment="Bottom" rotation="None" lineSpacing="Single">
 						<font fontName="SansSerif" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
 				<text><![CDATA[POLIZA No.]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="452"
+						x="484"
 						y="54"
 						width="100"
 						height="15"
@@ -841,8 +834,28 @@ WHERE P.ID=$P{ID}
 					<textElement textAlignment="Center">
 						<font/>
 					</textElement>
-				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{POLIZA}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.Integer"><![CDATA[$F{POLIZA}]]></textFieldExpression>
 				</textField>
+				<staticText>
+					<reportElement
+						mode="Opaque"
+						x="90"
+						y="76"
+						width="75"
+						height="12"
+						forecolor="#666666"
+						backcolor="#FFFFFF"
+						key="staticText-18"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
+						<font fontName="Arial" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+					</textElement>
+				<text><![CDATA[  POLIZA]]></text>
+				</staticText>
 			</band>
 		</lastPageFooter>
 		<summary>

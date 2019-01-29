@@ -159,4 +159,14 @@ abstract  class InversionService implements  LogUser{
         return redimientoCalculado
 
     }
+
+    void cancelarInversion(Inversion inversion) {
+        def movimientos = inversion.movimientos.collect{it.id}
+        inversion.movimientos.clear()
+        inversion.delete flush: true
+        movimientos.each {
+            MovimientoDeCuenta m = MovimientoDeCuenta.get(it)
+            m.delete flush: true
+        }
+    }
 }

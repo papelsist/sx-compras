@@ -2,7 +2,7 @@ package sx.contabilidad
 
 import groovy.util.logging.Slf4j
 import org.springframework.stereotype.Component
-import sx.core.Cliente
+
 import sx.core.Sucursal
 import static sx.contabilidad.Mapeo.*
 
@@ -10,9 +10,9 @@ import static sx.contabilidad.Mapeo.*
 
 @Slf4j
 @Component
-class CobranzaCodProc implements  ProcesadorDePoliza{
+class CobranzaCodProc implements  ProcesadorMultipleDePolizas{
 
-       static String IVA_NO_TRASLADADO = "209-0001-0000-0000"
+    static String IVA_NO_TRASLADADO = "209-0001-0000-0000"
 
     String DebeBanco = """    
       SELECT          
@@ -84,7 +84,7 @@ class CobranzaCodProc implements  ProcesadorDePoliza{
         				(case when  b.forma_de_pago like 'DEPOSIT%' and (SELECT m.por_identificar FROM cobro_deposito xx join movimiento_de_cuenta m on(xx.ingreso_id=m.id) where xx.cobro_id=b.id)=true then '_xIDENT'
         				when  b.forma_de_pago in('TRANSFERENCIA') and (SELECT m.por_identificar FROM cobro_transferencia xx join movimiento_de_cuenta m on(xx.ingreso_id=m.id)  where xx.cobro_id=b.id)=true then '_xIDENT'
         				else '' end)) as asiento
-        ,null as origen,f.tipo documentoTipo,f.fecha,null documento
+        ,f.id as origen,f.tipo documentoTipo,f.fecha,f.documento
         ,f.moneda,f.tipo_de_cambio tc,sum(round(a.importe/1.16,2)) subtotal,sum(a.importe-round(a.importe/1.16,2)) impuesto,sum(a.importe) total,s.nombre referencia2,s.nombre sucursal, s.clave as suc
         ,concat(s.nombre,"_",f.tipo_documento,"_",f.tipo) cliente
         ,concat('105-0002-',(case when s.clave>9 then '00' else '000' end),s.clave,'-0000') as cta_contable,'209-0001-0000-0000' as cta_iva     
@@ -92,7 +92,7 @@ class CobranzaCodProc implements  ProcesadorDePoliza{
         join sucursal s on(f.sucursal_id=s.id) join cfdi x on(f.cfdi_id=x.id) join cobro b on(a.cobro_id=b.id)
         where a.fecha='@FECHA' and f.tipo in('COD') and f.tipo_documento='VENTA' and f.cancelada is null and f.sw2 is null
         and b.forma_de_pago not in('PAGO_DIF','DEVOLUCION','BONIFICACION') and a.fecha=b.primera_aplicacion  and b.forma_de_pago not like 'TARJ%'   
-        group by f.fecha,s.id,f.moneda,f.tipo_de_cambio ,
+        group by f.fecha,f.id,s.id,f.moneda,f.tipo_de_cambio ,
         			concat('COB_',(case 	when b.forma_de_pago in('EFECTIVO','CHEQUE') then 'FICHA'when b.forma_de_pago like 'TARJETA%' then 'TARJ'        				
         				when b.forma_de_pago in('TRANSFERENCIA') then 'TRANSF' else substr(b.forma_de_pago,1,3) end),'_',f.tipo,
         				(case when  b.forma_de_pago like 'DEPOSIT%' and (SELECT m.por_identificar FROM cobro_deposito xx join movimiento_de_cuenta m on(xx.ingreso_id=m.id) where xx.cobro_id=b.id)=true then '_xIDENT'
@@ -483,8 +483,38 @@ class CobranzaCodProc implements  ProcesadorDePoliza{
         poliza.addToPartidas(det)
     }
 
-    
 
+    List<Poliza> generarPolizas(PolizaCreateCommand command) {
+        // log.info('Generando polizas  para {}', command)
+        List<Sucursal> sucursals = getSucursales()
+        // log.info("Generando polizas de ventas {} para {} sucursales", getTipoLabel(), sucursals.size())
+
+        List<Poliza> polizas = []
+        sucursals.each {
+            String suc = it.nombre
+            Poliza p = Poliza.where{
+                ejercicio == command.ejercicio &&
+                        mes == command.mes &&
+                        subtipo == command.subtipo &&
+                        tipo == command.tipo &&
+                        fecha == command.fecha &&
+                        sucursal == suc
+            }.find()
+
+            if(p == null) {
+
+                p = new Poliza(ejercicio: command.ejercicio, mes: command.mes, subtipo: command.subtipo, tipo: command.tipo)
+                p.concepto = "COBRANZA COD  ${it.nombre}"
+                p.fecha = command.fecha
+                p.sucursal = it.nombre
+                log.info('Agregando poliza: {}', it)
+                polizas << p
+            } else
+                log.info('Poliza ya existente  {}', p)
+
+        }
+        return polizas
+    }
 
 
 

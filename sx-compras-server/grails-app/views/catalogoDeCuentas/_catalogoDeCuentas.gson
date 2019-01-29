@@ -1,0 +1,7 @@
+import sx.sat.CatalogoDeCuentas
+
+model {
+	CatalogoDeCuentas catalogoDeCuentas
+}
+
+json g.render(catalogoDeCuentas, [excludes: ['xml', 'acuse'], resolveTemplate: false])

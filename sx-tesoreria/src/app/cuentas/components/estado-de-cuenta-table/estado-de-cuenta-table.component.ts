@@ -176,6 +176,11 @@ export class EstadoDeCuentaTableComponent implements OnInit, OnChanges {
         width: 90
       },
       {
+        headerName: 'F.Pago',
+        field: 'formaDePago',
+        width: 90
+      },
+      {
         headerName: 'Concepto R',
         field: 'conceptoReporte',
         width: 150
@@ -233,12 +238,22 @@ export class EstadoDeCuentaTableComponent implements OnInit, OnChanges {
         headerName: 'Creado',
         field: 'dateCreated',
         width: 60
+      },
+      {
+        headerName: 'F. Dep',
+        field: 'fechaDeposito',
+        cellRenderer: params => this.transformDate(params.value),
+        width: 90
       }
     ];
   }
 
   transformDate(date) {
-    return formatDate(date, 'dd/MM/yyyy', this.locale);
+    if (date !== undefined && date !== null) {
+      return formatDate(date, 'dd/MM/yyyy', this.locale);
+    } else {
+      return '';
+    }
   }
   transformCurrency(data) {
     return formatCurrency(data, this.locale, '');

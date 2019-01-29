@@ -42,6 +42,7 @@ import { ReportService } from 'app/reportes/services/report.service';
         <div layout class="mat-title pad-top pad-left pad-right">
           <span>Cuenta: </span>
           <span class="cursor-pointer" (click)="seleccionarCuenta(cuentas)" *ngIf="cuentas$ | async as cuentas">
+
             <span class="pad-left">{{cuenta.descripcion}}</span>
             <span class="pad-left">{{cuenta.tipo}}</span>
             <span class="pad-left">{{cuenta.numero}}</span>
@@ -63,12 +64,13 @@ import { ReportService } from 'app/reportes/services/report.service';
 
         <mat-divider></mat-divider>
 
-        <div class="table-panel">
+        <div class="table-panel" >
+
           <sx-estado-de-cuenta-table class="table" #grid
             [movimientos]="movimientos$ | async"
             (totalesChanged)="actualizarTotales($event)"
             (print)="onPrint($event)"
-            (printAsEstadoDeCuenta)="onPrintEstadoDeCuenta($event)">
+            (printAsEstadoDeCuenta)="onPrintEstadoDeCuenta($event, estado)">
           </sx-estado-de-cuenta-table>
         </div>
 
@@ -113,6 +115,7 @@ import { ReportService } from 'app/reportes/services/report.service';
 export class EstadoDeCuentaComponent
   implements OnInit, AfterViewInit, OnDestroy {
   estadoDeCuenta$: Observable<EstadoDeCuenta>;
+  estado: EstadoDeCuenta;
   cuentas$: Observable<CuentaDeBanco[]>;
   loading$: Observable<boolean>;
 
@@ -134,6 +137,8 @@ export class EstadoDeCuentaComponent
   ) {}
 
   ngOnInit() {
+    this.loading$ = this.store.pipe(select(fromStore.getEstadoDeCuentaLoading));
+
     this.periodo = Periodo.fromStorage(
       this.periodoStorageKey,
       Periodo.monthToDay()
@@ -146,7 +151,10 @@ export class EstadoDeCuentaComponent
       .subscribe(cuenta => (this.cuenta = cuenta));
 
     this.estadoDeCuenta$ = this.store.pipe(select(fromStore.getEstadoDeCuenta));
-    // this.loading$ = this.store.pipe(select(fromStore.getEstadoDeCuentaLoading));
+    this.estadoDeCuenta$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(estado => (this.estado = estado));
+
     this.movimientos$ = this.store.pipe(select(fromStore.getMovimientos));
   }
 
@@ -213,11 +221,15 @@ export class EstadoDeCuentaComponent
     );
   }
 
-  onPrintEstadoDeCuenta(event: Array<any>) {
+  onPrintEstadoDeCuenta(event: Array<any>, estado: EstadoDeCuenta) {
     this.service.runReportWithData(
       'tesoreria/cuentas/estadoDeCuentaReport',
       {
-        cuentaId: this.cuenta.id
+        cuentaId: this.cuenta.id,
+        saldoInicial: estado.saldoInicial,
+        cargos: estado.cargos,
+        abonos: estado.abonos,
+        saldoFinal: estado.saldoFinal
       },
       {
         rows: event,

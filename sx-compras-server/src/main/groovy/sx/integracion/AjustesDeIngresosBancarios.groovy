@@ -123,7 +123,7 @@ class AjustesDeIngresosBancarios {
                 case TipoDeAplicacion.AMEX_COMISION:
                     ingreso.conceptoReporte = "Comision por tarjeta Amex"
                     break
-                case TipoDeAplicacion.DEBITO_COMISON:
+                case TipoDeAplicacion.DEBITO_COMISION:
                     ingreso.conceptoReporte = "Comision por tarjeta debito"
                     break
                 case TipoDeAplicacion.CREDITO_COMISION:
@@ -135,7 +135,7 @@ class AjustesDeIngresosBancarios {
                 case TipoDeAplicacion.CREDITO_COMISION_IVA:
                     ingreso.conceptoReporte = "IVA comision tarjeta credito"
                     break
-                case TipoDeAplicacion.DEBITO_COMISON_IVA:
+                case TipoDeAplicacion.DEBITO_COMISION_IVA:
                     ingreso.conceptoReporte = "IVA comision tarjeta debito"
                     break
                 default:

@@ -11,7 +11,7 @@ import sx.reports.ReportService
 import sx.utils.Periodo
 
 
-@Secured(['ROLE_CXC', 'ROLE_GASTOS', 'ROLE_TESORERIA'])
+@Secured(['ROLE_CXC', 'ROLE_GASTOS', 'ROLE_TESORERIA', 'ROLE_GASTOS'])
 @GrailsCompileStatic
 @Slf4j
 class CancelacionDeCfdiController extends RestfulController<CancelacionDeCfdi> {
@@ -19,8 +19,6 @@ class CancelacionDeCfdiController extends RestfulController<CancelacionDeCfdi> {
     static responseFormats = ['json']
 
     ReportService reportService
-
-    CfdiCanceladoService cfdiCanceladoService
 
     CancelacionService cancelacionService
 
@@ -111,6 +109,29 @@ class CancelacionDeCfdiController extends RestfulController<CancelacionDeCfdi> {
         // render (file: cancelacion.ack, contentType: 'text/xml', filename: fileName, encoding: "UTF-8")
     }
 
+    def reporteDeCancelados(CanceladosReportCommand command) {
+        log.info('Cancelados: {}', params)
+        Map repParams = [:]
+        repParams.FECHA = command.fecha
+        def pdf =  reportService.run('cfdis/CancelacionDeCFDIs.jrxml', repParams)
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'EstadoDecuentaBancario.pdf')
+    }
+
+    def reporteDePendientes() {
+        log.info('Pendientes: {}', params)
+        Map repParams = [:]
+        def pdf =  reportService.run('cfdis/CancelacionDeCFDIsPendientes.jrxml', repParams)
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'EstadoDecuentaBancario.pdf')
+
+    }
+
+    def facturasCanceladas(CanceladosReportCommand command) {
+        Map repParams = [:]
+        repParams.FECHA = command.fecha
+        def pdf =  reportService.run('cfdis/FacturasCanceladasGlobal.jrxml', repParams)
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'FacturasCanceladasGlobal.pdf')
+    }
+
 
 
     def handleException(Exception e) {
@@ -119,4 +140,8 @@ class CancelacionDeCfdiController extends RestfulController<CancelacionDeCfdi> {
         log.error(message, ExceptionUtils.getRootCause(e))
         respond([message: message], status: 500)
     }
+}
+
+class CanceladosReportCommand {
+    Date fecha
 }

@@ -4,6 +4,8 @@ model {
 	PolizaDet polizaDet
 }
 
-json g.render(polizaDet, [resolveTemplate: false]) {
+json g.render(polizaDet, [excludes: ['nacionales', 'extranjeros'] ,resolveTemplate: false]) {
 	clave polizaDet.cuenta.clave
+    nacionales g.render(polizaDet.nacionales)
+    extranjeros g.render(polizaDet.extranjeros)
 }

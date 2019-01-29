@@ -93,6 +93,19 @@ abstract class PagoDeNominaService implements  LogUser{
 
     }
 
+    def cancelarPago(PagoDeNomina pago) {
+        if(pago.egreso) {
+            MovimientoDeCuenta egreso = pago.egreso
+            pago.egreso = null
+            Cheque cheque = egreso.cheque
+            if(cheque) {
+                egreso.cheque = null
+                cheque.egreso = null
+                cheque.delete flush: true
+            }
+        }
+    }
+
 
 
 }

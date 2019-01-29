@@ -74,6 +74,15 @@ class PagoDeNominaController extends RestfulController<PagoDeNomina> {
         pagoDeNominaService.delete(resource.id)
     }
 
+    def cancelar(PagoDeNomina pago) {
+        if(pago == null) {
+            notFound()
+            return
+        }
+        pagoDeNominaService.cancelarCheque(pago)
+        respond pago
+    }
+
     def importar(ImportadorParaPagoDeNomina command){
         log.info('Importar {}', this.params)
         if(command == null){

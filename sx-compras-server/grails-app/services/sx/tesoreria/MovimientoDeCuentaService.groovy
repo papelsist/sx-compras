@@ -197,6 +197,7 @@ class MovimientoDeCuentaService implements  LogUser{
         mov.importe = cobro.importe
         mov.moneda = deposito.cuentaDestino.moneda
         mov.concepto = 'VENTAS'
+
         mov.save failOnError: true, flush: true
         deposito.ingreso = mov
         cobro.save flush: true

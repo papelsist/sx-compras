@@ -59,7 +59,7 @@ class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaC
     def cierreAnual(Integer ejercicio) {
         log.info('Cierre Anual para  {} ', ejercicio)
         Poliza poliza = cierreAnualService.generarPolizaDeCierreAnual(ejercicio)
-        saldoPorCuentaContableService.actualizarSaldos(poliza)
+        // saldoPorCuentaContableService.actualizarSaldos(poliza)
         // saldoPorCuentaContableService.cierreMensual(ejercicio, 13)
         respond status: OK
     }

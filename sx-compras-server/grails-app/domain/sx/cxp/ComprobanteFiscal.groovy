@@ -5,7 +5,7 @@ import groovy.transform.ToString
 import groovy.util.slurpersupport.GPathResult
 import sx.core.Proveedor
 
-@ToString(includes ='emisorRfc, serie, folio, fileName',includeNames=true,includePackage=false)
+@ToString(includes ='emisorRfc, serie, folio, fileName, tipoDeComprobante',includeNames=true,includePackage=false)
 @EqualsAndHashCode(includes='id, uuid')
 class ComprobanteFiscal {
 

@@ -38,7 +38,7 @@ export class CobrosTarjetaTableComponent implements OnInit, OnChanges {
       label: 'Total',
       sortable: true,
       filter: true,
-      format: value => this.currencyPipe.transform(value, 'USD')
+      format: value => this.currencyPipe.transform(value)
     }
   ];
 

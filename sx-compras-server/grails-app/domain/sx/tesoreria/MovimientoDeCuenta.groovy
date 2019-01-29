@@ -52,6 +52,7 @@ class MovimientoDeCuenta {
     String sucursal
 
     Long orden
+    Date fechaDeposito
 
     boolean porIdentificar = false
 
@@ -65,7 +66,7 @@ class MovimientoDeCuenta {
     ]
     static mappedBy = [ pagoDeMorralla: "none"]
 
-    static transients = ['orden']
+    static transients = ['orden', 'fechaDeposito']
 
 
     static constraints = {

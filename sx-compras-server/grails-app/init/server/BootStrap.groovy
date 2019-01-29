@@ -5,10 +5,13 @@ import grails.util.Environment
 import groovy.transform.CompileStatic
 import sx.security.*
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider
+
 @GrailsCompileStatic
 class BootStrap {
 
     def init = { servletContext ->
+        java.security.Security.addProvider(new BouncyCastleProvider())
         if(Environment.DEVELOPMENT) {
             Role userRole=Role.findOrSaveWhere(authority:'ROLE_USER')
             Role adminRole=Role.findOrSaveWhere(authority:'ROLE_ADMIN')

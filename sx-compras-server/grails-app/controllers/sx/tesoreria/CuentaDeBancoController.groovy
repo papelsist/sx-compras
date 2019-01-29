@@ -21,6 +21,8 @@ class CuentaDeBancoController extends RestfulController {
 
     ReportService reportService
 
+    SaldoPorCuentaDeBancoService saldoPorCuentaDeBancoService
+
     CuentaDeBancoController() {
         super(CuentaDeBanco)
     }
@@ -85,17 +87,16 @@ class CuentaDeBancoController extends RestfulController {
         params.max = 50
         params.sort = 'lastUpdated'
         params.order = 'desc'
-        // log.info('Saldos: {}', params)
         List<SaldoPorCuentaDeBanco> res = SaldoPorCuentaDeBanco.where {cuenta == cuenta}.list(params)
         respond res
     }
 
     @CompileDynamic
-    def estadoDeCuenta(EstadoDeCuentaCommand command) {
+    def estadoDeCuenta3(EstadoDeCuentaCommand command) {
         log.info('Estado de cuenta: {}', params)
         log.info('F.Ini:{} F.Fin:{} Cta:{} ', command.fechaIni.format('dd/MM/yyyy'), command.fechaFin.format('dd/MM/yyyy'), command.cuenta)
-        Date inicioOperativo = Date.parse('dd/MM/yyyy', '31/12/2017')
 
+        Date inicioOperativo = Date.parse('dd/MM/yyyy', '31/12/2017')
         BigDecimal saldoInicial = MovimientoDeCuenta
                 .findAll("""
                     select sum(m.importe) from MovimientoDeCuenta m
@@ -115,10 +116,40 @@ class CuentaDeBancoController extends RestfulController {
                       order by fecha 
                 """,
                 [command.fechaIni, command.fechaFin, command.cuenta.id])
+        List<Cheque> cancelados = Cheque
+                .findAll(
+                "from Cheque c where c.fecha between ? and ? and c.cuenta = ? and c.cancelado != null",
+            [command.fechaIni, command.fechaFin, command.cuenta])
+        cancelados.each {
+            MovimientoDeCuenta mv = new MovimientoDeCuenta()
+            mv.cuenta = command.cuenta
+            mv.fecha = it.fecha
+            mv.referencia = it.folio.toString()
+            mv.comentario = it.nombre
+            mv.afavor = it.nombre
+            mv.cheque = it
+            mv.formaDePago = 'CHEQUE'
+            mv.tipo = 'CHE_CANCELADO'
+            mv.sucursal = 'OFICINAS'
+            mv.importe = 0.0
+            mv.conceptoReporte = "CHEQUE CANCELADO: ${it.folio}"
+            mv.concepto = 'CHE_CANCELADO'
+            mv.dateCreated = it.dateCreated
+            mv.lastUpdated = it.lastUpdated
+            mv.createUser = it.createUser
+            mv.updateUser = it.updateUser
+            movimientos << mv
+        }
+
         Long row = 1
         movimientos.each {
             if(it.formaDePago == 'TARJETA') {
                 it.orden = row++
+            }
+        }
+        movimientos.each {
+            if(it.importe > 0) {
+                saldoPorCuentaDeBancoService.actulizarFechaDeposito(it)
             }
         }
         log.info('Movimientos: {}', movimientos.size())
@@ -141,6 +172,47 @@ class CuentaDeBancoController extends RestfulController {
     }
 
     @CompileDynamic
+    def estadoDeCuenta(EstadoDeCuentaCommand command) {
+        // log.info('Estado de cuenta: {}', params)
+        log.info('Estado de cuenta F.Ini:{} F.Fin:{} Cta:{} ',
+                command.fechaIni.format('dd/MM/yyyy'),
+                command.fechaFin.format('dd/MM/yyyy'),
+                command.cuenta)
+
+        BigDecimal saldoInicial = saldoPorCuentaDeBancoService.calcularSaldoInicial(command.cuenta, command.fechaIni)
+        List<MovimientoDeCuenta> movimientos = saldoPorCuentaDeBancoService
+                .movimientos(command.cuenta, command.fechaIni, command.fechaFin)
+        Long row = 1
+        movimientos.each {
+            if(it.formaDePago == 'TARJETA') {
+                it.orden = row++
+            }
+        }
+        movimientos.each {
+            if(it.importe > 0) {
+                saldoPorCuentaDeBancoService.actulizarFechaDeposito(it)
+            }
+        }
+        // log.info('Movimientos: {}', movimientos.size())
+
+        BigDecimal cargos = movimientos.findAll{!it.porIdentificar}.sum 0.0, {it.importe < 0.0 ? it.importe: 0.0}
+        BigDecimal abonos = movimientos.findAll{!it.porIdentificar}.sum 0.0, {it.importe > 0.0 ? it.importe: 0.0}
+        BigDecimal saldoFinal = saldoInicial + cargos + abonos
+
+        EstadoDeCuenta estadoDeCuenta = new EstadoDeCuenta(
+                cuenta: command.cuenta,
+                saldoInicial:saldoInicial,
+                cargos: cargos,
+                abonos: abonos,
+                saldoFinal: saldoFinal,
+                movimientos: movimientos
+        )
+        // log.info("inicial:{}, cargos: {} abonos: {}, saldo:{}", saldoInicial, cargos, abonos, saldoFinal)
+        respond([estadoDeCuenta: estadoDeCuenta])
+
+    }
+
+    @CompileDynamic
     def estadoDeCuentaReport() {
         log.info('Imprimir estado de cuenta: {}', params)
         ReporteDeMovimientos command = new ReporteDeMovimientos()
@@ -157,9 +229,9 @@ class CuentaDeBancoController extends RestfulController {
         repParams.FECHA_FINAL = command.fechaFin
         repParams.CUENTA_ID = command.cuenta.id
 
+        /*
         Date fechaInicial = command.fechaIni
         Date inicioOperativo = Date.parse('dd/MM/yyyy', '31/12/2017')
-
         BigDecimal inicial = MovimientoDeCuenta
                 .findAll("""
                     select sum(m.importe) from MovimientoDeCuenta m 
@@ -169,6 +241,7 @@ class CuentaDeBancoController extends RestfulController {
                        and m.porIdentificar = false
                 """,
                 [command.cuenta.id, fechaInicial, inicioOperativo])[0]?: 0.0 as BigDecimal
+
 
         BigDecimal cargos = MovimientoDeCuenta.findAll(
                 """
@@ -189,8 +262,12 @@ class CuentaDeBancoController extends RestfulController {
                       and m.porIdentificar = false
                 """,
                 [command.cuenta.id, fechaInicial, command.fechaFin])[0]?: 0.0 as BigDecimal
-
         BigDecimal saldo = inicial + cargos + abonos
+        */
+        BigDecimal inicial = params.saldoInicial as BigDecimal
+        BigDecimal cargos = params.cargos as BigDecimal
+        BigDecimal abonos = params.abonos as BigDecimal
+        BigDecimal saldo = params.saldoFinal as BigDecimal
 
         repParams.INICIAL = inicial
         repParams.CARGOS = cargos
@@ -235,7 +312,7 @@ class CuentaDeBancoController extends RestfulController {
                     abono: mov.importe > 0 ? mov.importe : 0.0,
                     orden: '',
                     date_created: mov.dateCreated,
-                    origen: mov.tipo.substring(0, 2)
+                    origen: mov.tipo.substring(0, 3)
             ]
             return res
 
@@ -274,14 +351,20 @@ class CuentaDeBancoController extends RestfulController {
          * 	<field name="Descripcion" class="java.lang.String"/>
          */
         List<MovimientoDeCuenta> data = command.rows.collect { mov ->
+
+            String comentario = mov.comentario
+            if(mov.fechaDeposito) {
+                comentario = 'Pago dep:' + mov.fechaDeposito.format('dd/MM/yyyy')
+            }
+
             def res = [
                     Banco: mov.cuenta.descripcion,
-                    Cuenta: mov.cuenta.numero,
+                    Cuenta: mov.cuenta.numero.toString(),
                     Fecha: mov.fecha,
                     Importe: mov.importe,
                     TC: mov.tipoDeCambio,
                     Referencia: mov.referencia,
-                    Comentario: mov.comentario,
+                    Comentario: comentario,
                     Origen: mov.tipo,
                     Conciliacion: mov.porIdentificar,
                     Descripcion: mov.conceptoReporte
@@ -294,7 +377,7 @@ class CuentaDeBancoController extends RestfulController {
 
     def handleException(Exception e) {
         String message = ExceptionUtils.getRootCauseMessage(e)
-        e.printStackTrace()
+        // e.printStackTrace()
         log.error(message, ExceptionUtils.getRootCause(e))
         respond([message: message], status: 500)
     }

@@ -84,7 +84,7 @@ export class ComisionFormComponent implements OnInit, OnDestroy {
   destroy$ = new Subject();
 
   conceptos = [
-    'POR_TRASFERENCIA',
+    'POR_TRANSFERENCIA',
     'CHEQUES_GIRADOS',
     'DIFERENCIA_COMISIONES',
     'CHEQUE_CERTIFICADO',
@@ -93,7 +93,7 @@ export class ComisionFormComponent implements OnInit, OnDestroy {
     'EXC_PAQ',
     'INT_MDIA',
     'SERV_BCA',
-    'TRANS_FONDOS',
+    'TRANSFER_FONDOS',
     'OTROS'
   ];
 

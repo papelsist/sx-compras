@@ -12,6 +12,10 @@ class SaldoPorCuentaContable {
 
     String clave
 
+    Integer nivel
+
+    boolean detalle
+
     Integer ejercicio
 
     Integer mes

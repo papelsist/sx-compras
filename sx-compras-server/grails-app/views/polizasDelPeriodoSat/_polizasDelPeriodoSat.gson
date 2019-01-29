@@ -1,0 +1,7 @@
+import sx.sat.PolizasDelPeriodoSat
+
+model {
+	PolizasDelPeriodoSat polizasDelPeriodoSat
+}
+
+json g.render(polizasDelPeriodoSat, [resolveTemplate: false])

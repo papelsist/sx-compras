@@ -16,15 +16,23 @@ import wslite.soap.SOAPResponse
 
 @Slf4j
 // @GrailsCompileStatic
-@Transactional
 class CancelacionService implements  LogUser{
 
     SOAPClient client = new SOAPClient("https://cfdiws.sedeb2b.com/EdiwinWS/services/CFDi?wsdl")
 
     // @CompileDynamic
+    // @Transactional
     CancelacionDeCfdi cancelarCfdi(Cfdi cfdi, boolean isTest = false) {
-        validar(cfdi)
-        log.info('Cancelando cfdi: {} {}', cfdi.uuid, isTest ? 'CFDI DE PRUEBA': '')
+
+        CancelacionDeCfdi found = CancelacionDeCfdi.where {cfdi == cfdi}.find()
+        if(found) {
+            cfdi.status = found.status
+            cfdi.cancelado = new Date()
+            cfdi.save flush: true
+            return found
+        }
+
+        log.debug('Cancelando: {} Fecha: {}  Total: {} ', cfdi.uuid, cfdi.fecha, cfdi.total)
 
         Empresa empresa = Empresa.first()
         String url = 'http://cfdi.service.ediwinws.edicom.com'
@@ -51,7 +59,9 @@ class CancelacionService implements  LogUser{
         logEntity(cancelacion)
         cancelacion.save failOnError: true, flush: true
         cfdi.status = cancelacion.status
+        cfdi.cancelado = new Date()
         cfdi.save flush: true
+        log.debug("Solicitud OK CancelStatus: {} Status: {}", responseData['cancelStatus'], responseData['status'])
         return cancelacion
 
     }
@@ -85,9 +95,10 @@ class CancelacionService implements  LogUser{
         def isCancelable = cancelQuery.breadthFirst().find { it.name() == 'isCancelable'}
         def status = cancelQuery.breadthFirst().find { it.name() == 'status'}
         def cancelStatus = cancelQuery.breadthFirst().find { it.name() == 'cancelStatus'}
-
+        /*
         log.info("StatusCode: {} isCancelable: {} Status: {} CancelStatus: {}",
                 statusCode, isCancelable, status, cancelStatus)
+                */
 
         Map responseData = [
                 ack: acuse.getBytes("UTF-8"),
@@ -99,11 +110,7 @@ class CancelacionService implements  LogUser{
         return responseData
     }
 
-    def validar(Cfdi cfdi) {
-        CancelacionDeCfdi found = CancelacionDeCfdi.where {cfdi == cfdi}.find()
-        if(found)
-            throw new CancelacionDeCfdiException(cfdi, "CFDI ya cancelado o en proceso de cancelación")
-    }
+
 
     /**
      * Get status de cancelacion con WebService de EDICOM
@@ -174,13 +181,14 @@ class CancelacionService implements  LogUser{
         return responseData
     }
 
-    List<Cfdi> buscarPendientes() {
-        List<Cfdi> pendientes = Cfdi.where{status == 'CANCELACION_PENDIENTE'}.list([sort: 'fecha', order: 'desc'])
+    List<Cfdi> buscarPendientes(int max, String order) {
+        List<Cfdi> pendientes = Cfdi.where{status == 'CANCELACION_PENDIENTE'}
+                .list([max: max, sort: 'fecha', order: order])
         return pendientes
     }
 
-    int generarSolicitudesDeCancelacion() {
-        List<Cfdi> pendientes = buscarPendientes()
+    int generarSolicitudesDeCancelacion(int max = 10, String order = 'desc') {
+        List<Cfdi> pendientes = buscarPendientes(max, order)
         log.info("{} Cancelaciones de CFDIs pendientes de SOLICITAR", pendientes.size())
         int solicitudes = 0
         pendientes.each {
@@ -188,6 +196,7 @@ class CancelacionService implements  LogUser{
                 cancelarCfdi(it)
                 solicitudes++
             }catch(Exception ex) {
+                ex.printStackTrace()
                 String msg = ExceptionUtils.getRootCauseMessage(ex)
                 log.error("Error mandando cancelar cfdi {} Err: {}", it.uuid, msg)
             }

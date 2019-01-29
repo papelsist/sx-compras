@@ -77,6 +77,21 @@ class PolizaController extends RestfulController<Poliza> {
     }
 
     @CompileDynamic
+    def generarPolizas(){
+        PolizaCreateCommand command = new PolizaCreateCommand()
+        command.properties = getObjectToBind()
+        String pname = polizaService.resolverProcesador(command.subtipo)
+        ProcesadorMultipleDePolizas procesador = (ProcesadorMultipleDePolizas)grailsApplication.mainContext.getBean(pname)
+        List<Poliza> res = procesador.generarPolizas(command)
+        List<Poliza> polizas = []
+        res.each {
+            polizas << polizaService.salvarPolza(it)
+
+        }
+        respond polizas
+    }
+
+    @CompileDynamic
     def generarPolizasEgreso(){
         PolizaCreateCommand command = new PolizaCreateCommand()
         command.properties = getObjectToBind()
@@ -126,7 +141,7 @@ class PolizaController extends RestfulController<Poliza> {
         }
         ProcesadorDePoliza procesador = getProcesador(poliza)
         poliza = procesador.recalcular(poliza)
-        poliza = polizaService.save(poliza)
+        poliza = polizaService.updatePoliza(poliza)
         respond poliza, [ view:'show']
     }
 
@@ -142,6 +157,16 @@ class PolizaController extends RestfulController<Poliza> {
         // repParams.ORDEN = ''
         def pdf =  reportService.run('contabilidad/Poliza.jrxml', repParams)
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'Poliza.pdf')
+    }
+
+    def printComprobantes() {
+        def tipo = params.tipo
+        def name = 'PolizaComprobanteNacional.jrxml'
+        if(tipo == 'E')
+            name = 'PolizaComprobanteExtranjero.jrxml'
+        Map repParams = [ POLIZA_ID: params.getLong('id')]
+        def pdf =  reportService.run("contabilidad/${name}", repParams)
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'PolizaComprobanteNacional.pdf')
     }
 
     ProcesadorDePoliza getProcesador(Poliza poliza) {

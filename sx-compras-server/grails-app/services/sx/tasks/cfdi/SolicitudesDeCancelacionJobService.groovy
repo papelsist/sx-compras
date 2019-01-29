@@ -28,12 +28,13 @@ class SolicitudesDeCancelacionJobService {
      *                  | `- Minute, 0-59
      *                  `- Second, 0-59
      */
-    @Scheduled(cron = "0 0/30 4,10,11,14,16,18,19,22 ? * MON-SAT")
+    // @Scheduled(cron = "0 0/30 4,10,11,14,16,18,19,22 ? * MON-SAT")
+    @Scheduled(cron = "0 0/30 8-20 * * MON-SAT")
     void generarSolicitudes() {
 
         Environment.executeForCurrentEnvironment {
             contabilidad {
-                int solicitudes = this.cancelacionService.generarSolicitudesDeCancelacion()
+                int solicitudes = this.cancelacionService.generarSolicitudesDeCancelacion(20)
                 log.info("Solicitudes de cancelacion generadas: {}", solicitudes)
             }
         }

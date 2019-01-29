@@ -37,8 +37,14 @@ class PolizaDet {
     Date dateCreated
     Date lastUpdated
 
+    List<SatComprobanteNac> nacionales = []
+
+    List<SatComprobanteExt> extranjeros = []
+
 
     static belongsTo = [poliza:Poliza]
+
+    static hasMany = [nacionales: SatComprobanteNac, extranjeros: SatComprobanteExt]
 
     //static hasOne = [cheque: PolizaCheque, transferencia: TransaccionTransferencia, compraNal: TransaccionCompraNal]
 
@@ -53,17 +59,23 @@ class PolizaDet {
         documentoTipo nullable:true
         documentoFecha nullable:true
 
-        //cheque(nullable:true)
-        //transferencia(nullable:true)
-        //compraNal nullable:true
-
-
     }
 
     static  mapping = {
         documentoFecha type: 'date'
+        nacionales cascade: "all-delete-orphan"
+        extranjeros cascade: "all-delete-orphan"
     }
 
+    BigDecimal getTotalNacionales() {
+        def nacional =  nacionales.sum 0.0, {it.montoTotal}
+        return nacional as BigDecimal
+    }
+
+    BigDecimal getTotalExtranjeros() {
+        def ext =  extranjeros.sum 0.0, {it.montoTotal}
+        return ext as BigDecimal
+    }
 
 }
 

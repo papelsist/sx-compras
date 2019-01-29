@@ -8,6 +8,13 @@ import * as fromAuth from 'app/auth/store';
 
 import { Observable } from 'rxjs';
 import { User } from 'app/auth/models/user';
+import { ReportService } from 'app/reportes/services/report.service';
+import { MatDialog } from '@angular/material';
+import {
+  PeriodoDialogComponent,
+  FechaDialogComponent
+} from 'app/_shared/components';
+import { Periodo } from 'app/_core/models/periodo';
 
 @Component({
   selector: 'sx-cfdis-page',
@@ -16,7 +23,7 @@ import { User } from 'app/auth/models/user';
       #navList
       [opened]="media.registerQuery('gt-sm') | async"
       [mode]="(media.registerQuery('gt-sm') | async) ? 'side' : 'over'"
-      [sidenavWidth]="(media.registerQuery('gt-xs') | async) ? '275px' : '100%'"
+      [sidenavWidth]="(media.registerQuery('gt-xs') | async) ? '325px' : '100%'"
     >
       <div td-sidenav-toolbar-content layout="row" layout-align="start center">
         <button mat-icon-button tdLayoutToggle>
@@ -56,31 +63,24 @@ import { User } from 'app/auth/models/user';
 
         <h3 matSubheader>Reportes</h3>
 
-        <a mat-list-item>
+        <a mat-list-item (click)="facturasCanceladas()">
           <mat-icon matListAvatar>picture_as_pdf</mat-icon>
-          <h3 matLine>Por Cancelar</h3>
-          <p matLine>CFDI's pendientes de cancelación</p>
+          <h3 matLine>FACTURAS</h3>
+          <p matLine>Facturas canceladas en sucursal</p>
         </a>
         <mat-divider></mat-divider>
 
-        <a mat-list-item>
+        <a mat-list-item (click)="reporteDeCancelados()">
           <mat-icon matListAvatar>picture_as_pdf</mat-icon>
-          <h3 matLine>Rep 2</h3>
-          <p matLine>Desc 2</p>
+          <h3 matLine>CANCELADOS</h3>
+          <p matLine>CFDIs cancelados</p>
         </a>
         <mat-divider></mat-divider>
 
-        <a mat-list-item>
+        <a mat-list-item (click)="reporteDePendientes()">
           <mat-icon matListAvatar>picture_as_pdf</mat-icon>
-          <h3 matLine>Rep 3</h3>
-          <p matLine>Desc 3</p>
-        </a>
-        <mat-divider></mat-divider>
-
-        <a mat-list-item>
-          <mat-icon matListAvatar>picture_as_pdf</mat-icon>
-          <h3 matLine>Rep 4</h3>
-          <p matLine>Desc 4</p>
+          <h3 matLine>PENDIENTES</h3>
+          <p matLine>CFDIs pendientes de cancelación</p>
         </a>
         <mat-divider></mat-divider>
       </mat-nav-list>
@@ -120,11 +120,48 @@ export class CfdisPageComponent implements OnInit {
 
   constructor(
     public media: TdMediaService,
-    private store: Store<fromStore.State>
+    private store: Store<fromStore.State>,
+    private service: ReportService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit() {
     this.user$ = this.store.pipe(select(fromAuth.getUser));
     this.api$ = this.store.pipe(select(fromAuth.getApiInfo));
+  }
+
+  reporteDePendientes() {
+    this.service.runReport('cfdi/cancelacion/reporteDePendientes', {});
+  }
+
+  reporteDeCancelados() {
+    this.dialog
+      .open(FechaDialogComponent, {
+        data: { fecha: Periodo.fromNow(1).fechaInicial }
+      })
+      .afterClosed()
+      .subscribe((fecha: Date) => {
+        if (fecha) {
+          const params = { fecha: fecha.toISOString() };
+          this.service.runReport(
+            'cfdi/cancelacion/reporteDeCancelados',
+            params
+          );
+        }
+      });
+  }
+
+  facturasCanceladas() {
+    this.dialog
+      .open(FechaDialogComponent, {
+        data: { fecha: Periodo.fromNow(1).fechaInicial }
+      })
+      .afterClosed()
+      .subscribe((fecha: Date) => {
+        if (fecha) {
+          const params = { fecha: fecha.toISOString() };
+          this.service.runReport('cfdi/cancelacion/facturasCanceladas', params);
+        }
+      });
   }
 }

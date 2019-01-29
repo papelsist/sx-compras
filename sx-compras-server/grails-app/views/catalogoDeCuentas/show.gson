@@ -1,0 +1,7 @@
+import sx.sat.CatalogoDeCuentas
+
+model {
+	CatalogoDeCuentas catalogoDeCuentas
+}
+
+json tmpl.catalogoDeCuentas(catalogoDeCuentas)

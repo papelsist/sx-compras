@@ -70,7 +70,9 @@ class Rembolso {
                           'CARGA_SOCIAL',
                           'PRESTAMO_CHOFER',
                           'PRESTAMO_EMPLEADO',
-                          'PAGO_CHOFER']
+                          'PAGO_CHOFER',
+                           'CUOTA_SINDICAL'
+        ]
     }
 
     static mapping = {

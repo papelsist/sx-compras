@@ -1,25 +1,63 @@
 package sx.contabilidad
 
-import grails.transaction.NotTransactional
+import grails.gorm.transactions.Transactional
+
 import groovy.util.logging.Slf4j
+import org.springframework.transaction.annotation.Propagation
 
 @Slf4j
 class SaldoPorCuentaContableService {
 
-    def actualizarSaldos(Integer ejercicio, Integer mes){
-        def cuentas = CuentaContable.findAllByDetalle('true')
-        log.info("Actualizando saldos de cuentas contables {} - {}", ejercicio, mes )
-        cuentas.each{ c ->
-            log.info('Actualizano cuenta: {}', c)
-            actualizarSaldoCuentaDetalle(c, ejercicio, mes)
+
+    void actualizarSaldos(Integer ejercicio, Integer mes){
+        List<CuentaContable> cuentasDeMayor = CuentaContable.where{padre == null}.list()
+        cuentasDeMayor.each { cuenta ->
+            actualizarSaldos(cuenta, ejercicio, mes)
         }
-        mayorizar(ejercicio, mes)
     }
 
+
+    void actualizarSaldos(CuentaContable cuenta, Integer ejercicio, Integer mes){
+        Node node = buildTree(cuenta, null)
+        acumularActualizandoSaldos(node, ejercicio, mes)
+    }
+
+
+    Node buildTree(CuentaContable cuenta, Node parent) {
+        if(!parent) {
+            parent = new Node(null, cuenta.clave, cuenta)
+        }
+        cuenta.subcuentas.each { cta ->
+            Node child = new Node(parent, cta.clave, cta)
+            if(cta.subcuentas) {
+                return buildTree(cta, child)
+            }
+        }
+        return parent
+    }
+
+
+    void acumularActualizandoSaldos(Node node, Integer ejercicio, Integer mes) {
+        node.breadthFirst().reverse().each { Node n ->
+            List children = n.children()
+            if(children.size() == 1){
+                log.info('Actualizar saldos de cuenta detalle {} ({} - {})', n.value(), ejercicio, mes)
+                CuentaContable cuenta = (CuentaContable)n.value()
+                actualizarSaldoCuentaDetalle(cuenta, ejercicio, mes)
+            } else {
+                CuentaContable cuenta = (CuentaContable)children[0]
+                log.info('Acumular saldos en: {}', children[0])
+                actualizarSaldoCuentaAcumulativa(cuenta, ejercicio, mes)
+
+            }
+        }
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     SaldoPorCuentaContable actualizarSaldoCuentaDetalle(CuentaContable cuenta, Integer ejercicio, Integer mes){
-        if(!cuenta.detalle)
-            throw new RuntimeException("Cuenta acumulativa no de detalle ${cuenta}")
-        log.info("Actualizando cuenta {} Ejercicio: {}/{}",cuenta.clave, ejercicio, mes )
+        //if(!cuenta.detalle)
+            // throw new RuntimeException("Cuenta acumulativa no de detalle ${cuenta}")
+        // log.info("Actualizando cuenta {} Ejercicio: {}/{}",cuenta.clave, ejercicio, mes )
 
         BigDecimal saldoInicial = 0.0
 
@@ -29,9 +67,9 @@ class SaldoPorCuentaContableService {
             saldoInicial = cierreAnual?.saldoFinal?: 0.0
         }else{
             saldoInicial = SaldoPorCuentaContable
-                    .findByCuentaAndEjercicioAndMes(cuenta, ejercicio, mes-1 )?.saldoFinal?:0.0
+                    .findByCuentaAndEjercicioAndMes(cuenta, ejercicio, mes-1)?.saldoFinal?:0.0
         }
-        log.info('Saldo inicial:{} ', saldoInicial)
+
 
         def row = PolizaDet
                 .executeQuery("""
@@ -48,6 +86,8 @@ class SaldoPorCuentaContableService {
 
         SaldoPorCuentaContable saldo = SaldoPorCuentaContable
                 .findOrCreateWhere(cuenta: cuenta, clave: cuenta.clave, ejercicio: ejercicio, mes: mes)
+        saldo.nivel = cuenta.nivel
+        saldo.detalle = cuenta.detalle
 
         saldo.saldoInicial = saldoInicial
         saldo.debe = debe
@@ -56,37 +96,17 @@ class SaldoPorCuentaContableService {
         saldo.save failOnError:true, flush: true
     }
 
-    @NotTransactional
-    void mayorizar(Integer ejercicio, Integer mes) {
-        List<CuentaContable> cuentas = CuentaContable.where{padre == null}.list()
-        cuentas.each {
-            mayorizar(it, ejercicio, mes)
-        }
-    }
 
-    @NotTransactional
-    void mayorizar(CuentaContable cuenta, Integer ejercicio, Integer mes) {
-        def niveles = calcularNiveles(cuenta, 1) - 1
-        (niveles..1).each {
-            mayorizarCuenta(cuenta, it, ejercicio, mes)
-        }
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    SaldoPorCuentaContable actualizarSaldoCuentaAcumulativa(CuentaContable cuenta, Integer ejercicio, Integer mes) {
 
-    }
+        SaldoPorCuentaContable saldo = SaldoPorCuentaContable
+                .findOrCreateWhere(cuenta: cuenta, clave: cuenta.clave, ejercicio: ejercicio, mes: mes)
+        saldo.nivel = cuenta.nivel
+        saldo.detalle = cuenta.detalle
 
-
-    def mayorizarCuenta(CuentaContable cuenta, int nivel, Integer ejercicio, Integer mes) {
-        String clave = cuenta.clave
-        String[] parts = clave.split('-')
-        String ma = parts[0] + '%'
-        List<CuentaContable> subcuentas = CuentaContable.where{clave =~ ma && nivel == nivel}.list()
-        //println "----------------------- Mayorizando ${subcuentas.size()} de nivel $nivel ---------------------"
-        log.info("-- Mayorizando {} de nivel {}", subcuentas.size(), nivel)
-        subcuentas.each {
-            // println it
-            SaldoPorCuentaContable saldo = SaldoPorCuentaContable
-                    .findOrCreateWhere(cuenta: it, clave: it.clave, ejercicio: ejercicio, mes: mes)
-            def row = SaldoPorCuentaContable
-                    .executeQuery("""
+        def row = SaldoPorCuentaContable
+                .executeQuery("""
                     select sum(d.saldoInicial),
                         sum(d.debe),
                         sum(d.haber), 
@@ -96,20 +116,18 @@ class SaldoPorCuentaContableService {
                          and ejercicio = ? 
                          and mes = ?
                          """
-                    ,[it, ejercicio, mes])
-            BigDecimal ini = row.get(0)[0]?:0.0
-            BigDecimal debe = row.get(0)[1]?:0.0
-            BigDecimal haber = row.get(0)[2]?:0.0
-            BigDecimal fin = row.get(0)[3]?:0.0
-            saldo.saldoInicial = ini
-            saldo.debe = debe
-            saldo.haber = haber
-            saldo.saldoFinal = fin
-            saldo.save failOnError: true, flush: true
-            log.info("Actualizado: ",saldo)
-
-        }
-
+                ,[cuenta, ejercicio, mes])
+        BigDecimal ini = row.get(0)[0]?:0.0
+        BigDecimal debe = row.get(0)[1]?:0.0
+        BigDecimal haber = row.get(0)[2]?:0.0
+        BigDecimal fin = row.get(0)[3]?:0.0
+        saldo.saldoInicial = ini
+        saldo.debe = debe
+        saldo.haber = haber
+        saldo.saldoFinal = fin
+        saldo.save failOnError: true, flush: true
+        log.info("Actualizado: ",saldo)
+        return saldo
 
     }
 
@@ -121,7 +139,6 @@ class SaldoPorCuentaContableService {
      * @param ejercicio
      * @param mes
      */
-    @NotTransactional
     void cierreMensual(Integer ejercicio, Integer mes) {
 
         Integer nextMes = mes + 1
@@ -131,13 +148,12 @@ class SaldoPorCuentaContableService {
             nextMes = 1
         }
         log.info("Cierre mensual {}/{} trasladando saldos a {},{}", ejercicio, mes, nextEjercicio, nextMes)
-        // Cacelamos el cierre de existir con anterioridad
-        //cancelarCierreMensual(nextEjercicio, nextMes)
 
+        List<SaldoPorCuentaContable> saldos = SaldoPorCuentaContable
+                .where{ejercicio == ejercicio && mes == mes}.list()
+        log.info("Registros por trasladar: {}", saldos.size())
 
-        List<SaldoPorCuentaContable> saldos = SaldoPorCuentaContable.where{ejercicio == ejercicio && mes == mes}.list()
-
-        saldos.each { SaldoPorCuentaContable sl ->
+        saldos.each {  sl ->
             CuentaContable cta = sl.cuenta
 
             SaldoPorCuentaContable saldo = new SaldoPorCuentaContable(
@@ -148,19 +164,15 @@ class SaldoPorCuentaContableService {
                     saldoInicial: sl.saldoFinal,
                     saldoFinal: sl.saldoFinal
             )
+            saldo.nivel = cta.nivel
+            saldo.detalle = cta.detalle
             saldo.save failOnError: true, flush: true
 
             sl.cierre = new Date()
-            sl.save flush: true
-
+            sl.save failOnError: true, flush: true
+            log.info("Saldo trasladado Cta: {} Saldo final: {}", saldo.clave, saldo.saldoFinal)
         }
-    }
 
-
-    Integer calcularNiveles(CuentaContable cuenta, int nivel) {
-         if(cuenta.subcuentas)
-             return calcularNiveles(cuenta.subcuentas.first(), nivel + 1)
-         return nivel
     }
 
     def cancelarCierreMensual(Integer ejercicio, Integer mes) {
@@ -169,22 +181,30 @@ class SaldoPorCuentaContableService {
     }
 
     def actualizarSaldos(Poliza poliza) {
+        // Pendiente de actualizar con el nuevo algoritmo de mayorizacion
+
         Map<String, CuentaContable> cuentas = [:]
         poliza.partidas.each {
-            cuentas.put(it.cuenta.clave, it.cuenta)
+            CuentaContable mayor = findRoot(it.cuenta)
+            cuentas.put(mayor.clave, mayor)
         }
+
         cuentas.each{
             CuentaContable cuenta = it.value
             Integer ejercicio = poliza.ejercicio
             Integer mes = poliza.mes
-            SaldoPorCuentaContable saldo = actualizarSaldoCuentaDetalle(cuenta, ejercicio, mes)
-            log.info('Saldo {}: {}', saldo.cuenta.clave, saldo.saldoFinal)
-        }
-        log.info('Mayorizando...')
-        cuentas.each {
-            mayorizar(it.value, poliza.ejercicio, poliza.mes)
+            actualizarSaldos(cuenta, ejercicio, mes)
+            //SaldoPorCuentaContable saldo = actualizarSaldos(cuenta, ejercicio, mes)
+            //log.info('Saldo {}: {}', saldo.cuenta.clave, saldo.saldoFinal)
         }
 
+    }
+
+    def findRoot(CuentaContable cuenta) {
+        if(cuenta.padre)
+            return findRoot(cuenta.padre)
+        else
+            return cuenta
     }
 
 
