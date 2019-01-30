@@ -41,10 +41,22 @@ class PolizaDet {
 
     List<SatComprobanteExt> extranjeros = []
 
+    List<SatPagoTransferencia> transferencias = []
+
+    List<SatPagoCheque> cheques = []
+
+    List<SatPagoOtro> otros = []
+
 
     static belongsTo = [poliza:Poliza]
 
-    static hasMany = [nacionales: SatComprobanteNac, extranjeros: SatComprobanteExt]
+    static hasMany = [
+            nacionales: SatComprobanteNac,
+            extranjeros: SatComprobanteExt,
+            transferencias: SatPagoTransferencia,
+            cheques: SatPagoCheque,
+            otros: SatPagoOtro
+    ]
 
     //static hasOne = [cheque: PolizaCheque, transferencia: TransaccionTransferencia, compraNal: TransaccionCompraNal]
 

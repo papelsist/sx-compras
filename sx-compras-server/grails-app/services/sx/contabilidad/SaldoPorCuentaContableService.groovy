@@ -55,9 +55,6 @@ class SaldoPorCuentaContableService {
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     SaldoPorCuentaContable actualizarSaldoCuentaDetalle(CuentaContable cuenta, Integer ejercicio, Integer mes){
-        //if(!cuenta.detalle)
-            // throw new RuntimeException("Cuenta acumulativa no de detalle ${cuenta}")
-        // log.info("Actualizando cuenta {} Ejercicio: {}/{}",cuenta.clave, ejercicio, mes )
 
         BigDecimal saldoInicial = 0.0
 
@@ -75,7 +72,8 @@ class SaldoPorCuentaContableService {
                 .executeQuery("""
                     select sum(d.debe),sum(d.haber) 
                         from PolizaDet d 
-                         where d.cuenta=? 
+                         where d.cuenta = ?
+                         and d.poliza.cierre is not null
                          and ejercicio = ? 
                          and mes = ? 
                          and d.poliza.tipo!=?"""
@@ -83,6 +81,7 @@ class SaldoPorCuentaContableService {
 
         BigDecimal debe=row.get(0)[0]?:0.0
         BigDecimal haber=row.get(0)[1]?:0.0
+
 
         SaldoPorCuentaContable saldo = SaldoPorCuentaContable
                 .findOrCreateWhere(cuenta: cuenta, clave: cuenta.clave, ejercicio: ejercicio, mes: mes)
@@ -188,14 +187,13 @@ class SaldoPorCuentaContableService {
             CuentaContable mayor = findRoot(it.cuenta)
             cuentas.put(mayor.clave, mayor)
         }
+        log.info('Ctas de mayor a cerrar: {}', cuentas.keySet().join(','))
 
         cuentas.each{
             CuentaContable cuenta = it.value
             Integer ejercicio = poliza.ejercicio
             Integer mes = poliza.mes
             actualizarSaldos(cuenta, ejercicio, mes)
-            //SaldoPorCuentaContable saldo = actualizarSaldos(cuenta, ejercicio, mes)
-            //log.info('Saldo {}: {}', saldo.cuenta.clave, saldo.saldoFinal)
         }
 
     }

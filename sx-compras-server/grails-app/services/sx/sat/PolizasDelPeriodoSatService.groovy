@@ -3,6 +3,8 @@ package sx.sat
 import groovy.util.logging.Slf4j
 import lx.econta.CadenaBuilder
 import lx.econta.Mes
+import lx.econta.polizas.Cheque
+import lx.econta.polizas.ComprobanteNacional
 import lx.econta.polizas.PolizasBuilder
 import lx.econta.polizas.SatPoliza
 import lx.econta.polizas.SatPolizaDet
@@ -10,7 +12,7 @@ import lx.econta.polizas.SatPolizas
 import lx.econta.polizas.TipoSolicitud
 import org.bouncycastle.util.encoders.Base64
 import sx.contabilidad.Poliza
-
+import sx.contabilidad.PolizaDet
 import sx.core.Empresa
 import sx.core.LogUser
 
@@ -69,6 +71,11 @@ class PolizasDelPeriodoSatService implements  LogUser, SelladorDigital{
                 .haber(t.haber)
                 .build()
                 satPoliza.transacciones.add(det)
+
+                registrarComprobantes(det, t)
+
+                registrarComplementosDePago(det, t)
+
             }
             satPolizas.polizas.add(satPoliza)
 
@@ -82,6 +89,37 @@ class PolizasDelPeriodoSatService implements  LogUser, SelladorDigital{
         polizasPer.xml = signedXml.getBytes('UTF-8')
         polizasPer.fileName = PolizasBuilder.getSatFileName(satPolizas)
         return polizasPer
+    }
+
+    /**
+     * Registra en el XML los comprobantes nacionales
+     *
+     * @param det
+     * @param polizaDet
+     * @return
+     */
+    def registrarComprobantes(SatPolizaDet det, PolizaDet polizaDet) {
+        polizaDet.nacionales.each {
+            ComprobanteNacional n = ComprobanteNacional
+                    .builder()
+                    .build()
+        }
+    }
+
+    /**
+     * Registra en el XML los complementos de Pago
+     *
+     * @param det
+     * @param polizaDet
+     * @return
+     */
+    def registrarComplementosDePago(SatPolizaDet det, PolizaDet polizaDet) {
+        polizaDet.cheques.each {
+            Cheque cheque = Cheque
+                    .builder()
+            .build()
+            det.cheques.add(cheque)
+        }
     }
 
     def sellarDocumento(SatPolizas documento, Empresa empresa, CadenaBuilder.Tipo tipo, byte[] data){

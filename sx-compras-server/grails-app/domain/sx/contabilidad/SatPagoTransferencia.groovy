@@ -10,30 +10,47 @@ import lx.econta.SatMoneda
 @GrailsCompileStatic
 @EqualsAndHashCode
 @ToString
-class SatTransaccionCheque {
+class SatPagoTransferencia {
 
-    String rfc
-
-    String num
-
-    String banEmisNal
 
     String ctaOri
 
-    Date fecha
+
+    String bancoOriNal
+
+
+    String bancoOriExt
+
+
+    String ctaDest
+
+
+    String bancoDestNal
+
+
+    String bancoDestExt
+
 
     String benef
 
+
+    String rfc
+
+
+    Date fecha
+
+
     BigDecimal monto
 
-    String banEmisExt
 
     SatMoneda moneda
+
 
     BigDecimal tipCamb
 
     static constraints = {
-        banEmisExt nullable: true
+        ctaOri nullable: true
+        bancoOriExt nullable: true
         moneda nullable:true
         tipCamb nullable:true, scale: 4
     }
