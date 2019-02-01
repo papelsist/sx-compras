@@ -117,7 +117,7 @@ export class PagoDeNominaDialogComponent implements OnInit, OnDestroy {
       referencia: [null, Validators.required],
       comision: [{ value: 0.0, disabled: false }],
       cheque: [{ value: null, disabled: true }],
-      importe: [null]
+      importe: [this.nomina.total]
     });
   }
 

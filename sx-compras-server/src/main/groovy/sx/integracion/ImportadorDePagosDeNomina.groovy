@@ -63,9 +63,9 @@ class ImportadorDePagosDeNomina {
         select = select.replaceAll("@PERIODICIDAD", periodicidad)
         select = select.replaceAll("@FOLIO", folio.toString())
         select = select.replaceAll("@TIPO", tipo)
-        log.info('SQL: ', select)
+        log.info('SQL: {}', select)
         def rows = getRows(select)
-        log.info('Rows: ', rows)
+        log.info('Rows: {}', rows.size())
         def res =  []
         rows.each { row ->
             try {

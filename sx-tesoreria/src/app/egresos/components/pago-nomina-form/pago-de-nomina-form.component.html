@@ -19,7 +19,7 @@
       <span class="pad-left" *ngIf="pagoNomina.formaDePago === 'CHEQUE'">
         <span>Cheque: </span>
         <span
-          *ngIf="pagoNomina.egreso && pagoNomina.egreso.cheque; else: pendiente"
+          *ngIf="pagoNomina.egreso && pagoNomina.egreso.cheque; else pendiente"
           class="pad-left"
         >
           {{ pagoNomina?.egreso?.cheque?.folio }} ({{
@@ -48,7 +48,7 @@
       <input
         matInput
         placeholder="Afavor"
-        value="{{pagoNomina.afavor}}"
+        value="{{ pagoNomina.afavor }}"
         [disabled]="true"
       />
     </mat-form-field>
@@ -56,7 +56,7 @@
       <input
         matInput
         placeholder="Empleado"
-        value="{{pagoNomina.empleado}}"
+        value="{{ pagoNomina.empleado }}"
         [disabled]="true"
       />
     </mat-form-field>
@@ -64,7 +64,7 @@
       <mat-form-field flex>
         <input
           matInput
-          value="{{pagoNomina.formaDePago}}"
+          value="{{ pagoNomina.formaDePago }}"
           placeholder="Forma de pago"
           [disabled]="true"
         />
@@ -72,9 +72,9 @@
       <mat-form-field class="pad-left" flex>
         <input
           matInput
-          value="{{pagoNomina.total | currency}}"
+          [(ngModel)]="pagoNomina.total"
           placeholder="Total"
-          [disabled]="true"
+          type="number"
         />
       </mat-form-field>
     </div>
@@ -82,7 +82,7 @@
       <mat-form-field flex>
         <input
           matInput
-          value="{{pagoNomina?.egreso?.updateUser }}"
+          value="{{ pagoNomina?.egreso?.updateUser }}"
           placeholder="Pagado por"
           [disabled]="true"
         />
@@ -90,7 +90,9 @@
       <mat-form-field flex class="pad-left">
         <input
           matInput
-          value="{{pagoNomina?.egreso?.cheque?.impresion | date: 'dd/MM/yy '}}"
+          value="{{
+            pagoNomina?.egreso?.cheque?.impresion | date: 'dd/MM/yy '
+          }}"
           placeholder="Impreso"
           [disabled]="true"
         />

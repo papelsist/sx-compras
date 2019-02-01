@@ -56,6 +56,7 @@ class MovimientoDeCuentaService implements  LogUser{
     }
 
     def generarCheque(MovimientoDeCuenta egreso) {
+        log.info('Generando cheque para egreso: {} Para: {}', egreso.importe, egreso.afavor)
         if(egreso.formaDePago == 'CHEQUE' ) {
             if(egreso.cheque != null)
                 throw new RuntimeException("Egreso ${egreso.id}  con  cheque ${egreso.cheque.folio}  ya generado")
@@ -68,6 +69,8 @@ class MovimientoDeCuentaService implements  LogUser{
 
             cheque.importe = egreso.importe.abs()
             if(!egreso.referencia) {
+                if(!cuenta.proximoCheque)
+                    cuenta.proximoCheque = 0L
                 cheque.folio = cuenta.proximoCheque
                 cuenta.proximoCheque = cuenta.proximoCheque + 1
                 cuenta.save()

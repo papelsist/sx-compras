@@ -28,11 +28,12 @@ abstract class PagoDeNominaService implements  LogUser{
         return save(pagoDeNomina)
     }
 
-    PagoDeNomina pagar(PagoDeNomina pagoDeNomina, Date fecha, CuentaDeBanco cuenta, String referencia) {
-        log.info("Pagando nomina {} Ref: {}", pagoDeNomina.nomina, referencia)
+    PagoDeNomina pagar(PagoDeNomina pagoDeNomina, Date fecha, CuentaDeBanco cuenta, String referencia, BigDecimal importe) {
+        log.info("Pagando nomina {} Ref: {} Total: {} Cuenta: ${cuenta}", importe, referencia, pagoDeNomina.total)
         if(pagoDeNomina.egreso != null)
             throw new RuntimeException("PagoDeNomina ${pagoDeNomina.id} ya pagado Egreso: ${pagoDeNomina.egreso.id}")
 
+        pagoDeNomina.total = importe
         pagoDeNomina.pago = fecha
         MovimientoDeCuenta egreso = generarEgreso(pagoDeNomina, cuenta, referencia)
 
@@ -44,6 +45,7 @@ abstract class PagoDeNominaService implements  LogUser{
         pagoDeNomina = save(pagoDeNomina)
         return pagoDeNomina
     }
+
 
     MovimientoDeCuenta generarEgreso( PagoDeNomina pago, CuentaDeBanco cuenta, String referencia){
         MovimientoDeCuenta egreso = new MovimientoDeCuenta()
@@ -65,10 +67,9 @@ abstract class PagoDeNominaService implements  LogUser{
         return egreso
     }
 
-
     def generarCheque( MovimientoDeCuenta egreso) {
         if(!egreso.cheque) {
-            log.info('Generando cheque para egreso: {} Para: {}', egreso.id, egreso.afavor)
+            // log.info('Generando cheque para egreso: {} Para: {}', egreso.importe, egreso.afavor)
             movimientoDeCuentaService.generarCheque(egreso)
             egreso.save failOnError: true
         }

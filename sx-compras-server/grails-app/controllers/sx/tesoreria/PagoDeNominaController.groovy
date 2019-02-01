@@ -6,6 +6,7 @@ import grails.gorm.DetachedCriteria
 import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.*
 import groovy.transform.CompileDynamic
+import groovy.transform.ToString
 import groovy.util.logging.Slf4j
 
 import org.apache.commons.lang3.exception.ExceptionUtils
@@ -97,8 +98,9 @@ class PagoDeNominaController extends RestfulController<PagoDeNomina> {
             notFound()
             return
         }
-
-        PagoDeNomina pagoDeNomina =   pagoDeNominaService.pagar(pago.pagoDeNomina, pago.fecha, pago.cuenta, pago.referencia)
+        // log.info('Pagar nomina por {}', pago)
+        PagoDeNomina pagoDeNomina =   pagoDeNominaService
+                .pagar(pago.pagoDeNomina, pago.fecha, pago.cuenta, pago.referencia, pago.importe)
         respond pagoDeNomina
     }
 
@@ -119,7 +121,7 @@ class PagoDeNominaController extends RestfulController<PagoDeNomina> {
     def handleException(Exception e) {
         String message = ExceptionUtils.getRootCauseMessage(e)
         e.printStackTrace()
-        log.error(message, ExceptionUtils.getRootCause(e))
+        log.error(message, e)
         respond([message: message], status: 500)
     }
 }
@@ -131,12 +133,14 @@ class ImportadorParaPagoDeNomina {
     String tipo
 }
 
+@ToString
 class PagoDeNominaCommand {
 
     PagoDeNomina pagoDeNomina
     CuentaDeBanco cuenta
     String referencia
     Date fecha
+    BigDecimal importe
 
     static constraints = {
         referencia nullable: true

@@ -29,6 +29,8 @@ class PagoDeNomina {
 
     MovimientoDeCuenta egreso
 
+    String referencia
+
     Date dateCreated
     Date lastUpdated
 
@@ -44,8 +46,21 @@ class PagoDeNomina {
 
     }
 
+    static transients = ['referencia']
+
     static mapping ={
         pago type:'date'
+    }
+
+    String getReferencia() {
+        if(egreso) {
+            if(formaDePago == 'CHEQUE') {
+                return "CH: ${egreso?.cheque?.folio}"
+            } else {
+                return egreso?.referencia
+            }
+        }
+        return null
     }
 
 }

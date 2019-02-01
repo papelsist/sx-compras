@@ -222,7 +222,7 @@ class CancelacionService implements  LogUser{
     }
 
     @NotTransactional
-    def cancelacionManual(String emisorRfc, String receptorRfc, String uuidTarget, BigDecimal totalTarget) {
+    def cancelacionManual(File dir, String emisorRfc, String receptorRfc, String uuidTarget, BigDecimal totalTarget) {
         log.info('Cancelacion manual de cfdi {}', uuidTarget)
         boolean isTest = false
         Empresa empresa = Empresa.first()
@@ -244,10 +244,9 @@ class CancelacionService implements  LogUser{
         }
 
         Map responseData = procesaResponse(response)
-        File file = new File("")
+        File file = new File(dir,"${uuidTarget}_${responseData.status}.xml")
         file.write(new String(responseData.ack, 'UTF-8'))
         file.write(new String(responseData.ack))
-
         return responseData
 
     }

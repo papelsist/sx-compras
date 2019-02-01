@@ -12,5 +12,6 @@ json g.render(pagoDeNomina, [ excludes: ['egreso'], resolveTemplate: false]) {
         if(pagoDeNomina?.egreso?.cheque)
             cheque g.render(pagoDeNomina.egreso.cheque)
     }
+    referencia pagoDeNomina.getReferencia()
 
 }

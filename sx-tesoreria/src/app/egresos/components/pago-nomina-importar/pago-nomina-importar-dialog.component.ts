@@ -22,7 +22,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
         </mat-form-field>
         <mat-form-field >
           <mat-select placeholder="Tipo" formControlName="tipo" >
-            <mat-option *ngFor="let p of ['GENERAL', 'LIQUIDACION', 'AGUINALDO', 'ASIMILADOS', 'PTUL', 'ESPECIAL', 'ESPECIAL_PA']"
+            <mat-option *ngFor="let p of ['GENERAL', 'LIQUIDACION', 'AGUINALDO', 'ASIMILADOS', 'PTU', 'ESPECIAL', 'ESPECIAL_PA']"
                 [value]="p">{{ p }}
             </mat-option>
           </mat-select>

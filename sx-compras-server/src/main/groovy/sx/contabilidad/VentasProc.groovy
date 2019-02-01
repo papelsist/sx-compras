@@ -107,6 +107,10 @@ abstract class VentasProc implements  ProcesadorMultipleDePolizas {
 
         // Comprobante nacional para el SAT
         def comprobante = new SatComprobanteNac(uuidcfdi: row.uuid, rfc: row.rfc, montoTotal: row.total)
+        if(!comprobante.uuidcfdi) {
+            throw new RuntimeException(
+                    "Venta facturada ${row.documento} sin UUID. No se puede generar el complemento CompNac(SAT)")
+        }
         if(row.moneda != 'MXN') {
             comprobante.moneda = row.moneda
             comprobante.tipCamb = row.tc
