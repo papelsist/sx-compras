@@ -18,7 +18,12 @@ abstract class SaldoPorCuentaDeBancoService implements  LogUser{
 
     abstract SaldoPorCuentaDeBanco save(SaldoPorCuentaDeBanco saldoPorCuentaDeBanco)
 
-    SaldoPorCuentaDeBanco actualizarSaldo(String id, Integer ejercicio = Periodo.currentYear(), Integer mes = Periodo.currentMes()) {
+    SaldoPorCuentaDeBanco salvar(SaldoPorCuentaDeBanco saldo) {
+        logEntity(saldo)
+        return save(saldo)
+    }
+    /*
+    SaldoPorCuentaDeBanco actualizarSaldo(SaldoPorCuentaDeBanco, saldo, ejercicio = Periodo.currentYear(), Integer mes = Periodo.currentMes()) {
         SaldoPorCuentaDeBanco saldo = findOrCreate(CuentaDeBanco.get(id), ejercicio, mes)
         if(!saldo.cierre) {
             saldoInicial(saldo)
@@ -31,6 +36,7 @@ abstract class SaldoPorCuentaDeBancoService implements  LogUser{
         }
         return saldo
     }
+    */
 
 
     SaldoPorCuentaDeBanco findOrCreate(CuentaDeBanco cuenta, Integer ejercicio, Integer mes) {
@@ -189,4 +195,71 @@ abstract class SaldoPorCuentaDeBancoService implements  LogUser{
             actualizarSaldo(id, ejercicio, it)
         }
     }
+
+    /**
+     * Cierra el saldo de la cuenta de banco y genera
+     *
+     * @param saldo
+     * @return
+     */
+    SaldoPorCuentaDeBanco cerrar(CuentaDeBanco cta, Integer e, Integer m) {
+        log.info('Cerrando la cuenta {}, {}-{}', cta, e, m)
+        SaldoPorCuentaDeBanco saldo = find(cta, e, m)
+        if(!saldo) throw new RuntimeException("No existe Saldo para la cuenta ${cta} en el periodo ${e}-${m}")
+        saldo.cierre = new Date()
+
+        Integer mes = saldo.mes == 12 ? 1 : saldo.mes + 1
+        Integer ejercicio = saldo.mes == 12 ? saldo.ejercicio + 1 : saldo.ejercicio
+
+        SaldoPorCuentaDeBanco next = SaldoPorCuentaDeBanco
+                .where{ejercicio == ejercicio && mes == mes && cuenta == saldo.cuenta}.find()
+        if(next) {
+            next.saldoInicial = saldo.saldoFinal
+            ingresos(next)
+            egresos(next)
+        } else {
+            next = new SaldoPorCuentaDeBanco()
+            next.ejercicio = ejercicio
+            next.mes = mes
+            next.cuenta = saldo.cuenta
+            next.saldoInicial = saldo.saldoFinal
+            next.ingresos = 0.0
+            next.egresos = 0.0
+            next.descripcion = saldo.descripcion
+            next.numero = saldo.numero
+        }
+        next.saldoFinal = next.saldoInicial + next.ingresos - next.egresos
+        next.cuenta = saldo.cuenta
+        salvar(saldo)
+        return salvar(next)
+
+    }
+
+    /*
+    List<SaldoPorCuentaDeBanco> generarSaldos(Integer ej , Integer m) {
+        def ant = m - 1
+        List<CuentaDeBanco> cuentas = CuentaDeBanco.list()
+        List<SaldoPorCuentaDeBanco> res = []
+        cuentas.each { cta ->
+            def sa = SaldoPorCuentaDeBanco.where{ejercicio == ej && mes == ant && cuenta == cta}.find()
+            def saldo = SaldoPorCuentaDeBanco.where{ejercicio == ej && mes == m && cuenta == cta}.find()
+            if(sa) {
+                if(!saldo) {
+                    log.info("Cta: ${cta} Saldo Ant: {}-{} {}", cta, ej, ant, sa.saldoFinal)
+                    saldo = new SaldoPorCuentaDeBanco(ejercicio: ej, mes: m, cuenta: cta)
+                    saldo.saldoInicial = sa.saldoFinal
+                    saldo.ingresos = 0.0
+                    saldo.egresos = 0.0
+                    saldo.saldoFinal = saldo.saldoInicial
+                    saldo.descripcion = sa.descripcion
+                    saldo.numero = sa.numero
+                    res.add(save(saldo))
+                }
+            }
+
+        }
+        return res
+
+    }
+    */
 }

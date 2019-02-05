@@ -85,4 +85,16 @@ export class CuentasService {
       .get<EstadoDeCuenta>(url, { params: params })
       .pipe(catchError((error: any) => throwError(error)));
   }
+
+  cerrarCuenta(
+    cuentaId: string,
+    periodo: EjercicioMes
+  ): Observable<CuentaDeBanco> {
+    const url = `${this.apiUrl}/${cuentaId}/cerrar/${periodo.ejercicio}/${
+      periodo.mes
+    }`;
+    return this.http
+      .put<CuentaDeBanco>(url, {})
+      .pipe(catchError((error: any) => throwError(error)));
+  }
 }

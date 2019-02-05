@@ -25,6 +25,7 @@ import { EstadoDeCuenta } from 'app/cuentas/models/estado-de-cuenta';
 import { takeUntil } from 'rxjs/operators';
 import { PeriodoDialogComponent } from 'app/_shared/components';
 import { ReportService } from 'app/reportes/services/report.service';
+import { TdDialogService } from '@covalent/core';
 
 @Component({
   selector: 'sx-estado-de-cuenta',
@@ -91,6 +92,9 @@ import { ReportService } from 'app/reportes/services/report.service';
             <button mat-button color="primary" (click)="grid.printEstadoDeCuenta()">
               <mat-icon>picture_as_pdf</mat-icon> Estado de cuenta
             </button>
+            <button mat-button color="warn" (click)="cerrar(cuenta, periodo)">
+              <mat-icon>grid_off</mat-icon> Cerrar
+            </button>
             <span flex></span>
             <span>Depósitos: {{depositos | currency}}</span>
             <span class="pad-left">Retiros: {{retiros | currency}}</span>
@@ -133,7 +137,8 @@ export class EstadoDeCuentaComponent
     private store: Store<fromStore.State>,
     private dialog: MatDialog,
     private service: ReportService,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private dialogService: TdDialogService
   ) {}
 
   ngOnInit() {
@@ -237,5 +242,26 @@ export class EstadoDeCuentaComponent
         fechaFin: this.periodo.fechaFinal.toISOString()
       }
     );
+  }
+
+  cerrar(cuenta: CuentaDeBanco, periodo: Periodo) {
+    const p = Periodo.getEjercicioMes(periodo.fechaFinal);
+    this.dialogService
+      .openConfirm({
+        title: 'Cerrar ejercicio',
+        message: `Cerrar la cuenta ${cuenta.descripcion} Periodo: ${
+          p.ejercicio
+        } - ${p.mes}`,
+        acceptButton: 'ACEPTAR',
+        cancelButton: 'CANCELAR'
+      })
+      .afterClosed()
+      .subscribe(res => {
+        if (res) {
+          this.store.dispatch(
+            new fromStore.CerrarCuenta({ cuenta, periodo: p })
+          );
+        }
+      });
   }
 }

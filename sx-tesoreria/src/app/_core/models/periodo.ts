@@ -47,6 +47,12 @@ export class Periodo {
     return localStorage.setItem(key, periodo.toJson());
   }
 
+  static getEjercicioMes(
+    date: Date = new Date()
+  ): { ejercicio: number; mes: number } {
+    return { ejercicio: date.getFullYear(), mes: date.getMonth() + 1 };
+  }
+
   constructor(
     public fechaInicial: Date = new Date(),
     public fechaFinal: Date = new Date()

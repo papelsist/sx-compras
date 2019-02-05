@@ -47,18 +47,15 @@ class PolizaDet {
 
     List<SatPagoOtro> otros = []
 
-
     static belongsTo = [poliza:Poliza]
 
     static hasMany = [
-            nacionales: SatComprobanteNac,
-            extranjeros: SatComprobanteExt,
-            transferencias: SatPagoTransferencia,
-            cheques: SatPagoCheque,
-            otros: SatPagoOtro
+        nacionales: SatComprobanteNac,
+        extranjeros: SatComprobanteExt,
+        transferencias: SatPagoTransferencia,
+        cheques: SatPagoCheque,
+        otros: SatPagoOtro
     ]
-
-    //static hasOne = [cheque: PolizaCheque, transferencia: TransaccionTransferencia, compraNal: TransaccionCompraNal]
 
     static constraints = {
         descripcion nullable:true
@@ -70,7 +67,6 @@ class PolizaDet {
         documento nullable:true
         documentoTipo nullable:true
         documentoFecha nullable:true
-
     }
 
     static  mapping = {

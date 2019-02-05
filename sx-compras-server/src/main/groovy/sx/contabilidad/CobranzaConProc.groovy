@@ -129,6 +129,9 @@ class CobranzaConProc implements  ProcesadorMultipleDePolizas{
             det.haber = Math.abs(row.total)
             det.debe = 0.0
         }
+        // Generar complemento de cobro
+        SatPagoOtro otroMP = new SatPagoOtro()
+
 
         poliza.addToPartidas(det)
 

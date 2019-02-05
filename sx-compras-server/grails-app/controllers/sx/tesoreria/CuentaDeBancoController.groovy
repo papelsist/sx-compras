@@ -375,9 +375,21 @@ class CuentaDeBancoController extends RestfulController {
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'Movimientos.pdf')
     }
 
+
+    @CompileDynamic
+    def cerrar(CuentaDeBanco cuenta, Integer ejercicio, Integer mes) {
+        if(cuenta == null) {
+            notFound()
+            return
+        }
+        saldoPorCuentaDeBancoService.cerrar(cuenta, ejercicio, mes)
+        respond cuenta
+    }
+
+
     def handleException(Exception e) {
         String message = ExceptionUtils.getRootCauseMessage(e)
-        // e.printStackTrace()
+        e.printStackTrace()
         log.error(message, ExceptionUtils.getRootCause(e))
         respond([message: message], status: 500)
     }
