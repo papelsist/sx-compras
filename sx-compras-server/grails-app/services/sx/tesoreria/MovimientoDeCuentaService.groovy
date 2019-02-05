@@ -6,6 +6,9 @@ import grails.gorm.transactions.Transactional
 import groovy.util.logging.Slf4j
 import sx.core.Empresa
 import sx.core.LogUser
+import sx.cxc.Cobro
+import sx.cxc.CobroDeposito
+import sx.cxc.CobroTransferencia
 import sx.cxp.Rembolso
 import sx.cxp.Requisicion
 import sx.cxp.RequisicionDeCompras
@@ -40,6 +43,7 @@ class MovimientoDeCuentaService implements  LogUser{
         // Datos del pago
         egreso.referencia = referencia
         egreso.afavor = requisicion.nombre
+        egreso.conceptoReporte = egreso.afavor
         egreso.cuenta = cuenta
         logEntity(egreso)
 
@@ -52,6 +56,7 @@ class MovimientoDeCuentaService implements  LogUser{
     }
 
     def generarCheque(MovimientoDeCuenta egreso) {
+        log.info('Generando cheque para egreso: {} Para: {}', egreso.importe, egreso.afavor)
         if(egreso.formaDePago == 'CHEQUE' ) {
             if(egreso.cheque != null)
                 throw new RuntimeException("Egreso ${egreso.id}  con  cheque ${egreso.cheque.folio}  ya generado")
@@ -64,6 +69,8 @@ class MovimientoDeCuentaService implements  LogUser{
 
             cheque.importe = egreso.importe.abs()
             if(!egreso.referencia) {
+                if(!cuenta.proximoCheque)
+                    cuenta.proximoCheque = 0L
                 cheque.folio = cuenta.proximoCheque
                 cuenta.proximoCheque = cuenta.proximoCheque + 1
                 cuenta.save()
@@ -86,6 +93,7 @@ class MovimientoDeCuentaService implements  LogUser{
             comision.importe = importe * -1
             comision.fecha = requisicion.fechaDePago
             comision.concepto = 'COMISION_POR_TRANSFERENCIA'
+            comision.conceptoReporte = 'COMISION_POR_TRANSFERENCIA'
             comision.moneda = Currency.getInstance(requisicion.moneda)
             comision.tipoDeCambio = requisicion.tipoDeCambio
             comision.comentario = requisicion.comentario
@@ -107,7 +115,7 @@ class MovimientoDeCuentaService implements  LogUser{
 
         MovimientoDeCuenta egreso = new MovimientoDeCuenta()
         egreso.tipo = 'REMBOLSO'
-        egreso.concepto = 'REMBOLSO'
+        egreso.concepto = rembolso.concepto
         egreso.sucursal = egreso.sucursal
         egreso.fecha = rembolso.fechaDePago
         egreso.moneda = cuenta.moneda
@@ -119,6 +127,7 @@ class MovimientoDeCuentaService implements  LogUser{
         // Datos del pago
         egreso.referencia = referencia
         egreso.afavor = rembolso.nombre
+        egreso.conceptoReporte = egreso.afavor
         egreso.cuenta = cuenta
         logEntity(egreso)
         if(egreso.formaDePago == 'CHEQUE'){
@@ -127,6 +136,75 @@ class MovimientoDeCuentaService implements  LogUser{
         }
         return egreso
 
+    }
+
+    /**
+     * Temporal debe ir en CobroServies
+     *
+     * @param deposito
+     * @return
+     */
+    MovimientoDeCuenta generarIngresoPorDepositoBancario(CobroDeposito deposito) {
+        Cobro cobro = deposito.cobro
+        String sucursal = cobro.sucursal.nombre
+        MovimientoDeCuenta mov = new MovimientoDeCuenta()
+        mov.sucursal = sucursal
+        mov.referencia = "Deposito: ${deposito.folio} "
+        mov.tipo = cobro.tipo
+        if(['CRE','JUR','CHE'].contains(mov.tipo)) {
+            mov.fecha = cobro.fecha
+        } else {
+            if(cobro.primeraAplicacion == null)
+                return null
+            mov.fecha = cobro.primeraAplicacion
+        }
+        mov.formaDePago = cobro.formaDePago
+        mov.comentario = "Deposito ${cobro.tipo} ${cobro.sucursal.nombre} "
+        mov.conceptoReporte = "Deposito suc: ${sucursal}"
+        mov.cuenta = deposito.cuentaDestino
+        mov.afavor = Empresa.first().nombre
+        mov.importe = cobro.importe
+        mov.moneda = deposito.cuentaDestino.moneda
+        mov.concepto = 'VENTAS'
+        mov.save failOnError: true, flush: true
+        deposito.ingreso = mov
+        cobro.save flush: true
+        return mov
+    }
+
+    /**
+     * Temporal debe ir en CobroServies
+     *
+     * @param deposito
+     * @return
+     */
+    MovimientoDeCuenta generarIngresoPorTransferencia(CobroTransferencia deposito) {
+        Cobro cobro = deposito.cobro
+        String sucursal = cobro.sucursal.nombre
+        MovimientoDeCuenta mov = new MovimientoDeCuenta()
+        mov.sucursal = sucursal
+        mov.referencia = "Deposito: ${deposito.folio} "
+        mov.tipo = cobro.tipo
+        if(['CRE','JUR','CHE'].contains(mov.tipo)) {
+            mov.fecha = cobro.fecha
+        } else {
+            if(cobro.primeraAplicacion == null)
+                return null
+            mov.fecha = cobro.primeraAplicacion
+        }
+        mov.formaDePago = cobro.formaDePago
+        mov.comentario = "Deposito ${cobro.tipo} ${cobro.sucursal.nombre} "
+        mov.conceptoReporte = "Deposito suc: ${sucursal}"
+        mov.cuenta = deposito.cuentaDestino
+        mov.afavor = Empresa.first().nombre
+        mov.importe = cobro.importe
+        mov.moneda = deposito.cuentaDestino.moneda
+        mov.concepto = 'VENTAS'
+
+        mov.save failOnError: true, flush: true
+        deposito.ingreso = mov
+        cobro.save flush: true
+        return mov
     }
 }
 

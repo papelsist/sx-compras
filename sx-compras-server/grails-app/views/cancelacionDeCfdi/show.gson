@@ -1,0 +1,7 @@
+import sx.cfdi.CancelacionDeCfdi
+
+model {
+	CancelacionDeCfdi cancelacionDeCfdi
+}
+
+json tmpl.cancelacionDeCfdi(cancelacionDeCfdi)

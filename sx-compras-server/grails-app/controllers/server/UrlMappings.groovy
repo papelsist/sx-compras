@@ -30,6 +30,9 @@ class UrlMappings {
         "/api/tesoreria/cuentas/$id/movimientos/$ejercicio/$mes"(controller: 'cuentaDeBanco', action: 'movimientos', method: 'GET')
         "/api/tesoreria/cuentas/$id/saldos"(controller: 'cuentaDeBanco', action: 'saldos', method: 'GET')
         "/api/tesoreria/cuentas/estadoDeCuenta"(controller: 'cuentaDeBanco', action: 'estadoDeCuenta', method: 'GET')
+        "/api/tesoreria/cuentas/estadoDeCuentaReport"(controller: 'cuentaDeBanco', action: 'estadoDeCuentaReport', method: 'PUT')
+        "/api/tesoreria/cuentas/movimientosReport"(controller: 'cuentaDeBanco', action: 'movimientosReport', method: 'PUT')
+        "/api/tesoreria/cuentas/$id/cerrar/$ejercicio/$mes"(controller: 'cuentaDeBanco', action: 'cerrar', method: 'PUT')
 
 
         "/api/tesoreria/cheques"(resources: 'cheque')
@@ -70,6 +73,8 @@ class UrlMappings {
         "/api/tesoreria/pagoDeNomina"(resources: 'pagoDeNomina', excludes:['create', 'edit','patch', 'update'] )
         "/api/tesoreria/pagoDeNomina/importar"(controller: 'pagoDeNomina', action: 'importar', method: 'POST')
         "/api/tesoreria/pagoDeNomina/pagar"(controller: 'pagoDeNomina', action: 'pagar', method: 'POST')
+        "/api/tesoreria/pagoDeNomina/cancelar/$id"(controller: 'pagoDeNomina', action: 'pagar', method: 'PUT')
+        "/api/tesoreria/pagoDeNomina/generarCheque/$id"(controller: 'pagoDeNomina', action: 'generarCheque', method: 'POST')
 
         "/api/tesoreria/pagoDeMorralla"(resources: 'pagoDeMorralla', excludes:['create', 'edit','patch', 'update'] )
         "/api/tesoreria/pagoDeMorralla/pendientes"(controller: 'pagoDeMorralla', action: 'pendientes', method: 'GET')
@@ -210,6 +215,49 @@ class UrlMappings {
 
         //Contabilidad
         "/api/contabilidad/cuentas"(resources: 'cuentaContable', excludes:['create', 'edit','patch'])
+        "/api/contabilidad/polizas"(resources: 'poliza', excludes: ['create', 'edit', 'patch'])
+        "/api/contabilidad/polizas/generarPolizas"(controller: 'poliza', action: 'generarPolizas', method: 'POST')
+        "/api/contabilidad/polizas/generarPolizasEgreso"(controller: 'poliza', action: 'generarPolizasEgreso', method: 'POST')
+        "/api/contabilidad/polizas/recalcular/$id"(controller: 'poliza', action: 'recalcular', method: 'PUT')
+        "/api/contabilidad/polizas/cerrar/$id"(controller: 'poliza', action: 'cerrar', method: 'PUT')
+        "/api/contabilidad/polizas/print/$id"(controller: 'poliza', action: 'print')
+        "/api/contabilidad/polizas/printComprobantes/$id"(controller: 'poliza', action: 'printComprobantes')
+        "/api/contabilidad/saldos"(resources: 'saldoPorCuentaContable', excludes: ['create', 'edit', 'patch'])
+        "/api/contabilidad/saldos/actualizar/$ejercicio/$mes"(controller: 'saldoPorCuentaContable', action: 'actualizarSaldos', method: 'PUT')
+        "/api/contabilidad/saldos/cierreMensual/$ejercicio/$mes"(controller: 'saldoPorCuentaContable', action: 'cierreMensual', method: 'PUT')
+        "/api/contabilidad/saldos/cierreAnual/$ejercicio"(controller: 'saldoPorCuentaContable', action: 'cierreAnual', method: 'PUT')
+
+        "/api/sat/cuentas"(resources: 'cuentaSat', excludes: ['create', 'edit', 'patch'])
+
+        // Cfdis
+        "/api/cfdi"(resources: 'cfdi', excludes:['create', 'edit', 'patch', 'update', 'save', 'delete'])
+        "/api/cfdi/cancelacion"(resources: 'cancelacionDeCfdi', excludes:['create', 'edit','patch', 'save'])
+        "/api/cfdi/cancelacion/pendientes"(controller: 'cancelacionDeCfdi', action: 'pendientes')
+        "/api/cfdi/cancelacion/cancelar/$id"(controller: 'cancelacionDeCfdi', action: 'cancelar', method: 'PUT')
+        "/api/cfdi/cancelacion/mostrarAcuse/$id"(controller:"cancelacionDeCfdi", action:"mostrarAcuse")
+        "/api/cfdi/cancelacion/descargarAcuse/$id"(controller:"cancelacionDeCfdi", action:"descargarAcuse", method: 'GET')
+        "/api/cfdi/cancelacion/reporteDeCancelados"(controller:"cancelacionDeCfdi", action:"reporteDeCancelados", method: 'GET')
+        "/api/cfdi/cancelacion/reporteDePendientes"(controller:"cancelacionDeCfdi", action:"reporteDePendientes", method: 'GET')
+        "/api/cfdi/cancelacion/facturasCanceladas"(controller:"cancelacionDeCfdi", action:"facturasCanceladas", method: 'GET')
+
+
+        // ************** Contabilidad electronica *************//
+        "/api/sat/catalogo"(resources: 'catalogoDeCuentas', excludes:['create', 'edit', 'update', 'patch'])
+        "/api/sat/catalogo/mostrarXml/$id"(controller:"catalogoDeCuentas", action:"mostrarXml")
+        "/api/sat/catalogo/mostrarAcuse/$id"(controller:"catalogoDeCuentas", action:"mostrarAcuse")
+        "/api/sat/catalogo/descargarXml/$id"(controller:"catalogoDeCuentas", action:"descargarXml")
+
+        // Balanza SAT
+        "/api/sat/balanza"(resources: 'balanzaSat', excludes:['create', 'edit', 'update', 'patch'])
+        "/api/sat/balanza/mostrarXml/$id"(controller:"balanzaSat", action:"mostrarXml")
+        "/api/sat/balanza/mostrarAcuse/$id"(controller:"balanzaSat", action:"mostrarAcuse")
+        "/api/sat/balanza/descargarXml/$id"(controller:"balanzaSat", action:"descargarXml")
+
+        // Polizas del periodo SAT
+        "/api/sat/polizas"(resources: 'polizasDelPeriodoSat', excludes:['create', 'edit', 'update', 'patch'])
+        "/api/sat/polizas/mostrarXml/$id"(controller:"polizasDelPeriodoSat", action:"mostrarXml")
+        "/api/sat/polizas/mostrarAcuse/$id"(controller:"polizasDelPeriodoSat", action:"mostrarAcuse")
+        "/api/sat/polizas/descargarXml/$id"(controller:"polizasDelPeriodoSat", action:"descargarXml")
 
         "/"(controller: 'application', action:'index')
         "/api/session"(controller: 'application', action: 'session')

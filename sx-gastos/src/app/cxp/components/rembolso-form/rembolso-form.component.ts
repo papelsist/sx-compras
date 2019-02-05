@@ -61,7 +61,10 @@ export class RembolsoFormComponent implements OnInit, OnChanges, OnDestroy {
     'PAGO_TARJETA',
     'PAGO_CONTABLE',
     'PRESTAMO_CHOFER',
-    'PRESTAMO_EMPLEADO'
+    'PRESTAMO_EMPLEADO',
+    'CARGA_SOCIAL',
+    'PAGO_CHOFER',
+    'CUOTA_SINDICAL'
   ];
 
   constructor(private fb: FormBuilder, private dialog: MatDialog) {}
@@ -89,7 +92,7 @@ export class RembolsoFormComponent implements OnInit, OnChanges, OnDestroy {
       this.partidas.push(new FormControl(det));
     });
     if (this.rembolso.egreso) {
-      this.form.disable();
+      // this.form.disable();
     }
   }
 

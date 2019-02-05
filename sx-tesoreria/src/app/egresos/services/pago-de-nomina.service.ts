@@ -5,10 +5,13 @@ import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 import { ConfigService } from '../../utils/config.service';
-import { PagoDeNomina, PagoDeNominaCommand } from '../models';
+import {
+  PagoDeNomina,
+  PagoDeNominaCommand,
+  PagosDeNominaFilter
+} from '../models';
 
 import { Update } from '@ngrx/entity';
-import { PeriodoFilter } from 'app/models';
 
 @Injectable()
 export class PagoDeNominaService {
@@ -18,10 +21,11 @@ export class PagoDeNominaService {
     this.apiUrl = config.buildApiUrl('tesoreria/pagoDeNomina');
   }
 
-  list(filter: PeriodoFilter): Observable<PagoDeNomina[]> {
+  list(filter: PagosDeNominaFilter): Observable<PagoDeNomina[]> {
     let params = new HttpParams()
       .set('fechaInicial', filter.fechaInicial.toISOString())
-      .set('fechaFinal', filter.fechaFinal.toISOString());
+      .set('fechaFinal', filter.fechaFinal.toISOString())
+      .set('pendientes', filter.pendientes.toString());
     if (filter.registros) {
       params = params.set('max', filter.registros.toString());
     }
@@ -48,6 +52,17 @@ export class PagoDeNominaService {
     const url = `${this.apiUrl}/pagar`;
     return this.http
       .post<PagoDeNomina>(url, command)
+      .pipe(catchError((error: any) => throwError(error)));
+  }
+
+  generarCheque(pagoId: number, referencia: string): Observable<PagoDeNomina> {
+    const url = `${this.apiUrl}/generarCheque/${pagoId.toString()}`;
+    return this.http
+      .post<PagoDeNomina>(
+        url,
+        {},
+        { params: new HttpParams().set('referencia', referencia) }
+      )
       .pipe(catchError((error: any) => throwError(error)));
   }
 

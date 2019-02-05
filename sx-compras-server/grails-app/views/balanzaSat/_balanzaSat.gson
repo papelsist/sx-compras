@@ -1,0 +1,9 @@
+import sx.sat.BalanzaSat
+
+model {
+	BalanzaSat balanzaSat
+}
+
+json g.render(balanzaSat, [excludes: ['xml', 'acuse'], resolveTemplate: false]) {
+	acuse balanzaSat.acuse != null
+}

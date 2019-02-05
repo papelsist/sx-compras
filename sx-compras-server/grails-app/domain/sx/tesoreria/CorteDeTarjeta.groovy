@@ -27,7 +27,7 @@ class CorteDeTarjeta {
 
 	List partidas = []
 
-	List aplicaciones = []
+	List<CorteDeTarjetaAplicacion> aplicaciones = []
 
 	Date dateCreated
 

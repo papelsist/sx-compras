@@ -48,7 +48,9 @@ export class CuentaFormComponent implements OnInit {
       impresionTemplate: [],
       proximoCheque: [],
       comisionPorTransferencia: [],
-      cuentaConcentradora: []
+      cuentaConcentradora: [],
+      rendimientoTasa: [],
+      tasaIsr: []
     });
   }
 

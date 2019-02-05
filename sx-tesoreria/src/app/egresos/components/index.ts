@@ -37,6 +37,8 @@ import { GenerarChequeRembolsoComponent } from './generar-cheque-rembolso/genera
 import { GenerarChequeRembolsoBtnComponent } from './generar-cheque-rembolso/generar-cheque-rembolso-btn.component';
 import { ComprasMonedaTableComponent } from './compras-moneda-table/compras-moneda-table.component';
 import { CompraMonedaFormComponent } from './compra-moneda-form/compra-moneda-form.component';
+
+// Pago de nomina
 import { PagosNominaTableComponent } from './pagos-nomina-table/pagos-nomina-table.component';
 import { PagoNominaImportarDialogComponent } from './pago-nomina-importar/pago-nomina-importar-dialog.component';
 import { PagoDeNominaDialogComponent } from './pago-nomina-dialog/pago-nomina-dialog.component';
@@ -52,6 +54,11 @@ import { DevolucionFormComponent } from './devolucion-form/devolucion-form.compo
 import { CobrosTableComponent } from './selector-cobro/cobros-table.component';
 import { SelectorCobrosComponent } from './selector-cobro/selector-cobros.component';
 import { SelectorCobrosBtnComponent } from './selector-cobro/selector-cobros-btn.component';
+import { PagosDeNominaFilterComponent } from './pagos-de-nomina-filter/pagos-de-nomina-filter.component';
+import { PagosDeNominaFilterBtnComponent } from './pagos-de-nomina-filter/pagos-de-nomina-filter-btn.component';
+import { PagosDeNominaFilterLabelComponent } from './pagos-de-nomina-filter/pagos-de-nomina-filter-label.component';
+import { GenerarChequeNominaComponent } from './generar-cheque-nomina/generar-cheque-nomina.component';
+import { GenerarChequeNominaBtnComponent } from './generar-cheque-nomina/generar-cheque-nomina-btn.component';
 
 export const components: any[] = [
   RequisicionesTableComponent,
@@ -98,6 +105,11 @@ export const components: any[] = [
   PagoDeNominaDialogComponent,
   PagoDeNominaBtnComponent,
   PagoDeNominaFormComponent,
+  PagosDeNominaFilterComponent,
+  PagosDeNominaFilterBtnComponent,
+  PagosDeNominaFilterLabelComponent,
+  GenerarChequeNominaComponent,
+  GenerarChequeNominaBtnComponent,
 
   // Morrallas
   PagoMorrallasTableComponent,
@@ -126,12 +138,16 @@ export const entryComponents: any[] = [
   // Pago de nomina
   PagoNominaImportarDialogComponent,
   PagoDeNominaDialogComponent,
+  GenerarChequeNominaComponent,
 
   // Morralla
   SelectorMorrallaComponent,
 
   // Devoluciones a clientes
-  SelectorCobrosComponent
+  SelectorCobrosComponent,
+
+  // Nomina
+  PagosDeNominaFilterComponent
 ];
 
 export * from './requisiciones-table/requisiciones-table.component';
@@ -179,6 +195,11 @@ export * from './pago-nomina-importar/pago-nomina-importar-dialog.component';
 export * from './pago-nomina-dialog/pago-nomina-dialog.component';
 export * from './pago-nomina-dialog/pago-nomina-dialog-btn.component';
 export * from './pago-nomina-form/pago-de-nomina-form.component';
+export * from './pagos-de-nomina-filter/pagos-de-nomina-filter.component';
+export * from './pagos-de-nomina-filter/pagos-de-nomina-filter-btn.component';
+export * from './pagos-de-nomina-filter/pagos-de-nomina-filter-label.component';
+export * from './generar-cheque-nomina/generar-cheque-nomina.component';
+export * from './generar-cheque-nomina/generar-cheque-nomina-btn.component';
 
 // Morrallas
 export * from './pago-morrallas-table/pago-morrallas-table.component';

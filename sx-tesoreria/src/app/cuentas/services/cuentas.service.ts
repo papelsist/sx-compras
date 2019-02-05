@@ -10,6 +10,8 @@ import { Update } from '@ngrx/entity';
 import { Movimiento } from '../models/movimiento';
 import { SaldoPorCuenta } from '../models/saldoPorCuenta';
 import { EjercicioMes } from 'app/models/ejercicioMes';
+import { Periodo } from 'app/_core/models/periodo';
+import { EstadoDeCuenta } from '../models/estado-de-cuenta';
 
 @Injectable()
 export class CuentasService {
@@ -67,6 +69,32 @@ export class CuentasService {
     }`;
     return this.http
       .get<SaldoPorCuenta>(url)
+      .pipe(catchError((error: any) => throwError(error)));
+  }
+
+  getEstadoDeCuenta(
+    cuenta: Partial<CuentaDeBanco>,
+    periodo: Periodo
+  ): Observable<EstadoDeCuenta> {
+    const url = `${this.apiUrl}/estadoDeCuenta`;
+    const params = new HttpParams()
+      .set('cuenta', cuenta.id)
+      .set('fechaIni', periodo.fechaInicial.toISOString())
+      .set('fechaFin', periodo.fechaFinal.toISOString());
+    return this.http
+      .get<EstadoDeCuenta>(url, { params: params })
+      .pipe(catchError((error: any) => throwError(error)));
+  }
+
+  cerrarCuenta(
+    cuentaId: string,
+    periodo: EjercicioMes
+  ): Observable<CuentaDeBanco> {
+    const url = `${this.apiUrl}/${cuentaId}/cerrar/${periodo.ejercicio}/${
+      periodo.mes
+    }`;
+    return this.http
+      .put<CuentaDeBanco>(url, {})
       .pipe(catchError((error: any) => throwError(error)));
   }
 }

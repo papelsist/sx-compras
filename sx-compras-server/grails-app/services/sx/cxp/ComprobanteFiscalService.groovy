@@ -1,9 +1,11 @@
 package sx.cxp
 
 import grails.compiler.GrailsCompileStatic
+import grails.transaction.NotTransactional
 import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
 import groovy.util.slurpersupport.GPathResult
+import org.apache.commons.io.input.BOMInputStream
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -37,11 +39,13 @@ class ComprobanteFiscalService implements  LogUser{
 
     @CompileDynamic
     ComprobanteFiscal buildFromXml(File xmlFile, String fileName, String tipo){
-        def fis = new FileInputStream(xmlFile)
+
+        def inputStream =getValidInputStream(xmlFile)
+        Reader fileReader = new InputStreamReader(inputStream,"UTF-8")
         CfdiReader reader = new CfdiReader()
         // ComprobanteFiscal comprobante = reader.readXml(xmlData, fileName, tipo)
         //return comprobante
-        GPathResult xml = new XmlSlurper().parse(fis)
+        GPathResult xml = new XmlSlurper().parse(fileReader)
 
         def data = xml.attributes()
 
@@ -49,13 +53,13 @@ class ComprobanteFiscalService implements  LogUser{
             throw new ComprobanteFiscalException(message:"${fileName} no es un CFDI valido")
         def version = data.Version ?: data.version
 
-        log.info('CFDI version {}', version)
+
 
         if(version == '3.2'){
-            // return null
-            log.debug('Importando cfdi con ver 3.2 ')
             return importadorCfdi32.buildFromXml32(xml, xmlFile.bytes ,fileName, tipo)
 
+        } else {
+            log.info('Building CFDI 3.3 con File: {} Tipo: {}', fileName, tipo)
         }
 
         def receptorNode = xml.breadthFirst().find { it.name() == 'Receptor'}
@@ -100,6 +104,14 @@ class ComprobanteFiscalService implements  LogUser{
         def moneda = data['Moneda']
         def tipoDeCamio = data['TipoCambio'] as BigDecimal
 
+        def impuestos = xml.breadthFirst().find { it.name() == 'Impuestos'}
+        def trasladados = 0.0
+        def retenidos =  0.0
+        if(impuestos) {
+            trasladados = impuestos.attributes()['TotalImpuestosTrasladados'] as BigDecimal?: 0.0
+            retenidos = impuestos.attributes()['TotalImpuestosRetenidos'] as BigDecimal?: 0.0
+        }
+
 
         def comprobanteFiscal=ComprobanteFiscal.findByUuid(uuid)
 
@@ -128,9 +140,11 @@ class ComprobanteFiscalService implements  LogUser{
                 moneda: moneda,
                 tipoDeCambio: tipoDeCamio?: 1.0,
                 usoCfdi: usoCfdi,
-                versionCfdi: '3.3'
+                versionCfdi: '3.3',
+                impuestoTrasladado: trasladados?: 0.0,
+                impuestoRetenido: retenidos?: 0.0
         )
-        // comprobanteFiscal.save failOnError: true, flush: true
+
         if(tipo == 'GASTOS') {
             reader.addConceptos(comprobanteFiscal, xml)
         }
@@ -141,6 +155,8 @@ class ComprobanteFiscalService implements  LogUser{
     CuentaPorPagar generarCuentaPorPagar(ComprobanteFiscal comprobanteFiscal, String tipo) {
         if(comprobanteFiscal.tipoDeComprobante != 'I') return null
         CuentaPorPagar cxp  = new CuentaPorPagar(tipo: tipo)
+        log.info("Generando CXP para {} Moneda: {}", comprobanteFiscal, comprobanteFiscal.moneda)
+        def mm = Currency.getInstance(comprobanteFiscal.moneda)
         cxp.with {
             proveedor = comprobanteFiscal.proveedor
             nombre = comprobanteFiscal.proveedor.nombre
@@ -176,28 +192,29 @@ class ComprobanteFiscalService implements  LogUser{
         return importarDirectorio(dir, tipo, deleteFiles)
     }
 
+
+
     int importarDirectorio(File dir, String tipo, boolean  deleteFiles) {
         int rows = 0
         dir.eachFile { File it ->
-            if(it.isDirectory())
-                importarDirectorio(it, tipo, deleteFiles)
-            else {
-                if(it.name.toLowerCase().endsWith('xml')) {
-                    try{
-                        ComprobanteFiscal cf = importar(it, tipo)
-                        if(cf) {
-                            rows++
-                        }
-                    }catch (Exception ex) {
-                        String m = ExceptionUtils.getRootCauseMessage(ex)
-                        log.error("Error importando ${it.name}: ${m}", ex)
-                    }
-                    // Eliminar los archivos
+
+            if(it.name.toLowerCase().endsWith('.xml')) {
+                try{
+                    ComprobanteFiscal cf = importar(it, tipo)
+                    rows = rows + 1
                     if(deleteFiles)
                         cleanFile(it)
+                }catch (Exception ex) {
+                    String m = ExceptionUtils.getRootCauseMessage(ex)
+                    log.error("Error importando ${it.name}: ${m}")
+                } finally {
+                    // Eliminar los archivos
+
                 }
 
             }
+
+
         }
         return rows
     }
@@ -206,6 +223,7 @@ class ComprobanteFiscalService implements  LogUser{
     @Transactional
     ComprobanteFiscal importar(File xmlFile, String tipo) {
         ComprobanteFiscal cf = buildFromXml(xmlFile, xmlFile.name, tipo)
+        log.info('CFDI Generado: {}', cf)
         if(cf == null){
             cleanFile(xmlFile)
             return null
@@ -222,7 +240,8 @@ class ComprobanteFiscalService implements  LogUser{
             if(pdf.exists() && pdf.isFile() && pdf.size() < maxSize) {
                 cf.pdf = pdf.bytes
             }
-            cf.save failOnError: true, flush: true
+            cf = cf.save failOnError: true, flush: true
+            log.info('****** Entity CFDI generado {}', cf)
             if (cf.tipoDeComprobante == 'I'){
                 CuentaPorPagar cxp = this.generarCuentaPorPagar(cf, tipo)
                 cxp.comprobanteFiscal = cf
@@ -235,6 +254,18 @@ class ComprobanteFiscalService implements  LogUser{
             return cf
 
         } else {
+            log.info('-----------* EL CFDI {} YA EXISTIA CON EL ID:{}', found.uuid, found.id)
+            if(cf.tipoDeComprobante == 'I') {
+                CuentaPorPagar cxp = CuentaPorPagar.where{comprobanteFiscal == cf}.find()
+                if(!cxp){
+                    cxp = this.generarCuentaPorPagar(cf, tipo)
+                    cxp.comprobanteFiscal = cf
+                    cxp = cxp.save failOnError: true, flush: true
+                    log.info('****** CXP generada {}', cxp.id)
+                } else {
+                    log.info("---------- TAMBIEN CXP EXISTE CON ID: {}", cxp.id)
+                }
+            }
             return null
         }
     }
@@ -254,6 +285,31 @@ class ComprobanteFiscalService implements  LogUser{
         if(pdf.exists())
             pdf.delete()
 
+    }
+
+    @NotTransactional
+    boolean isBOM(File file) {
+        boolean res = false
+        file.withInputStream { fis ->
+            byte[] openingBytes = new byte[3]
+            fis.read( openingBytes )
+            if( openingBytes != [ 0xEF, 0xBB, 0xBF ] as byte[] ) {
+               log.info("File {} needs to be converted from UTF-8 BOM to UTF-8 without BOM",  file.path )
+                res = true
+            }
+        }
+        return res
+    }
+
+    def getValidInputStream(File xmlFile) {
+        BOMInputStream bomIn = new BOMInputStream(new FileInputStream(xmlFile))
+        if(bomIn.hasBOM()) {
+            log.info('BOM detected in file....')
+            return bomIn
+        } else {
+            log.info('BOM NOT detected in file....')
+            return new FileInputStream(xmlFile)
+        }
     }
 
 

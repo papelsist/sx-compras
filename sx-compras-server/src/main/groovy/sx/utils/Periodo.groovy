@@ -101,6 +101,13 @@ class Periodo implements Comparable<Periodo>, WebDataBinding {
 		return p;
 	}
 
+	static Date inicioDeMes(Date fecha) {
+        Calendar cal=Calendar.getInstance()
+        cal.setTime(fecha)
+        cal.set(Calendar.DATE, 1)
+        return cal.getTime()
+    }
+
 	public static Periodo getPeriodoEnUnMes(int mes,int ano){
 		Calendar cal=Calendar.getInstance()
 		cal.clear()
@@ -186,16 +193,16 @@ class Periodo implements Comparable<Periodo>, WebDataBinding {
 	
 	public static int obtenerMes(Date d){
 		Calendar c=Calendar.getInstance();
-		c.setTime(d);
+		c.setTime(d)
 		int mes=c.get(Calendar.MONTH);
-		return mes;
+		return mes
 	}
 	
 	public static int obtenerYear(Date d){
 		Calendar c=Calendar.getInstance();
-		c.setTime(d);
+		c.setTime(d)
 		int year=c.get(Calendar.YEAR);
-		return year;
+		return year
 	}
 
 	public static Integer currentYear(){

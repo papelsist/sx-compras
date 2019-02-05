@@ -1,0 +1,12 @@
+import sx.contabilidad.Poliza
+
+model {
+	Poliza poliza
+}
+
+json g.render(poliza, [excludes: ['partidas'], resolveTemplate: false]) {
+	partidas g.render(poliza.partidas)
+    totalNacional poliza.getTotalNacionales()
+    totalExtranjero poliza.getTotalExtranjeros()
+
+}

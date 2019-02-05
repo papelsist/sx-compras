@@ -28,20 +28,24 @@ abstract class PagoDeNominaService implements  LogUser{
         return save(pagoDeNomina)
     }
 
-    PagoDeNomina pagar(PagoDeNomina pagoDeNomina, CuentaDeBanco cuenta, String referencia) {
-        log.info("Pagando nomina {}", pagoDeNomina.nomina)
+    PagoDeNomina pagar(PagoDeNomina pagoDeNomina, Date fecha, CuentaDeBanco cuenta, String referencia, BigDecimal importe) {
+        log.info("Pagando nomina {} Ref: {} Total: {} Cuenta: ${cuenta}", importe, referencia, pagoDeNomina.total)
         if(pagoDeNomina.egreso != null)
             throw new RuntimeException("PagoDeNomina ${pagoDeNomina.id} ya pagado Egreso: ${pagoDeNomina.egreso.id}")
 
+        pagoDeNomina.total = importe
+        pagoDeNomina.pago = fecha
         MovimientoDeCuenta egreso = generarEgreso(pagoDeNomina, cuenta, referencia)
+
         pagoDeNomina.egreso = egreso
-        pagoDeNomina = save(pagoDeNomina)
+
         if(pagoDeNomina.egreso.formaDePago == 'CHEQUE') {
             generarCheque(pagoDeNomina.egreso)
         }
-
+        pagoDeNomina = save(pagoDeNomina)
         return pagoDeNomina
     }
+
 
     MovimientoDeCuenta generarEgreso( PagoDeNomina pago, CuentaDeBanco cuenta, String referencia){
         MovimientoDeCuenta egreso = new MovimientoDeCuenta()
@@ -58,15 +62,16 @@ abstract class PagoDeNominaService implements  LogUser{
         // Datos del pago
         egreso.referencia = referencia
         egreso.afavor = pago.afavor
+        egreso.conceptoReporte = pago.afavor
         logEntity(egreso)
         return egreso
     }
 
-
     def generarCheque( MovimientoDeCuenta egreso) {
         if(!egreso.cheque) {
-            log.info('Generando cheque para egreso: {} Para: {}', egreso.id, egreso.afavor)
+            // log.info('Generando cheque para egreso: {} Para: {}', egreso.importe, egreso.afavor)
             movimientoDeCuentaService.generarCheque(egreso)
+            egreso.save failOnError: true
         }
     }
 
@@ -89,7 +94,18 @@ abstract class PagoDeNominaService implements  LogUser{
 
     }
 
-
+    def cancelarPago(PagoDeNomina pago) {
+        if(pago.egreso) {
+            MovimientoDeCuenta egreso = pago.egreso
+            pago.egreso = null
+            Cheque cheque = egreso.cheque
+            if(cheque) {
+                egreso.cheque = null
+                cheque.egreso = null
+                cheque.delete flush: true
+            }
+        }
+    }
 
 
 

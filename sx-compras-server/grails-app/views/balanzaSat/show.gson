@@ -1,0 +1,7 @@
+import sx.sat.BalanzaSat
+
+model {
+	BalanzaSat balanzaSat
+}
+
+json tmpl.balanzaSat(balanzaSat)

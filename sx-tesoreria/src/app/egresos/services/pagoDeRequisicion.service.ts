@@ -57,10 +57,14 @@ export class PagoDeRequisicionService {
       .pipe(catchError((error: any) => throwError(error)));
   }
 
-  generarCheque(requisicion: Requisicion): Observable<Requisicion> {
-    const url = `${this.apiUrl}/generarCheque/${requisicion.id}`;
+  generarCheque(
+    requisicionId: string,
+    referencia: string
+  ): Observable<Requisicion> {
+    const url = `${this.apiUrl}/generarCheque/${requisicionId}`;
+    const params = new HttpParams().set('referencia', referencia);
     return this.http
-      .put<Requisicion>(url, {})
+      .put<Requisicion>(url, {}, { params })
       .pipe(catchError((error: any) => throwError(error)));
   }
 

@@ -30,6 +30,7 @@ abstract  class InversionService implements  LogUser{
                 'RETIRO',
                 inversion.cuentaOrigen,
                 inversion.referencia )
+        egreso.conceptoReporte = "INVERSION a: ${egreso.cuenta.numero} TASA: ${inversion.tasa}"
         logEntity(egreso)
         inversion.addToMovimientos(egreso)
 
@@ -42,6 +43,7 @@ abstract  class InversionService implements  LogUser{
                 inversion.cuentaDestino,
                 inversion.referencia)
         logEntity(ingreso)
+        ingreso.conceptoReporte = "INVERSION de: ${ingreso.cuenta.numero} TASA: ${inversion.tasa}"
         inversion.addToMovimientos(ingreso)
 
         logEntity(inversion)
@@ -94,6 +96,7 @@ abstract  class InversionService implements  LogUser{
                 inversion.cuentaDestino,
                 inversion.referencia )
         logEntity(retiro)
+        retiro.conceptoReporte = "RETORNO INVERSION TASA: ${inversion.tasa}"
         inversion.addToMovimientos(retiro)
 
         MovimientoDeCuenta rendimiento = generarMovimiento(
@@ -103,6 +106,7 @@ abstract  class InversionService implements  LogUser{
                 'RETIRO',
                 inversion.cuentaDestino,
                 inversion.referencia )
+        rendimiento.conceptoReporte = "RENDIMIENTO DE INVERSION TASA: ${inversion.tasa}"
         logEntity(rendimiento)
         inversion.addToMovimientos(rendimiento)
 
@@ -114,6 +118,7 @@ abstract  class InversionService implements  LogUser{
                 'DEPOSITO',
                 inversion.cuentaOrigen,
                 inversion.referencia)
+        deposito.conceptoReporte = "INVERSION DE ${inversion.cuentaOrigen.numero} TASA: ${inversion.tasa}"
         logEntity(deposito)
         inversion.addToMovimientos(deposito)
         inversion.retorno = new Date()
@@ -153,5 +158,15 @@ abstract  class InversionService implements  LogUser{
         BigDecimal redimientoCalculado = MonedaUtils.round(rendimientoNeto, 2)
         return redimientoCalculado
 
+    }
+
+    void cancelarInversion(Inversion inversion) {
+        def movimientos = inversion.movimientos.collect{it.id}
+        inversion.movimientos.clear()
+        inversion.delete flush: true
+        movimientos.each {
+            MovimientoDeCuenta m = MovimientoDeCuenta.get(it)
+            m.delete flush: true
+        }
     }
 }

@@ -1,0 +1,7 @@
+import sx.contabilidad.PolizaDet
+
+model {
+	PolizaDet polizaDet
+}
+
+json tmpl.polizaDet(polizaDet)

@@ -32,7 +32,7 @@ export class RembolsosFilter {
 
 export function createRembolsoFilter() {
   const { fechaInicial, fechaFinal } = Periodo.fromNow(30);
-  const registros = 50;
+  const registros = 300;
   const pendientes = false;
   return {
     fechaInicial,

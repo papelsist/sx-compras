@@ -1,0 +1,10 @@
+import sx.contabilidad.Poliza
+
+model {
+	Poliza poliza
+}
+
+json g.render(poliza, [resolveTemplate: false]) {
+	cuadre poliza.debe - poliza.haber
+
+}

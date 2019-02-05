@@ -53,6 +53,11 @@ class InversionController extends RestfulController<Inversion> {
         return inversionService.actualizar(resource)
     }
 
+    @Override
+    protected void deleteResource(Inversion resource) {
+        inversionService.cancelarInversion(resource)
+    }
+
     def retorno() {
         Inversion inversion = Inversion.get(params.id.toString())
         if (inversion == null) {

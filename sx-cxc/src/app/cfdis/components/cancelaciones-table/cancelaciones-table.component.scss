@@ -1,0 +1,21 @@
+table {
+  width: 100%;
+  max-height: 650px;
+  overflow: auto;
+}
+.mat-column-statusCode{
+  max-width: 90px;
+}
+.mat-cell {
+  font-size: 11px;
+}
+.mat-row {
+  height: 30px;
+}
+.mat-footer-row {
+  height: 30px;
+  font-size: 11px;
+  font-weight: bold;
+  font-style: italic;
+}
+

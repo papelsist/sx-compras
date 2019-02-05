@@ -4,4 +4,9 @@ model {
 	CuentaContable cuentaContable
 }
 
-json tmpl.cuentaContable(cuentaContable)
+json g.render(cuentaContable, [ excludes: ['cuentaSat', 'padre', 'subcuentas'], resolveTemplate: false]){
+	cuentaSat g.render(cuentaContable.cuentaSat)
+	padre g.render(cuentaContable.padre)
+	subcuentas g.render(cuentaContable.subcuentas)
+}
+

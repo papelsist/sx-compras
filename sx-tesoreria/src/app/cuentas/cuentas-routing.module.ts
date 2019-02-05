@@ -9,6 +9,11 @@ const routes: Routes = [
     path: '',
     canActivate: [fromGuards.CuentasGuard],
     component: fromContainers.CuentasPageComponent
+  },
+  {
+    path: 'estadoDeCuenta/:cuentaId',
+    canActivate: [fromGuards.CuentasGuard],
+    component: fromContainers.EstadoDeCuentaComponent
   }
 ];
 

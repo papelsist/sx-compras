@@ -29,26 +29,10 @@
 	<parameter name="FECHA_INICIAL" isForPrompting="true" class="java.util.Date"/>
 	<parameter name="FECHA_FINAL" isForPrompting="true" class="java.util.Date"/>
 	<parameter name="CUENTA_ID" isForPrompting="true" class="java.lang.String"/>
-	<queryString><![CDATA[SELECT day(fecha) as dia,fecha,m.id,c.id,c.numero,c.descripcion,m.concepto,m.forma_de_pago
-,s.saldo_inicial,saldo_final,egresos,ingresos,referencia
-,comentario
-,case when importe < 0 then importe else 0 end as cargo
-,case when importe > 0 then importe else 0 end as abono 
-,case 
-	when m.forma_de_pago ='TARJETA' then 'C'
-	when importe > 0 then 'A'
-	when importe <0 then 'B'
-	else 'D'
-	end as orden
-,m.date_created
-,SUBSTRING(m.tipo,1,3) AS origen
-,(SELECT sum(case when importe < 0 then importe else 0 end ) FROM movimiento_de_cuenta x where x.fecha BETWEEN $P{FECHA_INICIAL} and $P{FECHA_FINAL} and x.cuenta_id = m.cuenta_id ) as cargos
-,(SELECT sum(case when importe > 0 then importe else 0 end) FROM movimiento_de_cuenta x where x.fecha BETWEEN $P{FECHA_INICIAL} and $P{FECHA_FINAL} and x.cuenta_id = m.cuenta_id ) as abonos
-,s.saldo_inicial+(SELECT sum(x.importe) FROM movimiento_de_cuenta x where x.fecha BETWEEN $P{FECHA_INICIAL} and $P{FECHA_FINAL} and x.cuenta_id = m.cuenta_id ) as final
-FROM movimiento_de_cuenta m  join cuenta_de_banco c on (m.cuenta_id=c.id) left join saldo_por_cuenta_de_banco s on (s.cuenta_id=c.id)
-where date(fecha) BETWEEN  $P{FECHA_INICIAL} and $P{FECHA_FINAL} and  s.mes = month(fecha) and ejercicio = year(fecha) 
-and m.cuenta_id= $P{CUENTA_ID}
-order by 1,17,18]]></queryString>
+	<parameter name="CARGOS" isForPrompting="true" class="java.math.BigDecimal"/>
+	<parameter name="ABONOS" isForPrompting="true" class="java.math.BigDecimal"/>
+	<parameter name="FINAL" isForPrompting="true" class="java.math.BigDecimal"/>
+	<parameter name="INICIAL" isForPrompting="true" class="java.math.BigDecimal"/>
 
 	<field name="dia" class="java.lang.Long"/>
 	<field name="fecha" class="java.sql.Date"/>
@@ -68,9 +52,6 @@ order by 1,17,18]]></queryString>
 	<field name="orden" class="java.lang.String"/>
 	<field name="date_created" class="java.sql.Timestamp"/>
 	<field name="origen" class="java.lang.String"/>
-	<field name="cargos" class="java.math.BigDecimal"/>
-	<field name="abonos" class="java.math.BigDecimal"/>
-	<field name="final" class="java.math.BigDecimal"/>
 
 	<variable name="ACUMULADO" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
 		<variableExpression><![CDATA[$F{cargo}.add( $F{abono} )]]></variableExpression>
@@ -132,7 +113,7 @@ order by 1,17,18]]></queryString>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 </box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Oblique" size="10" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" />
+						<font pdfFontName="Helvetica-Oblique" size="9" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" />
 					</textElement>
 				<text><![CDATA[P E R I O D O   D E L :]]></text>
 				</staticText>
@@ -149,7 +130,7 @@ order by 1,17,18]]></queryString>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 </box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Oblique" size="10" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" />
+						<font pdfFontName="Helvetica-Oblique" size="9" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" />
 					</textElement>
 				<text><![CDATA[I N I C I A L  :]]></text>
 				</staticText>
@@ -166,7 +147,7 @@ order by 1,17,18]]></queryString>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 </box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Oblique" size="10" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" />
+						<font pdfFontName="Helvetica-Oblique" size="9" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" />
 					</textElement>
 				<text><![CDATA[C A R G O S  :]]></text>
 				</staticText>
@@ -183,7 +164,7 @@ order by 1,17,18]]></queryString>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 </box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Oblique" size="10" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" />
+						<font pdfFontName="Helvetica-Oblique" size="9" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" />
 					</textElement>
 				<text><![CDATA[A B O N O S  :]]></text>
 				</staticText>
@@ -200,7 +181,7 @@ order by 1,17,18]]></queryString>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 </box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font pdfFontName="Courier-Oblique" size="10" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" />
+						<font pdfFontName="Courier-Oblique" size="9" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" />
 					</textElement>
 				<text><![CDATA[S A L D O  :]]></text>
 				</staticText>
@@ -231,7 +212,7 @@ order by 1,17,18]]></queryString>
 						key="textField-11"/>
 					<box></box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-BoldOblique" size="10" isBold="true" isItalic="true" isUnderline="false" isStrikeThrough="false" />
+						<font pdfFontName="Helvetica-BoldOblique" size="9" isBold="true" isItalic="true" isUnderline="false" isStrikeThrough="false" />
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[new String("CUENTA : ").concat($F{numero}).concat("  ").concat($F{descripcion})]]></textFieldExpression>
 				</textField>
@@ -244,9 +225,9 @@ order by 1,17,18]]></queryString>
 						key="textField"/>
 					<box></box>
 					<textElement>
-						<font/>
+						<font size="9"/>
 					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{saldo_inicial}]]></textFieldExpression>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$P{INICIAL}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -257,9 +238,9 @@ order by 1,17,18]]></queryString>
 						key="textField"/>
 					<box></box>
 					<textElement>
-						<font/>
+						<font size="9"/>
 					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{final}]]></textFieldExpression>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$P{FINAL}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -270,9 +251,9 @@ order by 1,17,18]]></queryString>
 						key="textField"/>
 					<box></box>
 					<textElement>
-						<font/>
+						<font size="9"/>
 					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{cargos}]]></textFieldExpression>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$P{CARGOS}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -283,9 +264,9 @@ order by 1,17,18]]></queryString>
 						key="textField"/>
 					<box></box>
 					<textElement>
-						<font/>
+						<font size="9"/>
 					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{abonos}]]></textFieldExpression>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$P{ABONOS}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
@@ -300,7 +281,7 @@ order by 1,17,18]]></queryString>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 </box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Oblique" size="10" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" />
+						<font pdfFontName="Helvetica-Oblique" size="9" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" />
 					</textElement>
 				<text><![CDATA[A L]]></text>
 				</staticText>
@@ -317,7 +298,7 @@ order by 1,17,18]]></queryString>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 </box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Oblique" size="10" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" />
+						<font pdfFontName="Helvetica-Oblique" size="9" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" />
 					</textElement>
 				<textFieldExpression   class="java.util.Date"><![CDATA[$P{FECHA_INICIAL}]]></textFieldExpression>
 				</textField>
@@ -334,7 +315,7 @@ order by 1,17,18]]></queryString>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 </box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Oblique" size="10" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" />
+						<font pdfFontName="Helvetica-Oblique" size="9" isBold="false" isItalic="true" isUnderline="false" isStrikeThrough="false" />
 					</textElement>
 				<textFieldExpression   class="java.util.Date"><![CDATA[$P{FECHA_FINAL}]]></textFieldExpression>
 				</textField>
@@ -358,7 +339,7 @@ order by 1,17,18]]></queryString>
 						key="staticText-9"/>
 					<box></box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica" size="10" isBold="false"/>
+						<font pdfFontName="Helvetica" size="9" isBold="false"/>
 					</textElement>
 				<text><![CDATA[DIA]]></text>
 				</staticText>
@@ -374,30 +355,30 @@ order by 1,17,18]]></queryString>
 						key="staticText-10"/>
 					<box></box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica" size="10" isBold="false"/>
+						<font pdfFontName="Helvetica" size="9" isBold="false"/>
 					</textElement>
 				<text><![CDATA[CONCEPTO]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="399"
+						x="405"
 						y="3"
-						width="69"
+						width="77"
 						height="13"
 						forecolor="#000000"
 						backcolor="#666666"
 						key="staticText-11"/>
 					<box></box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica" size="10" isBold="false"/>
+						<font pdfFontName="Helvetica" size="9" isBold="false"/>
 					</textElement>
 				<text><![CDATA[RETIROS]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="255"
+						x="253"
 						y="3"
 						width="75"
 						height="13"
@@ -406,14 +387,14 @@ order by 1,17,18]]></queryString>
 						key="staticText-12"/>
 					<box></box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica" size="10" isBold="false"/>
+						<font pdfFontName="Helvetica" size="9" isBold="false"/>
 					</textElement>
 				<text><![CDATA[REFERENCIA]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="468"
+						x="480"
 						y="3"
 						width="75"
 						height="13"
@@ -422,7 +403,7 @@ order by 1,17,18]]></queryString>
 						key="staticText-13"/>
 					<box></box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica" size="10" isBold="false"/>
+						<font pdfFontName="Helvetica" size="9" isBold="false"/>
 					</textElement>
 				<text><![CDATA[ACUMULADO]]></text>
 				</staticText>
@@ -453,16 +434,16 @@ order by 1,17,18]]></queryString>
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="330"
+						x="328"
 						y="3"
-						width="69"
+						width="77"
 						height="13"
 						forecolor="#000000"
 						backcolor="#666666"
 						key="staticText-14"/>
 					<box></box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica" size="10" isBold="false"/>
+						<font pdfFontName="Helvetica" size="9" isBold="false"/>
 					</textElement>
 				<text><![CDATA[DEPOSITOS]]></text>
 				</staticText>
@@ -471,14 +452,14 @@ order by 1,17,18]]></queryString>
 						mode="Transparent"
 						x="226"
 						y="3"
-						width="29"
+						width="27"
 						height="13"
 						forecolor="#000000"
 						backcolor="#666666"
 						key="staticText-15"/>
 					<box></box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica" size="10" isBold="false"/>
+						<font pdfFontName="Helvetica" size="9" isBold="false"/>
 					</textElement>
 				<text><![CDATA[ORI]]></text>
 				</staticText>
@@ -495,20 +476,20 @@ order by 1,17,18]]></queryString>
 						key="textField"/>
 					<box></box>
 					<textElement>
-						<font/>
+						<font size="10"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{dia}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="255"
+						x="253"
 						y="1"
 						width="75"
 						height="13"
 						key="textField"/>
 					<box></box>
 					<textElement>
-						<font/>
+						<font size="10"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{referencia}]]></textFieldExpression>
 				</textField>
@@ -521,7 +502,7 @@ order by 1,17,18]]></queryString>
 						key="textField"/>
 					<box></box>
 					<textElement>
-						<font/>
+						<font size="10"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{concepto}]]></textFieldExpression>
 				</textField>
@@ -529,53 +510,57 @@ order by 1,17,18]]></queryString>
 					<reportElement
 						x="226"
 						y="1"
-						width="29"
+						width="27"
 						height="13"
 						key="textField"/>
 					<box></box>
 					<textElement>
-						<font/>
+						<font size="10"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{origen}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="330"
+						x="328"
 						y="1"
-						width="69"
+						width="77"
 						height="13"
-						key="textField"/>
+						key="textField">
+							<printWhenExpression><![CDATA[new  Boolean($F{abono}.doubleValue() != 0.00)]]></printWhenExpression>
+						</reportElement>
 					<box></box>
 					<textElement textAlignment="Right">
-						<font/>
+						<font size="10"/>
 					</textElement>
 				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{abono}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="399"
+						x="405"
 						y="1"
-						width="69"
+						width="77"
 						height="13"
-						key="textField"/>
+						key="textField">
+							<printWhenExpression><![CDATA[new  Boolean($F{cargo}.doubleValue() != 0.00)]]></printWhenExpression>
+						</reportElement>
 					<box></box>
 					<textElement textAlignment="Right">
-						<font/>
+						<font size="10"/>
 					</textElement>
 				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{cargo}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="468"
+						x="480"
 						y="1"
 						width="75"
 						height="13"
 						key="textField"/>
 					<box></box>
 					<textElement textAlignment="Right">
-						<font/>
+						<font size="10"/>
 					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{saldo_inicial}.add($V{ACUMULADO})]]></textFieldExpression>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$P{INICIAL}.add($V{ACUMULADO})]]></textFieldExpression>
 				</textField>
 			</band>
 		</detail>
@@ -808,7 +793,7 @@ order by 1,17,18]]></queryString>
 			</band>
 		</lastPageFooter>
 		<summary>
-			<band height="50"  isSplitAllowed="true" >
+			<band height="0"  isSplitAllowed="true" >
 			</band>
 		</summary>
 </jasperReport>

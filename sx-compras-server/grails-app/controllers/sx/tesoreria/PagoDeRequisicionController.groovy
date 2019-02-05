@@ -51,7 +51,10 @@ class PagoDeRequisicionController {
 
     def generarCheque() {
         log.info('Genera cheque {}', params)
-        Requisicion requisicion = pagoDeRequisicionService.generarCheque(params.id.toString())
+        String id = params.id.toString()
+        String referencia = params.referencia.toString()
+        Requisicion requisicion = pagoDeRequisicionService
+                .generarCheque(id, referencia)
         [requisicion: requisicion]
     }
 
@@ -94,7 +97,7 @@ class PagoDeRequisicion implements  Validateable{
 
 class CancelacionDeCheque implements  Validateable{
     Requisicion requisicion
-    Date fecha
+    Date fecha = new Date()
     String comentario
 
     String toString() {

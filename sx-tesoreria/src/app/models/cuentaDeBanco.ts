@@ -19,4 +19,6 @@ export interface CuentaDeBanco {
   bancoSat?: { id: string };
   comisionPorTransferencia?: number;
   cuentaConcentradora?: boolean;
+  rendimientoTasa?: number;
+  tasaIsr?: number;
 }

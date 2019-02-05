@@ -1,0 +1,8 @@
+import sx.contabilidad.Poliza
+
+model {
+	Iterable<Poliza> polizaList
+}
+
+json tmpl.poliza(polizaList ?: [])
+

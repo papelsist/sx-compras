@@ -25,7 +25,7 @@ import { CxPFilter } from '../../model';
       <sx-proveedor-field formControlName="proveedor"></sx-proveedor-field>
       <div layout="column">
         <h3>Registros {{form.value.registros}}</h3>
-        <mat-slider thumbLabel step="10" tickInterval="10" min="10" max="200" formControlName="registros" flex></mat-slider>
+        <mat-slider thumbLabel step="20" tickInterval="20" min="20" max="1000" formControlName="registros" flex></mat-slider>
       </div>
     </mat-dialog-content>
 
@@ -63,7 +63,7 @@ export class FacturasFilterComponent implements OnInit {
       proveedor: [null],
       registros: [
         100,
-        [Validators.required, Validators.min(10), Validators.max(300)]
+        [Validators.required, Validators.min(10), Validators.max(3000)]
       ]
     });
   }

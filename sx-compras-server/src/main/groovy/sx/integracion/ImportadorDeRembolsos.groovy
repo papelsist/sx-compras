@@ -19,16 +19,21 @@ class ImportadorDeRembolsos {
 
     ImportadorDeRembolsos importar(Periodo periodo) {
         def select = """
-    	select c.sucursal_id, c.tipo as gtipo, t.*,d.documento,pp.rfc as rfc2, 
-    	c.proveedor_id as prov , pp.nombre as provNombre
+    	select
+    	t.*, 
+    	c.sucursal_id, 
+    	c.tipo as gtipo,
+    	d.documento,
+    	pp.rfc as rfc2, 
+    	c.proveedor_id as prov , 
+    	pp.nombre as provNombre
         from sw_trequisicion t 
         join sw_trequisiciondet d on(t.requisicion_id = d.requisicion_id)
         join sx_gas_facxreq2 g on(g.requisicionesdet_id = d.requisicionde_id)
         join sw_facturas_gastos f on(g.factura_id = f.id)
         join sw_gcompra c on(f.compra_id = c.compra_id)
         join sw_gproveedor pp on(pp.proveedor_id = c.proveedor_id)
-        where origen = 'GASTOS' and pp.rfc is null
-        and date(t.fecha) between ? and ? 
+        where date(t.fecha) between ? and ? 
         order by t.fecha """
         def rows = getRows(select, periodo.fechaInicial, periodo.fechaFinal)
         rows.each { row ->
@@ -37,21 +42,73 @@ class ImportadorDeRembolsos {
             }catch(Exception ex) {
                 ex.printStackTrace()
                 def message = ExceptionUtils.getRootCauseMessage(ex)
-                log.error('Error importando {} {}', row.requsicion_id, message)
+                log.error('Error importando {} {}', row.REQUISICION_ID, message)
             }
         }
         return this
     }
 
+    ImportadorDeRembolsos importarPorId(Long id) {
+        def select = """
+    	select
+    	t.*, 
+    	c.sucursal_id, 
+    	c.tipo as gtipo,
+    	d.documento,
+    	pp.rfc as rfc2, 
+    	c.proveedor_id as prov , 
+    	pp.nombre as provNombre
+        from sw_trequisicion t 
+        join sw_trequisiciondet d on(t.requisicion_id = d.requisicion_id)
+        join sx_gas_facxreq2 g on(g.requisicionesdet_id = d.requisicionde_id)
+        join sw_facturas_gastos f on(g.factura_id = f.id)
+        join sw_gcompra c on(f.compra_id = c.compra_id)
+        join sw_gproveedor pp on(pp.proveedor_id = c.proveedor_id)
+        where t.requisicion_id = ? """
+        def rows = getRows(select, id)
+        rows.each { row ->
+            try {
+                Rembolso rem = importarRembolso(row)
+                if(rem != null) {
+                    def egresoRow = findEgreso(getSql(), rem)
+                    MovimientoDeCuenta egreso = importarEgreso(egresoRow, rem)
+                    rem.egreso = egreso
+                    if(egreso.formaDePago == 'CHEQUE') {
+                        Cheque cheque = new Cheque()
+                        cheque.cuenta = egreso.cuenta
+                        cheque.nombre = egreso.afavor
+                        cheque.fecha = egreso.fecha
+                        cheque.folio = egreso.referencia.toLong()
+                        cheque.importe = egreso.importe.abs()
+                        cheque.impresion = egresoRow.impreso
+                        cheque.cobrado = egresoRow.FECHACOBRADO
+                        cheque.save failOnError: true, flush: true
+                        egreso.cheque = cheque
+                    }
+                    rem.save flush: true
+                    return rem
+                }
+
+            }catch(Exception ex) {
+                ex.printStackTrace()
+                def message = ExceptionUtils.getRootCauseMessage(ex)
+                log.error('Error importando {} {}', row.REQUISICION_ID, message)
+                return null
+            }
+        }
+        return null
+    }
+
     def importarRembolso(def row) {
-        log.info('Impotando: {}', row)
+
         def found = Rembolso.where{sw2 == row.REQUISICION_ID}.find()
         if(found){
             log.info('Rembolso ya iportado: {} ', row.REQUISICION_ID)
-            return
+            return null
         }
         Rembolso rembolso = new Rembolso()
         rembolso.with {
+            formaDePago = row.FORMADEPAGO == 1 ? 'CHEQUE' : 'TRANSFERENCIA'
             sw2 = row.REQUISICION_ID
             sucursal = Sucursal.where{ sw2 == row.sucursal_id}.find()
             concepto = 'REMBOLSO'
@@ -64,8 +121,9 @@ class ImportadorDeRembolsos {
             createUser = 'ADMIN'
             updateUser = 'ADMIN'
         }
-        rembolso = rembolso.save flush: true
+        rembolso = rembolso.save failOnError: true, flush: true
         log.info("Rembolso importado {}", rembolso.id)
+        return rembolso
     }
 
     ImportadorDeRembolsos importarEgresos(Periodo periodo){
@@ -92,9 +150,40 @@ class ImportadorDeRembolsos {
 
         }
         db.close()
-
-
         return this
+    }
+
+
+
+    def findEgreso(Sql db, Rembolso row) {
+        def SQL = """
+    	select * from sw_bcargoabono 
+         where cargoabono_id = (select cargoabono_id from sw_trequisicion where requisicion_id = ?)
+        """
+        return db.firstRow(SQL,[row.sw2])
+    }
+
+    MovimientoDeCuenta importarEgreso(def row, Rembolso rembolso) {
+        def cuenta = CuentaDeBanco.where{sw2 == row.cuenta_id}.find()
+        MovimientoDeCuenta egreso = new MovimientoDeCuenta()
+        egreso.tipo = 'REMBOLSO'
+        egreso.importe = row.importe
+        egreso.fecha = row.fecha
+        egreso.concepto = 'REMBOLSO'
+        egreso.moneda = Currency.getInstance(row.moneda)
+        egreso.tipoDeCambio = row.tc
+        egreso.comentario = row.comentario
+        egreso.conceptoReporte = row.afavor
+        egreso.formaDePago = rembolso.formaDePago
+        egreso.referencia = row.referencia
+        egreso.afavor = row.afavor
+        egreso.cuenta = cuenta
+        egreso.createUser = 'admin'
+        egreso.updateUser = 'admin'
+        egreso.sw2 = row.cargoabono_id
+        // requisicionDeGastos.save(flush: true)
+        // egreso.save failOnError: true, flush: true
+        return egreso
     }
 
     ImportadorDeRembolsos importarCheques(Periodo periodo) {
@@ -118,7 +207,7 @@ class ImportadorDeRembolsos {
                 cheque.fecha = egreso.fecha
                 cheque.folio = egreso.referencia.toLong()
                 cheque.importe = egreso.importe.abs()
-                cheque.egreso = egreso
+                // cheque.egreso = egreso
                 cheque.impresion = row.impreso
                 cheque.cobrado = row.FECHACOBRADO
 
@@ -134,38 +223,6 @@ class ImportadorDeRembolsos {
         }
         db.close()
         return this
-    }
-
-
-
-    def findEgreso(Sql db, Rembolso row) {
-        def SQL = """
-    	select * from sw_bcargoabono 
-         where cargoabono_id = (select cargoabono_id from sw_trequisicion where requisicion_id = ?)
-        """
-        return db.firstRow(SQL,[row.sw2])
-    }
-
-    MovimientoDeCuenta importarEgreso(def row, Rembolso rembolso) {
-        def cuenta = CuentaDeBanco.where{sw2 == row.cuenta_id}.find()
-        MovimientoDeCuenta egreso = new MovimientoDeCuenta()
-        egreso.tipo = 'GASTO'
-        egreso.importe = row.importe
-        egreso.fecha = row.fecha
-        egreso.concepto = 'REMBOLSO'
-        egreso.moneda = Currency.getInstance(row.moneda)
-        egreso.tipoDeCambio = row.tc
-        egreso.comentario = row.comentario
-        egreso.formaDePago = rembolso.formaDePago
-        egreso.referencia = row.referencia
-        egreso.afavor = row.afavor
-        egreso.cuenta = cuenta
-        egreso.createUser = 'admin'
-        egreso.updateUser = 'admin'
-        egreso.sw2 = row.cargoabono_id
-        // requisicionDeGastos.save(flush: true)
-        // egreso.save failOnError: true, flush: true
-        return egreso
     }
 
 

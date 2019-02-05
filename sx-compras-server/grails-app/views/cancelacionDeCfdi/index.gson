@@ -1,0 +1,8 @@
+import sx.cfdi.CancelacionDeCfdi
+
+model {
+	Iterable<CancelacionDeCfdi> cancelacionDeCfdiList
+}
+
+json tmpl.cancelacionDeCfdi(cancelacionDeCfdiList ?: [])
+

@@ -92,7 +92,6 @@ class RembolsoController extends RestfulController {
     @Override
     protected Object updateResource(Object resource) {
         logUser(resource)
-        resource.nombre = resource.sucursal.nombre
         resource.save flush: true
     }
 
@@ -105,7 +104,7 @@ class RembolsoController extends RestfulController {
     @CompileDynamic
     def pendientes() {
         log.info('Pendientes: {}', params)
-        params.max = 30
+        params.max = 100
 
         def q = CuentaPorPagar.where {tipo == 'GASTOS' && pagos <= 0}
 

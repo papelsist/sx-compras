@@ -1,0 +1,14 @@
+import sx.tesoreria.EstadoDeCuenta
+
+model {
+    EstadoDeCuenta estadoDeCuenta
+}
+
+json {
+    cuenta g.render(estadoDeCuenta.cuenta)
+    saldoInicial estadoDeCuenta.saldoInicial
+    cargos estadoDeCuenta.cargos
+    abonos estadoDeCuenta.abonos
+    saldoFinal estadoDeCuenta.saldoFinal
+    movimientos g.render(estadoDeCuenta.movimientos)
+}

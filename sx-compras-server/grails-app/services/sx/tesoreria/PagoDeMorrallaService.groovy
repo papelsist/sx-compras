@@ -39,6 +39,7 @@ abstract class PagoDeMorrallaService implements  LogUser{
             ingreso.formaDePago = pago.formaDePago
             ingreso.referencia = pago.referencia
             ingreso.afavor = pago.proveedor.nombre
+            ingreso.conceptoReporte = ingreso.afavor
             pago.addToMovimientos(ingreso)
             logEntity(ingreso)
 

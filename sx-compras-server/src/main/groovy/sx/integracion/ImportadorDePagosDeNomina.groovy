@@ -55,16 +55,17 @@ class ImportadorDePagosDeNomina {
             FROM calendario c join calendario_det d on(d.calendario_id=c.id) join nomina n on(n.calendario_det_id=d.id)
             join nomina_por_empleado ne on(ne.nomina_id=n.id) join empleado e on(ne.empleado_id=e.id) join pension_alimenticia p on(p.empleado_id=e.id)
             where p.tipo_de_pago='MENSUAL' and n.ejercicio=@EJERCICIO and ne.total>0 and n.periodicidad='@PERIODICIDAD'  and n.tipo='@TIPO'
-            and concat(d.mes,'-',@FOLIO)=( SELECT concat(x.mes,'-',max(folio)) FROM calendario_det x join calendario y on(x.calendario_id=y.id) where y.comentario='NOMINA' and y.ejercicio=c.ejercicio and y.tipo=substr(n.periodicidad,1,LENGTH(n.periodicidad)-1)  and d.mes=x.mes )
+            and concat(d.mes,'-',@FOLIO)=( SELECT concat(x.mes,'-',max(folio)) FROM calendario_det x join calendario y on(x.calendario_id=y.id) where y.comentario=(CASE WHEN '@TIPO'='GENERAL' THEN 'NOMINA' ELSE '@TIPO' END) 
+            and y.ejercicio=c.ejercicio and y.tipo=substr(n.periodicidad,1,LENGTH(n.periodicidad)-1)  and d.mes=x.mes )
             group by e.id
     	"""
         select = select.replaceAll("@EJERCICIO", ejercicio.toString())
         select = select.replaceAll("@PERIODICIDAD", periodicidad)
         select = select.replaceAll("@FOLIO", folio.toString())
         select = select.replaceAll("@TIPO", tipo)
-        log.info('SQL: ', select)
+        log.info('SQL: {}', select)
         def rows = getRows(select)
-        log.info('Rows: ', rows)
+        log.info('Rows: {}', rows.size())
         def res =  []
         rows.each { row ->
             try {

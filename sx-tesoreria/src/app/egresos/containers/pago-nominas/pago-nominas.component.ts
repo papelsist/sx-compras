@@ -4,8 +4,7 @@ import { Store, select } from '@ngrx/store';
 import * as fromRoot from 'app/store';
 import * as fromStore from '../../store';
 import * as fromActions from '../../store/actions/pago-nomina.actions';
-import { PagoDeNomina } from '../../models';
-import { PeriodoFilter } from 'app/models';
+import { PagoDeNomina, PagosDeNominaFilter } from '../../models';
 
 import { Observable } from 'rxjs';
 
@@ -23,8 +22,11 @@ import {
     <ng-template  tdLoading [tdLoadingUntil]="!(loading$ | async)" tdLoadingStrategy="overlay">
 
       <sx-search-title title="Pagos de nómina" (search)="search = $event">
-        <sx-periodo-filter-btn [filter]="filter$ | async" class="options" (change)="onFilterChange($event)"></sx-periodo-filter-btn>
 
+        <sx-pagos-de-nomina-filter-btn [filter]="filter$ | async"
+          class="options"
+          (change)="onFilterChange($event)">
+        </sx-pagos-de-nomina-filter-btn>
         <button mat-menu-item class="actions" (click)="reload()"><mat-icon>refresh</mat-icon> Recargar</button>
         <a mat-menu-item  color="accent"[routerLink]="['create']" class="actions">
           <mat-icon>add</mat-icon> Importar
@@ -37,7 +39,8 @@ import {
           [filter]="search">
         </sx-pagos-nomina-table>
       <mat-card-footer>
-        <sx-periodo-filter-label [filter]="filter$ | async"></sx-periodo-filter-label>
+        <sx-pagos-de-nomina-filter-label [filter]="filter$ | async">
+        </sx-pagos-de-nomina-filter-label>
       </mat-card-footer>
     </ng-template>
     </mat-card>
@@ -61,7 +64,7 @@ import {
 export class PagoNominasComponent implements OnInit {
   pagos$: Observable<PagoDeNomina[]>;
   search = '';
-  filter$: Observable<PeriodoFilter>;
+  filter$: Observable<PagosDeNominaFilter>;
   loading$: Observable<boolean>;
 
   constructor(
@@ -82,7 +85,7 @@ export class PagoNominasComponent implements OnInit {
     );
   }
 
-  onFilterChange(filter: PeriodoFilter) {
+  onFilterChange(filter: PagosDeNominaFilter) {
     this.store.dispatch(new fromStore.SetPagoDeNominasFilter({ filter }));
   }
 

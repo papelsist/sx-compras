@@ -63,17 +63,19 @@ export class PagoDeRequisicionEffects {
       fromActions.PagoRequisicionActionTypes.GenerarCheque
     ),
     mergeMap(action => {
-      return this.service.generarCheque(action.payload.requisicion).pipe(
-        map(requisicion => {
-          const tipo = requisicion.tipo;
-          if (tipo === 'COMPRAS') {
-            return new fromCompras.UpsertCompra({ requisicion });
-          } else {
-            return new fromGastos.UpsertGasto({ requisicion });
-          }
-        }),
-        catchError(response => of(new fromRoot.GlobalHttpError({ response })))
-      );
+      return this.service
+        .generarCheque(action.payload.requisicion.id, action.payload.referencia)
+        .pipe(
+          map(requisicion => {
+            const tipo = requisicion.tipo;
+            if (tipo === 'COMPRAS') {
+              return new fromCompras.UpsertCompra({ requisicion });
+            } else {
+              return new fromGastos.UpsertGasto({ requisicion });
+            }
+          }),
+          catchError(response => of(new fromRoot.GlobalHttpError({ response })))
+        );
     })
   );
 

@@ -1,9 +1,11 @@
 package sx.contabilidad
 
 import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
 import sx.sat.CuentaSat
 
 @EqualsAndHashCode(includes='clave')
+@ToString(includes='clave, tipo, subtipo, detalle',includeNames=true,includePackage=false)
 class CuentaContable {
 
     String clave
@@ -42,15 +44,21 @@ class CuentaContable {
 
     Date lastUpdated
 
+    String createUser
+
+    String updateUser
+
     static hasMany = [subcuentas:CuentaContable]
 
     static constraints = {
         clave nullable:true,maxSize:100 , unique:true
         descripcion blank:false,maxSize:300
         tipo inList:['ACTIVO','PASIVO','CAPITAL','ORDEN']
-        subTipo inList: ['CIRCULANTE', 'FIJO', 'DIFERIDO', 'CORTO_PLAZO', 'CAPITAL', 'ORDEN']
+        subTipo inList: ['CIRCULANTE', 'FIJO', 'DIFERIDO', 'CORTO_PLAZO', 'LARGO_PLAZO', 'CAPITAL', 'ORDEN']
         naturaleza inList:['DEUDORA','ACREEDORA']
         cuentaSat nullable:true
+        createUser nullable: true
+        updateUser nullable: true
     }
 
     static mapping ={

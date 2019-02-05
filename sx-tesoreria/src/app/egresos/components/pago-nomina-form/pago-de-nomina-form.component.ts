@@ -24,6 +24,8 @@ export class PagoDeNominaFormComponent implements OnInit, OnChanges {
   @Output()
   cancel = new EventEmitter();
 
+  total: number;
+
   constructor() {}
 
   ngOnInit() {}
@@ -31,6 +33,8 @@ export class PagoDeNominaFormComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     if (changes.pagoNomina && changes.pagoNomina.currentValue) {
       // console.log('Pago: ', changes.pagoNomina.currentValue);
+      // this.pagoNomina.total
+      this.total = changes.pagoNomina.currentValue.total;
     }
   }
 }

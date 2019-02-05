@@ -5,6 +5,8 @@ import grails.compiler.GrailsCompileStatic
 import grails.gorm.DetachedCriteria
 import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.*
+import groovy.transform.CompileDynamic
+import groovy.transform.ToString
 import groovy.util.logging.Slf4j
 
 import org.apache.commons.lang3.exception.ExceptionUtils
@@ -30,15 +32,34 @@ class PagoDeNominaController extends RestfulController<PagoDeNomina> {
     }
 
     @Override
+    @CompileDynamic
     protected List listAllResources(Map params) {
         params.sort = params.sort ?:'pago'
         params.order = params.order ?:'asc'
-
+        params.max = params.max?: 500
         log.debug('List : {}', params)
         Periodo periodo = (Periodo)params.periodo
+        def pendientes = this.params.getBoolean('pendientes', false)
 
-        def criteria = new DetachedCriteria(PagoDeNomina).build {
-            between("lastUpdated", periodo.fechaInicial, periodo.fechaFinal)
+        def criteria = new DetachedCriteria(PagoDeNomina).build {}
+        if(pendientes) {
+            criteria = criteria.build {
+                isNull('egreso')
+            }
+            def cheques = new DetachedCriteria(PagoDeNomina).build {
+                isNotNull('egreso')
+                eq('formaDePago', 'CHEQUE')
+                egreso {
+                    isNull('cheque')
+                }
+            }
+            List<PagoDeNomina> res = criteria.list(params)
+            res.addAll(cheques.list(params))
+            return res
+        } else {
+            criteria = criteria.build {
+                between("pago", periodo.fechaInicial, periodo.fechaFinal)
+            }
         }
         return criteria.list(params)
     }
@@ -52,6 +73,15 @@ class PagoDeNominaController extends RestfulController<PagoDeNomina> {
     @Override
     protected void deleteResource(PagoDeNomina resource) {
         pagoDeNominaService.delete(resource.id)
+    }
+
+    def cancelar(PagoDeNomina pago) {
+        if(pago == null) {
+            notFound()
+            return
+        }
+        pagoDeNominaService.cancelarCheque(pago)
+        respond pago
     }
 
     def importar(ImportadorParaPagoDeNomina command){
@@ -68,16 +98,30 @@ class PagoDeNominaController extends RestfulController<PagoDeNomina> {
             notFound()
             return
         }
-
-        PagoDeNomina pagoDeNomina =   pagoDeNominaService.pagar(pago.pagoDeNomina, pago.cuenta, pago.referencia)
+        // log.info('Pagar nomina por {}', pago)
+        PagoDeNomina pagoDeNomina =   pagoDeNominaService
+                .pagar(pago.pagoDeNomina, pago.fecha, pago.cuenta, pago.referencia, pago.importe)
         respond pagoDeNomina
+    }
+
+    def generarCheque(PagoDeNomina pago) {
+        if(pago == null){
+            notFound()
+            return
+        }
+        String referencia = params.referencia
+        MovimientoDeCuenta egreso = pago.egreso
+        egreso.referencia = referencia
+        pagoDeNominaService.generarCheque(egreso)
+        pago.refresh()
+        respond pago
     }
 
 
     def handleException(Exception e) {
         String message = ExceptionUtils.getRootCauseMessage(e)
         e.printStackTrace()
-        log.error(message, ExceptionUtils.getRootCause(e))
+        log.error(message, e)
         respond([message: message], status: 500)
     }
 }
@@ -89,11 +133,14 @@ class ImportadorParaPagoDeNomina {
     String tipo
 }
 
+@ToString
 class PagoDeNominaCommand {
 
     PagoDeNomina pagoDeNomina
     CuentaDeBanco cuenta
     String referencia
+    Date fecha
+    BigDecimal importe
 
     static constraints = {
         referencia nullable: true

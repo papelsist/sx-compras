@@ -6,6 +6,7 @@ import { CuentasRoutingModule } from './cuentas-routing.module';
 
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
+import { AgGridModule } from 'ag-grid-angular';
 
 import { reducers, effects } from './store';
 
@@ -19,6 +20,7 @@ import { guards } from './guards';
     SharedModule,
     CuentasRoutingModule,
     ReportesModule,
+    AgGridModule.withComponents([]),
     StoreModule.forFeature('cuentas', reducers),
     EffectsModule.forFeature(effects)
   ],

@@ -1,0 +1,8 @@
+import sx.sat.CatalogoDeCuentas
+
+model {
+	Iterable<CatalogoDeCuentas> catalogoDeCuentasList
+}
+
+json tmpl.catalogoDeCuentas(catalogoDeCuentasList ?: [])
+

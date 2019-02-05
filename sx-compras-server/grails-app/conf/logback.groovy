@@ -14,12 +14,9 @@ appender('STDOUT', ConsoleAppender) {
     encoder(PatternLayoutEncoder) {
         charset = Charset.forName('UTF-8')
 
-        pattern =
-                '%clr(%d{dd-MM-yy HH:mm}){faint} ' + // Date
-                        '%clr(%5p) ' + // Log level
-                        //'%clr(---){faint} %clr([%15.15t]){faint} ' + // Thread
-                        '%clr(%-40.40logger{39}){cyan} %clr(:){faint} ' + // Logger
-                        '%m%n%wex' // Message
+        pattern ='%clr(%5p) ' + // Log level
+                '%logger{0} ' + // Logger
+                '%msg%n' // Message
     }
 }
 
@@ -70,6 +67,10 @@ if (Environment.isDevelopmentMode() && targetDir != null) {
     logger("sx.integracion", DEBUG, ['STDOUT'], false)
     logger("sx.bi", DEBUG, ['STDOUT'], false)
     logger("sx.cxc", DEBUG, ['STDOUT'], false)
+    logger("sx.contabilidad", DEBUG, ['STDOUT'], false)
+    logger("sx.sat", DEBUG, ['STDOUT'], false)
+    logger("sx.cfdi", DEBUG, ['STDOUT'], false)
+    logger("sx.utils", DEBUG, ['STDOUT'], false)
 
 
     // Log Listeners

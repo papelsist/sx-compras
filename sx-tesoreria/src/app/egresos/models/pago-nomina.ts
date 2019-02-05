@@ -24,11 +24,20 @@ export interface PagoDeNomina {
   lastUpdated: string;
   createUser: string;
   updateUser: string;
+  referencia?: string;
 }
 
 export interface PagoDeNominaCommand {
   pagoDeNomina: number;
   cuenta: string;
+  fecha: Date;
   referencia: string;
   importe?: number;
+}
+
+export class PagosDeNominaFilter {
+  fechaInicial?: Date;
+  fechaFinal?: Date;
+  registros?: number;
+  pendientes: boolean;
 }

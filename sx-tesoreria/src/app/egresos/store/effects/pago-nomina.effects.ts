@@ -84,6 +84,38 @@ export class PagoDeNominaEffects {
     })
   );
 
+  /*
+  @Effect()
+  pagoFail$ = this.actions$.pipe(
+    ofType<fromActions.PagarNominaFial>(
+      PagoDeNominaActionTypes.PagarNominaFial
+    ),
+    map(action => action.payload),
+    map(action => [
+      new fromRoot.GlobalHttpError({ response: action.response }),
+      new fromRoot.Go({ path: ['egresos/pagoNominas'] })
+    ])
+  );
+  */
+
+  @Effect()
+  cheque$ = this.actions$.pipe(
+    ofType<fromActions.GenerarChequeDePago>(
+      PagoDeNominaActionTypes.GenerarChequeDePago
+    ),
+    map(action => action.payload),
+    switchMap(payload => {
+      return this.service
+        .generarCheque(payload.pagoId, payload.referencia)
+        .pipe(
+          map(res => new fromActions.GenerarChequeDePagoSuccess({ pago: res })),
+          catchError(error =>
+            of(new fromActions.PagoDeNominaError({ response: error }))
+          )
+        );
+    })
+  );
+
   @Effect()
   delete$ = this.actions$.pipe(
     ofType<fromActions.DeletePagoDeNomina>(

@@ -58,4 +58,44 @@ export class ReportService {
         }
       );
   }
+
+  runReportWithData(url: string, repParams = {}, data: any) {
+    console.log('Run report with payload: ', repParams);
+    this._loadingService.register();
+    this.runWithData(url, repParams, data)
+      .pipe(finalize(() => this._loadingService.resolve()))
+      .subscribe(
+        res => {
+          const blob = new Blob([res], {
+            type: 'application/pdf'
+          });
+          const fileUrl = window.URL.createObjectURL(blob);
+          window.open(fileUrl, '_blank');
+        },
+        (error: HttpErrorResponse) => {
+          console.log(error);
+          const desc = `${error.message}`;
+          const message = `Error:${error.status}, Rep:${url}`;
+          this.snackBar.open(message, 'Cerrar', { duration: 10000 });
+        }
+      );
+  }
+
+  runWithData(url: string, repParams = {}, data: any): Observable<any> {
+    let params = new HttpParams();
+    _.forIn(repParams, (value, key) => {
+      params = params.set(key, value);
+    });
+    const apiUrl = this.config.buildApiUrl(url);
+    const headers = new HttpHeaders().set('Content-type', 'application/pdf');
+    return this.http.put(
+      apiUrl,
+      data,
+      {
+        headers: headers,
+        params: params,
+        responseType: 'blob'
+      }
+    );
+  }
 }

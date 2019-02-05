@@ -1,0 +1,15 @@
+import sx.cfdi.CancelacionDeCfdi
+
+model {
+	CancelacionDeCfdi cancelacionDeCfdi
+}
+
+json g.render(cancelacionDeCfdi, [excludes: [ 'ack'], resolveTemplate: false]) {
+	serie cancelacionDeCfdi.cfdi.serie
+	folio cancelacionDeCfdi.cfdi.folio
+	fecha cancelacionDeCfdi.cfdi.fecha
+	receptor cancelacionDeCfdi.cfdi.receptor
+	receptorRfc cancelacionDeCfdi.cfdi.receptorRfc
+	total cancelacionDeCfdi.cfdi.total
+	tipo cancelacionDeCfdi.cfdi.tipoDeComprobante
+}

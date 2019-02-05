@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { MaterialModule } from './_material/material.module';
 import { CovalentModule } from './_covalent/covalent.module';
+// import { AgGridModule } from 'ag-grid-angular';
 
 // components
 import { components, entyComponents } from './components';
@@ -19,6 +20,7 @@ import { MAT_DATE_LOCALE } from '@angular/material';
     ReactiveFormsModule,
     MaterialModule,
     CovalentModule
+    // AgGridModule.withComponents([])
   ],
   exports: [
     CommonModule,

@@ -1,18 +1,28 @@
 import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 
-import { PagoDeNomina } from '../../models';
+import { PagoDeNomina, PagosDeNominaFilter } from '../../models';
 
 import {
   PagoDeNominaActions,
   PagoDeNominaActionTypes
 } from '../actions/pago-nomina.actions';
+import { Periodo } from 'app/_core/models/periodo';
 
-import { PeriodoFilter, createPeriodoFilter } from 'app/models';
+export function createPagosDeNominaFilter(dias = 20): PagosDeNominaFilter {
+  const { fechaInicial, fechaFinal } = Periodo.fromNow(dias);
+  const registros = 20;
+  return {
+    fechaInicial,
+    fechaFinal,
+    registros,
+    pendientes: true
+  };
+}
 
 export interface State extends EntityState<PagoDeNomina> {
   loading: boolean;
   loaded: boolean;
-  filter: PeriodoFilter;
+  filter: PagosDeNominaFilter;
   term: string;
 }
 
@@ -23,7 +33,7 @@ export const adapter: EntityAdapter<PagoDeNomina> = createEntityAdapter<
 export const initialState: State = adapter.getInitialState({
   loading: false,
   loaded: false,
-  filter: createPeriodoFilter(90),
+  filter: createPagosDeNominaFilter(30),
   term: ''
 });
 
@@ -40,6 +50,7 @@ export function reducer(
       };
     }
 
+    case PagoDeNominaActionTypes.GenerarChequeDePago:
     case PagoDeNominaActionTypes.DeletePagoDeNomina:
     case PagoDeNominaActionTypes.ImportarPagosDeNomina:
     case PagoDeNominaActionTypes.PagarNomina:
@@ -80,6 +91,7 @@ export function reducer(
       });
     }
 
+    case PagoDeNominaActionTypes.GenerarChequeDePagoSuccess:
     case PagoDeNominaActionTypes.PagarNominaSuccess: {
       return adapter.upsertOne(action.payload.pago, {
         ...state,

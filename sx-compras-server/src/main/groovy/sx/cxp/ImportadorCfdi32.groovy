@@ -14,6 +14,7 @@ import sx.cxp.ComprobanteFiscal
 
 
 @Component
+@Slf4j
 class ImportadorCfdi32{
 
     
@@ -24,6 +25,7 @@ class ImportadorCfdi32{
         String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss"
 
         def data = xml.attributes()
+        log.info('Building CFDI 3.2 con File: {} Tipo: {}', fileName, origen)
 
         def receptorNode = xml.breadthFirst().find { it.name() == 'Receptor'}
         def receptorNombre = receptorNode.attributes()['nombre']
@@ -38,8 +40,19 @@ class ImportadorCfdi32{
           
 
         def proveedor = Proveedor.findByRfc(emisorRfc)
-        if(!proveedor)
-            throw new ComprobanteFiscalException(message:"El proveedor de RFC: ${emisorRfc} / ${emisorNombre} no esta dado de alta en el sistema")
+        if(!proveedor){
+            if(origen == 'GASTOS') {
+                proveedor = new Proveedor(nombre: emisorNombre, rfc: emisorRfc, tipo: origen)
+                proveedor.clave = "GS${emisorRfc[0..-4]}"
+                proveedor.save(failOnError: true, flush: true)
+                log.info('Nuevo proveedor registrado {}  ', emisorRfc)
+            } else {
+                throw new ComprobanteFiscalException(
+                        message:"El proveedor de RFC: ${emisorRfc} / ${emisorNombre} no esta dado de alta en el sistema")
+
+            }
+        }
+
 
 
         def serie = xml.attributes()['serie']
@@ -57,7 +70,10 @@ class ImportadorCfdi32{
 
         def formaDePago = data['formaDePago']
 
-        def metodoDePago = data['metodoDePago']
+        String metodoDePago = data['metodoDePago'] as String
+        if(metodoDePago && metodoDePago.length() > 2) {
+            metodoDePago = '99'
+        }
         def tipoDeComp =  data['tipoDeComprobante']
         def tipo='I'
         switch(tipoDeComp) {
@@ -69,9 +85,15 @@ class ImportadorCfdi32{
             break
         }
 
-        def moneda = data['Moneda']
-        def tipoDeCamio = data['TipoCambio'] as BigDecimal
-             def comprobanteFiscal=ComprobanteFiscal.findByUuid(uuid)
+        def moneda = data['Moneda'] ?: 'MXN'
+
+        if(moneda != 'MXN' || moneda != 'USD') {
+            moneda = 'MXN'
+        }
+
+
+        def tipoDeCamio = data['TipoCambio'] as BigDecimal ?: 0.0
+        def comprobanteFiscal = ComprobanteFiscal.findByUuid(uuid)
 
         if(comprobanteFiscal){
             return comprobanteFiscal
@@ -101,7 +123,7 @@ class ImportadorCfdi32{
             tipoDeCambio: tipoDeCamio?: 1.0,
             tipo: origen)
         comprobanteFiscal = comprobanteFiscal.save failOnError: true, flush: true
-        println 'Comprobante: ' + comprobanteFiscal.id
+
 
         return comprobanteFiscal
 

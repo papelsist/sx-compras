@@ -2,7 +2,7 @@ import { createSelector } from '@ngrx/store';
 
 import * as fromRoot from 'app/store';
 import * as fromFeature from '../reducers';
-import * as fromMovimientos from '../reducers/movimientos.reducre';
+import * as fromMovimientos from '../reducers/movimientos.reducer';
 
 import { Movimiento } from '../../models/movimiento';
 
@@ -31,6 +31,11 @@ export const getMovimientosLoaded = createSelector(
 export const getMovimientosLoading = createSelector(
   getMovimientosState,
   fromMovimientos.getMovimientosLoading
+);
+
+export const getPeriodoDeMovimientos = createSelector(
+  getMovimientosState,
+  fromMovimientos.getPeriodoDeMovimientos
 );
 
 export const getEgresos = createSelector(getAllMovimientos, movimientos =>

@@ -27,7 +27,7 @@ import * as moment from 'moment';
             <mat-datepicker #myDatepicker></mat-datepicker>
           </mat-form-field>
           <mat-form-field class="pad-left" flex>
-            <input matInput formControlName="cheque" placeholder="Próximo cheque" autocomplete="off">
+            <input matInput formControlName="referencia" placeholder="Próximo cheque" autocomplete="off">
           </mat-form-field>
         </div>
 
@@ -36,7 +36,7 @@ import * as moment from 'moment';
     </mat-dialog-content>
 
     <mat-dialog-actions>
-      <button mat-button [mat-dialog-close]="true" [disabled]="form.invalid">Aceptar</button>
+      <button mat-button [mat-dialog-close]="form.value" [disabled]="form.invalid">Aceptar</button>
       <button mat-button mat-dialog-close>Canelar</button>
     </mat-dialog-actions>
   </form>
@@ -56,7 +56,7 @@ export class GenerarChequeComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.buildForm();
-    this.form.disable();
+    // this.form.disable();
   }
 
   ngOnDestroy() {
@@ -68,8 +68,11 @@ export class GenerarChequeComponent implements OnInit, OnDestroy {
   private buildForm() {
     this.form = this.fb.group({
       fecha: [{ value: this.pago, disabled: true }],
-      cuenta: [this.requisicion.egreso.cuenta],
-      cheque: [this.requisicion.egreso.cuenta.proximoCheque]
+      cuenta: [{ value: this.requisicion.egreso.cuenta, disabled: true }],
+      referencia: [
+        this.requisicion.egreso.cuenta.proximoCheque,
+        Validators.required
+      ]
     });
   }
 

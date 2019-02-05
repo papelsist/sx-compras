@@ -1,6 +1,10 @@
 import { Action } from '@ngrx/store';
 
-import { PagoDeNomina, PagoDeNominaCommand } from '../../models';
+import {
+  PagoDeNomina,
+  PagoDeNominaCommand,
+  PagosDeNominaFilter
+} from '../../models';
 import { Update } from '@ngrx/entity';
 import { PeriodoFilter } from 'app/models';
 
@@ -14,7 +18,11 @@ export enum PagoDeNominaActionTypes {
   ImportarPagosDeNominaSuccess = '[PagoDeNomina API] Importar PagsoDeNomina Success',
 
   PagarNomina = '[PagoDeNomina Component] Pagar nomina',
+  PagarNominaFial = '[PagoDeNomina Effect] Pagar nomina Fail',
   PagarNominaSuccess = '[PagoDeNomina API] Pagar nomina  Success',
+
+  GenerarChequeDePago = '[PagoDeNomina Component] Generar cheque de pago',
+  GenerarChequeDePagoSuccess = '[PagoDeNomina API] Generar cheque de pago  Success',
 
   DeletePagoDeNomina = '[PagoDeNomina Component] Delete PagoDeNomina',
   DeletePagoDeNominaSuccess = '[PagoDeNomina API] Delete PagoDeNomina Success',
@@ -27,7 +35,7 @@ export enum PagoDeNominaActionTypes {
 // Filters
 export class SetPagoDeNominasFilter implements Action {
   readonly type = PagoDeNominaActionTypes.SetPagoDeNominasFilter;
-  constructor(public payload: { filter: PeriodoFilter }) {}
+  constructor(public payload: { filter: PagosDeNominaFilter }) {}
 }
 
 // Load
@@ -55,6 +63,10 @@ export class ImportarPagosDeNominaSuccess implements Action {
 export class PagarNomina implements Action {
   readonly type = PagoDeNominaActionTypes.PagarNomina;
   constructor(public payload: { command: PagoDeNominaCommand }) {}
+}
+export class PagarNominaFial implements Action {
+  readonly type = PagoDeNominaActionTypes.PagarNominaFial;
+  constructor(public payload: { response: any }) {}
 }
 export class PagarNominaSuccess implements Action {
   readonly type = PagoDeNominaActionTypes.PagarNominaSuccess;
@@ -84,6 +96,15 @@ export class UpsertPagoDeNomina implements Action {
   constructor(public payload: { pago: PagoDeNomina }) {}
 }
 
+export class GenerarChequeDePago implements Action {
+  readonly type = PagoDeNominaActionTypes.GenerarChequeDePago;
+  constructor(public payload: { pagoId: number; referencia: string }) {}
+}
+export class GenerarChequeDePagoSuccess implements Action {
+  readonly type = PagoDeNominaActionTypes.GenerarChequeDePagoSuccess;
+  constructor(public payload: { pago: PagoDeNomina }) {}
+}
+
 export type PagoDeNominaActions =
   | SetPagoDeNominasFilter
   | LoadPagoDeNominas
@@ -95,4 +116,6 @@ export type PagoDeNominaActions =
   | DeletePagoDeNomina
   | DeletePagoDeNominaSuccess
   | PagoDeNominaError
-  | UpsertPagoDeNomina;
+  | UpsertPagoDeNomina
+  | GenerarChequeDePago
+  | GenerarChequeDePagoSuccess;

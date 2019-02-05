@@ -36,6 +36,8 @@ class MovimientoDeCuenta {
 
     String comentario
 
+    String conceptoReporte
+
     Long sw2
 
     Date dateCreated
@@ -49,14 +51,22 @@ class MovimientoDeCuenta {
 
     String sucursal
 
+    Long orden
+    Date fechaDeposito
+
+    boolean porIdentificar = false
+
     static belongsTo = [
             movimientoDeTesoreria: MovimientoDeTesoreria,
             requisicion: Requisicion,
             pagoNomina: PagoDeNomina,
             pagoDeMorralla: PagoDeMorralla,
-            devolucionCliente: DevolucionCliente
+            devolucionCliente: DevolucionCliente,
+            ficha: Ficha
     ]
     static mappedBy = [ pagoDeMorralla: "none"]
+
+    static transients = ['orden', 'fechaDeposito']
 
 
     static constraints = {
@@ -78,6 +88,9 @@ class MovimientoDeCuenta {
         pagoNomina nullable: true
         pagoDeMorralla nullable: true
         devolucionCliente nullable: true
+        ficha nullable: true
+        conceptoReporte nullable: true
+        porIdentificar nullable: true
     }
 
     static mapping ={

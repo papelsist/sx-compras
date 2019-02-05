@@ -70,12 +70,13 @@ class ChequeDevueltoService implements  LogUser{
         mov.fecha = chequeDevuelto.cxc.fecha
         mov.formaDePago = 'CHEQUE'
         mov.comentario = "CHEQUE DEVUELTO:  ${chequeDevuelto.cxc.sucursal.nombre} "
+        mov.sucursal = chequeDevuelto.cxc.sucursal.nombre
+        mov.conceptoReporte = "Cargo por cheque devuelto suc: ${chequeDevuelto.cxc.sucursal.nombre}"
         mov.cuenta = chequeDevuelto.cheque.ficha.cuentaDeBanco
         mov.afavor = empresa.nombre
         mov.importe = chequeDevuelto.cxc.total * -1
         mov.moneda = mov.cuenta.moneda
         mov.concepto = 'CHEQUE_DEVUELTO'
-        mov.sucursal = chequeDevuelto.cxc.sucursal.nombre
         return mov
     }
 

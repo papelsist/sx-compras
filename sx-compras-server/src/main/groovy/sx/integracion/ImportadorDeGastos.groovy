@@ -4,6 +4,7 @@ package sx.integracion
 
 import sx.cxp.Pago
 import sx.cxp.PagoService
+import sx.cxp.Rembolso
 import sx.tesoreria.Cheque
 import sx.tesoreria.CuentaDeBanco
 import sx.tesoreria.MovimientoDeCuenta
@@ -23,6 +24,75 @@ import sx.utils.Periodo
 
 @Slf4j
 class ImportadorDeGastos {
+
+
+    RequisicionDeGastos importarRequisicion(Long id){
+        def select = """
+    	select c.tipo as gtipo, t.*,d.documento,pp.rfc as rfc2, c.proveedor_id as prov , pp.nombre as provNombre
+        from sw_trequisicion t 
+        join sw_trequisiciondet d on(t.requisicion_id = d.requisicion_id)
+        join sx_gas_facxreq2 g on(g.requisicionesdet_id = d.requisicionde_id)
+        join sw_facturas_gastos f on(g.factura_id = f.id)
+        join sw_gcompra c on(f.compra_id = c.compra_id)
+        join sw_gproveedor pp on(pp.proveedor_id = c.proveedor_id)
+        where t.requisicion_id = ?
+        """
+        Sql db = getSql()
+        Map row = db.firstRow(select,[id])
+        log.info('Importando requisicion: {}, con Reg:{} ', id, row)
+        RequisicionDeGastos req = importarRegistro(row)
+        if(!req.egreso){
+            Map egresoRow = findEgreso(db, req)
+            MovimientoDeCuenta egreso = importarEgreso(egresoRow, req)
+            req.egreso = egreso
+            req.pagada = egreso.fecha
+            req = req.save flush: true
+            log.info('Egreso generado: {}', req.egreso)
+        }
+        if(req.egreso && req.egreso.formaDePago == 'CHEQUE' && req.egreso.cheque == null) {
+
+            log.info('Generando cheque para egreso {}', req.egreso.id)
+            Map egresoRow = findEgreso(db, req)
+            MovimientoDeCuenta egreso = req.egreso
+
+            def chequeFound = Cheque.where{folio == egreso.referencia.toLong()}.find()
+            if(chequeFound) {
+                def mov = MovimientoDeCuenta.where{cheque == chequeFound}.find()
+                def rembolso = Rembolso.where{egreso == mov}.find()
+                if(rembolso) {
+                    log.info("Rembolso: {} ELIMINANDOLO", rembolso)
+                    rembolso.egreso = null
+                    rembolso.delete flush: true
+
+                    mov.cheque = null
+                    mov.delete flush: true
+
+                    chequeFound.delete flush: true
+                }
+            }
+
+
+            Cheque cheque = new Cheque()
+            cheque.cuenta = egreso.cuenta
+            cheque.nombre = egreso.afavor
+            cheque.fecha = egreso.fecha
+            cheque.folio = egreso.referencia.toLong()
+            cheque.importe = egreso.importe.abs()
+            cheque.egreso = egreso
+            cheque.impresion = egresoRow.impreso
+            cheque.cobrado = egresoRow.FECHACOBRADO
+            cheque = cheque.save failOnError: true, flush: true
+            egreso.cheque = cheque
+            egreso.save flush: true
+
+            log.info('Generando cheque: {}', cheque)
+
+        }
+        return req
+
+    }
+
+
 
 
     ImportadorDeGastos importarRequisiciones(Periodo periodo) {
@@ -145,7 +215,7 @@ class ImportadorDeGastos {
         def found = RequisicionDeGastos.where{folio == row.requisicion_id}.find()
         if(found){
             log.info('Req ya iportada: {} ', row.requisicion_id)
-            return
+            return found
         }
         Proveedor proveedor = Proveedor.where{rfc == row.rfc2}.find()
         if(!proveedor) {
@@ -172,6 +242,7 @@ class ImportadorDeGastos {
         req.updateUser = 'ADMIN'
         req.save failOnError:true, flush:true
         log.info("Requisicion importada {}", req.id)
+        return req
     }
 
     def findEgreso(Sql db, RequisicionDeGastos row) {

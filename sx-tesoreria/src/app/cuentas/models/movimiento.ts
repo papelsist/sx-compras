@@ -9,6 +9,7 @@ export interface Movimiento {
   tipo: string;
   referencia: string;
   concepto: string;
+  conceptoReporte: string;
   importe: number;
   moneda: string;
   tipoDeCambio: number;
@@ -20,4 +21,7 @@ export interface Movimiento {
   cuentaNumero?: string;
   banco?: string;
   cheque?: any;
+  deposito?: number;
+  retiro?: number;
+  fechaDeposito?: string;
 }

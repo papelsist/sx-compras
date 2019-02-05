@@ -96,6 +96,7 @@ export class RembolsosEffects {
     })
   );
 
+  @Effect()
   deleteSuccess$ = this.actions$.pipe(
     ofType<fromActions.DeleteRembolsoSuccess>(
       RembolsoActionTypes.DeleteRembolsoSuccess

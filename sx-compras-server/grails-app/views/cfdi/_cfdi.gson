@@ -1,0 +1,7 @@
+import sx.cfdi.Cfdi
+
+model {
+	Cfdi cfdi
+}
+
+json g.render(cfdi, [resolveTemplate: false])

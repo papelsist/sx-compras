@@ -1,0 +1,12 @@
+<mat-card layout="column">
+  <sx-search-title title="Productos"></sx-search-title>
+  <mat-divider></mat-divider>
+  <sx-productos-table [productos]="productos$ | async" (select)="onSelect($event)"></sx-productos-table>
+  <mat-divider></mat-divider>
+  <mat-card-footer>
+  </mat-card-footer>
+</mat-card>
+<a mat-fab matTooltip="Alta de producto" matTooltipPosition="before" color="accent" class="mat-fab-position-bottom-right z-3"
+  [routerLink]="['create']">
+  <mat-icon>add</mat-icon>
+</a>

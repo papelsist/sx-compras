@@ -25,7 +25,7 @@ import { RembolsosFilter } from '../../model';
       <sx-sucursal-field [parent]="form"></sx-sucursal-field>
       <div layout="column">
         <h3>Registros {{form.value.registros}}</h3>
-        <mat-slider thumbLabel step="10" tickInterval="10" min="10" max="200" formControlName="registros" flex></mat-slider>
+        <mat-slider thumbLabel step="20" tickInterval="20" min="50" max="1000" formControlName="registros" flex></mat-slider>
       </div>
     </mat-dialog-content>
 
@@ -63,7 +63,7 @@ export class RembolsosFilterComponent implements OnInit {
       sucursal: [null],
       registros: [
         10,
-        [Validators.required, Validators.min(10), Validators.max(300)]
+        [Validators.required, Validators.min(10), Validators.max(3000)]
       ]
     });
   }

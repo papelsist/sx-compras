@@ -11,6 +11,8 @@ import org.apache.commons.lang3.exception.ExceptionUtils
 
 import sx.reports.ReportService
 
+import static org.springframework.http.HttpStatus.OK
+
 @Slf4j
 @GrailsCompileStatic
 @Secured("ROLE_CONTABILIDAD")
@@ -27,18 +29,63 @@ class CuentaContableController extends RestfulController <CuentaContable>{
     }
 
     @Override
-    protected List listAllResources(Map params) {
+    @Secured("IS_AUTHENTICATED_ANONYMOUSLY")
+    def index(Integer max) {
+        // params.max = max?: 5000
+        params.max = max?: 20
         params.sort = params.sort ?:'lastUpdated'
         params.order = params.order ?:'desc'
-        params.max = 2000
-        log.debug('List : {}', params)
-        return CuentaContable.list(params)
+        // log.debug('Index : {}', params)
+        def q = CuentaContable.where {}
+        if(params.getBoolean('mayor')) {
+            q = q.where {padre == null}
+        }
+        if(params.term) {
+            def term = "${params.term}%"
+            // log.info('Term: {}', term)
+            q = q.where {clave =~ term || descripcion =~ term.toUpperCase()}
+        }
+        respond q.list(params)
+        // respond rows, model: [("${resourceName}Count".toString()): countResources()]
+    }
+
+    @CompileDynamic
+    def update() {
+        if(handleReadOnly()) {
+            return
+        }
+
+        CuentaContable instance = CuentaContable.get(params.id)
+        if (instance == null) {
+            transactionStatus.setRollbackOnly()
+            notFound()
+            return
+        }
+
+        instance.properties = getObjectToBind()
+
+        if (instance.hasErrors()) {
+            transactionStatus.setRollbackOnly()
+            respond instance.errors, view:'edit' // STATUS CODE 422
+            return
+        }
+
+        updateResource instance
+        respond instance, [status: OK, view: 'show']
     }
 
 
     @Override
+    protected CuentaContable createResource() {
+        CuentaContable instance = new CuentaContable()
+        bindData instance, getObjectToBind()
+        instance.nivel = instance.padre ? instance.padre.nivel + 1 : 1
+        instance
+    }
+
+    @Override
     protected CuentaContable saveResource(CuentaContable resource) {
-        return cuentaContableService.save(resource)
+        return cuentaContableService.salvarCuenta(resource)
     }
 
     @Override

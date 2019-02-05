@@ -1,0 +1,59 @@
+<table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+  <ng-container matColumnDef="nombre">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Proveedor</th>
+    <td mat-cell *matCellDef="let req" class="cursor-pointer">{{req.nombre}}</td>
+  </ng-container>
+  <ng-container matColumnDef="folio">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Folio</th>
+    <td mat-cell *matCellDef="let req" class="cursor-pointer">{{req.folio}}</td>
+  </ng-container>
+  <ng-container matColumnDef="fecha">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
+    <td mat-cell *matCellDef="let req">{{req.fecha | date: 'dd/MM/yyyy'}}</td>
+  </ng-container>
+  <ng-container matColumnDef="fechaDePago">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha P</th>
+    <td mat-cell *matCellDef="let req">{{req.fechaDePago | date: 'dd/MM/yyyy'}}</td>
+  </ng-container>
+  <ng-container matColumnDef="cerrada">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Cerrada</th>
+    <td mat-cell *matCellDef="let req">{{req.cerrada | date: 'dd/MM/yyyy'}}</td>
+  </ng-container>
+  <ng-container matColumnDef="moneda">
+    <th mat-header-cell *matHeaderCellDef>Moneda</th>
+    <td mat-cell *matCellDef="let req">{{req.moneda}}</td>
+  </ng-container>
+  <ng-container matColumnDef="tipoDeCambio">
+    <th mat-header-cell *matHeaderCellDef>TC</th>
+    <td mat-cell *matCellDef="let req">{{req.tipoDeCambio}}</td>
+  </ng-container>
+  <ng-container matColumnDef="total">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Total</th>
+    <td mat-cell *matCellDef="let req">{{req.total | currency:'USD'}}</td>
+  </ng-container>
+  <ng-container matColumnDef="descuentofImporte">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Dscto F</th>
+    <td mat-cell *matCellDef="let req">{{req.descuentofImporte | currency:'USD'}}</td>
+  </ng-container>
+  <ng-container matColumnDef="apagar">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>A Pagar</th>
+    <td mat-cell *matCellDef="let req">{{req.apagar | currency:'USD'}}</td>
+  </ng-container>
+  <ng-container matColumnDef="comentario">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Pagada</th>
+    <td mat-cell *matCellDef="let req" class="cursor-pointer">
+      <span *ngIf="req.egreso">{{req.pagada | date: 'dd/MM/yyyy'}}</span>
+    </td>
+  </ng-container>
+  <ng-container matColumnDef="operaciones">
+    <th mat-header-cell *matHeaderCellDef></th>
+    <td mat-cell *matCellDef="let req">
+      <mat-icon (click)="edit.emit(req)" class="cursor-pointer pad-right">edit</mat-icon>
+
+      <sx-print-requisicion [requisicion]="req" smallIcon="true"></sx-print-requisicion>
+    </td>
+  </ng-container>
+  <tr mat-header-row *matHeaderRowDef="displayColumns"></tr>
+  <tr mat-row *matRowDef="let req; columns: displayColumns" [ngClass]="{'active': req.selected}" (click)="edit.emit(req)"></tr>
+</table>
+<mat-paginator [pageSizeOptions]="[20, 50, 100, 200]" showFirstLastButtons></mat-paginator>

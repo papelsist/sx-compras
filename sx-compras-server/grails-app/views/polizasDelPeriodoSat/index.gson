@@ -1,0 +1,8 @@
+import sx.sat.PolizasDelPeriodoSat
+
+model {
+	Iterable<PolizasDelPeriodoSat> polizasDelPeriodoSatList
+}
+
+json tmpl.polizasDelPeriodoSat(polizasDelPeriodoSatList ?: [])
+

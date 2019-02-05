@@ -1,0 +1,84 @@
+<mat-card flex>
+  <mat-card-content>
+    <form [formGroup]="form" layout>
+      <div layout="column" flex="50">
+        <sx-upper-case-field
+          placeholder="Nombre"
+          formControlName="nombre"
+        ></sx-upper-case-field>
+        <div layout>
+          <sx-upper-case-field
+            placeholder="RFC"
+            formControlName="rfc"
+          ></sx-upper-case-field>
+          <span flex></span>
+          <sx-upper-case-field
+            placeholder="Clave"
+            formControlName="clave"
+          ></sx-upper-case-field>
+        </div>
+        <div layout>
+          <mat-form-field>
+            <mat-select
+              placeholder="Tipo"
+              formControlName="tipo"
+              class="pad-right"
+            >
+              <mat-option *ngFor="let tipo of ['GASTOS']" [value]="tipo">
+                {{ tipo }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-checkbox formControlName="activo" flex class="pad-left"
+            >Activo</mat-checkbox
+          >
+          <mat-checkbox formControlName="nacional" flex>Nacional</mat-checkbox>
+        </div>
+        <div layout>
+          <mat-form-field class="pad-right">
+            <input
+              matInput
+              placeholder="Teléfono 1"
+              formControlName="telefono1"
+            />
+          </mat-form-field>
+          <mat-form-field class="pad-right">
+            <input
+              matInput
+              placeholder="Teléfono 2"
+              formControlName="telefono2"
+            />
+          </mat-form-field>
+        </div>
+        <div layout>
+          <mat-form-field class="pad-right">
+            <input
+              matInput
+              placeholder="Teléfono 3"
+              formControlName="telefono3"
+            />
+          </mat-form-field>
+        </div>
+      </div>
+      <div layout="column" flex class="pad-left">
+        <mat-accordion>
+          <sx-proveedor-credito [parent]="form" flex></sx-proveedor-credito>
+          <sx-proveedor-direccion [parent]="form" flex></sx-proveedor-direccion>
+        </mat-accordion>
+      </div>
+    </form>
+  </mat-card-content>
+  <mat-divider></mat-divider>
+  <mat-card-actions align="end">
+    <button mat-button (click)="cancel.emit($event)">Cancelar</button>
+    <button
+      mat-button
+      color="primary"
+      (click)="onSubmit()"
+      [disabled]="form.invalid || form.pristine"
+    >
+      <mat-icon>save</mat-icon> Salvar
+    </button>
+    <button mat-icon-button><mat-icon color="accent">print</mat-icon></button>
+  </mat-card-actions>
+</mat-card>

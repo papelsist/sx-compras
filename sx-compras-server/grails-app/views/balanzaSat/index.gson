@@ -1,0 +1,8 @@
+import sx.sat.BalanzaSat
+
+model {
+	Iterable<BalanzaSat> balanzaSatList
+}
+
+json tmpl.balanzaSat(balanzaSatList ?: [])
+

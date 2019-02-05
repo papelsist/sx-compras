@@ -76,7 +76,7 @@ class CompraListenerService {
     }
 
     def buildLog(Compra compra, String destino, String type) {
-        AuditLog log = new AuditLog(
+        Audit alog = new Audit(
                 name: 'Compra',
                 persistedObjectId: compra.id,
                 source: 'CENTRAL',
@@ -84,9 +84,11 @@ class CompraListenerService {
                 tableName: 'compra',
                 eventName: type
         )
-        auditLogDataService.save(log)
+        alog.save flush: true
+        // auditLogDataService.save(log)
+
         compra.partidas.each {
-            AuditLog logDet = new AuditLog(
+            Audit logDet = new Audit(
                     name: 'CompraDet',
                     persistedObjectId: it.id,
                     source: 'CENTRAL',
@@ -94,7 +96,8 @@ class CompraListenerService {
                     tableName: 'compra_det',
                     eventName: type
             )
-            auditLogDataService.save(logDet)
+            logDet.save flush: true
+            // auditLogDataService.save(logDet)
         }
     }
 }

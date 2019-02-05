@@ -112,7 +112,7 @@ class RequisicionDeGastosController extends RestfulController<RequisicionDeGasto
                     and c not in(select d.cxp from RequisicionDet d where d.requisicion.proveedor = c.proveedor)
                     order by c.fecha desc
                  """,
-                [id, 'GASTOS'], [max: 100])
+                [id, 'GASTOS'], [max: 300])
         log.info("Facturas localizadas: {}", facturas.size())
         respond facturas
     }

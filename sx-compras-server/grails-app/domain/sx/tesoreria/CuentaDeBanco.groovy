@@ -49,6 +49,7 @@ class CuentaDeBanco {
 
     Boolean inversion
     BigDecimal rendimientoTasa
+    BigDecimal tasaIsr
     Integer plazo
 
     static constraints = {
@@ -70,6 +71,7 @@ class CuentaDeBanco {
         inversion nullable: true
         rendimientoTasa nullable: true
         plazo nullable: true
+        tasaIsr nullable: true
     }
 
     String toString() {
