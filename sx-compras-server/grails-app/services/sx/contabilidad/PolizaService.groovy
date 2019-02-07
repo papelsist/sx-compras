@@ -19,7 +19,8 @@ abstract class PolizaService implements  LogUser{
     abstract void delete(Serializable id)
 
     Poliza salvarPolza(Poliza poliza) {
-        asignarFolio(poliza)
+        if(!poliza.id)
+            asignarFolio(poliza)
         logEntity(poliza)
         poliza =  save(poliza)
         return poliza

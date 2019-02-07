@@ -26,8 +26,11 @@ class SatPagoOtro {
 
     BigDecimal tipCamb
 
+    String asiento
+
     static constraints = {
         moneda nullable:true
         tipCamb nullable:true, scale: 4
+        asiento nullable: true
     }
 }

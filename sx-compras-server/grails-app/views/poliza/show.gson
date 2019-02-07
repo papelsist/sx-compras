@@ -6,7 +6,7 @@ model {
 
 json g.render(poliza, [excludes: ['partidas'], resolveTemplate: false]) {
 	partidas g.render(poliza.partidas)
-    totalNacional poliza.getTotalNacionales()
-    totalExtranjero poliza.getTotalExtranjeros()
+    totalNacional 0.0 //poliza.getTotalNacionales()
+    totalExtranjero 0.0 //poliza.getTotalExtranjeros()
 
 }

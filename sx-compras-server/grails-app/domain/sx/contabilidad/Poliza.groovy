@@ -43,6 +43,9 @@ class Poliza {
     String createUser
     String updateUser
 
+    Date satComplementos
+    Date satComprobantes
+
     static hasMany = [partidas: PolizaDet]
 
     static constraints = {
@@ -59,11 +62,15 @@ class Poliza {
         updateUser nullable: true
         egreso nullable: true
         sucursal nullable: true
+        satComplementos nullable: true
+        satComprobantes nullable: true
     }
 
     static mapping ={
         partidas cascade: "all-delete-orphan"
         fecha type:'date'
+        satComplementos type:'date'
+        satComprobantes type:'date'
     }
 
     static transients = {'cuadre'}

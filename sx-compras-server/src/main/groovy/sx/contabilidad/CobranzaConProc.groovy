@@ -5,7 +5,9 @@ import org.springframework.stereotype.Component
 
 import sx.core.Sucursal
 import sx.core.Venta
+import sx.cxc.Cobro
 import sx.cxc.CobroCheque
+import sx.cxc.CobroDeposito
 import sx.cxc.CobroTarjeta
 import sx.cxc.CuentaPorCobrar
 import sx.tesoreria.CorteDeTarjeta
@@ -467,16 +469,23 @@ class CobranzaConProc implements  ProcesadorMultipleDePolizas{
         }
         // Fichas depoito
         complementoFichasEfectivo(poliza)
+
+        complementoFichasCheque(poliza)
         complementoTarjetas(poliza)
+        complementoDeposito(poliza)
+        complementoTransferencia(poliza)
+        poliza.satComplementos = new Date()
+        log.info('Complementos generados {}', poliza.satComplementos)
         return poliza
     }
 
     void complementoFichasEfectivo(Poliza poliza) {
-        PolizaDet selected = poliza.partidas.find {it.asiento.contains('FICHA') && it.referencia2.contains('BANCO')}
+        log.info('Complemento de pago: EFECTIVO ' )
+        PolizaDet selected = poliza.partidas.find {it.asiento.contains('FICHA') && it.referencia2.contains('EFECTIVO')}
         if(selected) {
+
             List<PolizaDet> ventas = poliza.partidas.findAll{it.cuenta.clave.startsWith('105') && it.asiento.contains('FICHA')}
             ventas.each { d ->
-                log.info('Evaluando: {}', d)
                 CuentaPorCobrar vta = CuentaPorCobrar.get(d.origen)
                 if(vta.formaDePago == 'EFECTIVO') {
                     SatPagoOtro pagoOtro = new SatPagoOtro()
@@ -485,13 +494,37 @@ class CobranzaConProc implements  ProcesadorMultipleDePolizas{
                     pagoOtro.monto = vta.total
                     pagoOtro.benef = getEmpresa().nombre
                     pagoOtro.metPagoPol = SatMetotoDePago.EFECTIVO.value
+                    pagoOtro.asiento = "${selected.asiento}_EFECTIVO"
                     selected.otros.add(pagoOtro)
                 }
             }
         }
     }
 
+    void complementoFichasCheque(Poliza poliza) {
+        log.info('Complemento de pago: CHEQUE ' )
+        List<PolizaDet> rows = poliza.partidas.findAll {it.asiento.contains('FICHA') && it.referencia2.contains('BANCO')}
+        rows.each { selected ->
+            Ficha ficha = Ficha.get(selected.origen)
+            List<CobroCheque> cheques = CobroCheque.where{ficha == ficha && cambioPorEfectivo == false}.list()
+            cheques.each { che ->
+                SatPagoOtro pagoOtro = new SatPagoOtro()
+                pagoOtro.rfc = che.cobro.cliente.rfc
+                pagoOtro.fecha = selected.poliza.fecha
+                pagoOtro.monto = che.cobro.importe
+                pagoOtro.benef = getEmpresa().nombre
+                pagoOtro.metPagoPol = '99'
+                pagoOtro.asiento = "${selected.asiento}_CHEQUE"
+                selected.otros.add(pagoOtro)
+            }
+        }
+
+    }
+
+
+
     void complementoTarjetas(Poliza poliza) {
+        log.info('Complemento de pago: TARJETA ' )
         List<PolizaDet> found = poliza.partidas
                 .findAll{it.cuenta.clave.startsWith('102') && it.asiento.contains('TARJ') && it.referencia.contains('INGRESO')}
         found.each { selected ->
@@ -506,14 +539,67 @@ class CobranzaConProc implements  ProcesadorMultipleDePolizas{
                     pagoOtro.benef = getEmpresa().nombre
                     if(cc.debitoCredito) {
                         pagoOtro.metPagoPol = SatMetotoDePago.TARJETA_DEBITO.value
-                    } else
+                        pagoOtro.asiento = "${selected.asiento}_DEBITO"
+                    } else {
                         pagoOtro.metPagoPol = SatMetotoDePago.TARJETA_CREDITO.value
+                        pagoOtro.asiento = "${selected.asiento}_CREDITO"
+                    }
                     selected.otros.add(pagoOtro)
                 }
             }
         }
-
     }
+
+    void complementoDeposito(Poliza poliza) {
+        log.info('Complemento de pago: DEPOSITOS EFECTIVO' )
+        List<PolizaDet> depositos = poliza.partidas.findAll{it.asiento.contains('DEP')}
+        depositos = depositos.findAll{it.cuenta.clave.startsWith('102') || it.cuenta.clave.startsWith('105')}
+
+        depositos.each {
+            Cobro cobro = Cobro.get(it.origen)
+            if(cobro) {
+                CobroDeposito cd = cobro.deposito
+                if(cd) {
+                    SatPagoOtro pagoOtro = new SatPagoOtro()
+                    pagoOtro.rfc = cobro.cliente.rfc
+                    pagoOtro.fecha = it.poliza.fecha
+                    pagoOtro.monto = cobro.importe
+                    pagoOtro.benef = getEmpresa().nombre
+                    pagoOtro.metPagoPol = '99'
+                    pagoOtro.asiento = it.asiento
+                    it.otros.add(pagoOtro)
+                }
+            }
+
+        }
+    }
+
+    void complementoTransferencia(Poliza poliza) {
+        log.info('Complemento de pago: TRANSFERENCIAS ' )
+        List<PolizaDet> depositos = poliza.partidas.findAll{it.asiento.contains('TRANSF')}
+        depositos = depositos.findAll{it.cuenta.clave.startsWith('102') || it.cuenta.clave.startsWith('105')}
+
+        depositos.each {
+            Cobro cobro = Cobro.get(it.origen)
+            if(cobro) {
+                CobroDeposito cd = cobro.deposito
+                if(cd) {
+
+                    SatPagoOtro pagoOtro = new SatPagoOtro()
+                    pagoOtro.rfc = cobro.cliente.rfc
+                    pagoOtro.fecha = it.poliza.fecha
+                    pagoOtro.monto = cobro.importe
+                    pagoOtro.benef = getEmpresa().nombre
+                    pagoOtro.metPagoPol = '99'
+                    pagoOtro.asiento = it.asiento
+                    it.otros.add(pagoOtro)
+                }
+            }
+
+        }
+    }
+
+
 
     // QUERYES
     String getCargoBancoQuery() {
