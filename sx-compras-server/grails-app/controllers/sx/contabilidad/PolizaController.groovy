@@ -39,6 +39,12 @@ class PolizaController extends RestfulController<Poliza> {
         super(Poliza)
     }
 
+    @Secured("permitAll")
+    def show() {
+        log.info("Show: {}", params)
+        respond Poliza.get(params.getLong('id'))
+    }
+
     @Override
     protected List<Poliza> listAllResources(Map params) {
         params.sort = params.sort ?:'lastUpdated'
@@ -101,6 +107,7 @@ class PolizaController extends RestfulController<Poliza> {
         respond polizas
     }
 
+
     @Override
     @NotTransactional
     @CompileDynamic
@@ -145,10 +152,29 @@ class PolizaController extends RestfulController<Poliza> {
         respond poliza, [ view:'show']
     }
 
+    @CompileDynamic
+    def generarFolios(String subtipo, Integer ejercicio, Integer mes) {
+        List<Poliza> polizas = polizaService.refoliar(subtipo, ejercicio, mes)
+        respond polizas, [ view: 'index']
+
+    }
+
+    def generarComplementos(Poliza poliza) {
+        if(poliza == null) {
+            notFound()
+            return
+        }
+
+        poliza = getProcesador(poliza).generarComplementos(poliza)
+        poliza = polizaService.salvarPolza(poliza)
+        log.info('Complementos generados {}', new Date())
+        respond poliza, [view: 'show']
+    }
+
     def handleException(Exception e) {
         String message = ExceptionUtils.getRootCauseMessage(e)
         // e.printStackTrace()
-        log.error(message)
+        log.error(message, e)
         respond([message: message], status: 500)
     }
 
@@ -164,6 +190,8 @@ class PolizaController extends RestfulController<Poliza> {
         def name = 'PolizaComprobanteNacional.jrxml'
         if(tipo == 'E')
             name = 'PolizaComprobanteExtranjero.jrxml'
+        else if (tipo == 'P')
+            name = 'PolizaComplementoMetodoPago.jrxml'
         Map repParams = [ POLIZA_ID: params.getLong('id')]
         def pdf =  reportService.run("contabilidad/${name}", repParams)
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'PolizaComprobanteNacional.pdf')

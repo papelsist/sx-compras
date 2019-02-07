@@ -45,7 +45,7 @@ export class CompraFormComponent implements OnInit, OnChanges {
     if (changes.compra && changes.compra.currentValue) {
       // console.log('Editando compra:', changes.compra.currentValue);
       const comp = changes.compra.currentValue;
-      this.clarPartidas();
+      this.cleanPartidas();
       this.form.patchValue(comp);
 
       comp.partidas.forEach(item => this.partidas.push(new FormControl(item)));
@@ -61,7 +61,7 @@ export class CompraFormComponent implements OnInit, OnChanges {
     }
   }
 
-  private clarPartidas() {
+  private cleanPartidas() {
     while (this.partidas.length !== 0) {
       this.partidas.removeAt(0);
     }

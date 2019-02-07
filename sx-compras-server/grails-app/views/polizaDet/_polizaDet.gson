@@ -4,11 +4,11 @@ model {
 	PolizaDet polizaDet
 }
 
-json g.render(polizaDet, [excludes: ['nacionales', 'extranjeros'] ,resolveTemplate: false]) {
+json g.render(polizaDet, [excludes: ['nacionales', 'extranjeros', 'transferencias', 'cheques', 'otros'] ,resolveTemplate: false]) {
 	clave polizaDet.cuenta.clave
-    nacionales g.render(polizaDet.nacionales)
-    extranjeros g.render(polizaDet.extranjeros)
-    transferencias g.render(polizaDet.transferencias)
-    cheques g.render(polizaDet.cheques)
-    otros g.render(polizaDet.otros)
+    // nacionales g.render(polizaDet.nacionales)
+    // extranjeros g.render(polizaDet.extranjeros)
+    // transferencias g.render(polizaDet.transferencias)
+    // cheques g.render(polizaDet.cheques)
+    // otros g.render(polizaDet.otros)
 }

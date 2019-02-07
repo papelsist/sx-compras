@@ -19,7 +19,8 @@ export class ProductosEffects {
   ) {}
 
   @Effect()
-  loadProductos$ = this.actions$.ofType(productoActions.LOAD_PRODUCTOS).pipe(
+  loadProductos$ = this.actions$.pipe(
+    ofType(productoActions.LOAD_PRODUCTOS),
     switchMap(() => {
       return this.productosService.list().pipe(
         map(productos => new productoActions.LoadProductosSuccess(productos)),
@@ -29,7 +30,8 @@ export class ProductosEffects {
   );
 
   @Effect()
-  createProducto$ = this.actions$.ofType(productoActions.CREATE_PRODUCTO).pipe(
+  createProducto$ = this.actions$.pipe(
+    ofType(productoActions.CREATE_PRODUCTO),
     map((action: productoActions.CreateProducto) => action.payload),
     switchMap(newProduct => {
       return this.productosService.save(newProduct).pipe(
@@ -40,19 +42,19 @@ export class ProductosEffects {
   );
 
   @Effect()
-  createProductoSuccess$ = this.actions$
-    .ofType(productoActions.CREATE_PRODUCTO_SUCCESS)
-    .pipe(
-      map((action: productoActions.CreateProductoSuccess) => action.payload),
-      map(producto => {
-        return new fromRoot.Go({
-          path: ['catalogos/productos', producto.id]
-        });
-      })
-    );
+  createProductoSuccess$ = this.actions$.pipe(
+    ofType(productoActions.CREATE_PRODUCTO_SUCCESS),
+    map((action: productoActions.CreateProductoSuccess) => action.payload),
+    map(producto => {
+      return new fromRoot.Go({
+        path: ['catalogos/productos', producto.id]
+      });
+    })
+  );
 
   @Effect()
-  updateProducto$ = this.actions$.ofType(productoActions.UPDATE_PRODUCTO).pipe(
+  updateProducto$ = this.actions$.pipe(
+    ofType(productoActions.UPDATE_PRODUCTO),
     map((action: productoActions.UpdateProducto) => action.payload),
     switchMap(newProduct => {
       return this.productosService.update(newProduct).pipe(
@@ -63,7 +65,8 @@ export class ProductosEffects {
   );
 
   @Effect()
-  removeProducto$ = this.actions$.ofType(productoActions.REMOVE_PRODUCTO).pipe(
+  removeProducto$ = this.actions$.pipe(
+    ofType(productoActions.REMOVE_PRODUCTO),
     map((action: productoActions.RemoveProducto) => action.payload),
     switchMap(producto => {
       return this.productosService.delete(producto.id).pipe(
@@ -87,17 +90,14 @@ export class ProductosEffects {
   );
 
   @Effect()
-  searchProductos$ = this.actions$
-    .ofType(productoActions.SEARCH_PRODUCTOS)
-    .pipe(
-      map((action: productoActions.SearchProductos) => action.payload),
-      switchMap(criteria => {
-        return this.productosService.list(criteria).pipe(
-          map(res => new productoActions.SearchProductosSuccess(res)),
-          catchError(error =>
-            of(new productoActions.SearchProductosFail(error))
-          )
-        );
-      })
-    );
+  searchProductos$ = this.actions$.pipe(
+    ofType(productoActions.SEARCH_PRODUCTOS),
+    map((action: productoActions.SearchProductos) => action.payload),
+    switchMap(criteria => {
+      return this.productosService.list(criteria).pipe(
+        map(res => new productoActions.SearchProductosSuccess(res)),
+        catchError(error => of(new productoActions.SearchProductosFail(error)))
+      );
+    })
+  );
 }

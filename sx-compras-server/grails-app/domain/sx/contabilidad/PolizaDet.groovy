@@ -73,6 +73,9 @@ class PolizaDet {
         documentoFecha type: 'date'
         nacionales cascade: "all-delete-orphan"
         extranjeros cascade: "all-delete-orphan"
+        cheques cascade: "all-delete-orphan"
+        transferencias cascade: "all-delete-orphan"
+        otros cascade: "all-delete-orphan"
     }
 
     BigDecimal getTotalNacionales() {
