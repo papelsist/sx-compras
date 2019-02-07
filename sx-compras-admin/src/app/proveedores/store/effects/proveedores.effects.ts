@@ -18,7 +18,8 @@ export class ProveedoresEffects {
   ) {}
 
   @Effect()
-  loadEntites$ = this.actions$.ofType(proveedorActions.LOAD_PROVEEDORES).pipe(
+  loadEntites$ = this.actions$.pipe(
+    ofType(proveedorActions.LOAD_PROVEEDORES),
     switchMap(() => {
       return this.service.list().pipe(
         map(
@@ -31,19 +32,17 @@ export class ProveedoresEffects {
   );
 
   @Effect()
-  updateProveedor$ = this.actions$
-    .ofType(proveedorActions.UPDATE_PROVEEDOR_ACTION)
-    .pipe(
-      map((action: proveedorActions.UpdateProveedor) => action.payload),
-      switchMap(proveedor => {
-        return this.service.update(proveedor).pipe(
-          map(res => new proveedorActions.UpdateProveedorSuccess(res)),
-          catchError(error =>
-            of(new proveedorActions.UpdateProveedorFail(error))
-          )
-        );
-      })
-    );
+  updateProveedor$ = this.actions$.pipe(
+    ofType(proveedorActions.UPDATE_PROVEEDOR_ACTION),
+
+    map((action: proveedorActions.UpdateProveedor) => action.payload),
+    switchMap(proveedor => {
+      return this.service.update(proveedor).pipe(
+        map(res => new proveedorActions.UpdateProveedorSuccess(res)),
+        catchError(error => of(new proveedorActions.UpdateProveedorFail(error)))
+      );
+    })
+  );
 
   @Effect({ dispatch: false })
   updateSuccess$ = this.actions$.pipe(
@@ -63,19 +62,17 @@ export class ProveedoresEffects {
   );
 
   @Effect()
-  createProveedor$ = this.actions$
-    .ofType(proveedorActions.CREATE_PROVEEDOR_ACTION)
-    .pipe(
-      map((action: proveedorActions.CreateProveedor) => action.payload),
-      switchMap(proveedor => {
-        return this.service.save(proveedor).pipe(
-          map(res => new proveedorActions.CreateProveedorSuccess(res)),
-          catchError(error =>
-            of(new proveedorActions.CreateProveedorFail(error))
-          )
-        );
-      })
-    );
+  createProveedor$ = this.actions$.pipe(
+    ofType(proveedorActions.CREATE_PROVEEDOR_ACTION),
+
+    map((action: proveedorActions.CreateProveedor) => action.payload),
+    switchMap(proveedor => {
+      return this.service.save(proveedor).pipe(
+        map(res => new proveedorActions.CreateProveedorSuccess(res)),
+        catchError(error => of(new proveedorActions.CreateProveedorFail(error)))
+      );
+    })
+  );
 
   @Effect()
   createSuccess$ = this.actions$.pipe(

@@ -4,8 +4,14 @@ import groovy.util.logging.Slf4j
 import org.springframework.stereotype.Component
 
 import sx.core.Sucursal
+import sx.core.Venta
+import sx.cxc.CobroCheque
+import sx.cxc.CobroTarjeta
+import sx.cxc.CuentaPorCobrar
 import sx.tesoreria.CorteDeTarjeta
 import sx.tesoreria.CorteDeTarjetaAplicacion
+import sx.tesoreria.Ficha
+
 import static sx.contabilidad.Mapeo.*
 
 
@@ -184,8 +190,6 @@ class CobranzaConProc implements  ProcesadorMultipleDePolizas{
         poliza.addToPartidas(det)
     }
 
-
-
     def cargoComisionBancaria(Poliza poliza,def row){
 
         def claveSuc = ''
@@ -300,7 +304,7 @@ class CobranzaConProc implements  ProcesadorMultipleDePolizas{
 
     }
 
-      def cargoOtrosGastos(Poliza poliza, def row){
+    def cargoOtrosGastos(Poliza poliza, def row){
  
         CuentaContable cuenta = buscarCuenta(row.cta_contable)
 
@@ -455,6 +459,61 @@ class CobranzaConProc implements  ProcesadorMultipleDePolizas{
 
     }
 
+    @Override
+    Poliza generarComplementos(Poliza poliza) {
+        log.info('Generando complementos para {} {}', poliza.subtipo, poliza.folio)
+        poliza.partidas.each {
+            it.otros.clear()
+        }
+        // Fichas depoito
+        complementoFichasEfectivo(poliza)
+        complementoTarjetas(poliza)
+        return poliza
+    }
+
+    void complementoFichasEfectivo(Poliza poliza) {
+        PolizaDet selected = poliza.partidas.find {it.asiento.contains('FICHA') && it.referencia2.contains('BANCO')}
+        if(selected) {
+            List<PolizaDet> ventas = poliza.partidas.findAll{it.cuenta.clave.startsWith('105') && it.asiento.contains('FICHA')}
+            ventas.each { d ->
+                log.info('Evaluando: {}', d)
+                CuentaPorCobrar vta = CuentaPorCobrar.get(d.origen)
+                if(vta.formaDePago == 'EFECTIVO') {
+                    SatPagoOtro pagoOtro = new SatPagoOtro()
+                    pagoOtro.rfc = vta.cliente.rfc
+                    pagoOtro.fecha = selected.poliza.fecha
+                    pagoOtro.monto = vta.total
+                    pagoOtro.benef = getEmpresa().nombre
+                    pagoOtro.metPagoPol = SatMetotoDePago.EFECTIVO.value
+                    selected.otros.add(pagoOtro)
+                }
+            }
+        }
+    }
+
+    void complementoTarjetas(Poliza poliza) {
+        List<PolizaDet> found = poliza.partidas
+                .findAll{it.cuenta.clave.startsWith('102') && it.asiento.contains('TARJ') && it.referencia.contains('INGRESO')}
+        found.each { selected ->
+            CorteDeTarjeta corte = CorteDeTarjeta.get(selected.origen)
+            List<CobroTarjeta> cobros = CobroTarjeta.where{corte == corte.id}.list()
+            if(cobros) {
+                cobros.each { cc ->
+                    SatPagoOtro pagoOtro = new SatPagoOtro()
+                    pagoOtro.rfc = cc.cobro.cliente.rfc
+                    pagoOtro.fecha = selected.poliza.fecha
+                    pagoOtro.monto = cc.cobro.importe
+                    pagoOtro.benef = getEmpresa().nombre
+                    if(cc.debitoCredito) {
+                        pagoOtro.metPagoPol = SatMetotoDePago.TARJETA_DEBITO.value
+                    } else
+                        pagoOtro.metPagoPol = SatMetotoDePago.TARJETA_CREDITO.value
+                    selected.otros.add(pagoOtro)
+                }
+            }
+        }
+
+    }
 
     // QUERYES
     String getCargoBancoQuery() {
@@ -668,7 +727,6 @@ class CobranzaConProc implements  ProcesadorMultipleDePolizas{
 	   
     """
     }
-
 
     String getCargoOgstQuery() {
         String DebeOgst = """

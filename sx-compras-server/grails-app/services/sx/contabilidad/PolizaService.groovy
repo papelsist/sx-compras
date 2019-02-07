@@ -103,6 +103,26 @@ abstract class PolizaService implements  LogUser{
         return cto
     }
 
+    @NotTransactional
+    List<Poliza> refoliar(String subtipo, Integer ejercicio, Integer mes) {
+        List<Poliza> polizas = Poliza.where{
+            subtipo == subtipo && ejercicio == ejercicio && mes == mes
+        }.list([sort: 'fecha', order: 'asc'])
+
+        int folio = 0
+        polizas.each { p ->
+            folio ++
+            p.folio = folio
+            p.save(flush: true)
+        }
+        PolizaFolio pfolio = PolizaFolio.where{
+            subtipo == subtipo && ejercicio == ejercicio && mes == mes
+        }.find()
+        pfolio.folio = folio
+        pfolio.save flush: true
+        return polizas
+    }
+
 
 
 }

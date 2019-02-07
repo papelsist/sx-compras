@@ -145,6 +145,24 @@ class PolizaController extends RestfulController<Poliza> {
         respond poliza, [ view:'show']
     }
 
+    @CompileDynamic
+    def generarFolios(String subtipo, Integer ejercicio, Integer mes) {
+        List<Poliza> polizas = polizaService.refoliar(subtipo, ejercicio, mes)
+        respond polizas, [ view: 'index']
+
+    }
+
+    def generarComplementos(Poliza poliza) {
+        if(poliza == null) {
+            notFound()
+            return
+        }
+
+        poliza = getProcesador(poliza).generarComplementos(poliza)
+        poliza = poliza.save flush: true
+        respond poliza, [view: 'show']
+    }
+
     def handleException(Exception e) {
         String message = ExceptionUtils.getRootCauseMessage(e)
         // e.printStackTrace()

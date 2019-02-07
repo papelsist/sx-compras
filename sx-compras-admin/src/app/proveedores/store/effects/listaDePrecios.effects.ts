@@ -37,14 +37,12 @@ export class ListaDePreciosEffects {
     ),
     map(action => action.payload),
     switchMap(lista => {
-      return this.service
-        .save(lista)
-        .pipe(
-          map(res => new listasActions.AddListaDePreciosProveedorSuccess(res)),
-          catchError(error =>
-            of(new listasActions.AddListaDePreciosProveedorFail(error))
-          )
-        );
+      return this.service.save(lista).pipe(
+        map(res => new listasActions.AddListaDePreciosProveedorSuccess(res)),
+        catchError(error =>
+          of(new listasActions.AddListaDePreciosProveedorFail(error))
+        )
+      );
     })
   );
 
@@ -61,7 +59,8 @@ export class ListaDePreciosEffects {
   );
 
   @Effect()
-  loadListas$ = this.actions$.ofType(listasActions.LOAD_LISTAS_PROVEEDOR).pipe(
+  loadListas$ = this.actions$.pipe(
+    ofType(listasActions.LOAD_LISTAS_PROVEEDOR),
     switchMap(() => {
       return this.store.pipe(
         select(fromSelectors.getSelectedProveedor),
@@ -69,40 +68,33 @@ export class ListaDePreciosEffects {
       );
     }),
     switchMap(proveedor => {
-      return this.service
-        .list(proveedor.id)
-        .pipe(
-          map(
-            listas =>
-              new listasActions.LoadListasDePreciosProveedorSuccess(listas)
-          ),
-          catchError(error =>
-            of(new listasActions.LoadListasDePreciosProveedorFail(error))
-          )
-        );
+      return this.service.list(proveedor.id).pipe(
+        map(
+          listas =>
+            new listasActions.LoadListasDePreciosProveedorSuccess(listas)
+        ),
+        catchError(error =>
+          of(new listasActions.LoadListasDePreciosProveedorFail(error))
+        )
+      );
     })
   );
 
   @Effect()
-  updateLista$ = this.actions$
-    .ofType(listasActions.UPDATE_LISTA_PROVEEDOR)
-    .pipe(
-      map(
-        (action: listasActions.UpdateListaDePreciosProveedor) => action.payload
-      ),
-      switchMap(proveedor => {
-        return this.service
-          .update(proveedor)
-          .pipe(
-            map(
-              res => new listasActions.UpdateListaDePreciosProveedorSuccess(res)
-            ),
-            catchError(error =>
-              of(new listasActions.UpdateListaDePreciosProveedorFail(error))
-            )
-          );
-      })
-    );
+  updateLista$ = this.actions$.pipe(
+    ofType(listasActions.UPDATE_LISTA_PROVEEDOR),
+    map(
+      (action: listasActions.UpdateListaDePreciosProveedor) => action.payload
+    ),
+    switchMap(proveedor => {
+      return this.service.update(proveedor).pipe(
+        map(res => new listasActions.UpdateListaDePreciosProveedorSuccess(res)),
+        catchError(error =>
+          of(new listasActions.UpdateListaDePreciosProveedorFail(error))
+        )
+      );
+    })
+  );
 
   @Effect()
   updateSuccess$ = this.actions$.pipe(
@@ -126,23 +118,20 @@ export class ListaDePreciosEffects {
   );
 
   @Effect()
-  aplicarLista$ = this.actions$
-    .ofType<listasActions.AplicarListaProveedor>(
+  aplicarLista$ = this.actions$.pipe(
+    ofType<listasActions.AplicarListaProveedor>(
       listasActions.APLICAR_LISTA_PROVEEDOR
-    )
-    .pipe(
-      map(action => action.payload),
-      switchMap(lista => {
-        return this.service
-          .aplicar(lista)
-          .pipe(
-            map(res => new listasActions.AplicarListaProveedorSuccess(res)),
-            catchError(error =>
-              of(new listasActions.AplicarListaProveedorFail(error))
-            )
-          );
-      })
-    );
+    ),
+    map(action => action.payload),
+    switchMap(lista => {
+      return this.service.aplicar(lista).pipe(
+        map(res => new listasActions.AplicarListaProveedorSuccess(res)),
+        catchError(error =>
+          of(new listasActions.AplicarListaProveedorFail(error))
+        )
+      );
+    })
+  );
 
   @Effect()
   aplicarListaSuccess$ = this.actions$.pipe(
@@ -174,25 +163,20 @@ export class ListaDePreciosEffects {
   );
 
   @Effect()
-  actualiarLista$ = this.actions$
-    .ofType<listasActions.ActualizarProductosDeLista>(
+  actualiarLista$ = this.actions$.pipe(
+    ofType<listasActions.ActualizarProductosDeLista>(
       listasActions.ACTUALIZAR_PRODUCTOS_DE_LISTA_PROVEEDOR
-    )
-    .pipe(
-      map(action => action.payload),
-      switchMap(lista => {
-        return this.service
-          .actualizar(lista)
-          .pipe(
-            map(
-              res => new listasActions.UpdateListaDePreciosProveedorSuccess(res)
-            ),
-            catchError(error =>
-              of(new listasActions.UpdateListaDePreciosProveedorFail(error))
-            )
-          );
-      })
-    );
+    ),
+    map(action => action.payload),
+    switchMap(lista => {
+      return this.service.actualizar(lista).pipe(
+        map(res => new listasActions.UpdateListaDePreciosProveedorSuccess(res)),
+        catchError(error =>
+          of(new listasActions.UpdateListaDePreciosProveedorFail(error))
+        )
+      );
+    })
+  );
 
   @Effect()
   deleteLista$ = this.actions$.pipe(
@@ -201,16 +185,14 @@ export class ListaDePreciosEffects {
     ),
     map(action => action.payload),
     concatMap(lista => {
-      return this.service
-        .delete(lista.id)
-        .pipe(
-          map(
-            res => new listasActions.DeleteListaDePreciosProveedorSuccess(lista)
-          ),
-          catchError(error =>
-            of(new listasActions.DeleteListaDePreciosProveedorFail(error))
-          )
-        );
+      return this.service.delete(lista.id).pipe(
+        map(
+          res => new listasActions.DeleteListaDePreciosProveedorSuccess(lista)
+        ),
+        catchError(error =>
+          of(new listasActions.DeleteListaDePreciosProveedorFail(error))
+        )
+      );
     })
   );
 
@@ -227,21 +209,18 @@ export class ListaDePreciosEffects {
   );
 
   @Effect()
-  actualizarCompras$ = this.actions$
-    .ofType<listasActions.ActualizarComprasConLista>(
+  actualizarCompras$ = this.actions$.pipe(
+    ofType<listasActions.ActualizarComprasConLista>(
       listasActions.ACTUALIZAR_COMPRAS_CONLISTA
-    )
-    .pipe(
-      map(action => action.payload),
-      switchMap(data => {
-        return this.service
-          .actualizarCompras(data.lista, data.fecha)
-          .pipe(
-            map(res => new listasActions.ActualizarComprasConListaSuccess(res)),
-            catchError(error =>
-              of(new listasActions.ActualizarComprasConListaFail(error))
-            )
-          );
-      })
-    );
+    ),
+    map(action => action.payload),
+    switchMap(data => {
+      return this.service.actualizarCompras(data.lista, data.fecha).pipe(
+        map(res => new listasActions.ActualizarComprasConListaSuccess(res)),
+        catchError(error =>
+          of(new listasActions.ActualizarComprasConListaFail(error))
+        )
+      );
+    })
+  );
 }

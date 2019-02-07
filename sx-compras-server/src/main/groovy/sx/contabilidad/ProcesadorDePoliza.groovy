@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 
 import org.apache.commons.lang3.exception.ExceptionUtils
-
+import sx.core.Empresa
 
 import java.sql.SQLException
 import java.text.DecimalFormat
@@ -24,12 +24,18 @@ trait ProcesadorDePoliza {
 
     DecimalFormat tipoDeCambioFormat
 
+    Empresa empresa
+
     String definirConcepto(Poliza poliza){
         return "${poliza.tipo} ${poliza.subtipo} ${poliza.fecha.format('dd/MM/yyyy')}"
     }
 
     Poliza recalcular(Poliza poliza) {
         log.info('Recalculando poliza {}', poliza)
+        return poliza
+    }
+
+    Poliza generarComplementos(Poliza poliza) {
         return poliza
     }
 
@@ -88,6 +94,13 @@ trait ProcesadorDePoliza {
             tipoDeCambioFormat.setGroupingUsed(false)
         }
         return this.tipoDeCambioFormat
+    }
+
+    Empresa getEmpresa() {
+        if(!this.empresa) {
+            empresa = Empresa.first()
+        }
+        return empresa
     }
 
 }
