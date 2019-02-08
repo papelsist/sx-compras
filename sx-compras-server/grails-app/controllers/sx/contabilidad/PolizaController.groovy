@@ -16,7 +16,7 @@ import sx.utils.Periodo
 
 import static org.springframework.http.HttpStatus.NO_CONTENT
 import static org.springframework.http.HttpStatus.OK
-
+import org.hibernate.FetchMode as FM
 
 @Slf4j
 @GrailsCompileStatic
@@ -40,9 +40,26 @@ class PolizaController extends RestfulController<Poliza> {
     }
 
     @Secured("permitAll")
+    @CompileDynamic
     def show() {
         log.info("Show: {}", params)
-        respond Poliza.get(params.getLong('id'))
+        // Poliza poliza = Poliza.where{id == params.getLong('id')}.join('partidas').find()
+        /*
+        def poliza = Poliza.withCriteria {
+            eq "id", params.getLong('id')
+            fetchMode "partidas", FM.SELECT
+        }.get()
+        */
+        /*
+        def c = Poliza.createCriteria()
+        def poliza = c.get{
+            eq "id", params.getLong('id')
+            fetchMode "partidas", FM.SELECT
+        }
+
+        respond poliza
+        */
+        respond Poliza.findById(params.getLong('id'), [fetch:[partidas:"join"]])
     }
 
     @Override

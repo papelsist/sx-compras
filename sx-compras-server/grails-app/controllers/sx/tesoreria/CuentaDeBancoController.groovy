@@ -229,41 +229,7 @@ class CuentaDeBancoController extends RestfulController {
         repParams.FECHA_FINAL = command.fechaFin
         repParams.CUENTA_ID = command.cuenta.id
 
-        /*
-        Date fechaInicial = command.fechaIni
-        Date inicioOperativo = Date.parse('dd/MM/yyyy', '31/12/2017')
-        BigDecimal inicial = MovimientoDeCuenta
-                .findAll("""
-                    select sum(m.importe) from MovimientoDeCuenta m 
-                     where m.cuenta.id=? 
-                       and date(m.fecha) < ? 
-                       and date(m.fecha) >= ? 
-                       and m.porIdentificar = false
-                """,
-                [command.cuenta.id, fechaInicial, inicioOperativo])[0]?: 0.0 as BigDecimal
 
-
-        BigDecimal cargos = MovimientoDeCuenta.findAll(
-                """
-                select sum(m.importe) from MovimientoDeCuenta m 
-                 where m.cuenta.id = ? 
-                    and date(m.fecha) between ? and ? 
-                    and m.importe < 0 
-                    and m.porIdentificar = false
-                """,
-                [command.cuenta.id, fechaInicial, command.fechaFin])[0]?: 0.0 as BigDecimal
-
-        BigDecimal abonos = MovimientoDeCuenta.findAll(
-                """
-                    select sum(m.importe) from MovimientoDeCuenta m 
-                     where m.cuenta.id = ? 
-                      and date(m.fecha) between ? and ? 
-                      and m.importe > 0 
-                      and m.porIdentificar = false
-                """,
-                [command.cuenta.id, fechaInicial, command.fechaFin])[0]?: 0.0 as BigDecimal
-        BigDecimal saldo = inicial + cargos + abonos
-        */
         BigDecimal inicial = params.saldoInicial as BigDecimal
         BigDecimal cargos = params.cargos as BigDecimal
         BigDecimal abonos = params.abonos as BigDecimal
@@ -308,8 +274,8 @@ class CuentaDeBancoController extends RestfulController {
                     ingresos: 0.0,
                     referencia: mov.referencia,
                     comentario: mov.comentario,
-                    cargo: mov.importe < 0 ? mov.importe : 0.0,
-                    abono: mov.importe > 0 ? mov.importe : 0.0,
+                    cargo: mov.importe < 0 ? mov.importe.abs() : 0.0,
+                    abono: mov.importe > 0 ? mov.importe.abs() : 0.0,
                     orden: '',
                     date_created: mov.dateCreated,
                     origen: mov.tipo.substring(0, 3)

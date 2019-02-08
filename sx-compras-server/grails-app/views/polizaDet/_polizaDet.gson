@@ -3,8 +3,11 @@ import sx.contabilidad.PolizaDet
 model {
 	PolizaDet polizaDet
 }
+json g.render(polizaDet, [includes: ['entidad']]) {
 
-json g.render(polizaDet, [excludes: ['nacionales', 'extranjeros', 'transferencias', 'cheques', 'otros'] ,resolveTemplate: false]) {
+}
+/*
+json g.render(polizaDet, [excludes: ['poliza','nacionales', 'extranjeros', 'transferencias', 'cheques', 'otros'] ,resolveTemplate: false]) {
 	clave polizaDet.cuenta.clave
     // nacionales g.render(polizaDet.nacionales)
     // extranjeros g.render(polizaDet.extranjeros)
@@ -12,3 +15,4 @@ json g.render(polizaDet, [excludes: ['nacionales', 'extranjeros', 'transferencia
     // cheques g.render(polizaDet.cheques)
     // otros g.render(polizaDet.otros)
 }
+*/

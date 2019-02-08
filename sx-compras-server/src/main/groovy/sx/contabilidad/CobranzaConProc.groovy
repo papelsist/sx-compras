@@ -9,6 +9,7 @@ import sx.cxc.Cobro
 import sx.cxc.CobroCheque
 import sx.cxc.CobroDeposito
 import sx.cxc.CobroTarjeta
+import sx.cxc.CobroTransferencia
 import sx.cxc.CuentaPorCobrar
 import sx.tesoreria.CorteDeTarjeta
 import sx.tesoreria.CorteDeTarjetaAplicacion
@@ -64,7 +65,7 @@ class CobranzaConProc implements  ProcesadorMultipleDePolizas{
         rows += getAllRows(selectHaberOprd, [])  
         rows += getAllRows(selectDebeOgst, [])
         rows = rows.findAll {it.sucursal == poliza.sucursal}
-        
+        log.info('Rows: {}', rows.size())
              
         rows.each{ row ->
             if(row.tipo == 'DEBE_BANCO'){
@@ -106,6 +107,7 @@ class CobranzaConProc implements  ProcesadorMultipleDePolizas{
                 cargoOtrosGastos(poliza, row)
             }
         }
+        log.info('Partidas generadas: {}', poliza.partidas.size())
         return poliza
     }
 
@@ -553,7 +555,7 @@ class CobranzaConProc implements  ProcesadorMultipleDePolizas{
     void complementoDeposito(Poliza poliza) {
         log.info('Complemento de pago: DEPOSITOS EFECTIVO' )
         List<PolizaDet> depositos = poliza.partidas.findAll{it.asiento.contains('DEP')}
-        depositos = depositos.findAll{it.cuenta.clave.startsWith('102') || it.cuenta.clave.startsWith('105')}
+        depositos = depositos.findAll{it.cuenta.clave.startsWith('102') || it.cuenta.clave.startsWith('205')}
 
         depositos.each {
             Cobro cobro = Cobro.get(it.origen)
@@ -577,14 +579,13 @@ class CobranzaConProc implements  ProcesadorMultipleDePolizas{
     void complementoTransferencia(Poliza poliza) {
         log.info('Complemento de pago: TRANSFERENCIAS ' )
         List<PolizaDet> depositos = poliza.partidas.findAll{it.asiento.contains('TRANSF')}
-        depositos = depositos.findAll{it.cuenta.clave.startsWith('102') || it.cuenta.clave.startsWith('105')}
-
+        depositos = depositos.findAll{it.cuenta.clave.startsWith('102') || it.cuenta.clave.startsWith('205')}
+        log.info('Transferencias: {}', depositos.size())
         depositos.each {
             Cobro cobro = Cobro.get(it.origen)
             if(cobro) {
-                CobroDeposito cd = cobro.deposito
+                CobroTransferencia cd = cobro.transferencia
                 if(cd) {
-
                     SatPagoOtro pagoOtro = new SatPagoOtro()
                     pagoOtro.rfc = cobro.cliente.rfc
                     pagoOtro.fecha = it.poliza.fecha
