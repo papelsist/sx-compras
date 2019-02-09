@@ -34,8 +34,16 @@ class PolizaDet {
 
     String sucursal
 
+    String uuid
+    String rfc
+    BigDecimal montoTotal
+    String moneda
+    BigDecimal tipCamb
+
     Date dateCreated
     Date lastUpdated
+
+
 
     List<SatComprobanteNac> nacionales = []
 
@@ -49,13 +57,16 @@ class PolizaDet {
 
     static belongsTo = [poliza:Poliza]
 
+
     static hasMany = [
-        nacionales: SatComprobanteNac,
-        extranjeros: SatComprobanteExt,
-        transferencias: SatPagoTransferencia,
-        cheques: SatPagoCheque,
+        //
+        // extranjeros: SatComprobanteExt,
+        // transferencias: SatPagoTransferencia,
+        // cheques: SatPagoCheque,
+        // nacionales: SatComprobanteNac,
         otros: SatPagoOtro
     ]
+
 
     static constraints = {
         descripcion nullable:true
@@ -67,16 +78,27 @@ class PolizaDet {
         documento nullable:true
         documentoTipo nullable:true
         documentoFecha nullable:true
+        uuid nullable: true
+        rfc nullable: true
+        montoTotal nullable: true
+        moneda nullable: true
+        tipCamb nullable: true
     }
 
     static  mapping = {
         documentoFecha type: 'date'
-        nacionales cascade: "all-delete-orphan"
+        /*
+        nacionales cascade: "all-delete-orphan", lazy: false
         extranjeros cascade: "all-delete-orphan"
         cheques cascade: "all-delete-orphan"
         transferencias cascade: "all-delete-orphan"
-        otros cascade: "all-delete-orphan"
+        */
+        otros cascade: "all-delete-orphan", lazy: false
+
+
     }
+
+    static transients = ['nacionales, otros, extranjeros,cheques,transferencias']
 
     BigDecimal getTotalNacionales() {
         def nacional =  nacionales.sum 0.0, {it.montoTotal}

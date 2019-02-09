@@ -3,10 +3,15 @@ import sx.contabilidad.PolizaDet
 model {
 	PolizaDet polizaDet
 }
-json g.render(polizaDet, [includes: ['entidad']]) {
-
-}
+// log.debug "Model is $binding.variables"
+// System.out.println "Model is $binding.variables"
+//json g.render(polizaDet, [includes: ['entidad']]) {
 /*
+json g.render(polizaDet, [excludes: ['poliza','nacionales', 'extranjeros', 'transferencias', 'cheques', 'otros'] ,resolveTemplate: false]) {
+    clave polizaDet.cuenta.clave
+}
+*/
+
 json g.render(polizaDet, [excludes: ['poliza','nacionales', 'extranjeros', 'transferencias', 'cheques', 'otros'] ,resolveTemplate: false]) {
 	clave polizaDet.cuenta.clave
     // nacionales g.render(polizaDet.nacionales)
@@ -15,4 +20,4 @@ json g.render(polizaDet, [excludes: ['poliza','nacionales', 'extranjeros', 'tran
     // cheques g.render(polizaDet.cheques)
     // otros g.render(polizaDet.otros)
 }
-*/
+

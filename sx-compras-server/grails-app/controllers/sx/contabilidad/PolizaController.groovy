@@ -42,23 +42,7 @@ class PolizaController extends RestfulController<Poliza> {
     @Secured("permitAll")
     @CompileDynamic
     def show() {
-        log.info("Show: {}", params)
-        // Poliza poliza = Poliza.where{id == params.getLong('id')}.join('partidas').find()
-        /*
-        def poliza = Poliza.withCriteria {
-            eq "id", params.getLong('id')
-            fetchMode "partidas", FM.SELECT
-        }.get()
-        */
-        /*
-        def c = Poliza.createCriteria()
-        def poliza = c.get{
-            eq "id", params.getLong('id')
-            fetchMode "partidas", FM.SELECT
-        }
-
-        respond poliza
-        */
+        // log.info("Show: {}", params)
         respond Poliza.findById(params.getLong('id'), [fetch:[partidas:"join"]])
     }
 

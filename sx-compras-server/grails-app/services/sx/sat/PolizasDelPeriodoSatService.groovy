@@ -101,8 +101,10 @@ class PolizasDelPeriodoSatService implements  LogUser, SelladorDigital{
     def registrarComprobantes(SatPolizaDet det, PolizaDet polizaDet) {
         polizaDet.nacionales.each {
             ComprobanteNacional n = ComprobanteNacional
-                    .builder()
-                    .build()
+            .builder()
+            .rfc(it.rfc)
+            .montoTotal()
+            .build()
         }
     }
 

@@ -69,6 +69,9 @@ abstract class VentasProc implements  ProcesadorMultipleDePolizas {
         rows = rows.findAll {it.sucursal == poliza.sucursal && it.documentoTipo == this.getTipo()}
         log.info('Actualizando poliza {} procesando {} registros', poliza.id, rows.size())
         rows.each { row ->
+            if(!row.uuid) {
+                throw new RuntimeException("Venta facturada ${row.documento} sin UUID. No se puede generar el complemento CompNac(SAT)")
+            }
             cargoClientes(poliza, row)
             abonoVentas(poliza, row)
             abonoIvaNoTrasladado(poliza, row)
@@ -78,7 +81,8 @@ abstract class VentasProc implements  ProcesadorMultipleDePolizas {
     }
 
     def cargoClientes(Poliza poliza, def row) {
-        // log.info('Cargo a clientes: {}', row)
+
+        // Validaciones
         if(row.cta_cliente == null) {
             throw new RuntimeException("No existe cuenta operativa para el cliente:  ${row.referencia2} Id:${row.cliente} ")
         }
@@ -88,6 +92,7 @@ abstract class VentasProc implements  ProcesadorMultipleDePolizas {
         if(row.tc > 1.0 ) {
             descripcion  = descripcion + " T.C: ${formatTipoDeCambio(row.tc)}"
         }
+
         PolizaDet det = new PolizaDet(
                 cuenta: cuenta,
                 concepto: cuenta.descripcion,
@@ -102,21 +107,13 @@ abstract class VentasProc implements  ProcesadorMultipleDePolizas {
                 documentoFecha: row.fecha,
                 sucursal: row.sucursal,
                 haber: 0.0,
-                debe: (row.total * row.tc)
+                debe: (row.total * row.tc),
+                rfc: row.rfc,
+                uuid: row.uuid,
+                montoTotal: row.total,
+                moneda: row.moneda,
+                tipCamb: row.tc
         )
-
-        // Comprobante nacional para el SAT
-        def comprobante = new SatComprobanteNac(uuidcfdi: row.uuid, rfc: row.rfc, montoTotal: row.total)
-        if(!comprobante.uuidcfdi) {
-            throw new RuntimeException(
-                    "Venta facturada ${row.documento} sin UUID. No se puede generar el complemento CompNac(SAT)")
-        }
-        if(row.moneda != 'MXN') {
-            comprobante.moneda = row.moneda
-            comprobante.tipCamb = row.tc
-        }
-        det.nacionales.add(comprobante)
-
         poliza.addToPartidas(det)
     }
 
@@ -168,7 +165,12 @@ abstract class VentasProc implements  ProcesadorMultipleDePolizas {
                 documentoFecha: row.fecha,
                 sucursal: row.sucursal,
                 haber: (row.subtotal * row.tc),
-                debe: 0.0
+                debe: 0.0,
+                rfc: row.rfc,
+                uuid: row.uuid,
+                montoTotal: row.total,
+                moneda: row.moneda,
+                tipCamb: row.tc
         )
         poliza.addToPartidas(det)
     }
@@ -194,7 +196,12 @@ abstract class VentasProc implements  ProcesadorMultipleDePolizas {
                 documentoFecha: row.fecha,
                 sucursal: row.sucursal,
                 haber: (row.impuesto * row.tc),
-                debe: 0.0
+                debe: 0.0,
+                rfc: row.rfc,
+                uuid: row.uuid,
+                montoTotal: row.total,
+                moneda: row.moneda,
+                tipCamb: row.tc
         )
         poliza.addToPartidas(det)
     }

@@ -55,6 +55,8 @@ if (Environment.isDevelopmentMode() && targetDir != null) {
 
     logger("org.springframework.security", OFF, ['STDOUT'], false)
     logger("grails.plugin.springsecurity", OFF, ['STDOUT'], false)
+    logger("grails.views", OFF, ['STDOUT'], false)
+
     logger("org.pac4j", OFF, ['STDOUT'], false)
 
     logger("sx.core", DEBUG, ['STDOUT'], false)
