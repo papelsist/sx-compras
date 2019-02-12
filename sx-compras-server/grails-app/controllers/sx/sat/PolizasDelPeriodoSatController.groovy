@@ -70,3 +70,5 @@ class PolizasDelPeriodoSatController extends RestfulController<PolizasDelPeriodo
         response.outputStream << polizas.toXml().getBytes('UTF-8')
     }
 }
+
+

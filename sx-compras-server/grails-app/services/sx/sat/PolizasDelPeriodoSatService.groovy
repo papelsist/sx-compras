@@ -3,6 +3,7 @@ package sx.sat
 import groovy.util.logging.Slf4j
 import lx.econta.CadenaBuilder
 import lx.econta.Mes
+import lx.econta.SatMoneda
 import lx.econta.polizas.Cheque
 import lx.econta.polizas.ComprobanteNacional
 import lx.econta.polizas.PolizasBuilder
@@ -52,7 +53,8 @@ class PolizasDelPeriodoSatService implements  LogUser, SelladorDigital{
         satPolizas.polizas = []
 
 
-        List<Poliza>  polizas = Poliza.where{ejercicio == polizasPer.ejercicio && mes == polizasPer.mes}.list()
+        List<Poliza>  polizas = Poliza.where{ejercicio == polizasPer.ejercicio && mes == polizasPer.mes}
+                .list([max: 10])
         polizas.each { p ->
 
             SatPoliza satPoliza = SatPoliza.builder()
@@ -99,12 +101,21 @@ class PolizasDelPeriodoSatService implements  LogUser, SelladorDigital{
      * @return
      */
     def registrarComprobantes(SatPolizaDet det, PolizaDet polizaDet) {
-        polizaDet.nacionales.each {
-            ComprobanteNacional n = ComprobanteNacional
-            .builder()
-            .rfc(it.rfc)
-            .montoTotal()
-            .build()
+        if(polizaDet.uuid) {
+            log.info('Comprobante nacional para : {}', polizaDet.uuid)
+            polizaDet.nacionales.each {
+                ComprobanteNacional n = ComprobanteNacional.builder()
+                .rfc(it.rfc)
+                .montoTotal(polizaDet.montoTotal)
+                .uuidcfdi(polizaDet.uuid)
+                .build()
+                if(polizaDet.tipCamb > 1.00) {
+                    n.moneda = SatMoneda.USD
+                    n.tipCamb = polizaDet.tipCamb
+                }
+                det.comprobanteNacional.add(n)
+            }
+
         }
     }
 

@@ -82,7 +82,7 @@ class PolizaDet {
         rfc nullable: true
         montoTotal nullable: true
         moneda nullable: true
-        tipCamb nullable: true
+        tipCamb nullable: true, scale: 5
     }
 
     static  mapping = {
