@@ -201,12 +201,18 @@ grails:
     cors:
         enabled: true
 ---
+siipapx:
+  econta:
+    polizasDir: /home/econta/polizas
+---
 environments:
   development:
     siipapx:
       cxp:
         cfdisDir: /Users/rubencancino/Documents/cfdis-carga/compras
         gastosDir: /Users/rubencancino/Documents/cfdis-carga/gastos
+      econta:
+        polizasDir: ${user.home}/Documents/econta
   production:
     siipapx:
       cxp:

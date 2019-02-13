@@ -24,7 +24,9 @@ class PolizasDelPeriodoSatController extends RestfulController<PolizasDelPeriodo
     protected PolizasDelPeriodoSat createResource() {
         PolizasDelPeriodoSat instance = resource.newInstance()
         bindData instance, getObjectToBind()
-        instance = polizasDelPeriodoSatService.generar(instance.ejercicio, instance.mes, instance.numTramite, instance.numOrden)
+        log.info('Params: {}', params)
+        log.info('Resoure : {}', instance)
+        instance = polizasDelPeriodoSatService.generar(instance)
         instance
     }
 
@@ -43,8 +45,11 @@ class PolizasDelPeriodoSatController extends RestfulController<PolizasDelPeriodo
             notFound()
             return
         }
-        render (file: polizas.xml, contentType: 'text/xml',
-                filename: "CatalogoDeCtasBitacora_${polizas.id}", encoding: "UTF-8")
+        // String xmlData = polizasDelPeriodoSatService.readXml(polizas)
+        // render (text: xmlData, contentType: 'text/xml', encoding: 'UTF-8')
+        render (file: polizasDelPeriodoSatService.findXmlFile(polizas),
+                contentType: 'text/xml',
+                filename: "${polizas.fileName}", encoding: "UTF-8")
     }
 
     def mostrarAcuse(PolizasDelPeriodoSat bitacora) {
@@ -63,11 +68,13 @@ class PolizasDelPeriodoSatController extends RestfulController<PolizasDelPeriodo
         }
         def co =  grailsApplication.config
         def encoding = co.getProperty('grails.converters.encoding', String, 'UTF-8')
+        String xmlData = polizasDelPeriodoSatService.readXml(polizas)
         response.setContentType("text/xml")
         response.setCharacterEncoding('UTF-8')
         response.contentType = "text/xml; charset=${encoding}"
         response.setHeader "Content-disposition", "attachment; filename=${polizas.fileName}"
-        response.outputStream << polizas.toXml().getBytes('UTF-8')
+
+        response.outputStream << xmlData.getBytes('UTF-8')
     }
 }
 

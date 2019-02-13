@@ -38,3 +38,4 @@ grails.plugin.springsecurity.filterChain.chainMap = [
     ]
 ]
 grails.plugin.console.enabled = true
+

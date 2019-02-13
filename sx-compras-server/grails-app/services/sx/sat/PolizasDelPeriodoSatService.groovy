@@ -12,6 +12,7 @@ import lx.econta.polizas.SatPolizaDet
 import lx.econta.polizas.SatPolizas
 import lx.econta.polizas.TipoSolicitud
 import org.bouncycastle.util.encoders.Base64
+import org.springframework.beans.factory.annotation.Value
 import sx.contabilidad.Poliza
 import sx.contabilidad.PolizaDet
 import sx.core.Empresa
@@ -20,20 +21,19 @@ import sx.core.LogUser
 @Slf4j
 class PolizasDelPeriodoSatService implements  LogUser, SelladorDigital{
 
+    @Value('${siipapx.econta.polizasDir}')
+    String econtaPolizasDir
+
     PolizasDelPeriodoSat save(PolizasDelPeriodoSat polizas) {
         logEntity(polizas)
         log.debug("Salvando balanza sat {}", polizas)
         polizas.save failOnError: true, flush: true
     }
 
-    PolizasDelPeriodoSat generar(Integer eje, Integer m, String numTramite = '', String numOrden = '') {
-        PolizasDelPeriodoSat polizas = new PolizasDelPeriodoSat(ejercicio: eje, mes: m)
+    PolizasDelPeriodoSat generar(PolizasDelPeriodoSat polizas) {
         Empresa empresa = Empresa.first()
         polizas.rfc = empresa.rfc
         polizas.emisor = empresa.nombre
-        polizas.tipoDeSolicitud = TipoSolicitud.COMPENSACION  // TODO QUITAR
-        polizas.numTramite = numTramite
-        polizas.numOrden = numOrden
         buildXml(polizas)
     }
 
@@ -54,7 +54,7 @@ class PolizasDelPeriodoSatService implements  LogUser, SelladorDigital{
 
 
         List<Poliza>  polizas = Poliza.where{ejercicio == polizasPer.ejercicio && mes == polizasPer.mes}
-                .list([max: 10])
+                .list()
         polizas.each { p ->
 
             SatPoliza satPoliza = SatPoliza.builder()
@@ -72,12 +72,11 @@ class PolizasDelPeriodoSatService implements  LogUser, SelladorDigital{
                 .debe(t.debe)
                 .haber(t.haber)
                 .build()
-                satPoliza.transacciones.add(det)
 
                 registrarComprobantes(det, t)
-
                 registrarComplementosDePago(det, t)
 
+                satPoliza.transacciones.add(det)
             }
             satPolizas.polizas.add(satPoliza)
 
@@ -88,8 +87,14 @@ class PolizasDelPeriodoSatService implements  LogUser, SelladorDigital{
         sellarDocumento(satPolizas, empresa, CadenaBuilder.Tipo.POLIZAS, xmlString.getBytes('UTF-8'))
         String signedXml = builder.buildXml(satPolizas)
 
-        polizasPer.xml = signedXml.getBytes('UTF-8')
         polizasPer.fileName = PolizasBuilder.getSatFileName(satPolizas)
+
+        File target = new File(getPolizasDir(), polizasPer.fileName)
+        target.write(signedXml, 'UTF-8')
+
+        // polizasPer.xml =  target.toURI().to// signedXml.getBytes('UTF-8')
+
+
         return polizasPer
     }
 
@@ -102,19 +107,17 @@ class PolizasDelPeriodoSatService implements  LogUser, SelladorDigital{
      */
     def registrarComprobantes(SatPolizaDet det, PolizaDet polizaDet) {
         if(polizaDet.uuid) {
-            log.info('Comprobante nacional para : {}', polizaDet.uuid)
-            polizaDet.nacionales.each {
-                ComprobanteNacional n = ComprobanteNacional.builder()
-                .rfc(it.rfc)
-                .montoTotal(polizaDet.montoTotal)
-                .uuidcfdi(polizaDet.uuid)
-                .build()
-                if(polizaDet.tipCamb > 1.00) {
-                    n.moneda = SatMoneda.USD
-                    n.tipCamb = polizaDet.tipCamb
-                }
-                det.comprobanteNacional.add(n)
+            // log.info('Comprobante nacional para : {}', polizaDet.uuid)
+            ComprobanteNacional n = ComprobanteNacional.builder()
+                    .rfc(polizaDet.rfc)
+                    .montoTotal(polizaDet.montoTotal)
+                    .uuidcfdi(polizaDet.uuid)
+                    .build()
+            if(polizaDet.tipCamb > 1.00) {
+                n.moneda = SatMoneda.USD
+                n.tipCamb = polizaDet.tipCamb
             }
+            det.comprobanteNacional.add(n)
 
         }
     }
@@ -145,6 +148,26 @@ class PolizasDelPeriodoSatService implements  LogUser, SelladorDigital{
         documento.sello = sello
         return documento
 
+    }
+
+    private File polizasDir
+
+    File getPolizasDir() {
+        if(!polizasDir) {
+            polizasDir = new File(this.econtaPolizasDir)
+            if(!polizasDir.exists())
+                polizasDir.mkdir()
+        }
+        return polizasDir
+    }
+
+    File findXmlFile(PolizasDelPeriodoSat p) {
+        return new File(getPolizasDir(), p.getFileName())
+    }
+
+    String readXml(PolizasDelPeriodoSat p) {
+        File xmlFile = findXmlFile(p)
+        return xmlFile.getText('UTF-8')
     }
 
 }

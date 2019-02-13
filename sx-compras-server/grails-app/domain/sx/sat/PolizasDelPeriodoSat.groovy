@@ -9,7 +9,7 @@ import groovy.transform.ToString
 import groovy.util.slurpersupport.GPathResult
 import lx.econta.polizas.TipoSolicitud
 
-@ToString( includes =   "ejercicio, mes, tipoDeSolicitud, fileName")
+@ToString( includes =   "ejercicio, mes, tipoDeSolicitud, numOrden, numTramite, fileName")
 @EqualsAndHashCode
 @GrailsCompileStatic
 class PolizasDelPeriodoSat {
@@ -32,8 +32,8 @@ class PolizasDelPeriodoSat {
 
     String fileName
 
-    byte[] xml
-    byte[] acuse
+    String xml
+    String acuse
 
     Date dateCreated
     Date lastUpdated
@@ -47,26 +47,28 @@ class PolizasDelPeriodoSat {
         numOrden nullable: true
         numTramite nullable: true
         mes inList:(1..13)
-        xml maxSize:(1024 * 512)  // 50kb para almacenar el xml
-        acuse nullable: true, maxSize:(1024 * 512)  // 50kb para almacenar el xml
+        acuse nullable: true
         createUser nullable: true
         updateUser nullable: true
     }
 
     static mapping ={}
 
-    static transients = ['xmlNode']
+    static transients = ['xmlNode', 'xml']
 
     private GPathResult xmlNode
 
+
     GPathResult getXmlNode(){
         if(xmlNode == null) {
-            xmlNode = new XmlSlurper().parse(new ByteArrayInputStream(xml))
+            xmlNode = new XmlSlurper()
+                    .parse(new ByteArrayInputStream(toXml().getBytes( 'UTF-8')))
         }
         return xmlNode
     }
 
+
     String  toXml() {
-        return new String(this.xml, 'UTF-8')
+        return new String(this.xml)
     }
 }
