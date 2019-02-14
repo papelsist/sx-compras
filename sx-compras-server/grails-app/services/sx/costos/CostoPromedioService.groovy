@@ -96,8 +96,13 @@ class CostoPromedioService {
                     costo = cp.costo
                     log.info("Costo anterior: {}", costo)
                 } else {
-                    log.error("Error no se enctontro Costo promedio en el periodo anterior...")
-                    costo = null
+                    //log.error("Error no se enctontro Costo promedio en el periodo anterior...")
+                    
+                    def existenciaAnt = Existencia.where{anio == anterior.ejercicio && mes == anterior.mes && producto == tr.producto && sucursal == trs.sucursal }.find()
+                    log.info("Costo en existencia {}",existenciaAnt.costoPromedio)
+                    if(existenciaAnt)
+                        costo = existenciaAnt.costoPromedio
+
                 }
 
             } else {
