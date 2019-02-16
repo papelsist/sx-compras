@@ -42,7 +42,7 @@ abstract class VentasProc implements  ProcesadorMultipleDePolizas {
         ,concat('105-',(SELECT concat(case when x.cuenta_operativa='0266' then concat('0004-',x.cuenta_operativa) else concat('0003-',x.cuenta_operativa) end) FROM cuenta_operativa_cliente x where x.cliente_id=c.id ),'-0000') as cta_cliente, c.rfc, x.uuid
         FROM cuenta_por_cobrar f join cliente c on(f.cliente_id=c.id)  
         join sucursal s on(f.sucursal_id=s.id) join cfdi x on(f.cfdi_id=x.id)
-        where  f.fecha='@FECHA' and tipo in('CRE') and f.tipo_documento='VENTA' and x.cancelado is false and f.sw2 is null        
+        where  f.fecha='@FECHA' and tipo in('CRE') and f.tipo_documento='VENTA' and f.cancelada is null and f.sw2 is null        
         UNION        
         SELECT concat('VENTAS_',f.tipo) as asiento,f.id as origen,f.tipo as documentoTipo,f.fecha,f.documento
         ,f.moneda,f.tipo_de_cambio,f.subtotal,f.impuesto,f.total,c.nombre referencia2,s.nombre sucursal, s.clave as suc
@@ -50,7 +50,7 @@ abstract class VentasProc implements  ProcesadorMultipleDePolizas {
         ,concat('105-',(case when f.tipo='CON' then '0001-' when f.tipo='COD' then '0002-' else 'nd' end ),(case when s.clave>9 then concat('00',s.clave) else concat('000',s.clave) end),'-0000') as cta_cliente, c.rfc, x.uuid
         FROM cuenta_por_cobrar f join cliente c on(f.cliente_id=c.id)  
         join sucursal s on(f.sucursal_id=s.id) join cfdi x on(f.cfdi_id=x.id)
-        where f.fecha='@FECHA' and tipo in('CON','COD') and f.tipo_documento='VENTA'and x.cancelado is false and f.sw2 is null              
+        where f.fecha='@FECHA' and tipo in('CON','COD') and f.tipo_documento='VENTA'and f.cancelada is null and f.sw2 is null              
         ) as x
     """
 

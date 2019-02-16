@@ -1,6 +1,9 @@
 package sx.contabilidad
 
-
+/**
+ * Mapeo de cuentas fijas de mayor importancia
+ *
+ */
 enum Mapeo {
 
     IvaNoTrasladadoVentas("209-0001-0000-0000")

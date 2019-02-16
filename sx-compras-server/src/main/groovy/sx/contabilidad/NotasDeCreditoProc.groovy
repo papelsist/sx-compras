@@ -115,7 +115,6 @@ abstract class NotasDeCreditoProc implements  ProcesadorDePoliza {
         CuentaContable cuenta = buscarCuenta(IvaNoTrasladadoVentas.clave)
         String descripcion  = !row.origen ?
                 "${row.asiento}":
-                // "F: ${row.documento} ${row.fecha.format('dd/MM/yyyy')} ${row.documentoTipo} ${row.sucursal}"
                 "NC: ${row.folio} F:${row.documento} ${row.fecha_documento.format('dd/MM/yyyy')} ${row.documentoTipo} ${row.sucursal}"
         PolizaDet det = new PolizaDet(
                 cuenta: cuenta,
@@ -145,7 +144,6 @@ abstract class NotasDeCreditoProc implements  ProcesadorDePoliza {
         CuentaContable cuenta = buscarCuenta(row.cta_cliente)
         String descripcion  = !row.origen ?
                 "${row.asiento}":
-                // "F: ${row.documento} ${row.fecha.format('dd/MM/yyyy')} ${row.documentoTipo} ${row.sucursal}"
                 "NC: ${row.folio} F:${row.documento} ${row.fecha_documento.format('dd/MM/yyyy')} ${row.documentoTipo} ${row.sucursal}"
         PolizaDet det = new PolizaDet(
             cuenta: cuenta,
@@ -163,13 +161,6 @@ abstract class NotasDeCreditoProc implements  ProcesadorDePoliza {
             haber: row.total,
             debe: 0.0
         )
-        // Comprobante nacional para el SAT
-        def comprobante = new SatComprobanteNac(uuidcfdi: row.uuid, rfc: row.rfc, montoTotal: row.total)
-        if(row.moneda != 'MXN') {
-            comprobante.moneda = row.moneda
-            comprobante.tipCamb = row.tc
-        }
-        det.nacionales.add(comprobante)
         poliza.addToPartidas(det)
     }
 

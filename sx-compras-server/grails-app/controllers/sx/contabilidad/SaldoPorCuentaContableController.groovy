@@ -4,8 +4,12 @@ import grails.compiler.GrailsCompileStatic
 import grails.gorm.DetachedCriteria
 import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.*
+import grails.validation.Validateable
 import groovy.transform.CompileDynamic
+import groovy.transform.ToString
 import groovy.util.logging.Slf4j
+import org.apache.commons.lang3.exception.ExceptionUtils
+import sx.reports.ReportService
 import sx.utils.Periodo
 import static org.springframework.http.HttpStatus.OK
 
@@ -16,6 +20,8 @@ import static org.springframework.http.HttpStatus.OK
 class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaContable> {
 
     static responseFormats = ['json']
+
+    ReportService reportService
 
     SaldoPorCuentaContableService saldoPorCuentaContableService
 
@@ -63,4 +69,37 @@ class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaC
         // saldoPorCuentaContableService.cierreMensual(ejercicio, 13)
         respond status: OK
     }
+
+    def printAuxiliar( AuxiliarContableCommand command) {
+        if(command == null) {
+            notFound()
+            return
+        }
+        log.info('Auxiliar contable para {}', command)
+        command.validate()
+        if (command.hasErrors()) {
+            respond command.errors
+            return
+        }
+        Map repParams = [
+                EJERCICIO: command.ejercicio.toString(),
+                MES: command.mes.toString(),
+                CUENTA_ID: command.cuenta.id
+        ]
+        def pdf =  reportService.run('contabilidad/AuxiliarContable.jrxml', repParams)
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'Poliza.pdf')
+    }
+
+    def handleException(Exception e) {
+        String message = ExceptionUtils.getRootCauseMessage(e)
+        log.error(message)
+        respond([message: message], status: 500)
+    }
+}
+
+@ToString
+class AuxiliarContableCommand implements Validateable{
+    Integer ejercicio
+    Integer mes
+    CuentaContable cuenta
 }

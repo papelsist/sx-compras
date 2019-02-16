@@ -33,38 +33,14 @@
 		<defaultValueExpression ><![CDATA["COMPLEMENTO DE POLIZA DE METODO DE PAGO"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="POLIZA_ID" isForPrompting="true" class="java.lang.Long"/>
-	<queryString><![CDATA[SELECT 'TRANSFERENCIA' as fpago,t.id,p.id as poliza_id,p.tipo,p.subtipo,p.folio,p.fecha
-,t.cta_ori,t.banco_ori_nal,t.banco_ori_ext,t.fecha,t.benef,t.rfc,t.monto
-,(case when t.moneda is null then 'MXN' else moneda end) as moneda,(case when t.moneda is null then 1 else t.tip_camb end) tip_camb,(t.monto*(case when t.moneda is null then 1 else t.tip_camb end)) as monto_mxn
-,t.cta_dest,t.banco_dest_nal,t.banco_dest_ext,d.referencia,'' as met_pago_pol,'' descrip_pago
-FROM sat_pago_transferencia t
-join poliza_det_sat_pago_transferencia x on(x.sat_pago_transferencia_id=t.id)
-join poliza_det d on(d.id=x.poliza_det_transferencias_id)
+	<queryString><![CDATA[SELECT (case when d.metodo_de_pago='02' then 'CHEQUE' when d.metodo_de_pago='03' then 'TRANSFENCIA' else 'OTRO_PAGO' end) fpago,d.id,p.id as poliza_id,p.tipo,p.subtipo,p.folio,p.fecha
+,d.cta_origen,d.banco_origen,d.beneficiario,d.rfc,d.monto_total
+,d.moneda,d.tip_camb,d.monto_total*d.tip_camb as monto_mxn
+,d.cta_destino,d.banco_destino,d.referencia,d.metodo_de_pago,d.asiento descrip_pago
+FROM  poliza_det d 
 join poliza p on(p.id=d.poliza_id)
 where p.id=$P{POLIZA_ID}
-group by t.id,t.banco_ori_nal,t.fecha,t.benef,t.rfc,t.monto,t.moneda,t.tip_camb
-union
-SELECT 'CHEQUE' as fpago,t.id,p.id as poliza_id,p.tipo,p.subtipo,p.folio,p.fecha
-,'' cta_ori,t.ban_emis_nal,t.ban_emis_ext,t.fecha,t.benef,t.rfc,t.monto
-,(case when t.moneda is null then 'MXN' else moneda end) as moneda,(case when t.moneda is null then 1 else t.tip_camb end) tip_camb,(t.monto*(case when t.moneda is null then 1 else t.tip_camb end)) as monto_mxn
-,'' cta_dest,'' banco_dest_nal,'' banco_dest_ext,t.num,'' met_pago_pol,'' descrip_pago
-FROM sat_pago_cheque t
-join poliza_det_sat_pago_cheque x on(x.sat_pago_cheque_id=t.id)
-join poliza_det d on(d.id=x.poliza_det_cheques_id)
-join poliza p on(p.id=d.poliza_id)
-where p.id=$P{POLIZA_ID}
-group by t.id,t.ban_emis_nal,t.fecha,t.benef,t.rfc,t.monto,t.moneda,t.tip_camb
-UNION
-SELECT 'OTRO_PAGO' as fpago,t.id,p.id as poliza_id,p.tipo,p.subtipo,p.folio,p.fecha
-,'' cta_ori,'' banco_ori_nal,'' banco_ori_ext,t.fecha,t.benef,t.rfc,t.monto
-,(case when t.moneda is null then 'MXN' else moneda end) as moneda,(case when t.moneda is null then 1 else t.tip_camb end) tip_camb,(t.monto*(case when t.moneda is null then 1 else t.tip_camb end)) as monto_mxn
-,'' cta_dest,'' banco_dest_nal,'' banco_dest_ext,'' referencia,t.met_pago_pol,t.asiento descrip_pago
-FROM sat_pago_otro t
-join poliza_det_sat_pago_otro x on(x.sat_pago_otro_id=t.id)
-join poliza_det d on(d.id=x.poliza_det_otros_id)
-join poliza p on(p.id=d.poliza_id)
-where p.id=$P{POLIZA_ID}
-group by t.id,t.fecha,t.benef,t.rfc,t.monto,t.moneda,t.tip_camb]]></queryString>
+group by d.origen,d.banco_origen,p.fecha,d.beneficiario,d.rfc,d.monto_total,d.moneda,d.tip_camb]]></queryString>
 
 	<field name="fpago" class="java.lang.String"/>
 	<field name="id" class="java.lang.Long"/>
@@ -73,20 +49,18 @@ group by t.id,t.fecha,t.benef,t.rfc,t.monto,t.moneda,t.tip_camb]]></queryString>
 	<field name="subtipo" class="java.lang.String"/>
 	<field name="folio" class="java.lang.Integer"/>
 	<field name="fecha" class="java.sql.Date"/>
-	<field name="cta_ori" class="java.lang.String"/>
-	<field name="banco_ori_nal" class="java.lang.String"/>
-	<field name="banco_ori_ext" class="java.lang.String"/>
-	<field name="benef" class="java.lang.String"/>
+	<field name="cta_origen" class="java.lang.String"/>
+	<field name="banco_origen" class="java.lang.String"/>
+	<field name="beneficiario" class="java.lang.String"/>
 	<field name="rfc" class="java.lang.String"/>
-	<field name="monto" class="java.math.BigDecimal"/>
+	<field name="monto_total" class="java.math.BigDecimal"/>
 	<field name="moneda" class="java.lang.String"/>
 	<field name="tip_camb" class="java.math.BigDecimal"/>
 	<field name="monto_mxn" class="java.math.BigDecimal"/>
-	<field name="cta_dest" class="java.lang.String"/>
-	<field name="banco_dest_nal" class="java.lang.String"/>
-	<field name="banco_dest_ext" class="java.lang.String"/>
+	<field name="cta_destino" class="java.lang.String"/>
+	<field name="banco_destino" class="java.lang.String"/>
 	<field name="referencia" class="java.lang.String"/>
-	<field name="met_pago_pol" class="java.lang.String"/>
+	<field name="metodo_de_pago" class="java.lang.String"/>
 	<field name="descrip_pago" class="java.lang.String"/>
 
 	<variable name="TOTAL" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
@@ -124,7 +98,7 @@ group by t.id,t.fecha,t.benef,t.rfc,t.monto,t.moneda,t.tip_camb]]></queryString>
 						key="textField"/>
 					<box></box>
 					<textElement textAlignment="Right" verticalAlignment="Bottom">
-						<font fontName="Algerian"/>
+						<font fontName="Arial"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$P{NomReporte}]]></textFieldExpression>
 				</textField>
@@ -583,7 +557,7 @@ group by t.id,t.fecha,t.benef,t.rfc,t.monto,t.moneda,t.tip_camb]]></queryString>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="7" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{banco_dest_nal}==null ? "BANCO DESTINO EXT" : "BANCO DESTINO NAL"]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{moneda}.equals( "USD" ) ? "BANCO DESTINO EXT" : "BANCO DESTINO NAL"]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -603,7 +577,7 @@ group by t.id,t.fecha,t.benef,t.rfc,t.monto,t.moneda,t.tip_camb]]></queryString>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="7" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{banco_ori_nal}==null ? "BANCO EMISOR EXT" : "BANCO EMISOR NAL"]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{moneda}.equals( "USD" ) ? "BANCO EMISOR EXT" : "BANCO EMISOR NAL"]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
@@ -666,7 +640,7 @@ group by t.id,t.fecha,t.benef,t.rfc,t.monto,t.moneda,t.tip_camb]]></queryString>
 					<textElement verticalAlignment="Middle">
 						<font size="7"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{cta_ori}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{cta_origen}]]></textFieldExpression>
 				</textField>
 				<line direction="TopDown">
 					<reportElement
@@ -758,7 +732,7 @@ group by t.id,t.fecha,t.benef,t.rfc,t.monto,t.moneda,t.tip_camb]]></queryString>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="7"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{benef}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{beneficiario}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -773,7 +747,7 @@ group by t.id,t.fecha,t.benef,t.rfc,t.monto,t.moneda,t.tip_camb]]></queryString>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="7"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{banco_ori_nal}==null ? $F{banco_ori_ext} : $F{banco_ori_nal}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{banco_origen}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -788,7 +762,7 @@ group by t.id,t.fecha,t.benef,t.rfc,t.monto,t.moneda,t.tip_camb]]></queryString>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="7"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{cta_dest}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{cta_destino}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -803,7 +777,7 @@ group by t.id,t.fecha,t.benef,t.rfc,t.monto,t.moneda,t.tip_camb]]></queryString>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="7"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{banco_dest_nal}==null ? $F{banco_dest_ext} : $F{banco_dest_nal}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{banco_destino}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -818,7 +792,7 @@ group by t.id,t.fecha,t.benef,t.rfc,t.monto,t.moneda,t.tip_camb]]></queryString>
 					<textElement verticalAlignment="Middle">
 						<font size="7"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{cta_ori}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{cta_origen}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -833,7 +807,7 @@ group by t.id,t.fecha,t.benef,t.rfc,t.monto,t.moneda,t.tip_camb]]></queryString>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="7"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{banco_ori_nal}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{banco_origen}]]></textFieldExpression>
 				</textField>
 				<line direction="TopDown">
 					<reportElement
@@ -862,7 +836,7 @@ group by t.id,t.fecha,t.benef,t.rfc,t.monto,t.moneda,t.tip_camb]]></queryString>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="7"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{met_pago_pol}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{metodo_de_pago}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement

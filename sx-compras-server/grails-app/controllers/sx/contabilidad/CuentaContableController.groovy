@@ -32,21 +32,25 @@ class CuentaContableController extends RestfulController <CuentaContable>{
     @Secured("IS_AUTHENTICATED_ANONYMOUSLY")
     def index(Integer max) {
         // params.max = max?: 5000
-        params.max = max?: 20
+        params.max = max?: 30
         params.sort = params.sort ?:'lastUpdated'
         params.order = params.order ?:'desc'
-        // log.debug('Index : {}', params)
+        log.debug('Index : {}', params)
         def q = CuentaContable.where {}
+
         if(params.getBoolean('mayor')) {
             q = q.where {padre == null}
         }
+        if(params.getBoolean('detalle')){
+            q = q.where {detalle == true}
+        }
+
         if(params.term) {
             def term = "${params.term}%"
-            // log.info('Term: {}', term)
+            log.info('Term: {}', term)
             q = q.where {clave =~ term || descripcion =~ term.toUpperCase()}
         }
         respond q.list(params)
-        // respond rows, model: [("${resourceName}Count".toString()): countResources()]
     }
 
     @CompileDynamic

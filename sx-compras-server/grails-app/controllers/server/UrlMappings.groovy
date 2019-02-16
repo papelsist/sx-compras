@@ -231,6 +231,7 @@ class UrlMappings {
         "/api/contabilidad/saldos/actualizar/$ejercicio/$mes"(controller: 'saldoPorCuentaContable', action: 'actualizarSaldos', method: 'PUT')
         "/api/contabilidad/saldos/cierreMensual/$ejercicio/$mes"(controller: 'saldoPorCuentaContable', action: 'cierreMensual', method: 'PUT')
         "/api/contabilidad/saldos/cierreAnual/$ejercicio"(controller: 'saldoPorCuentaContable', action: 'cierreAnual', method: 'PUT')
+        "/api/contabilidad/saldos/printAuxiliar"(controller: 'saldoPorCuentaContable', action: 'printAuxiliar')
 
         "/api/sat/cuentas"(resources: 'cuentaSat', excludes: ['create', 'edit', 'patch'])
 
