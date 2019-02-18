@@ -38,11 +38,11 @@ class CobranzaConProc implements  ProcesadorMultipleDePolizas{
     @Override
     Poliza recalcular(Poliza poliza) {
         poliza.partidas.clear()
-        log.info('Partidas generadas: {}', poliza.partidas.size())
         cobranzaDepositosTask.generarAsientos(poliza, [tipo: 'CON'])
         cobranzaEfectivoTask.generarAsientos(poliza, [tipo: 'CON'])
         cobranzaTarjetaTask.generarAsientos(poliza, [tipo: 'CON'])
         cobranzaSaldosAFavorTask.generarAsientos(poliza, [tipo: 'CON'])
+        log.info('Partidas generadas: {}', poliza.partidas.size())
         return poliza
     }
 

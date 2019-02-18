@@ -11,7 +11,7 @@ import sx.contabilidad.PolizaDet
 @Slf4j
 @GrailsCompileStatic
 @Component
-class CobranzaEfectivoCodTask implements  AsientoBuilder {
+class CobranzaEfectivoCheTask implements  AsientoBuilder {
 
 
     /**
@@ -35,7 +35,8 @@ class CobranzaEfectivoCodTask implements  AsientoBuilder {
         String sql = getTransferenciasDepositosSql()
                 .replaceAll("@FECHA", toSqlDate(poliza.fecha))
 
-        List rows = getAllRows(sql, []).findAll {it.sucursal == poliza.sucursal}
+
+        List rows = getAllRows(sql, [])
 
         // Almacenar los cobros (Para el cargo a bancos)
         Set cobros = new HashSet()
@@ -50,7 +51,7 @@ class CobranzaEfectivoCodTask implements  AsientoBuilder {
                 cobros.add(row.origen)
 
                 // Abono a CAJA
-                if(row.asiento == 'COB_FICHA_EFE_COD' )
+                if(row.asiento == 'COB_FICHA_EFE_CRE' )
                     poliza.addToPartidas(buildRegistro(row.cta_contable2.toString(), descripcion, row,0.0, row.total))
 
                 // En caso de una cobranza de saldo a favor
@@ -64,7 +65,7 @@ class CobranzaEfectivoCodTask implements  AsientoBuilder {
                 }
                 if(row.saf > 0.0) {
                     PolizaDet saf = buildRegistro(
-                            '205-0001-0002-0000',
+                            '205-0001-0003-0000',
                             descripcion, row)
                     saf.haber = row.SAF.abs()
                     saf.asiento = "${saf.asiento}_SAF"
@@ -73,7 +74,7 @@ class CobranzaEfectivoCodTask implements  AsientoBuilder {
 
                 if(row.diferencia > 0.0) {
                     PolizaDet saf = buildRegistro(
-                            '704-0002-0000-0000',
+                            '704-0003-0000-0000',
                             descripcion, row)
                     saf.haber = row.diferencia.abs()
                     saf.asiento = "${saf.asiento}_OPRD"
@@ -91,7 +92,7 @@ class CobranzaEfectivoCodTask implements  AsientoBuilder {
                 clienteDet.haber = row.cobro_aplic
                 poliza.addToPartidas(clienteDet)
 
-                if(row.asiento == 'COB_FICHA_EFE_COD' ) {
+                if(row.asiento == 'COB_FICHA_EFE_CRE' ) {
                     // Abono a CAJA
                     poliza.addToPartidas(buildRegistro(
                             row.cta_contable2.toString(),
@@ -135,7 +136,7 @@ class CobranzaEfectivoCodTask implements  AsientoBuilder {
 
         String res = """
              SELECT          
-        'FICHA_CON' tipo,
+        'FICHA_CHE' tipo,
         x.asiento,
         x.origen_gpo,
         x.documentoTipo,
@@ -184,11 +185,11 @@ class CobranzaEfectivoCodTask implements  AsientoBuilder {
         ,b.forma_de_pago,'02' metodoDePago,b.id origen,x.numero documento,x.numero referenciaBancaria,b.importe total,(case when b.diferencia_fecha='@FECHA' then b.diferencia else 0 end) diferencia
         ,b.importe-(case when b.diferencia_fecha='@FECHA' then b.diferencia else 0 end)-ifnull((SELECT sum(a.importe) FROM aplicacion_de_cobro a where a.cobro_id=b.id and a.fecha='@FECHA'),0) SAF
         ,null ctaOrigen,x.banco_origen_id,(SELECT y.nombre FROM banco y where x.banco_origen_id=y.id) bancoOrigen,t.rfc,t.nombre cliente,c.id cxc_id,c.documento factura,c.tipo,c.fecha fecha_fac,i.uuid,a.importe cobro_aplic,c.total montoTotal
-        ,concat('105-0002-',(case when s.clave>9 then '00' else '000' end),s.clave,'-0000') cta_contable_fac,'209-0001-0000-0000' cta_iva_pend,'208-0001-0000-0000' cta_iva_pag
+        ,concat('106-0001-',(SELECT x.cuenta_operativa FROM cuenta_operativa_cliente x where x.cliente_id=t.id ),'-0000') cta_contable_fac,'209-0001-0000-0000' cta_iva_pend,'208-0001-0000-0000' cta_iva_pag
         FROM ficha f join movimiento_de_cuenta m on(f.ingreso_id=m.id) join cuenta_de_banco z on(m.cuenta_id=z.id)
         join sucursal s on(f.sucursal_id=s.id) left join cobro_cheque x on(x.ficha_id=f.id) join cobro b on(x.cobro_id=b.id)  join cliente t on(b.cliente_id=t.id)
-        join aplicacion_de_cobro a on(a.cobro_id=b.id) join cuenta_por_cobrar c on(a.cuenta_por_cobrar_id=c.id) join cfdi i on(c.cfdi_id=i.id)
-        where f.fecha='@FECHA' and f.origen in('COD') and f.tipo_de_ficha<>'EFECTIVO' and x.cambio_por_efectivo is false                  
+        join aplicacion_de_cobro a on(a.cobro_id=b.id) join cuenta_por_cobrar c on(a.cuenta_por_cobrar_id=c.id) left join cfdi i on(c.cfdi_id=i.id)
+        where f.fecha='@FECHA' and f.origen in('CHE') and f.tipo_de_ficha<>'EFECTIVO' and x.cambio_por_efectivo is false                  
         ) as x  
         """
         return res

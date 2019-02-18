@@ -22,9 +22,15 @@ class CobranzaSaldosAFavorTask implements  AsientoBuilder{
 
         List<AplicacionDeCobro> aplicaciones = findAplicaciones(poliza.fecha, tipo)
         if(tipo == 'CON') {
+            aplicaciones = aplicaciones.findAll{it.cobro.sucursal.nombre == poliza.sucursal}
             generarContado(poliza, aplicaciones)
         } else if(tipo == 'COD') {
+            aplicaciones = aplicaciones.findAll{it.cobro.sucursal.nombre == poliza.sucursal}
             generarCod(poliza, aplicaciones)
+        } else if(tipo == 'CRE') {
+            generarCre(poliza, aplicaciones)
+        } else  if(tipo == 'CHE') {
+
         }
 
     }
@@ -74,6 +80,77 @@ class CobranzaSaldosAFavorTask implements  AsientoBuilder{
             String desc = row.descripcion
 
             String cta = '205-0001-0002-0000'
+            BigDecimal total = it.importe
+            BigDecimal importe = MonedaUtils.calcularImporteDelTotal(total)
+            BigDecimal iva = MonedaUtils.calcularImpuesto(importe)
+
+            // Cargo a Aplicacion de saldos a favor CONTADO
+            poliza.addToPartidas(buildDet(cta, desc, row, total))
+
+            // Abono al cliente
+            def clienteClave = "105-0002-${it.cobro.sucursal.clave.padLeft(4,'0')}-0000"
+            poliza.addToPartidas(buildDet(clienteClave, desc, row, 0.0, total))
+
+            // Cargo al IVA de saldo a favor
+            poliza.addToPartidas(buildDet('208-0004-0000-0000', desc, row, 0.0, iva))
+
+            // Abono al IVA pendiente
+            poliza.addToPartidas(buildDet('208-0001-0000-0000', desc, row, iva))
+        }
+    }
+
+
+    /**
+     * Genera los registros contables para el caso de aplicaciones de COD
+     *
+     * @param poliza
+     * @param aplicaciones
+     * @return
+     */
+    def generarCre(Poliza poliza, List<AplicacionDeCobro> aplicaciones) {
+
+        aplicaciones.each {
+
+            Map row = buildRow(it, 'CRE')
+
+            String desc = row.descripcion
+
+            String cta = '205-0001-0003-0000'
+            BigDecimal total = it.importe
+            BigDecimal importe = MonedaUtils.calcularImporteDelTotal(total)
+            BigDecimal iva = MonedaUtils.calcularImpuesto(importe)
+
+            // Cargo a Aplicacion de saldos a favor CONTADO
+            poliza.addToPartidas(buildDet(cta, desc, row, total))
+
+            // Abono al cliente
+            def clienteClave = "105-0002-${it.cobro.sucursal.clave.padLeft(4,'0')}-0000"
+            poliza.addToPartidas(buildDet(clienteClave, desc, row, 0.0, total))
+
+            // Cargo al IVA de saldo a favor
+            poliza.addToPartidas(buildDet('208-0004-0000-0000', desc, row, 0.0, iva))
+
+            // Abono al IVA pendiente
+            poliza.addToPartidas(buildDet('208-0001-0000-0000', desc, row, iva))
+        }
+    }
+
+    /**
+     * Genera los registros contables para el caso de aplicaciones de COD
+     *
+     * @param poliza
+     * @param aplicaciones
+     * @return
+     */
+    def generarChe(Poliza poliza, List<AplicacionDeCobro> aplicaciones) {
+
+        aplicaciones.each {
+
+            Map row = buildRow(it, 'CHE')
+
+            String desc = row.descripcion
+
+            String cta = '205-0001-0003-0000'
             BigDecimal total = it.importe
             BigDecimal importe = MonedaUtils.calcularImporteDelTotal(total)
             BigDecimal iva = MonedaUtils.calcularImpuesto(importe)

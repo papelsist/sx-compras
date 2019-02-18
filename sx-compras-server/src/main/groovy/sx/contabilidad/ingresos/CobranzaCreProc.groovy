@@ -11,15 +11,15 @@ import sx.core.Sucursal
 
 @Slf4j
 @Component
-class CobranzaCodProc implements  ProcesadorMultipleDePolizas{
+class CobranzaCreProc implements  ProcesadorMultipleDePolizas{
 
     @Autowired
-    @Qualifier('cobranzaDepositosCodTask')
-    CobranzaDepositosCodTask cobranzaDepositosCodTask
+    @Qualifier('cobranzaDepositosCreTask')
+    CobranzaDepositosCreTask cobranzaDepositosCreTask
 
     @Autowired
-    @Qualifier('cobranzaEfectivoCodTask')
-    CobranzaEfectivoCodTask cobranzaEfectivoCodTask
+    @Qualifier('cobranzaEfectivoCreTask')
+    CobranzaEfectivoCreTask cobranzaEfectivoCreTask
 
     @Autowired
     @Qualifier('cobranzaSaldosAFavorTask')
@@ -27,15 +27,15 @@ class CobranzaCodProc implements  ProcesadorMultipleDePolizas{
 
     @Override
     String definirConcepto(Poliza poliza) {
-        return "COBRANZA COD"
+        return "COBRANZA CRE"
     }
 
     @Override
     Poliza recalcular(Poliza poliza) {
         poliza.partidas.clear()
-        cobranzaDepositosCodTask.generarAsientos(poliza, [tipo: 'COD'])
-        cobranzaEfectivoCodTask.generarAsientos(poliza, [tipo: 'COD'])
-        cobranzaSaldosAFavorTask.generarAsientos(poliza, [tipo: 'COD'])
+        cobranzaDepositosCreTask.generarAsientos(poliza, [tipo: 'CRE'])
+        cobranzaEfectivoCreTask.generarAsientos(poliza, [tipo: 'CRE'])
+        cobranzaSaldosAFavorTask.generarAsientos(poliza, [tipo: 'CRE'])
         log.info('Partidas generadas: {}', poliza.partidas.size())
         return poliza
     }
@@ -43,10 +43,9 @@ class CobranzaCodProc implements  ProcesadorMultipleDePolizas{
 
 
     List<Poliza> generarPolizas(PolizaCreateCommand command) {
-        List<Sucursal> sucursals = getSucursales()
+        List<String> sucursals = ['OFICINAS']
         List<Poliza> polizas = []
-        sucursals.each {
-            String suc = it.nombre
+        sucursals.each { suc ->
             Poliza p = Poliza.where{
                 ejercicio == command.ejercicio &&
                         mes == command.mes &&
@@ -59,10 +58,10 @@ class CobranzaCodProc implements  ProcesadorMultipleDePolizas{
             if(p == null) {
 
                 p = new Poliza(ejercicio: command.ejercicio, mes: command.mes, subtipo: command.subtipo, tipo: command.tipo)
-                p.concepto = "COBRANZA COD  ${it.nombre}"
+                p.concepto = "COBRANZA CRE  ${suc}"
                 p.fecha = command.fecha
-                p.sucursal = it.nombre
-                log.info('Agregando poliza: {}', it)
+                p.sucursal = suc
+                log.info('Agregando poliza: {}', suc)
                 polizas << p
             } else
                 log.info('Poliza ya existente  {}', p)
