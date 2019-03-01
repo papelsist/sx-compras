@@ -74,7 +74,6 @@ if (Environment.isDevelopmentMode() && targetDir != null) {
     logger("sx.cfdi", DEBUG, ['STDOUT'], false)
     logger("sx.utils", DEBUG, ['STDOUT'], false)
 
-
     // Log Listeners
     logger("sx.audit", DEBUG, ['STDOUT'], false)
     logger("sx.reports", DEBUG, ['STDOUT'], false)

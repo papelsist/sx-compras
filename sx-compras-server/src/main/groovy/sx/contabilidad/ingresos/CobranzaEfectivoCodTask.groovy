@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component
 import sx.contabilidad.AsientoBuilder
 import sx.contabilidad.Poliza
 import sx.contabilidad.PolizaDet
+import sx.utils.MonedaUtils
 
 @Slf4j
 @GrailsCompileStatic
@@ -31,7 +32,7 @@ class CobranzaEfectivoCodTask implements  AsientoBuilder {
     @Override
     @CompileDynamic
     def generarAsientos(Poliza poliza, Map params = [:]) {
-        log.info("Generando asientos contables para cobranza con efectivo")
+        log.info("Generando asientos contables para cobranza con EFECTIVO {} {}", poliza.sucursal, poliza.fecha)
         String sql = getTransferenciasDepositosSql()
                 .replaceAll("@FECHA", toSqlDate(poliza.fecha))
 
@@ -62,13 +63,26 @@ class CobranzaEfectivoCodTask implements  AsientoBuilder {
                             descripcion, row, row.impuesto)
                     )
                 }
-                if(row.saf > 0.0) {
-                    PolizaDet saf = buildRegistro(
+                if(row.SAF > 0.0) {
+
+                    BigDecimal safTotal = row.SAF
+                    BigDecimal safImporte = MonedaUtils.calcularImporteDelTotal(safTotal)
+                    BigDecimal safIva = safTotal - safImporte
+                    row.asiento = row.asiento + '_SAF'
+
+                    poliza.addToPartidas(buildRegistro(
                             '205-0001-0002-0000',
-                            descripcion, row)
-                    saf.haber = row.SAF.abs()
-                    saf.asiento = "${saf.asiento}_SAF"
-                    poliza.addToPartidas(saf)
+                            descripcion,
+                            row,
+                            0.0,
+                            safImporte))
+
+                    poliza.addToPartidas(buildRegistro(
+                            '208-0004-0000-0000',
+                            descripcion,
+                            row,
+                            0.0,
+                            safIva))
                 }
 
                 if(row.diferencia > 0.0) {
@@ -158,6 +172,7 @@ class CobranzaEfectivoCodTask implements  AsientoBuilder {
         x.documento,
         x.referenciaBancaria,
         x.total,
+        x.total as montoTotalPago,
         x.diferencia,
         x.SAF,
         x.ctaOrigen,

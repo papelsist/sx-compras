@@ -29,6 +29,10 @@ class CobranzaConProc implements  ProcesadorMultipleDePolizas{
     @Qualifier('cobranzaSaldosAFavorTask')
     CobranzaSaldosAFavorTask cobranzaSaldosAFavorTask
 
+    @Autowired
+    @Qualifier('cobranzaPagosDiffTask')
+    CobranzaPagosDiffTask cobranzaPagosDiffTask
+
 
     @Override
     String definirConcepto(Poliza poliza) {
@@ -38,10 +42,11 @@ class CobranzaConProc implements  ProcesadorMultipleDePolizas{
     @Override
     Poliza recalcular(Poliza poliza) {
         poliza.partidas.clear()
-        cobranzaDepositosTask.generarAsientos(poliza, [tipo: 'CON'])
         cobranzaEfectivoTask.generarAsientos(poliza, [tipo: 'CON'])
+        cobranzaDepositosTask.generarAsientos(poliza, [tipo: 'CON'])
         cobranzaTarjetaTask.generarAsientos(poliza, [tipo: 'CON'])
         cobranzaSaldosAFavorTask.generarAsientos(poliza, [tipo: 'CON'])
+        cobranzaPagosDiffTask.generarAsientos(poliza, [tipo: 'CON'])
         log.info('Partidas generadas: {}', poliza.partidas.size())
         return poliza
     }

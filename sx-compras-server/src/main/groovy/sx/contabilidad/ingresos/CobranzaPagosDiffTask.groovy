@@ -14,7 +14,7 @@ import sx.utils.MonedaUtils
 
 @Slf4j
 @Component
-class CobranzaSaldosAFavorTask implements  AsientoBuilder{
+class CobranzaPagosDiffTask implements  AsientoBuilder{
 
 
     def generarAsientos(Poliza poliza, Map params = [:]) {
@@ -44,15 +44,10 @@ class CobranzaSaldosAFavorTask implements  AsientoBuilder{
 
             String desc = row.descripcion
 
-            BigDecimal total = it.importe
-            BigDecimal importe = MonedaUtils.calcularImporteDelTotal(total)
-            BigDecimal iva = total - importe
-
-            String cta = '205-0001-0001-0000'
+            String cta = '703-0001-0000-0000'
             // Cargo a Aplicacion de saldos a favor
-            poliza.addToPartidas(buildDet(cta, desc, row, importe))
-            // Cargo al IVA de saldo a favor
-            poliza.addToPartidas(buildDet('209-0001-0000-0000', desc, row, iva))
+            poliza.addToPartidas(buildDet(cta, desc, row, it.importe))
+
 
             // Abono al cliente
             def clienteClave = "105-0001-${it.cobro.sucursal.clave.padLeft(4,'0')}-0000"
@@ -61,7 +56,7 @@ class CobranzaSaldosAFavorTask implements  AsientoBuilder{
                     desc,
                     row,
                     0.0,
-                    total))
+                    it.importe))
         }
     }
 
@@ -77,17 +72,13 @@ class CobranzaSaldosAFavorTask implements  AsientoBuilder{
         aplicaciones.each {
 
             Map row = buildRow(it, 'COD')
+
             String desc = row.descripcion
 
-            BigDecimal total = it.importe
-            BigDecimal importe = MonedaUtils.calcularImporteDelTotal(total)
-            BigDecimal iva = total - importe
-
-            String cta = '205-0001-0002-0000'
+            String cta = '703-0001-0000-0000'
             // Cargo a Aplicacion de saldos a favor
-            poliza.addToPartidas(buildDet(cta, desc, row, importe))
-            // Cargo al IVA de saldo a favor
-            poliza.addToPartidas(buildDet('209-0001-0000-0000', desc, row, iva))
+            poliza.addToPartidas(buildDet(cta, desc, row, it.importe))
+
 
             // Abono al cliente
             def clienteClave = "105-0002-${it.cobro.sucursal.clave.padLeft(4,'0')}-0000"
@@ -96,7 +87,7 @@ class CobranzaSaldosAFavorTask implements  AsientoBuilder{
                     desc,
                     row,
                     0.0,
-                    total))
+                    it.importe))
         }
     }
 
@@ -112,19 +103,14 @@ class CobranzaSaldosAFavorTask implements  AsientoBuilder{
 
         aplicaciones.each {
 
-            Map row = buildRow(it, 'CRE')
+            Map row = buildRow(it, 'CON')
 
             String desc = row.descripcion
 
-            BigDecimal total = it.importe
-            BigDecimal importe = MonedaUtils.calcularImporteDelTotal(total)
-            BigDecimal iva = total - importe
-
-            String cta = '205-0001-0003-0000'
+            String cta = '703-0001-0000-0000'
             // Cargo a Aplicacion de saldos a favor
-            poliza.addToPartidas(buildDet(cta, desc, row, importe))
-            // Cargo al IVA de saldo a favor
-            poliza.addToPartidas(buildDet('209-0001-0000-0000', desc, row, iva))
+            poliza.addToPartidas(buildDet(cta, desc, row, it.importe))
+
 
             // Abono al cliente
             Cobro cob = it.cobro
@@ -135,7 +121,7 @@ class CobranzaSaldosAFavorTask implements  AsientoBuilder{
                     desc,
                     row,
                     0.0,
-                    total))
+                    it.importe))
         }
     }
 
@@ -150,80 +136,36 @@ class CobranzaSaldosAFavorTask implements  AsientoBuilder{
 
         aplicaciones.each {
 
-            Map row = buildRow(it, 'CHE')
+            Map row = buildRow(it, 'CON')
+
             String desc = row.descripcion
 
-            BigDecimal total = it.importe
-            BigDecimal importe = MonedaUtils.calcularImporteDelTotal(total)
-            BigDecimal iva = total - importe
-
-            String cta = '205-0001-0003-0000'
+            String cta = '703-0001-0000-0000'
             // Cargo a Aplicacion de saldos a favor
-            poliza.addToPartidas(buildDet(cta, desc, row, importe))
-            // Cargo al IVA de saldo a favor
-            poliza.addToPartidas(buildDet('209-0001-0000-0000', desc, row, iva))
+            poliza.addToPartidas(buildDet(cta, desc, row, it.importe))
+
 
             // Abono al cliente
             Cobro cob = it.cobro
             CuentaOperativaCliente co = CuentaOperativaCliente.where{cliente == cob.cliente}.find()
+
             def clienteClave = "106-0001-${co.cuentaOperativa}-0000"
             poliza.addToPartidas(buildDet(
                     clienteClave,
                     desc,
                     row,
                     0.0,
-                    total))
+                    it.importe))
         }
     }
 
     Map<String, Object> buildRow(AplicacionDeCobro a, String tipo) {
         Map map = [:]
         Cobro cobro = a.cobro
-        if(cobro.cheque)  {
-            map.asiento = "COB_FICHA_CHE_${tipo}_SAF_APL"
-            map.descripcion = "Ficha: ${cobro.cheque?.ficha?.folio} Folio: ${cobro.cheque.folio.toString()} " +
-                    "F: ${a.cuentaPorCobrar.folio} (${a.cuentaPorCobrar.fecha.format('dd/MM/yyyy')}) " +
-                    " ${a.cuentaPorCobrar.tipoDocumento}" +
-                    " ${a.cuentaPorCobrar.sucursal.nombre}"
-
-        } else if(cobro.transferencia) {
-            map.asiento = "COB_TRANSF_${tipo}_SAF_APL"
-            map.descripcion = "Folio: ${cobro.transferencia?.folio} " +
-                    "F: ${a.cuentaPorCobrar.folio} (${a.cuentaPorCobrar.fecha.format('dd/MM/yyyy')}) " +
-                    " ${a.cuentaPorCobrar.tipoDocumento}" +
-                    " ${a.cuentaPorCobrar.sucursal.nombre}"
-            if(cobro.transferencia?.ingreso?.porIdentificar) {
-                map.asiento = "COB_TRANSF_${tipo}_xIDENT_SAF_APL"
-                map.porIdentificar = true
-                map.ctaOperativa = cobro.transferencia.ingreso.cuenta.subCuentaOperativa
-            }
-        } else if(cobro.deposito) {
-            map.asiento = "COB_DEP_CHE_${tipo}_SAF_APL"
-            map.descripcion = "Folio: ${cobro.deposito?.folio}  " +
-                    "F: ${a.cuentaPorCobrar.folio} (${a.cuentaPorCobrar.fecha.format('dd/MM/yyyy')}) " +
-                    " ${a.cuentaPorCobrar.tipoDocumento}" +
-                    " ${a.cuentaPorCobrar.sucursal.nombre}"
-            if(cobro.deposito?.ingreso?.porIdentificar) {
-                map.asiento = "COB_DEP_CHE_${tipo}_xIDENT_SAF_APL"
-                map.porIdentificar = true
-                map.ctaOperativa = cobro.deposito.ingreso.cuenta.subCuentaOperativa
-            }
-            if(cobro.formaDePago == 'DEPOSITO_EFECTIVO') {
-                map.asiento = map.asiento.toString().replaceAll('CHE', 'EFE')
-            }
-        } else if(cobro.tarjeta) {
-            map.asiento = "COB_FICHA_TAR_${tipo}_SAF_APL"
-            map.descripcion = "Corte: ${cobro.tarjeta?.corteDeTarjeta?.folio ?: ''} " +
-                    " Folio: ${cobro.tarjeta?.validacion} " +
-                    "F: ${a.cuentaPorCobrar.folio} (${a.cuentaPorCobrar.fecha.format('dd/MM/yyyy')}) " +
-                    " ${a.cuentaPorCobrar.tipoDocumento}" +
-                    " ${a.cuentaPorCobrar.sucursal.nombre}"
-        } else {
-            map.asiento = "COB_FICHA_EFE_${tipo}_SAF_APL"
-            map.descripcion = "F: ${a.cuentaPorCobrar.folio} (${a.cuentaPorCobrar.fecha.format('dd/MM/yyyy')}) " +
-                    " ${a.cuentaPorCobrar.tipoDocumento}" +
-                    " ${a.cuentaPorCobrar.sucursal.nombre}"
-        }
+        map.asiento = "COB_OGST_${tipo}"
+        map.descripcion = "F: ${a.cuentaPorCobrar.folio} (${a.cuentaPorCobrar.fecha.format('dd/MM/yyyy')}) " +
+                " ${a.cuentaPorCobrar.tipoDocumento}" +
+                " ${a.cuentaPorCobrar.sucursal.nombre}"
 
         map.referencia = a.cobro.cliente.nombre
         map.referencia2 = a.cobro.cliente.nombre
@@ -239,9 +181,8 @@ class CobranzaSaldosAFavorTask implements  AsientoBuilder{
 
     List<AplicacionDeCobro> findAplicaciones(Date dia, String tpo) {
         return AplicacionDeCobro
-                .where{ fecha == dia && cobro.primeraAplicacion != dia && cobro.tipo == tpo }
-                .where{cobro.formaDePago != 'BONIFICACION'}
-                .where{cobro.formaDePago != 'DEVOLUCION'}
+                .where{ fecha == dia  && cobro.tipo == tpo }
+                .where{cobro.formaDePago == 'PAGO_DIF'}
                 .list()
     }
 

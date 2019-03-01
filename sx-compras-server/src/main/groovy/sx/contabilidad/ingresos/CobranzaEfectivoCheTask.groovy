@@ -159,6 +159,7 @@ class CobranzaEfectivoCheTask implements  AsientoBuilder {
         x.documento,
         x.referenciaBancaria,
         x.total,
+        x.total as montoTotalPago,
         x.diferencia,
         x.SAF,
         x.ctaOrigen,

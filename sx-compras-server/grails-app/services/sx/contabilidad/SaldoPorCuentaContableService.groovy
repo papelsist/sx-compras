@@ -204,6 +204,26 @@ class SaldoPorCuentaContableService {
         else
             return cuenta
     }
+    /*
+    def drillPorCuenta(DrillPorDiaCommand command) {
+    def data = PolizaDet.findAll(
+    """select new HashMap(
+        	'tipo': d.poliza.tipo,
+        	'subtipo': d.poliza.subtipo,
+            'folio': d.poliza.folio,
+            'dia': day(d.poliza.fecha),
+            'debe': sum(d.debe),
+            'haber': sum(d.haber))
+        from PolizaDet d
+        where d.cuenta=?
+         and year(d.poliza.fecha) = ?
+         and month(d.poliza.fecha)=?
+         group by d.poliza.fecha
+    """,
+    [saldo.cuenta, ejercicio,mes])
+
+    }
+    */
 
 
 }

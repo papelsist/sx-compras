@@ -95,6 +95,10 @@ class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaC
         log.error(message)
         respond([message: message], status: 500)
     }
+
+    def drillPorDia(AuxiliarContableCommand command){
+        
+    }
 }
 
 @ToString
@@ -102,4 +106,8 @@ class AuxiliarContableCommand implements Validateable{
     Integer ejercicio
     Integer mes
     CuentaContable cuenta
+}
+
+class DrillPorPeriodoCommand extends AuxiliarContableCommand{
+    SaldoPorCuentaContable saldo
 }

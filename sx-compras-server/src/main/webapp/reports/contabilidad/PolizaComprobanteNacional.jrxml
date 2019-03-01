@@ -38,7 +38,7 @@
 ,(d.monto_total*d.tip_camb) as monto_mxn,p.sucursal
 FROM poliza_det d 
 join poliza p on(p.id=d.poliza_id)
-where p.id=$P{POLIZA_ID}
+where d.uuid is not null and p.id=$P{POLIZA_ID}
 group by uuid ]]></queryString>
 
 	<field name="compl" class="java.lang.String"/>

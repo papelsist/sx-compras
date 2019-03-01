@@ -1,5 +1,7 @@
 package sx.contabilidad
 
+import sx.utils.MonedaUtils
+
 /**
  * Trait para simplificar la generacion de asientos contables, util en la generacion de polizas
  * y partiendo de la primisa de que los asientos deben ir cuadrados es decir los Debe - Haber == 0
@@ -32,7 +34,7 @@ abstract trait AsientoBuilder implements  SqlAccess{
                 documentoTipo: row.tipo,
                 documentoFecha: row.fecha_fac,
                 sucursal: row.sucursal,
-                debe: debe.abs(),
+                debe: debe.abs() ,
                 haber: haber.abs()
         )
         // Datos del complemento
@@ -64,16 +66,18 @@ abstract trait AsientoBuilder implements  SqlAccess{
      * @param row
      */
     void asignarComplementoDePago(PolizaDet det, def row) {
+        det.montoTotalPago = row.montoTotalPago
         det.metodoDePago = row.metodoDePago
         det.beneficiario = row.beneficiario
         det.bancoOrigen = row.bancoOrigen
         det.bancoDestino = row.bancoDestino
         det.ctaOrigen = row.ctaOrigen
         det.ctaDestino = row.ctaDestino
+        det.rfc = row.rfc
         det.referenciaBancaria = row.referenciaBancaria
         if(det.metodoDePago != '01') {
             if(det.ctaOrigen == null) {
-                det.metodoDePago = '99'
+                // det.metodoDePago = '99'
             }
         }
 

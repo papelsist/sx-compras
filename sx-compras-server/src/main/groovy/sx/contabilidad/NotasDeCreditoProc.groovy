@@ -106,11 +106,13 @@ abstract class NotasDeCreditoProc implements  ProcesadorDePoliza {
                 haber: 0.0,
                 debe: row.subtotal
         )
+        asignarComprobanteNacional(det, row,)
         poliza.addToPartidas(det)
 
     }
 
-     def abonoIvaNoTrasladado(Poliza poliza, def row) {
+
+    def abonoIvaNoTrasladado(Poliza poliza, def row) {
 
         CuentaContable cuenta = buscarCuenta(IvaNoTrasladadoVentas.clave)
         String descripcion  = !row.origen ?
@@ -132,6 +134,7 @@ abstract class NotasDeCreditoProc implements  ProcesadorDePoliza {
                 haber: 0.0,
                 debe: row.impuesto
         )
+        asignarComprobanteNacional(det, row,)
         poliza.addToPartidas(det)
     }
 
@@ -161,7 +164,16 @@ abstract class NotasDeCreditoProc implements  ProcesadorDePoliza {
             haber: row.total,
             debe: 0.0
         )
+        asignarComprobanteNacional(det, row,)
         poliza.addToPartidas(det)
+    }
+
+    void asignarComprobanteNacional(PolizaDet det, def row) {
+        det.uuid = row.uuid
+        det.rfc = row.rfc
+        det.montoTotal = row.montoTotal
+        det.moneda = row.moneda
+        det.tipCamb = row.tc
     }
 
     String getSelect() {
@@ -177,7 +189,8 @@ abstract class NotasDeCreditoProc implements  ProcesadorDePoliza {
         x.moneda,
         x.tc,
         x.folio,
-        x.total,        
+        round(x.total * x.tc, 2) as total,
+        x.total as montoTotal,        
         x.documentoTipo,
         x.asiento,
         x.referencia2,

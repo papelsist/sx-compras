@@ -26,6 +26,7 @@ class PagoDeNomina {
     String empleado
     String afavor
     boolean pensionAlimenticia
+    Long pensionAlimenticiaId
 
     MovimientoDeCuenta egreso
 
@@ -43,6 +44,7 @@ class PagoDeNomina {
         egreso nullable: true
         createUser nullable: true
         updateUser nullable: true
+        pensionAlimenticiaId nullable: true
 
     }
 

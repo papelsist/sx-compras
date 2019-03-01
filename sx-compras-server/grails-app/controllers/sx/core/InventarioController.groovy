@@ -55,6 +55,17 @@ class InventarioController extends RestfulController<Inventario>{
         def pdf =  reportService.run('KardexSuc.jrxml', repParams)
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'Pedido.pdf')
     }
+
+    def ventasDiarias() {
+        def repParams = [:]
+        repParams.FECHA = params.getDate('fecha', 'dd/MM/yyyy').format('yyyy/MM/dd')
+        repParams['SUCURSAL'] = params.sucursal
+        repParams['ORIGEN'] = params.origen
+        def pdf = this.reportService.run('ventas_diarias', repParams)
+        def fileName = "VentasDiarias.pdf"
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: fileName)
+
+    }
 }
 
 class KardexCommand {

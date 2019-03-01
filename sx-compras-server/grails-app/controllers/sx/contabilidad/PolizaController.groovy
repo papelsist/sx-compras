@@ -168,7 +168,6 @@ class PolizaController extends RestfulController<Poliza> {
 
         poliza = getProcesador(poliza).generarComplementos(poliza)
         poliza = polizaService.salvarPolza(poliza)
-        log.info('Complementos generados {}', new Date())
         respond poliza, [view: 'show']
     }
 

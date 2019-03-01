@@ -41,6 +41,7 @@ class PolizaDet {
     String moneda
     BigDecimal tipCamb
 
+    BigDecimal montoTotalPago
     String beneficiario
     String metodoDePago
     String bancoOrigen
@@ -89,6 +90,7 @@ class PolizaDet {
         ctaOrigen nullable: true
         ctaDestino nullable: true
         referenciaBancaria nullable: true
+        montoTotalPago nullable: true
     }
 
     static  mapping = {

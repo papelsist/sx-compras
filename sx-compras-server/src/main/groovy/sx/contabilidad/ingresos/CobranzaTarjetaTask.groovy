@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component
 import sx.contabilidad.AsientoBuilder
 import sx.contabilidad.Poliza
 import sx.contabilidad.PolizaDet
+import sx.utils.MonedaUtils
 
 @Slf4j
 @GrailsCompileStatic
@@ -31,7 +32,7 @@ class CobranzaTarjetaTask implements  AsientoBuilder {
     @Override
     @CompileDynamic
     def generarAsientos(Poliza poliza, Map params = [:]) {
-        log.info("Generando asientos contables para cobranza con depositos y/o transferencias")
+        log.info("Generando asientos contables para cobranza CONTADO TARJETA  {} {}", poliza.sucursal, poliza.fecha)
         String sql = getSelect()
                 .replaceAll("@FECHA", toSqlDate(poliza.fecha))
 
@@ -53,7 +54,7 @@ class CobranzaTarjetaTask implements  AsientoBuilder {
                     // Se carga a la cuenta deudora american express  el total del cobro
                     det.cuenta = buscarCuenta(row.cta_contable2.toString())
                     det.debe = row.total.abs()
-
+                    /*
                     // con abono a a la misma cuenta
                     PolizaDet ivaPend = buildRegistro(
                             row.cta_contable2.toString(),
@@ -67,13 +68,13 @@ class CobranzaTarjetaTask implements  AsientoBuilder {
                             descripcion, row)
                     banco.debe = (row.total.abs() - row.imp_comision.abs() - row.comision_iva.abs())
                     poliza.addToPartidas(banco)
-
-
-
+                    */
                 }
+
                 /***** Procesamiento de las comisiones ******/
 
                 // 1 Cargo a gastos comisiones bancarias la comision
+                /*
                 poliza.addToPartidas(buildRegistro(
                         "600-0014-${row.suc.toString().padLeft(4,'0')}-0000",
                         descripcion,
@@ -87,9 +88,11 @@ class CobranzaTarjetaTask implements  AsientoBuilder {
                         row,
                         row.comision_iva.abs())
                 )
+                */
 
                 // 3 Abono al banco la comision  e iva de la comision solo si no es american express
                 if(row.cta_contable2.toString() != '107-0001-0001-0000') {
+                    /*
                     poliza.addToPartidas(buildRegistro(
                             row.cta_contable.toString(),
                             descripcion,
@@ -105,15 +108,28 @@ class CobranzaTarjetaTask implements  AsientoBuilder {
                             0.0,
                             row.comision_iva.abs())
                     )
+                    */
                 }
 
                 if(row.SAF > 0.0) {
-                    PolizaDet saf = buildRegistro(
+                    BigDecimal safTotal = row.SAF
+                    BigDecimal safImporte = MonedaUtils.calcularImporteDelTotal(safTotal)
+                    BigDecimal safIva = safTotal - safImporte
+                    row.asiento = row.asiento + '_SAF'
+
+                    poliza.addToPartidas(buildRegistro(
                             '205-0001-0001-0000',
-                            descripcion, row)
-                    saf.haber = row.SAF.abs()
-                    saf.asiento = "${saf.asiento}_SAF"
-                    poliza.addToPartidas(saf)
+                            descripcion,
+                            row,
+                            0.0,
+                            safImporte))
+
+                    poliza.addToPartidas(buildRegistro(
+                            '208-0004-0000-0000',
+                            descripcion,
+                            row,
+                            0.0,
+                            safIva))
                 }
 
                 if(row.diferencia > 0.0) {
@@ -150,9 +166,6 @@ class CobranzaTarjetaTask implements  AsientoBuilder {
         }
     }
 
-    def procesarComisionesBancarias() {
-
-    }
 
     @Override
     String generarDescripcion(Map row) {
@@ -189,6 +202,7 @@ class CobranzaTarjetaTask implements  AsientoBuilder {
         round(x.total/x.comision/100,2) imp_comision,
         round(x.total/x.comision/100,2)-round((x.total/x.comision/100)/1.16,2) comision_iva,
         x.total,
+        x.total as montoTotalPago,
         x.diferencia,
         x.SAF,
         x.ctaOrigen, 
@@ -210,7 +224,7 @@ class CobranzaTarjetaTask implements  AsientoBuilder {
         x.cta_iva_pag
         FROM (                                                                 
         SELECT 
-        concat('COB_TARJ_CON') as asiento,f.id origen_gpo,x.debito_credito,(case when x.debito_credito is true then 'DEBITO' else 'CREDITO' end)  documentoTipo,f.corte fecha,f.folio documento_gpo,b.moneda,b.tipo_de_cambio tc ,f.total total_gpo
+        concat('COB_TARJ_',(case when x.debito_credito is true then 'DEB' when x.visa_master is false then 'AME' else 'CRE' end),'_CON') as asiento,f.id origen_gpo,x.debito_credito,(case when x.debito_credito is true then 'DEBITO' else 'CREDITO' end)  documentoTipo,f.corte fecha,f.folio documento_gpo,b.moneda,b.tipo_de_cambio tc ,f.total total_gpo
         ,j.tipo referencia2,s.nombre sucursal, s.clave suc
         ,(case when j.tipo like '%INGRESO' then concat('102-0001-',z.sub_cuenta_operativa,'-0000') when j.tipo like '%COMISION' then concat('600-0014-',(case when s.clave>9 then '00' else '000' end),s.clave,'-0000') when j.tipo like '%IVA' then '118-0002-0000-0000' else '' end)  cta_contable
         ,(case when j.tipo='AMEX_INGRESO' then '107-0001-0001-0000' else '000-0000-0000-0000' end) cta_contable2,z.numero ctaDestino,z.descripcion bancoDestino,'PAPEL SA DE CV' beneficiario
@@ -221,9 +235,10 @@ class CobranzaTarjetaTask implements  AsientoBuilder {
         FROM corte_de_tarjeta f join corte_de_tarjeta_aplicacion j on(j.corte_id=f.id) join movimiento_de_cuenta m on(j.ingreso_id=m.id) join cuenta_de_banco z on(m.cuenta_id=z.id)
         join sucursal s on(f.sucursal_id=s.id) left join cobro_tarjeta   x on(x.corte=f.id) join cobro b on(x.cobro_id=b.id)  join cliente t on(b.cliente_id=t.id)        
         join aplicacion_de_cobro a on(a.cobro_id=b.id) join cuenta_por_cobrar c on(a.cuenta_por_cobrar_id=c.id) join cfdi i on(c.cfdi_id=i.id)        
-        where f.corte='@FECHA'      
+        where f.corte='@FECHA'   and f.corte=a.fecha   and j.tipo like '%INGRESO%'
         ) as x   
         group by x.origen,x.uuid 
+        order by asiento desc
         """
         return res
     }

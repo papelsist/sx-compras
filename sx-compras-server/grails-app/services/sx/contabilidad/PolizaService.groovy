@@ -8,7 +8,7 @@ import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
 
 import sx.core.LogUser
- 
+
 @Slf4j
 @GrailsCompileStatic
 @Service(Poliza)
@@ -29,7 +29,7 @@ abstract class PolizaService implements  LogUser{
     @CompileDynamic
     Poliza updatePoliza(Poliza poliza) {
         logEntity(poliza)
-        poliza.debe = poliza.partidas.sum 0.0, {it.debe}
+        poliza.debe =  poliza.partidas.sum 0.0, {it.debe}
         poliza.haber = poliza.partidas.sum 0.0, {it.haber}
         poliza.partidas.each {
             it.concepto = concatenar(it.cuenta)

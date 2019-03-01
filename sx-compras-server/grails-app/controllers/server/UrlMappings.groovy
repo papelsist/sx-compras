@@ -190,6 +190,8 @@ class UrlMappings {
         "/api/inventario"(resources: 'inventario', excludes:['create', 'update', 'save', 'edit','patch'])
         "/api/inventario/$producto/$ejercicio/$mes"(controller: 'inventario', action: 'movimientos', method: 'GET')
         "/api/inventario/printKardex"(controller: 'inventario', action: 'printKardex', method: 'GET')
+        // TEMPORALMENTE EN ESTE CONTROLADOR
+        "/api/inventario/ventasDiarias"(controller: 'inventario', action: 'ventasDiarias', method: 'GET')
 
 
         // Rembolsos

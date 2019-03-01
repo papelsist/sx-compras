@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import sx.compras.Compra
 
 @Slf4j
-@CompileStatic
+// @CompileStatic
 @Transactional
 class CompraListenerService {
 
@@ -36,7 +36,8 @@ class CompraListenerService {
 
     @Subscriber
     void afterUpdate(PostUpdateEvent event) {
-        // log.debug('{} {} ', event.eventType.name(), event.entity.name)
+        // log.info('{} {} ', event.eventType.name(), event.entity.name)
+
         String id = getId(event)
         if ( id ) {
             log.debug('{} {} Id: {}', event.eventType.name(), event.entity.name, id)
@@ -54,10 +55,11 @@ class CompraListenerService {
     }
 
     def logEntity(Compra compra, String type) {
-        // log.debug('Compra cerrada: {}', compra.cerrada ? 'SI' : 'NO')
+        // log.debug('Cambio {} Compra cerrada: {}',type, compra.cerrada ? 'SI' : 'NO')
         if(compra.cerrada != null) {
             Boolean central = compra.sucursal.clave.trim() == '1' ? true : false
             if(central) {
+
                 ['SOLIS',
                  'TACUBA',
                  'ANDRADE',
@@ -76,6 +78,7 @@ class CompraListenerService {
     }
 
     def buildLog(Compra compra, String destino, String type) {
+        // log.info('Destino: {}', destino)
         Audit alog = new Audit(
                 name: 'Compra',
                 persistedObjectId: compra.id,
@@ -85,7 +88,7 @@ class CompraListenerService {
                 eventName: type
         )
         alog.save flush: true
-        // auditLogDataService.save(log)
+        // auditLogDataService.save(alog)
 
         compra.partidas.each {
             Audit logDet = new Audit(

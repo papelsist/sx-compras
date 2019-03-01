@@ -4,7 +4,6 @@ import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
-
 import sx.contabilidad.Poliza
 import sx.contabilidad.PolizaCreateCommand
 import sx.contabilidad.ProcesadorMultipleDePolizas
@@ -12,12 +11,12 @@ import sx.tesoreria.MovimientoDeCuenta
 
 /**
  * Procesador para la generacion de polizas de Egreso tipo
- * Cheque, es decir Pagos con CHEQUE
+ * Transferencia
  *
  */
 @Slf4j
 @Component
-class ChequeProc implements  ProcesadorMultipleDePolizas {
+class TransferenciaProc implements  ProcesadorMultipleDePolizas {
 
     @Autowired
     @Qualifier('pagoDeCompraTask')
@@ -35,8 +34,6 @@ class ChequeProc implements  ProcesadorMultipleDePolizas {
     @Qualifier('pagoDeNominaTask')
     PagoDeNominaTask pagoDeNominaTask
 
-
-
     @Override
     String definirConcepto(Poliza poliza) {
         return ""
@@ -52,7 +49,7 @@ class ChequeProc implements  ProcesadorMultipleDePolizas {
             case 'COMPRA':
                 pagoDeCompraTask.generarAsientos(poliza, [:])
                 break
-            case 'GASTO' :
+            case 'GASTO':
                 pagoDeGastosTask.generarAsientos(poliza, [:])
                 break
             case 'REMBOLSO':
@@ -61,6 +58,7 @@ class ChequeProc implements  ProcesadorMultipleDePolizas {
             case 'PAGO_NOMINA':
                 pagoDeNominaTask.generarAsientos(poliza, [:])
                 break
+
         }
 
         poliza = poliza.save flush: true
@@ -73,10 +71,12 @@ class ChequeProc implements  ProcesadorMultipleDePolizas {
     @Override
     List<Poliza> generarPolizas(PolizaCreateCommand command) {
         List<Poliza> polizas = []
-        List<MovimientoDeCuenta> movimientos = MovimientoDeCuenta.where{fecha == command.fecha && cheque != null}.list()
-        movimientos = movimientos.sort {it.cheque.folio}.reverse()
+        List<MovimientoDeCuenta> movimientos = MovimientoDeCuenta
+                .where{fecha == command.fecha && formaDePago ==  'TRANSFERENCIA' && importe < 0.0}
+                .where{tipo in ['COMPRA','GASTO','REMBOLSO','PAGO_NOMINA']}
+                .list()
+        movimientos = movimientos.sort {it.dateCreated}.reverse()
         movimientos.each{ mov ->
-
             Poliza p = Poliza.where{
                 ejercicio == command.ejercicio &&
                 mes == command.mes &&
@@ -89,8 +89,7 @@ class ChequeProc implements  ProcesadorMultipleDePolizas {
             if(p == null) {
 
                 p = new Poliza(command.properties)
-                p.concepto = "CH ${mov.referencia} ${mov.afavor} (${mov.fecha.format('dd/MM/yyyy')})" +
-                        " (${mov.tipo} ${mov.tipo != mov.concepto ? mov.concepto : ''})"
+                p.concepto = "TR: ${mov.referencia} ${mov.afavor} (${mov.fecha.format('dd/MM/yyyy')}) (${mov.tipo})"
                 p.sucursal = mov.sucursal?: 'OFICINAS'
                 p.egreso = mov.id
                 polizas << p

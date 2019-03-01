@@ -33,14 +33,14 @@
 		<defaultValueExpression ><![CDATA["COMPLEMENTO DE POLIZA DE METODO DE PAGO"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="POLIZA_ID" isForPrompting="true" class="java.lang.Long"/>
-	<queryString><![CDATA[SELECT (case when d.metodo_de_pago='02' then 'CHEQUE' when d.metodo_de_pago='03' then 'TRANSFENCIA' else 'OTRO_PAGO' end) fpago,d.id,p.id as poliza_id,p.tipo,p.subtipo,p.folio,p.fecha
-,d.cta_origen,d.banco_origen,d.beneficiario,d.rfc,d.monto_total
-,d.moneda,d.tip_camb,d.monto_total*d.tip_camb as monto_mxn
-,d.cta_destino,d.banco_destino,d.referencia,d.metodo_de_pago,d.asiento descrip_pago
+	<queryString><![CDATA[SELECT (case when d.metodo_de_pago='02' then 'CHEQUE' when d.metodo_de_pago='03' then 'TRANSFERENCIA' else 'OTRO_PAGO' end) fpago,d.id,p.id as poliza_id,p.tipo,p.subtipo,p.folio,p.fecha
+,d.cta_origen,d.banco_origen,d.beneficiario,d.rfc
+,d.moneda,d.tip_camb, d.monto_total_pago*d.tip_camb as monto_mxn, d.monto_total_pago as monto_total
+,d.cta_destino,d.banco_destino,d.referencia,d.metodo_de_pago,d.asiento descrip_pago,p.concepto,p.sucursal
 FROM  poliza_det d 
 join poliza p on(p.id=d.poliza_id)
-where p.id=$P{POLIZA_ID}
-group by d.origen,d.banco_origen,p.fecha,d.beneficiario,d.rfc,d.monto_total,d.moneda,d.tip_camb]]></queryString>
+where d.rfc is not null and p.id=$P{POLIZA_ID}
+group by fpago,d.origen,d.banco_origen,p.fecha,d.beneficiario,d.rfc,d.monto_total_pago,d.moneda,d.tip_camb]]></queryString>
 
 	<field name="fpago" class="java.lang.String"/>
 	<field name="id" class="java.lang.Long"/>
@@ -53,19 +53,33 @@ group by d.origen,d.banco_origen,p.fecha,d.beneficiario,d.rfc,d.monto_total,d.mo
 	<field name="banco_origen" class="java.lang.String"/>
 	<field name="beneficiario" class="java.lang.String"/>
 	<field name="rfc" class="java.lang.String"/>
-	<field name="monto_total" class="java.math.BigDecimal"/>
 	<field name="moneda" class="java.lang.String"/>
 	<field name="tip_camb" class="java.math.BigDecimal"/>
 	<field name="monto_mxn" class="java.math.BigDecimal"/>
+	<field name="monto_total" class="java.math.BigDecimal"/>
 	<field name="cta_destino" class="java.lang.String"/>
 	<field name="banco_destino" class="java.lang.String"/>
 	<field name="referencia" class="java.lang.String"/>
 	<field name="metodo_de_pago" class="java.lang.String"/>
 	<field name="descrip_pago" class="java.lang.String"/>
+	<field name="concepto" class="java.lang.String"/>
+	<field name="sucursal" class="java.lang.String"/>
 
 	<variable name="TOTAL" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
 		<variableExpression><![CDATA[$F{monto_mxn}]]></variableExpression>
 	</variable>
+
+		<group  name="TIPO_FPAGO" isStartNewPage="true" >
+			<groupExpression><![CDATA[$F{fpago}]]></groupExpression>
+			<groupHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="6"  isSplitAllowed="true" >
+			</band>
+			</groupFooter>
+		</group>
 		<background>
 			<band height="0"  isSplitAllowed="true" >
 			</band>
@@ -211,7 +225,7 @@ group by d.origen,d.banco_origen,p.fecha,d.beneficiario,d.rfc,d.monto_total,d.mo
 					<reportElement
 						mode="Opaque"
 						x="9"
-						y="47"
+						y="48"
 						width="48"
 						height="11"
 						forecolor="#000000"
@@ -230,7 +244,7 @@ group by d.origen,d.banco_origen,p.fecha,d.beneficiario,d.rfc,d.monto_total,d.mo
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="57"
-						y="47"
+						y="48"
 						width="55"
 						height="11"
 						forecolor="#000000"
@@ -246,7 +260,7 @@ group by d.origen,d.banco_origen,p.fecha,d.beneficiario,d.rfc,d.monto_total,d.mo
 					<reportElement
 						mode="Opaque"
 						x="126"
-						y="47"
+						y="48"
 						width="48"
 						height="11"
 						forecolor="#000000"
@@ -265,7 +279,7 @@ group by d.origen,d.banco_origen,p.fecha,d.beneficiario,d.rfc,d.monto_total,d.mo
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="174"
-						y="47"
+						y="48"
 						width="164"
 						height="11"
 						forecolor="#000000"
@@ -280,14 +294,14 @@ group by d.origen,d.banco_origen,p.fecha,d.beneficiario,d.rfc,d.monto_total,d.mo
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="346"
-						y="45"
+						y="48"
 						width="82"
 						height="11"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="textField-107"/>
 					<box></box>
-					<textElement textAlignment="Right" verticalAlignment="Bottom" rotation="None" lineSpacing="Single">
+					<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None" lineSpacing="Single">
 						<font fontName="Arial" pdfFontName="Helvetica-Oblique" size="8" isBold="false" isItalic="true" isUnderline="true" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{fpago}]]></textFieldExpression>
@@ -296,7 +310,7 @@ group by d.origen,d.banco_origen,p.fecha,d.beneficiario,d.rfc,d.monto_total,d.mo
 					<reportElement
 						mode="Opaque"
 						x="433"
-						y="45"
+						y="48"
 						width="62"
 						height="11"
 						forecolor="#000000"
@@ -310,13 +324,13 @@ group by d.origen,d.banco_origen,p.fecha,d.beneficiario,d.rfc,d.monto_total,d.mo
 					<textElement textAlignment="Right" verticalAlignment="Bottom" rotation="None" lineSpacing="Single">
 						<font fontName="Arial" pdfFontName="Helvetica-Oblique" size="8" isBold="false" isItalic="true" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<text><![CDATA[REFERENCIA : ]]></text>
+				<text><![CDATA[CONCEPTO : ]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="495"
-						y="45"
-						width="94"
+						y="48"
+						width="163"
 						height="11"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -325,7 +339,7 @@ group by d.origen,d.banco_origen,p.fecha,d.beneficiario,d.rfc,d.monto_total,d.mo
 					<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None" lineSpacing="Single">
 						<font fontName="Arial" pdfFontName="Helvetica-Oblique" size="8" isBold="false" isItalic="true" isUnderline="true" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{referencia}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{concepto}]]></textFieldExpression>
 				</textField>
 			</band>
 		</pageHeader>
@@ -627,7 +641,7 @@ group by d.origen,d.banco_origen,p.fecha,d.beneficiario,d.rfc,d.monto_total,d.mo
 		</columnHeader>
 		<detail>
 			<band height="12"  isSplitAllowed="true" >
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="4"
 						y="0"
@@ -738,7 +752,7 @@ group by d.origen,d.banco_origen,p.fecha,d.beneficiario,d.rfc,d.monto_total,d.mo
 					<reportElement
 						x="69"
 						y="0"
-						width="113"
+						width="112"
 						height="11"
 						key="textField-104">
 							<printWhenExpression><![CDATA[new Boolean($F{fpago}.equals( "TRANSFERENCIA" ))]]></printWhenExpression>
@@ -749,7 +763,7 @@ group by d.origen,d.banco_origen,p.fecha,d.beneficiario,d.rfc,d.monto_total,d.mo
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{banco_origen}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="182"
 						y="0"
@@ -779,7 +793,7 @@ group by d.origen,d.banco_origen,p.fecha,d.beneficiario,d.rfc,d.monto_total,d.mo
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{banco_destino}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="182"
 						y="0"
