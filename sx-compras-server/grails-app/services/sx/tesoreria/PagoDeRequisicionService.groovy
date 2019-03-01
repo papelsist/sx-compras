@@ -45,14 +45,10 @@ class PagoDeRequisicionService implements  LogUser {
         log.info("Pagando requisicion {}", requisicion.folio)
         if(requisicion.egreso != null)
             throw new PagoDeRequisicionException("Requisicion ${requisicion.folio} ya está pagada con el egreso ${requisicion.egreso}")
-        if(!requisicion.partidas) {
-            // throw new PagoDeRequisicionException("Requisicion ${requisicion.folio} no tiene documentos por pagar")
-        }
-        if(!requisicion.cerrada) {
-            // throw new PagoDeRequisicionException("Requisicion ${requisicion.folio} no no esta cerrada")
-        }
+
 
         String tipo  = requisicion.instanceOf(RequisicionDeCompras) ? 'COMPRA' : 'GASTO'
+
         if(command.importe > 0) {
             requisicion.comentario = "PAGO MODIFICADO ORIGINAL DE:${requisicion.apagar}"
             requisicion.apagar = command.importe
