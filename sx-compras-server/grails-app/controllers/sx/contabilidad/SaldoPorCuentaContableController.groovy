@@ -5,6 +5,7 @@ import grails.gorm.DetachedCriteria
 import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.*
 import grails.validation.Validateable
+import groovy.transform.Canonical
 import groovy.transform.CompileDynamic
 import groovy.transform.ToString
 import groovy.util.logging.Slf4j
@@ -96,7 +97,19 @@ class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaC
         respond([message: message], status: 500)
     }
 
-    def drillPorDia(AuxiliarContableCommand command){
+    def drillPeriodo(AuxiliarContableCommand command){
+        log.info('Drill: {}', command)
+        def res = PolizaDet.findAll(
+                "select new sx.contabilidad.PorPeriodoDTO(" +
+                        // "d.poliza.tipo, d.poliza.folio, " +
+                        " d.poliza.fecha, sum(d.debe), sum(d.haber)) " +
+                        " from PolizaDet d " +
+                        " where d.cuenta = ? " +
+                        "  and d.poliza.ejercicio = ? " +
+                        "  and d.poliza.mes = ?" +
+                        "  group by d.poliza.fecha",
+                [command.cuenta, command.ejercicio, command.mes])
+        respond res
         
     }
 }
@@ -110,4 +123,14 @@ class AuxiliarContableCommand implements Validateable{
 
 class DrillPorPeriodoCommand extends AuxiliarContableCommand{
     SaldoPorCuentaContable saldo
+}
+
+@Canonical
+class PorPeriodoDTO {
+    // String tipo
+    // Integer folio
+    Date fecha
+    BigDecimal debe
+    BigDecimal haber
+
 }

@@ -49,13 +49,13 @@ class AnalisisDeFacturaDet {
 
     static constraints = {
         clave maxSize:15
-        precioDeLista scale:2
+        precioDeLista scale: 6
         unidad nullable: true, maxSize: 5
-        desc1 scale:4
-        desc2 scale:4
-        desc3 scale:4
-        desc4 scale:4
-        costoUnitario scale:4
+        desc1 scale: 4
+        desc2 scale: 4
+        desc3 scale: 4
+        desc4 scale: 4
+        costoUnitario scale: 6
         remision maxSize: 20
         sucursal maxSize: 20
         // com unique: true

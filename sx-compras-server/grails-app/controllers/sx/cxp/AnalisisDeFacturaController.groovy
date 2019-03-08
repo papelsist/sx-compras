@@ -27,10 +27,11 @@ class AnalisisDeFacturaController extends RestfulController<AnalisisDeFactura> {
 
     @Override
     protected List<AnalisisDeFactura> listAllResources(Map params) {
-        // log.info('List: {}', params)
+
         params.max = 1000
         params.sort = 'lastUpdated'
         params.order = 'desc'
+        log.info('List: {}', params)
         def query = AnalisisDeFactura.where {}
         if(params.periodo) {
             Periodo periodo = params.periodo

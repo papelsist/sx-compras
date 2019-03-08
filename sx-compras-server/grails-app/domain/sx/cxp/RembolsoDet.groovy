@@ -47,4 +47,9 @@ class RembolsoDet {
         concepto nullable: true
     }
 
+    static mapping ={
+        documentoFecha type: 'date'
+
+    }
+
 }

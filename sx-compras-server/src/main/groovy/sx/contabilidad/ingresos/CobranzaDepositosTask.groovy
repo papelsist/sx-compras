@@ -33,7 +33,7 @@ class CobranzaDepositosTask implements  AsientoBuilder {
     @Override
     @CompileDynamic
     def generarAsientos(Poliza poliza, Map params = [:]) {
-        log.info("Generando asientos contables para cobranza con DEPOSITOS {} {}", poliza.sucursal, poliza.fecha)
+        log.info("Generando asientos contables para cobranza con DEPOSITOS/TRANSFERENCIAS {} {}", poliza.sucursal, poliza.fecha)
         String sql = getSelect()
                 .replaceAll("@FECHA", toSqlDate(poliza.fecha))
 

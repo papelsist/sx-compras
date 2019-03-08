@@ -57,6 +57,8 @@ class CobranzaEfectivoTask implements  AsientoBuilder {
                     row.cliete = row.diferenciaTipo
                     row.cliente = row.diferenciaTipo
 
+
+
                     poliza.addToPartidas(buildRegistro(
                             row.cta_caja.toString(),
                             descripcion,
@@ -128,12 +130,20 @@ class CobranzaEfectivoTask implements  AsientoBuilder {
                 }
 
                 if(row.diferencia > 0.0) {
+                    BigDecimal diferencia = row.diferencia
                     PolizaDet saf = buildRegistro(
                             '704-0001-0000-0000',
-                            descripcion, row)
-                    saf.haber = row.diferencia.abs()
-                    saf.asiento = "${saf.asiento}_OPRD"
+                            descripcion, row, 0.0, diferencia)
+
+                    if(diferencia == row.total && row.cobro_aplic == 0.0) {
+                        saf.cuenta = buscarCuenta("101-0003-${row.suc.toString().padLeft(4,'0')}-0000")
+                        saf.asiento = "${saf.asiento}"
+                    } else {
+                        saf.asiento = "${saf.asiento}_OPRD"
+                    }
                     poliza.addToPartidas(saf)
+
+
                 }
             }
 
@@ -285,7 +295,7 @@ class CobranzaEfectivoTask implements  AsientoBuilder {
         join sucursal s on(f.sucursal_id=s.id) left join cobro_cheque x on(x.ficha_id=f.id) join cobro b on(x.cobro_id=b.id)  join cliente t on(b.cliente_id=t.id)
         join aplicacion_de_cobro a on(a.cobro_id=b.id) join cuenta_por_cobrar c on(a.cuenta_por_cobrar_id=c.id) join cfdi i on(c.cfdi_id=i.id)
         where f.fecha='@FECHA' and f.origen in('CON') and f.tipo_de_ficha<>'EFECTIVO' and x.cambio_por_efectivo is false 
-        ) as x
+        ) as x 
         """
         return res
     }

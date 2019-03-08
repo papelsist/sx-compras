@@ -111,6 +111,7 @@ class CobranzaSaldosAFavorTask implements  AsientoBuilder{
     def generarCredito(Poliza poliza, List<AplicacionDeCobro> aplicaciones) {
 
         aplicaciones.each {
+            log.info('Procesando: CobroId: {}  Fecha:{} Fecha P.Aplicacion:{}', it.cobro.id, it.fecha, it.cobro.primeraAplicacion)
 
             Map row = buildRow(it, 'CRE')
 
@@ -181,7 +182,7 @@ class CobranzaSaldosAFavorTask implements  AsientoBuilder{
         Cobro cobro = a.cobro
         if(cobro.cheque)  {
             map.asiento = "COB_FICHA_CHE_${tipo}_SAF_APL"
-            map.descripcion = "Ficha: ${cobro.cheque?.ficha?.folio} Folio: ${cobro.cheque.folio.toString()} " +
+            map.descripcion = "Ficha: ${cobro.cheque?.ficha?.folio} Folio: ${cobro.cheque.numero} " +
                     "F: ${a.cuentaPorCobrar.folio} (${a.cuentaPorCobrar.fecha.format('dd/MM/yyyy')}) " +
                     " ${a.cuentaPorCobrar.tipoDocumento}" +
                     " ${a.cuentaPorCobrar.sucursal.nombre}"
@@ -212,7 +213,7 @@ class CobranzaSaldosAFavorTask implements  AsientoBuilder{
                 map.asiento = map.asiento.toString().replaceAll('CHE', 'EFE')
             }
         } else if(cobro.tarjeta) {
-            map.asiento = "COB_FICHA_TAR_${tipo}_SAF_APL"
+            map.asiento = "COB_TAR_${tipo}_SAF_APL"
             map.descripcion = "Corte: ${cobro.tarjeta?.corteDeTarjeta?.folio ?: ''} " +
                     " Folio: ${cobro.tarjeta?.validacion} " +
                     "F: ${a.cuentaPorCobrar.folio} (${a.cuentaPorCobrar.fecha.format('dd/MM/yyyy')}) " +
@@ -238,11 +239,20 @@ class CobranzaSaldosAFavorTask implements  AsientoBuilder{
     }
 
     List<AplicacionDeCobro> findAplicaciones(Date dia, String tpo) {
+        return AplicacionDeCobro.findAll(
+                "from AplicacionDeCobro a " +
+                        " where date(a.fecha)=?" +
+                        "  and date(a.cobro.primeraAplicacion) = ?" +
+                        "  and a.cobro.tipo = ? " +
+                        "  and a.cobro.formaDePago in ('BONIFICACION', 'DEVOLUCION')",
+                [dia, dia, tpo])
+        /*
         return AplicacionDeCobro
                 .where{ fecha == dia && cobro.primeraAplicacion != dia && cobro.tipo == tpo }
                 .where{cobro.formaDePago != 'BONIFICACION'}
                 .where{cobro.formaDePago != 'DEVOLUCION'}
                 .list()
+                */
     }
 
 

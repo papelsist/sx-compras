@@ -29,6 +29,10 @@ class CobranzaCreProc implements  ProcesadorMultipleDePolizas{
     @Qualifier('cobranzaPagosDiffTask')
     CobranzaPagosDiffTask cobranzaPagosDiffTask
 
+    @Autowired
+    @Qualifier('cobranzaTarjetaCreTask')
+    CobranzaTarjetaCreTask cobranzaTarjetaCreTask
+
     @Override
     String definirConcepto(Poliza poliza) {
         return "COBRANZA CRE"
@@ -39,6 +43,7 @@ class CobranzaCreProc implements  ProcesadorMultipleDePolizas{
         poliza.partidas.clear()
         cobranzaEfectivoCreTask.generarAsientos(poliza, [tipo: 'CRE'])
         cobranzaDepositosCreTask.generarAsientos(poliza, [tipo: 'CRE'])
+        cobranzaTarjetaCreTask.generarAsientos(poliza,[tipo: 'CRE'])
         cobranzaSaldosAFavorTask.generarAsientos(poliza, [tipo: 'CRE'])
         cobranzaPagosDiffTask.generarAsientos(poliza, [tipo: 'CRE'])
         log.info('Partidas generadas: {}', poliza.partidas.size())

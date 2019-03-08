@@ -31,9 +31,12 @@ abstract class PolizaService implements  LogUser{
         logEntity(poliza)
         poliza.debe =  poliza.partidas.sum 0.0, {it.debe}
         poliza.haber = poliza.partidas.sum 0.0, {it.haber}
+
         poliza.partidas.each {
             it.concepto = concatenar(it.cuenta)
         }
+        List<PolizaDet> borrar = poliza.partidas.findAll {it.debe == 0.0 && it.haber == 0.0}
+        borrar.each { poliza.removeFromPartidas(it)}
         return save(poliza)
     }
 

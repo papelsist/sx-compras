@@ -113,8 +113,11 @@ abstract class NotasDeCreditoProc implements  ProcesadorDePoliza {
 
 
     def abonoIvaNoTrasladado(Poliza poliza, def row) {
-
-        CuentaContable cuenta = buscarCuenta(IvaNoTrasladadoVentas.clave)
+        String clave = "209-0002-0000-0000"
+        if(getTipo().contains('BON')) {
+            clave = "209-0003-0000-0000"
+        }
+        CuentaContable cuenta = buscarCuenta(clave)
         String descripcion  = !row.origen ?
                 "${row.asiento}":
                 "NC: ${row.folio} F:${row.documento} ${row.fecha_documento.format('dd/MM/yyyy')} ${row.documentoTipo} ${row.sucursal}"

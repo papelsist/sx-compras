@@ -112,26 +112,32 @@ class CobranzaTarjetaTask implements  AsientoBuilder {
                 }
 
                 if(row.SAF > 0.0) {
-                    BigDecimal safTotal = row.SAF
-                    BigDecimal safImporte = MonedaUtils.calcularImporteDelTotal(safTotal)
-                    BigDecimal safIva = safTotal - safImporte
-                    row.asiento = row.asiento + '_SAF'
 
-                    poliza.addToPartidas(buildRegistro(
-                            '205-0001-0001-0000',
-                            descripcion,
-                            row,
-                            0.0,
-                            safImporte))
+                    // Esta operacion SOLO se ejecuta si el tipo y la fomra de pago cumplen esta condicion
+                    if(!['CRE','CHE', 'JUR'].contains(row.tipo)) {
+                        BigDecimal safTotal = row.SAF
+                        BigDecimal safImporte = MonedaUtils.calcularImporteDelTotal(safTotal)
+                        BigDecimal safIva = safTotal - safImporte
+                        row.asiento = row.asiento + '_SAF'
 
-                    poliza.addToPartidas(buildRegistro(
-                            '208-0004-0000-0000',
-                            descripcion,
-                            row,
-                            0.0,
-                            safIva))
+                        poliza.addToPartidas(buildRegistro(
+                                '205-0001-0001-0000',
+                                descripcion,
+                                row,
+                                0.0,
+                                safImporte))
+
+                        poliza.addToPartidas(buildRegistro(
+                                '208-0004-0000-0000',
+                                descripcion,
+                                row,
+                                0.0,
+                                safIva))
+
+                    }
+
                 }
-
+                /*
                 if(row.diferencia > 0.0) {
                     PolizaDet saf = buildRegistro(
                             '704-0001-0000-0000',
@@ -139,6 +145,23 @@ class CobranzaTarjetaTask implements  AsientoBuilder {
                     saf.haber = row.diferencia.abs()
                     saf.asiento = "${saf.asiento}_OPRD"
                     poliza.addToPartidas(saf)
+                }
+                */
+                if(row.diferencia > 0.0) {
+                    BigDecimal diferencia = row.diferencia
+                    PolizaDet saf = buildRegistro(
+                            '704-0001-0000-0000',
+                            descripcion, row, 0.0, diferencia)
+
+                    if(diferencia == row.total && row.cobro_aplic == 0.0) {
+                        saf.cuenta = buscarCuenta("101-0003-${row.suc.toString().padLeft(4,'0')}-0000")
+                        saf.asiento = "${saf.asiento}"
+                    } else {
+                        saf.asiento = "${saf.asiento}_OPRD"
+                    }
+                    poliza.addToPartidas(saf)
+
+
                 }
             }
 
@@ -151,17 +174,19 @@ class CobranzaTarjetaTask implements  AsientoBuilder {
             poliza.addToPartidas(clienteDet)
 
             // IVAS
-            PolizaDet ivaPend = buildRegistro(
-                    row.cta_iva_pend.toString(),
-                    descripcion, row)
-            ivaPend.debe = row.impuesto_apl.abs()
-            poliza.addToPartidas(ivaPend)
+            if(!['CRE','JUR','CHE'].contains(row.tipo)) {
+                PolizaDet ivaPend = buildRegistro(
+                        row.cta_iva_pend.toString(),
+                        descripcion, row)
+                ivaPend.debe = row.impuesto_apl.abs()
+                poliza.addToPartidas(ivaPend)
 
-            PolizaDet ivaPag = buildRegistro(
-                    row.cta_iva_pag.toString(),
-                    descripcion, row)
-            ivaPag.haber = row.impuesto_apl.abs()
-            poliza.addToPartidas(ivaPag)
+                PolizaDet ivaPag = buildRegistro(
+                        row.cta_iva_pag.toString(),
+                        descripcion, row)
+                ivaPag.haber = row.impuesto_apl.abs()
+                poliza.addToPartidas(ivaPag)
+            }
 
         }
     }
@@ -176,7 +201,7 @@ class CobranzaTarjetaTask implements  AsientoBuilder {
     String getSelect() {
 
         String res = """
-          SELECT
+        SELECT
         'TARJETA_CON' tipo,
         x.asiento,
         x.origen_gpo,
@@ -231,13 +256,14 @@ class CobranzaTarjetaTask implements  AsientoBuilder {
         ,b.forma_de_pago,(case when x.debito_credito is true then '99' else '04' end) metodoDePago,b.id origen,x.validacion documento,x.validacion referenciaBancaria,x.comision,b.importe total,(case when b.diferencia_fecha='@FECHA' then b.diferencia else 0 end) diferencia
         ,b.importe-(case when b.diferencia_fecha='@FECHA' then b.diferencia else 0 end)-ifnull((SELECT sum(a.importe) FROM aplicacion_de_cobro a where a.cobro_id=b.id and a.fecha='@FECHA'),0) SAF
         ,null ctaOrigen,null banco_origen_id,null bancoOrigen,t.rfc,t.nombre cliente,c.id cxc_id,c.documento factura,c.tipo,c.fecha fecha_fac,i.uuid,a.importe cobro_aplic,c.total montoTotal
-        ,concat('105-0001-',(case when s.clave>9 then '00' else '000' end),s.clave,'-0000') cta_contable_fac,'209-0001-0000-0000' cta_iva_pend,'208-0001-0000-0000' cta_iva_pag        
+        ,(case when b.tipo in('CRE','CHE','JUR') then '205-0007-0001-0000' else concat('105-',(case when b.tipo='COD' then '0002-' else '0001-' end),(case when s.clave>9 then '00' else '000' end),s.clave,'-0000') end) cta_contable_fac
+        ,'209-0001-0000-0000' cta_iva_pend,'208-0001-0000-0000' cta_iva_pag        
         FROM corte_de_tarjeta f join corte_de_tarjeta_aplicacion j on(j.corte_id=f.id) join movimiento_de_cuenta m on(j.ingreso_id=m.id) join cuenta_de_banco z on(m.cuenta_id=z.id)
         join sucursal s on(f.sucursal_id=s.id) left join cobro_tarjeta   x on(x.corte=f.id) join cobro b on(x.cobro_id=b.id)  join cliente t on(b.cliente_id=t.id)        
-        join aplicacion_de_cobro a on(a.cobro_id=b.id) join cuenta_por_cobrar c on(a.cuenta_por_cobrar_id=c.id) join cfdi i on(c.cfdi_id=i.id)        
-        where f.corte='@FECHA'   and f.corte=a.fecha   and j.tipo like '%INGRESO%'
+        join aplicacion_de_cobro a on(a.cobro_id=b.id) join cuenta_por_cobrar c on(a.cuenta_por_cobrar_id=c.id) left join cfdi i on(c.cfdi_id=i.id)        
+        where f.corte='@FECHA' and a.fecha=(b.primera_aplicacion) and j.tipo like '%INGRESO%'
         ) as x   
-        group by x.origen,x.uuid 
+        group by x.origen,x.uuid,x.cxc_id
         order by asiento desc
         """
         return res

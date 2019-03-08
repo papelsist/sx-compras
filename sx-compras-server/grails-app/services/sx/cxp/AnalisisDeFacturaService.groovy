@@ -37,7 +37,7 @@ class AnalisisDeFacturaService {
             it.clave = it.com.producto.clave
             it.descripcion = it.com.producto.descripcion
             it.costoUnitario = MonedaUtils.aplicarDescuentosEnCascada(it.precioDeLista, it.desc1, it.desc2, it.desc3, it.desc4)
-            // log.debug("{} Costo unitario: {}",it.clave, it.costoUnitario)
+            // log.debug("{} Precio de lista: {} Costo unitario: {}",it.clave, it.precioDeLista,it.costoUnitario)
             // Actualizacion de importes
             BigDecimal cantidad = it.com.producto.unidad == 'MIL' ? it.cantidad/1000 : it.cantidad;
             BigDecimal importeBruto = it.precioDeLista * cantidad
