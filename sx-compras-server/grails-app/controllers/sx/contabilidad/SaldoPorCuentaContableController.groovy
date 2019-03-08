@@ -93,23 +93,43 @@ class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaC
 
     def handleException(Exception e) {
         String message = ExceptionUtils.getRootCauseMessage(e)
-        log.error(message)
+        log.error(message, e)
         respond([message: message], status: 500)
     }
 
+    @CompileDynamic
     def drillPeriodo(AuxiliarContableCommand command){
         log.info('Drill: {}', command)
-        def res = PolizaDet.findAll(
-                "select new sx.contabilidad.PorPeriodoDTO(" +
-                        // "d.poliza.tipo, d.poliza.folio, " +
-                        " d.poliza.fecha, sum(d.debe), sum(d.haber)) " +
-                        " from PolizaDet d " +
-                        " where d.cuenta = ? " +
-                        "  and d.poliza.ejercicio = ? " +
-                        "  and d.poliza.mes = ?" +
-                        "  group by d.poliza.fecha",
+        List res = PolizaDet.findAll(
+                """
+                select new sx.contabilidad.PorPeriodoDTO(
+                    d.poliza.tipo, d.poliza.subtipo, d.poliza.folio, d.poliza.fecha, sum(d.debe), sum(d.haber)
+                    )  
+                    from PolizaDet d 
+                        where d.cuenta = ? 
+                        and d.poliza.ejercicio = ? 
+                        and d.poliza.mes = ?
+                        group by d.poliza.tipo, d.poliza.subtipo, d.poliza.fecha
+                """,
                 [command.cuenta, command.ejercicio, command.mes])
-        respond res
+        Map<Date, List<PorPeriodoDTO>> map = res.groupBy {it.fecha}
+        List data = map.collect { entry ->
+            List<PorPeriodoDTO> list = entry.value
+            BigDecimal debe = list.sum{it.debe}
+            BigDecimal haber = list.sum{it.haber}
+
+            Map row = [
+                    fecha: entry.key,
+                    debe: debe,
+                    haber: haber,
+                    data: list
+            ]
+            return row
+        }
+        SaldoPorCuentaContable saldo = SaldoPorCuentaContable
+                .where{cuenta == command.cuenta && ejercicio == command.ejercicio && mes == command.mes}.find()
+        Map resumen = [data: data, saldo: saldo]
+        respond resumen
         
     }
 }
@@ -127,8 +147,9 @@ class DrillPorPeriodoCommand extends AuxiliarContableCommand{
 
 @Canonical
 class PorPeriodoDTO {
-    // String tipo
-    // Integer folio
+    String tipo
+    String subtipo
+    Integer folio
     Date fecha
     BigDecimal debe
     BigDecimal haber

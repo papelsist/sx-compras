@@ -35,7 +35,7 @@ class CuentaContableController extends RestfulController <CuentaContable>{
         params.max = max?: 30
         params.sort = params.sort ?:'lastUpdated'
         params.order = params.order ?:'desc'
-        log.debug('Index : {}', params)
+
         def q = CuentaContable.where {}
 
         if(params.getBoolean('mayor')) {
@@ -47,7 +47,6 @@ class CuentaContableController extends RestfulController <CuentaContable>{
 
         if(params.term) {
             def term = "${params.term}%"
-            log.info('Term: {}', term)
             q = q.where {clave =~ term || descripcion =~ term.toUpperCase()}
         }
         respond q.list(params)
@@ -100,7 +99,6 @@ class CuentaContableController extends RestfulController <CuentaContable>{
 
     def handleException(Exception e) {
         String message = ExceptionUtils.getRootCauseMessage(e)
-        e.printStackTrace()
         log.error(message, ExceptionUtils.getRootCause(e))
         respond([message: message], status: 500)
     }
