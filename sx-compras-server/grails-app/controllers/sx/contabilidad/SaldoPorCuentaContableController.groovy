@@ -100,6 +100,10 @@ class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaC
     @CompileDynamic
     def drillPeriodo(AuxiliarContableCommand command){
         log.info('Drill: {}', command)
+
+        SaldoPorCuentaContable saldo = SaldoPorCuentaContable
+                .where{cuenta == command.cuenta && ejercicio == command.ejercicio && mes == command.mes}.find()
+
         List res = PolizaDet.findAll(
                 """
                 select new sx.contabilidad.PorPeriodoDTO(
@@ -113,21 +117,28 @@ class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaC
                 """,
                 [command.cuenta, command.ejercicio, command.mes])
         Map<Date, List<PorPeriodoDTO>> map = res.groupBy {it.fecha}
+        BigDecimal acumulado = saldo.saldoInicial
         List data = map.collect { entry ->
             List<PorPeriodoDTO> list = entry.value
             BigDecimal debe = list.sum{it.debe}
             BigDecimal haber = list.sum{it.haber}
+            acumulado = acumulado + debe - haber
+            // log.info("{} Debe: {} Haber:{} Saldo:{}", entry.key.format('dd'),debe, haber, acumulado)
 
             Map row = [
+                    ejercicio: command.ejercicio,
+                    mes: command.mes,
                     fecha: entry.key,
                     debe: debe,
                     haber: haber,
-                    data: list
+                    data: list,
+                    acumulado: acumulado
             ]
+
             return row
         }
-        SaldoPorCuentaContable saldo = SaldoPorCuentaContable
-                .where{cuenta == command.cuenta && ejercicio == command.ejercicio && mes == command.mes}.find()
+        // log.info("Saldo final: {}", saldo.saldoFinal)
+
         Map resumen = [data: data, saldo: saldo]
         respond resumen
         
