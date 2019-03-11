@@ -241,10 +241,10 @@ class CobranzaSaldosAFavorTask implements  AsientoBuilder{
     List<AplicacionDeCobro> findAplicaciones(Date dia, String tpo) {
         return AplicacionDeCobro.findAll(
                 "from AplicacionDeCobro a " +
-                        " where date(a.fecha)=?" +
-                        "  and date(a.cobro.primeraAplicacion) = ?" +
+                        " where date(a.fecha) = ?" +
+                        "  and date(a.cobro.primeraAplicacion) != ?" +
                         "  and a.cobro.tipo = ? " +
-                        "  and a.cobro.formaDePago in ('BONIFICACION', 'DEVOLUCION')",
+                        "  and a.cobro.formaDePago not in ('BONIFICACION', 'DEVOLUCION')",
                 [dia, dia, tpo])
         /*
         return AplicacionDeCobro
