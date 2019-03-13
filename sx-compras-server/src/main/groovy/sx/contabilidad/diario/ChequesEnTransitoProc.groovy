@@ -1,4 +1,4 @@
-package sx.contabilidad.egresos
+package sx.contabilidad.diario
 
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
@@ -17,28 +17,23 @@ import sx.tesoreria.MovimientoDeCuenta
  */
 @Slf4j
 @Component
-class ChequeProc implements  ProcesadorMultipleDePolizas {
-
-    @Autowired
-    @Qualifier('pagoDeCompraTask')
-    PagoDeCompraTask pagoDeCompraTask
-
-    @Autowired
-    @Qualifier('pagoDeGastosTask')
-    PagoDeGastosTask pagoDeGastosTask
-
-    @Autowired
-    @Qualifier('pagoDeRembolsoTask')
-    PagoDeRembolsoTask pagoDeRembolsoTask
-
-    @Autowired
-    @Qualifier('pagoDeNominaTask')
-    PagoDeNominaTask pagoDeNominaTask
+class ChequesEnTransitoProc implements  ProcesadorMultipleDePolizas {
 
 
     @Autowired
-    @Qualifier('devolucionClienteTask')
-    DevolucionClienteTask devolucionClienteTask
+    @Qualifier('pagoDeGastosTransitoTask')
+    PagoDeGastosTransitoTask pagoDeGastosTransitoTask
+
+    @Autowired
+    @Qualifier('pagoDeCompraTransitoTask')
+    PagoDeCompraTransitoTask pagoDeCompraTransitoTask
+
+
+    @Autowired
+    @Qualifier('pagoDeRembolsoTransitoTask')
+    PagoDeRembolsoTransitoTask pagoDeRembolsoTransitoTask
+
+
 
 
 
@@ -48,27 +43,26 @@ class ChequeProc implements  ProcesadorMultipleDePolizas {
     }
 
     @Override
-    Poliza recalcular(Poliza poliza) {
+    Poliza recalcular(Poliza poliza) { 
         poliza.partidas.clear()
         MovimientoDeCuenta egreso = MovimientoDeCuenta.get(poliza.egreso)
+
+        println "egreso__"+poliza.id+"  "+ egreso + "   "+poliza.egreso
 
         log.info("Generando poliza de egreso: {} Id:{}", egreso.tipo, poliza.egreso)
         switch (egreso.tipo) {
             case 'COMPRA':
-                pagoDeCompraTask.generarAsientos(poliza, [:])
+            println "Recalculando compra"
+                pagoDeCompraTransitoTask.generarAsientos(poliza, [:])
                 break
             case 'GASTO' :
-                pagoDeGastosTask.generarAsientos(poliza, [:])
+                pagoDeGastosTransitoTask.generarAsientos(poliza, [:])
                 break
+            
             case 'REMBOLSO':
-                pagoDeRembolsoTask.generarAsientos(poliza, [:])
+               pagoDeRembolsoTransitoTask.generarAsientos(poliza, [:])
                 break
-            case 'PAGO_NOMINA':
-                pagoDeNominaTask.generarAsientos(poliza, [:])
-                break
-            case 'DEVOLUCION_CLIENTE':
-                devolucionClienteTask.generarAsientos(poliza, [:])
-            break
+           
         }
 
         poliza = poliza.save flush: true
@@ -80,10 +74,17 @@ class ChequeProc implements  ProcesadorMultipleDePolizas {
 
     @Override
     List<Poliza> generarPolizas(PolizaCreateCommand command) {
+
+        log.info('Generando  polizas...')
         List<Poliza> polizas = []
-        List<MovimientoDeCuenta> movimientos = MovimientoDeCuenta.where{fecha == command.fecha && cheque != null}.list()
+        List<MovimientoDeCuenta> movimientos = MovimientoDeCuenta.where{cheque.fechaTransito == command.fecha && cheque != null}.list()
         movimientos = movimientos.sort {it.cheque.folio}.reverse()
+
+           log.info('Movimientos:  ', movimientos.size())
+
         movimientos.each{ mov ->
+
+               log.info('Movi id: ',mov.id)
 
             Poliza p = Poliza.where{
                 ejercicio == command.ejercicio &&

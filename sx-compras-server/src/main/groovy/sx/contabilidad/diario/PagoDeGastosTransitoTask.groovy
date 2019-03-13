@@ -1,27 +1,21 @@
-package sx.contabilidad.egresos
+package sx.contabilidad.diario
 
 import grails.compiler.GrailsCompileStatic
 import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
-import lx.econta.catalogo.Cuenta
 import org.springframework.stereotype.Component
-import sx.contabilidad.AsientoBuilder
-import sx.contabilidad.CuentaContable
-import sx.contabilidad.CuentaOperativaProveedor
-import sx.contabilidad.Poliza
-import sx.contabilidad.PolizaDet
+import sx.contabilidad.*
 import sx.core.Proveedor
-import sx.cxp.AnalisisDeFactura
 import sx.cxp.CuentaPorPagar
 import sx.cxp.Requisicion
-import sx.cxp.RequisicionDeCompras
+
 import sx.tesoreria.MovimientoDeCuenta
 import sx.utils.MonedaUtils
 
 @Slf4j
 @GrailsCompileStatic
 @Component
-class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
+class PagoDeGastosTransitoTask implements  AsientoBuilder{
 
     /**
      * Genera los asientos requreidos por la poliza
@@ -35,11 +29,11 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
     def generarAsientos(Poliza poliza, Map params = [:]) {
         Requisicion r = findRequisicion(poliza)
 
-        log.info("Generando Asientos para poliza para egreso: {}", r.egreso)
+        log.info("Pago de GASTO: {}", r.egreso)
 
         ajustarConcepto(poliza, r)
         cargoProveedor(poliza, r)
-        abonoBanco(poliza, r)
+       
         registrarRetenciones(poliza, r)
         registrarDiferenciaCambiaria(poliza, r)
     }
@@ -51,7 +45,8 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
      * @param r
      */
     void cargoProveedor(Poliza poliza, Requisicion r) {
-        CuentaOperativaProveedor co = buscarCuentaOperativa(r.proveedor)
+     
+        
         MovimientoDeCuenta egreso = r.egreso
         r.partidas.each {
             CuentaPorPagar cxp = it.cxp
@@ -73,49 +68,16 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
                     moneda: cxp.moneda,
                     tc: cxp.tipoDeCambio ? cxp.tipoDeCambio : 1.0
             ]
-            buildComplementoDePago(row, egreso)
-            // Cargo a Proveedor
-            String cv = "201-0002-${co.cuentaOperativa}-0000"
-            if(['0038','0061'].contains(co.cuentaOperativa)) {
-                cv = "201-0001-${co.cuentaOperativa}-0000"
-            }
-            poliza.addToPartidas(mapRow(cv, desc, row, MonedaUtils.round(it.apagar  * r.tipoDeCambio)))
 
-            if(egreso.cheque.fecha != egreso.cheque.fechaTransito){
                  // IVA
                 BigDecimal importe = MonedaUtils.calcularImporteDelTotal(it.apagar * r.tipoDeCambio)
                 BigDecimal impuesto = it.apagar - importe
-                poliza.addToPartidas(mapRow('118-0001-0000-0000', desc, row, impuesto))
-                poliza.addToPartidas(mapRow('119-0001-0000-0000', desc, row, 0.0, impuesto))
-            }
-
-           
+                poliza.addToPartidas(mapRow('118-0002-0000-0000', desc, row, impuesto))
+                poliza.addToPartidas(mapRow('119-0002-0000-0000', desc, row, 0.0, impuesto))
+            
+            
         }
 
-    }
-
-    void abonoBanco(Poliza poliza, Requisicion r) {
-        MovimientoDeCuenta egreso = r.egreso
-
-        // Abono a Banco
-        String ctaBanco = "102-${egreso.moneda.currencyCode == 'MXN' ? '0001': '0002'}-${egreso.cuenta.subCuentaOperativa}-0000"
-        log.info('Cta de banco: {}, {} MXN: {}', ctaBanco, egreso.moneda, egreso.moneda == 'MXN')
-        Map row = [
-                asiento: "PAGO_${egreso.tipo}",
-                referencia: r.nombre,
-                referencia2: egreso.cuenta.descripcion,
-                origen: egreso.id,
-                documento: egreso.referencia,
-                documentoTipo: 'CXP',
-                documentoFecha: egreso.fecha,
-                sucursal: egreso.sucursal?: 'OFICINAS'
-        ]
-        buildComplementoDePago(row, egreso)
-        String desc = "Folio: ${egreso.referencia} (${egreso.fecha.format('dd/MM/yyyy')}) "
-        if(r.moneda != 'MXN') {
-            desc = desc + " TC: ${r.tipoDeCambio}"
-        }
-        poliza.addToPartidas(mapRow(ctaBanco, desc, row, 0.0, egreso.importe.abs()))
     }
 
     void registrarRetenciones(Poliza poliza, Requisicion r) {
@@ -130,7 +92,7 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
                 documentoFecha: egreso.fecha,
                 sucursal: egreso.sucursal?: 'OFICINAS'
         ]
-        buildComplementoDePago(row, egreso)
+      //  buildComplementoDePago(row, egreso)
         String desc = "Folio: ${egreso.referencia} (${egreso.fecha.format('dd/MM/yyyy')}) "
         r.partidas.each {
             if(it.cxp.impuestoRetenido > 0) {
@@ -177,14 +139,14 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
 
     Requisicion findRequisicion(Poliza poliza) {
         MovimientoDeCuenta egreso = MovimientoDeCuenta.get(poliza.egreso)
-        RequisicionDeCompras r = RequisicionDeCompras.where{ egreso == egreso}.find()
+        Requisicion r = Requisicion.where{ egreso == egreso}.find()
         if(!r) throw new RuntimeException("Egreso ${egreso.id} de ${egreso.tipo} no tiene Requisicion")
         return r
     }
 
     CuentaOperativaProveedor buscarCuentaOperativa(Proveedor p) {
         CuentaOperativaProveedor co = CuentaOperativaProveedor.where{proveedor == p}.find()
-        if(!p) throw new RuntimeException("Proveedor ${p.nombre} sin cuenta operativa")
+        if(!co) throw new RuntimeException("Proveedor ${p.nombre} sin cuenta operativa")
         return co
     }
 
@@ -214,5 +176,6 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
             asignarComplementoDePago(det, row)
         return det
     }
+
 
 }

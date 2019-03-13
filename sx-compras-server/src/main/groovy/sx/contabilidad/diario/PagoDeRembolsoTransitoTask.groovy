@@ -1,4 +1,4 @@
-package sx.contabilidad.egresos
+package sx.contabilidad.diario
 
 
 import groovy.transform.CompileDynamic
@@ -14,7 +14,7 @@ import sx.utils.MonedaUtils
 
 @Slf4j
 @Component
-class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
+class PagoDeRembolsoTransitoTask implements  AsientoBuilder{
 
     /**
      * Genera los asientos requreidos por la poliza
@@ -30,7 +30,7 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
 
         log.info("Pago de REMBOLSO: {} {}", r.concepto, r.id)
         cargoSucursal(poliza, r)
-        abonoBanco(poliza, r)
+       
 
     }
 
@@ -51,43 +51,16 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
                 documentoTipo: 'REMBOLSO',
                 sucursal: r.sucursal.nombre
         ]
-        buildComplementoDePago(row, egreso)
-        row.rfc = Empresa.first().rfc
-        // Cargo a caja
-        String cv = "101-0002-${r.sucursal.clave.padLeft(4,'0')}-0000"
-        poliza.addToPartidas(mapRow(cv, desc, row, egreso.importe))
 
-            if(egreso.cheque.fecha.format('dd/MM/yyyy') == egreso.cheque.fechaTransito.format('dd/MM/yyyy')){
-             
-                // IVA
-                BigDecimal importe = MonedaUtils.calcularImporteDelTotal(r.apagar * r.tipoDeCambio)
-                BigDecimal impuesto = r.apagar - importe
-                poliza.addToPartidas(mapRow('118-0002-0000-0000', desc, row, impuesto))
-                poliza.addToPartidas(mapRow('119-0002-0000-0000', desc, row, 0.0, impuesto))
-
-            }
-         
+        BigDecimal importe = MonedaUtils.calcularImporteDelTotal(r.apagar * r.tipoDeCambio)
+            BigDecimal impuesto = r.apagar - importe
+            poliza.addToPartidas(mapRow('118-0002-0000-0000', desc, row, impuesto))
+            poliza.addToPartidas(mapRow('119-0002-0000-0000', desc, row, 0.0, impuesto))
         
 
     }
 
-    void abonoBanco(Poliza poliza, Rembolso r) {
-        MovimientoDeCuenta egreso = r.egreso
-        log.info('Abono a banco: {}', egreso)
-
-        // Abono a Banco
-        Map row = buildDataRow(egreso)
-        buildComplementoDePago(row, egreso)
-        row.rfc = Empresa.first().rfc
-
-        String desc = row.descripcion
-        poliza.addToPartidas(mapRow(
-                buildCuentaDeBanco(egreso),
-                desc,
-                row,
-                0.0,
-                egreso.importe.abs()))
-    }
+  
 
 
 
