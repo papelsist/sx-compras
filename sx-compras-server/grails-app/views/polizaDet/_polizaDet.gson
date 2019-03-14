@@ -19,5 +19,9 @@ json g.render(polizaDet, [excludes: ['poliza','nacionales', 'extranjeros', 'tran
     // transferencias g.render(polizaDet.transferencias)
     // cheques g.render(polizaDet.cheques)
     // otros g.render(polizaDet.otros)
+	folio polizaDet.poliza.folio
+    fecha polizaDet.poliza.fecha
+    subtipo polizaDet.poliza.subtipo
+    tipo polizaDet.poliza.tipo
 }
 

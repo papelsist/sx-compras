@@ -88,6 +88,10 @@ class RembolsoController extends RestfulController<Rembolso> {
         }
     }
 
+    @Override
+    def update() {
+        return super.update()
+    }
 
     @CompileDynamic
     @Override
@@ -98,7 +102,6 @@ class RembolsoController extends RestfulController<Rembolso> {
                 it.documentoFecha = it.cxp.fecha
                 it.documentoSerie = it.cxp.serie
                 it.documentoFolio = it.cxp.folio
-                DateUtils.isSameDay()
             }
         }
         resource.save flush: true
@@ -112,7 +115,6 @@ class RembolsoController extends RestfulController<Rembolso> {
 
     @CompileDynamic
     def pendientes() {
-        log.info('Pendientes: {}', params)
         params.max = 100
 
         def q = CuentaPorPagar.where {tipo == 'GASTOS' && pagos <= 0}

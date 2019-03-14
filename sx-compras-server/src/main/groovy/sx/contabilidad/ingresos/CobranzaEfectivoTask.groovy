@@ -107,7 +107,7 @@ class CobranzaEfectivoTask implements  AsientoBuilder {
                     )
                 }
 
-                if(row.saf > 0.0) {
+                if(row.SAF > 0.0) {
 
                     BigDecimal safTotal = row.SAF
                     BigDecimal safImporte = MonedaUtils.calcularImporteDelTotal(safTotal)
@@ -181,6 +181,35 @@ class CobranzaEfectivoTask implements  AsientoBuilder {
 
             }
 
+            if(row.SAF > 0.0 && row.cta_contable == '000-0000-0000-0000' && row.referencia2 == 'EFECTIVO') {
+                if(!cobros.contains(row.origen)) {
+                    log.info('FALTA: SAF: {}', row.SAF)
+                    BigDecimal safTotal = row.SAF
+                    BigDecimal safImporte = MonedaUtils.calcularImporteDelTotal(safTotal)
+                    BigDecimal safIva = safTotal - safImporte
+                    row.asiento = row.asiento + '_SAF'
+
+                    poliza.addToPartidas(buildRegistro(
+                            row.cta_contable2.toString(),
+                            descripcion,
+                            row,
+                            safTotal))
+
+                    poliza.addToPartidas(buildRegistro(
+                            '205-0001-0001-0000',
+                            descripcion,
+                            row,
+                            0.0,
+                            safImporte))
+
+                    poliza.addToPartidas(buildRegistro(
+                            '208-0004-0000-0000',
+                            descripcion,
+                            row,
+                            0.0,
+                            safIva))
+                }
+            }
         }
     }
 
@@ -282,7 +311,7 @@ class CobranzaEfectivoTask implements  AsientoBuilder {
         ,'' diferenciaTipo,0 diferencia,'000-0000-0000-0000' cta_caja,'000-0000-0000-0000' cta_cajera 
         FROM cobro b join sucursal s on(b.sucursal_id=s.id)  join cliente t on(b.cliente_id=t.id)
         join aplicacion_de_cobro a on(a.cobro_id=b.id) join cuenta_por_cobrar c on(a.cuenta_por_cobrar_id=c.id) join cfdi i on(c.cfdi_id=i.id)
-        where date(b.primera_aplicacion)='@FECHA' and b.tipo in('CON','COD') and b.forma_de_pago='EFECTIVO' 
+        where date(b.primera_aplicacion)='@FECHA' and date(b.primera_aplicacion)=a.fecha and b.tipo in('CON','COD') and b.forma_de_pago='EFECTIVO' 
         UNION
         SELECT concat('COB_FICHA_CHE_',f.origen) as asiento,f.id origen_gpo,f.origen documentoTipo,f.fecha,f.folio documento_gpo,b.moneda,b.tipo_de_cambio tc ,f.total total_gpo,f.tipo_de_ficha referencia2,s.nombre sucursal, s.clave suc
         ,concat('102-0001-',z.sub_cuenta_operativa,'-0000') cta_contable,'000-0000-0000-0000' cta_contable2,z.numero ctaDestino,z.descripcion bancoDestino,'PAPEL SA DE CV' beneficiario

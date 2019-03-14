@@ -139,9 +139,18 @@ class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaC
         }
         // log.info("Saldo final: {}", saldo.saldoFinal)
 
-        Map resumen = [data: data, saldo: saldo]
+        Map resumen = [data: data, saldo: saldo, cuenta: saldo.cuenta]
         respond resumen
         
+    }
+
+    def drillSubtipo(DrillPorSubtipo command){
+        log.info('Drill: {}', command)
+        def q = PolizaDet.where {cuenta == command.cuenta &&  poliza.subtipo in command.subtipos}
+        if(command.fecha) {
+            q = q.where {poliza.fecha == command.fecha}
+        }
+        respond q.list()
     }
 }
 
@@ -154,6 +163,17 @@ class AuxiliarContableCommand implements Validateable{
 
 class DrillPorPeriodoCommand extends AuxiliarContableCommand{
     SaldoPorCuentaContable saldo
+}
+
+@ToString()
+class DrillPorSubtipo  extends AuxiliarContableCommand {
+    Date fecha
+    List<String> subtipos
+
+    static constraints = {
+        fecha nullable: true
+    }
+
 }
 
 @Canonical

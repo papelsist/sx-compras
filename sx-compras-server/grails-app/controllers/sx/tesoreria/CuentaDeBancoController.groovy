@@ -6,6 +6,7 @@ import grails.rest.RestfulController
 import grails.web.databinding.WebDataBinding
 import groovy.beans.Bindable
 import groovy.transform.CompileDynamic
+import groovy.transform.ToString
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.exception.ExceptionUtils
 
@@ -295,9 +296,8 @@ class CuentaDeBancoController extends RestfulController {
         ReporteDeMovimientos command = new ReporteDeMovimientos()
         command.cuenta = CuentaDeBanco.get(params.cuentaId)
         command.properties = getObjectToBind()
-        log.info('Cuenta: {}', command.cuenta)
-        log.info('Rows: {}', command.rows.size())
-        log.info('Fecha Ini: {}', command.fechaIni)
+        log.info('Command: {}', command)
+        log.info('Rows: {}', command.rows)
 
         Map reportParams = [
                 FECHA_INI: command.fechaIni.format('dd/MM/yyyy'),
@@ -317,7 +317,7 @@ class CuentaDeBancoController extends RestfulController {
          * 	<field name="Descripcion" class="java.lang.String"/>
          */
         List<MovimientoDeCuenta> data = command.rows.collect { mov ->
-
+            log.info('Transformanto: {} F. Deposito: {}', mov, mov.fechaDeposito)
             String comentario = mov.comentario
             if(mov.fechaDeposito) {
                 comentario = 'Pago dep:' + mov.fechaDeposito.format('dd/MM/yyyy')
@@ -378,9 +378,12 @@ class EstadoDeCuenta {
 
 }
 
+@ToString
 class ReporteDeMovimientos implements WebDataBinding {
     Date fechaIni
     Date fechaFin
     CuentaDeBanco cuenta
     List<MovimientoDeCuenta> rows
 }
+
+
