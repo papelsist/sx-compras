@@ -1,0 +1,7 @@
+import sx.logistica.Envio
+
+model {
+	Envio envio
+}
+
+json tmpl.envio(envio)

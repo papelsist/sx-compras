@@ -1,0 +1,8 @@
+import sx.logistica.EnvioDet
+
+model {
+	Iterable<EnvioDet> envioDetList
+}
+
+json tmpl.envioDet(envioDetList ?: [])
+

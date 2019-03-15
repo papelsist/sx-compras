@@ -1,0 +1,7 @@
+import sx.logistica.EnvioDet
+
+model {
+	EnvioDet envioDet
+}
+
+json g.render(envioDet, [resolveTemplate: false])

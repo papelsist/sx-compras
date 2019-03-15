@@ -12,25 +12,25 @@ class CondicionDeEnvio {
 
     String id
 
-    Venta	venta
+    Venta venta
 
-    String	condiciones
+    String condiciones
 
-    Boolean	ocurre	 = false
+    Boolean ocurre
 
-    Boolean	recoleccion	 = false
+    Boolean	recoleccion
 
-    Boolean	asegurado	 = false
+    Boolean	asegurado
 
-    Date	fechaDeEntrega = new Date()
+    Date fechaDeEntrega
 
     String	comentario
 
-    BigDecimal	latitud	 = 0
+    BigDecimal latitud
 
-    BigDecimal	longitud	 = 0
+    BigDecimal longitud
 
-    Boolean parcial = false
+    Boolean parcial
 
     Date asignado
 

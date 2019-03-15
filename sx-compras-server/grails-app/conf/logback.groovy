@@ -73,6 +73,7 @@ if (Environment.isDevelopmentMode() && targetDir != null) {
     logger("sx.sat", DEBUG, ['STDOUT'], false)
     logger("sx.cfdi", DEBUG, ['STDOUT'], false)
     logger("sx.utils", DEBUG, ['STDOUT'], false)
+    logger("sx.logistica", DEBUG, ['STDOUT'], false)
 
     // Log Listeners
     logger("sx.audit", DEBUG, ['STDOUT'], false)

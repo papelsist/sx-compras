@@ -1,0 +1,8 @@
+import sx.logistica.EnvioComision
+
+model {
+	Iterable<EnvioComision> envioComisionList
+}
+
+json tmpl.envioComision(envioComisionList ?: [])
+

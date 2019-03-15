@@ -25,6 +25,10 @@ class Periodo implements Comparable<Periodo>, WebDataBinding {
 	Periodo(){
 
 	}
+
+	Periodo(String f1, String f2) {
+        this(Date.parse(defaultFormat, f1), Date.parse(defaultFormat, f2))
+    }
 	
 	Periodo(Date f1,Date f2){
 		fechaInicial=f1

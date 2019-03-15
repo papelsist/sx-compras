@@ -269,6 +269,13 @@ class UrlMappings {
         "/api/sat/polizas/mostrarAcuse/$id"(controller:"polizasDelPeriodoSat", action:"mostrarAcuse")
         "/api/sat/polizas/descargarXml/$id"(controller:"polizasDelPeriodoSat", action:"descargarXml")
 
+        // Embarques
+        "/api/embarques"(resources: 'embarque', excludes:['create', 'edit','patch', 'save', 'update', 'delete'])
+        "/api/envios"(resources: 'envio', excludes:['create', 'edit','patch', 'save','update', 'delete']) {
+            "/partidas"(resources: 'envioDet', excludes:['create', 'edit','patch', 'save', 'update', 'delete'])
+        }
+        "/api/envios/comisiones"(resources: "envioComision", excludes: ['create', 'edit', 'patch'])
+
         "/"(controller: 'application', action:'index')
         "/api/session"(controller: 'application', action: 'session')
         "500"(view: '/error')

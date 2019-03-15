@@ -204,6 +204,8 @@ grails:
 siipapx:
   econta:
     polizasDir: /home/econta/polizas
+  logistica:
+    inicioOperacionComisiones: 01/03/2019
 ---
 environments:
   development:
@@ -213,6 +215,8 @@ environments:
         gastosDir: /Users/rubencancino/Documents/cfdis-carga/gastos
       econta:
         polizasDir: ${user.home}/Documents/econta
+      logistica:
+        inicioOperacionComisiones: 01/03/2019
   production:
     siipapx:
       cxp:
