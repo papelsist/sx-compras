@@ -1,11 +1,15 @@
 package sx.logistica
 
 import grails.compiler.GrailsCompileStatic
-
+import grails.plugin.springsecurity.annotation.Secured
+import grails.rest.Resource
 import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
 
-
+@Resource(readOnly = false, formats = ['json'], uri = "/api/choferes")
 @GrailsCompileStatic
+@Secured("IS_AUTHENTICATED_ANONYMOUSLY")
+@ToString(excludes =  'id, version', includeNames = true, includePackage = false)
 @EqualsAndHashCode(includes=['id', 'nombre'])
 class Chofer {
 

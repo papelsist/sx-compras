@@ -1,0 +1,7 @@
+import sx.logistica.Chofer
+
+model {
+	Chofer chofer
+}
+
+json tmpl.chofer(chofer)

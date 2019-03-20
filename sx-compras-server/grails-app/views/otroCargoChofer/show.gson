@@ -1,0 +1,7 @@
+import sx.logistica.OtroCargoChofer
+
+model {
+	OtroCargoChofer otroCargoChofer
+}
+
+json tmpl.otroCargoChofer(otroCargoChofer)

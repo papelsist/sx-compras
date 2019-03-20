@@ -3,11 +3,12 @@ package sx.logistica
 import grails.compiler.GrailsCompileStatic
 
 import groovy.transform.EqualsAndHashCode
-
+import groovy.transform.ToString
 import sx.core.Cliente
 
 @GrailsCompileStatic
 @EqualsAndHashCode(includes=['id', 'documento'])
+@ToString(excludes = 'version, dateCreated,lastUpdated, partidas', includeNames=true, includePackage=false)
 class Envio {
 
     String	id

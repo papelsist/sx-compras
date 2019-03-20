@@ -276,6 +276,11 @@ class UrlMappings {
         }
         "/api/envios/comisiones"(resources: "envioComision", excludes: ['create', 'edit', 'patch'])
 
+        "/api/prestamoChofer"(resources: 'prestamoChofer', excludes:['create', 'edit','patch']){
+            "/partidas"(resources: 'prestamoChoferDet', excludes:['create', 'edit','patch'])
+        }
+
+
         "/"(controller: 'application', action:'index')
         "/api/session"(controller: 'application', action: 'session')
         "500"(view: '/error')
