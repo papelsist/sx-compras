@@ -32,7 +32,7 @@ export class AgregarFacturasComponent implements OnInit {
   openSelector() {
     const ref = this.dialog.open(FacturaSelectorComponent, {
       data: { facturas: this.facturas },
-      width: '750px'
+      width: '850px'
     });
     ref.afterClosed().subscribe((selected: CuentaPorPagar[]) => {
       if (selected) {

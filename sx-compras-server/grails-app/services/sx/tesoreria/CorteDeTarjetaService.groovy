@@ -43,6 +43,7 @@ class CorteDeTarjetaService implements  LogUser{
         corte.total = total
         corte.cuentaDeBanco = CuentaDeBanco.where{numero == 1858193}.find()
         corte.comentario = 'CORTE AUTOMATICO'
+        corte.fechaDeposito = fecha
 
         // INGRESO
         CorteDeTarjetaAplicacion ingreso = new CorteDeTarjetaAplicacion()
@@ -109,6 +110,7 @@ class CorteDeTarjetaService implements  LogUser{
             corte.total = amexIngreso
             corte.cuentaDeBanco = CuentaDeBanco.where{numero == 1858193}.find()
             corte.comentario = 'CORTE AUTOMATICO AMEX'
+            corte.fechaDeposito = fecha
 
             // INGRESO
             CorteDeTarjetaAplicacion ingreso = new CorteDeTarjetaAplicacion()

@@ -1,0 +1,8 @@
+import sx.logistica.OtroCargoChofer
+
+model {
+	Iterable<OtroCargoChofer> otroCargoChoferList
+}
+
+json tmpl.otroCargoChofer(otroCargoChoferList ?: [])
+

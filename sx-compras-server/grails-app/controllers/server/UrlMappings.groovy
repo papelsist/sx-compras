@@ -190,6 +190,8 @@ class UrlMappings {
         "/api/inventario"(resources: 'inventario', excludes:['create', 'update', 'save', 'edit','patch'])
         "/api/inventario/$producto/$ejercicio/$mes"(controller: 'inventario', action: 'movimientos', method: 'GET')
         "/api/inventario/printKardex"(controller: 'inventario', action: 'printKardex', method: 'GET')
+        // TEMPORALMENTE EN ESTE CONTROLADOR
+        "/api/inventario/ventasDiarias"(controller: 'inventario', action: 'ventasDiarias', method: 'GET')
 
 
         // Rembolsos
@@ -231,6 +233,9 @@ class UrlMappings {
         "/api/contabilidad/saldos/actualizar/$ejercicio/$mes"(controller: 'saldoPorCuentaContable', action: 'actualizarSaldos', method: 'PUT')
         "/api/contabilidad/saldos/cierreMensual/$ejercicio/$mes"(controller: 'saldoPorCuentaContable', action: 'cierreMensual', method: 'PUT')
         "/api/contabilidad/saldos/cierreAnual/$ejercicio"(controller: 'saldoPorCuentaContable', action: 'cierreAnual', method: 'PUT')
+        "/api/contabilidad/saldos/printAuxiliar"(controller: 'saldoPorCuentaContable', action: 'printAuxiliar')
+        "/api/contabilidad/saldos/drillPeriodo"(controller: 'saldoPorCuentaContable', action: 'drillPeriodo')
+        "/api/contabilidad/saldos/drillSubtipo"(controller: 'saldoPorCuentaContable', action: 'drillSubtipo', method: 'POST')
 
         "/api/sat/cuentas"(resources: 'cuentaSat', excludes: ['create', 'edit', 'patch'])
 
@@ -263,6 +268,18 @@ class UrlMappings {
         "/api/sat/polizas/mostrarXml/$id"(controller:"polizasDelPeriodoSat", action:"mostrarXml")
         "/api/sat/polizas/mostrarAcuse/$id"(controller:"polizasDelPeriodoSat", action:"mostrarAcuse")
         "/api/sat/polizas/descargarXml/$id"(controller:"polizasDelPeriodoSat", action:"descargarXml")
+
+        // Embarques
+        "/api/embarques"(resources: 'embarque', excludes:['create', 'edit','patch', 'save', 'update', 'delete'])
+        "/api/envios"(resources: 'envio', excludes:['create', 'edit','patch', 'save','update', 'delete']) {
+            "/partidas"(resources: 'envioDet', excludes:['create', 'edit','patch', 'save', 'update', 'delete'])
+        }
+        "/api/envios/comisiones"(resources: "envioComision", excludes: ['create', 'edit', 'patch'])
+
+        "/api/prestamoChofer"(resources: 'prestamoChofer', excludes:['create', 'edit','patch']){
+            "/partidas"(resources: 'prestamoChoferDet', excludes:['create', 'edit','patch'])
+        }
+
 
         "/"(controller: 'application', action:'index')
         "/api/session"(controller: 'application', action: 'session')

@@ -15,6 +15,7 @@ import {
   FechaDialogComponent
 } from 'app/_shared/components';
 import { Periodo } from 'app/_core/models/periodo';
+import { VentasDiariasDialogComponent } from 'app/reportes/components';
 
 @Component({
   selector: 'sx-cfdis-page',
@@ -83,6 +84,12 @@ import { Periodo } from 'app/_core/models/periodo';
           <p matLine>CFDIs pendientes de cancelación</p>
         </a>
         <mat-divider></mat-divider>
+
+        <a mat-list-item (click)="ventasDiarias()">
+          <mat-icon matListAvatar>picture_as_pdf</mat-icon>
+          <h3 matLine>Ventas diarias</h3>
+        </a>
+        <mat-divider inset></mat-divider>
       </mat-nav-list>
 
       <router-outlet></router-outlet>
@@ -161,6 +168,19 @@ export class CfdisPageComponent implements OnInit {
         if (fecha) {
           const params = { fecha: fecha.toISOString() };
           this.service.runReport('cfdi/cancelacion/facturasCanceladas', params);
+        }
+      });
+  }
+
+  ventasDiarias() {
+    this.dialog
+      .open(VentasDiariasDialogComponent, {
+        data: {}
+      })
+      .afterClosed()
+      .subscribe(res => {
+        if (res) {
+          this.service.runReport(`inventario/ventasDiarias`, res);
         }
       });
   }

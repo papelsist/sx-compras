@@ -1,0 +1,7 @@
+import sx.logistica.OtroCargoChoferDet
+
+model {
+	OtroCargoChoferDet otroCargoChoferDet
+}
+
+json g.render(otroCargoChoferDet, [resolveTemplate: false])

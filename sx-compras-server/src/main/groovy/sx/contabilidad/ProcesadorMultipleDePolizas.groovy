@@ -6,6 +6,7 @@ import sx.core.Sucursal
 @Slf4j
 trait ProcesadorMultipleDePolizas extends ProcesadorDePoliza{
 
+
     List<Poliza> generarPolizas(PolizaCreateCommand command) {
         return []
     }

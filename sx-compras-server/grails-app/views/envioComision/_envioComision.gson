@@ -1,0 +1,7 @@
+import sx.logistica.EnvioComision
+
+model {
+	EnvioComision envioComision
+}
+
+json g.render(envioComision, [resolveTemplate: false])

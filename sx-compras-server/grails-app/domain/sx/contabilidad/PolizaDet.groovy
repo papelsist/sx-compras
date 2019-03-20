@@ -34,12 +34,26 @@ class PolizaDet {
 
     String sucursal
 
+    //  Comprobantes
+    String uuid
+    String rfc
+    BigDecimal montoTotal
+    String moneda
+    BigDecimal tipCamb
+
+    BigDecimal montoTotalPago
+    String beneficiario
+    String metodoDePago
+    String bancoOrigen
+    String bancoDestino
+    String ctaOrigen
+    String ctaDestino
+    String referenciaBancaria
+
+
     Date dateCreated
     Date lastUpdated
 
-    List<SatComprobanteNac> nacionales = []
-
-    List<SatComprobanteExt> extranjeros = []
 
     List<SatPagoTransferencia> transferencias = []
 
@@ -49,13 +63,9 @@ class PolizaDet {
 
     static belongsTo = [poliza:Poliza]
 
-    static hasMany = [
-        nacionales: SatComprobanteNac,
-        extranjeros: SatComprobanteExt,
-        transferencias: SatPagoTransferencia,
-        cheques: SatPagoCheque,
-        otros: SatPagoOtro
-    ]
+
+    // static hasMany = []
+
 
     static constraints = {
         descripcion nullable:true
@@ -67,26 +77,31 @@ class PolizaDet {
         documento nullable:true
         documentoTipo nullable:true
         documentoFecha nullable:true
+        uuid nullable: true
+        rfc nullable: true
+        montoTotal nullable: true
+        moneda nullable: true
+        tipCamb nullable: true, scale: 5
+        //
+        beneficiario nullable: true
+        metodoDePago nullable: true
+        bancoOrigen nullable: true
+        bancoDestino nullable: true
+        ctaOrigen nullable: true
+        ctaDestino nullable: true
+        referenciaBancaria nullable: true
+        montoTotalPago nullable: true
     }
 
     static  mapping = {
         documentoFecha type: 'date'
-        nacionales cascade: "all-delete-orphan"
-        extranjeros cascade: "all-delete-orphan"
-        cheques cascade: "all-delete-orphan"
-        transferencias cascade: "all-delete-orphan"
-        otros cascade: "all-delete-orphan"
+        // otros cascade: "all-delete-orphan", lazy: false
+
     }
 
-    BigDecimal getTotalNacionales() {
-        def nacional =  nacionales.sum 0.0, {it.montoTotal}
-        return nacional as BigDecimal
-    }
+    // static transients = ['nacionales, otros, extranjeros,cheques,transferencias']
 
-    BigDecimal getTotalExtranjeros() {
-        def ext =  extranjeros.sum 0.0, {it.montoTotal}
-        return ext as BigDecimal
-    }
+
 
 }
 

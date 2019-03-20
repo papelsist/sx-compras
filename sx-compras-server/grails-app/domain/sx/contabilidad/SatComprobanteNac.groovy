@@ -7,8 +7,8 @@ import groovy.transform.TupleConstructor
 
 @TupleConstructor
 @GrailsCompileStatic
-@EqualsAndHashCode
-@ToString
+@EqualsAndHashCode(includes = "id")
+@ToString(includes = 'uuidcfdi, rfc, montoTotal', includeNames=true,includePackage=false)
 class SatComprobanteNac {
 
     String uuidcfdi
@@ -21,7 +21,7 @@ class SatComprobanteNac {
 
     BigDecimal tipCamb
 
-    // static belongsTo = [polizaDet: PolizaDet]
+    // static belongsTo = [polizaDet:PolizaDet]
 
     static constraints = {
         moneda nullable:true

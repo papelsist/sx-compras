@@ -33,24 +33,13 @@
 		<defaultValueExpression ><![CDATA["COMPLEMENTO DE POLIZA DE COMPROBANTE NACIONAL"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="POLIZA_ID" isForPrompting="true" class="java.lang.Long"/>
-	<queryString><![CDATA[SELECT 'NACIONAL' as compl,t.id,p.id as poliza_id,p.tipo,p.subtipo
-,p.folio,p.fecha,t.uuidcfdi,t.rfc,t.monto_total ,(case when t.moneda is null then 'MXN' else t.moneda end) moneda,(case when t.moneda is null then 1.00 else t.tip_camb end) tip_camb
-,(t.monto_total*(case when t.moneda is null then 1.00 else t.tip_camb end)) as monto_mxn,p.sucursal
-FROM sat_comprobante_nac t
-join poliza_det_sat_comprobante_nac n on(n.sat_comprobante_nac_id=t.id)
-join poliza_det d on(d.id=n.poliza_det_nacionales_id)
+	<queryString><![CDATA[SELECT 'NACIONAL' as compl,d.id,p.id as poliza_id,p.tipo,p.subtipo
+,p.folio,p.fecha,d.uuid uuidcfdi,d.rfc,d.monto_total ,d.moneda,d.tip_camb
+,(d.monto_total*d.tip_camb) as monto_mxn,p.sucursal
+FROM poliza_det d 
 join poliza p on(p.id=d.poliza_id)
-where p.id=$P{POLIZA_ID}
-UNION
-SELECT 'EXTRANJERO' as compl,t.id,p.id as poliza_id,p.tipo,p.subtipo
-,p.folio,p.fecha,t.num_fact_ext,t.taxid,t.monto_total ,(case when t.moneda is null then 'MXN' else t.moneda end) moneda,(case when t.moneda is null then 1.00 else t.tip_camb end) tip_camb
-,(t.monto_total*(case when t.moneda is null then 1.00 else t.tip_camb end)) as monto_mxn,p.sucursal
-FROM sat_comprobante_ext t 
-join poliza_det_sat_comprobante_nac n on(n.sat_comprobante_nac_id=t.id)
-join poliza_det d on(d.id=n.poliza_det_nacionales_id)
-join poliza p on(p.id=d.poliza_id)
-where p.id=$P{POLIZA_ID}
-]]></queryString>
+where d.uuid is not null and p.id=$P{POLIZA_ID}
+group by uuid ]]></queryString>
 
 	<field name="compl" class="java.lang.String"/>
 	<field name="id" class="java.lang.Long"/>

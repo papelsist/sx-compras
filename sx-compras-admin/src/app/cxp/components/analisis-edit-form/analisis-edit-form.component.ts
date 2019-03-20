@@ -100,6 +100,7 @@ export class AnalisisEditFormComponent implements OnInit, OnDestroy {
 
   onSubmit() {
     if (this.form.valid) {
+      // console.log('Save: ', this.form.value);
       this.update.emit(this.form.value);
     }
   }

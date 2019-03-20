@@ -52,6 +52,7 @@ class MovimientoDeCuenta {
     String sucursal
 
     Long orden
+
     Date fechaDeposito
 
     boolean porIdentificar = false
@@ -66,7 +67,7 @@ class MovimientoDeCuenta {
     ]
     static mappedBy = [ pagoDeMorralla: "none"]
 
-    static transients = ['orden', 'fechaDeposito']
+    static transients = ['orden']
 
 
     static constraints = {
@@ -91,6 +92,7 @@ class MovimientoDeCuenta {
         ficha nullable: true
         conceptoReporte nullable: true
         porIdentificar nullable: true
+        fechaDeposito nullable: true
     }
 
     static mapping ={

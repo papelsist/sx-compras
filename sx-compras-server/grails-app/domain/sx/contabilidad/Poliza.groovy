@@ -23,9 +23,9 @@ class Poliza {
 
     String concepto
 
-    BigDecimal debe = 0.0
+    BigDecimal debe = 0.00
 
-    BigDecimal haber = 0.0
+    BigDecimal haber = 0.00
 
     boolean manual = false
 
@@ -54,8 +54,6 @@ class Poliza {
         tipo inList:['INGRESO','EGRESO','DIARIO']
         subtipo minSize:5,maxSize:50
         folio unique:['ejercicio','mes','subtipo']
-        debe scale:6
-        haber scale:6
         concepto maxSize:300
         cierre nullable:true
         createUser nullable: true

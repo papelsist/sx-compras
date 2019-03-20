@@ -55,6 +55,8 @@ if (Environment.isDevelopmentMode() && targetDir != null) {
 
     logger("org.springframework.security", OFF, ['STDOUT'], false)
     logger("grails.plugin.springsecurity", OFF, ['STDOUT'], false)
+    logger("grails.views", OFF, ['STDOUT'], false)
+
     logger("org.pac4j", OFF, ['STDOUT'], false)
 
     logger("sx.core", DEBUG, ['STDOUT'], false)
@@ -71,7 +73,7 @@ if (Environment.isDevelopmentMode() && targetDir != null) {
     logger("sx.sat", DEBUG, ['STDOUT'], false)
     logger("sx.cfdi", DEBUG, ['STDOUT'], false)
     logger("sx.utils", DEBUG, ['STDOUT'], false)
-
+    logger("sx.logistica", DEBUG, ['STDOUT'], false)
 
     // Log Listeners
     logger("sx.audit", DEBUG, ['STDOUT'], false)

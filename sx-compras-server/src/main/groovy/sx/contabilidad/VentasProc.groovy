@@ -42,7 +42,7 @@ abstract class VentasProc implements  ProcesadorMultipleDePolizas {
         ,concat('105-',(SELECT concat(case when x.cuenta_operativa='0266' then concat('0004-',x.cuenta_operativa) else concat('0003-',x.cuenta_operativa) end) FROM cuenta_operativa_cliente x where x.cliente_id=c.id ),'-0000') as cta_cliente, c.rfc, x.uuid
         FROM cuenta_por_cobrar f join cliente c on(f.cliente_id=c.id)  
         join sucursal s on(f.sucursal_id=s.id) join cfdi x on(f.cfdi_id=x.id)
-        where  f.fecha='@FECHA' and tipo in('CRE') and f.tipo_documento='VENTA' and x.cancelado is false and f.sw2 is null        
+        where  f.fecha='@FECHA' and tipo in('CRE') and f.tipo_documento='VENTA' and f.cancelada is null and f.sw2 is null        
         UNION        
         SELECT concat('VENTAS_',f.tipo) as asiento,f.id as origen,f.tipo as documentoTipo,f.fecha,f.documento
         ,f.moneda,f.tipo_de_cambio,f.subtotal,f.impuesto,f.total,c.nombre referencia2,s.nombre sucursal, s.clave as suc
@@ -50,7 +50,7 @@ abstract class VentasProc implements  ProcesadorMultipleDePolizas {
         ,concat('105-',(case when f.tipo='CON' then '0001-' when f.tipo='COD' then '0002-' else 'nd' end ),(case when s.clave>9 then concat('00',s.clave) else concat('000',s.clave) end),'-0000') as cta_cliente, c.rfc, x.uuid
         FROM cuenta_por_cobrar f join cliente c on(f.cliente_id=c.id)  
         join sucursal s on(f.sucursal_id=s.id) join cfdi x on(f.cfdi_id=x.id)
-        where f.fecha='@FECHA' and tipo in('CON','COD') and f.tipo_documento='VENTA'and x.cancelado is false and f.sw2 is null              
+        where f.fecha='@FECHA' and tipo in('CON','COD') and f.tipo_documento='VENTA'and f.cancelada is null and f.sw2 is null              
         ) as x
     """
 
@@ -69,6 +69,9 @@ abstract class VentasProc implements  ProcesadorMultipleDePolizas {
         rows = rows.findAll {it.sucursal == poliza.sucursal && it.documentoTipo == this.getTipo()}
         log.info('Actualizando poliza {} procesando {} registros', poliza.id, rows.size())
         rows.each { row ->
+            if(!row.uuid) {
+                throw new RuntimeException("Venta facturada ${row.documento} sin UUID. No se puede generar el complemento CompNac(SAT)")
+            }
             cargoClientes(poliza, row)
             abonoVentas(poliza, row)
             abonoIvaNoTrasladado(poliza, row)
@@ -78,7 +81,8 @@ abstract class VentasProc implements  ProcesadorMultipleDePolizas {
     }
 
     def cargoClientes(Poliza poliza, def row) {
-        // log.info('Cargo a clientes: {}', row)
+
+        // Validaciones
         if(row.cta_cliente == null) {
             throw new RuntimeException("No existe cuenta operativa para el cliente:  ${row.referencia2} Id:${row.cliente} ")
         }
@@ -88,6 +92,7 @@ abstract class VentasProc implements  ProcesadorMultipleDePolizas {
         if(row.tc > 1.0 ) {
             descripcion  = descripcion + " T.C: ${formatTipoDeCambio(row.tc)}"
         }
+
         PolizaDet det = new PolizaDet(
                 cuenta: cuenta,
                 concepto: cuenta.descripcion,
@@ -102,21 +107,13 @@ abstract class VentasProc implements  ProcesadorMultipleDePolizas {
                 documentoFecha: row.fecha,
                 sucursal: row.sucursal,
                 haber: 0.0,
-                debe: (row.total * row.tc)
+                debe: (row.total * row.tc),
+                rfc: row.rfc,
+                uuid: row.uuid,
+                montoTotal: row.total,
+                moneda: row.moneda,
+                tipCamb: row.tc
         )
-
-        // Comprobante nacional para el SAT
-        def comprobante = new SatComprobanteNac(uuidcfdi: row.uuid, rfc: row.rfc, montoTotal: row.total)
-        if(!comprobante.uuidcfdi) {
-            throw new RuntimeException(
-                    "Venta facturada ${row.documento} sin UUID. No se puede generar el complemento CompNac(SAT)")
-        }
-        if(row.moneda != 'MXN') {
-            comprobante.moneda = row.moneda
-            comprobante.tipCamb = row.tc
-        }
-        det.nacionales.add(comprobante)
-
         poliza.addToPartidas(det)
     }
 
@@ -168,7 +165,12 @@ abstract class VentasProc implements  ProcesadorMultipleDePolizas {
                 documentoFecha: row.fecha,
                 sucursal: row.sucursal,
                 haber: (row.subtotal * row.tc),
-                debe: 0.0
+                debe: 0.0,
+                rfc: row.rfc,
+                uuid: row.uuid,
+                montoTotal: row.total,
+                moneda: row.moneda,
+                tipCamb: row.tc
         )
         poliza.addToPartidas(det)
     }
@@ -194,7 +196,12 @@ abstract class VentasProc implements  ProcesadorMultipleDePolizas {
                 documentoFecha: row.fecha,
                 sucursal: row.sucursal,
                 haber: (row.impuesto * row.tc),
-                debe: 0.0
+                debe: 0.0,
+                rfc: row.rfc,
+                uuid: row.uuid,
+                montoTotal: row.total,
+                moneda: row.moneda,
+                tipCamb: row.tc
         )
         poliza.addToPartidas(det)
     }

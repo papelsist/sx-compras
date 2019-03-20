@@ -4,6 +4,7 @@ import grails.compiler.GrailsCompileStatic
 import grails.gorm.transactions.Transactional
 import sx.core.Empresa
 import sx.core.Folio
+import sx.core.FolioLog
 import sx.core.LogUser
 import sx.tesoreria.MovimientoDeCuenta
 import sx.utils.MonedaUtils
@@ -11,7 +12,7 @@ import sx.utils.MonedaUtils
 
 @GrailsCompileStatic
 @Transactional
-class ChequeDevueltoService implements  LogUser{
+class ChequeDevueltoService implements  LogUser, FolioLog{
 
     ChequeDevuelto save(ChequeDevuelto che) {
 
@@ -44,7 +45,7 @@ class ChequeDevueltoService implements  LogUser{
         cxc.cliente = cobroCheque.cobro.cliente
         cxc.sucursal = cobroCheque.cobro.sucursal
         cxc.formaDePago = cobroCheque.cobro.formaDePago
-        cxc.documento = Folio.nextFolio('CHEQUE_DEVUELTO', cxc.tipo)
+        cxc.documento = nextFolio('CHEQUE_DEVUELTO', cxc.tipo)
         cxc.comentario = 'Cargo por cheque devuelto'
         cxc.fecha = chequeDevuelto.fecha
         cxc.tipo = 'CHE'

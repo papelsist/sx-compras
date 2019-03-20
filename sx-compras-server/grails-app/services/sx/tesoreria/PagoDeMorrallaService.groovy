@@ -26,6 +26,7 @@ abstract class PagoDeMorrallaService implements  LogUser{
     }
 
     def generarIngresos(PagoDeMorralla pago){
+
         pago.partidas.each { Morralla m ->
             MovimientoDeCuenta ingreso = new MovimientoDeCuenta()
             ingreso.cuenta = pago.cuentaIngreso
@@ -40,6 +41,7 @@ abstract class PagoDeMorrallaService implements  LogUser{
             ingreso.referencia = pago.referencia
             ingreso.afavor = pago.proveedor.nombre
             ingreso.conceptoReporte = ingreso.afavor
+            ingreso.sucursal = m.sucursal.nombre
             pago.addToMovimientos(ingreso)
             logEntity(ingreso)
 
@@ -61,6 +63,7 @@ abstract class PagoDeMorrallaService implements  LogUser{
         egreso.formaDePago = pago.formaDePago
         egreso.referencia = pago.referencia
         egreso.afavor = Empresa.first().nombre
+        egreso.sucursal = 'OFICINAS'
         pago.egreso = egreso
         logEntity(egreso)
         return egreso

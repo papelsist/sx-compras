@@ -55,6 +55,10 @@ class Ficha {
     String createUser
     String updateUser
 
+    String diferenciaTipo
+    BigDecimal diferencia
+    String diferenciaUsuario
+
 
     // static hasMany =[partidas: FichaDet]
 
@@ -69,6 +73,9 @@ class Ficha {
         createUser nullable: true
         updateUser nullable: true
         // tipo nullable: true
+        diferenciaTipo nullable: true, inList: ['EN_VALORES','POR_COBRANZA']
+        diferencia nullable: true
+        diferenciaUsuario nullable: true
     }
 
     static mapping ={

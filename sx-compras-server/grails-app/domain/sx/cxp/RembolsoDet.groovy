@@ -45,6 +45,13 @@ class RembolsoDet {
         documentoFolio nullable:true
         documentoSerie nullable:true
         concepto nullable: true
+        createUser nullable: true
+        updateUser nullable: true
+    }
+
+    static mapping ={
+        documentoFecha type: 'date'
+
     }
 
 }

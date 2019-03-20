@@ -1,0 +1,7 @@
+import sx.logistica.Embarque
+
+model {
+	Embarque embarque
+}
+
+json tmpl.embarque(embarque)

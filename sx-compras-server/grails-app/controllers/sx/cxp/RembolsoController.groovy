@@ -6,6 +6,7 @@ import grails.rest.*
 import grails.validation.Validateable
 import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
+
 import sx.core.Empresa
 import sx.reports.ReportService
 import sx.tesoreria.CuentaDeBanco
@@ -16,7 +17,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND
 @Secured(['ROLE_GASTOS', 'ROLE_TESORERIA'])
 @GrailsCompileStatic
 @Slf4j
-class RembolsoController extends RestfulController {
+class RembolsoController extends RestfulController<Rembolso> {
 
     static responseFormats = ['json']
 
@@ -51,7 +52,7 @@ class RembolsoController extends RestfulController {
 
     @CompileDynamic
     @Override
-    protected Object createResource() {
+    protected Rembolso createResource() {
         Rembolso instance = new Rembolso()
         bindData instance, getObjectToBind()
         if(!instance.proveedor && !instance.nombre) {
@@ -87,23 +88,33 @@ class RembolsoController extends RestfulController {
         }
     }
 
+    @Override
+    def update() {
+        return super.update()
+    }
 
     @CompileDynamic
     @Override
-    protected Object updateResource(Object resource) {
+    protected Rembolso updateResource(Rembolso resource) {
         logUser(resource)
+        resource.partidas.each {
+            if(it.cxp) {
+                it.documentoFecha = it.cxp.fecha
+                it.documentoSerie = it.cxp.serie
+                it.documentoFolio = it.cxp.folio
+            }
+        }
         resource.save flush: true
     }
 
 
     @Override
-    protected void deleteResource(Object resource) {
+    protected void deleteResource(Rembolso resource) {
         super.deleteResource(resource)
     }
 
     @CompileDynamic
     def pendientes() {
-        log.info('Pendientes: {}', params)
         params.max = 100
 
         def q = CuentaPorPagar.where {tipo == 'GASTOS' && pagos <= 0}

@@ -39,6 +39,8 @@ class CorteDeTarjeta {
 
     String estatus
 
+	Date fechaDeposito 
+
 	static hasMany =[partidas: CobroTarjeta, aplicaciones: CorteDeTarjetaAplicacion]
 
     static transients = ['estatus']
@@ -48,6 +50,7 @@ class CorteDeTarjeta {
     	comentario nullable: true
 		updateUser nullable: true
 		createUser nullable: true
+		fechaDeposito nullable: true
     }
 
     static mapping ={

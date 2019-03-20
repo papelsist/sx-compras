@@ -13,7 +13,7 @@ import sx.utils.Periodo
 
 @GrailsCompileStatic
 @Slf4j
-@Secured("ROLE_COSTOS_MANAGER")
+@Secured("ROLE_CONTABILIDAD")
 class CostoPromedioController extends RestfulController<CostoPromedio> {
 
     static responseFormats = ['json']

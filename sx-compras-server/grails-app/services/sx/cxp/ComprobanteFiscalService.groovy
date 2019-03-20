@@ -197,24 +197,24 @@ class ComprobanteFiscalService implements  LogUser{
     int importarDirectorio(File dir, String tipo, boolean  deleteFiles) {
         int rows = 0
         dir.eachFile { File it ->
+            if(!it.name.startsWith('.')){
+                if(it.name.toLowerCase().endsWith('.xml')) {
+                    try{
+                        ComprobanteFiscal cf = importar(it, tipo)
+                        rows = rows + 1
+                        if(deleteFiles)
+                            cleanFile(it)
+                    }catch (Exception ex) {
+                        String m = ExceptionUtils.getRootCauseMessage(ex)
+                        log.error("Error importando ${it.name}: ${m}")
+                    } finally {
+                        // Eliminar los archivos
 
-            if(it.name.toLowerCase().endsWith('.xml')) {
-                try{
-                    ComprobanteFiscal cf = importar(it, tipo)
-                    rows = rows + 1
-                    if(deleteFiles)
-                        cleanFile(it)
-                }catch (Exception ex) {
-                    String m = ExceptionUtils.getRootCauseMessage(ex)
-                    log.error("Error importando ${it.name}: ${m}")
-                } finally {
-                    // Eliminar los archivos
+                    }
 
                 }
 
             }
-
-
         }
         return rows
     }

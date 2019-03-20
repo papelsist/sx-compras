@@ -45,6 +45,8 @@ class Cheque {
 	String updateUser
 
 	String asignado
+
+	Date fechaTransito
 	
 
     static constraints = {
@@ -61,6 +63,7 @@ class Cheque {
 		createUser nullable: true
 		updateUser nullable: true
 		asignado nullable: true
+		fechaTransito nullable: true
     }
 
 	static mapping = {

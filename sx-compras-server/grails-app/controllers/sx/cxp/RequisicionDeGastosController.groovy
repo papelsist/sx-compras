@@ -100,7 +100,7 @@ class RequisicionDeGastosController extends RestfulController<RequisicionDeGasto
      * @TODO Modificar el hql query para contemplar solo las analizadas y descriminar
      * las ya incluidas en una requisicion
      */
-    def pendientes() {
+    def pendientesOld() {
         log.debug('Facturas pendientes {}', params)
         String id = params.proveedorId
         List<CuentaPorPagar> facturas = CuentaPorPagar
@@ -113,6 +113,22 @@ class RequisicionDeGastosController extends RestfulController<RequisicionDeGasto
                     order by c.fecha desc
                  """,
                 [id, 'GASTOS'], [max: 300])
+        log.info("Facturas localizadas: {}", facturas.size())
+        respond facturas
+    }
+
+    def pendientes() {
+        log.debug('Facturas pendientes {}', params)
+        String id = params.proveedorId
+        List<CuentaPorPagar> facturas = CuentaPorPagar
+                .findAll("""
+                 from CuentaPorPagar c 
+                  where c.proveedor.id = ? 
+                    and c.tipo = ?
+                    and (c.total - c.pagos -  c.compensaciones) > 0
+                    order by c.fecha desc
+                 """,
+                [id, 'GASTOS'], [max: 100])
         log.info("Facturas localizadas: {}", facturas.size())
         respond facturas
     }
