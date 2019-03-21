@@ -56,5 +56,6 @@ class EnvioComision {
 
     static  mapping = {
         fechaComision type: 'date'
+        regreso type: 'date'
     }
 }

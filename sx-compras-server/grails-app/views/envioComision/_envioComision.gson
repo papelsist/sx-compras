@@ -4,4 +4,5 @@ model {
 	EnvioComision envioComision
 }
 
-json g.render(envioComision, [resolveTemplate: false])
+json g.render(envioComision, [ resolveTemplate: false]) {
+}

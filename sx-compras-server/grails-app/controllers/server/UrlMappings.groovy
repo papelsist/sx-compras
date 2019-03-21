@@ -274,7 +274,8 @@ class UrlMappings {
         "/api/envios"(resources: 'envio', excludes:['create', 'edit','patch', 'save','update', 'delete']) {
             "/partidas"(resources: 'envioDet', excludes:['create', 'edit','patch', 'save', 'update', 'delete'])
         }
-        "/api/envios/comisiones"(resources: "envioComision", excludes: ['create', 'edit', 'patch'])
+        "/api/embarques/comisiones"(resources: "envioComision", excludes: ['create', 'edit', 'patch'])
+        "/api/embarques/comisiones/generar"(controller: 'envioComision', action: 'generar', method: 'POST')
 
         "/api/prestamoChofer"(resources: 'prestamoChofer', excludes:['create', 'edit','patch']){
             "/partidas"(resources: 'prestamoChoferDet', excludes:['create', 'edit','patch'])

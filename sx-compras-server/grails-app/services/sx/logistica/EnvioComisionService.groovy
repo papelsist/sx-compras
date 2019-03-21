@@ -16,12 +16,13 @@ class EnvioComisionService implements  LogUser{
 
 
 
-    def generarComisiones(Date fechaInicial, Date fechaFinal) {
+    List<EnvioComision> generarComisiones(Date fechaInicial, Date fechaFinal) {
         log.info('Generando comisiones {} {}', fechaInicial, fechaFinal)
         List<Envio> envios = Envio.findAll(
                 "from Envio e where date(e.embarque.regreso) between ? and ? " +
                 " and e not in (select x.envio from EnvioComision x)", [fechaInicial, fechaFinal])
         log.info('Envios pendientes: {}', envios.size())
+        List<EnvioComision> res = []
         envios.each { e ->
             EnvioComision ec = new EnvioComision(
                     chofer: e.embarque.chofer,
@@ -39,18 +40,22 @@ class EnvioComisionService implements  LogUser{
             )
             logEntity(ec)
             ec.save failOnError: true, flush: true
+            res << ec
         }
-        generarPorTraslado(fechaInicial, fechaFinal)
+        log.info('Comisiones por venta generadas {}', res.size())
+        res.addAll(generarPorTraslado(fechaInicial, fechaFinal))
+        return res
 
     }
 
-    def generarPorTraslado(Date fechaInicial, Date fechaFinal) {
+    List<EnvioComision> generarPorTraslado(Date fechaInicial, Date fechaFinal) {
         List<Traslado> traslados = Envio.findAll(
                 "from Traslado t where date(t.fechaInventario) between ? and ? " +
                         " and cancelado is null " +
                         " and chofer !=null" +
                         " and uuid != null" +
                         " and t not in (select x.traslado from EnvioComision x)", [fechaInicial, fechaFinal])
+        List<EnvioComision> res = []
         traslados.each { t ->
             EnvioComision ec = new EnvioComision(
                     chofer: t.chofer,
@@ -68,26 +73,29 @@ class EnvioComisionService implements  LogUser{
             )
             logEntity(ec)
             ec.save failOnError: true, flush: true
+            res << ec
         }
+        return res
     }
 
-    def calcularComisiones(Periodo periodo) {
+    List<EnvioComision> calcularComisiones(Periodo periodo) {
+        log.info('Calculando comisiones de embarquers periodo: {}', periodo)
         List<EnvioComision> comisiones = EnvioComision
                 .findAll("from EnvioComision e " +
                 " where date(e.embarque.regreso) between ? and ?" +
                 " e.fechaComision is null",
                 [periodo.fechaInicial, periodo.fechaFinal])
+        comisiones.each {ec ->
+            cacular(ec)
+        }
+        return comisiones
     }
 
-    def cacularComisione(EnvioComision ec) {
+    def cacular(EnvioComision ec) {
         Envio e = ec.envio
         String entidad = e.entidad
         if(entidad == '') {}
 
     }
 
-
-    Date getInicio() {
-        return Date.parse('dd/MM/yyyy', this.inicioDeOperacion)
-    }
 }
