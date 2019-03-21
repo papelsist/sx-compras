@@ -1,13 +1,13 @@
 package sx.logistica
 
-import grails.compiler.GrailsCompileStatic
+
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Value
 import sx.core.LogUser
 import sx.inventario.Traslado
 import sx.utils.Periodo
 
-// @GrailsCompileStatic
+
 @Slf4j
 class EnvioComisionService implements  LogUser{
 
