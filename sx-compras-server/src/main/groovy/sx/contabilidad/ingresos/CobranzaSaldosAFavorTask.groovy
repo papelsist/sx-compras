@@ -49,6 +49,9 @@ class CobranzaSaldosAFavorTask implements  AsientoBuilder{
             BigDecimal iva = total - importe
 
             String cta = '205-0001-0001-0000'
+            if(it.cobro.tipo == 'COD') {
+                cta = '205-0001-0002-0000'
+            }
             // Cargo a Aplicacion de saldos a favor
             poliza.addToPartidas(buildDet(cta, desc, row, importe))
             // Cargo al IVA de saldo a favor
@@ -84,6 +87,9 @@ class CobranzaSaldosAFavorTask implements  AsientoBuilder{
             BigDecimal iva = total - importe
 
             String cta = '205-0001-0002-0000'
+            if(it.cobro.tipo == 'CON') {
+                cta = '205-0001-0001-0000'
+            }
             // Cargo a Aplicacion de saldos a favor
             poliza.addToPartidas(buildDet(cta, desc, row, importe))
             // Cargo al IVA de saldo a favor
@@ -231,7 +237,7 @@ class CobranzaSaldosAFavorTask implements  AsientoBuilder{
         map.origen = a.cobro.id
         map.entidad = 'Cobro'
         map.documento = a.cuentaPorCobrar.documento
-        map.documentoTipo =  a.cuentaPorCobrar.tipoDocumento
+        map.documentoTipo =  a.cuentaPorCobrar.tipo
         map.documentoFecha = a.cuentaPorCobrar.fecha
         map.sucursal = a.cuentaPorCobrar.sucursal.nombre
 
@@ -243,7 +249,7 @@ class CobranzaSaldosAFavorTask implements  AsientoBuilder{
                 "from AplicacionDeCobro a " +
                         " where date(a.fecha) = ?" +
                         "  and date(a.cobro.primeraAplicacion) != ?" +
-                        "  and a.cobro.tipo = ? " +
+                        "  and a.cuentaPorCobrar.tipo = ? " +
                         "  and a.cobro.formaDePago not in ('BONIFICACION', 'DEVOLUCION')",
                 [dia, dia, tpo])
         /*

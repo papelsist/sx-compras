@@ -104,6 +104,30 @@ class FichaController extends RestfulController<Ficha> {
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'RelacionDeFichas.pdf')
     }
 
+    def ajustarFicha(AjusteDeFichaComman command) {
+
+        if(command == null) {
+            notFound()
+            return
+        }
+        command.validate()
+        if(command.hasErrors()) {
+            respond command.errors, view:'edit' // STATUS CODE 422
+            return
+        }
+
+        Ficha ficha = command.ficha
+        ficha.diferenciaTipo = command.diferenciaTipo
+        ficha.diferenciaUsuario = command.diferenciaUsuario
+        ficha.diferencia = command.diferencia
+        if(isLoggedIn()) {
+            ficha.updateUser = getPrincipal().username
+        }
+        ficha.save flush: true
+
+
+    }
+
     def handleException(Exception e) {
         String message = ExceptionUtils.getRootCauseMessage(e)
         log.error(message, ExceptionUtils.getRootCause(e))
@@ -145,5 +169,17 @@ class RelacionDeFichasCommand {
     Date fecha
     String origen
     Sucursal sucursal
+
+}
+
+class AjusteDeFichaComman implements  Validateable {
+    Ficha ficha
+    BigDecimal diferencia
+    String diferenciaUsuario
+    String diferenciaTipo
+
+    static constraints = {
+        diferenciaTipo nullable: true, inList: ['EN_VALORES','POR_COBRANZA']
+    }
 
 }

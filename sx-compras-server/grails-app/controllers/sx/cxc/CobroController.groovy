@@ -12,7 +12,7 @@ import sx.utils.Periodo
 
 @Slf4j
 @GrailsCompileStatic
-@Secured("ROLE_TESORERIA")
+@Secured('ROLE_TESORERIA, ROLE_CONTABILIDAD')
 class CobroController extends RestfulController<Cobro> {
     static responseFormats = ['json']
 
@@ -89,6 +89,22 @@ class CobroController extends RestfulController<Cobro> {
     }
 
     @CompileDynamic
+    def reporteDeCobranzaCON(CobranzaPorSucursalCommand command){
+        def repParams = [FECHA: command.fecha.format('yyyy/MM/dd'), SUCURSAL: command.sucursal]
+        def pdf =  reportService.run('FacturasCobrada.jrxml', repParams)
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'CobranzaCON.pdf')
+    }
+
+    @CompileDynamic
+    def reporteDeCobranzaCOD(CobranzaPorSucursalCommand command){
+        def repParams = [FECHA: command.fecha.format('yyyy/MM/dd'), SUCURSAL: command.sucursal]
+        def pdf =  reportService.run('CobranzaCamioneta.jrxml', repParams)
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'CobranzaCON.pdf')
+    }
+
+
+
+    @CompileDynamic
     def reporteDeRelacionDePagos(RelacionPagosCommand command){
         log.debug('Rep: {}', params)
         def repParams = [FECHA: command.fecha]
@@ -112,5 +128,10 @@ class RelacionPagosCommand {
     Date fecha
     String origen
     Integer cobrador
+}
+
+class CobranzaPorSucursalCommand {
+    Date fecha
+    String sucursal
 }
 

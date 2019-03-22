@@ -47,6 +47,7 @@ class UrlMappings {
         }
         "/api/tesoreria/fichas/generar"(controller: "ficha", action: 'generar', method: 'POST')
         "/api/tesoreria/fichas/reporteDeRelacionDeFichas"(controller: "ficha", action: 'reporteDeRelacionDeFichas', method: 'GET')
+        "/api/tesoreria/fichas/ajustarFicha"(controller: "ficha", action: 'ajustarFicha', method: 'PUT')
 
         // Cortes de tarjeta
         "/api/tesoreria/cortesTarjeta"(resources: 'corteDeTarjeta')
@@ -86,6 +87,9 @@ class UrlMappings {
         "/api/cxc/cobros"(resources: 'cobro')
         "/api/cxc/cobro/reporteDeCobranza"(controller: "cobro", action: 'reporteDeCobranza', method: 'GET')
         "/api/cxc/cobro/reporteDeRelacionDePagos"(controller: "cobro", action: 'reporteDeRelacionDePagos', method: 'GET')
+
+        "/api/cxc/cobro/reporteDeCobranzaCON"(controller: "cobro", action: 'reporteDeCobranzaCON', method: 'GET')
+        "/api/cxc/cobro/reporteDeCobranzaCOD"(controller: "cobro", action: 'reporteDeCobranzaCOD', method: 'GET')
 
         // Cheques devueltos
         "/api/cxc/chequesDevuetos"(resources: 'chequeDevuelto')

@@ -79,11 +79,11 @@ class EnvioComisionService implements  LogUser{
     }
 
     List<EnvioComision> calcularComisiones(Periodo periodo) {
-        log.info('Calculando comisiones de embarquers periodo: {}', periodo)
+        log.info('Calculando la comision de los envios para el periodo: {}', periodo)
         List<EnvioComision> comisiones = EnvioComision
                 .findAll("from EnvioComision e " +
-                " where date(e.embarque.regreso) between ? and ?" +
-                " e.fechaComision is null",
+                " where date(e.regreso) between ? and ? " +
+                " and e.fechaComision = null",
                 [periodo.fechaInicial, periodo.fechaFinal])
         comisiones.each {ec ->
             cacular(ec)
@@ -92,9 +92,12 @@ class EnvioComisionService implements  LogUser{
     }
 
     def cacular(EnvioComision ec) {
-        Envio e = ec.envio
-        String entidad = e.entidad
-        if(entidad == '') {}
+        if(ec.envio) {
+
+        }
+        if(ec.traslado) {
+            log.info('Comision para TRASLADO: {}', ec.traslado.documento)
+        }
 
     }
 
