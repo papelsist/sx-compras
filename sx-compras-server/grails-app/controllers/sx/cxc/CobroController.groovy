@@ -12,7 +12,7 @@ import sx.utils.Periodo
 
 @Slf4j
 @GrailsCompileStatic
-@Secured('ROLE_TESORERIA, ROLE_CONTABILIDAD')
+@Secured(['ROLE_TESORERIA', 'ROLE_CONTABILIDAD'])
 class CobroController extends RestfulController<Cobro> {
     static responseFormats = ['json']
 

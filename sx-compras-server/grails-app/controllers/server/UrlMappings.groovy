@@ -47,7 +47,7 @@ class UrlMappings {
         }
         "/api/tesoreria/fichas/generar"(controller: "ficha", action: 'generar', method: 'POST')
         "/api/tesoreria/fichas/reporteDeRelacionDeFichas"(controller: "ficha", action: 'reporteDeRelacionDeFichas', method: 'GET')
-        "/api/tesoreria/fichas/ajustarFicha"(controller: "ficha", action: 'ajustarFicha', method: 'PUT')
+        "/api/tesoreria/fichas/cajeras"(controller: "ficha", action: 'cajeras', method: 'GET')
 
         // Cortes de tarjeta
         "/api/tesoreria/cortesTarjeta"(resources: 'corteDeTarjeta')
