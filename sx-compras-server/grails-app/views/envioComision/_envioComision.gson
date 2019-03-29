@@ -4,4 +4,7 @@ model {
 	EnvioComision envioComision
 }
 
-json g.render(envioComision, [resolveTemplate: false])
+json g.render(envioComision, [ resolveTemplate: false]) {
+    if(envioComision.envio)
+	    cliente envioComision.envio?.cliente?.nombre
+}

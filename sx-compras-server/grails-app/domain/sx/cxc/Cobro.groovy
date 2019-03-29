@@ -46,7 +46,7 @@ class  Cobro {
 
     String sw2
 
-    List aplicaciones = []
+    List<AplicacionDeCobro> aplicaciones = []
 
     BigDecimal aplicado = 0
 

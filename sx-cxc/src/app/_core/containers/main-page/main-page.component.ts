@@ -15,11 +15,6 @@ import { User } from 'app/auth/models/user';
 export class MainPageComponent implements OnInit {
   navigation: Array<{ icon: string; route: string; title: string }> = [
     {
-      icon: 'home',
-      route: '/',
-      title: 'Inicio'
-    },
-    {
       icon: 'my_library_books',
       route: '/cfdis',
       title: 'Control de CFDIs'

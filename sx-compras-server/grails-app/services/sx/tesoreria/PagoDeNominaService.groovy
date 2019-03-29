@@ -1,7 +1,6 @@
 
 package sx.tesoreria
 
-import grails.compiler.GrailsCompileStatic
 import grails.gorm.services.Service
 
 import groovy.util.logging.Slf4j
@@ -11,7 +10,6 @@ import sx.core.LogUser
 
 
 @Slf4j
-// @GrailsCompileStatic
 @Service(PagoDeNomina)
 abstract class PagoDeNominaService implements  LogUser{
 

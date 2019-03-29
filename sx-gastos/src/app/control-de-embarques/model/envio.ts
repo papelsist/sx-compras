@@ -1,0 +1,43 @@
+import { Embarque } from './embarque';
+import { EnvioDet } from './envio-det';
+
+export interface Envio {
+  id: string;
+  embarque: Partial<Embarque>;
+  cliente: any;
+  precioTonelada: number;
+  origen: string;
+  entidad: string;
+  porCobrar: number;
+  paquetes: number;
+  kilos: number;
+  parcial: boolean;
+  arribo: string;
+  recepcion: string;
+  recibio: string;
+  comentario: string;
+  documento: string;
+  fechaDocumento: string;
+  totalDocumento: number;
+  nombre: string;
+  tipoDocumento: string;
+  arriboLatitud: number;
+  arriboLongitud: number;
+  recepcionLatitud: number;
+  recepcionLongitud: number;
+  area: string;
+  formaPago: string;
+  entregado: boolean;
+  motivo: string;
+  completo: boolean;
+  matratado: boolean;
+  impreso: boolean;
+  cortado: boolean;
+  reportoNombre: string;
+  reportoPuesto: string;
+  valor: number;
+  partidas: Partial<EnvioDet>[];
+  maniobra: number;
+  dateCreated: string;
+  lastUpdated: string;
+}

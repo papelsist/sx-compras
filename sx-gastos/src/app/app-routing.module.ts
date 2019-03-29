@@ -23,6 +23,11 @@ const routes: Routes = [
       {
         path: 'proveedores',
         loadChildren: './proveedores/proveedores.module#ProveedoresModule'
+      },
+      {
+        path: 'embarques',
+        loadChildren:
+          './control-de-embarques/control-de-embarques.module#ControlDeEmbarquesModule'
       }
     ]
   }

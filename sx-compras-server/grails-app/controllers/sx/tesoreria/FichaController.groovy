@@ -5,18 +5,20 @@ import grails.gorm.transactions.Transactional
 import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.*
 import grails.validation.Validateable
+import groovy.transform.ToString
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.springframework.http.HttpStatus
 import sx.core.Sucursal
 import sx.cxc.CobroCheque
+import sx.integracion.EmpleadosLookup
 import sx.reports.ReportService
 
 import static org.springframework.http.HttpStatus.CREATED
 
 @Slf4j
 // @GrailsCompileStatic
-@Secured("ROLE_TESORERIA")
+@Secured(['ROLE_TESORERIA', 'ROLE_CONTABILIDAD'])
 class FichaController extends RestfulController<Ficha> {
 
     static responseFormats = ['json']
@@ -24,6 +26,8 @@ class FichaController extends RestfulController<Ficha> {
     ReportService reportService
 
     FichaService fichaService
+
+    EmpleadosLookup empleadosLookup
 
     FichaController() {
         super(Ficha)
@@ -35,7 +39,7 @@ class FichaController extends RestfulController<Ficha> {
         params.max = 1000
         params.sort = params.sort ?:'lastUpdated'
         params.order = params.order ?:'desc'
-        String cartera = params.cartera ?: 'CREDITO'
+        String tipo = params.cartera ?: 'CREDITO'
 
         log.debug('List : {}', params)
 
@@ -43,14 +47,13 @@ class FichaController extends RestfulController<Ficha> {
         bindData(command, params)
         def query = Ficha.where {fecha == command.fecha}
         if(command.tipo ){
-
             if(command.tipo == 'CON') {
-                log.info('Contado...')
                 query = query.where{ origen == 'CON' || origen == 'COD'}
             } else {
                 query = query.where{ origen == command.tipo}
             }
         }
+
         if(command.sucursal) {
             query = query.where{ sucursal == command.sucursal}
         }
@@ -60,6 +63,14 @@ class FichaController extends RestfulController<Ficha> {
     @Override
     protected void deleteResource(Ficha resource) {
         fichaService.cancelarFicha(resource)
+    }
+
+    @Override
+    protected Ficha saveResource(Ficha resource) {
+        if(isLoggedIn()) {
+            resource.updateUser = getPrincipal().username
+        }
+        resource.save flush: true
     }
 
     @Transactional
@@ -104,6 +115,11 @@ class FichaController extends RestfulController<Ficha> {
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'RelacionDeFichas.pdf')
     }
 
+    def cajeras() {
+        String term = params.term ?: ''
+        respond empleadosLookup.findCajeras(term)
+    }
+
     def handleException(Exception e) {
         String message = ExceptionUtils.getRootCauseMessage(e)
         log.error(message, ExceptionUtils.getRootCause(e))
@@ -112,6 +128,7 @@ class FichaController extends RestfulController<Ficha> {
 
 }
 
+@ToString()
 class FichasPorFechaCommand {
 
     Date fecha
@@ -145,5 +162,17 @@ class RelacionDeFichasCommand {
     Date fecha
     String origen
     Sucursal sucursal
+
+}
+
+class AjusteDeFichaComman implements  Validateable {
+    Ficha ficha
+    BigDecimal diferencia
+    String diferenciaUsuario
+    String diferenciaTipo
+
+    static constraints = {
+        diferenciaTipo nullable: true, inList: ['EN_VALORES','POR_COBRANZA']
+    }
 
 }

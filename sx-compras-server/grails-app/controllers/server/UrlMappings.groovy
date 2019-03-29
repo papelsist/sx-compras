@@ -47,6 +47,7 @@ class UrlMappings {
         }
         "/api/tesoreria/fichas/generar"(controller: "ficha", action: 'generar', method: 'POST')
         "/api/tesoreria/fichas/reporteDeRelacionDeFichas"(controller: "ficha", action: 'reporteDeRelacionDeFichas', method: 'GET')
+        "/api/tesoreria/fichas/cajeras"(controller: "ficha", action: 'cajeras', method: 'GET')
 
         // Cortes de tarjeta
         "/api/tesoreria/cortesTarjeta"(resources: 'corteDeTarjeta')
@@ -86,6 +87,11 @@ class UrlMappings {
         "/api/cxc/cobros"(resources: 'cobro')
         "/api/cxc/cobro/reporteDeCobranza"(controller: "cobro", action: 'reporteDeCobranza', method: 'GET')
         "/api/cxc/cobro/reporteDeRelacionDePagos"(controller: "cobro", action: 'reporteDeRelacionDePagos', method: 'GET')
+        "/api/cxc/cobro/ajustarFormaDePago/$id"(controller: "cobro", action: 'ajustarFormaDePago', method: 'PUT')
+
+
+        "/api/cxc/cobro/reporteDeCobranzaCON"(controller: "cobro", action: 'reporteDeCobranzaCON', method: 'GET')
+        "/api/cxc/cobro/reporteDeCobranzaCOD"(controller: "cobro", action: 'reporteDeCobranzaCOD', method: 'GET')
 
         // Cheques devueltos
         "/api/cxc/chequesDevuetos"(resources: 'chequeDevuelto')
@@ -274,7 +280,8 @@ class UrlMappings {
         "/api/envios"(resources: 'envio', excludes:['create', 'edit','patch', 'save','update', 'delete']) {
             "/partidas"(resources: 'envioDet', excludes:['create', 'edit','patch', 'save', 'update', 'delete'])
         }
-        "/api/envios/comisiones"(resources: "envioComision", excludes: ['create', 'edit', 'patch'])
+        "/api/embarques/comisiones"(resources: "envioComision", excludes: ['create', 'edit', 'patch'])
+        "/api/embarques/comisiones/generar"(controller: 'envioComision', action: 'generar', method: 'POST')
 
         "/api/prestamoChofer"(resources: 'prestamoChofer', excludes:['create', 'edit','patch']){
             "/partidas"(resources: 'prestamoChoferDet', excludes:['create', 'edit','patch'])

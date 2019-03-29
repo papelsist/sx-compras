@@ -28,6 +28,11 @@ export class MainPageComponent implements OnInit {
       icon: 'my_library_books',
       route: '/cxp',
       title: 'Cuentas por pagar (CXP)'
+    },
+    {
+      icon: 'local_shipping',
+      route: '/embarques',
+      title: 'Control de embarques'
     }
   ];
 
@@ -54,7 +59,7 @@ export class MainPageComponent implements OnInit {
 
     this.expiration$ = this.store.pipe(select(fromAuth.getSessionExpiration));
     this.apiInfo$ = this.store.pipe(select(fromAuth.getApiInfo));
-    
+
     this.store.pipe(select(fromAuth.getUser)).subscribe(u => (this.user = u));
   }
 

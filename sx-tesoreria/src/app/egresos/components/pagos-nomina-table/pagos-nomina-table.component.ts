@@ -55,6 +55,8 @@ export class PagosNominaTableComponent implements OnInit, OnChanges {
     'total',
     'egreso',
     'referencia',
+    'pensionAlimenticia',
+    'otraDeduccion',
     'updateUser'
     // 'operaciones'
   ];

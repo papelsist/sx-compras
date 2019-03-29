@@ -5,6 +5,7 @@ import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
 import org.springframework.stereotype.Component
 import sx.contabilidad.AsientoBuilder
+import sx.contabilidad.CuentaContable
 import sx.contabilidad.Poliza
 import sx.contabilidad.PolizaDet
 import sx.utils.MonedaUtils
@@ -40,6 +41,7 @@ class CobranzaEfectivoTask implements  AsientoBuilder {
 
         // Almacenar los cobros (Para el cargo a bancos)
         Set cobros = new HashSet()
+        Set diferencias = new HashSet()
         rows.each { Map row ->
             // Cargo a banco NO DEBE REPETIRSE
             String descripcion  = generarDescripcion(row)
@@ -130,12 +132,14 @@ class CobranzaEfectivoTask implements  AsientoBuilder {
                 }
 
                 if(row.diferencia > 0.0) {
+                    log.info('Dif: {}  ROW:{}', row.diferencia, row)
                     BigDecimal diferencia = row.diferencia
                     PolizaDet saf = buildRegistro(
                             '704-0001-0000-0000',
                             descripcion, row, 0.0, diferencia)
 
                     if(diferencia == row.total && row.cobro_aplic == 0.0) {
+                        log.info('ESPECIAL....')
                         saf.cuenta = buscarCuenta("101-0003-${row.suc.toString().padLeft(4,'0')}-0000")
                         saf.asiento = "${saf.asiento}"
                     } else {
@@ -145,6 +149,32 @@ class CobranzaEfectivoTask implements  AsientoBuilder {
 
 
                 }
+
+            }
+
+            if(!diferencias.contains(row.origen) && row.diferencia > 0.0 && row.referencia2 == 'EFECTIVO') {
+
+                BigDecimal diferencia = row.diferencia
+                if(row.cta_contable == '000-0000-0000-0000') {
+                    String scta = "101-0003-${row.suc.toString().padLeft(4,'0')}-0000"
+                    poliza.addToPartidas(
+                            buildRegistro(scta, descripcion, row, diferencia)
+                    )
+                }
+                PolizaDet saf = buildRegistro(
+                        '704-0001-0000-0000',
+                        descripcion, row, 0.0, diferencia)
+
+                if(diferencia == row.total && row.cobro_aplic == 0.0) {
+
+                    saf.cuenta = buscarCuenta("101-0003-${row.suc.toString().padLeft(4,'0')}-0000")
+                    saf.asiento = "${saf.asiento}"
+                } else {
+                    saf.asiento = "${saf.asiento}_OPRD"
+                }
+                poliza.addToPartidas(saf)
+                diferencias.add(row.origen)
+
             }
 
             if(row.cta_contable_fac != '000-0000-0000-0000') {
@@ -230,7 +260,7 @@ class CobranzaEfectivoTask implements  AsientoBuilder {
     String getTransferenciasDepositosSql() {
 
         String res = """
-                SELECT          
+        SELECT          
         'FICHA_CON' tipo,
         x.asiento,
         x.origen_gpo,
@@ -323,7 +353,7 @@ class CobranzaEfectivoTask implements  AsientoBuilder {
         FROM ficha f join movimiento_de_cuenta m on(f.ingreso_id=m.id) join cuenta_de_banco z on(m.cuenta_id=z.id)
         join sucursal s on(f.sucursal_id=s.id) left join cobro_cheque x on(x.ficha_id=f.id) join cobro b on(x.cobro_id=b.id)  join cliente t on(b.cliente_id=t.id)
         join aplicacion_de_cobro a on(a.cobro_id=b.id) join cuenta_por_cobrar c on(a.cuenta_por_cobrar_id=c.id) join cfdi i on(c.cfdi_id=i.id)
-        where f.fecha='@FECHA' and f.origen in('CON') and f.tipo_de_ficha<>'EFECTIVO' and x.cambio_por_efectivo is false 
+        where f.fecha='@FECHA' and date(b.primera_aplicacion)=a.fecha and f.origen in('CON') and f.tipo_de_ficha<>'EFECTIVO' and x.cambio_por_efectivo is false 
         ) as x 
         """
         return res

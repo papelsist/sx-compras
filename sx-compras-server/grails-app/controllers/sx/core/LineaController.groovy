@@ -6,7 +6,7 @@ import grails.rest.RestfulController
 
 
 @GrailsCompileStatic
-@Secured("IS_AUTHENTICATED_ANONYMOUSLY")
+@Secured("permitAll")
 class LineaController extends RestfulController<Linea> {
     static responseFormats = ['json']
     LineaController() {

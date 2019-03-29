@@ -32,6 +32,10 @@ class PagoDeNomina {
 
     String referencia
 
+    String numeroDeTrabajador
+
+    boolean otraDeduccion
+
     Date dateCreated
     Date lastUpdated
 
@@ -39,12 +43,13 @@ class PagoDeNomina {
     String updateUser
 
     static constraints = {
-        nominaEmpleado unique: ['tipo', 'pensionAlimenticia']
+        nominaEmpleado unique: ['tipo', 'pensionAlimenticia', 'otraDeduccion']
         empleadoId nullable: true
         egreso nullable: true
         createUser nullable: true
         updateUser nullable: true
         pensionAlimenticiaId nullable: true
+        numeroDeTrabajador nullable: true
 
     }
 

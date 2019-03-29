@@ -261,10 +261,26 @@ class CobranzaTarjetaTask implements  AsientoBuilder {
         FROM corte_de_tarjeta f join corte_de_tarjeta_aplicacion j on(j.corte_id=f.id) join movimiento_de_cuenta m on(j.ingreso_id=m.id) join cuenta_de_banco z on(m.cuenta_id=z.id)
         join sucursal s on(f.sucursal_id=s.id) left join cobro_tarjeta   x on(x.corte=f.id) join cobro b on(x.cobro_id=b.id)  join cliente t on(b.cliente_id=t.id)        
         join aplicacion_de_cobro a on(a.cobro_id=b.id) join cuenta_por_cobrar c on(a.cuenta_por_cobrar_id=c.id) left join cfdi i on(c.cfdi_id=i.id)        
-        where f.corte='@FECHA' and a.fecha=(b.primera_aplicacion) and j.tipo like '%INGRESO%'
+        where f.corte='@FECHA' and a.fecha=(b.primera_aplicacion) and j.tipo like '%INGRESO%' and c.tipo in('CON','COD')
+        UNION
+        SELECT 
+        concat('COB_TARJ_',(case when x.debito_credito is true then 'DEB' when x.visa_master is false then 'AME' else 'CRE' end),'_CON') as asiento,f.id origen_gpo,x.debito_credito,(case when x.debito_credito is true then 'DEBITO' else 'CREDITO' end)  documentoTipo,f.corte fecha,f.folio documento_gpo,b.moneda,b.tipo_de_cambio tc ,f.total total_gpo
+        ,j.tipo referencia2,s.nombre sucursal, s.clave suc
+        ,(case when j.tipo like '%INGRESO' then concat('102-0001-',z.sub_cuenta_operativa,'-0000') when j.tipo like '%COMISION' then concat('600-0014-',(case when s.clave>9 then '00' else '000' end),s.clave,'-0000') when j.tipo like '%IVA' then '118-0002-0000-0000' else '' end)  cta_contable
+        ,(case when j.tipo='AMEX_INGRESO' then '107-0001-0001-0000' else '000-0000-0000-0000' end) cta_contable2,z.numero ctaDestino,z.descripcion bancoDestino,'PAPEL SA DE CV' beneficiario
+        ,b.forma_de_pago,(case when x.debito_credito is true then '99' else '04' end) metodoDePago,b.id origen,x.validacion documento,x.validacion referenciaBancaria,x.comision
+        ,b.importe total,0 diferencia,0 SAF
+        ,null ctaOrigen,null banco_origen_id,null bancoOrigen,t.rfc,t.nombre cliente,c.id cxc_id,x.validacion factura,b.tipo,date(b.primera_aplicacion) fecha_fac,i.uuid,b.importe cobro_aplic,b.importe montoTotal
+        ,(case when b.tipo in('CRE','CHE','JUR') then '205-0007-0001-0000' else concat('105-',(case when b.tipo='COD' then '0002-' else '0001-' end),(case when s.clave>9 then '00' else '000' end),s.clave,'-0000') end) cta_contable_fac
+        ,'209-0001-0000-0000' cta_iva_pend,'208-0001-0000-0000' cta_iva_pag        
+        FROM corte_de_tarjeta f join corte_de_tarjeta_aplicacion j on(j.corte_id=f.id) join movimiento_de_cuenta m on(j.ingreso_id=m.id) join cuenta_de_banco z on(m.cuenta_id=z.id)
+        join sucursal s on(f.sucursal_id=s.id) left join cobro_tarjeta   x on(x.corte=f.id) join cobro b on(x.cobro_id=b.id)  join cliente t on(b.cliente_id=t.id)        
+        join aplicacion_de_cobro a on(a.cobro_id=b.id) join cuenta_por_cobrar c on(a.cuenta_por_cobrar_id=c.id) left join cfdi i on(c.cfdi_id=i.id)        
+        where f.corte='@FECHA' and a.fecha=(b.primera_aplicacion) and j.tipo like '%INGRESO%' and c.tipo not in('CON','COD')
+        group by b.id        
         ) as x   
         group by x.origen,x.uuid,x.cxc_id
-        order by asiento desc
+        order by x.sucursal,asiento,x.origen_gpo,x.tipo,x.factura desc
         """
         return res
     }

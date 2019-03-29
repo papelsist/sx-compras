@@ -133,7 +133,7 @@ class PolizaController extends RestfulController<Poliza> {
         }
         poliza.cierre = new Date()
         poliza = poliza.save flush: true
-        saldoPorCuentaContableService.actualizarSaldos(poliza)
+        // saldoPorCuentaContableService.actualizarSaldos(poliza)
         respond poliza, [status: OK, view:'show']
 
     }

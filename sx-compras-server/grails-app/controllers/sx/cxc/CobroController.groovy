@@ -12,7 +12,7 @@ import sx.utils.Periodo
 
 @Slf4j
 @GrailsCompileStatic
-@Secured("ROLE_TESORERIA")
+@Secured(['ROLE_TESORERIA', 'ROLE_CONTABILIDAD'])
 class CobroController extends RestfulController<Cobro> {
     static responseFormats = ['json']
 
@@ -89,6 +89,22 @@ class CobroController extends RestfulController<Cobro> {
     }
 
     @CompileDynamic
+    def reporteDeCobranzaCON(CobranzaPorSucursalCommand command){
+        def repParams = [FECHA: command.fecha.format('yyyy/MM/dd'), SUCURSAL: command.sucursal]
+        def pdf =  reportService.run('FacturasCobrada.jrxml', repParams)
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'CobranzaCON.pdf')
+    }
+
+    @CompileDynamic
+    def reporteDeCobranzaCOD(CobranzaPorSucursalCommand command){
+        def repParams = [FECHA: command.fecha.format('yyyy/MM/dd'), SUCURSAL: command.sucursal]
+        def pdf =  reportService.run('CobranzaCamioneta.jrxml', repParams)
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'CobranzaCON.pdf')
+    }
+
+
+
+    @CompileDynamic
     def reporteDeRelacionDePagos(RelacionPagosCommand command){
         log.debug('Rep: {}', params)
         def repParams = [FECHA: command.fecha]
@@ -96,6 +112,29 @@ class CobroController extends RestfulController<Cobro> {
         repParams.COBRADOR = command.cobrador == 0 ? '%': command.cobrador.toString()
         def pdf =  reportService.run('RelacionDePagos.jrxml', repParams)
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'RelacionDePagos.pdf')
+    }
+
+    @CompileDynamic
+    def ajustarFormaDePago(Cobro cobro) {
+        if(cobro == null) {
+            notFound()
+            return
+        }
+        String fp = params.formaDePago
+        log.info('Ajustando forma de pago a: {}', fp)
+        if(fp == 'EFECTIVO') {
+            cobro.formaDePago = 'EFECTIVO'
+        } else {
+            cobro.formaDePago = 'PAGO_DIF'
+        }
+        cobro.aplicaciones.each {
+            it.formaDePago = cobro.formaDePago
+        }
+        if(isLoggedIn()) {
+            cobro.updateUser = getPrincipal().username
+        }
+        cobro.save flush: true
+        respond cobro
     }
 }
 
@@ -112,5 +151,10 @@ class RelacionPagosCommand {
     Date fecha
     String origen
     Integer cobrador
+}
+
+class CobranzaPorSucursalCommand {
+    Date fecha
+    String sucursal
 }
 

@@ -36,13 +36,13 @@ class InventariosProcGeneralesTask implements  AsientoBuilder {
                         row.cta_contable.toString(),
                         descripcion,
                         row,
+                        0.0,
                         row.costo))
                 poliza.addToPartidas(mapRow(
                         poliza,
                         "115-0001-${row.suc.toString().padLeft(4,'0')}-0000",
                         descripcion,
                         row,
-                        0.0,
                         row.costo))
             }else {
                 poliza.addToPartidas(mapRow(
@@ -50,13 +50,13 @@ class InventariosProcGeneralesTask implements  AsientoBuilder {
                         row.cta_contable.toString(),
                         descripcion,
                         row,
-                        0.0,
                         row.costo))
                 poliza.addToPartidas(mapRow(
                         poliza,
                         "115-0001-${row.suc.toString().padLeft(4,'0')}-0000",
                         descripcion,
                         row,
+                        0.0,
                         row.costo))
             }
 
