@@ -49,6 +49,8 @@ class EnvioComision {
 
     BigDecimal valorCajas = 0.0
 
+    boolean manual = false
+
     Date dateCreated
     Date lastUpdated
 

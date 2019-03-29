@@ -5,7 +5,7 @@ import { of } from 'rxjs';
 
 import * as fromClases from '../actions/clases.actions';
 
-import { Effect, Actions } from '@ngrx/effects';
+import { Effect, Actions, ofType } from '@ngrx/effects';
 import { ClasesService } from '../../services';
 
 @Injectable()
@@ -13,7 +13,8 @@ export class ClasesEffects {
   constructor(private actions$: Actions, private service: ClasesService) {}
 
   @Effect()
-  loadClases$ = this.actions$.ofType(fromClases.LOAD_CLASES).pipe(
+  loadClases$ = this.actions$.pipe(
+    ofType(fromClases.LOAD_CLASES),
     switchMap(() => {
       return this.service
         .list()
@@ -25,7 +26,7 @@ export class ClasesEffects {
   );
 
   @Effect()
-  createClase$ = this.actions$.ofType(fromClases.CREATE_CLASE).pipe(
+  createClase$ = this.actions$.pipe(ofType(fromClases.CREATE_CLASE),
     map((action: fromClases.CreateClase) => action.payload),
     switchMap(clase => {
       return this.service
@@ -38,7 +39,7 @@ export class ClasesEffects {
   );
 
   @Effect()
-  updateClase$ = this.actions$.ofType(fromClases.UPDATE_CLASE).pipe(
+  updateClase$ = this.actions$.pipe(ofType(fromClases.UPDATE_CLASE),
     map((action: fromClases.UpdateClase) => action.payload),
     switchMap(clase => {
       return this.service

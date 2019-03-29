@@ -54,5 +54,31 @@ class EnvioComisionController extends RestfulController<EnvioComision> {
 
     }
 
+    def batchUpdate(EnvioComisionBatchUpdate command) {
+        if(command == null) {
+            notFound()
+            return
+        }
+        List<EnvioComision> res = []
+        command.registros.each {
+            bindData(it, command)
+            res << envioComisionService.calcular(it)
+        }
+        respond res
+    }
+
+
+}
+
+class EnvioComisionBatchUpdate  {
+
+    Date fecha = new Date()
+    BigDecimal comision = 0.0
+    BigDecimal precioTonelada = 0.0
+    BigDecimal valorCajas = 0.0
+    BigDecimal importeComision = 0.0
+    boolean manual = false
+
+    List<EnvioComision>  registros
 
 }

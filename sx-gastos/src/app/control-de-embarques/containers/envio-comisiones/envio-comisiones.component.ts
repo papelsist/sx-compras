@@ -9,6 +9,7 @@ import * as fromStore from '../../store';
 import { EnvioComision, EnviosFilter } from '../../model';
 import { Periodo } from 'app/_core/models/periodo';
 import { MatDialog } from '@angular/material';
+import { EnvioComisionFormComponent } from 'app/control-de-embarques/components';
 
 @Component({
   selector: 'sx-envio-comisiones',
@@ -25,6 +26,7 @@ import { MatDialog } from '@angular/material';
         </button>
         <button mat-menu-item  *ngIf="filter$ | async as filter" class="actions"
           (click)="generarComisiones(filter)" >
+          <mat-icon>settings</mat-icon>
           Generar
         </button>
         <button mat-menu-item   class="actions" [disabled]="currentSelection.length === 0"
@@ -93,13 +95,7 @@ export class EnvioComisionesComponent implements OnInit {
     this.store.dispatch(new fromStore.SetEnvioComisionesFilter({ filter }));
   }
 
-  onEdit(event: EnvioComision) {
-    /*
-    this.store.dispatch(
-      new fromRoot.Go({ path: ['embarques/envioComision', event.id] })
-    );
-    */
-  }
+  onEdit(event: EnvioComision) {}
 
   onPrint(event: EnvioComision) {}
 
@@ -113,6 +109,24 @@ export class EnvioComisionesComponent implements OnInit {
   }
 
   modificar() {
-    console.log('Modificar: {}', this.currentSelection.length);
+    this.dialog
+      .open(EnvioComisionFormComponent, {
+        width: '650px'
+      })
+      .afterClosed()
+      .subscribe(res => {
+        if (res) {
+          const command = {
+            ...res,
+            registros: this.currentSelection.map(item => item.id)
+          };
+          console.log('Actualizando registros con: ', command);
+        }
+      });
+    /*
+    this.store.dispatch(
+      new fromRoot.Go({ path: ['embarques/envioComision', event.id] })
+    );
+    */
   }
 }

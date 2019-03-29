@@ -7,7 +7,8 @@ import {
   EventEmitter,
   OnDestroy,
   OnChanges,
-  SimpleChanges
+  SimpleChanges,
+  ChangeDetectorRef
 } from '@angular/core';
 import {
   FormBuilder,
@@ -51,7 +52,7 @@ export class RequisicionFormComponent implements OnInit, OnDestroy, OnChanges {
   subscription: Subscription;
 
   form: FormGroup;
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private cd: ChangeDetectorRef) {}
 
   ngOnInit() {
     if (this.requisicion) {
@@ -148,6 +149,7 @@ export class RequisicionFormComponent implements OnInit, OnDestroy, OnChanges {
   onAgregarFactura(selected: CuentaPorPagar[]) {
     selected.forEach(cxp => {
       const det = fromFactura(cxp);
+      console.log('Agregando: ', cxp);
       const found = _.find(this.partidas.value, ['uuid', cxp.uuid]);
       if (!found) {
         this.partidas.push(new FormControl(det));
@@ -163,6 +165,7 @@ export class RequisicionFormComponent implements OnInit, OnDestroy, OnChanges {
     this.form.markAsDirty();
   }
   onUpdateRow(event) {
+    this.actualizarApagar();
     this.form.markAsDirty();
   }
 
@@ -195,7 +198,8 @@ export class RequisicionFormComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   actualizarApagar() {
-    const total = _.sumBy(this.partidas.value, 'total');
+    const total = _.sumBy(this.partidas.value, 'apagar');
     this.form.get('apagar').setValue(total);
+    this.cd.detectChanges();
   }
 }

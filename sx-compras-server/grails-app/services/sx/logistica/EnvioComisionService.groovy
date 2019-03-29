@@ -116,6 +116,14 @@ class EnvioComisionService implements  LogUser{
         return comisiones
     }
 
+    EnvioComision calcular(EnvioComision ec) {
+        if(ec.comisionPorTonelada) {
+            return calclarPorTonelada(ec)
+        } else {
+            return calcularPorEnvio(ec)
+        }
+    }
+
 
 
     def calclarPorTonelada(EnvioComision ec) {

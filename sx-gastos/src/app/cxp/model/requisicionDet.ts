@@ -30,6 +30,8 @@ export function fromFactura(cxp: CuentaPorPagar): RequisicionDet {
     documentoFecha: cxp.fecha,
     uuid: cxp.uuid,
     total: cxp.importePorPagar,
+    apagar: cxp.importePorPagar,
+    documentoSaldo: cxp.saldo,
     analizado: cxp.importePorPagar
   };
   return det;
