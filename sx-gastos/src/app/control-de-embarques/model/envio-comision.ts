@@ -15,12 +15,16 @@ export interface EnvioComision {
   comentarioDeComision: string;
   comisionPorTonelada: number;
   importeComision: number;
+  valorCajas: number;
   comision: number;
   precioTonelada: number;
   maniobra: number;
   regreso: string;
   sucursal: string;
   entidad?: string;
+  documentoFolio: string;
+  documentoTipo: string;
+  documentoFecha: string;
   dateCreated?: string;
   lastUpdated?: string;
   createUser?: string;

@@ -49,7 +49,6 @@ class EnvioComisionController extends RestfulController<EnvioComision> {
         bindData(periodo, getObjectToBind())
         envioComisionService.generarComisiones(periodo.fechaInicial, periodo.fechaFinal)
         List<EnvioComision> res = envioComisionService.calcularComisiones(periodo)
-
         log.info('{} comisiones genradas para el periodo: {}', res.size(), periodo)
         respond res
 

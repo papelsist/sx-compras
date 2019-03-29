@@ -130,7 +130,7 @@ class CobranzaEfectivoTask implements  AsientoBuilder {
                             0.0,
                             safIva))
                 }
-                /*
+
                 if(row.diferencia > 0.0) {
                     log.info('Dif: {}  ROW:{}', row.diferencia, row)
                     BigDecimal diferencia = row.diferencia
@@ -149,10 +149,10 @@ class CobranzaEfectivoTask implements  AsientoBuilder {
 
 
                 }
-                */
+
             }
 
-            if(!diferencias.contains(row.origen) && row.diferencia > 0.0) {
+            if(!diferencias.contains(row.origen) && row.diferencia > 0.0 && row.referencia2 == 'EFECTIVO') {
 
                 BigDecimal diferencia = row.diferencia
                 if(row.cta_contable == '000-0000-0000-0000') {
@@ -353,7 +353,7 @@ class CobranzaEfectivoTask implements  AsientoBuilder {
         FROM ficha f join movimiento_de_cuenta m on(f.ingreso_id=m.id) join cuenta_de_banco z on(m.cuenta_id=z.id)
         join sucursal s on(f.sucursal_id=s.id) left join cobro_cheque x on(x.ficha_id=f.id) join cobro b on(x.cobro_id=b.id)  join cliente t on(b.cliente_id=t.id)
         join aplicacion_de_cobro a on(a.cobro_id=b.id) join cuenta_por_cobrar c on(a.cuenta_por_cobrar_id=c.id) join cfdi i on(c.cfdi_id=i.id)
-        where f.fecha='@FECHA' and f.origen in('CON') and f.tipo_de_ficha<>'EFECTIVO' and x.cambio_por_efectivo is false 
+        where f.fecha='@FECHA' and date(b.primera_aplicacion)=a.fecha and f.origen in('CON') and f.tipo_de_ficha<>'EFECTIVO' and x.cambio_por_efectivo is false 
         ) as x 
         """
         return res

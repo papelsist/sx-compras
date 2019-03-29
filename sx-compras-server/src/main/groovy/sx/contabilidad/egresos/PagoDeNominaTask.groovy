@@ -64,6 +64,12 @@ class PagoDeNominaTask implements  AsientoBuilder, EgresoTask {
                     " (${mov.tipo} ${mov.tipo != mov.concepto ? mov.concepto : ''}) PA"
             cv = "205-D007-${nomina.pensionAlimenticiaId.toString().padLeft(4, '0')}-0000"
         }
+        if(nomina.otraDeduccion) {
+            MovimientoDeCuenta mov = nomina.egreso
+            poliza.concepto = "CH ${mov.referencia} ${mov.afavor} (${mov.fecha.format('dd/MM/yyyy')})" +
+                    " (${mov.tipo} ${mov.tipo != mov.concepto ? mov.concepto : ''}) OTRA D"
+            cv = "107-D004-${nomina.numeroDeTrabajador.toString().padLeft(4, '0')}-0000"
+        }
         poliza.addToPartidas(toPolizaDet(cv, desc, row, egreso.importe))
 
     }

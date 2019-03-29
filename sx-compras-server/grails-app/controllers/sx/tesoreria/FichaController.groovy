@@ -18,7 +18,7 @@ import static org.springframework.http.HttpStatus.CREATED
 
 @Slf4j
 // @GrailsCompileStatic
-@Secured("ROLE_TESORERIA")
+@Secured(['ROLE_TESORERIA', 'ROLE_CONTABILIDAD'])
 class FichaController extends RestfulController<Ficha> {
 
     static responseFormats = ['json']

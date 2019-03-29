@@ -113,6 +113,29 @@ class CobroController extends RestfulController<Cobro> {
         def pdf =  reportService.run('RelacionDePagos.jrxml', repParams)
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'RelacionDePagos.pdf')
     }
+
+    @CompileDynamic
+    def ajustarFormaDePago(Cobro cobro) {
+        if(cobro == null) {
+            notFound()
+            return
+        }
+        String fp = params.formaDePago
+        log.info('Ajustando forma de pago a: {}', fp)
+        if(fp == 'EFECTIVO') {
+            cobro.formaDePago = 'EFECTIVO'
+        } else {
+            cobro.formaDePago = 'PAGO_DIF'
+        }
+        cobro.aplicaciones.each {
+            it.formaDePago = cobro.formaDePago
+        }
+        if(isLoggedIn()) {
+            cobro.updateUser = getPrincipal().username
+        }
+        cobro.save flush: true
+        respond cobro
+    }
 }
 
 class CobranzaPorFechaCommand {

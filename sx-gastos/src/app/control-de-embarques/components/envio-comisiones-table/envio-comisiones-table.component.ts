@@ -16,6 +16,8 @@ import { EnvioComision } from '../../model';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Subscription } from 'rxjs';
 
+import * as _ from 'lodash';
+
 @Component({
   selector: 'sx-envio-comisiones-table',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -36,15 +38,22 @@ export class EnvioComisionesTableComponent
     'id',
     'sucursal',
     'nombre',
+    'documentoTipo',
+    'documentoFolio',
+    'documentoFecha',
     'regreso',
     'valor',
+    'valorCajas',
     'comision',
+    'precioTonelada',
     'kilos',
+    'importeComision',
     'fechaComision',
-    'comentarioDeComision',
+    // 'comentarioDeComision',
     'entidad',
-    'status',
-    'operaciones'
+    // 'status',
+    'operaciones',
+    'cliente'
   ];
 
   @ViewChild(MatSort)
@@ -71,6 +80,8 @@ export class EnvioComisionesTableComponent
 
   subscription: Subscription;
 
+  totalComision = 0.0;
+
   selection: SelectionModel<EnvioComision> = new SelectionModel<EnvioComision>(
     this.allowMultiSelect,
     this.initialSelection,
@@ -90,11 +101,21 @@ export class EnvioComisionesTableComponent
   ngOnChanges(changes: SimpleChanges) {
     if (changes.comisiones && changes.comisiones.currentValue) {
       this.dataSource.data = changes.comisiones.currentValue;
+      this.actuailizar();
     }
     if (changes.filter) {
       const f: string = changes.filter.currentValue || '';
       this.dataSource.filter = f.toLowerCase();
+      this.actuailizar();
     }
+  }
+
+  actuailizar() {
+    this.totalComision = _.sumBy(
+      this.dataSource.filteredData,
+      'importeComision'
+    );
+    console.log('Total comision: ', this.totalComision);
   }
 
   ngOnDestroy() {

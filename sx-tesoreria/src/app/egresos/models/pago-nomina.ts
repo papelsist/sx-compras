@@ -25,6 +25,7 @@ export interface PagoDeNomina {
   createUser: string;
   updateUser: string;
   referencia?: string;
+  otraDeduccion: boolean;
 }
 
 export interface PagoDeNominaCommand {

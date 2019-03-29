@@ -83,6 +83,8 @@ class Envio {
 
     BigDecimal maniobra
 
+    boolean comisionPorTonelada = false
+
     Date dateCreated
 
     Date lastUpdated
@@ -109,36 +111,8 @@ class Envio {
         cliente nullable: true
         precioTonelada nullable: true
         maniobra nullable: true
+        comisionPorTonelada nullable: true
     }
 
-    def beforeDelete() {
-        if( entidad == 'VENTA') {
-            CondicionDeEnvio.withNewSession {
-                CondicionDeEnvio envio = CondicionDeEnvio.where{venta.id == origen}.find()
-                if(envio) {
-                    envio.asignado = null;
-                    envio.save flush: true
-                }
-            }
-        }
-    }
-
-    def beforeUpdate() {
-        /*
-       if(!partidas) {
-           this.acualizarValorDeOrigen()
-       } else {
-       }
-       */
-    }
-
-    def acualizarValorDeOrigen() {
-        /*
-        if (entidad == 'VENTA') {
-            Venta venta = Venta.get(envio.origen)
-            this.valor = venta.subtotal
-        }
-        */
-    }
 
 }
