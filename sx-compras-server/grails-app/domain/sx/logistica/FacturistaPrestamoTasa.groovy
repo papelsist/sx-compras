@@ -12,10 +12,13 @@ import groovy.transform.ToString
 @Secured("IS_AUTHENTICATED_ANONYMOUSLY")
 @ToString(includes='fuente, tasa fecha', includeNames = true, includePackage = false)
 @EqualsAndHashCode(includes='fecha,fuente')
-class PrestamoChoferTasa {
+class FacturistaPrestamoTasa {
 
     Date fecha
+
     String fuente = 'CETES a 28 Dias'
+
     String moneda = 'MXN'
+    
     BigDecimal tasa = 0.0
 }

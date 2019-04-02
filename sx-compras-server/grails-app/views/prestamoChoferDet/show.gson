@@ -1,7 +1,0 @@
-import sx.logistica.PrestamoChoferDet
-
-model {
-	PrestamoChoferDet prestamoChoferDet
-}
-
-json tmpl.prestamoChoferDet(prestamoChoferDet)

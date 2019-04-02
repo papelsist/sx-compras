@@ -4,14 +4,17 @@ import grails.compiler.GrailsCompileStatic
 
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
+import sx.cxc.CuentaPorCobrar
 
 
 @GrailsCompileStatic
 @ToString(includes='fuente, tasa fecha', includeNames = true, includePackage = false)
-@EqualsAndHashCode(includes='fecha,fuente')
-class OtroCargoChofer {
+@EqualsAndHashCode(includes = ['nombre', 'tipo'])
+class FacturistaOtroCargo {
 
-    Chofer chofer
+    FacturistaDeEmbarque facturista
+
+    CuentaPorCobrar cxc
 
     String nombre
 
@@ -21,9 +24,7 @@ class OtroCargoChofer {
 
     String comentario
 
-    TipoCargo tipo
-
-    List<OtroCargoChoferDet> partidas
+    String tipo
 
     Date dateCreated
     Date lastUpdated
@@ -31,14 +32,11 @@ class OtroCargoChofer {
     String createUser
     String updateUser
 
-    static hasMany = [partidas: OtroCargoChofer]
 
+
+    static constraints = {
+        tipo inList: ['MATERIAL', 'CELULAR', 'OTROS']
+    }
 
 }
 
-enum TipoCargo {
-    MATERIAL,
-    CELULAR,
-    ETC,
-    OTROS,
-}

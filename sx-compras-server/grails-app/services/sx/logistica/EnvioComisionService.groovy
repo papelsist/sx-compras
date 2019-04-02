@@ -93,7 +93,7 @@ class EnvioComisionService implements  LogUser{
         log.info('Calculando la comision de los envios para el periodo: {}', periodo)
         List<EnvioComision> comisiones = EnvioComision
                 .findAll("""
-            from EnvioComision e  where date(e.regreso) between ? and ?
+            from EnvioComision e  where date(e.regreso) between ? and ? and e.manual = false
               and e.chofer.id not in ('3ba15718-e40e-11e7-b1f8-b4b52f67eab0', '3ba15bf0-e40e-11e7-b1f8-b4b52f67eab0')
             """,
                 [periodo.fechaInicial, periodo.fechaFinal])
@@ -173,6 +173,7 @@ class EnvioComisionService implements  LogUser{
                     ec.documentoFolio = venta.cuentaPorCobrar.documento
                     ec.documentoFecha = venta.cuentaPorCobrar.fecha
                     ec.documentoTipo = venta.cuentaPorCobrar.tipo
+                    ec.maniobra = venta.cargosPorManiobra
                 }
             }
         }

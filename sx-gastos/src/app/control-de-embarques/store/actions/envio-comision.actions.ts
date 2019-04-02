@@ -13,7 +13,11 @@ export enum EnvioComisionActionTypes {
 
   GenerarComisiones = '[EnvioComisiones component] Generar EnvioComisiones',
   GenerarComisionesFail = '[EnvioComision API] Generar EnvioComisiones fail',
-  GenerarComisionesSuccess = '[EnvioComision API] Generar EnvioComisiones Success'
+  GenerarComisionesSuccess = '[EnvioComision API] Generar EnvioComisiones Success',
+
+  UpdateManyComisiones = '[EnvioComisiones component] UpdateMany EnvioComisiones',
+  UpdateManyComisionesFail = '[EnvioComision API] UpdateMany EnvioComisiones fail',
+  UpdateManyComisionesSuccess = '[EnvioComision API] UpdateMany EnvioComisiones Success'
 }
 
 export class SetEnvioComisionesFilter implements Action {
@@ -54,6 +58,21 @@ export class GenerarComisionesSuccess implements Action {
   constructor(public payload: { comisiones: EnvioComision[] }) {}
 }
 
+export class UpdateManyComisiones implements Action {
+  readonly type = EnvioComisionActionTypes.UpdateManyComisiones;
+  constructor(
+    public payload: { data: { registros: number[]; command: Object } }
+  ) {}
+}
+export class UpdateManyComisionesFail implements Action {
+  readonly type = EnvioComisionActionTypes.UpdateManyComisionesFail;
+  constructor(public payload: { response: any }) {}
+}
+export class UpdateManyComisionesSuccess implements Action {
+  readonly type = EnvioComisionActionTypes.UpdateManyComisionesSuccess;
+  constructor(public payload: { comisiones: EnvioComision[] }) {}
+}
+
 export type EnvioComisionActions =
   | SetEnvioComisionesFilter
   | SetEnvioComisionesSearchTerm
@@ -62,4 +81,7 @@ export type EnvioComisionActions =
   | LoadEnvioComisionesSuccess
   | GenerarComisiones
   | GenerarComisionesFail
-  | GenerarComisionesSuccess;
+  | GenerarComisionesSuccess
+  | UpdateManyComisiones
+  | UpdateManyComisionesFail
+  | UpdateManyComisionesSuccess;

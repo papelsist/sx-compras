@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 
 import { Observable } from 'rxjs';
 
@@ -9,7 +9,10 @@ import * as fromStore from '../../store';
 import { EnvioComision, EnviosFilter } from '../../model';
 import { Periodo } from 'app/_core/models/periodo';
 import { MatDialog } from '@angular/material';
-import { EnvioComisionFormComponent } from 'app/control-de-embarques/components';
+import {
+  EnvioComisionFormComponent,
+  EnvioComisionesTableComponent
+} from 'app/control-de-embarques/components';
 
 @Component({
   selector: 'sx-envio-comisiones',
@@ -39,10 +42,11 @@ import { EnvioComisionFormComponent } from 'app/control-de-embarques/components'
       <mat-divider></mat-divider>
       <div class="table-panel">
 
-        <sx-envio-comisiones-table [comisiones]="envioComisiones$ | async" [filter]="search"
+        <sx-envio-comisiones-table #table
+          [comisiones]="envioComisiones$ | async"
+          [filter]="search"
           (print)="onPrint($event)"
-          (select)="onSelect($event)"
-          (edit)="onEdit($event)">
+          (select)="onSelect($event)">
         </sx-envio-comisiones-table>
 
       </div>
@@ -72,6 +76,9 @@ export class EnvioComisionesComponent implements OnInit {
 
   currentSelection: EnvioComision[] = [];
 
+  @ViewChild(EnvioComisionesTableComponent)
+  table: EnvioComisionesTableComponent;
+
   constructor(
     private store: Store<fromStore.State>,
     private dialog: MatDialog
@@ -95,8 +102,6 @@ export class EnvioComisionesComponent implements OnInit {
     this.store.dispatch(new fromStore.SetEnvioComisionesFilter({ filter }));
   }
 
-  onEdit(event: EnvioComision) {}
-
   onPrint(event: EnvioComision) {}
 
   reload() {
@@ -109,8 +114,14 @@ export class EnvioComisionesComponent implements OnInit {
   }
 
   modificar() {
+    console.log('Selection: ', this.currentSelection.map(item => item.id));
+
     this.dialog
       .open(EnvioComisionFormComponent, {
+        data: {
+          comisionBase: this.currentSelection[0],
+          registros: this.currentSelection.length
+        },
         width: '650px'
       })
       .afterClosed()
@@ -120,13 +131,11 @@ export class EnvioComisionesComponent implements OnInit {
             ...res,
             registros: this.currentSelection.map(item => item.id)
           };
-          console.log('Actualizando registros con: ', command);
+          this.store.dispatch(
+            new fromStore.UpdateManyComisiones({ data: command })
+          );
+          this.table.clearSelection();
         }
       });
-    /*
-    this.store.dispatch(
-      new fromRoot.Go({ path: ['embarques/envioComision', event.id] })
-    );
-    */
   }
 }

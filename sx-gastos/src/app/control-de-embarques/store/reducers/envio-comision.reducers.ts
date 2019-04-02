@@ -49,6 +49,7 @@ export function reducer(
       };
     }
 
+    case EnvioComisionActionTypes.UpdateManyComisiones:
     case EnvioComisionActionTypes.GenerarComisiones:
     case EnvioComisionActionTypes.LoadEnvioComisiones: {
       return {
@@ -56,6 +57,8 @@ export function reducer(
         loading: true
       };
     }
+
+    case EnvioComisionActionTypes.UpdateManyComisionesFail:
     case EnvioComisionActionTypes.GenerarComisionesFail:
     case EnvioComisionActionTypes.LoadEnvioComisionesFail: {
       return {
@@ -77,6 +80,13 @@ export function reducer(
         ...state,
         loading: false,
         loaded: true
+      });
+    }
+
+    case EnvioComisionActionTypes.UpdateManyComisionesSuccess: {
+      return adapter.upsertMany(action.payload.comisiones, {
+        ...state,
+        loading: false
       });
     }
 

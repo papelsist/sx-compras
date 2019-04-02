@@ -54,7 +54,7 @@
 	<field name="origen" class="java.lang.String"/>
 
 	<variable name="ACUMULADO" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
-		<variableExpression><![CDATA[$F{cargo}.add( $F{abono} )]]></variableExpression>
+		<variableExpression><![CDATA[$F{abono}.subtract( $F{cargo} )]]></variableExpression>
 	</variable>
 		<background>
 			<band height="0"  isSplitAllowed="true" >

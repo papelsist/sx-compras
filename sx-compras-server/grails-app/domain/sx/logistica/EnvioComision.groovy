@@ -51,6 +51,8 @@ class EnvioComision {
 
     boolean manual = false
 
+    String empresa
+
     Date dateCreated
     Date lastUpdated
 
@@ -67,6 +69,7 @@ class EnvioComision {
         documentoFolio nullable: true
         documentoFecha nullable: true
         documentoFecha nullable: true
+        empresa maxSize: 50
     }
 
     static  mapping = {

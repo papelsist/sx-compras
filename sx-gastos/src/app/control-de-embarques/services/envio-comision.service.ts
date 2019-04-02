@@ -66,4 +66,15 @@ export class EnvioComisionService {
       .delete(url)
       .pipe(catchError((error: any) => throwError(error)));
   }
+
+  batchUpdate(data: {
+    registros: number[];
+    command: Object;
+  }): Observable<EnvioComision[]> {
+    const url = `${this.apiUrl}/batchUpdate`;
+    // const data =  {registros, ...command};
+    return this.http
+      .put<EnvioComision[]>(url, data)
+      .pipe(catchError((error: any) => throwError(error)));
+  }
 }

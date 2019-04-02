@@ -3,62 +3,48 @@ package sx.logistica
 import grails.compiler.GrailsCompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
-import sx.tesoreria.MovimientoDeCuenta
+
 
 @GrailsCompileStatic
-@EqualsAndHashCode(includes='id, nombre, tipo, fecha')
+@EqualsAndHashCode(includes='id, envio')
 @ToString(excludes = 'version, dateCreated,lastUpdated, partidas', includeNames=true, includePackage=false)
-class PrestamoChofer {
+class FacturistaEstadoDeCuenta {
 
-    Chofer chofer
-
-    TipoDePrestamo tipo
+    FacturistaDeEmbarque facturista
 
     String nombre
 
     Date fecha
 
-    Date autorizacion
+    String tipo
 
-    String autorizo
+    String origen
+
+    String concepto
 
     BigDecimal importe
 
     String comentario
 
-    MovimientoDeCuenta egreso
-
-    List<PrestamoChoferDet> partidas
-
     String createUser
     String updateUser
 
     Date dateCreated
-
     Date lastUpdated
 
-    static hasMany = [partidas: PrestamoChoferDet]
-
     static constraints = {
-        comentario nullable:true
-        egreso nullable: true
+        tipo inList: ['PRESTAMO_PERSONAL', 'OTROS_CARGOS', 'ABONO', 'INTERESES', 'INTERESES_IVA']
+        origen nullable: true
     }
+
 
     static  mapping = {
         fecha type: 'date'
-        autorizacion type: 'date'
     }
 
+
 }
 
-enum TipoDePrestamo {
-    CAMIONETA,
-    REPARACION,
-    MANTENIMIENTO,
-    PERSONAL,
-    SEGURO,
-    OTROS
-}
 
 
 

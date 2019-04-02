@@ -3,7 +3,9 @@ package sx.logistica
 import grails.compiler.GrailsCompileStatic
 import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.*
+import grails.validation.Validateable
 import groovy.transform.CompileDynamic
+import groovy.transform.ToString
 import groovy.util.logging.Slf4j
 import org.springframework.http.HttpStatus
 import sx.reports.ReportService
@@ -59,10 +61,19 @@ class EnvioComisionController extends RestfulController<EnvioComision> {
             notFound()
             return
         }
+        command.validate()
+        if(command.hasErrors()) {
+            respond command.errors, view:'edit' // STATUS CODE 422
+            return
+
+        }
+        log.info('BatchUpdate de: {}', command)
         List<EnvioComision> res = []
         command.registros.each {
             bindData(it, command)
+            it.manual = true
             res << envioComisionService.calcular(it)
+
         }
         respond res
     }
@@ -70,15 +81,19 @@ class EnvioComisionController extends RestfulController<EnvioComision> {
 
 }
 
-class EnvioComisionBatchUpdate  {
+@ToString( includeNames = true, excludes = ['registros'])
+class EnvioComisionBatchUpdate  implements  Validateable{
 
-    Date fecha = new Date()
+
     BigDecimal comision = 0.0
     BigDecimal precioTonelada = 0.0
-    BigDecimal valorCajas = 0.0
-    BigDecimal importeComision = 0.0
-    boolean manual = false
+    String comentarioDeComision
 
     List<EnvioComision>  registros
+
+    static constraints = {
+        comentarioDeComision nullable: true
+        precioTonelada nullable: true
+    }
 
 }

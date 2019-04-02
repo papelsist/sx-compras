@@ -97,10 +97,32 @@ export class EnvioComisionEffects {
   );
 
   @Effect()
+  batchUpdate$ = this.actions$.pipe(
+    ofType<fromActions.UpdateManyComisiones>(
+      EnvioComisionActionTypes.UpdateManyComisiones
+    ),
+    map(action => action.payload.data),
+    switchMap(data =>
+      this.service.batchUpdate(data).pipe(
+        map(
+          comisiones =>
+            new fromActions.UpdateManyComisionesSuccess({ comisiones })
+        ),
+        catchError(error =>
+          of(new fromActions.UpdateManyComisionesFail({ response: error }))
+        )
+      )
+    )
+  );
+
+  @Effect()
   fail$ = this.actions$.pipe(
     ofType<
-      fromActions.LoadEnvioComisionesFail | fromActions.GenerarComisionesFail
+      | fromActions.LoadEnvioComisionesFail
+      | fromActions.GenerarComisionesFail
+      | fromActions.UpdateManyComisionesFail
     >(
+      EnvioComisionActionTypes.UpdateManyComisionesFail,
       EnvioComisionActionTypes.LoadEnvioComisionesFail,
       EnvioComisionActionTypes.GenerarComisionesFail
     ),

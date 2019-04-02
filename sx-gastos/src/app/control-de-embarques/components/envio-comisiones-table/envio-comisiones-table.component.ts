@@ -36,6 +36,7 @@ export class EnvioComisionesTableComponent
   displayColumns = [
     'select',
     'id',
+    'manual',
     'sucursal',
     'nombre',
     'documentoTipo',
@@ -115,7 +116,6 @@ export class EnvioComisionesTableComponent
       this.dataSource.filteredData,
       'importeComision'
     );
-    console.log('Total comision: ', this.totalComision);
   }
 
   ngOnDestroy() {
@@ -127,7 +127,7 @@ export class EnvioComisionesTableComponent
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
     const numSelected = this.selection.selected.length;
-    const numRows = this.dataSource.data.length;
+    const numRows = this.dataSource.filteredData.length;
     return numSelected === numRows;
   }
 
@@ -135,6 +135,10 @@ export class EnvioComisionesTableComponent
   masterToggle() {
     this.isAllSelected()
       ? this.selection.clear()
-      : this.dataSource.data.forEach(row => this.selection.select(row));
+      : this.dataSource.filteredData.forEach(row => this.selection.select(row));
+  }
+
+  clearSelection() {
+    this.selection.clear();
   }
 }

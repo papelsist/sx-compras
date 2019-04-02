@@ -23,6 +23,8 @@ class FacturistaDeEmbarque {
 
     String email
 
+    String cuentaOperativa
+
     Date dateCreated
 
     Date lastUpdated
@@ -31,18 +33,17 @@ class FacturistaDeEmbarque {
 
     String updateUser
 
-    String sw2
 
     static constraints = {
         createUser nullable: true
         updateUser nullable: true
-        sw2 nullable:  true
     }
 
     static mapping= {
-        id generator: 'uuid'
+        id generator:'uuid'
         rfc minSize: 12, maxSize: 13
         telefono nullbale: true
+        cuentaOperativa nullable: true
     }
 
     String toString() {
