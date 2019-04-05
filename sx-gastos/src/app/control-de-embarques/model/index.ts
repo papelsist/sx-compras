@@ -4,4 +4,5 @@ export * from './embarque';
 export * from './envio';
 export * from './envio-det';
 export * from './envio-comision';
-export * from './prestamo-chofer';
+export * from './facturista-prestamo';
+export * from './facturista-cargo';

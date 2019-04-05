@@ -1,0 +1,86 @@
+<h2 mat-dialog-title>{{ title }}</h2>
+<mat-dialog-content [formGroup]="form">
+  <div layout>
+    <sx-facturista-field [parent]="form" flex></sx-facturista-field>
+  </div>
+  <div layout>
+    <mat-form-field class="pad-right" flex>
+      <mat-select placeholder="Tipo" formControlName="tipo">
+        <mat-option *ngFor="let tipo of tipos" [value]="tipo">{{
+          tipo
+        }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field flex>
+      <input
+        matInput
+        [matDatepicker]="myDatepicker"
+        placeholder="Fecha"
+        formControlName="fecha"
+        autocomplete="off"
+      />
+      <mat-datepicker-toggle
+        matSuffix
+        [for]="myDatepicker"
+      ></mat-datepicker-toggle>
+      <mat-datepicker #myDatepicker></mat-datepicker>
+    </mat-form-field>
+  </div>
+
+  <div layout>
+    <sx-upper-case-field
+      class="pad-right"
+      flex
+      placeholder="Autorizo"
+      formControlName="autorizo"
+      autocomplete="off"
+    >
+    </sx-upper-case-field>
+    <mat-form-field flex>
+      <input
+        matInput
+        [matDatepicker]="myDatepicker2"
+        placeholder="F.Autorización"
+        formControlName="autorizacion"
+        autocomplete="off"
+      />
+      <mat-datepicker-toggle
+        matSuffix
+        [for]="myDatepicker2"
+      ></mat-datepicker-toggle>
+      <mat-datepicker #myDatepicker2></mat-datepicker>
+    </mat-form-field>
+  </div>
+
+  <div layout>
+    <mat-form-field>
+      <input
+        matInput
+        type="number"
+        placeholder="Importe"
+        autocomplete="off"
+        formControlName="importe"
+      />
+    </mat-form-field>
+  </div>
+  <div layout>
+    <sx-upper-case-field
+      flex
+      placeholder="Comentario"
+      formControlName="comentario"
+      autocomplete="off"
+    >
+    </sx-upper-case-field>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close>Canelar</button>
+  <button
+    mat-button
+    (click)="onSubmit()"
+    [disabled]="form.invalid || form.pristine"
+  >
+    Aceptar
+  </button>
+</mat-dialog-actions>

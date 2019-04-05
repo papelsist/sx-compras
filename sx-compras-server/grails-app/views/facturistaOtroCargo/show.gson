@@ -1,0 +1,7 @@
+import sx.logistica.FacturistaOtroCargo
+
+model {
+	FacturistaOtroCargo facturistaOtroCargo
+}
+
+json tmpl.facturistaOtroCargo(facturistaOtroCargo)

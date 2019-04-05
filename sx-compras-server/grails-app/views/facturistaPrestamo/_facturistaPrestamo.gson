@@ -1,0 +1,11 @@
+import sx.logistica.FacturistaPrestamo
+
+model {
+	FacturistaPrestamo facturistaPrestamo
+}
+
+json g.render(facturistaPrestamo, [excludes: ['cxc'], resolveTemplate: false]){
+	cxc g.render(facturistaPrestamo.cxc)
+    saldo facturistaPrestamo.cxc.saldoReal
+    cobros facturistaPrestamo.cxc.pagos
+}

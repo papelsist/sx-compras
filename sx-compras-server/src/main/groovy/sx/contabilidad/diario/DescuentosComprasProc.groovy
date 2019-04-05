@@ -99,9 +99,9 @@ class DescuentosComprasProc implements  ProcesadorDePoliza, AsientoBuilder{
     String getSelect() {
         String query =
         """
-                  SELECT 
-        x.subtotal,
-        x.impuesto,
+                SELECT 
+        x.subtotal,        
+        CASE WHEN MONEDA='USD' THEN round(X.TOTAL-X.SUBTOTAL,2) ELSE x.impuesto END impuesto,
         x.total_det,
         x.fecha_documento,
         x.documento,        
@@ -123,8 +123,9 @@ class DescuentosComprasProc implements  ProcesadorDePoliza, AsientoBuilder{
         else concat('115-',(case when asiento like '%DEVOLUCION%' then '0006-' else '0008-' end),x.cta_operativa_prov,'-0000') end) end) as cta_contable ,'119-0001-0000-0000' cta_contable_iva,
         (case when x.moneda='USD' then concat('201-0003-',x.cta_operativa_prov,'-0000') when x.cta_operativa_prov in('0038','0061') then concat('201-0001-',x.cta_operativa_prov,'-0000') else concat('201-0002-',x.cta_operativa_prov,'-0000') end) cta_proveedor
         FROM (        
-        SELECT concat('NOTA_CXP_',case when n.concepto like '%FINANCIER%' then 'FINANCIERO' else concepto end) asiento,n.id origen,n.total,n.folio,n.fecha,n.concepto documentoTipo,n.moneda,n.tipo_de_cambio tc,n.proveedor_id proveedor,n.nombre referencia2
-        ,a.importe total_det,round(a.importe/1.16) as subtotal,a.importe - round(a.importe/1.16) as impuesto
+        SELECT concat('NOTA_CXP_',case when n.concepto like '%FINANCIER%' then 'FINANCIERO' else concepto end) asiento,n.id origen
+        ,round(n.total * n.tipo_de_cambio,2) total,n.folio,n.fecha,n.concepto documentoTipo,n.moneda,n.tipo_de_cambio tc,n.proveedor_id proveedor,n.nombre referencia2
+        ,round(a.importe * n.tipo_de_cambio,2) total_det,round((a.importe * n.tipo_de_cambio) / 1.16,2) subtotal,round(a.importe - round(a.importe/1.16,2) * n.tipo_de_cambio,2) impuesto
         ,c.folio documento,c.fecha fecha_documento,'OFICINAS' sucursal,1 suc
         ,(SELECT x.cuenta_operativa FROM cuenta_operativa_proveedor x where x.proveedor_id=n.proveedor_id ) as cta_operativa_prov,n.uuid,p.rfc
         FROM nota_de_credito_cxp n join aplicacion_de_pago a on(a.nota_id=n.id) join cuenta_por_pagar c on(a.cxp_id=c.id)  join proveedor p on(n.proveedor_id=p.id)

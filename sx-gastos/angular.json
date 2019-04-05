@@ -7,6 +7,12 @@
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "prefix": "sx",
+          "style": "scss"
+        }
+      },
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
@@ -110,18 +116,7 @@
     }
   },
   "defaultProject": "sx-gastos",
-  "schematics": {
-    "@schematics/angular:component": {
-      "inlineStyle": true,
-      "prefix": "sx",
-      "styleext": "scss"
-    },
-    "@schematics/angular:directive": {
-      "prefix": "sx"
-    }
-  },
   "cli": {
-    "defaultCollection": "@ngrx/schematics",
     "packageManager": "npm"
   }
 }

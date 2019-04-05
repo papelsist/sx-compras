@@ -43,6 +43,8 @@ class FacturistaPrestamo {
         comentario nullable:true
         egreso nullable: true
         tipo inList: ['CAMIONETA', 'REPARACION', 'MANTENIMIENTO', 'PERSONAL', 'SEGURO', 'OTROS']
+        createUser nullable: true
+        updateUser nullable: true
     }
 
     static  mapping = {

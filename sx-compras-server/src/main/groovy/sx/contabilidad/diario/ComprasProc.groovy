@@ -192,13 +192,13 @@ class ComprasProc implements  ProcesadorDePoliza, AsientoBuilder{
     String getSelect() {
         String query =
         """
-            SELECT  
+         SELECT  
         x.analisis,
         x.analisis_det,
         x.total_analisis,
         x.descuento,
         x.subtotal,
-        x.impuesto,
+        CASE WHEN MONEDA='USD' THEN round(X.TOTAL-X.SUBTOTAL+X.DESCUENTO,2) ELSE x.impuesto END impuesto,
         x.retenido,
         x.total,
         x.montoTotal,
@@ -231,7 +231,7 @@ class ComprasProc implements  ProcesadorDePoliza, AsientoBuilder{
         ,c.total as montoTotal
         ,round(c.total*c.tipo_de_cambio,2) AS total
         ,round(X.importe_flete*C.tipo_de_cambio,2) AS flete
-        ,SUM((A.CANTIDAD/(case when z.unidad='MIL' then 1000 else 1 end)*A.costo_unitario)*C.tipo_de_cambio) AS analisis_det,x.importe analisis
+        ,round(SUM((A.CANTIDAD/(case when z.unidad='MIL' then 1000 else 1 end)*A.costo_unitario)*C.tipo_de_cambio),2) AS analisis_det,round(x.importe*C.tipo_de_cambio,2) analisis
         ,round(SUM((A.CANTIDAD/(case when z.unidad='MIL' then 1000 else 1 end)*A.costo_unitario)*C.tipo_de_cambio)*1.16,2) AS total_analisis
         ,ROUND( ((C.sub_total-c.descuento)*C.tipo_de_cambio - ((x.importe+x.importe_flete)*C.tipo_de_cambio) ) ,2) AS diferencia
         ,(SELECT x.cuenta_operativa FROM cuenta_operativa_proveedor x where x.proveedor_id=p.id ) as cta_operativa_prov,c.uuid,p.rfc
@@ -243,10 +243,10 @@ class ComprasProc implements  ProcesadorDePoliza, AsientoBuilder{
         JOIN sucursal S ON(S.id=IC.SUCURSAL_ID)
         JOIN proveedor p on(c.proveedor_id=p.id)
         JOIN producto z on(ic.producto_id=z.id)
-        WHERE  DATE(IC.FECHA) = '@FECHA'   
+        WHERE  DATE(IC.FECHA) = '@FECHA'            
         GROUP BY P.ID,IC.FECHA,C.ID,S.ID,C.FECHA,C.MONEDA
         ORDER BY p.CLAVE
-        ) as x
+        ) as x    
         """
         return query
     }

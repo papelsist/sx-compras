@@ -1,0 +1,8 @@
+import sx.logistica.FacturistaOtroCargo
+
+model {
+	Iterable<FacturistaOtroCargo> facturistaOtroCargoList
+}
+
+json tmpl.facturistaOtroCargo(facturistaOtroCargoList ?: [])
+

@@ -39,6 +39,11 @@ export class EmbarquesPageComponent implements OnInit {
       title: 'Pagos ',
       description: 'Pagos de comisiones',
       icon: 'money_off'
+    },
+    {
+      route: 'cobros',
+      title: 'Cobros',
+      descripcion: 'Cobros a choferes'
     }
   ];
 

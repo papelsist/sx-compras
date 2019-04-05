@@ -5,8 +5,9 @@ import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.Resource
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
+import sx.core.Proveedor
 
-@Resource(readOnly = false, formats = ['json'], uri = "/api/embarque/facturistas")
+@Resource(readOnly = false, formats = ['json'], uri = "/api/embarques/facturistas")
 @GrailsCompileStatic
 @Secured("IS_AUTHENTICATED_ANONYMOUSLY")
 @ToString(excludes =  'id, version', includeNames = true, includePackage = false)
@@ -17,33 +18,13 @@ class FacturistaDeEmbarque {
 
     String nombre
 
-    String rfc
-
-    String telefono
-
-    String email
-
-    String cuentaOperativa
-
-    Date dateCreated
-
-    Date lastUpdated
-
-    String createUser
-
-    String updateUser
+    Proveedor proveedor
 
 
-    static constraints = {
-        createUser nullable: true
-        updateUser nullable: true
-    }
+    static constraints = {}
 
     static mapping= {
         id generator:'uuid'
-        rfc minSize: 12, maxSize: 13
-        telefono nullbale: true
-        cuentaOperativa nullable: true
     }
 
     String toString() {

@@ -1,0 +1,11 @@
+import sx.logistica.FacturistaOtroCargo
+
+model {
+	FacturistaOtroCargo facturistaOtroCargo
+}
+
+json g.render(facturistaOtroCargo, [excludes: ['cxc'], resolveTemplate: false]) {
+	cxc g.render(facturistaOtroCargo.cxc)
+	saldo facturistaOtroCargo.cxc.saldoReal
+	cobros facturistaOtroCargo.cxc.pagos
+}

@@ -7,7 +7,6 @@ import groovy.transform.EqualsAndHashCode
 @EqualsAndHashCode(includes='nombre,rfc')
 class Cliente {
 
-    static  auditable=true
 
     String	id
 

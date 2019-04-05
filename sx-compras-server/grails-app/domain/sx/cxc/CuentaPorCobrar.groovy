@@ -76,9 +76,11 @@ class CuentaPorCobrar {
 
     VentaCredito credito
 
+    BigDecimal saldoReal
+
     static constraints = {
-        tipoDocumento inList:['VENTA','CHEQUE_DEVUELTO','DEVOLUCION_CLIENTE','NOTA_DE_CARGO']
-        tipo nullable:true, inList:['CON','COD','CRE','CHE','JUR','PSF','INE','OTR','ACF','ANT','AND']
+        tipoDocumento inList:['VENTA','CHEQUE_DEVUELTO','DEVOLUCION_CLIENTE','NOTA_DE_CARGO', 'PRESTAMO', 'OTROS']
+        tipo nullable:true, inList:['CON','COD','CRE','CHE','JUR','PSF','INE','OTR','ACF','ANT','AND', 'CHO']
         documento maxSize: 20
         uuid nullable:true, unique:true
         tipoDeCambio(scale:6)
@@ -102,6 +104,7 @@ class CuentaPorCobrar {
         cliente index: 'CXC_IDX3'
         cancelada type: 'date'
         pagos formula:'(select COALESCE(sum(x.importe),0) from aplicacion_de_cobro x where x.cuenta_por_cobrar_id=id)'
+        saldoReal formula:'total - (select COALESCE(sum(x.importe),0) from aplicacion_de_cobro x where x.cuenta_por_cobrar_id=id)'
     }
 
     static transients = ['saldo','folio','atraso']

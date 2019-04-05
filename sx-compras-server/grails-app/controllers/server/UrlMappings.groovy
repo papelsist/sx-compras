@@ -284,11 +284,9 @@ class UrlMappings {
         "/api/embarques/comisiones/generar"(controller: 'envioComision', action: 'generar', method: 'POST')
         "/api/embarques/comisiones/batchUpdate"(controller: 'envioComision', action: 'batchUpdate', method: 'PUT')
 
-
-        "/api/prestamoChofer"(resources: 'prestamoChofer', excludes:['create', 'edit','patch']){
-            "/partidas"(resources: 'prestamoChoferDet', excludes:['create', 'edit','patch'])
-        }
-
+        // Prestamos
+        "/api/embarques/facturistaPrestamo"(resources: 'facturistaPrestamo', excludes:['create', 'edit','patch'])
+        "/api/embarques/facturistaOtroCargo"(resources: 'facturistaOtroCargo', excludes:['create', 'edit','patch'])
 
         "/"(controller: 'application', action:'index')
         "/api/session"(controller: 'application', action: 'session')

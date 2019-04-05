@@ -5,6 +5,7 @@ import grails.transaction.NotTransactional
 import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
 import groovy.util.slurpersupport.GPathResult
+import groovy.xml.XmlUtil
 import org.apache.commons.io.input.BOMInputStream
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.springframework.beans.factory.annotation.Autowired
@@ -105,6 +106,7 @@ class ComprobanteFiscalService implements  LogUser{
         def tipoDeCamio = data['TipoCambio'] as BigDecimal
 
         def impuestos = xml.breadthFirst().find { it.name() == 'Impuestos'}
+        // XmlUtil.serialize()
         def trasladados = 0.0
         def retenidos =  0.0
         if(impuestos) {
@@ -141,8 +143,8 @@ class ComprobanteFiscalService implements  LogUser{
                 tipoDeCambio: tipoDeCamio?: 1.0,
                 usoCfdi: usoCfdi,
                 versionCfdi: '3.3',
-                impuestoTrasladado: trasladados?: 0.0,
-                impuestoRetenido: retenidos?: 0.0
+                impuestoTrasladado: trasladados,
+                impuestoRetenido: retenidos
         )
 
         if(tipo == 'GASTOS') {

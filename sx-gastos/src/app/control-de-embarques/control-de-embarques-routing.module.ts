@@ -20,6 +20,20 @@ const routes: Routes = [
             component: fromContainers.EnvioComisionComponent
           }
         ]
+      },
+      {
+        path: 'prestamos',
+        canActivate: [fromGuards.FacturistasGuard],
+        component: fromContainers.PrestamosComponent
+      },
+      {
+        path: 'cargos',
+        canActivate: [fromGuards.FacturistasGuard],
+        component: fromContainers.CargosComponent
+      },
+      {
+        path: 'cobros',
+        loadChildren: 'app/cobros/cobros.module#CobrosModule'
       }
     ]
   }

@@ -14,13 +14,13 @@ class FacturistaOtroCargo {
 
     FacturistaDeEmbarque facturista
 
+    Date fecha
+
     CuentaPorCobrar cxc
 
     String nombre
 
     BigDecimal importe
-
-    BigDecimal saldo
 
     String comentario
 
@@ -35,7 +35,13 @@ class FacturistaOtroCargo {
 
 
     static constraints = {
-        tipo inList: ['MATERIAL', 'CELULAR', 'OTROS']
+        tipo inList: ['MATERIAL', 'CELULAR', 'PATIN', 'MANIOBRA_LOCAL', 'MANIOBRA_FORANEA', 'VALES', 'OTROS']
+        createUser nullable: true
+        updateUser nullable: true
+    }
+
+    static  mapping = {
+        fecha type: 'date'
     }
 
 }
