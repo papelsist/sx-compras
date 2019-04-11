@@ -34,10 +34,10 @@ export const CUENTA_DE_BANCO_LOOKUPFIELD_VALUE_ACCESSOR: any = {
   templateUrl: './cuenta-banco-field.component.html',
   styles: [
     `
-    .fill {
-      width: 100%;
-    }
-  `
+      .fill {
+        width: 100%;
+      }
+    `
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -46,9 +46,14 @@ export class CuentaBancoFieldComponent implements OnInit, ControlValueAccessor {
 
   searchControl = new FormControl();
 
-  @Input() required = false;
+  @Input()
+  required = false;
 
-  @Input() placeholder = 'Cuenta';
+  @Input()
+  placeholder = 'Cuenta';
+
+  @Input()
+  disponibleEnVentas = true;
 
   cuentas$: Observable<any[]>;
 
@@ -56,7 +61,8 @@ export class CuentaBancoFieldComponent implements OnInit, ControlValueAccessor {
 
   onTouch;
 
-  @ViewChild('inputField') inputField: ElementRef;
+  @ViewChild('inputField')
+  inputField: ElementRef;
 
   constructor(private http: HttpClient, private config: ConfigService) {
     this.apiUrl = config.buildApiUrl('tesoreria/cuentas');
@@ -68,7 +74,7 @@ export class CuentaBancoFieldComponent implements OnInit, ControlValueAccessor {
       switchMap((term: any) => {
         const params = new HttpParams()
           .set('term', term)
-          .set('activa', 'activa');
+          .set('disponibleEnVentas', this.disponibleEnVentas.toString());
         return this.http.get<any[]>(this.apiUrl, { params: params });
       })
     );

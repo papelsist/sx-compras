@@ -33,6 +33,11 @@ export class MainPageComponent implements OnInit {
       icon: 'local_shipping',
       route: '/embarques',
       title: 'Control de embarques'
+    },
+    {
+      icon: 'local_atm',
+      route: '/cobranza',
+      title: 'Cobranza choferes'
     }
   ];
 

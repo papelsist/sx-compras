@@ -31,7 +31,7 @@ class CuentaDeBancoController extends RestfulController {
     @Override
     protected List listAllResources(Map params) {
         params.max = 100
-        log.info('List {}', params)
+        // log.info('List {}', params)
         def query = CuentaDeBanco.where{}
 
         if(params.activas) {
@@ -39,6 +39,9 @@ class CuentaDeBancoController extends RestfulController {
         }
         if( this.params.getBoolean('disponibleEnPagos')) {
             query = query.where {disponibleEnPagos == this.params.getBoolean('disponibleEnPagos')}
+        }
+        if( this.params.getBoolean('disponibleEnVentas')) {
+            query = query.where {disponibleEnPagos == this.params.getBoolean('disponibleEnVentas')}
         }
         if(params.cuentaConcentradora) {
             query = query.where{cuentaConcentradora == true}

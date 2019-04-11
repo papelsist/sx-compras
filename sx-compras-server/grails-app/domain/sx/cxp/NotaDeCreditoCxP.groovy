@@ -65,6 +65,11 @@ class NotaDeCreditoCxP {
 
     String tipoDeRelacion
 
+    BigDecimal diferencia
+    Date diferenciaFecha
+
+    BigDecimal disponibleReal
+
 
 
     static constraints = {
@@ -83,6 +88,7 @@ class NotaDeCreditoCxP {
         comentario nullable: true
         tipoDeRelacion nullable: true ,maxSize: 10
         tcContable nullable: true
+        diferenciaFecha nullable: true
     }
 
     static mapping = {
@@ -91,6 +97,8 @@ class NotaDeCreditoCxP {
         fecha type:'date' ,index: 'CXP_APLICACION_IDX1'
         concepto inList: ['DEVOLUCION','DESCUENTO','DESCUENTO_FINANCIERO', 'DESCUENTO_ANTICIPO', 'BONIFICACION']
         aplicado formula:'(select COALESCE(sum(x.importe),0) from aplicacion_de_pago x where x.nota_id=id)'
+        disponibleReal formula:'total - (select COALESCE(sum(x.importe),0) from aplicacion_de_pago x where x.nota_id=id) - diferencia'
+        diferenciaFecha type: 'date'
     }
 
     static transients = ['disponible', 'aplicaciones']
@@ -98,7 +106,7 @@ class NotaDeCreditoCxP {
     static hasMany =[conceptos: NotaDeCreditoCxPDet]
 
     BigDecimal getDisponible() {
-        return total - aplicado
+        return total  - aplicado - diferencia?: 0.0
     }
 
     List<AplicacionDePago> getAplicaciones() {

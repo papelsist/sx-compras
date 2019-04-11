@@ -179,7 +179,7 @@ class ComprasProc implements  ProcesadorDePoliza, AsientoBuilder{
                 documento: row.documento,
                 documentoTipo: 'FAC',
                 documentoFecha: row.fecha_doc,
-                sucursal: 'OFICINAS',
+                sucursal: row.sucursal,
                 debe: debe.abs(),
                 haber: haber.abs()
         )
@@ -194,7 +194,7 @@ class ComprasProc implements  ProcesadorDePoliza, AsientoBuilder{
         """
          SELECT  
         x.analisis,
-        x.analisis_det,
+        (case when x.analisis_det-x.analisis BETWEEN -0.99 and 0.99 then x.analisis else x.analisis_det end) analisis_det,
         x.total_analisis,
         x.descuento,
         x.subtotal,

@@ -1,0 +1,33 @@
+<ng-template
+  tdLoading
+  [tdLoadingUntil]="!(loading$ | async)"
+  tdLoadingStrategy="overlay"
+>
+  <mat-card *ngIf="(cobro$ | async) as cobro">
+    <div class="pad-top pad-left pad-right mat-title" layout>
+      <span>{{ cobro.nombre }}</span>
+      <div class="pad-left">
+        <span>Importe: </span>
+        <span class="pad-left">{{ cobro.importe | currency }}</span>
+      </div>
+      <div class="pad-left">
+        <span>Aplicado: </span>
+        <span class="pad-left">{{ cobro.aplicado | currency }}</span>
+      </div>
+      <!-- <div class="pad-left">
+        <span>Diferencia: </span>
+        <span class="pad-left">{{ cobro.diferencia | currency }}</span>
+      </div> -->
+      <div class="pad-left">
+        <span>Disponible: </span>
+        <span class="pad-left">{{ cobro.saldo | currency }}</span>
+      </div>
+      <span flex></span>
+      <span>Fecha: {{ cobro.fecha | date: 'dd/MM/yyyy' }}</span>
+    </div>
+    <mat-divider></mat-divider>
+    <mat-card-content>
+      {{ cobro | json }}
+    </mat-card-content>
+  </mat-card>
+</ng-template>

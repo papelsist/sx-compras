@@ -1,0 +1,14 @@
+import sx.cxc.SolicitudDeDeposito
+
+model {
+	SolicitudDeDeposito solicitudDeDeposito
+}
+
+json g.render(solicitudDeDeposito, [resolveTemplate: false]){
+	nombre solicitudDeDeposito.cliente.nombre
+    sucursalNombre solicitudDeDeposito.sucursal.nombre
+    banco g.render(solicitudDeDeposito.banco)
+    cuenta g.render(solicitudDeDeposito.cuenta)
+    cliente g.render(solicitudDeDeposito.cliente)
+    status solicitudDeDeposito.status
+}

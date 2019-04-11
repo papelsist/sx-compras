@@ -45,7 +45,7 @@ class CobranzaEfectivoTask implements  AsientoBuilder {
         rows.each { Map row ->
             // Cargo a banco NO DEBE REPETIRSE
             String descripcion  = generarDescripcion(row)
-            if(!cobros.contains(row.origen) && row.cta_contable != '000-0000-0000-0000') {
+            if(!cobros.contains(row.origen) && row.cta_contable != '000-0000-0000-0000' ){
 
                 // Cargo a BANCOS
                 PolizaDet det = buildRegistro(row.cta_contable.toString(), descripcion, row, row.total)
@@ -151,6 +151,8 @@ class CobranzaEfectivoTask implements  AsientoBuilder {
                 }
 
             }
+
+
 
             if(!diferencias.contains(row.origen) && row.diferencia > 0.0 && row.referencia2 == 'EFECTIVO') {
 
@@ -349,7 +351,7 @@ class CobranzaEfectivoTask implements  AsientoBuilder {
         ,b.importe-(case when b.diferencia_fecha='@FECHA' then b.diferencia else 0 end)-ifnull((SELECT sum(a.importe) FROM aplicacion_de_cobro a where a.cobro_id=b.id and a.fecha='@FECHA'),0) SAF
         ,null ctaOrigen,x.banco_origen_id,(SELECT y.nombre FROM banco y where x.banco_origen_id=y.id) bancoOrigen,t.rfc,t.nombre cliente,c.id cxc_id,c.documento factura,c.tipo,c.fecha fecha_fac,i.uuid,a.importe cobro_aplic,c.total montoTotal
         ,concat('105-0001-',(case when s.clave>9 then '00' else '000' end),s.clave,'-0000') cta_contable_fac,'209-0001-0000-0000' cta_iva_pend,'208-0001-0000-0000' cta_iva_pag
-        ,'' diferenciaTipo,0 diferencia,'000-0000-0000-0000' cta_caja,'000-0000-0000-0000' cta_cajera 
+        ,'' diferenciaTipo,0 diferencia,'000-0000-0000-0000' cta_caja,'000-0000-0000-0000' cta_cajera
         FROM ficha f join movimiento_de_cuenta m on(f.ingreso_id=m.id) join cuenta_de_banco z on(m.cuenta_id=z.id)
         join sucursal s on(f.sucursal_id=s.id) left join cobro_cheque x on(x.ficha_id=f.id) join cobro b on(x.cobro_id=b.id)  join cliente t on(b.cliente_id=t.id)
         join aplicacion_de_cobro a on(a.cobro_id=b.id) join cuenta_por_cobrar c on(a.cuenta_por_cobrar_id=c.id) join cfdi i on(c.cfdi_id=i.id)

@@ -30,10 +30,6 @@ const routes: Routes = [
         path: 'cargos',
         canActivate: [fromGuards.FacturistasGuard],
         component: fromContainers.CargosComponent
-      },
-      {
-        path: 'cobros',
-        loadChildren: 'app/cobros/cobros.module#CobrosModule'
       }
     ]
   }

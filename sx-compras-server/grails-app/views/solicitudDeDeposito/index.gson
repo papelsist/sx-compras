@@ -1,0 +1,8 @@
+import sx.cxc.SolicitudDeDeposito
+
+model {
+	Iterable<SolicitudDeDeposito> solicitudDeDepositoList
+}
+
+json tmpl.solicitudDeDeposito(solicitudDeDepositoList ?: [])
+

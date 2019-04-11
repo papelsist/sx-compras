@@ -35,6 +35,7 @@ export class ApplicationsEffects {
     private dialogService: TdDialogService
   ) {
     this.router.events.subscribe(event => {
+      // console.log('Event: ', event);
       switch (true) {
         case event instanceof NavigationStart: {
           this.store.dispatch(

@@ -28,6 +28,10 @@ const routes: Routes = [
         path: 'embarques',
         loadChildren:
           './control-de-embarques/control-de-embarques.module#ControlDeEmbarquesModule'
+      },
+      {
+        path: 'cobranza',
+        loadChildren: './cobranza/cobranza.module#CobranzaModule'
       }
     ]
   }

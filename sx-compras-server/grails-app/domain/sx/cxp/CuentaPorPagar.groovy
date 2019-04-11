@@ -66,6 +66,10 @@ class CuentaPorPagar {
 
     BigDecimal saldoReal
 
+    BigDecimal diferencia = 0.0
+
+    Date diferenciaFecha;
+
     static constraints = {
         tipo inList:['COMPRAS', 'GASTOS']
         folio nullable: true, maxSize: 255
@@ -92,6 +96,7 @@ class CuentaPorPagar {
         comprobanteFiscal nullable: true
         tcContable nullable: true
         contrarecibo nullable: true
+        diferenciaFecha nullable: true
     }
 
     static mapping ={
@@ -101,7 +106,8 @@ class CuentaPorPagar {
         descuentoFinancieroVto type:'date'
         pagos formula:'(select COALESCE(sum(x.importe),0) from aplicacion_de_pago x where x.cxp_id=id and x.pago_id is not null)'
         compensaciones formula:'(select COALESCE(sum(x.importe),0) from aplicacion_de_pago x where x.cxp_id=id and x.nota_id is not null)'
-        saldoReal formula:'total - (select COALESCE(sum(x.importe),0) from aplicacion_de_pago x where x.cxp_id=id and x.pago_id is not null)'
+        saldoReal formula:'total - (select COALESCE(sum(x.importe),0) from aplicacion_de_pago x where x.cxp_id=id and x.pago_id is not null) - diferencia'
+        diferenciaFecha type: 'date'
     }
 
 
@@ -113,7 +119,7 @@ class CuentaPorPagar {
     }
 
     BigDecimal getSaldo() {
-        return this.total - this.pagos - this.compensaciones
+        return this.total - this.pagos - this.compensaciones - this.diferencia
     }
 
     String getAnalisis() {

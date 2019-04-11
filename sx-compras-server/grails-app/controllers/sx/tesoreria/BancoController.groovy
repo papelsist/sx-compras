@@ -18,7 +18,7 @@ class BancoController extends RestfulController<Banco> {
 
     @Override
     protected List listAllResources(Map params) {
-        log.info('List: {}', params)
+        
         def query = Banco.where {}
         params.sort = params.sort ?:'nombre'
         params.order = params.order ?:'asc'

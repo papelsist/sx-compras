@@ -73,7 +73,7 @@ class  Cobro {
     static hasMany =[aplicaciones: AplicacionDeCobro]
 
     static constraints = {
-        tipo inList:['COD','CON','CRE','CHE','JUR']
+        tipo inList:['COD','CON','CRE','CHE','JUR','CHO']
         referencia nullable:true
         sw2 nullable:true, unique:true
         dateCreated nullable: true

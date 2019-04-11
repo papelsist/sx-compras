@@ -84,6 +84,9 @@ export class CobrosTableComponent implements OnInit, OnChanges {
   edit = new EventEmitter();
 
   @Output()
+  select = new EventEmitter();
+
+  @Output()
   delete = new EventEmitter();
 
   constructor(private utils: PagosUtils) {}
@@ -110,5 +113,11 @@ export class CobrosTableComponent implements OnInit, OnChanges {
   doDelete(event: Event, row: Cobro) {
     event.stopPropagation();
     this.delete.emit(row);
+  }
+
+  doSelect(event: Event, row: Cobro) {
+    console.log('Select: ', event);
+    event.stopPropagation();
+    this.select.emit(row);
   }
 }

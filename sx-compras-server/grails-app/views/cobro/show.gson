@@ -4,4 +4,35 @@ model {
 	Cobro cobro
 }
 
-json tmpl.cobro(cobro)
+// json tmpl.cobro(cobro)
+
+json g.render(cobro, [ excludes: ['moneda', 'cliente', 'aplicaciones'], resolveTemplate: false]) {
+    cliente g.render(cobro.cliente, [includes: ['id', 'nombre', 'rfc']])
+    nombre cobro.cliente.nombre
+    moneda cobro.moneda.currencyCode
+    sucursalNombre cobro.sucursal.nombre
+    if(cobro.cheque) {
+        cheque g.render(cobro.cheque, [excludes: ['cobro']]) {
+            bancoOrigen {
+                id cobro.cheque.bancoOrigen.id
+                nombre cobro.cheque.bancoOrigen.nombre
+            }
+        }
+        bancoOrigen cobro.cheque.bancoOrigen.nombre
+    }
+    if(cobro.deposito) {
+        deposito g.render(cobro.deposito)
+    }
+    if(cobro.transferencia) {
+        transferencia g.render(cobro.transferencia)
+    }
+    if(cobro.tarjeta) {
+        tarjeta g.render(cobro.tarjeta)
+    }
+    ingreso cobro.getIngreso()
+    if(cobro.cfdi) {
+        recibo cobro.cfdi.uuid
+    }
+	aplicaciones g.render(cobro.aplicaciones)
+}
+

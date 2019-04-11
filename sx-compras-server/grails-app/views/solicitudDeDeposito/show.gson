@@ -1,0 +1,7 @@
+import sx.cxc.SolicitudDeDeposito
+
+model {
+	SolicitudDeDeposito solicitudDeDeposito
+}
+
+json tmpl.solicitudDeDeposito(solicitudDeDeposito)
