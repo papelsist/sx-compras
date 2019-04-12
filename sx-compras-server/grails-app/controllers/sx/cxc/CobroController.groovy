@@ -4,6 +4,7 @@ import grails.compiler.GrailsCompileStatic
 import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.*
 import groovy.transform.CompileDynamic
+import groovy.transform.ToString
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.exception.ExceptionUtils
 import sx.core.Sucursal
@@ -12,7 +13,7 @@ import sx.utils.Periodo
 
 @Slf4j
 @GrailsCompileStatic
-@Secured(['ROLE_TESORERIA', 'ROLE_CONTABILIDAD'])
+@Secured(['ROLE_TESORERIA', 'ROLE_GASTOS', 'ROLE_CONTABILIDAD'])
 class CobroController extends RestfulController<Cobro> {
     static responseFormats = ['json']
 
@@ -49,6 +50,7 @@ class CobroController extends RestfulController<Cobro> {
         if(params.nombre) {
             query = query.where {cliente.nombre =~ params.nombre}
         }
+        // query = query.where {saldo > 1.0}
         return query.list(params)
     }
 
@@ -59,6 +61,28 @@ class CobroController extends RestfulController<Cobro> {
         cobro.sucursal = Sucursal.where{nombre == 'OFICINAS'}.find()
         return cobro
     }
+
+    def aplicar(AplicarCobroCommand command) {
+        if(command == null) {
+            notFound()
+            return
+        }
+        Cobro cobro = cobroService.registrarAplicaciones(command.cobro, command.facturas)
+        cobro.refresh()
+        forward action: 'show', id: cobro.id
+        // respond cobro view: 'show'
+    }
+
+    def eliminarAplicacion(AplicacionDeCobro aplicacionDeCobro) {
+        if(aplicacionDeCobro == null) {
+            notFound()
+            return
+        }
+        Cobro cobro = cobroService.eliminarAplicacion(aplicacionDeCobro)
+        cobro.refresh()
+        forward action: 'show', id: cobro.id
+    }
+
 
 
 
@@ -156,5 +180,11 @@ class RelacionPagosCommand {
 class CobranzaPorSucursalCommand {
     Date fecha
     String sucursal
+}
+
+@ToString
+class AplicarCobroCommand {
+    Cobro cobro
+    List<CuentaPorCobrar> facturas
 }
 

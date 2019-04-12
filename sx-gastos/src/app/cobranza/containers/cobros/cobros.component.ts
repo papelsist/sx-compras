@@ -39,7 +39,7 @@ import { Periodo } from 'app/_core/models/periodo';
           (change)="onFilterChange($event)">
         </sx-cartera-filter-btn>
 
-        <button mat-menu-item class="actions" (click)="reload()"><mat-icon>refresh</mat-icon> Recargar</button>
+        <button mat-menu-item class="actions" (click)="reload(cartera, filter)"><mat-icon>refresh</mat-icon> Recargar</button>
       </sx-search-title>
       <mat-divider></mat-divider>
 

@@ -25,6 +25,11 @@ export class CobranzaPageComponent implements OnInit {
       route: 'solicitudes',
       title: 'Depositos',
       description: 'Solicitudes de deposito'
+    },
+    {
+      route: 'notas-de-cargo',
+      title: 'N.Cargo',
+      description: 'Notas de cargo'
     }
   ];
 

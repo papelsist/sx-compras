@@ -26,6 +26,11 @@ export const routes: Route[] = [
         path: 'solicitudes',
         data: { cartera: CARTERAS.CHO },
         component: containers.SolicitudesComponent
+      },
+      {
+        path: 'notas-de-cargo',
+        data: { cartera: CARTERAS.CRE },
+        component: containers.NotasDeCargoComponent
       }
     ]
   }

@@ -6,5 +6,17 @@ model {
 
 json g.render(cuentaPorCobrar, [ excludes: ['moneda'], resolveTemplate: false]) {
     sucursalNombre cuentaPorCobrar.sucursal.nombre
+    nombre cuentaPorCobrar.cliente.nombre
+    cliente g.render(cuentaPorCobrar.cliente, [includes: ['id', 'nombre', 'rfc']])
     moneda cuentaPorCobrar.moneda.currencyCode
+    saldo cuentaPorCobrar.saldoReal
+    atraso cuentaPorCobrar.getAtraso()
+    cfdi g.render(cuentaPorCobrar.cfdi)
+    sucursal cuentaPorCobrar.sucursal.nombre
+    if(cuentaPorCobrar.credito) {
+        cobrador cuentaPorCobrar.credito.cobrador.sw2
+        plazo cuentaPorCobrar.credito.plazo
+    }
+    credito g.render(cuentaPorCobrar.credito)
+
 }

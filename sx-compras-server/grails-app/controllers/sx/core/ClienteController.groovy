@@ -38,4 +38,5 @@ class ClienteController extends RestfulController<Cliente> {
     }
 
 
+
 }

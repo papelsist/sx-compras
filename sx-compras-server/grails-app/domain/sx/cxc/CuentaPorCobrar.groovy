@@ -18,31 +18,31 @@ class CuentaPorCobrar {
 
     String tipoDocumento
 
-    Long	documento	 = 0
+    Long documento = 0
 
-    BigDecimal	importe	 = 0
+    BigDecimal importe = 0
 
-    BigDecimal descuentoImporte = 0
+    BigDecimal descuentoImporte = 0.0
 
-    BigDecimal subtotal = 0
+    BigDecimal subtotal = 0.0
 
-    BigDecimal	impuesto	 = 0
+    BigDecimal impuesto	= 0.0
 
-    BigDecimal	total	 = 0
+    BigDecimal total = 0.0
 
-    String	formaDePago
+    String formaDePago
 
     Currency moneda = Currency.getInstance('MXN')
 
-    BigDecimal	tipoDeCambio	 = 1
+    BigDecimal tipoDeCambio	 = 1
 
-    BigDecimal	cargo	 = 0
+    BigDecimal cargo	 = 0
 
-    String	comentario
+    String comentario
 
-    String	sw2
+    String sw2
 
-    String	uuid
+    String uuid
 
     String tipo
 

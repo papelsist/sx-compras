@@ -30,8 +30,48 @@ export class CobroEffects {
   );
 
   @Effect()
+  aplicarCobro$ = this.actions$.pipe(
+    ofType<fromActions.RegistrarAplicaciones>(
+      CobroActionTypes.RegistrarAplicaciones
+    ),
+    map(action => action.payload),
+    switchMap(command => {
+      return this.service
+        .registrarAcplicaciones(command.cobroId, command.facturas)
+        .pipe(
+          map(cobro => new fromActions.RegistrarAplicacionesSuccess({ cobro })),
+          catchError(error =>
+            of(new fromActions.RegistrarAplicacionesFail({ response: error }))
+          )
+        );
+    })
+  );
+
+  @Effect()
+  eliminarAplicacion$ = this.actions$.pipe(
+    ofType<fromActions.EliminarAplicacion>(CobroActionTypes.EliminarAplicacion),
+    map(action => action.payload),
+    switchMap(command => {
+      return this.service.eliminarAcplicacion(command.aplicationId).pipe(
+        map(cobro => new fromActions.EliminarAplicacionSuccess({ cobro })),
+        catchError(error =>
+          of(new fromActions.EliminarAplicacionFail({ response: error }))
+        )
+      );
+    })
+  );
+
+  @Effect()
   fail$ = this.actions$.pipe(
-    ofType<fromActions.LoadCobrosFail>(CobroActionTypes.LoadCobrosFail),
+    ofType<
+      | fromActions.LoadCobrosFail
+      | fromActions.RegistrarAplicacionesFail
+      | fromActions.EliminarAplicacionFail
+    >(
+      CobroActionTypes.LoadCobrosFail,
+      CobroActionTypes.RegistrarAplicacionesFail,
+      CobroActionTypes.EliminarAplicacionFail
+    ),
     map(action => action.payload.response),
     // tap(response => console.log('Error: ', response)),
     map(response => new fromRoot.GlobalHttpError({ response }))

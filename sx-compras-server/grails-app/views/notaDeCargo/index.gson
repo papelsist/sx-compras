@@ -1,0 +1,8 @@
+import sx.cxc.NotaDeCargo
+
+model {
+	Iterable<NotaDeCargo> notaDeCargoList
+}
+
+json tmpl.notaDeCargo(notaDeCargoList ?: [])
+

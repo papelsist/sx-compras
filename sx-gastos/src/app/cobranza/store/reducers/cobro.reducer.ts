@@ -36,14 +36,16 @@ export function reducer(state = initialState, action: CobroActions): State {
         term
       };
     }
-
+    case CobroActionTypes.EliminarAplicacion:
+    case CobroActionTypes.RegistrarAplicaciones:
     case CobroActionTypes.LoadCobros: {
       return {
         ...state,
         loading: true
       };
     }
-
+    case CobroActionTypes.EliminarAplicacionFail:
+    case CobroActionTypes.RegistrarAplicacionesFail:
     case CobroActionTypes.LoadCobrosFail: {
       return {
         ...state,
@@ -62,6 +64,14 @@ export function reducer(state = initialState, action: CobroActions): State {
     case CobroActionTypes.UpsertCobro: {
       return adapter.upsertOne(action.payload.cobro, {
         ...state
+      });
+    }
+
+    case CobroActionTypes.EliminarAplicacionSuccess:
+    case CobroActionTypes.RegistrarAplicacionesSuccess: {
+      return adapter.upsertOne(action.payload.cobro, {
+        ...state,
+        loading: false
       });
     }
 

@@ -418,44 +418,47 @@ class ImporteALetra {
         if (numero >= 90 && numero < 100)
         {
             num_letra = "NOVENTA ";
-            if (numero > 90)
+            if (numero >= 91)
                 num_letra = num_letra.concat("Y ").concat(unidad(numero - 90));
         }
         else if (numero >= 80 && numero < 90)
         {
             num_letra = "OCHENTA ";
-            if (numero > 80)
+            if (numero >= 81)
                 num_letra = num_letra.concat("Y ").concat(unidad(numero - 80));
         }
         else if (numero >= 70 && numero < 80)
         {
             num_letra = "SETENTA ";
-            if (numero > 70)
+            if (numero >= 71)
                 num_letra = num_letra.concat("Y ").concat(unidad(numero - 70));
         }
         else if (numero >= 60 && numero < 70)
         {
             num_letra = "SESENTA ";
-            if (numero > 60)
+            if (numero >= 61)
                 num_letra = num_letra.concat("Y ").concat(unidad(numero - 60));
         }
         else if (numero >= 50 && numero < 60)
         {
-            num_letra = "CINCUENTA ";
-            if (numero > 50)
+            num_letra = "CINCUENTA "
+            if (numero >= 51)
                 num_letra = num_letra.concat("Y ").concat(unidad(numero - 50));
         }
         else if (numero >= 40 && numero < 50)
         {
-            num_letra = "CUARENTA ";
-            if (numero > 40)
-                num_letra = num_letra.concat("Y ").concat(unidad(numero - 40));
+            num_letra = "CUARENTA "
+            if (numero >= 41)
+                num_letra = num_letra.concat("Y ").concat(unidad(numero - 40))
+
         }
         else if (numero >= 30 && numero < 40)
         {
-            num_letra = "TREINTA ";
-            if (numero > 30)
-                num_letra = num_letra.concat("Y ").concat(unidad(numero - 30));
+            if (numero < 31)
+                num_letra = "TREINTA "
+            else
+                num_letra = "TREINTA Y ".concat(unidad(numero - 30))
+
         }
         else if (numero >= 20 && numero < 30)
         {
@@ -579,10 +582,10 @@ class ImporteALetra {
             }
             else if (numero >= 100 && numero < 200)
             {
-                if (numero == 100)
-                    num_letra = "CIEN ";
-                else
+                num_letra = "CIEN "
+                if (numero >= 101)
                     num_letra = "CIENTO ".concat(decena(numero - 100));
+
             }
         }
         else
@@ -688,7 +691,7 @@ class ImporteALetra {
         return MessageFormat.format(num_letras, ok);
     }
 
-    private static ImporteALetra INSTANCE;
+    private static   INSTANCE;
 
     public static String aLetra(final BigDecimal importe){
         if(INSTANCE==null)

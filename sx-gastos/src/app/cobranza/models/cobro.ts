@@ -9,6 +9,7 @@ export interface Cobro {
   moneda: string;
   tipoDeCambio: number;
   importe: number;
+  diferencia: number;
   disponible: number;
   referencia?: string;
   primeraAplicacion?: string;
@@ -28,6 +29,7 @@ export interface Cobro {
   bancoOrigen?: string;
   selected?: boolean;
   saldo?: number;
+  recibo?: string;
 }
 
 export interface CobroTarjeta {

@@ -19,7 +19,7 @@ abstract trait AsientoBuilder implements  SqlAccess{
 
     PolizaDet buildRegistro(String cuentaClave, String descripcion, Map row, def debe = 0.0, def haber = 0.0) {
 
-        CuentaContable cuenta = buscarCuenta(cuentaClave)
+        CuentaContable cuenta = buscarCuenta(cuentaClave, row)
 
         PolizaDet det = new PolizaDet(
                 cuenta: cuenta,
@@ -89,10 +89,10 @@ abstract trait AsientoBuilder implements  SqlAccess{
      * @param clave
      * @return
      */
-    CuentaContable buscarCuenta(String clave) {
+    CuentaContable buscarCuenta(String clave, Map data = [:]) {
         CuentaContable cuenta = CuentaContable.where{clave == clave}.find()
         if(!cuenta)
-            throw new RuntimeException("No existe cuenta contable ${clave}")
+            throw new RuntimeException("No existe cuenta contable ${clave} ${data}")
         return cuenta
     }
 
