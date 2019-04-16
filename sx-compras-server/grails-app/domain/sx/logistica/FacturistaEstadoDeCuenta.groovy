@@ -24,6 +24,10 @@ class FacturistaEstadoDeCuenta {
 
     BigDecimal importe
 
+    BigDecimal saldo
+
+    BigDecimal tasaDeInteres = 0.0
+
     String comentario
 
     String createUser
@@ -35,6 +39,8 @@ class FacturistaEstadoDeCuenta {
     static constraints = {
         tipo inList: ['PRESTAMO_PERSONAL', 'OTROS_CARGOS', 'ABONO', 'INTERESES', 'INTERESES_IVA']
         origen nullable: true
+        comentario nullable: true
+        tasaDeInteres nullable: true
     }
 
 

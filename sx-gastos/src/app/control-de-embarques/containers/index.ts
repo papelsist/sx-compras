@@ -3,13 +3,15 @@ import { EnvioComisionesComponent } from './envio-comisiones/envio-comisiones.co
 import { EnvioComisionComponent } from './envio-comision/envio-comision.component';
 import { PrestamosComponent } from './prestamos/prestamos.component';
 import { CargosComponent } from './cargos/cargos.component';
+import { EstadoDeCuentaComponent } from './estado-de-cuenta/estado-de-cuenta.component';
 
 export const containers: any[] = [
   EmbarquesPageComponent,
   EnvioComisionesComponent,
   EnvioComisionComponent,
   PrestamosComponent,
-  CargosComponent
+  CargosComponent,
+  EstadoDeCuentaComponent
 ];
 
 export * from './embarques-page/embarques-page.component';
@@ -19,3 +21,5 @@ export * from './envio-comision/envio-comision.component';
 export * from './prestamos/prestamos.component';
 
 export * from './cargos/cargos.component';
+
+export * from './estado-de-cuenta/estado-de-cuenta.component';

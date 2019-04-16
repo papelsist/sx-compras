@@ -7,6 +7,7 @@ import * as fromGuards from './guards';
 const routes: Routes = [
   {
     path: '',
+    canActivate: [fromGuards.FacturistasGuard],
     component: fromContainers.EmbarquesPageComponent,
     children: [
       {
@@ -23,13 +24,17 @@ const routes: Routes = [
       },
       {
         path: 'prestamos',
-        canActivate: [fromGuards.FacturistasGuard],
+        // canActivate: [fromGuards.FacturistasGuard],
         component: fromContainers.PrestamosComponent
       },
       {
         path: 'cargos',
         canActivate: [fromGuards.FacturistasGuard],
         component: fromContainers.CargosComponent
+      },
+      {
+        path: 'estadoDeCuenta',
+        component: fromContainers.EstadoDeCuentaComponent
       }
     ]
   }

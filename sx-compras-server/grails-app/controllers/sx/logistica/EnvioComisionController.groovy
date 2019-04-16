@@ -8,6 +8,7 @@ import groovy.transform.CompileDynamic
 import groovy.transform.ToString
 import groovy.util.logging.Slf4j
 import org.springframework.http.HttpStatus
+import sx.core.Sucursal
 import sx.reports.ReportService
 import sx.utils.Periodo
 
@@ -76,6 +77,32 @@ class EnvioComisionController extends RestfulController<EnvioComision> {
 
         }
         respond res
+    }
+
+    def entregasPorChofer() {
+        Periodo periodo = (Periodo)params.periodo
+        Map repParams = [
+                FECHA_INI: periodo.fechaInicial,
+                FECHA_FIN: periodo.fechaFinal,
+                SUCURSAL: params.sucursal,
+                CHOFER: params.chofer
+        ]
+
+        def pdf =  reportService.run('embarques/ComisionEntregaPorChoferADMIN.jrxml', repParams)
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'EntregaPorChofer.pdf')
+    }
+
+    def comisionesPorFacturista() {
+        Periodo periodo = (Periodo)params.periodo
+        Map repParams = [
+                FECHA_INI: periodo.fechaInicial,
+                FECHA_FIN: periodo.fechaFinal,
+                FACTURISTA: params.facturista
+        ]
+        repParams.MONEDA = params.moneda
+
+        def pdf =  reportService.run('embarques/ComisionPorFacturistaDeEmbarques.jrxml', repParams)
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'ComisionPorFacturistaDeEmbarques.jrxml.pdf')
     }
 
 

@@ -9,6 +9,12 @@ import { PrestamoFormComponent } from './prestamo-form/prestamo-form.component';
 import { FacturistasFieldComponent } from './facturista-field/facturista-field.component';
 import { CargosTableComponent } from './cargos-table/cargos-table.component';
 import { CargoFormComponent } from './cargo-form/cargo-form.component';
+import { EntregasPorChoferDialogComponent } from './comisiones-report/entregas-por-chofer-dialog.component';
+import { ChoferFieldComponent } from './chofer-field/chofer-field.component';
+import { ComisionesPorFacturistaDialogComponent } from './comisiones-report/comisiones-facturista-dialog.component';
+
+import { SelectorDeFacturistaComponent } from './selector-de-facturista/selector-de-facturista.component';
+import { EstadoDeCuentaTableComponent } from './estado-de-cuenta-table/estado-de-cuenta-table.component';
 
 export const components: any[] = [
   EnviosFilterLabelComponent,
@@ -22,14 +28,27 @@ export const components: any[] = [
   FacturistasFieldComponent,
   // Otros cargos
   CargosTableComponent,
-  CargoFormComponent
+  CargoFormComponent,
+  ChoferFieldComponent,
+
+  // Reportes
+  EntregasPorChoferDialogComponent,
+  ComisionesPorFacturistaDialogComponent,
+
+  SelectorDeFacturistaComponent,
+
+  // Estado de cuenta
+  EstadoDeCuentaTableComponent
 ];
 
 export const entryComponents = [
   EnviosFilterComponent,
   EnvioComisionFormComponent,
   PrestamoFormComponent,
-  CargoFormComponent
+  CargoFormComponent,
+  EntregasPorChoferDialogComponent,
+  ComisionesPorFacturistaDialogComponent,
+  SelectorDeFacturistaComponent
 ];
 
 export * from './envios-filter/envios-filter-label.component';
@@ -46,3 +65,11 @@ export * from './facturista-field/facturista-field.component';
 // Otros cargos
 export * from './cargos-table/cargos-table.component';
 export * from './cargo-form/cargo-form.component';
+
+export * from './chofer-field/chofer-field.component';
+export * from './comisiones-report/entregas-por-chofer-dialog.component';
+export * from './comisiones-report/comisiones-facturista-dialog.component';
+
+export * from './selector-de-facturista/selector-de-facturista.component';
+
+export * from './estado-de-cuenta-table/estado-de-cuenta-table.component';

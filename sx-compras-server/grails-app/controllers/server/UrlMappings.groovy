@@ -304,6 +304,7 @@ class UrlMappings {
         "/api/sat/polizas/descargarXml/$id"(controller:"polizasDelPeriodoSat", action:"descargarXml")
 
         // Embarques
+        "/api/choferes"(resources: 'chofer', excludes:['create', 'edit','patch'])
         "/api/embarques"(resources: 'embarque', excludes:['create', 'edit','patch', 'save', 'update', 'delete'])
         "/api/envios"(resources: 'envio', excludes:['create', 'edit','patch', 'save','update', 'delete']) {
             "/partidas"(resources: 'envioDet', excludes:['create', 'edit','patch', 'save', 'update', 'delete'])
@@ -311,10 +312,13 @@ class UrlMappings {
         "/api/embarques/comisiones"(resources: "envioComision", excludes: ['create', 'edit', 'patch'])
         "/api/embarques/comisiones/generar"(controller: 'envioComision', action: 'generar', method: 'POST')
         "/api/embarques/comisiones/batchUpdate"(controller: 'envioComision', action: 'batchUpdate', method: 'PUT')
+        "/api/embarques/comisiones/entregasPorChofer"(controller: 'envioComision', action: 'entregasPorChofer')
+        "/api/embarques/comisiones/comisionesPorFacturista"(controller: 'envioComision', action: 'comisionesPorFacturista')
 
         // Prestamos
         "/api/embarques/facturistaPrestamo"(resources: 'facturistaPrestamo', excludes:['create', 'edit','patch'])
         "/api/embarques/facturistaOtroCargo"(resources: 'facturistaOtroCargo', excludes:['create', 'edit','patch'])
+        "/api/embarques/facturistaEstadoDeCuenta"(resources: 'facturistaEstadoDeCuenta', excludes:['create', 'save', 'edit', 'update','patch'])
 
         // SolicitudDeDepositos
 

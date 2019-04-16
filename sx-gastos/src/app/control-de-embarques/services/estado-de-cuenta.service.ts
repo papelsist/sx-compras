@@ -6,22 +6,27 @@ import { catchError } from 'rxjs/operators';
 
 import { ConfigService } from 'app/utils/config.service';
 
-import { FacturistaDeEmbarque } from '../model';
+import { FacturistaEstadoDeCuenta } from '../model';
 
 @Injectable({
   providedIn: 'root'
 })
-export class FacturistaService {
+export class EstadoDeCuentaService {
   private apiUrl: string;
 
   constructor(private http: HttpClient, configService: ConfigService) {
-    this.apiUrl = configService.buildApiUrl('embarques/facturistas');
+    this.apiUrl = configService.buildApiUrl(
+      'embarques/facturistaEstadoDeCuenta'
+    );
   }
 
-  list(): Observable<FacturistaDeEmbarque[]> {
-    const params = new HttpParams().set('max', '100').set('sort', 'nombre');
+  list(facturistaId: string): Observable<FacturistaEstadoDeCuenta[]> {
+    const params = new HttpParams()
+      .set('facturistaId', facturistaId)
+      .set('sort', 'lastUpdated')
+      .set('order', 'desc');
     return this.http
-      .get<FacturistaDeEmbarque[]>(this.apiUrl, { params: params })
+      .get<FacturistaEstadoDeCuenta[]>(this.apiUrl, { params: params })
       .pipe(catchError((error: any) => throwError(error)));
   }
 }

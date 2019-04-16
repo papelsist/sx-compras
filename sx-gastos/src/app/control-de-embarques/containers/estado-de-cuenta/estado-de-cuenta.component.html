@@ -1,0 +1,40 @@
+<mat-card>
+  <mat-toolbar layout>
+    <span>Estado de cuenta</span>
+    <span flex></span>
+    <span *ngIf="(selected$ | async) as selected">
+      <span>{{ selected.nombre }}</span>
+    </span>
+    <span flex></span>
+    <div class="button-section">
+      <ng-container *ngIf="(facturistas$ | async) as facturistas">
+        <button mat-icon-button (click)="select(facturistas)">
+          <mat-icon>search</mat-icon>
+        </button>
+      </ng-container>
+      <button
+        *ngIf="(selected$ | async) as facturista"
+        (click)="reload(facturista)"
+        mat-icon-button
+      >
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </div>
+    <span>
+      <button mat-icon-button [matMenuTriggerFor]="toolbarMenu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #toolbarMenu="matMenu">
+        <button mat-menu-item>
+          Registrar intereses
+        </button>
+      </mat-menu>
+    </span>
+  </mat-toolbar>
+
+  <div class="table-panel">
+    <sx-estado-de-cuenta-table
+      [movimientos]="movimientos$ | async"
+    ></sx-estado-de-cuenta-table>
+  </div>
+</mat-card>

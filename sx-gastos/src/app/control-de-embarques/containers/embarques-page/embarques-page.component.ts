@@ -8,6 +8,12 @@ import * as fromAuth from 'app/auth/store';
 
 import { Observable } from 'rxjs';
 import { User } from 'app/auth/models/user';
+import { MatDialog } from '@angular/material';
+import {
+  EntregasPorChoferDialogComponent,
+  ComisionesPorFacturistaDialogComponent
+} from 'app/control-de-embarques/components';
+import { ReportService } from 'app/reportes/services/report.service';
 
 @Component({
   selector: 'sx-embarques-page',
@@ -35,15 +41,10 @@ export class EmbarquesPageComponent implements OnInit {
       icon: 'gradient'
     },
     {
-      route: 'pagos',
-      title: 'Pagos ',
-      description: 'Pagos de comisiones',
-      icon: 'money_off'
-    },
-    {
-      route: 'cobros',
-      title: 'Cobros',
-      descripcion: 'Cobros a choferes'
+      route: 'estadoDeCuenta',
+      title: 'Estado de cuenta',
+      description: '',
+      icon: 'account_box'
     }
   ];
 
@@ -52,11 +53,45 @@ export class EmbarquesPageComponent implements OnInit {
 
   constructor(
     public media: TdMediaService,
-    private store: Store<fromStore.State>
+    private store: Store<fromStore.State>,
+    private dialog: MatDialog,
+    private service: ReportService
   ) {}
 
   ngOnInit() {
     this.user$ = this.store.pipe(select(fromAuth.getUser));
     this.api$ = this.store.pipe(select(fromAuth.getApiInfo));
+  }
+
+  reporteDeEntrgasPorChofer() {
+    this.dialog
+      .open(EntregasPorChoferDialogComponent, {
+        data: {},
+        width: '600px'
+      })
+      .afterClosed()
+      .subscribe(res => {
+        if (res) {
+          console.log('Run report: ', res);
+          this.service.runReport('embarques/comisiones/entregasPorChofer', res);
+        }
+      });
+  }
+  comisionesPorFacturista() {
+    this.dialog
+      .open(ComisionesPorFacturistaDialogComponent, {
+        data: {},
+        width: '550px'
+      })
+      .afterClosed()
+      .subscribe(res => {
+        if (res) {
+          console.log('Run report: ', res);
+          this.service.runReport(
+            'embarques/comisiones/comisionesPorFacturista',
+            res
+          );
+        }
+      });
   }
 }

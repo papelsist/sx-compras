@@ -1,0 +1,10 @@
+<ng-container [formGroup]="parent">
+  <mat-form-field [style.width.%]="100">
+    <mat-select [placeholder]="placeholder" formControlName="chofer">
+      <mat-option>TODOS</mat-option>
+      <mat-option *ngFor="let chofer of choferes" [value]="chofer.id">
+        {{ chofer.nombre }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</ng-container>
