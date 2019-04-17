@@ -6,18 +6,20 @@ import grails.events.annotation.gorm.Listener
 import groovy.util.logging.Slf4j
 
 import org.grails.datastore.mapping.engine.event.AbstractPersistenceEvent
+import org.grails.datastore.mapping.engine.event.EventType
 import org.grails.datastore.mapping.engine.event.PostDeleteEvent
 import org.grails.datastore.mapping.engine.event.PostInsertEvent
 import org.grails.datastore.mapping.engine.event.PostUpdateEvent
 
 import sx.core.LogUser
+import sx.cxc.AplicacionDeCobro
 
 
 @Slf4j
 @GrailsCompileStatic
 class EstadoDeCuentaListenerService implements  LogUser{
 
-    @Listener([FacturistaOtroCargo, FacturistaPrestamo])
+    @Listener([FacturistaOtroCargo, FacturistaPrestamo, AplicacionDeCobro])
     void onPostInsertEvent(PostInsertEvent event) {
         registrar(event)
     }
@@ -28,7 +30,7 @@ class EstadoDeCuentaListenerService implements  LogUser{
         registrar(event)
     }
 
-    @Listener([FacturistaOtroCargo, FacturistaPrestamo])
+    @Listener([FacturistaOtroCargo, FacturistaPrestamo, AplicacionDeCobro])
     void onPostDelete(PostDeleteEvent event) {
         registrar(event)
     }
@@ -51,6 +53,10 @@ class EstadoDeCuentaListenerService implements  LogUser{
             FacturistaPrestamo prestamo = event.entityObject as FacturistaPrestamo
             registrarPrestamo(prestamo)
         }
+        if(event.entityObject instanceof AplicacionDeCobro) {
+            AplicacionDeCobro aplicacion = event.entityObject as AplicacionDeCobro
+            atenderAplicacion(aplicacion, event)
+        }
     }
 
     private registrarPrestamo(FacturistaPrestamo prestamo) {
@@ -66,11 +72,12 @@ class EstadoDeCuentaListenerService implements  LogUser{
         BigDecimal saldoAnterior = last ? last.saldo : 0.0
         BigDecimal saldo = saldoAnterior + prestamo.importe
         if(!mov) {
+            log.info('Generando MOV...')
             mov = new FacturistaEstadoDeCuenta(
                     facturista: prestamo.facturista,
                     nombre: prestamo.facturista.nombre,
                     origen: prestamo.id.toString(),
-                    tipo: 'OTROS_CARGOS',
+                    tipo: 'PRESTAMO',
                     importe: prestamo.importe,
                     saldo: saldo,
                     concepto: prestamo.tipo,
@@ -78,6 +85,7 @@ class EstadoDeCuentaListenerService implements  LogUser{
                     fecha: prestamo.fecha
             )
         } else {
+            log.info('Mov existente: {}', mov)
             mov.importe = prestamo.importe
             mov.saldo = saldo
         }
@@ -115,4 +123,51 @@ class EstadoDeCuentaListenerService implements  LogUser{
         logEntity(mov)
         mov.save()
     }
+
+
+    private atenderAplicacion(AplicacionDeCobro aplicacion, AbstractPersistenceEvent event) {
+        if(event.eventType == EventType.PostDelete) {
+            log.info("Eliminando abono cancelacion de apliacion: {}", aplicacion.id)
+            eliminarAbono(aplicacion)
+        } else {
+            registrarAbono(aplicacion)
+        }
+
+    }
+
+    private registrarAbono(AplicacionDeCobro a) {
+        log.info('Registrando abono en estado de cuenta aplicacion: {}', a.id)
+        FacturistaDeEmbarque f = FacturistaDeEmbarque.where{rfc == a.cobro.cliente.rfc}.find()
+        FacturistaEstadoDeCuenta.withNewSession {
+            FacturistaEstadoDeCuenta mov = FacturistaEstadoDeCuenta.where{ origen == a.id}.find()
+            BigDecimal importe = a.importe * - 1.0
+            if(!mov) {
+                mov = new FacturistaEstadoDeCuenta(
+                        facturista: f,
+                        nombre: f.nombre,
+                        origen: a.id,
+                        tipo: 'ABONO',
+                        concepto: a.cuentaPorCobrar.tipoDocumento,
+                        comentario: a.cobro.comentario,
+                        fecha: a.fecha
+                )
+            }
+            mov.importe = importe
+            mov.saldo = 0.0
+            logEntity(mov)
+            mov.save(flush: true)
+        }
+
+    }
+
+    private eliminarAbono(AplicacionDeCobro a) {
+        FacturistaEstadoDeCuenta.withNewSession {
+            FacturistaEstadoDeCuenta row = FacturistaEstadoDeCuenta.where{ origen == a.id}.find()
+            if(row) {
+                row.delete flush: true
+            }
+        }
+    }
+
+
 }

@@ -60,10 +60,13 @@ export class EstadoDeCuentaComponent implements OnInit {
       .afterClosed()
       .subscribe(facturista => {
         if (facturista) {
-          this.store.dispatch(new fromStore.SetFacturista({ facturista }));
+          // this.store.dispatch(new fromStore.SetFacturista({ facturista }));
+          this.load(facturista);
         }
       });
   }
 
-  reload() {}
+  load(facturista: FacturistaDeEmbarque) {
+    this.store.dispatch(new fromStore.SetFacturista({ facturista }));
+  }
 }

@@ -34,6 +34,7 @@ export class CxCTableComponent implements OnInit, OnChanges {
     'sucursal',
     'nombre',
     'tipo',
+    'tipoDocumento',
     'fecha',
     'documento',
     'moneda',

@@ -18,8 +18,9 @@ class FacturistaDeEmbarque {
 
     String nombre
 
-    Proveedor proveedor
+    String rfc
 
+    Proveedor proveedor
 
     static constraints = {}
 

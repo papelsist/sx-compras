@@ -37,6 +37,7 @@ export class CxCSelectorDialogComponent implements OnInit {
   columns = [
     'sucursal',
     'tipo',
+    'tipoDocumento',
     'fecha',
     'documento',
     'moneda',

@@ -14,7 +14,7 @@
       </ng-container>
       <button
         *ngIf="(selected$ | async) as facturista"
-        (click)="reload(facturista)"
+        (click)="load(facturista)"
         mat-icon-button
       >
         <mat-icon>refresh</mat-icon>

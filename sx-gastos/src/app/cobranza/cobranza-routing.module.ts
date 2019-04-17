@@ -14,7 +14,7 @@ export const routes: Route[] = [
     children: [
       {
         path: 'cobros',
-        data: { cartera: CARTERAS.CRE },
+        data: { cartera: CARTERAS.CHO },
         component: containers.CobrosComponent
       },
       {

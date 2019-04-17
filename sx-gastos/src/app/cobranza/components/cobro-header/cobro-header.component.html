@@ -18,12 +18,23 @@
       placeholder="Forma de pago"
     />
   </mat-form-field>
-  <mat-form-field class="pad-left small-field">
+  <mat-form-field
+    class="pad-left small-field"
+    *ngIf="cobro.formaDePago !== 'CHEQUE'"
+  >
     <input
       matInput
       [value]="cobro.referencia"
       [disabled]="true"
       placeholder="Referencia"
+    />
+  </mat-form-field>
+  <mat-form-field class="pad-left small-field" *ngIf="cobro.cheque">
+    <input
+      matInput
+      [value]="cobro.cheque.numero"
+      [disabled]="true"
+      placeholder="Cheque"
     />
   </mat-form-field>
   <mat-form-field class="pad-left" flex>

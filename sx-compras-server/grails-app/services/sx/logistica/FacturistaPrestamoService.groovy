@@ -18,7 +18,6 @@ class FacturistaPrestamoService implements  LogUser{
     }
 
     FacturistaPrestamo update(FacturistaPrestamo prestamo) {
-
         CuentaPorCobrar cxc = prestamo.cxc
         cxc.comentario = prestamo.comentario
         cxc.importe = prestamo.importe
@@ -45,7 +44,7 @@ class FacturistaPrestamoService implements  LogUser{
                 sucursal: suc,
                 fecha: prestamo.fecha,
                 formaDePago: 'TRANSFERENCIA',
-                comentario: prestamo.comentario,
+                comentario: "${prestamo.tipo} ${prestamo.comentario}",
         )
         logEntity(cxc)
         return cxc

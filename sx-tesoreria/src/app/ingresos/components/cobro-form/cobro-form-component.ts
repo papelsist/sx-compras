@@ -90,6 +90,7 @@ export class CobroFormComponent implements OnInit, OnDestroy {
     { tipo: 'CRE', descripcion: 'CREDITO' },
     { tipo: 'JUR', descripcion: 'JURIDICO' },
     { tipo: 'CHE', descripcion: 'CHEQUE_DEVUELTO' },
+    { tipo: 'CHO', descripcion: 'CHOFERES' },
     { tipo: 'TODOS', descripcion: 'TODAS' }
   ];
 

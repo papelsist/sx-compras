@@ -45,7 +45,7 @@ class FacturistaOtroCargoService implements  LogUser{
                 sucursal: suc,
                 fecha: cargo.fecha,
                 formaDePago: 'TRANSFERENCIA',
-                comentario: cargo.comentario,
+                comentario: "${cargo.tipo} ${cargo.comentario}" ,
         )
         logEntity(cxc)
         return cxc

@@ -37,7 +37,7 @@ class FacturistaEstadoDeCuenta {
     Date lastUpdated
 
     static constraints = {
-        tipo inList: ['PRESTAMO_PERSONAL', 'OTROS_CARGOS', 'ABONO', 'INTERESES', 'INTERESES_IVA']
+        tipo inList: ['PRESTAMO', 'OTROS_CARGOS', 'ABONO', 'INTERESES', 'INTERESES_IVA']
         origen nullable: true
         comentario nullable: true
         tasaDeInteres nullable: true

@@ -32,15 +32,16 @@ class CobroController extends RestfulController<Cobro> {
         params.max = params.registros ?: 20
         def stipo = params.tipo ?: 'CRE'
 
-        log.info('List: {}', params)
+        log.info('List: {} tipo: {}', params, stipo)
 
         def query = Cobro.where { formaDePago != 'BONIFICACION' || formaDePago != 'DEVOLUCION'}
 
         if(stipo != 'TODOS') {
             query = Cobro.where{ tipo == stipo}
-        } else {
+        } /* else {
             query = Cobro.where{ tipo != 'CON' && tipo != 'COD'}
         }
+        */
 
         if(params.periodo) {
             Periodo periodo = (Periodo)params.periodo
