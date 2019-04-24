@@ -32,6 +32,8 @@ class CobranzaPagosDiffTask implements  AsientoBuilder{
             generarCredito(poliza, aplicaciones)
         } else  if(tipo == 'CHE') {
             generarChe(poliza, aplicaciones)
+        } else  if(tipo == 'JUR') {
+            generarJur(poliza, aplicaciones)
         }
 
     }
@@ -150,6 +152,33 @@ class CobranzaPagosDiffTask implements  AsientoBuilder{
             CuentaOperativaCliente co = CuentaOperativaCliente.where{cliente == cob.cliente}.find()
 
             def clienteClave = "106-0001-${co.cuentaOperativa}-0000"
+            poliza.addToPartidas(buildDet(
+                    clienteClave,
+                    desc,
+                    row,
+                    0.0,
+                    it.importe))
+        }
+    }
+
+    def generarJur(Poliza poliza, List<AplicacionDeCobro> aplicaciones) {
+
+        aplicaciones.each {
+
+            Map row = buildRow(it, 'JUR')
+
+            String desc = row.descripcion
+
+            String cta = '703-0001-0000-0000'
+            // Cargo a Aplicacion de saldos a favor
+            poliza.addToPartidas(buildDet(cta, desc, row, it.importe))
+
+
+            // Abono al cliente
+            Cobro cob = it.cobro
+            CuentaOperativaCliente co = CuentaOperativaCliente.where{cliente == cob.cliente}.find()
+
+            def clienteClave = "106-0002-${co.cuentaOperativa}-0000"
             poliza.addToPartidas(buildDet(
                     clienteClave,
                     desc,

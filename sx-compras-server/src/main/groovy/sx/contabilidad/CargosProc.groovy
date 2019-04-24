@@ -14,7 +14,7 @@ class CargosProc implements  ProcesadorDePoliza{
 
     @Override
     String definirConcepto(Poliza poliza) {
-        return ""
+        return "CARGOS DIVERSOS y NOTAS DE DEBITO ${poliza.fecha}"
     }
 
     @Override
@@ -36,6 +36,46 @@ class CargosProc implements  ProcesadorDePoliza{
 
             if(row.asiento.startsWith("CHEQUE_DEVUELTO")){
                abonoBanco(poliza,row)
+                CuentaContable cuenta = buscarCuenta('208-0001-0000-0000')
+                String descripcion  = !row.origen ?
+                        "${row.asiento}":
+                        "CHE: ${row.documento} ${row.fecha.format('dd/MM/yyyy')} ${row.documentoTipo} ${row.sucursal}"
+                PolizaDet det = new PolizaDet(
+                        cuenta: cuenta,
+                        concepto: cuenta.descripcion,
+                        descripcion: descripcion,
+                        asiento: row.asiento,
+                        referencia: row.referencia2,
+                        referencia2: row.referencia2,
+                        origen: row.origen,
+                        entidad: 'CuentaPorCobrar',
+                        documento: row.documento,
+                        documentoTipo: row.documentoTipo,
+                        documentoFecha: row.fecha,
+                        sucursal: row.sucursal,
+                        haber: 0.0,
+                        debe: row.impuesto
+                )
+                poliza.addToPartidas(det)
+
+                poliza.addToPartidas( new PolizaDet(
+                        cuenta: buscarCuenta('209-0001-0000-0000'),
+                        concepto: cuenta.descripcion,
+                        descripcion: descripcion,
+                        asiento: row.asiento,
+                        referencia: row.referencia2,
+                        referencia2: row.referencia2,
+                        origen: row.origen,
+                        entidad: 'CuentaPorCobrar',
+                        documento: row.documento,
+                        documentoTipo: row.documentoTipo,
+                        documentoFecha: row.fecha,
+                        sucursal: row.sucursal,
+                        haber: row.impuesto,
+                        debe: 0.0
+                ))
+
+
             }
 
             if(row.asiento.startsWith("TRASPASO_JUR")){
@@ -86,6 +126,15 @@ class CargosProc implements  ProcesadorDePoliza{
        
         CuentaContable cuenta = buscarCuenta('702-0002-0000-0000')
 
+        switch (tipo) {
+            case 'CHE':
+                cuenta= buscarCuenta('704-0004-0000-0000')
+                break
+            case 'CHO':
+                cuenta = buscarCuenta('702-0005-0000-0000')
+                break
+        }
+
         if(!cuenta)
             throw new RuntimeException("No existe cuenta contable para el abono a ventas del reg: ${row}")
         String descripcion  = !row.origen ?
@@ -112,7 +161,7 @@ class CargosProc implements  ProcesadorDePoliza{
     }
 
     def abonoIvaNoTrasladado(Poliza poliza, def row) {
-        CuentaContable cuenta = buscarCuenta('209-0004-0000-0000')
+        CuentaContable cuenta = buscarCuenta('209-0001-0000-0000')
         String descripcion  = !row.origen ?
                 "${row.asiento}":
                 "CAR: ${row.documento} ${row.fecha.format('dd/MM/yyyy')} ${row.documentoTipo} ${row.sucursal}"
@@ -177,9 +226,9 @@ class CargosProc implements  ProcesadorDePoliza{
         def cxc = CuentaPorCobrar.get(row.origen)
         def claveSuc = ''
         if( new Integer(cxc.sucursal.clave).intValue() < 10){
-            claveSuc = "000"+cxc.sucursal.clave
+            claveSuc = "000" + cxc.sucursal.clave
         }else{
-            claveSuc = "00"+cxc.sucursal.clave
+            claveSuc = "00" + cxc.sucursal.clave
         }
 
         def cte = Cliente.get(row.cliente)

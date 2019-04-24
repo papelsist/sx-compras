@@ -42,24 +42,27 @@ class ComisionesTarjetaProc implements  ProcesadorDePoliza, AsientoBuilder{
                 poliza.addToPartidas(mapRow(
                         "102-0001-${corte.cuentaDeBanco.subCuentaOperativa.padLeft(4,'0')}-0000",
                         comision,
-                        comision.ingreso.importe
-                ))
-                poliza.addToPartidas(mapRow(
-                        "600-0014-${corte.sucursal.clave.padLeft(4,'0')}-0000",
-                        comision,
                         0.0,
                         comision.ingreso.importe
                 ))
-                CorteDeTarjetaAplicacion impuesto = corte.aplicaciones.find{it.tipo.toString().endsWith('IVA')}
+                poliza.addToPartidas(mapRow(
+                        "107-0009-0001-0000",
+                        comision,
+                        comision.ingreso.importe
+                ))
+
+            }
+            List<CorteDeTarjetaAplicacion> impuestos = corte.aplicaciones.findAll{it.tipo.toString().endsWith('IVA')}
+            impuestos.each { impuesto ->
                 poliza.addToPartidas(mapRow(
                         "102-0001-${corte.cuentaDeBanco.subCuentaOperativa.padLeft(4,'0')}-0000",
-                        comision,
+                        impuesto,
+                        0.0,
                         impuesto.ingreso.importe
                 ))
                 poliza.addToPartidas(mapRow(
-                        "119-0002-0000-0000",
-                        comision,
-                        0.0,
+                        "118-0002-0000-0000",
+                        impuesto,
                         impuesto.ingreso.importe
                 ))
             }
@@ -92,12 +95,12 @@ class ComisionesTarjetaProc implements  ProcesadorDePoliza, AsientoBuilder{
                     toBancos
             ))
             poliza.addToPartidas(mapRow(
-                    "600-0013-${corte.sucursal.clave.padLeft(4,'0')}-0000",
+                    "107-0009-0011-0000",
                     corte,
                     comision.ingreso.importe
             ))
             poliza.addToPartidas(mapRow(
-                    "119-0002-0000-0000",
+                    "118-0002-0000-0000",
                     corte,
                     iva.ingreso.importe
             ))
@@ -123,7 +126,7 @@ class ComisionesTarjetaProc implements  ProcesadorDePoliza, AsientoBuilder{
                 cuenta: cuenta,
                 concepto: cuenta.descripcion,
                 descripcion: descripcion,
-                asiento: 'PENDIENTE',
+                asiento: 'COMISION_TARJETA',
                 referencia: row.tipo,
                 referencia2: row.tipo,
                 origen: corte.id,
@@ -153,7 +156,7 @@ class ComisionesTarjetaProc implements  ProcesadorDePoliza, AsientoBuilder{
                 cuenta: cuenta,
                 concepto: cuenta.descripcion,
                 descripcion: descripcion,
-                asiento: 'PENDIENTE',
+                asiento: 'COMISION_TARJETA',
                 referencia: 'INGRESO_AMEX',
                 referencia2: 'INGRESO_AMEX',
                 origen: corte.id,

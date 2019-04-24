@@ -15,6 +15,8 @@ import { ComisionesPorFacturistaDialogComponent } from './comisiones-report/comi
 
 import { SelectorDeFacturistaComponent } from './selector-de-facturista/selector-de-facturista.component';
 import { EstadoDeCuentaTableComponent } from './estado-de-cuenta-table/estado-de-cuenta-table.component';
+import { PrestamoInteresesFormComponent } from './prestamo-intereses/prestamo-intereses-form.component';
+import { AnalisisDeEmbarquesDialogComponent } from './comisiones-report/analisis-de-embarques.dialog.component';
 
 export const components: any[] = [
   EnviosFilterLabelComponent,
@@ -25,6 +27,7 @@ export const components: any[] = [
   // Prestamos chofer
   PrestamosTableComponent,
   PrestamoFormComponent,
+  PrestamoInteresesFormComponent,
   FacturistasFieldComponent,
   // Otros cargos
   CargosTableComponent,
@@ -34,6 +37,7 @@ export const components: any[] = [
   // Reportes
   EntregasPorChoferDialogComponent,
   ComisionesPorFacturistaDialogComponent,
+  AnalisisDeEmbarquesDialogComponent,
 
   SelectorDeFacturistaComponent,
 
@@ -45,10 +49,12 @@ export const entryComponents = [
   EnviosFilterComponent,
   EnvioComisionFormComponent,
   PrestamoFormComponent,
+  PrestamoInteresesFormComponent,
   CargoFormComponent,
   EntregasPorChoferDialogComponent,
   ComisionesPorFacturistaDialogComponent,
-  SelectorDeFacturistaComponent
+  SelectorDeFacturistaComponent,
+  AnalisisDeEmbarquesDialogComponent
 ];
 
 export * from './envios-filter/envios-filter-label.component';
@@ -59,6 +65,7 @@ export * from './envio-comision-form/envio-comision-form.component';
 
 export * from './prestamos-table/prestamos-table.component';
 export * from './prestamo-form/prestamo-form.component';
+export * from './prestamo-intereses/prestamo-intereses-form.component';
 
 export * from './facturista-field/facturista-field.component';
 
@@ -67,8 +74,11 @@ export * from './cargos-table/cargos-table.component';
 export * from './cargo-form/cargo-form.component';
 
 export * from './chofer-field/chofer-field.component';
+
+// Reports
 export * from './comisiones-report/entregas-por-chofer-dialog.component';
 export * from './comisiones-report/comisiones-facturista-dialog.component';
+export * from './comisiones-report/analisis-de-embarques.dialog.component';
 
 export * from './selector-de-facturista/selector-de-facturista.component';
 

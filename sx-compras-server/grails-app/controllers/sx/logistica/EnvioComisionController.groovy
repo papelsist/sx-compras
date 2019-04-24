@@ -106,6 +106,25 @@ class EnvioComisionController extends RestfulController<EnvioComision> {
     }
 
 
+    def analisisDeEmbarque() {
+        Periodo periodo = (Periodo)params.periodo
+        Sucursal sucursal = Sucursal.get(params.sucursal.toString())
+        Map repParams = [
+                FECHA_INI: periodo.fechaInicial,
+                FECHA_FIN: periodo.fechaFinal,
+                SUCURSAL: sucursal ? sucursal.nombre: '%',
+                ORDEN: params.orden,  // '16' // 17,18,1
+                FORMA: params.forma //'asc',
+
+
+        ]
+        // repParams.MONEDA = params.moneda
+
+        def pdf =  reportService.run('embarques/AnalisisDeEmbarques.jrxml', repParams)
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'AnalisisDeEmbarques.jrxml.pdf')
+    }
+
+
 }
 
 @ToString( includeNames = true, excludes = ['registros'])

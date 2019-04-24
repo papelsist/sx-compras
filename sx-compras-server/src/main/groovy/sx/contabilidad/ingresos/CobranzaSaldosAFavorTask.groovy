@@ -32,6 +32,8 @@ class CobranzaSaldosAFavorTask implements  AsientoBuilder{
             generarCredito(poliza, aplicaciones)
         } else  if(tipo == 'CHE') {
             generarChe(poliza, aplicaciones)
+        } else if(tipo == 'JUR') {
+            generarJur(poliza, aplicaciones)
         }
 
     }
@@ -158,6 +160,36 @@ class CobranzaSaldosAFavorTask implements  AsientoBuilder{
         aplicaciones.each {
 
             Map row = buildRow(it, 'CHE')
+            String desc = row.descripcion
+
+            BigDecimal total = it.importe
+            BigDecimal importe = MonedaUtils.calcularImporteDelTotal(total)
+            BigDecimal iva = total - importe
+
+            String cta = '205-0001-0003-0000'
+            // Cargo a Aplicacion de saldos a favor
+            poliza.addToPartidas(buildDet(cta, desc, row, importe))
+            // Cargo al IVA de saldo a favor
+            poliza.addToPartidas(buildDet('209-0001-0000-0000', desc, row, iva))
+
+            // Abono al cliente
+            Cobro cob = it.cobro
+            CuentaOperativaCliente co = CuentaOperativaCliente.where{cliente == cob.cliente}.find()
+            def clienteClave = "106-0001-${co.cuentaOperativa}-0000"
+            poliza.addToPartidas(buildDet(
+                    clienteClave,
+                    desc,
+                    row,
+                    0.0,
+                    total))
+        }
+    }
+
+    def generarJur(Poliza poliza, List<AplicacionDeCobro> aplicaciones) {
+
+        aplicaciones.each {
+
+            Map row = buildRow(it, 'JUR')
             String desc = row.descripcion
 
             BigDecimal total = it.importe

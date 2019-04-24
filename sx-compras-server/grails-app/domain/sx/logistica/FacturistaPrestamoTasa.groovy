@@ -7,7 +7,7 @@ import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 
 
-@Resource(readOnly = false, formats = ['json'], uri = "/api/prestamos/cetes")
+@Resource(readOnly = false, formats = ['json'], uri = "/api/embarques/prestamos/tasas")
 @GrailsCompileStatic
 @Secured("IS_AUTHENTICATED_ANONYMOUSLY")
 @ToString(includes='fuente, tasa fecha', includeNames = true, includePackage = false)

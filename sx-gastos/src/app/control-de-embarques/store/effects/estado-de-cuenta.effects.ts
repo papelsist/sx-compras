@@ -34,6 +34,43 @@ export class EstadoDeCuentaEffects {
     })
   );
 
+  @Effect()
+  generarIntereses$ = this.actions$.pipe(
+    ofType<fromActions.GenerarIntereses>(
+      fromActions.EstadoDeCuentaActionTypes.GenerarIntereses
+    ),
+    map(action => action.payload),
+    switchMap(data => {
+      return this.service.calcularIntereses(data).pipe(
+        map(
+          rows => new fromActions.GenerarInteresesSuccess({ response: rows })
+        ),
+        catchError(response =>
+          of(new fromActions.GenerarInteresesFail(response))
+        )
+      );
+    })
+  );
+
+  @Effect()
+  generarNotaDeCargo$ = this.actions$.pipe(
+    ofType<fromActions.GenerarNotaDeCargo>(
+      fromActions.EstadoDeCuentaActionTypes.GenerarNotaDeCargo
+    ),
+    map(action => action.payload.facturistaId),
+    switchMap(facturistaId => {
+      return this.service.generarNotaDeCargo(facturistaId).pipe(
+        map(rows => [
+          new fromActions.GenerarInteresesSuccess({ response: rows }),
+          new fromActions.LoadEstadoDeCuenta({ facturistaId })
+        ]),
+        catchError(response =>
+          of(new fromActions.GenerarInteresesFail(response))
+        )
+      );
+    })
+  );
+
   constructor(
     private actions$: Actions,
     private service: EstadoDeCuentaService

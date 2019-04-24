@@ -1,84 +1,149 @@
 package sx.logistica
 
-import grails.events.annotation.gorm.Listener
-
-import groovy.transform.CompileStatic
+import grails.compiler.GrailsCompileStatic
+import grails.gorm.transactions.Transactional
 import groovy.util.logging.Slf4j
-
-import org.grails.datastore.mapping.engine.event.AbstractPersistenceEvent
-import org.grails.datastore.mapping.engine.event.PostDeleteEvent
-import org.grails.datastore.mapping.engine.event.PostUpdateEvent
-import org.grails.datastore.mapping.engine.event.PostInsertEvent
-
+import sx.core.FolioLog
 import sx.core.LogUser
 
+import sx.core.Cliente
+import sx.core.Sucursal
+
+import sx.cxc.NotaDeCargo
+import sx.cxc.NotaDeCargoDet
+import sx.cxc.NotaDeCargoService
+
+import sx.utils.MonedaUtils
 
 
 @Slf4j
-// @CompileStatic
-class FacturistaEstadoDeCuentaService implements  LogUser{
+@GrailsCompileStatic
+class FacturistaEstadoDeCuentaService implements  LogUser, FolioLog {
 
-    // @Listener(FacturistaOtroCargo)
-    void onPostInsertEvent(PostInsertEvent event) {
-        registrar(event)
-    }
+    NotaDeCargoService notaDeCargoService
 
-
-    // @Listener(FacturistaOtroCargo)
-    void onPostUpdateEvent(PostUpdateEvent event) {
-        registrar(event)
-    }
-
-    // @Listener(FacturistaOtroCargo)
-    void onPostDelete(PostDeleteEvent event) {
-        registrar(event)
-    }
-
-
-    private void registrar(AbstractPersistenceEvent event) {
-        // println 'Event: ' + event
-        if (event.entityObject instanceof FacturistaOtroCargo) {
-            FacturistaOtroCargo cargo = event.entityObject as FacturistaOtroCargo
-            if(event instanceof PostInsertEvent) {
-                log.info('Generar ingreso en movimiento de cuenta para {}', cargo)
-                registrarCargo(cargo)
-            }
-            if(event instanceof  PostUpdateEvent) {
-                log.info('Actualizar estado de cuenta.....{}', cargo)
-                registrarCargo(cargo)
-            }
+    def calcularInteresesGlobales(Date corte, BigDecimal tasa) {
+        List<FacturistaDeEmbarque> facturistas = FacturistaDeEmbarque.list()
+        facturistas.each { facturista ->
+            calcularInteresesPorFacturista(corte, tasa, facturista)
         }
     }
 
-    private registrarCargo(FacturistaOtroCargo otroCargo) {
+    List<FacturistaEstadoDeCuenta> calcularInteresesPorFacturista(Date corte, BigDecimal tasa, FacturistaDeEmbarque f) {
+        log.info('Calculando intereses de {} al {} Tasa: {}', f.nombre, corte, tasa)
+        List<FacturistaEstadoDeCuenta> rows = FacturistaEstadoDeCuenta
+                .where{facturista == f}
+                .list([sort: 'fecha', 'order': 'asc'])
+        BigDecimal saldo = 0.0
+        rows.sort {it.fecha}.each {
+            saldo += it.importe
+            it.saldo = saldo
+        }
+        List<FacturistaEstadoDeCuenta> movs = []
+
+        if(saldo) {
+            BigDecimal intereses = MonedaUtils.round(saldo * tasa/100.00)
+            movs << generarMovimiento(f, corte, 'INTERESES', intereses, tasa)
+            BigDecimal impuesto = MonedaUtils.calcularImpuesto(intereses)
+            movs << generarMovimiento(f, corte, 'INTERESES_IVA', impuesto, tasa)
+
+        }
+        return movs
+    }
+
+    private FacturistaEstadoDeCuenta generarMovimiento(FacturistaDeEmbarque f, Date corte, String tipo, BigDecimal importe, BigDecimal tasa ) {
         FacturistaEstadoDeCuenta mov = FacturistaEstadoDeCuenta
-                .where{facturista == otroCargo.facturista && origen == otroCargo.id.toString()}.find()
+                .where{ facturista == f &&
+                    tipo == tipo &&
+                    fecha == corte}
+                .find()
 
-        FacturistaEstadoDeCuenta last = FacturistaEstadoDeCuenta.where{
-            facturista == otroCargo.facturista &&
-            origen != otroCargo.id.toString()
-        }.find([sort:'dateCreated', order: 'desc'])
-
-        BigDecimal saldoAnterior = last ? last.saldo : 0.0
-        BigDecimal saldo = saldoAnterior + otroCargo.importe
         if(!mov) {
             mov = new FacturistaEstadoDeCuenta(
-                    facturista: otroCargo.facturista,
-                    nombre: otroCargo.facturista.nombre,
-                    origen: otroCargo.id.toString(),
-                    tipo: 'OTROS_CARGOS',
-                    importe: otroCargo.importe,
-                    saldo: saldo,
-                    concepto: otroCargo.tipo,
-                    comentario: otroCargo.comentario,
-                    fecha: otroCargo.fecha
+                    facturista: f,
+                    nombre: f.nombre,
+                    origen: null,
+                    tipo: tipo,
+                    concepto: 'INTERESES'
             )
-        } else {
-            mov.importe = otroCargo.importe
-            mov.saldo = saldo
         }
+        mov.importe = importe
+        mov.tasaDeInteres = tasa
+        mov.saldo = 0.0
+        mov.fecha = corte
+        mov.comentario = "TASA DE INTERES ${tasa} %"
+
         logEntity(mov)
-        mov.save()
+        mov.save(flush: true)
+        return mov
+
+    }
+
+    def generarNotasDeCargoPorIntereses(Date fecha) {
+        List<FacturistaDeEmbarque> facturistas = FacturistaDeEmbarque.list()
+        facturistas.each { f ->
+            generarNotaDeCargo(f, fecha)
+        }
+    }
+
+
+    @Transactional
+    NotaDeCargo generarNotaDeCargo(FacturistaDeEmbarque f, Date fecha = new Date()) {
+        List<FacturistaEstadoDeCuenta> intereses = FacturistaEstadoDeCuenta.where{
+                facturista == f &&
+                tipo == 'INTERESES' &&
+                origen == null
+            }.list()
+        def importe = intereses.sum 0.0 , {FacturistaEstadoDeCuenta m -> m.importe}
+        if( (importe as BigDecimal) <= 0.0)
+            return null
+
+        NotaDeCargo nc = new NotaDeCargo()
+        nc.tipo = 'CHO'
+        nc.cliente = Cliente.where{rfc == f.rfc}.find()
+        nc.sucursal = Sucursal.where{nombre == 'OFICINAS'}.find()
+        nc.fecha = fecha
+        nc.comentario = 'INTERESES SOBRE PRESTAMOS'
+        nc.importe = importe as BigDecimal
+        nc.impuesto = MonedaUtils.calcularImpuesto(nc.importe)
+        nc.total = nc.importe + nc.impuesto
+        nc.tipoDeCalculo = 'NINGUNO'
+        nc.serie = 'CHO'
+        nc.folio = nextFolio('NOTA_DE_CARGO', 'CHO')
+        nc.usoDeCfdi = 'G03'
+        nc.cuentaPorCobrar = notaDeCargoService.generarCuentaPorCobrar(nc)
+
+        NotaDeCargoDet det = new NotaDeCargoDet()
+        det.comentario = nc.comentario
+        det.importe = nc.importe
+        det.impuesto = nc.impuesto
+        det.total = nc.total
+
+        det.documento = 0L
+        det.documentoTipo = 'ND'
+        det.documentoSaldo = 0.0
+        det.documentoTotal = 0.0
+        det.documentoFecha = nc.fecha
+        det.sucursal = nc.sucursal.nombre
+
+        nc.addToPartidas(det)
+        logEntity(nc)
+        /***** TEMPO **/
+        nc.createUser = 'aa'
+        nc.updateUser = 'aa'
+        nc.cuentaPorCobrar.createUser = 'aa'
+        nc.cuentaPorCobrar.updateUser = 'aa'
+        /********/
+        nc = nc.save failOnError: true, flush: true
+        intereses.each {
+            it.origen = nc.id
+            it.save flush: true
+        }
+
+        notaDeCargoService.generarCfdi(nc)
+        notaDeCargoService.timbrar(nc)
+
+        return nc
     }
 
 

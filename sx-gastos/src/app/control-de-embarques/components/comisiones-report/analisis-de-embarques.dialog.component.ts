@@ -8,19 +8,14 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 import * as moment from 'moment';
-import { Periodo } from 'app/_core/models/periodo';
-import { FacturistaDeEmbarque } from 'app/control-de-embarques/model';
 
 @Component({
-  selector: 'sx-comisiones-facturista-report',
+  selector: 'sx-analisis-de-embarque-report',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-  <h2 mat-dialog-title>{{title}}</h2>
+  <h2 mat-dialog-title>Análisis de embarque</h2>
   <mat-dialog-content>
   <div [formGroup]="form">
-    <div layout>
-      <sx-facturista-field [parent]="form" flex></sx-facturista-field>
-    </div>
     <div layout layout-align="center">
       <mat-form-field class="pad-right" >
         <input matInput [matDatepicker]="myDatepicker" placeholder="Fecha inicial" formControlName="fechaInicial">
@@ -34,6 +29,27 @@ import { FacturistaDeEmbarque } from 'app/control-de-embarques/model';
         <mat-datepicker #myDatepicker2></mat-datepicker>
       </mat-form-field>
     </div>
+    <div layout>
+
+    <mat-form-field flex class="pad-right">
+        <mat-select placeholder="Orden" formControlName="orden">
+          <mat-option *ngFor="let item of ORDEN" [value]="item.clave">
+            {{ item.descripcion }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field flex>
+        <mat-select placeholder="Forma" formControlName="forma">
+          <mat-option value="ASC">ASCENDENTE</mat-option>
+          <mat-option value="DESC">DESCENDENTE</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div layout>
+      <sx-sucursal-field [parent]="form" ></sx-sucursal-field>
+    </div>
 
 
   </div>
@@ -44,42 +60,41 @@ import { FacturistaDeEmbarque } from 'app/control-de-embarques/model';
   </mat-dialog-actions>
   `
 })
-export class ComisionesPorFacturistaDialogComponent implements OnInit {
+export class AnalisisDeEmbarquesDialogComponent implements OnInit {
   form: FormGroup;
-  title: string;
-  periodo: Periodo;
-  facturista: FacturistaDeEmbarque;
+  ORDEN = [
+    { clave: '16', descripcion: 'TONELADAS' },
+    { clave: '17', descripcion: 'OPERACIONES' },
+    { clave: '18', descripcion: 'COMISIONES' },
+    { clave: '1', descripcion: 'CHOFER' }
+  ];
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private dialogRef: MatDialogRef<ComisionesPorFacturistaDialogComponent>,
-    private fb: FormBuilder
+    private dialogRef: MatDialogRef<AnalisisDeEmbarquesDialogComponent>,
+    fb: FormBuilder
   ) {
-    this.title = data.title || 'Comisiones por facturista';
-    this.periodo = data.periodo || Periodo.fromNow(90);
-    this.facturista = data.facturista;
-  }
-  ngOnInit() {
-    this.buildForm();
-  }
-
-  private buildForm() {
-    this.form = this.fb.group({
-      facturista: [this.facturista, [Validators.required]],
-      fechaInicial: [this.periodo.fechaInicial, [Validators.required]],
-      fechaFinal: [this.periodo.fechaFinal, [Validators.required]]
+    this.form = fb.group({
+      fechaInicial: [new Date(), [Validators.required]],
+      fechaFinal: [new Date(), [Validators.required]],
+      orden: [this.ORDEN[0].clave, [Validators.required]],
+      forma: ['asc', [Validators.required]],
+      sucursal: [null]
     });
   }
+
+  ngOnInit() {}
 
   onSubmit() {
     if (this.form.valid) {
       const fechaInicial: Date = this.form.get('fechaInicial').value;
       const fechaFinal: Date = this.form.get('fechaFinal').value;
-      const { facturista } = this.form.value;
+      const { sucursal } = this.form.value;
       const data = {
+        ...this.form.value,
         fechaInicial: fechaInicial.toISOString(),
         fechaFinal: fechaFinal.toISOString(),
-        facturista: facturista.id
+        sucursal: sucursal ? sucursal.id : null
       };
       this.dialogRef.close(data);
     }

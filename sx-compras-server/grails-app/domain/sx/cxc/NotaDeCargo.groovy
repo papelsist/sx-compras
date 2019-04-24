@@ -73,7 +73,7 @@ class NotaDeCargo {
         usoDeCfdi maxSize:3
         sw2 nullable:true
         cfdi nullable: true
-        tipoDeCalculo inList: ['PORCENTAJE','PRORRATEO']
+        tipoDeCalculo inList: ['PORCENTAJE','PRORRATEO', 'NINGUNO']
     }
 
     static hasMany =[partidas:NotaDeCargoDet]

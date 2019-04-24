@@ -113,10 +113,7 @@ abstract class NotasDeCreditoProc implements  ProcesadorDePoliza {
 
 
     def abonoIvaNoTrasladado(Poliza poliza, def row) {
-        String clave = "209-0002-0000-0000"
-        if(getTipo().contains('BON')) {
-            clave = "209-0003-0000-0000"
-        }
+        String clave = "209-0001-0000-0000"
         CuentaContable cuenta = buscarCuenta(clave)
         String descripcion  = !row.origen ?
                 "${row.asiento}":
@@ -205,7 +202,7 @@ abstract class NotasDeCreditoProc implements  ProcesadorDePoliza {
         x.rfc,
         x.uuid
         FROM (                
-          SELECT round((d.importe/1.16),2) subtotal ,d.importe-round((d.importe/1.16),2) impuesto,d.importe total_det,d.fecha_documento,d.documento,d.sucursal,f.fecha,f.moneda,f.tipo_de_cambio  tc ,n.folio,n.total ,f.tipo as documentoTipo,
+          SELECT d.base subtotal ,d.impuesto,d.importe total_det,d.fecha_documento,d.documento,d.sucursal,f.fecha,f.moneda,f.tipo_de_cambio  tc ,n.folio,n.total ,f.tipo as documentoTipo,
 		concat('NOTA_',substr(f.forma_de_pago,1,3),'_',f.tipo) as asiento,c.nombre referencia2,n.id as origen,f.cliente_id as cliente,
 		concat((case when f.tipo='CRE' then concat('105-',(SELECT concat(case when x.cuenta_operativa='0266' then concat('0004-',x.cuenta_operativa) else concat('0003-',x.cuenta_operativa) end) FROM cuenta_operativa_cliente x where x.cliente_id=c.id ))
 				when f.tipo='CON' then (case when s.clave>9 then concat('105-0001-00',s.clave) else concat('105-0001-000',s.clave) end)
@@ -225,7 +222,7 @@ abstract class NotasDeCreditoProc implements  ProcesadorDePoliza {
 		FROM cobro f join cliente c on(f.cliente_id=c.id)  join sucursal s on(f.sucursal_id=s.id) join nota_de_credito n on(f.id=n.cobro_id) 
 		join cfdi x on(n.cfdi_id=x.id)  join devolucion_de_venta d on(d.cobro_id=f.id)  join venta v on(d.venta_id=v.id) join cuenta_por_cobrar y on(v.cuenta_por_cobrar_id=y.id)
 		where  n.fecha = '@FECHA' and F.forma_de_pago in('DEVOLUCION') and n.sw2 is null and (x.cancelado is false or x.cancelado is null)  		                      
-        ) as x
+        ) as x order by x.documentoTipo,x.folio
         """
         return QUERY
     }

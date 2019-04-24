@@ -56,7 +56,7 @@ export class EstadoDeCuentaTableComponent implements OnInit, OnChanges {
 
   @Input()
   displayColumns = [
-    //'nombre',
+    // 'nombre',
     'tipo',
     'concepto',
     'comentario',
@@ -79,9 +79,10 @@ export class EstadoDeCuentaTableComponent implements OnInit, OnChanges {
   constructor() {}
 
   ngOnInit() {
-    this.dataSource.paginator = this.paginator;
+    // this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
+
   ngOnChanges(changes: SimpleChanges) {
     if (changes.movimientos && changes.movimientos.currentValue) {
       this.dataSource.data = changes.movimientos.currentValue;
@@ -98,7 +99,11 @@ export class EstadoDeCuentaTableComponent implements OnInit, OnChanges {
     this.select.emit(event);
   }
 
-  getTotal(property: string) {
-    return _.sumBy(this.dataSource.filteredData, property);
+  getSaldo() {
+    if (this.dataSource.data && this.dataSource.data.length > 0) {
+      return _.last(this.dataSource.data).saldo;
+    } else {
+      return 0.0;
+    }
   }
 }

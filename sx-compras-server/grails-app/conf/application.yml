@@ -215,6 +215,8 @@ environments:
         gastosDir: /Users/rubencancino/Documents/cfdis-carga/gastos
       econta:
         polizasDir: ${user.home}/Documents/econta
+      cfdi:
+        dir: ${user.home}/Documents/siipapx-cfdis
       logistica:
         inicioOperacionComisiones: 01/03/2019
   production:
@@ -222,6 +224,8 @@ environments:
       cxp:
         cfdisDir: /home/cfdProv
         gastosDir: /home/cfdGastos
+      cfdi:
+        dir: /home/siipapx-cfdis
   tesoreria:
     siipapx:
       cxp:

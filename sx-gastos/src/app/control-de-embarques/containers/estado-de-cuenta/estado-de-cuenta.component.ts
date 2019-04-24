@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 
 import { Store, select } from '@ngrx/store';
 import * as fromStore from '../../store';
 import * as fromEstadoDeCuenta from '../../store/selectors/estado-de-cuenta.selectors';
 
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 import { MatDialog } from '@angular/material';
 
@@ -12,7 +12,14 @@ import {
   FacturistaDeEmbarque,
   FacturistaEstadoDeCuenta
 } from 'app/control-de-embarques/model';
-import { SelectorDeFacturistaComponent } from 'app/control-de-embarques/components';
+import {
+  SelectorDeFacturistaComponent,
+  PrestamoInteresesFormComponent,
+  ComisionesPorFacturistaDialogComponent
+} from 'app/control-de-embarques/components';
+import { TdDialogService } from '@covalent/core';
+import { ReportService } from 'app/reportes/services/report.service';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'sx-estado-de-cuenta-facturista',
@@ -23,32 +30,50 @@ import { SelectorDeFacturistaComponent } from 'app/control-de-embarques/componen
         padding: 0 14px;
       }
       .table-panel {
-        min-height: 400px;
-      }
-      .table-det-panel {
-        min-height: 200px;
+        max-height: 50px;
       }
     `
   ]
 })
-export class EstadoDeCuentaComponent implements OnInit {
+export class EstadoDeCuentaComponent implements OnInit, OnDestroy {
   facturistas$: Observable<FacturistaDeEmbarque[]>;
   selected$: Observable<FacturistaDeEmbarque>;
   movimientos$: Observable<FacturistaEstadoDeCuenta[]>;
+  loading$: Observable<boolean>;
+  selected: FacturistaDeEmbarque;
+
+  destroy$ = new Subject<boolean>();
 
   constructor(
     private store: Store<fromStore.State>,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private dialogService: TdDialogService,
+    private service: ReportService
   ) {}
 
   ngOnInit() {
+    this.loading$ = this.store.pipe(select(fromStore.getEstadoDeCuentaLoading));
     this.facturistas$ = this.store.pipe(select(fromStore.getAllFacturistas));
+
     this.selected$ = this.store.pipe(
       select(fromEstadoDeCuenta.getSelectedFacturista)
     );
+
+    this.store
+      .pipe(
+        takeUntil(this.destroy$),
+        select(fromEstadoDeCuenta.getSelectedFacturista)
+      )
+      .subscribe(facturista => (this.selected = facturista));
+
     this.movimientos$ = this.store.pipe(
       select(fromStore.getAllRowsEstadoDeCuenta)
     );
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.complete();
   }
 
   select(facturistas: FacturistaDeEmbarque[]) {
@@ -60,7 +85,6 @@ export class EstadoDeCuentaComponent implements OnInit {
       .afterClosed()
       .subscribe(facturista => {
         if (facturista) {
-          // this.store.dispatch(new fromStore.SetFacturista({ facturista }));
           this.load(facturista);
         }
       });
@@ -68,5 +92,58 @@ export class EstadoDeCuentaComponent implements OnInit {
 
   load(facturista: FacturistaDeEmbarque) {
     this.store.dispatch(new fromStore.SetFacturista({ facturista }));
+  }
+
+  calcularIntereses(facturista?: FacturistaDeEmbarque) {
+    this.dialog
+      .open(PrestamoInteresesFormComponent, {
+        data: {
+          facturista
+        }
+      })
+      .afterClosed()
+      .subscribe(res => {
+        if (res) {
+          this.store.dispatch(new fromStore.GenerarIntereses(res));
+        }
+      });
+  }
+
+  generarNotaDeCargo(facturista: FacturistaDeEmbarque) {
+    this.dialogService
+      .openConfirm({
+        title: 'NOTA DE CARGO',
+        message: 'GENERAR NOTA DE CARGO POR INTERESES',
+        acceptButton: 'ACEPTAR',
+        cancelButton: 'CANCELAR'
+      })
+      .afterClosed()
+      .subscribe(res => {
+        if (res) {
+          this.store.dispatch(
+            new fromStore.GenerarNotaDeCargo({ facturistaId: facturista.id })
+          );
+        }
+      });
+  }
+
+  print(facturista?: FacturistaDeEmbarque) {
+    this.dialog
+      .open(ComisionesPorFacturistaDialogComponent, {
+        data: {
+          title: 'Estado de cuenta',
+          facturista
+        },
+        width: '550px'
+      })
+      .afterClosed()
+      .subscribe(res => {
+        if (res) {
+          this.service.runReport(
+            'embarques/facturistaEstadoDeCuenta/estadoDeCuenta',
+            res
+          );
+        }
+      });
   }
 }

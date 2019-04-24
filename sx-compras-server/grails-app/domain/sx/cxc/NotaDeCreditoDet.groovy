@@ -10,6 +10,10 @@ class NotaDeCreditoDet {
 
     CuentaPorCobrar	cuentaPorCobrar
 
+    BigDecimal base = 0.0
+
+    BigDecimal impuesto = 0.0
+
     BigDecimal importe
 
     Long documento = 0

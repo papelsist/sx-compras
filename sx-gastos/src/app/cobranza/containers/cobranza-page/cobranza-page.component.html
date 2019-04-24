@@ -34,10 +34,11 @@
     </ng-template>
 
     <h3 matSubheader>Reportes</h3>
-    <!-- <a mat-list-item>
+    <a mat-list-item (click)="reporteDeCobranza()">
       <mat-icon matListAvatar>picture_as_pdf</mat-icon>
-      <h3 matLine>REPORTE 1</h3>
-    </a> -->
+      <h3 matLine>Entregas por Chofer</h3>
+    </a>
+    <mat-divider></mat-divider>
   </mat-nav-list>
 
   <router-outlet></router-outlet>

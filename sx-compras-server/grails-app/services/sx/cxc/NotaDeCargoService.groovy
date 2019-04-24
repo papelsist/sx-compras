@@ -3,40 +3,40 @@ package sx.cxc
 import grails.compiler.GrailsCompileStatic
 import grails.gorm.transactions.Transactional
 import groovy.util.logging.Slf4j
-
+import lx.cfdi.v33.Comprobante
+import org.apache.commons.lang3.exception.ExceptionUtils
+import sx.cfdi.Cfdi
+import sx.cfdi.CfdiService
+import sx.cfdi.CfdiTimbradoService
+import sx.cfdi.v33.NotaDeCargoBuilder
 import sx.core.FolioLog
 import sx.core.LogUser
-import sx.utils.MonedaUtils
+
+
 
 @Slf4j
+// @GrailsCompileStatic
 @Transactional
-class NotaDeCargoService implements  LogUser, FolioLog{
+class NotaDeCargoService implements  LogUser, FolioLog {
+
+    NotaDeCargoBuilder notaDeCargoBuilder
+
+    CfdiService cfdiService
+
+    CfdiTimbradoService cfdiTimbradoService
 
     NotaDeCargo save(NotaDeCargo nota) {
         if(!nota.id){
             nota.folio = nextFolio('NOTA_DE_CARGO', nota.serie)
         }
-        actualizarPartidas(nota)
-        if (nota.tipoDeCalculo == 'PORCENTAJE') {
-            calcularPorentaje(nota)
-        } else {
-            calcularProrrateo(nota)
-        }
-        if(nota.partidas) {
-            nota.importe = nota.partidas.sum 0.0, {it.importe}
-            nota.impuesto = nota.partidas.sum 0.0, {it.impuesto}
-            nota.total = nota.partidas.sum 0.0, {it.total}
-        } else {
-            if(nota.total <= 0.0) {
-                throw new RuntimeException('Nota de cargo sin conceptos debe tener el importe debe ser mayor a 0')
-            }
-            generarConceptoUnico(nota)
-            nota.importe = nota.partidas.sum 0.0, {it.importe}
-            nota.impuesto = nota.partidas.sum 0.0, {it.impuesto}
-            nota.total = nota.partidas.sum 0.0, {it.total}
-        }
+
+        nota.importe = nota.partidas.sum 0.0, {it.importe}
+        nota.impuesto = nota.partidas.sum 0.0, {it.impuesto}
+        nota.total = nota.partidas.sum 0.0, {it.total}
         nota.cuentaPorCobrar = generarCuentaPorCobrar(nota)
+        actualizarPartidas(nota)
         nota.save failOnError: true, flush:true
+        return nota
     }
 
     CuentaPorCobrar generarCuentaPorCobrar(NotaDeCargo nota) {
@@ -76,89 +76,49 @@ class NotaDeCargoService implements  LogUser, FolioLog{
         }
     }
 
-    void calcularProrrateo(NotaDeCargo nota) {
-        assert nota.total >0 , 'Nota de cargo requiere total para proceder Total registrado: ' + nota.total
-        nota.cargo = 0.0;
-        BigDecimal importe = nota.total
+    NotaDeCargo generarCfdi(NotaDeCargo nota) {
+        if(nota.cfdi)
+            throw new RuntimeException("Nota de cargo ${nota.serie} ${nota.folio} YA tiene CFDI (XML) generado")
 
-        List<CuentaPorCobrar> facturas = nota.partidas.collect{ it.cuentaPorCobrar}
-        NotaDeCargoDet sinSaldo = nota.partidas.find{it.cuentaPorCobrar.getSaldo() == 0.0}
-        log.debug('Se encontro una factura con saldo {}', sinSaldo)
-        boolean sobreSaldo = sinSaldo == null
+        Comprobante comprobante = notaDeCargoBuilder.build(nota)
+        Cfdi cfdi = cfdiService.generarCfdi(comprobante, 'I', 'NOTA_CARGO')
 
-        BigDecimal base = facturas.sum 0.0,{ item -> sobreSaldo ? item.getSaldo() : item.getTotal()}
 
-        log.debug("Importe a prorratear: ${importe} Base del prorrateo ${base} Tipo ${sobreSaldo ? 'SOBR SALDO': 'SOBRE TOTAL'}")
-
-        nota.partidas.each {  det ->
-            CuentaPorCobrar cxc = det.cuentaPorCobrar
-            def monto = sobreSaldo ? cxc.getSaldo(): cxc.total
-            def por = monto / base
-            def asignado = MonedaUtils.round(importe * por)
-            det.importe = MonedaUtils.calcularImporteDelTotal(asignado)
-            det.impuesto = MonedaUtils.calcularImpuesto(det.importe)
-            det.total = det.importe + det.impuesto
-        }
-
-    }
-
-    def calcularPorentaje(NotaDeCargo nota) {
-        log.debug('Generando Nota de cargo por el {}%', nota.cargo)
-        def cargo = nota.cargo / 100
-        boolean sobreSaldo = true
-        nota.partidas.each {  NotaDeCargoDet det ->
-            CuentaPorCobrar cxc = det.cuentaPorCobrar
-            def monto = sobreSaldo ? det.cuentaPorCobrar.getSaldo() : det.cuentaPorCobrar.getTotal()
-            def total = MonedaUtils.round(monto * cargo)
-            det.total = total
-            det.importe = MonedaUtils.calcularImporteDelTotal(total)
-            det.impuesto = MonedaUtils.calcularImpuesto(det.importe)
-        }
+        nota.cuentaPorCobrar.cfdi = cfdi
+        nota.cfdi = cfdi
+        logEntity(nota)
+        nota.save flush: true
         return nota
     }
 
+    Cfdi timbrar(NotaDeCargo nota){
+        if(nota.cfdi.uuid == null) {
+            Cfdi cfdi = nota.cfdi
+            cfdi = cfdiTimbradoService.timbrar(cfdi)
+            logEntity(cfdi)
 
-
-
-    void actualizarConceptoUnico(NotaDeCargo nota) {
-        if(nota.partidas && nota.tipo == 'CHE') {
-            NotaDeCargoDet det = nota.partidas[0]
-            det.comentario = nota.comentario
-
-            BigDecimal total = nota.total
-            det.total = total
-            det.importe = MonedaUtils.calcularImporteDelTotal(total)
-            det.impuesto = MonedaUtils.calcularImpuesto(det.importe)
-            det.total = det.importe + det.impuesto
-
-            det.documento = nota.folio
-            det.documentoTipo = nota.tipo
-            det.documentoSaldo = nota.total
-            det.documentoTotal = nota.total
-            det.documentoFecha = nota.fecha
-            det.sucursal = nota.sucursal.nombre
+            CuentaPorCobrar cxc = nota.cuentaPorCobrar
+            cxc.uuid = cfdi.uuid
+            logEntity(cxc)
+            cxc.save flush: true
+            return cfdi
         }
     }
 
-    def generarConceptoUnico(NotaDeCargo nota) {
-        if(!nota.partidas) {
-            log.info('Generando concepto unico para nora tipo {} N.Cargo ', nota.tipo)
-            NotaDeCargoDet det = new NotaDeCargoDet()
-            det.comentario = nota.comentario
 
-            BigDecimal total = nota.total
-            det.total = total
-            det.importe = MonedaUtils.calcularImporteDelTotal(total)
-            det.impuesto = MonedaUtils.calcularImpuesto(det.importe)
-            det.total = det.importe + det.impuesto
+}
 
-            det.documento = nota.folio
-            det.documentoTipo = nota.tipo
-            det.documentoSaldo = 0.0
-            det.documentoTotal = 0.0
-            det.documentoFecha = nota.fecha
-            det.sucursal = nota.sucursal.nombre
-            nota.addToPartidas(det)
-        }
+class NotaDeCargoException  extends RuntimeException {
+
+    NotaDeCargo notaDeCargo
+
+    NotaDeCargoException(String message) {
+        super(message)
     }
+
+    NotaDeCargoException(NotaDeCargo nota, String message) {
+        super(message)
+        this.notaDeCargo = nota
+    }
+
 }

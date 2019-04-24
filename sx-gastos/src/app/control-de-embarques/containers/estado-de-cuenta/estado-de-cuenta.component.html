@@ -1,40 +1,59 @@
-<mat-card>
-  <mat-toolbar layout>
-    <span>Estado de cuenta</span>
-    <span flex></span>
-    <span *ngIf="(selected$ | async) as selected">
-      <span>{{ selected.nombre }}</span>
-    </span>
-    <span flex></span>
-    <div class="button-section">
-      <ng-container *ngIf="(facturistas$ | async) as facturistas">
-        <button mat-icon-button (click)="select(facturistas)">
-          <mat-icon>search</mat-icon>
+<ng-template
+  tdLoading
+  [tdLoadingUntil]="!(loading$ | async)"
+  tdLoadingStrategy="overlay"
+>
+  <mat-card>
+    <mat-toolbar layout>
+      <span>Estado de cuenta</span>
+      <span flex></span>
+      <span *ngIf="(selected$ | async) as selected">
+        <span>{{ selected.nombre }}</span>
+      </span>
+      <span flex></span>
+      <div class="button-section">
+        <ng-container *ngIf="(facturistas$ | async) as facturistas">
+          <button mat-icon-button (click)="select(facturistas)">
+            <mat-icon>search</mat-icon>
+          </button>
+        </ng-container>
+        <ng-container *ngIf="(selected$ | async) as facturista">
+          <button (click)="load(facturista)" mat-icon-button>
+            <mat-icon>refresh</mat-icon>
+          </button>
+        </ng-container>
+        <button (click)="print(selected)" mat-icon-button>
+          <mat-icon>print</mat-icon>
         </button>
-      </ng-container>
-      <button
-        *ngIf="(selected$ | async) as facturista"
-        (click)="load(facturista)"
-        mat-icon-button
-      >
-        <mat-icon>refresh</mat-icon>
-      </button>
-    </div>
-    <span>
-      <button mat-icon-button [matMenuTriggerFor]="toolbarMenu">
-        <mat-icon>more_vert</mat-icon>
-      </button>
-      <mat-menu #toolbarMenu="matMenu">
-        <button mat-menu-item>
-          Registrar intereses
+      </div>
+      <span>
+        <button mat-icon-button [matMenuTriggerFor]="toolbarMenu">
+          <mat-icon>more_vert</mat-icon>
         </button>
-      </mat-menu>
-    </span>
-  </mat-toolbar>
+        <mat-menu #toolbarMenu="matMenu">
+          <button mat-menu-item (click)="calcularIntereses()">
+            Calcular intereses (GLOBAL)
+          </button>
+          <button
+            mat-menu-item
+            *ngIf="(selected$ | async) as facturista"
+            (click)="calcularIntereses(facturista)"
+          >
+            Calcular intereses (INDIVIDUAL)
+          </button>
+          <button
+            *ngIf="selected"
+            mat-menu-item
+            (click)="generarNotaDeCargo(selected)"
+          ></button>
+        </mat-menu>
+      </span>
+    </mat-toolbar>
 
-  <div class="table-panel">
-    <sx-estado-de-cuenta-table
-      [movimientos]="movimientos$ | async"
-    ></sx-estado-de-cuenta-table>
-  </div>
-</mat-card>
+    <div class="table-panel">
+      <sx-estado-de-cuenta-table
+        [movimientos]="movimientos$ | async"
+      ></sx-estado-de-cuenta-table>
+    </div>
+  </mat-card>
+</ng-template>

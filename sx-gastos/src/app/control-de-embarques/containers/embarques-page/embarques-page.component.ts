@@ -11,8 +11,10 @@ import { User } from 'app/auth/models/user';
 import { MatDialog } from '@angular/material';
 import {
   EntregasPorChoferDialogComponent,
-  ComisionesPorFacturistaDialogComponent
+  ComisionesPorFacturistaDialogComponent,
+  AnalisisDeEmbarquesDialogComponent
 } from 'app/control-de-embarques/components';
+
 import { ReportService } from 'app/reportes/services/report.service';
 
 @Component({
@@ -89,6 +91,24 @@ export class EmbarquesPageComponent implements OnInit {
           console.log('Run report: ', res);
           this.service.runReport(
             'embarques/comisiones/comisionesPorFacturista',
+            res
+          );
+        }
+      });
+  }
+
+  analisisDeEmbarque() {
+    this.dialog
+      .open(AnalisisDeEmbarquesDialogComponent, {
+        data: {},
+        width: '550px'
+      })
+      .afterClosed()
+      .subscribe(res => {
+        if (res) {
+          console.log('Run report: ', res);
+          this.service.runReport(
+            'embarques/comisiones/analisisDeEmbarque',
             res
           );
         }

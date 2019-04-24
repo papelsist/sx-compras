@@ -314,11 +314,16 @@ class UrlMappings {
         "/api/embarques/comisiones/batchUpdate"(controller: 'envioComision', action: 'batchUpdate', method: 'PUT')
         "/api/embarques/comisiones/entregasPorChofer"(controller: 'envioComision', action: 'entregasPorChofer')
         "/api/embarques/comisiones/comisionesPorFacturista"(controller: 'envioComision', action: 'comisionesPorFacturista')
+        "/api/embarques/comisiones/analisisDeEmbarque"(controller: 'envioComision', action: 'analisisDeEmbarque')
+
 
         // Prestamos
         "/api/embarques/facturistaPrestamo"(resources: 'facturistaPrestamo', excludes:['create', 'edit','patch'])
         "/api/embarques/facturistaOtroCargo"(resources: 'facturistaOtroCargo', excludes:['create', 'edit','patch'])
         "/api/embarques/facturistaEstadoDeCuenta"(resources: 'facturistaEstadoDeCuenta', excludes:['create', 'save', 'edit', 'update','patch'])
+        "/api/embarques/facturistaEstadoDeCuenta/calcularIntereses"(controller: 'facturistaEstadoDeCuenta', action: 'calcularIntereses', method: 'POST')
+        "/api/embarques/facturistaEstadoDeCuenta/estadoDeCuenta"(controller: 'facturistaEstadoDeCuenta', action: 'estadoDeCuenta')
+        "/api/embarques/facturistaEstadoDeCuenta/generarNotaDeCargo/$id"(controller: 'facturistaEstadoDeCuenta', action: 'generarNotaDeCargo', method: 'PUT')
 
         // SolicitudDeDepositos
 

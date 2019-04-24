@@ -36,6 +36,8 @@ export function reducer(
       };
     }
 
+    case EstadoDeCuentaActionTypes.GenerarNotaDeCargo:
+    case EstadoDeCuentaActionTypes.GenerarIntereses:
     case EstadoDeCuentaActionTypes.LoadEstadoDeCuenta: {
       return {
         ...state,
@@ -43,6 +45,8 @@ export function reducer(
       };
     }
 
+    case EstadoDeCuentaActionTypes.GenerarInteresesFail:
+    case EstadoDeCuentaActionTypes.GenerarInteresesFail:
     case EstadoDeCuentaActionTypes.LoadEstadoDeCuentaFail: {
       return {
         ...state,
@@ -56,6 +60,15 @@ export function reducer(
         loading: false
       });
     }
+
+    case EstadoDeCuentaActionTypes.GenerarNotaDeCargoSuccess:
+    case EstadoDeCuentaActionTypes.GenerarInteresesSuccess: {
+      return {
+        ...state,
+        loading: false
+      };
+    }
+
     default: {
       return {
         ...state

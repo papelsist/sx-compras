@@ -7,12 +7,11 @@ import org.springframework.stereotype.Component
 import sx.contabilidad.AsientoBuilder
 import sx.contabilidad.Poliza
 import sx.contabilidad.PolizaDet
-import sx.utils.MonedaUtils
 
 @Slf4j
 @GrailsCompileStatic
 @Component
-class CobranzaEfectivoCreTask implements  AsientoBuilder {
+class CobranzaEfectivoJurTask implements  AsientoBuilder {
 
 
     /**
@@ -36,6 +35,7 @@ class CobranzaEfectivoCreTask implements  AsientoBuilder {
         String sql = getTransferenciasDepositosSql()
                 .replaceAll("@FECHA", toSqlDate(poliza.fecha))
 
+
         List rows = getAllRows(sql, [])
 
         // Almacenar los cobros (Para el cargo a bancos)
@@ -51,6 +51,9 @@ class CobranzaEfectivoCreTask implements  AsientoBuilder {
                 poliza.addToPartidas(det)
                 cobros.add(row.origen)
 
+                // Abono a CAJA
+                //if(row.asiento == 'COB_FICHA_EFE_CRE' )
+                    //poliza.addToPartidas(buildRegistro(row.cta_contable2.toString(), descripcion, row,0.0, row.total))
 
                 // En caso de una cobranza de saldo a favor
                 if(det.cuenta.clave.startsWith('205')) {
@@ -61,35 +64,22 @@ class CobranzaEfectivoCreTask implements  AsientoBuilder {
                             descripcion, row, row.impuesto)
                     )
                 }
-                if(row.SAF > 0.0) {
-
-                    BigDecimal safTotal = row.SAF
-                    BigDecimal safImporte = MonedaUtils.calcularImporteDelTotal(safTotal)
-                    BigDecimal safIva = safTotal - safImporte
-                    row.asiento = row.asiento + '_SAF'
-
-                    poliza.addToPartidas(buildRegistro(
+                if(row.saf > 0.0) {
+                    PolizaDet saf = buildRegistro(
                             '205-0001-0003-0000',
-                            descripcion,
-                            row,
-                            0.0,
-                            safImporte))
-
-                    poliza.addToPartidas(buildRegistro(
-                            '208-0004-0000-0000',
-                            descripcion,
-                            row,
-                            0.0,
-                            safIva))
+                            descripcion, row)
+                    saf.haber = row.SAF.abs()
+                    saf.asiento = "${saf.asiento}_SAF"
+                    poliza.addToPartidas(saf)
                 }
 
                 if(row.diferencia > 0.0) {
-                    PolizaDet saf = buildRegistro(
-                            '704-0003-0000-0000',
+                    PolizaDet otprd = buildRegistro(
+                            '704-0004-0000-0000',
                             descripcion, row)
-                    saf.haber = row.diferencia.abs()
-                    saf.asiento = "${saf.asiento}_OPRD"
-                    poliza.addToPartidas(saf)
+                    otprd.haber = row.diferencia.abs()
+                    otprd.asiento = "${otprd.asiento}_OPRD"
+                    poliza.addToPartidas(otprd)
                 }
             }
 
@@ -98,7 +88,7 @@ class CobranzaEfectivoCreTask implements  AsientoBuilder {
                 BigDecimal diferencia = row.diferencia
 
                 PolizaDet otprd = buildRegistro(
-                        '704-0003-0000-0000',
+                        '704-0004-0000-0000',
                         descripcion,
                         row,
                         0.0,
@@ -119,6 +109,16 @@ class CobranzaEfectivoCreTask implements  AsientoBuilder {
                 clienteDet.haber = row.cobro_aplic
                 poliza.addToPartidas(clienteDet)
 
+                /*
+                if(row.asiento == 'COB_FICHA_EFE_CRE' ) {
+                    // Abono a CAJA
+                    poliza.addToPartidas(buildRegistro(
+                            row.cta_contable2.toString(),
+                            descripcion,
+                            row,
+                            row.cobro_aplic ))
+                }
+                */
 
                 // IVAS
                 PolizaDet ivaPend = buildRegistro(
@@ -154,8 +154,9 @@ class CobranzaEfectivoCreTask implements  AsientoBuilder {
     String getTransferenciasDepositosSql() {
 
         String res = """
-        SELECT          
-        'FICHA_CRE' tipo,
+            
+         SELECT          
+        'FICHA_CHE' tipo,
         x.asiento,
         x.origen_gpo,
         x.documentoTipo,
@@ -206,32 +207,31 @@ class CobranzaEfectivoCreTask implements  AsientoBuilder {
         ,null ctaOrigen,null banco_origen_id,null bancoOrigen,null rfc,null cliente,null cxc_id,null factura,null tipo,null fecha_fac,null uuid,0 cobro_aplic,0 montoTotal
         ,'000-0000-0000-0000' cta_contable_fac,'000-0000-0000-0000' cta_iva_pend,'000-0000-0000-0000' cta_iva_pag    
         FROM ficha f join movimiento_de_cuenta m on(f.ingreso_id=m.id) join cuenta_de_banco z on(m.cuenta_id=z.id) join sucursal s on(f.sucursal_id=s.id)     
-        where f.fecha='@FECHA' and f.origen in('CRE') and f.tipo_de_ficha='EFECTIVO'        
+        where f.fecha='@FECHA' and f.origen in('JUR') and f.tipo_de_ficha='EFECTIVO'        
         UNION                                                                         
         SELECT 
-        'COB_FICHA_EFE_CRE' as asiento,null origen_gpo,null documentoTipo,null fecha,null documento_gpo,b.moneda,b.tipo_de_cambio tc ,b.importe total_gpo,'EFECTIVO' referencia2,s.nombre sucursal, s.clave suc
+        'COB_FICHA_EFE_JUR' as asiento,null origen_gpo,null documentoTipo,null fecha,null documento_gpo,b.moneda,b.tipo_de_cambio tc ,b.importe total_gpo,'EFECTIVO' referencia2,s.nombre sucursal, s.clave suc
         ,'000-0000-0000-0000' cta_contable,'000-0000-0000-0000' cta_contable2,null ctaDestino,null bancoDestino,'PAPEL SA DE CV' beneficiario
         ,b.forma_de_pago,'01' metodoDePago,b.id origen,null documento,null referenciaBancaria,b.importe total,(case when b.diferencia_fecha='@FECHA' then b.diferencia else 0 end) diferencia
         ,b.importe-(case when b.diferencia_fecha='@FECHA' then b.diferencia else 0 end)-ifnull((SELECT sum(a.importe) FROM aplicacion_de_cobro a where a.cobro_id=b.id and a.fecha='@FECHA'),0) SAF
         ,null ctaOrigen,null banco_origen_id,null bancoOrigen,t.rfc,t.nombre cliente,c.id cxc_id,c.documento factura,c.tipo,c.fecha fecha_fac,i.uuid,a.importe cobro_aplic,c.total montoTotal
-        ,concat('105-',(SELECT concat(case when x.cuenta_operativa='0266' then concat('0004-',x.cuenta_operativa) else concat('0003-',x.cuenta_operativa) end) FROM cuenta_operativa_cliente x where x.cliente_id=t.id ),'-0000') cta_contable_fac,'209-0001-0000-0000' cta_iva_pend,'208-0001-0000-0000' cta_iva_pag 
+        ,concat('106-0002-',(SELECT x.cuenta_operativa FROM cuenta_operativa_cliente x where x.cliente_id=t.id ),'-0000') cta_contable_fac,'209-0001-0000-0000' cta_iva_pend,'208-0001-0000-0000' cta_iva_pag 
         FROM cobro b join sucursal s on(b.sucursal_id=s.id)  join cliente t on(b.cliente_id=t.id)
-        join aplicacion_de_cobro a on(a.cobro_id=b.id) join cuenta_por_cobrar c on(a.cuenta_por_cobrar_id=c.id) join cfdi i on(c.cfdi_id=i.id)
-        where date(b.primera_aplicacion)='@FECHA' and date(b.primera_aplicacion)=a.fecha and b.tipo in('CRE') and b.forma_de_pago='EFECTIVO'        
-        UNION        
+        join aplicacion_de_cobro a on(a.cobro_id=b.id) join cuenta_por_cobrar c on(a.cuenta_por_cobrar_id=c.id) left join cfdi i on(c.cfdi_id=i.id)
+        where date(b.primera_aplicacion)='@FECHA' and date(b.primera_aplicacion)=a.fecha and b.tipo in('JUR') and b.forma_de_pago='EFECTIVO'        
+        UNION                                                              
         SELECT 
         concat('COB_FICHA_CHE_',f.origen) as asiento,f.id origen_gpo,f.origen documentoTipo,f.fecha,f.folio documento_gpo,b.moneda,b.tipo_de_cambio tc ,f.total total_gpo,f.tipo_de_ficha referencia2,s.nombre sucursal, s.clave suc
         ,concat('102-0001-',z.sub_cuenta_operativa,'-0000') cta_contable,'000-0000-0000-0000' cta_contable2,z.numero ctaDestino,z.descripcion bancoDestino,'PAPEL SA DE CV' beneficiario
         ,b.forma_de_pago,'02' metodoDePago,b.id origen,x.numero documento,x.numero referenciaBancaria,b.importe total,(case when b.diferencia_fecha='@FECHA' then b.diferencia else 0 end) diferencia
         ,b.importe-(case when b.diferencia_fecha='@FECHA' then b.diferencia else 0 end)-ifnull((SELECT sum(a.importe) FROM aplicacion_de_cobro a where a.cobro_id=b.id and a.fecha='@FECHA'),0) SAF
         ,null ctaOrigen,x.banco_origen_id,(SELECT y.nombre FROM banco y where x.banco_origen_id=y.id) bancoOrigen,t.rfc,t.nombre cliente,c.id cxc_id,c.documento factura,c.tipo,c.fecha fecha_fac,i.uuid,a.importe cobro_aplic,c.total montoTotal
-        ,concat('105-',(SELECT concat(case when x.cuenta_operativa='0266' then concat('0004-',x.cuenta_operativa) else concat('0003-',x.cuenta_operativa) end) FROM cuenta_operativa_cliente x where x.cliente_id=t.id ),'-0000') cta_contable_fac,'209-0001-0000-0000' cta_iva_pend,'208-0001-0000-0000' cta_iva_pag
+        ,concat('106-0002-',(SELECT x.cuenta_operativa FROM cuenta_operativa_cliente x where x.cliente_id=t.id ),'-0000') cta_contable_fac,'209-0001-0000-0000' cta_iva_pend,'208-0001-0000-0000' cta_iva_pag
         FROM ficha f join movimiento_de_cuenta m on(f.ingreso_id=m.id) join cuenta_de_banco z on(m.cuenta_id=z.id)
         join sucursal s on(f.sucursal_id=s.id) left join cobro_cheque x on(x.ficha_id=f.id) join cobro b on(x.cobro_id=b.id)  join cliente t on(b.cliente_id=t.id)
         join aplicacion_de_cobro a on(a.cobro_id=b.id) join cuenta_por_cobrar c on(a.cuenta_por_cobrar_id=c.id) left join cfdi i on(c.cfdi_id=i.id)
-        where f.fecha='@FECHA' and f.origen in('CRE') and f.tipo_de_ficha<>'EFECTIVO' and x.cambio_por_efectivo is false        
-        ) as x
- 
+        where f.fecha='@FECHA' and f.origen in('JUR') and f.tipo_de_ficha<>'EFECTIVO' and x.cambio_por_efectivo is false                  
+        ) as x  
         """
         return res
     }
