@@ -173,6 +173,7 @@ class ComprobanteFiscalService implements  LogUser{
             total = comprobanteFiscal.total
             descuentoFinanciero = comprobanteFiscal.proveedor.descuentoF
             uuid = comprobanteFiscal.uuid
+            descuento = comprobanteFiscal.descuento
 
         }
         def plazo = comprobanteFiscal.proveedor.plazo ?: 0

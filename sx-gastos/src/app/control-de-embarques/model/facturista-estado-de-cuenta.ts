@@ -16,4 +16,5 @@ export interface FacturistaEstadoDeCuenta {
   updateUser?: string;
   dateCreated?: string;
   lastUpdated?: string;
+  nota?: string;
 }

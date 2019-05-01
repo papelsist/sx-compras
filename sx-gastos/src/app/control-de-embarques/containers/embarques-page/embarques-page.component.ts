@@ -47,6 +47,12 @@ export class EmbarquesPageComponent implements OnInit {
       title: 'Estado de cuenta',
       description: '',
       icon: 'account_box'
+    },
+    {
+      route: 'facturistas',
+      title: 'Facturistas',
+      descripcion: 'Proveedores de embarque',
+      icon: 'people_outline'
     }
   ];
 

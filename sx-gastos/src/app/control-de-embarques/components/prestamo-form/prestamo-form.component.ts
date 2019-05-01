@@ -1,4 +1,9 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Inject,
+  ChangeDetectionStrategy
+} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { FacturistaPrestamo } from 'app/control-de-embarques/model';
@@ -7,8 +12,8 @@ import * as moment from 'moment';
 
 @Component({
   selector: 'sx-prestamo-form',
-  templateUrl: './prestamo-form.component.html',
-  styleUrls: ['/prestamo-form.component.scss']
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './prestamo-form.component.html'
 })
 export class PrestamoFormComponent implements OnInit {
   form: FormGroup;

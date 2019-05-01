@@ -4,6 +4,8 @@ import { EnvioComisionComponent } from './envio-comision/envio-comision.componen
 import { PrestamosComponent } from './prestamos/prestamos.component';
 import { CargosComponent } from './cargos/cargos.component';
 import { EstadoDeCuentaComponent } from './estado-de-cuenta/estado-de-cuenta.component';
+import { FacturistasComponent } from './facturistas/facturistas.component';
+import { FacturistaComponent } from './facturista/facturista.component';
 
 export const containers: any[] = [
   EmbarquesPageComponent,
@@ -11,7 +13,9 @@ export const containers: any[] = [
   EnvioComisionComponent,
   PrestamosComponent,
   CargosComponent,
-  EstadoDeCuentaComponent
+  EstadoDeCuentaComponent,
+  FacturistasComponent,
+  FacturistaComponent
 ];
 
 export * from './embarques-page/embarques-page.component';
@@ -23,3 +27,6 @@ export * from './prestamos/prestamos.component';
 export * from './cargos/cargos.component';
 
 export * from './estado-de-cuenta/estado-de-cuenta.component';
+
+export * from './facturistas/facturistas.component';
+export * from './facturista/facturista.component';

@@ -1,4 +1,10 @@
-import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Inject,
+  OnDestroy,
+  ChangeDetectionStrategy
+} from '@angular/core';
 import {
   MAT_DIALOG_DATA,
   MatDialogRef,
@@ -44,8 +50,8 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
 
 @Component({
   selector: 'sx-solicitud-form',
-  templateUrl: './solicitud-form.component.html',
-  styleUrls: ['/solicitud-form.component.scss']
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './solicitud-form.component.html'
 })
 export class SolicitudFormComponent implements OnInit, OnDestroy {
   form: FormGroup;

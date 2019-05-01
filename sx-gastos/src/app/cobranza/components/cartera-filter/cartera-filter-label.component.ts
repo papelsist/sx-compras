@@ -8,7 +8,6 @@ import { CarteraFilter } from '../../models';
     <span *ngIf="filter.nombre" >{{filter.nombre}}</span>
     <span *ngIf="filter.fechaInicial" class="pad-left">Del: {{filter.fechaInicial | date: 'dd/MM/yyyy'}}</span>
     <span *ngIf="filter.fechaFinal" class="pad-left">al: {{filter.fechaFinal | date: 'dd/MM/yyyy'}}</span>
-    <span *ngIf="filter.tipo" class="pad-left">({{filter.tipo}})</span>
   <div>
   `
 })

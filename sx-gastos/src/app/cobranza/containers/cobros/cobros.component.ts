@@ -70,7 +70,7 @@ export class CobrosComponent implements OnInit, OnDestroy {
   cobros$: Observable<Cobro[]>;
   search$: Observable<string>;
   filter: CarteraFilter;
-  cartera: Cartera;
+  cartera: Cartera = new Cartera('CHO', 'CHOFER');
   destroy$ = new Subject<boolean>();
   loading$: Observable<boolean>;
 
@@ -83,7 +83,7 @@ export class CobrosComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.route.data.pipe(takeUntil(this.destroy$)).subscribe(data => {
-      this.cartera = data.cartera;
+      // this.cartera = data.cartera;
       this.storageKey = data.storageKey || 'sx.cxc.cobros';
       this.loadFilter();
       this.reload(this.cartera, this.filter);

@@ -42,7 +42,8 @@ class EnvioComisionService implements  LogUser{
                     precioTonelada: e.precioTonelada ?: 0.0,
                     createUser: 'NA',
                     updateUser: 'NA',
-                    comisionPorTonelada: false
+                    comisionPorTonelada: false,
+
             )
             logEntity(ec)
             actualizarOtrosImportes(ec)
@@ -66,6 +67,7 @@ class EnvioComisionService implements  LogUser{
                         " and t not in (select x.traslado from EnvioComision x)", [fechaInicial, fechaFinal])
         List<EnvioComision> res = []
         traslados.each { t ->
+            // t.solicitudDeTraslado.s
             EnvioComision ec = new EnvioComision(
                     chofer: t.chofer,
                     comision: t.chofer.comision ?: 0.0,
@@ -81,6 +83,11 @@ class EnvioComisionService implements  LogUser{
                     updateUser: 'NA',
                     comisionPorTonelada: true,
             )
+
+            if(t.solicitudDeTraslado.sucursalSolicita.nombre == 'ANDRADE' && t.solicitudDeTraslado.sucursalAtiende.nombre == 'VERTIZ 176') {
+                ec.precioTonelada = 50.00
+            }
+
             logEntity(ec)
             actualizarDocumento(ec)
             ec.save failOnError: true, flush: true
@@ -136,6 +143,7 @@ class EnvioComisionService implements  LogUser{
     }
 
     def calcularPorEnvio(EnvioComision ec) {
+        ec.valor = ec.envio.valor
         ec.precioTonelada = 0.0
         ec.importeComision = (ec.comision * (ec.valor + (ec.valorCajas * 2) )) / 100.00
         ec.fechaComision = new Date()

@@ -61,7 +61,7 @@ export class EstadoDeCuentaEffects {
     switchMap(facturistaId => {
       return this.service.generarNotaDeCargo(facturistaId).pipe(
         map(rows => [
-          new fromActions.GenerarInteresesSuccess({ response: rows }),
+          new fromActions.GenerarNotaDeCargoSuccess({ response: rows }),
           new fromActions.LoadEstadoDeCuenta({ facturistaId })
         ]),
         catchError(response =>

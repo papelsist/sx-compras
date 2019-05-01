@@ -105,8 +105,7 @@ join facturista_de_embarque P ON(C.facturista_id=P.id)
 JOIN sucursal S ON(S.ID=E.sucursal_id)
 WHERE  P.ID=$P{FACTURISTA} AND DATE(X.REGRESO) BETWEEN $P{FECHA_INI} AND $P{FECHA_FIN} 
 ) AS A 
-GROUP BY A.SUCURSAL
-]]></queryString>
+GROUP BY A.SUCURSAL]]></queryString>
 
 	<field name="TIPO" class="java.lang.String"/>
 	<field name="FACTURISTA" class="java.lang.String"/>
@@ -161,6 +160,9 @@ GROUP BY A.SUCURSAL
 	</variable>
 	<variable name="CAJAS" class="java.math.BigDecimal" resetType="Group" resetGroup="TIPO" calculation="Sum">
 		<variableExpression><![CDATA[$F{CAJAS}]]></variableExpression>
+	</variable>
+	<variable name="CAJAS_CH" class="java.lang.Double" resetType="Group" resetGroup="TIPO" calculation="Sum">
+		<variableExpression><![CDATA[new Double(($F{CAJAS}.doubleValue() * 3.00 ) * $F{FACTOR}.doubleValue() )]]></variableExpression>
 	</variable>
 
 		<group  name="TIPO" >
@@ -443,7 +445,9 @@ GROUP BY A.SUCURSAL
 						y="2"
 						width="50"
 						height="10"
-						key="textField-64"/>
+						key="textField-64">
+							<printWhenExpression><![CDATA[new Boolean(!$F{TIPO}.equals( "POR CHOFER" ))]]></printWhenExpression>
+						</reportElement>
 					<box>					<pen lineWidth="0.0" lineStyle="Solid"/>
 					<topPen lineWidth="0.75" lineStyle="Solid" lineColor="#CCCCCC"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid"/>
@@ -491,6 +495,26 @@ GROUP BY A.SUCURSAL
 					</textElement>
 				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$V{VTA_IMPORTE}]]></textFieldExpression>
 				</textField>
+				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="315"
+						y="2"
+						width="50"
+						height="10"
+						key="textField-87">
+							<printWhenExpression><![CDATA[new Boolean($F{TIPO}.equals( "POR CHOFER" ))]]></printWhenExpression>
+						</reportElement>
+					<box>					<pen lineWidth="0.0" lineStyle="Solid"/>
+					<topPen lineWidth="0.75" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+</box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$V{CAJAS_CH}]]></textFieldExpression>
+				</textField>
 			</band>
 			</groupFooter>
 		</group>
@@ -533,19 +557,6 @@ GROUP BY A.SUCURSAL
 						key="line-8"/>
 					<graphicElement stretchType="NoStretch" fill="Solid" />
 				</line>
-				<staticText>
-					<reportElement
-						x="374"
-						y="47"
-						width="84"
-						height="13"
-						key="staticText-6"/>
-					<box></box>
-					<textElement textAlignment="Right">
-						<font fontName="SansSerif" pdfFontName="Helvetica-Oblique" size="9" isBold="false" isItalic="true"/>
-					</textElement>
-				<text><![CDATA[PERIODO: DEL ]]></text>
-				</staticText>
 				<staticText>
 					<reportElement
 						x="226"
@@ -657,19 +668,6 @@ GROUP BY A.SUCURSAL
 					</textElement>
 				<text><![CDATA[VALOR]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="false" pattern="dd-MMM-yy" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="458"
-						y="47"
-						width="51"
-						height="13"
-						key="textField-44"/>
-					<box></box>
-					<textElement textAlignment="Center">
-						<font pdfFontName="Helvetica-BoldOblique" size="9" isBold="true" isItalic="true" isUnderline="false"/>
-					</textElement>
-				<textFieldExpression   class="java.util.Date"><![CDATA[$P{FECHA_INI}]]></textFieldExpression>
-				</textField>
 				<staticText>
 					<reportElement
 						x="492"
@@ -747,32 +745,6 @@ GROUP BY A.SUCURSAL
 				</staticText>
 				<staticText>
 					<reportElement
-						x="509"
-						y="47"
-						width="20"
-						height="13"
-						key="staticText-74"/>
-					<box></box>
-					<textElement textAlignment="Center">
-						<font fontName="SansSerif" pdfFontName="Helvetica-Oblique" size="9" isBold="false" isItalic="true"/>
-					</textElement>
-				<text><![CDATA[AL ]]></text>
-				</staticText>
-				<textField isStretchWithOverflow="false" pattern="dd-MMM-yy" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="529"
-						y="47"
-						width="51"
-						height="13"
-						key="textField-67"/>
-					<box></box>
-					<textElement textAlignment="Center">
-						<font pdfFontName="Helvetica-BoldOblique" size="9" isBold="true" isItalic="true" isUnderline="false"/>
-					</textElement>
-				<textFieldExpression   class="java.util.Date"><![CDATA[$P{FECHA_FIN}]]></textFieldExpression>
-				</textField>
-				<staticText>
-					<reportElement
 						x="524"
 						y="82"
 						width="48"
@@ -786,6 +758,58 @@ GROUP BY A.SUCURSAL
 					</textElement>
 				<text><![CDATA[TOTAL]]></text>
 				</staticText>
+				<staticText>
+					<reportElement
+						x="341"
+						y="48"
+						width="84"
+						height="13"
+						key="staticText-77"/>
+					<box></box>
+					<textElement textAlignment="Right">
+						<font fontName="SansSerif" pdfFontName="Helvetica-Oblique" size="9" isBold="false" isItalic="true"/>
+					</textElement>
+				<text><![CDATA[PERIODO: DEL ]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="dd-MMM-yy" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="425"
+						y="48"
+						width="66"
+						height="13"
+						key="textField-84"/>
+					<box></box>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-BoldOblique" size="9" isBold="true" isItalic="true" isUnderline="false"/>
+					</textElement>
+				<textFieldExpression   class="java.util.Date"><![CDATA[$P{FECHA_INI}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="491"
+						y="48"
+						width="20"
+						height="13"
+						key="staticText-78"/>
+					<box></box>
+					<textElement textAlignment="Center">
+						<font fontName="SansSerif" pdfFontName="Helvetica-Oblique" size="9" isBold="false" isItalic="true"/>
+					</textElement>
+				<text><![CDATA[AL ]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="dd-MMM-yy" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="511"
+						y="48"
+						width="66"
+						height="13"
+						key="textField-85"/>
+					<box></box>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-BoldOblique" size="9" isBold="true" isItalic="true" isUnderline="false"/>
+					</textElement>
+				<textFieldExpression   class="java.util.Date"><![CDATA[$P{FECHA_FIN}]]></textFieldExpression>
+				</textField>
 			</band>
 		</columnHeader>
 		<detail>
@@ -926,7 +950,9 @@ GROUP BY A.SUCURSAL
 						y="2"
 						width="50"
 						height="11"
-						key="textField-63"/>
+						key="textField-63">
+							<printWhenExpression><![CDATA[new Boolean(!$F{TIPO}.equals( "POR CHOFER" ))]]></printWhenExpression>
+						</reportElement>
 					<box>					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
 					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#CCCCCC"/>
@@ -1035,6 +1061,26 @@ GROUP BY A.SUCURSAL
 						<font fontName="Arial" size="8"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{SUCURSAL}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="317"
+						y="2"
+						width="50"
+						height="11"
+						key="textField-86">
+							<printWhenExpression><![CDATA[new Boolean($F{TIPO}.equals( "POR CHOFER" ))]]></printWhenExpression>
+						</reportElement>
+					<box>					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[new Double(($F{CAJAS}.doubleValue() * 3.00 ) * $F{FACTOR}.doubleValue() )]]></textFieldExpression>
 				</textField>
 			</band>
 		</detail>

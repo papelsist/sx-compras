@@ -17,6 +17,8 @@ import { SelectorDeFacturistaComponent } from './selector-de-facturista/selector
 import { EstadoDeCuentaTableComponent } from './estado-de-cuenta-table/estado-de-cuenta-table.component';
 import { PrestamoInteresesFormComponent } from './prestamo-intereses/prestamo-intereses-form.component';
 import { AnalisisDeEmbarquesDialogComponent } from './comisiones-report/analisis-de-embarques.dialog.component';
+import { FacturistasTableComponent } from './facturistas-table/facturistas-table.component';
+import { FacturistaFormComponent } from './facturista-form/facturista-form.component';
 
 export const components: any[] = [
   EnviosFilterLabelComponent,
@@ -28,7 +30,11 @@ export const components: any[] = [
   PrestamosTableComponent,
   PrestamoFormComponent,
   PrestamoInteresesFormComponent,
+
   FacturistasFieldComponent,
+  FacturistasTableComponent,
+  FacturistaFormComponent,
+
   // Otros cargos
   CargosTableComponent,
   CargoFormComponent,
@@ -67,7 +73,10 @@ export * from './prestamos-table/prestamos-table.component';
 export * from './prestamo-form/prestamo-form.component';
 export * from './prestamo-intereses/prestamo-intereses-form.component';
 
+// Facturistas
 export * from './facturista-field/facturista-field.component';
+export * from './facturistas-table/facturistas-table.component';
+export * from './facturista-form/facturista-form.component';
 
 // Otros cargos
 export * from './cargos-table/cargos-table.component';

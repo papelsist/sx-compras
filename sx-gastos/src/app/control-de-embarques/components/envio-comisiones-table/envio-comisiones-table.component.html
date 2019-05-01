@@ -120,6 +120,12 @@
     <td mat-footer-cell *matFooterCellDef></td>
   </ng-container>
 
+  <ng-container matColumnDef="maniobra">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Maniobra</th>
+    <td mat-cell *matCellDef="let req">{{ req.maniobra | currency }}</td>
+    <td mat-footer-cell *matFooterCellDef></td>
+  </ng-container>
+
   <ng-container matColumnDef="kilos">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Kilos</th>
     <td mat-cell *matCellDef="let req">{{ req.kilos }}</td>

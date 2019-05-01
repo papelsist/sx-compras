@@ -17,7 +17,7 @@ import sx.utils.MonedaUtils
 
 
 @Slf4j
-@GrailsCompileStatic
+// @GrailsCompileStatic
 class FacturistaEstadoDeCuentaService implements  LogUser, FolioLog {
 
     NotaDeCargoService notaDeCargoService
@@ -30,7 +30,7 @@ class FacturistaEstadoDeCuentaService implements  LogUser, FolioLog {
     }
 
     List<FacturistaEstadoDeCuenta> calcularInteresesPorFacturista(Date corte, BigDecimal tasa, FacturistaDeEmbarque f) {
-        log.info('Calculando intereses de {} al {} Tasa: {}', f.nombre, corte, tasa)
+        log.info('Calculando intereses de {} al {} Tasa: {}', f.nombre, corte, MonedaUtils.round(tasa, 4))
         List<FacturistaEstadoDeCuenta> rows = FacturistaEstadoDeCuenta
                 .where{facturista == f}
                 .list([sort: 'fecha', 'order': 'asc'])
@@ -42,6 +42,7 @@ class FacturistaEstadoDeCuentaService implements  LogUser, FolioLog {
         List<FacturistaEstadoDeCuenta> movs = []
 
         if(saldo) {
+            tasa = (tasa * 2) / 365
             BigDecimal intereses = MonedaUtils.round(saldo * tasa/100.00)
             movs << generarMovimiento(f, corte, 'INTERESES', intereses, tasa)
             BigDecimal impuesto = MonedaUtils.calcularImpuesto(intereses)
@@ -79,20 +80,22 @@ class FacturistaEstadoDeCuentaService implements  LogUser, FolioLog {
 
     }
 
-    def generarNotasDeCargoPorIntereses(Date fecha) {
+    def generarNotasDeCargoPorIntereses(Date fecha, String comentario = 'INTERESES POR PRESTAMO') {
         List<FacturistaDeEmbarque> facturistas = FacturistaDeEmbarque.list()
         facturistas.each { f ->
-            generarNotaDeCargo(f, fecha)
+            generarNotaDeCargo(f, fecha, comentario)
         }
     }
 
 
     @Transactional
-    NotaDeCargo generarNotaDeCargo(FacturistaDeEmbarque f, Date fecha = new Date()) {
+    NotaDeCargo generarNotaDeCargo(FacturistaDeEmbarque f, Date corte = new Date(), String comentario) {
         List<FacturistaEstadoDeCuenta> intereses = FacturistaEstadoDeCuenta.where{
                 facturista == f &&
                 tipo == 'INTERESES' &&
-                origen == null
+                origen == null &&
+                fecha <= corte
+
             }.list()
         def importe = intereses.sum 0.0 , {FacturistaEstadoDeCuenta m -> m.importe}
         if( (importe as BigDecimal) <= 0.0)
@@ -100,10 +103,12 @@ class FacturistaEstadoDeCuentaService implements  LogUser, FolioLog {
 
         NotaDeCargo nc = new NotaDeCargo()
         nc.tipo = 'CHO'
+        nc.formaDePago = 'COMPENSACION'
         nc.cliente = Cliente.where{rfc == f.rfc}.find()
         nc.sucursal = Sucursal.where{nombre == 'OFICINAS'}.find()
-        nc.fecha = fecha
-        nc.comentario = 'INTERESES SOBRE PRESTAMOS'
+        nc.fecha = corte
+        // nc.comentario = 'INTERESES POR PRESTAMO DE ENERO A DICIEMBRE 2018'
+        nc.comentario = comentario
         nc.importe = importe as BigDecimal
         nc.impuesto = MonedaUtils.calcularImpuesto(nc.importe)
         nc.total = nc.importe + nc.impuesto
@@ -115,6 +120,7 @@ class FacturistaEstadoDeCuentaService implements  LogUser, FolioLog {
 
         NotaDeCargoDet det = new NotaDeCargoDet()
         det.comentario = nc.comentario
+        det.concepto = '84101700'
         det.importe = nc.importe
         det.impuesto = nc.impuesto
         det.total = nc.total
@@ -128,20 +134,23 @@ class FacturistaEstadoDeCuentaService implements  LogUser, FolioLog {
 
         nc.addToPartidas(det)
         logEntity(nc)
+
         /***** TEMPO **/
         nc.createUser = 'aa'
         nc.updateUser = 'aa'
         nc.cuentaPorCobrar.createUser = 'aa'
         nc.cuentaPorCobrar.updateUser = 'aa'
         /********/
+
         nc = nc.save failOnError: true, flush: true
-        intereses.each {
-            it.origen = nc.id
-            it.save flush: true
-        }
 
         notaDeCargoService.generarCfdi(nc)
         notaDeCargoService.timbrar(nc)
+
+        intereses.each {
+            it.origen = nc.id
+            it.save failOnError: true, flush: true
+        }
 
         return nc
     }

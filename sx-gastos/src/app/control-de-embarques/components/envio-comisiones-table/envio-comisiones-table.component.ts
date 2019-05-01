@@ -45,6 +45,7 @@ export class EnvioComisionesTableComponent
     'regreso',
     'valor',
     'valorCajas',
+    'maniobra',
     'comision',
     'precioTonelada',
     'kilos',

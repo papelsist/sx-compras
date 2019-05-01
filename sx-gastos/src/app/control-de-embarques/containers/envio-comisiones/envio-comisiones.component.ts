@@ -114,8 +114,6 @@ export class EnvioComisionesComponent implements OnInit {
   }
 
   modificar() {
-    console.log('Selection: ', this.currentSelection.map(item => item.id));
-
     this.dialog
       .open(EnvioComisionFormComponent, {
         data: {
@@ -131,6 +129,7 @@ export class EnvioComisionesComponent implements OnInit {
             ...res,
             registros: this.currentSelection.map(item => item.id)
           };
+          console.log('Update: ', res);
           this.store.dispatch(
             new fromStore.UpdateManyComisiones({ data: command })
           );

@@ -1,6 +1,7 @@
 export interface NotaDeCargo {
   id?: string;
   cliente: any;
+  nombre: string;
   folio?: number;
   tipo: string;
   fecha: string;

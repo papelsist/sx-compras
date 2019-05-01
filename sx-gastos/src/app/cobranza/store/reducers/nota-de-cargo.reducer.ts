@@ -84,6 +84,13 @@ export function reducer(
       };
     }
 
+    case NotaDeCargoActionTypes.UpsertNotaDeCargo: {
+      const nota = action.payload.nota;
+      return adapter.upsertOne(nota, {
+        ...state
+      });
+    }
+
     default:
       return state;
   }

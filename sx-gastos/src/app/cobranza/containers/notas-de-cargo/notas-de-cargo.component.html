@@ -22,7 +22,10 @@
     </sx-search-title>
     <mat-divider></mat-divider>
 
-    <sx-notas-de-cargo-table [notas]="notas$ | async"></sx-notas-de-cargo-table>
+    <sx-notas-de-cargo-table
+      [notas]="notas$ | async"
+      (edit)="onSelect($event)"
+    ></sx-notas-de-cargo-table>
 
     <!-- <sx-cobros-table
       [cobros]="cobros$ | async"

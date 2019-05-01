@@ -30,7 +30,7 @@ export class NotasDeCargoTableComponent implements OnInit, OnChanges {
   @Input()
   displayColumns = [
     'folio',
-    // 'nombre',
+    'nombre',
     'tipo',
     'fecha',
     'moneda',

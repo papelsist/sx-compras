@@ -275,6 +275,11 @@ class UrlMappings {
 
         // Cfdis
         "/api/cfdi"(resources: 'cfdi', excludes:['create', 'edit', 'patch', 'update', 'save', 'delete'])
+        "/api/cfdi/print/$id"(controller:"cfdi", action:"print")
+        "/api/cfdi/mostrarXml/$id?"(controller:"cfdi", action:"mostrarXml")
+        "/api/cfdis/descargarXml/$id?"(controller:"cfdi", action:"descargarXml", method: 'GET')
+
+
         "/api/cfdi/cancelacion"(resources: 'cancelacionDeCfdi', excludes:['create', 'edit','patch', 'save'])
         "/api/cfdi/cancelacion/pendientes"(controller: 'cancelacionDeCfdi', action: 'pendientes')
         "/api/cfdi/cancelacion/cancelar/$id"(controller: 'cancelacionDeCfdi', action: 'cancelar', method: 'PUT')

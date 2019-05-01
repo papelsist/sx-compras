@@ -22,13 +22,18 @@ export function reducer(
   action: fromActions.FacturistaActions
 ): State {
   switch (action.type) {
+    case fromActions.FacturistaActionTypes.DeleteFacturista:
+    case fromActions.FacturistaActionTypes.UpdateFacturista:
+    case fromActions.FacturistaActionTypes.CreateFacturista:
     case fromActions.FacturistaActionTypes.LoadFacturistas: {
       return {
         ...state,
         loading: true
       };
     }
-
+    case fromActions.FacturistaActionTypes.DeleteFacturistaFail:
+    case fromActions.FacturistaActionTypes.UpdateFacturistaFail:
+    case fromActions.FacturistaActionTypes.CreateFacturistaFail:
     case fromActions.FacturistaActionTypes.LoadFacturistasFail: {
       return {
         ...state,
@@ -41,6 +46,21 @@ export function reducer(
         ...state,
         loading: false,
         loaded: true
+      });
+    }
+
+    case fromActions.FacturistaActionTypes.UpdateFacturistaSuccess:
+    case fromActions.FacturistaActionTypes.CreateFacturistaSuccess: {
+      return adapter.upsertOne(action.payload.facturista, {
+        ...state,
+        loading: false
+      });
+    }
+
+    case fromActions.FacturistaActionTypes.DeleteFacturistaSuccess: {
+      return adapter.removeOne(action.payload.facturistaId, {
+        ...state,
+        loading: false
       });
     }
 

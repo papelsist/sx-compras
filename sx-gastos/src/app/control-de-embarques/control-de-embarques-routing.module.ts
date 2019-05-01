@@ -35,6 +35,14 @@ const routes: Routes = [
       {
         path: 'estadoDeCuenta',
         component: fromContainers.EstadoDeCuentaComponent
+      },
+      {
+        path: 'facturistas',
+        component: fromContainers.FacturistasComponent
+      },
+      {
+        path: 'facturistas/:facturistaId',
+        component: fromContainers.FacturistaComponent
       }
     ]
   }

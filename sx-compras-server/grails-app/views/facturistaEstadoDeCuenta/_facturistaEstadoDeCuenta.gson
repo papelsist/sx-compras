@@ -1,7 +1,15 @@
+import sx.cxc.NotaDeCargo
 import sx.logistica.FacturistaEstadoDeCuenta
 
 model {
 	FacturistaEstadoDeCuenta facturistaEstadoDeCuenta
 }
 
-json g.render(facturistaEstadoDeCuenta, [resolveTemplate: false])
+json g.render(facturistaEstadoDeCuenta, [resolveTemplate: false]) {
+	if(facturistaEstadoDeCuenta.tipo.startsWith('INTERES')) {
+        if (facturistaEstadoDeCuenta.origen) {
+            nota "N. Cargo:   ${NotaDeCargo.get(facturistaEstadoDeCuenta.origen).folio}"
+        }
+
+    }
+}

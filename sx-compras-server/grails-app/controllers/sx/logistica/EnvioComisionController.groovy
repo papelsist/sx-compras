@@ -133,6 +133,9 @@ class EnvioComisionBatchUpdate  implements  Validateable{
 
     BigDecimal comision = 0.0
     BigDecimal precioTonelada = 0.0
+    BigDecimal valorCajas = 0.0
+    BigDecimal maniobra = 0.0
+
     String comentarioDeComision
 
     List<EnvioComision>  registros

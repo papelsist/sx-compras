@@ -65,7 +65,8 @@ export class EstadoDeCuentaTableComponent implements OnInit, OnChanges {
     'saldo',
     'tasaDeInteres',
     'updateUser',
-    'dateCreated'
+    'dateCreated',
+    'nota'
   ];
   @ViewChild(MatSort)
   sort: MatSort;

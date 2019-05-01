@@ -69,7 +69,8 @@ class EnvioComision {
         documentoFolio nullable: true
         documentoFecha nullable: true
         documentoFecha nullable: true
-        empresa maxSize: 50
+        empresa nullable: true, maxSize: 50
+
     }
 
     static  mapping = {

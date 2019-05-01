@@ -7,8 +7,9 @@
     <mat-toolbar layout>
       <span>Estado de cuenta</span>
       <span flex></span>
-      <span *ngIf="(selected$ | async) as selected">
+      <span *ngIf="(selected$ | async) as selected" layout>
         <span>{{ selected.nombre }}</span>
+        <span flex></span>
       </span>
       <span flex></span>
       <div class="button-section">
@@ -45,7 +46,9 @@
             *ngIf="selected"
             mat-menu-item
             (click)="generarNotaDeCargo(selected)"
-          ></button>
+          >
+            Generar Nota de Cargo
+          </button>
         </mat-menu>
       </span>
     </mat-toolbar>

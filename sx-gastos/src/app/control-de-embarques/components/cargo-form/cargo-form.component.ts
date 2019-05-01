@@ -1,4 +1,9 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Inject,
+  ChangeDetectionStrategy
+} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { FacturistaCargo } from 'app/control-de-embarques/model';
@@ -7,8 +12,8 @@ import * as moment from 'moment';
 
 @Component({
   selector: 'sx-cargo-form',
-  templateUrl: './cargo-form.component.html',
-  styleUrls: ['/cargo-form.component.scss']
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './cargo-form.component.html'
 })
 export class CargoFormComponent implements OnInit {
   form: FormGroup;

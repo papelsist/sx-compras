@@ -80,6 +80,7 @@ WHERE DATE(X.REGRESO) BETWEEN $P{FECHA_INI} AND $P{FECHA_FIN} AND X.chofer_id=$P
 
 	<sortField name="VTA" />
 	<sortField name="TIPO" />
+	<sortField name="regreso" />
 	<sortField name="FECHA_DOCTO" />
 	<sortField name="DOCUMENTO" />
 
@@ -273,19 +274,6 @@ WHERE DATE(X.REGRESO) BETWEEN $P{FECHA_INI} AND $P{FECHA_FIN} AND X.chofer_id=$P
 						key="line-8"/>
 					<graphicElement stretchType="NoStretch" fill="Solid" />
 				</line>
-				<staticText>
-					<reportElement
-						x="360"
-						y="63"
-						width="41"
-						height="13"
-						key="staticText-6"/>
-					<box></box>
-					<textElement textAlignment="Left">
-						<font fontName="SansSerif" pdfFontName="Helvetica-Oblique" size="9" isBold="false" isItalic="true"/>
-					</textElement>
-				<text><![CDATA[FECHA:]]></text>
-				</staticText>
 				<staticText>
 					<reportElement
 						x="392"
@@ -483,19 +471,6 @@ WHERE DATE(X.REGRESO) BETWEEN $P{FECHA_INI} AND $P{FECHA_FIN} AND X.chofer_id=$P
 					</textElement>
 				<text><![CDATA[TOT FAC]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="false" pattern="EEEEE dd MMMMM yyyy" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="401"
-						y="63"
-						width="70"
-						height="13"
-						key="textField-44"/>
-					<box></box>
-					<textElement textAlignment="Left">
-						<font pdfFontName="Helvetica-BoldOblique" size="9" isBold="true" isItalic="true" isUnderline="false"/>
-					</textElement>
-				<textFieldExpression   class="java.util.Date"><![CDATA[$P{FECHA_INI}]]></textFieldExpression>
-				</textField>
 				<staticText>
 					<reportElement
 						x="471"
@@ -541,6 +516,58 @@ WHERE DATE(X.REGRESO) BETWEEN $P{FECHA_INI} AND $P{FECHA_FIN} AND X.chofer_id=$P
 					</textElement>
 				<text><![CDATA[COMISION]]></text>
 				</staticText>
+				<staticText>
+					<reportElement
+						x="342"
+						y="63"
+						width="84"
+						height="13"
+						key="staticText-72"/>
+					<box></box>
+					<textElement textAlignment="Right">
+						<font fontName="SansSerif" pdfFontName="Helvetica-Oblique" size="9" isBold="false" isItalic="true"/>
+					</textElement>
+				<text><![CDATA[PERIODO: DEL ]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="dd-MMM-yy" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="426"
+						y="63"
+						width="66"
+						height="13"
+						key="textField-61"/>
+					<box></box>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-BoldOblique" size="9" isBold="true" isItalic="true" isUnderline="false"/>
+					</textElement>
+				<textFieldExpression   class="java.util.Date"><![CDATA[$P{FECHA_INI}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="492"
+						y="63"
+						width="20"
+						height="13"
+						key="staticText-73"/>
+					<box></box>
+					<textElement textAlignment="Center">
+						<font fontName="SansSerif" pdfFontName="Helvetica-Oblique" size="9" isBold="false" isItalic="true"/>
+					</textElement>
+				<text><![CDATA[AL ]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="dd-MMM-yy" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="512"
+						y="63"
+						width="66"
+						height="13"
+						key="textField-62"/>
+					<box></box>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-BoldOblique" size="9" isBold="true" isItalic="true" isUnderline="false"/>
+					</textElement>
+				<textFieldExpression   class="java.util.Date"><![CDATA[$P{FECHA_FIN}]]></textFieldExpression>
+				</textField>
 			</band>
 		</columnHeader>
 		<detail>

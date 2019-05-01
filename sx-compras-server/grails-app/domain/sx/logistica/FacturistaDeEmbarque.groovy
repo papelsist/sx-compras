@@ -20,12 +20,20 @@ class FacturistaDeEmbarque {
 
     String rfc
 
+    String email
+
+    String telefono
+
     Proveedor proveedor
 
-    static constraints = {}
+    static constraints = {
+        email nullable: true
+        telefono nullable: true
+    }
 
     static mapping= {
         id generator:'uuid'
+
     }
 
     String toString() {

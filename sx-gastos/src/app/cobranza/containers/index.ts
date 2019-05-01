@@ -3,13 +3,15 @@ import { CobranzaPageComponent } from './cobranza-page/cobranza-page.component';
 import { SolicitudesComponent } from './solicitudes/solicitudes.component';
 import { CobroComponent } from './cobro/cobro.component';
 import { NotasDeCargoComponent } from './notas-de-cargo/notas-de-cargo.component';
+import { NotaDeCargoComponent } from './nota-de-cargo/nota-de-cargo.component';
 
 export const containers: any[] = [
   CobranzaPageComponent,
   CobrosComponent,
   CobroComponent,
   SolicitudesComponent,
-  NotasDeCargoComponent
+  NotasDeCargoComponent,
+  NotaDeCargoComponent
 ];
 
 export * from './cobranza-page/cobranza-page.component';
@@ -21,3 +23,4 @@ export * from './solicitudes/solicitudes.component';
 
 // Notas de cargo
 export * from './notas-de-cargo/notas-de-cargo.component';
+export * from './nota-de-cargo/nota-de-cargo.component';

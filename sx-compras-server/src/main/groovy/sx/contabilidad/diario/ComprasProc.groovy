@@ -203,7 +203,7 @@ class ComprasProc implements  ProcesadorDePoliza, AsientoBuilder{
         x.total,
         x.montoTotal,
         x.flete,
-        x.diferencia,
+        CASE WHEN MONEDA='USD' THEN x.subtotal-x.descuento-x.analisis-x.flete ELSE x.diferencia END diferencia,
         x.fecha,
         x.moneda,
         x.tc,
@@ -223,7 +223,7 @@ class ComprasProc implements  ProcesadorDePoliza, AsientoBuilder{
         x.rfc
         FROM (                 
         SELECT c.id origen,P.id AS proveedor,P.nombre referencia2,S.clave suc,S.nombre AS sucursal,IC.fecha
-        ,concat(c.serie,'-',C.folio) documento,C.fecha fecha_doc,C.tipo_de_cambio tc,C.moneda
+        ,concat(ifnull(c.serie,''),(case when c.serie is null or c.folio is null then '' else '-' end),ifnull(C.folio,'')) documento,C.fecha fecha_doc,C.tipo_de_cambio tc,C.moneda
         ,round((C.sub_total-c.descuento-X.importe_flete)*C.tipo_de_cambio,2) AS subtotal
         ,c.descuento
         ,ROUND(c.impuesto_trasladado * c.tipo_de_cambio, 2) impuesto
@@ -244,8 +244,8 @@ class ComprasProc implements  ProcesadorDePoliza, AsientoBuilder{
         JOIN proveedor p on(c.proveedor_id=p.id)
         JOIN producto z on(ic.producto_id=z.id)
         WHERE  DATE(IC.FECHA) = '@FECHA'            
-        GROUP BY P.ID,IC.FECHA,C.ID,S.ID,C.FECHA,C.MONEDA
-        ORDER BY p.CLAVE
+        GROUP BY P.ID,C.ID,S.ID,C.FECHA,C.MONEDA
+        ORDER BY s.nombre,p.nombre,c.folio
         ) as x    
         """
         return query

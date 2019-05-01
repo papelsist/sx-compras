@@ -11,6 +11,9 @@ import { CxCSelectorComponent } from './cxc-selector/cxc-selector.component';
 import { CxCSelectorDialogComponent } from './cxc-selector/cxc-selector-dialog.component';
 import { CxCTableComponent } from './cxc-table/cxc-table.component';
 import { NotasDeCargoTableComponent } from './notas-de-cargo-table/notas-de-cargo-table.component';
+import { NotaDeCargoFormComponent } from './nota-de-cargo-form/nota-de-cargo-form.component';
+import { NcHeaderComponent } from './nota-de-cargo-form/nc-header/nc-header.component';
+import { NcPartidasComponent } from './nota-de-cargo-form/nc-partidas/nc-partidas.component';
 
 export const components: any[] = [
   CarteraFilterBtnComponent,
@@ -28,7 +31,10 @@ export const components: any[] = [
   SolicitudFormComponent,
 
   // Notas de Cargo
-  NotasDeCargoTableComponent
+  NotasDeCargoTableComponent,
+  NotaDeCargoFormComponent,
+  NcHeaderComponent,
+  NcPartidasComponent
 ];
 
 export const entryComponents: any[] = [
@@ -53,3 +59,6 @@ export * from './solicitud-form/solicitud-form.component';
 
 // Notas de cargo
 export * from './notas-de-cargo-table/notas-de-cargo-table.component';
+export * from './nota-de-cargo-form/nota-de-cargo-form.component';
+export * from './nota-de-cargo-form/nc-header/nc-header.component';
+export * from './nota-de-cargo-form/nc-partidas/nc-partidas.component';

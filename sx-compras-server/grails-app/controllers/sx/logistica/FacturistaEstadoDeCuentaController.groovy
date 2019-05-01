@@ -72,8 +72,9 @@ class FacturistaEstadoDeCuentaController extends RestfulController<FacturistaEst
             notFound()
             return
         }
+        String comentario = params.comentario?: 'INTERESES PRESTAMO '
         log.info('Generando nota de cargo por intereses de prestamo para {}', facturista)
-        facturistaEstadoDeCuentaService.generarNotaDeCargo(facturista, new Date())
+        facturistaEstadoDeCuentaService.generarNotaDeCargo(facturista, new Date(), comentario)
         respond ([message: 'NOTA DE CARGO  GENERADA ', status: 200])
     }
 

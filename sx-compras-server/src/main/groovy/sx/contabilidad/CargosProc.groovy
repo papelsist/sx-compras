@@ -14,7 +14,7 @@ class CargosProc implements  ProcesadorDePoliza{
 
     @Override
     String definirConcepto(Poliza poliza) {
-        return "CARGOS DIVERSOS y NOTAS DE DEBITO ${poliza.fecha}"
+        return "CARGOS DIVERSOS y NOTAS DE DEBITO ${poliza.fecha.format('dd/MM/yyyy')}"
     }
 
     @Override

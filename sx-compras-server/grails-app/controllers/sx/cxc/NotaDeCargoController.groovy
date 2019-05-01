@@ -7,6 +7,7 @@ import grails.rest.*
 import groovy.util.logging.Slf4j
 import sx.cfdi.Cfdi
 import sx.reports.ReportService
+import sx.utils.Periodo
 
 @Slf4j
 @GrailsCompileStatic
@@ -21,6 +22,32 @@ class NotaDeCargoController extends RestfulController<NotaDeCargo> {
 
     NotaDeCargoController() {
         super(NotaDeCargo)
+    }
+
+    @Override
+    protected List<NotaDeCargo> listAllResources(Map params) {
+        log.info('List params: {}', params)
+        params.sort = params.sort ?: 'lastUpdated'
+        params.order = params.order ?: 'desc'
+        params.max = params.registros ?: 20
+
+        def cartera = params.cartera
+
+        log.info('List: {} tipo: {}', params, cartera)
+
+        def query = NotaDeCargo.where { }
+
+        if(cartera) {
+            log.info('Cartera: {}', cartera)
+            query = query.where{ tipo == cartera}
+        }
+
+        if(params.periodo) {
+            Periodo periodo = (Periodo)params.periodo
+           //  query = query.where {fecha >= periodo.fechaInicial && fecha <= periodo.fechaFinal}
+        }
+        return query.list(params)
+
     }
 
     def generarCfdi(NotaDeCargo notaDeCargo) {

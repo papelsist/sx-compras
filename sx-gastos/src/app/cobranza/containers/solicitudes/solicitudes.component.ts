@@ -70,7 +70,7 @@ export class SolicitudesComponent implements OnInit, OnDestroy {
   filter$: Observable<CarteraFilter>;
   filter: CarteraFilter;
 
-  cartera: Cartera;
+  cartera: Cartera = new Cartera('CHO', 'CHOFER');
   destroy$ = new Subject<boolean>();
 
   constructor(
@@ -81,7 +81,7 @@ export class SolicitudesComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.route.data.pipe(takeUntil(this.destroy$)).subscribe(data => {
-      this.cartera = data.cartera;
+      // this.cartera = data.cartera;
       this.loadFilter();
       this.reload(this.cartera, this.filter);
     });

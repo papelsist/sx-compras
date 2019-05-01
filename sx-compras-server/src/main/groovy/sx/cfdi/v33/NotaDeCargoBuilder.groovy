@@ -53,6 +53,7 @@ class NotaDeCargoBuilder {
         // CfdiUtils.serialize(comprobante)
         return comprobante
     }
+
     def buildComprobante(){
         log.info("Generando CFDI 3.3 para Nota de cargo {} {} - {} ", nota.tipo, nota.serie, nota.folio)
         this.comprobante = factory.createComprobante()
@@ -127,6 +128,7 @@ class NotaDeCargoBuilder {
                 break
             case 'BONIFICACION':
             case 'DEVOLUCION':
+            case 'COMPENSACION':
                 comprobante.formaPago = '17'
                 break
             default:
@@ -174,6 +176,11 @@ class NotaDeCargoBuilder {
             concepto.cantidad = 1
             concepto.unidad = unidad
             concepto.descripcion = "${prefix} ${nota.tipo} ${item.documento?: ''}  (${item.documentoFecha.format('dd/MM/yyyy')}) ${item.sucursal}"
+
+            if(nota.tipo == 'CHO') {
+                concepto.descripcion = nota.comentario
+            }
+
             concepto.valorUnitario = importe
             concepto.importe = importe
 

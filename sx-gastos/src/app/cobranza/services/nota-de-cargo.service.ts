@@ -36,6 +36,13 @@ export class NotaDeCargoService {
       .pipe(catchError(error => throwError(error)));
   }
 
+  get(id: string): Observable<NotaDeCargo> {
+    const url = `${this.apiUrl}/${id}`;
+    return this.http
+      .get<NotaDeCargo>(url)
+      .pipe(catchError(error => throwError(error)));
+  }
+
   save(nota: Partial<NotaDeCargo>): Observable<NotaDeCargo> {
     return this.http
       .post<NotaDeCargo>(this.apiUrl, nota)

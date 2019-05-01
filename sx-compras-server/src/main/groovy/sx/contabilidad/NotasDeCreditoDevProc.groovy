@@ -13,8 +13,11 @@ class NotasDeCreditoDevProc  extends NotasDeCreditoProc{
     }
 
     String getTipoLabel() {
-        return 'DEVOLUCIONES'
+        return 'DEVOLUCIONES DE CONTADO, COD y CREDITO'
     }
 
-
+    @Override
+    String definirConcepto(Poliza poliza) {
+        return "DEVOLUCIONES DE CON, COD y CRE ${poliza.fecha.format('dd/MM/yyyy')}"
+    }
 }

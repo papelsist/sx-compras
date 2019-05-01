@@ -41,7 +41,7 @@ export class NotasDeCargoComponent implements OnInit, OnDestroy {
   notas$: Observable<NotaDeCargo[]>;
   search$: Observable<string>;
   filter: CarteraFilter;
-  cartera: Cartera;
+  cartera: Cartera = new Cartera('CHO', 'CHOFER');
   destroy$ = new Subject<boolean>();
   loading$: Observable<boolean>;
 
@@ -54,7 +54,7 @@ export class NotasDeCargoComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.route.data.pipe(takeUntil(this.destroy$)).subscribe(data => {
-      this.cartera = data.cartera;
+      // this.cartera = data.cartera;
       this.storageKey = data.storageKey || 'sx.cxc.notas-cargo';
       this.loadFilter();
       this.reload(this.cartera, this.filter);
@@ -74,7 +74,6 @@ export class NotasDeCargoComponent implements OnInit, OnDestroy {
   }
 
   onSelect(event: NotaDeCargo) {
-    console.log('Select: ', event);
     this.store.dispatch(
       new fromRoot.Go({ path: ['cobranza/notas-de-cargo', event.id] })
     );

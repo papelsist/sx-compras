@@ -16,5 +16,10 @@ class NotasDeCreditoBonProc extends NotasDeCreditoProc{
         return 'BONIFICACIONES'
     }
 
+    @Override
+    String definirConcepto(Poliza poliza) {
+        return "BONIFICACIONES DE CON, COD, CRE, CHE y JUR ${poliza.fecha.format('dd/MM/yyyy')}"
+    }
+
 
 }

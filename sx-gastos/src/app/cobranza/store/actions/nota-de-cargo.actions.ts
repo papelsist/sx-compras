@@ -23,6 +23,8 @@ export enum NotaDeCargoActionTypes {
   DeleteNotaDeCargoFail = '[NotaDeCargo effect] Delete NotaDeCargo fail',
   DeleteNotaDeCargoSuccess = '[NotaDeCargo effect] Delete NotaDeCargo success',
 
+  UpsertNotaDeCargo = '[NotaDeCargo component] Upsert NotaDeCargo',
+
   SetNotasDeCargoSearchTerm = '[NotasDeCargo Component] Set NotasDeCargo search term'
 }
 
@@ -88,6 +90,11 @@ export class SetNotasDeCargoSearchTerm implements Action {
   constructor(public payload: { term: string }) {}
 }
 
+export class UpsertNotaDeCargo implements Action {
+  readonly type = NotaDeCargoActionTypes.UpsertNotaDeCargo;
+  constructor(public payload: { nota: NotaDeCargo }) {}
+}
+
 export type NotaDeCargoActions =
   | LoadNotasDeCargo
   | LoadNotasDeCargoFail
@@ -101,4 +108,5 @@ export type NotaDeCargoActions =
   | DeleteNotaDeCargo
   | DeleteNotaDeCargoFail
   | DeleteNotaDeCargoSuccess
-  | SetNotasDeCargoSearchTerm;
+  | SetNotasDeCargoSearchTerm
+  | UpsertNotaDeCargo;
