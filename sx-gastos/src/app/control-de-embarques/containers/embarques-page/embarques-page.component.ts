@@ -12,7 +12,9 @@ import { MatDialog } from '@angular/material';
 import {
   EntregasPorChoferDialogComponent,
   ComisionesPorFacturistaDialogComponent,
-  AnalisisDeEmbarquesDialogComponent
+  AnalisisDeEmbarquesDialogComponent,
+  RelacionDePagosComponent,
+  SolicitudDeFacturacionComponent
 } from 'app/control-de-embarques/components';
 
 import { ReportService } from 'app/reportes/services/report.service';
@@ -115,6 +117,42 @@ export class EmbarquesPageComponent implements OnInit {
           console.log('Run report: ', res);
           this.service.runReport(
             'embarques/comisiones/analisisDeEmbarque',
+            res
+          );
+        }
+      });
+  }
+
+  relacionDePagosDeFletes() {
+    this.dialog
+      .open(RelacionDePagosComponent, {
+        data: {},
+        width: '550px'
+      })
+      .afterClosed()
+      .subscribe(res => {
+        if (res) {
+          console.log('Run report: ', res);
+          this.service.runReport(
+            'embarques/comisiones/relacionDePagosDeFletes',
+            res
+          );
+        }
+      });
+  }
+
+  solicitudDeFacturacionDeFletes() {
+    this.dialog
+      .open(SolicitudDeFacturacionComponent, {
+        data: {},
+        width: '550px'
+      })
+      .afterClosed()
+      .subscribe(res => {
+        if (res) {
+          console.log('Run report: ', res);
+          this.service.runReport(
+            'embarques/comisiones/solicitudDeFacturacionDeFletes',
             res
           );
         }

@@ -26,6 +26,8 @@ class FacturistaDeEmbarque {
 
     Proveedor proveedor
 
+    BigDecimal descuentEnPrestamo = 0.0
+
     static constraints = {
         email nullable: true
         telefono nullable: true

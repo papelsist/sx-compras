@@ -4,7 +4,8 @@ model {
 	EnvioComision envioComision
 }
 
-json g.render(envioComision, [ resolveTemplate: false]) {
+json g.render(envioComision, [ excludes: ['regreso'], resolveTemplate: false]) {
     if(envioComision.envio)
 	    cliente envioComision.envio?.cliente?.nombre
+    regreso envioComision?.regreso?.format('dd/MM/yyyy')
 }

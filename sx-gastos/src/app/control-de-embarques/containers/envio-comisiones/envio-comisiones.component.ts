@@ -3,7 +3,6 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { Store, select } from '@ngrx/store';
-import * as fromRoot from 'app/store';
 import * as fromStore from '../../store';
 
 import { EnvioComision, EnviosFilter } from '../../model';
@@ -50,9 +49,11 @@ import {
         </sx-envio-comisiones-table>
 
       </div>
+      <!--
       <mat-card-footer>
         <sx-envios-filter-label [filter]="filter$ | async"></sx-envios-filter-label>
       </mat-card-footer>
+      -->
     </mat-card>
 
   </ng-template>
@@ -129,7 +130,6 @@ export class EnvioComisionesComponent implements OnInit {
             ...res,
             registros: this.currentSelection.map(item => item.id)
           };
-          console.log('Update: ', res);
           this.store.dispatch(
             new fromStore.UpdateManyComisiones({ data: command })
           );

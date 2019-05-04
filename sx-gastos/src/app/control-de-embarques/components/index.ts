@@ -19,6 +19,8 @@ import { PrestamoInteresesFormComponent } from './prestamo-intereses/prestamo-in
 import { AnalisisDeEmbarquesDialogComponent } from './comisiones-report/analisis-de-embarques.dialog.component';
 import { FacturistasTableComponent } from './facturistas-table/facturistas-table.component';
 import { FacturistaFormComponent } from './facturista-form/facturista-form.component';
+import { RelacionDePagosComponent } from './comisiones-report/relacion-de-pagos.component';
+import { SolicitudDeFacturacionComponent } from './comisiones-report/solicitud-de-facturacion.component';
 
 export const components: any[] = [
   EnviosFilterLabelComponent,
@@ -44,6 +46,8 @@ export const components: any[] = [
   EntregasPorChoferDialogComponent,
   ComisionesPorFacturistaDialogComponent,
   AnalisisDeEmbarquesDialogComponent,
+  RelacionDePagosComponent,
+  SolicitudDeFacturacionComponent,
 
   SelectorDeFacturistaComponent,
 
@@ -58,6 +62,8 @@ export const entryComponents = [
   PrestamoInteresesFormComponent,
   CargoFormComponent,
   EntregasPorChoferDialogComponent,
+  RelacionDePagosComponent,
+  SolicitudDeFacturacionComponent,
   ComisionesPorFacturistaDialogComponent,
   SelectorDeFacturistaComponent,
   AnalisisDeEmbarquesDialogComponent
@@ -88,6 +94,8 @@ export * from './chofer-field/chofer-field.component';
 export * from './comisiones-report/entregas-por-chofer-dialog.component';
 export * from './comisiones-report/comisiones-facturista-dialog.component';
 export * from './comisiones-report/analisis-de-embarques.dialog.component';
+export * from './comisiones-report/relacion-de-pagos.component';
+export * from './comisiones-report/solicitud-de-facturacion.component';
 
 export * from './selector-de-facturista/selector-de-facturista.component';
 

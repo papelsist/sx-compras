@@ -4,10 +4,11 @@ import grails.compiler.GrailsCompileStatic
 import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.*
 import grails.validation.Validateable
+
 import groovy.transform.CompileDynamic
 import groovy.transform.ToString
 import groovy.util.logging.Slf4j
-import org.springframework.http.HttpStatus
+
 import sx.core.Sucursal
 import sx.reports.ReportService
 import sx.utils.Periodo
@@ -38,11 +39,15 @@ class EnvioComisionController extends RestfulController<EnvioComision> {
 
         if(params.periodo) {
             def periodo = params.periodo
-            query = query.where{regreso >= periodo.fechaInicial && regreso <= periodo.fechaFinal}
+            def res = EnvioComision
+                    .findAll(
+                    "from EnvioComision e where e.regreso between ? and ? " +
+                            " order by e.nombre, e.sucursal, e.regreso," +
+                            " e.documentoTipo, e.documentoFolio",
+                    [periodo.fechaInicial, periodo.fechaFinal])
+            return res
         }
-        if(params.sucursal) {
-            query = query.where {sucursal.id == params.sucursal}
-        }
+
         return query.list(params)
     }
 
@@ -122,6 +127,32 @@ class EnvioComisionController extends RestfulController<EnvioComision> {
 
         def pdf =  reportService.run('embarques/AnalisisDeEmbarques.jrxml', repParams)
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'AnalisisDeEmbarques.jrxml.pdf')
+    }
+
+    def relacionDePagosDeFletes() {
+        Periodo periodo = (Periodo)params.periodo
+        Map repParams = [
+                FECHA_INI: periodo.fechaInicial,
+                FECHA_FIN: periodo.fechaFinal,
+                FECHA_PAGO: params.getDate('fechaPago', 'dd/MM/yyyy')
+
+        ]
+        def pdf =  reportService.run('embarques/RelacionDePagosDeFletes.jrxml', repParams)
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'RelacionDePagosDeFlete.jrxml.pdf')
+    }
+
+    def solicitudDeFacturacionDeFletes() {
+        Periodo periodo = (Periodo)params.periodo
+        Map repParams = [
+                FECHA_INI: periodo.fechaInicial,
+                FECHA_FIN: periodo.fechaFinal,
+                FECHA_INI_TIMB: params.getDate('fechaTimbradoInicial', 'dd/MM/yyyy'),
+                FECHA_FIN_TIMB: params.getDate('fechaTimbradoFinal', 'dd/MM/yyyy'),
+                EMAIL: params['email']
+
+        ]
+        def pdf =  reportService.run('embarques/SolicituddDeFactucionDeComisionesDeEmbarques.jrxml', repParams)
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'SolicitudDeFacturacionDeFletes.jrxml.pdf')
     }
 
 

@@ -10,11 +10,15 @@ import {
   EventEmitter,
   OnDestroy
 } from '@angular/core';
-import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
+import { FormBuilder, FormGroup } from '@angular/forms';
+
+import { MatTableDataSource, MatSort } from '@angular/material';
+import { SelectionModel } from '@angular/cdk/collections';
+
+import { Subject } from 'rxjs';
+import { takeUntil, debounceTime, tap } from 'rxjs/operators';
 
 import { EnvioComision } from '../../model';
-import { SelectionModel } from '@angular/cdk/collections';
-import { Subscription } from 'rxjs';
 
 import * as _ from 'lodash';
 
@@ -33,16 +37,18 @@ export class EnvioComisionesTableComponent
 
   dataSource = new MatTableDataSource<EnvioComision>([]);
 
+  loading = false;
+
   displayColumns = [
     'select',
     'id',
     'manual',
-    'sucursal',
     'nombre',
+    'sucursal',
     'documentoTipo',
+    'regreso',
     'documentoFolio',
     'documentoFecha',
-    'regreso',
     'valor',
     'valorCajas',
     'maniobra',
@@ -50,19 +56,13 @@ export class EnvioComisionesTableComponent
     'precioTonelada',
     'kilos',
     'importeComision',
+    'total',
     'fechaComision',
-    // 'comentarioDeComision',
-    'entidad',
-    // 'status',
-    'operaciones',
     'cliente'
   ];
 
   @ViewChild(MatSort)
   sort: MatSort;
-
-  @ViewChild(MatPaginator)
-  paginator: MatPaginator;
 
   @Output()
   print = new EventEmitter();
@@ -80,7 +80,7 @@ export class EnvioComisionesTableComponent
   @Input()
   currentSelection: EnvioComision[];
 
-  subscription: Subscription;
+  destroy$ = new Subject<boolean>();
 
   totalComision = 0.0;
 
@@ -90,39 +90,69 @@ export class EnvioComisionesTableComponent
     true
   );
 
-  constructor() {}
+  filteredData: EnvioComision[] = [];
+
+  filterForm: FormGroup;
+
+  props = ['nombre', 'sucursal', 'documentoTipo', 'documentoFolio', 'regreso'];
+
+  constructor(private fb: FormBuilder) {
+    this.buildForm();
+  }
 
   ngOnInit() {
-    this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-    this.subscription = this.selection.changed.subscribe(() =>
-      this.select.emit(this.selection.selected)
-    );
+    this.selection.changed
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => this.select.emit(this.selection.selected));
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.comisiones && changes.comisiones.currentValue) {
-      this.dataSource.data = changes.comisiones.currentValue;
-      this.actuailizar();
+      this.filterData();
     }
-    if (changes.filter) {
-      const f: string = changes.filter.currentValue || '';
-      this.dataSource.filter = f.toLowerCase();
-      this.actuailizar();
-    }
-  }
-
-  actuailizar() {
-    this.totalComision = _.sumBy(
-      this.dataSource.filteredData,
-      'importeComision'
-    );
   }
 
   ngOnDestroy() {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
+    this.destroy$.next(true);
+    this.destroy$.complete();
+  }
+
+  private buildForm() {
+    this.filterForm = this.fb.group({
+      sucursal: [],
+      nombre: [],
+      documentoTipo: [],
+      documentoFolio: [],
+      regreso: []
+    });
+    this.filterForm.valueChanges
+      .pipe(
+        takeUntil(this.destroy$),
+        debounceTime(500)
+      )
+      .subscribe(val => {
+        this.filterData();
+      });
+  }
+
+  private filterData() {
+    const val = this.filterForm.value;
+    let data = this.comisiones;
+
+    this.props.forEach(item => {
+      if (val[item]) {
+        data = this.filterBy(data, item, val[item]);
+      }
+    });
+    this.dataSource.data = data;
+  }
+
+  filterBy(data: EnvioComision[], property: string, term: string) {
+    return data.filter(item => {
+      const f: string = term || '';
+      return item[property].toLowerCase().includes(f.toLocaleLowerCase());
+    });
   }
 
   /** Whether the number of selected elements matches the total number of rows. */
@@ -141,5 +171,9 @@ export class EnvioComisionesTableComponent
 
   clearSelection() {
     this.selection.clear();
+  }
+
+  totalByProperty(property: string) {
+    return _.round(_.sumBy(this.dataSource.data, property), 2);
   }
 }

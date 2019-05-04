@@ -48,6 +48,18 @@
       <mat-icon matListAvatar>picture_as_pdf</mat-icon>
       <h3 matLine>Análisis de embarques</h3>
     </a>
+
+    <mat-divider></mat-divider>
+    <a mat-list-item (click)="relacionDePagosDeFletes()">
+      <mat-icon matListAvatar>picture_as_pdf</mat-icon>
+      <h3 matLine>Relación de pagos</h3>
+    </a>
+
+    <mat-divider></mat-divider>
+    <a mat-list-item (click)="solicitudDeFacturacionDeFletes()">
+      <mat-icon matListAvatar>picture_as_pdf</mat-icon>
+      <h3 matLine>Solicitud de facturación</h3>
+    </a>
   </mat-nav-list>
 
   <router-outlet></router-outlet>

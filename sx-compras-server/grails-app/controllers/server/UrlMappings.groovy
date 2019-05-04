@@ -115,6 +115,7 @@ class UrlMappings {
         "/api/cxc/cobro/ajustarFormaDePago/$id"(controller: "cobro", action: 'ajustarFormaDePago', method: 'PUT')
         "/api/cxc/cobro/reporteDeCobranzaCON"(controller: "cobro", action: 'reporteDeCobranzaCON', method: 'GET')
         "/api/cxc/cobro/reporteDeCobranzaCOD"(controller: "cobro", action: 'reporteDeCobranzaCOD', method: 'GET')
+        "/api/cxc/cobro/reporteComisionTarjetas"(controller: "cobro", action: 'reporteComisionTarjetas', method: 'GET')
 
         // Cheques devueltos
         "/api/cxc/chequesDevuetos"(resources: 'chequeDevuelto')
@@ -320,6 +321,8 @@ class UrlMappings {
         "/api/embarques/comisiones/entregasPorChofer"(controller: 'envioComision', action: 'entregasPorChofer')
         "/api/embarques/comisiones/comisionesPorFacturista"(controller: 'envioComision', action: 'comisionesPorFacturista')
         "/api/embarques/comisiones/analisisDeEmbarque"(controller: 'envioComision', action: 'analisisDeEmbarque')
+        "/api/embarques/comisiones/relacionDePagosDeFletes"(controller: 'envioComision', action: 'relacionDePagosDeFletes')
+        "/api/embarques/comisiones/solicitudDeFacturacionDeFletes"(controller: 'envioComision', action: 'solicitudDeFacturacionDeFletes')
 
 
         // Prestamos
@@ -329,6 +332,7 @@ class UrlMappings {
         "/api/embarques/facturistaEstadoDeCuenta/calcularIntereses"(controller: 'facturistaEstadoDeCuenta', action: 'calcularIntereses', method: 'POST')
         "/api/embarques/facturistaEstadoDeCuenta/estadoDeCuenta"(controller: 'facturistaEstadoDeCuenta', action: 'estadoDeCuenta')
         "/api/embarques/facturistaEstadoDeCuenta/generarNotaDeCargo/$id"(controller: 'facturistaEstadoDeCuenta', action: 'generarNotaDeCargo', method: 'PUT')
+
 
         // SolicitudDeDepositos
 

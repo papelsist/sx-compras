@@ -107,7 +107,10 @@ class CobroController extends RestfulController<Cobro> {
 
     @CompileDynamic
     def reporteDeCobranza(CobranzaPorFechaCommand command){
-        def repParams = [FECHA: command.fecha]
+        def repParams = [
+                FECHA: command.fecha,
+                CLIENTE: '%'
+        ]
         repParams.ORIGEN = params.cartera
         def pdf =  reportService.run('CobranzaCxc.jrxml', repParams)
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'CobranzaCxc.pdf')
@@ -137,6 +140,14 @@ class CobroController extends RestfulController<Cobro> {
         repParams.COBRADOR = command.cobrador == 0 ? '%': command.cobrador.toString()
         def pdf =  reportService.run('RelacionDePagos.jrxml', repParams)
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'RelacionDePagos.pdf')
+    }
+
+    @CompileDynamic
+    def reporteComisionTarjetas(CobranzaPorSucursalCommand command){
+        log.debug('Rep: {}', params)
+        def repParams = [FECHA: command.fecha.format('yyyy/MM/dd'), SUCURSAL: command.sucursal]
+        def pdf =  reportService.run('ComisionTarjetas.jrxml', repParams)
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'ComisionTarjetas.pdf')
     }
 
     @CompileDynamic

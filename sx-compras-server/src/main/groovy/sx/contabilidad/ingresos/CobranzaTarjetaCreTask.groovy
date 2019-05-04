@@ -58,7 +58,7 @@ class CobranzaTarjetaCreTask implements  AsientoBuilder {
                     row.asiento = row.asiento + '_SAF'
 
                     poliza.addToPartidas(buildRegistro(
-                            '205-0001-0001-0000',
+                            '205-0001-0003-0000',
                             descripcion,
                             row,
                             0.0,

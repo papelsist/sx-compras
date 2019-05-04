@@ -1,15 +1,65 @@
 table {
   width: 100%;
-  // min-height: 200px;
   max-height: 500px;
-  overflow: auto;
+  overflow-x: scroll;
+  // white-space: nowrap;
 }
-.mat-column-tipoDeComprobante{
-  max-width: 20px;
+
+.mat-column-id{
+  width: 60px;
+  text-align: center;
 }
+.mat-column-manual{
+  width: 40px;
+}
+
+.mat-column-nombre{
+  width: 200px;
+}
+
+.mat-column-sucursal{
+  width: 50px;
+}
+.mat-column-documentoFecha{
+  width: 70px;
+}
+
+.mat-column-maniobra, .mat-column-comision, .mat-column-fechaComision{
+  width: 70px;
+}
+.mat-column-precioTonelada{
+  width: 60px;
+}
+
+.mat-column-valor, .mat-column-valorCajas, .mat-column-kilos, .mat-column-importeComision{
+  width: 70px;
+}
+
+.mat-column-kilos {
+  width: 60px;
+}
+
+
 .mat-cell {
   font-size: 11px;
 }
 .mat-row {
   height: 30px;
+}
+.mat-footer-cell {
+  font-size: 11px;
+}
+
+mat-form-field.mat-form-field {
+  // font-size: 10px;
+  height: 55px;
+  padding-bottom: 5px;
+  padding-right: 2px;
+}
+mat-form-field.mat-form-field.sucursal {
+  // font-size: 10px;
+  height: 55px;
+  width: 100px;
+  padding-bottom: 5px;
+  padding-right: 2px;
 }
