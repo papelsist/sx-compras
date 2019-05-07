@@ -30,4 +30,5 @@ class PolizaDetController extends RestfulController<PolizaDet> {
         log.info('Poliza {} partidas: {}', params.polizaId, partidas.size())
         return partidas
     }
+
 }

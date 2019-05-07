@@ -91,6 +91,27 @@ class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaC
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'Poliza.pdf')
     }
 
+    @CompileDynamic
+    def loadMovimientos() {
+        log.info('Localizando movimientos: {}', params)
+        CuentaContable cuenta = CuentaContable.get(params.cuentaId)
+        Periodo periodo = params.periodo
+        List res = PolizaDet.findAll(
+                """
+                select new sx.contabilidad.PorPeriodoDTO(
+                    d.poliza.tipo, d.poliza.subtipo, d.poliza.folio, d.poliza.fecha, sum(d.debe), sum(d.haber)
+                    )  
+                    from PolizaDet d 
+                        where d.cuenta = ? 
+                        and d.poliza.fecha between ? and ?
+                        group by d.poliza.tipo, d.poliza.subtipo, d.poliza.fecha
+                """,
+                [cuenta,periodo.fechaInicial, periodo.fechaFinal])
+        respond res
+    }
+
+
+
     def handleException(Exception e) {
         String message = ExceptionUtils.getRootCauseMessage(e)
         log.error(message, e)

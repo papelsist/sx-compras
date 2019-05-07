@@ -34,6 +34,7 @@ class EnvioComisionService implements  LogUser{
                     comision: e.embarque.chofer.comision?: 0.0,
                     nombre: e.embarque.chofer.nombre,
                     envio:e,
+                    cliente: e.cliente.nombre,
                     valor: e.valor,
                     kilos: e.kilos,
                     regreso: e.embarque.regreso,
@@ -73,6 +74,7 @@ class EnvioComisionService implements  LogUser{
                     comision: t.chofer.comision ?: 0.0,
                     nombre: t.chofer.nombre,
                     traslado: t,
+                    cliente: t.solicitudDeTraslado.sucursalSolicita.nombre,
                     valor: 0.0,
                     kilos: t.kilos,
                     regreso: t.fechaInventario,
@@ -85,6 +87,9 @@ class EnvioComisionService implements  LogUser{
             )
 
             if(t.solicitudDeTraslado.sucursalSolicita.nombre == 'ANDRADE' && t.solicitudDeTraslado.sucursalAtiende.nombre == 'VERTIZ 176') {
+                ec.precioTonelada = 50.00
+            }
+            if(t.solicitudDeTraslado.sucursalSolicita.nombre == 'VERTIZ 176' && t.solicitudDeTraslado.sucursalAtiende.nombre == 'ANDRADE') {
                 ec.precioTonelada = 50.00
             }
 

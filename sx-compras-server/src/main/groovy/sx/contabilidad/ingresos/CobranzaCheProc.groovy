@@ -62,7 +62,7 @@ class CobranzaCheProc implements  ProcesadorMultipleDePolizas{
             if(p == null) {
 
                 p = new Poliza(ejercicio: command.ejercicio, mes: command.mes, subtipo: command.subtipo, tipo: command.tipo)
-                p.concepto = "COBRANZA CHE  ${suc}"
+                p.concepto = "COBRANZA CHEQUE DEVUELTO  ${suc}"
                 p.fecha = command.fecha
                 p.sucursal = suc
                 log.info('Agregando poliza: {}', suc)

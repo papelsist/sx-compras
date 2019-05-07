@@ -17,6 +17,8 @@ class EnvioComision {
 
     Envio envio
 
+    String cliente
+
     Traslado traslado
 
     Date fechaComision
@@ -62,6 +64,7 @@ class EnvioComision {
 
     static constraints = {
         fechaComision nullable:true
+        cliente nullable: true
         comentarioDeComision nullable: true
         envio nullable: true
         traslado nullable: true

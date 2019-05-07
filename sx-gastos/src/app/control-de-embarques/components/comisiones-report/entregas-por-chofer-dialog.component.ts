@@ -54,7 +54,7 @@ export class EntregasPorChoferDialogComponent implements OnInit {
       chofer: [null, [Validators.required]],
       fechaInicial: [new Date(), [Validators.required]],
       fechaFinal: [new Date(), [Validators.required]],
-      sucursal: [null, [Validators.required]]
+      sucursal: [null]
     });
   }
 
@@ -69,7 +69,7 @@ export class EntregasPorChoferDialogComponent implements OnInit {
         fechaInicial: fechaInicial.toISOString(),
         fechaFinal: fechaFinal.toISOString(),
         chofer,
-        sucursal: sucursal.id
+        sucursal: sucursal ? sucursal.id : '%'
       };
       this.dialogRef.close(data);
     }

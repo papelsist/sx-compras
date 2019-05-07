@@ -68,7 +68,7 @@ class CobranzaCreProc implements  ProcesadorMultipleDePolizas{
             if(p == null) {
 
                 p = new Poliza(ejercicio: command.ejercicio, mes: command.mes, subtipo: command.subtipo, tipo: command.tipo)
-                p.concepto = "COBRANZA CRE  ${suc}"
+                p.concepto = "COBRANZA CREDITO ${suc}"
                 p.fecha = command.fecha
                 p.sucursal = suc
                 log.info('Agregando poliza: {}', suc)

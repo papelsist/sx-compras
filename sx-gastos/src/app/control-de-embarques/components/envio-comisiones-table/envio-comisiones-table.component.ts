@@ -8,7 +8,8 @@ import {
   ViewChild,
   Output,
   EventEmitter,
-  OnDestroy
+  OnDestroy,
+  ChangeDetectorRef
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
@@ -96,7 +97,7 @@ export class EnvioComisionesTableComponent
 
   props = ['nombre', 'sucursal', 'documentoTipo', 'documentoFolio', 'regreso'];
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private cd: ChangeDetectorRef) {
     this.buildForm();
   }
 
@@ -146,6 +147,8 @@ export class EnvioComisionesTableComponent
       }
     });
     this.dataSource.data = data;
+    this.dataSource.filteredData = data;
+    this.cd.markForCheck();
   }
 
   filterBy(data: EnvioComision[], property: string, term: string) {
@@ -158,7 +161,7 @@ export class EnvioComisionesTableComponent
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
     const numSelected = this.selection.selected.length;
-    const numRows = this.dataSource.filteredData.length;
+    const numRows = this.dataSource.data.length;
     return numSelected === numRows;
   }
 
@@ -166,7 +169,7 @@ export class EnvioComisionesTableComponent
   masterToggle() {
     this.isAllSelected()
       ? this.selection.clear()
-      : this.dataSource.filteredData.forEach(row => this.selection.select(row));
+      : this.dataSource.data.forEach(row => this.selection.select(row));
   }
 
   clearSelection() {

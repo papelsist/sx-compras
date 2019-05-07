@@ -133,7 +133,7 @@ class ComprobanteFiscalService implements  LogUser{
                 receptorRfc: receptorRfc,
                 receptorNombre: receptorNombre,
                 subTotal: subTotal,
-                descuento: descuento,
+                descuento: descuento ?: 0.0,
                 total: total,
                 fecha: fecha,
                 formaDePago: formaDePago,
@@ -173,7 +173,7 @@ class ComprobanteFiscalService implements  LogUser{
             total = comprobanteFiscal.total
             descuentoFinanciero = comprobanteFiscal.proveedor.descuentoF
             uuid = comprobanteFiscal.uuid
-            descuento = comprobanteFiscal.descuento
+            descuento = comprobanteFiscal.descuento ?: 0.0
 
         }
         def plazo = comprobanteFiscal.proveedor.plazo ?: 0

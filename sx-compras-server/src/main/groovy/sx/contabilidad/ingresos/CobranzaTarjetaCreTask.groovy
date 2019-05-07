@@ -166,7 +166,7 @@ class CobranzaTarjetaCreTask implements  AsientoBuilder {
         x.cta_iva_pag
         FROM (                                                                    
         SELECT 
-        concat('COB_TARJ_',(case when x.debito_credito is true then 'DEB' when x.visa_master is false then 'AME' else 'CRE' end),'_CON') as asiento,f.id origen_gpo,x.debito_credito,(case when x.debito_credito is true then 'DEBITO' else 'CREDITO' end)  documentoTipo,f.corte fecha,f.folio documento_gpo,b.moneda,b.tipo_de_cambio tc ,f.total total_gpo
+        concat('COB_TARJ_',(case when x.debito_credito is true then 'DEB' when x.visa_master is false then 'AME' else 'CRE' end),'_CRE') as asiento,f.id origen_gpo,x.debito_credito,(case when x.debito_credito is true then 'DEBITO' else 'CREDITO' end)  documentoTipo,f.corte fecha,f.folio documento_gpo,b.moneda,b.tipo_de_cambio tc ,f.total total_gpo
         ,j.tipo referencia2,s.nombre sucursal, s.clave suc,'205-0007-0001-0000'  cta_contable,'000-0000-0000-0000' cta_contable2,z.numero ctaDestino,z.descripcion bancoDestino,'PAPEL SA DE CV' beneficiario
         ,b.forma_de_pago,(case when x.debito_credito is true then '99' else '04' end) metodoDePago,b.id origen,x.validacion documento,x.validacion referenciaBancaria,x.comision,b.importe total,(case when b.diferencia_fecha='@FECHA' then b.diferencia else 0 end) diferencia
         ,b.importe-(case when b.diferencia_fecha='@FECHA' then b.diferencia else 0 end)-ifnull((SELECT sum(a.importe) FROM aplicacion_de_cobro a where a.cobro_id=b.id and a.fecha='@FECHA'),0) SAF

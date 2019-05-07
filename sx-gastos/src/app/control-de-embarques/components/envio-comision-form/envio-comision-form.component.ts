@@ -10,10 +10,10 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
   <mat-dialog-content [formGroup]="form">
     <div layout>
       <mat-form-field class="pad-right" flex >
-        <input matInput placeholder="Comisión" formControlName="comision" autocomplete="off">
+        <input matInput placeholder="Comisión" formControlName="comision" autocomplete="off" type="number">
       </mat-form-field>
       <mat-form-field class="pad-right" flex>
-        <input matInput placeholder="Precio por Tonelada " formControlName="precioTonelada" autocomplete="off">
+        <input matInput placeholder="Precio por Tonelada " formControlName="precioTonelada" autocomplete="off" type="number">
       </mat-form-field>
     </div>
 

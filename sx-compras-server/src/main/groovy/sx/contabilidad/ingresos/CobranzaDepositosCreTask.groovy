@@ -1,6 +1,6 @@
 package sx.contabilidad.ingresos
 
-import grails.compiler.GrailsCompileStatic
+
 import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
 import org.springframework.stereotype.Component
@@ -8,6 +8,8 @@ import sx.contabilidad.AsientoBuilder
 import sx.contabilidad.Poliza
 import sx.contabilidad.PolizaDet
 import sx.utils.MonedaUtils
+
+import static sx.utils.MonedaUtils.*
 
 @Slf4j
 @Component
@@ -48,20 +50,21 @@ class CobranzaDepositosCreTask implements  AsientoBuilder {
                         row.cta_contable.toString(),
                         descripcion,
                         row,
-                        MonedaUtils.round(row.total * row.tc)
+                        round(row.total * row.tc)
                 )
                 poliza.addToPartidas(det)
                 cobros.add(row.origen)
 
                 // 205 es una cobranza  por identificar
                 if(det.cuenta.clave.startsWith('205')) {
-                    det.debe = row.subtotal.abs()
+                    det.debe = round(row.subtotal.abs() * row.tc)
 
-                    BigDecimal impuesto = row.impuesto
+                    BigDecimal impuesto = round(row.impuesto * row.tc)
+
                     if(row.SAF > 0 ){
-                        BigDecimal total = row.total - row.SAF
-                        BigDecimal importe = MonedaUtils.calcularImporteDelTotal(total)
-                        impuesto = MonedaUtils.round(total - importe)
+                        BigDecimal total = round( (row.total - row.SAF) * row.tc )
+                        BigDecimal importe = calcularImporteDelTotal(total)
+                        impuesto = round(total - importe)
                     }
 
                     // Cargo a iva
@@ -74,8 +77,8 @@ class CobranzaDepositosCreTask implements  AsientoBuilder {
 
                 if(row.SAF > 0.0) {
 
-                    BigDecimal safTotal = row.SAF
-                    BigDecimal safImporte = MonedaUtils.calcularImporteDelTotal(safTotal)
+                    BigDecimal safTotal = round(row.SAF * row.tc)
+                    BigDecimal safImporte = calcularImporteDelTotal(safTotal)
                     BigDecimal safIva = safTotal - safImporte
                     row.asiento = row.asiento + '_SAF'
 
@@ -100,7 +103,7 @@ class CobranzaDepositosCreTask implements  AsientoBuilder {
                     PolizaDet saf = buildRegistro(
                             '704-0003-0000-0000',
                             descripcion, row)
-                    saf.haber = row.diferencia.abs()
+                    saf.haber = round(row.diferencia.abs() * row.tc)
                     saf.asiento = "${saf.asiento}_OPRD"
                     poliza.addToPartidas(saf)
                 }
@@ -111,7 +114,7 @@ class CobranzaDepositosCreTask implements  AsientoBuilder {
                     row.cta_contable_fac.toString(),
                     descripcion,
                     row)
-            clienteDet.haber = row.cobro_aplic
+            clienteDet.haber = round(row.cobro_aplic * row.tc)
             poliza.addToPartidas(clienteDet)
 
             // IVAS
@@ -119,22 +122,71 @@ class CobranzaDepositosCreTask implements  AsientoBuilder {
                 PolizaDet ivaPend = buildRegistro(
                         row.cta_iva_pend.toString(),
                         descripcion, row)
-                ivaPend.debe = row.impuesto_apl.abs()
+                ivaPend.debe = round(row.impuesto_apl.abs() * row.tc)
                 poliza.addToPartidas(ivaPend)
 
                 PolizaDet ivaPag = buildRegistro(
                         row.cta_iva_pag.toString(),
                         descripcion, row)
-                ivaPag.haber = row.impuesto_apl.abs()
+                ivaPag.haber = round(row.impuesto_apl.abs() * row.tc)
                 poliza.addToPartidas(ivaPag)
             }
 
         }
+        generarCuadre(poliza)
     }
 
     @Override
     String generarDescripcion(Map row) {
         return "Folio: ${row.documento} F:${row.factura} (${row.fecha_fac}) ${row.tipo} ${row.sucursal}"
+    }
+
+    def generarCuadre(Poliza p) {
+        def grupos = p.partidas.groupBy { it.origen }
+        grupos.each {
+            BigDecimal debe = it.value.sum 0.0, {r -> r.debe}
+            BigDecimal haber = it.value.sum 0.0, {r -> r.haber}
+            BigDecimal dif = debe - haber
+            if(dif.abs() > 0.0 &&  dif.abs()<=1.0){
+                log.info("Generando cuadre para: ${it.key} Debe: ${debe} Haber: ${haber} Dif: ${dif}")
+                def det = it.value.find {it.cuenta.clave.startsWith('102')}
+                def descripcion = det.descripcion
+                if(dif > 0.0) {
+                    PolizaDet pdet = new PolizaDet()
+                    pdet.cuenta = buscarCuenta('704-0003-0000-0000')
+                    pdet.sucursal = det.sucursal
+                    pdet.origen = det.origen
+                    pdet.referencia = det.referencia
+                    pdet.referencia2 = det.referencia2
+                    pdet.haber = dif.abs()
+                    pdet.descripcion = det.descripcion
+                    pdet.entidad = det.entidad
+                    pdet.asiento = det.asiento+ '_OPRD'
+                    pdet.documentoTipo = det.documentoTipo
+                    pdet.documentoFecha = det.documentoFecha
+                    pdet.documento = det.documento
+                    p.addToPartidas(pdet)
+
+                } else {
+                    PolizaDet pdet = new PolizaDet()
+                    pdet.cuenta = buscarCuenta('703-0001-0000-0000')
+                    pdet.sucursal = det.sucursal
+                    pdet.origen = det.origen
+                    pdet.referencia = det.referencia
+                    pdet.referencia2 = det.referencia2
+                    pdet.debe = dif.abs()
+                    pdet.descripcion = det.descripcion
+                    pdet.entidad = det.entidad
+                    pdet.asiento = det.asiento+ '_OGST'
+                    pdet.documentoTipo = det.documentoTipo
+                    pdet.documentoFecha = det.documentoFecha
+                    pdet.documento = det.documento
+                    p.addToPartidas(pdet)
+                }
+            }
+
+        }
+
     }
 
     // QUERYES
@@ -184,7 +236,7 @@ class CobranzaDepositosCreTask implements  AsientoBuilder {
         FROM (    
         SELECT 
         (case when M.por_identificar is true then 'COB_TRANSF_CRE_xIDENT' else 'COB_TRANSF_CRE' end) as asiento,b.moneda,b.tipo_de_cambio tc,s.nombre sucursal, s.clave suc
-        ,concat((case when M.por_identificar is true then '205-0002-' else '102-0001-' end),z.sub_cuenta_operativa,'-0000') as cta_contable,(case when m.por_identificar is true then '208-0003-0000-0000' else '000-0000-0000-0000' end) cta_contable2
+        ,concat((case when M.por_identificar is true then '205-0002-' else (case when b.moneda='USD' then '102-0002-' else '102-0001-' end) end),z.sub_cuenta_operativa,'-0000') as cta_contable,(case when m.por_identificar is true then '208-0003-0000-0000' else '000-0000-0000-0000' end) cta_contable2
         ,z.numero ctaDestino,z.descripcion bancoDestino,'PAPEL SA DE CV' beneficiario,b.forma_de_pago,'03' metodoDePago,b.id origen,x.folio documento,b.referencia referenciaBancaria,b.importe total,(case when b.diferencia_fecha='@FECHA' then b.diferencia else 0 end) diferencia
         ,b.importe-(case when b.diferencia_fecha='@FECHA' then b.diferencia else 0 end)-ifnull((SELECT sum(a.importe) FROM aplicacion_de_cobro a where a.cobro_id=b.id and a.fecha='@FECHA'),0) SAF
         ,null ctaOrigen,x.banco_origen_id,(SELECT y.nombre FROM banco y where x.banco_origen_id=y.id) bancoOrigen,t.rfc,t.nombre cliente,c.id cxc_id,c.documento factura,c.tipo,c.fecha fecha_fac,i.uuid,a.importe cobro_aplic,c.total montoTotal
