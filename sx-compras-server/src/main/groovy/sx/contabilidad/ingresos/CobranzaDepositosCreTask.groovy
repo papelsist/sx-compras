@@ -40,11 +40,17 @@ class CobranzaDepositosCreTask implements  AsientoBuilder {
         List rows = getAllRows(sql, [])
 
         // Almacenar los cobros (Para el cargo a bancos)
+
         Set cobros = new HashSet()
         rows.each { Map row ->
+
             // Cargo a banco NO DEBE REPETIRSE
             String descripcion  = generarDescripcion(row)
             if(!cobros.contains(row.origen)) {
+
+                if(row.tc > 1.0) {
+                    descripcion = "${descripcion} TC: ${row.tc}"
+                }
 
                 PolizaDet det = buildRegistro(
                         row.cta_contable.toString(),
@@ -109,36 +115,155 @@ class CobranzaDepositosCreTask implements  AsientoBuilder {
                 }
             }
 
+            def desc = generarDescripcion(row)
+            if(row.tc_var > 1.0) {
+                descripcion = "${generarDescripcion(row)} TC: ${row.tc_var}"
+            }
+
             // Abono a clientes (Provision)
             PolizaDet clienteDet = buildRegistro(
                     row.cta_contable_fac.toString(),
                     descripcion,
                     row)
-            clienteDet.haber = round(row.cobro_aplic * row.tc)
+            clienteDet.haber = round(row.cobro_aplic * row.tc_var)
             poliza.addToPartidas(clienteDet)
 
             // IVAS
             if(!row.asiento.toString().contains('xIDENT')) {
+
                 PolizaDet ivaPend = buildRegistro(
                         row.cta_iva_pend.toString(),
-                        descripcion, row)
-                ivaPend.debe = round(row.impuesto_apl.abs() * row.tc)
+                        descripcion,
+                        row)
+                ivaPend.debe = round(row.impuesto_apl.abs() * row.tc_var)
                 poliza.addToPartidas(ivaPend)
+
+                if(row.tc > 1.0) {
+                    descripcion = "${desc} TC: ${row.tc}"
+                }
 
                 PolizaDet ivaPag = buildRegistro(
                         row.cta_iva_pag.toString(),
-                        descripcion, row)
+                        descripcion,
+                        row)
                 ivaPag.haber = round(row.impuesto_apl.abs() * row.tc)
+
                 poliza.addToPartidas(ivaPag)
             }
 
         }
+        registrarVariacionCambiaria(poliza)
+        registrarVariacionCambiariaIva(poliza)
         generarCuadre(poliza)
     }
 
     @Override
     String generarDescripcion(Map row) {
-        return "Folio: ${row.documento} F:${row.factura} (${row.fecha_fac}) ${row.tipo} ${row.sucursal}"
+        return "Folio: ${row.documento} F:${row.factura} (${row.fecha_fac}) ${row.tipo}"
+    }
+
+    def registrarVariacionCambiaria(Poliza p) {
+
+        def grupos = p.partidas.findAll {it.moneda == 'USD' && ( it.cuenta.clave.startsWith('102') || it.cuenta.clave.startsWith('105') )}
+                .groupBy { it.origen }
+
+        grupos.each {
+            BigDecimal debe = it.value.sum 0.0, {r -> r.debe}
+            BigDecimal haber = it.value.sum 0.0, {r -> r.haber}
+
+            BigDecimal dif = debe - haber
+            if(dif.abs() > 1.0 ){
+                log.info("Registrando variacion cambiaria: ${it.key} Debe: ${debe} Haber: ${haber} Dif: ${dif}")
+
+                def det = it.value.find {it.cuenta.clave.startsWith('102')}
+
+                if(dif > 0.0) {
+                    PolizaDet pdet = new PolizaDet()
+                    pdet.cuenta = buscarCuenta('702-0004-0000-0000')
+                    pdet.sucursal = det.sucursal
+                    pdet.origen = det.origen
+                    pdet.referencia = det.referencia
+                    pdet.referencia2 = det.referencia2
+                    pdet.haber = dif.abs()
+                    pdet.descripcion = det.descripcion
+                    pdet.entidad = det.entidad
+                    pdet.asiento = det.asiento+ '_VC'
+                    pdet.documentoTipo = det.documentoTipo
+                    pdet.documentoFecha = det.documentoFecha
+                    pdet.documento = det.documento
+                    p.addToPartidas(pdet)
+
+                } else {
+                    PolizaDet pdet = new PolizaDet()
+                    pdet.cuenta = buscarCuenta('701-0001-0000-0000')
+                    pdet.sucursal = det.sucursal
+                    pdet.origen = det.origen
+                    pdet.referencia = det.referencia
+                    pdet.referencia2 = det.referencia2
+                    pdet.debe = dif.abs()
+                    pdet.descripcion = det.descripcion
+                    pdet.entidad = det.entidad
+                    pdet.asiento = det.asiento+ '_VC'
+                    pdet.documentoTipo = det.documentoTipo
+                    pdet.documentoFecha = det.documentoFecha
+                    pdet.documento = det.documento
+                    p.addToPartidas(pdet)
+                }
+            }
+
+        }
+    }
+
+    def registrarVariacionCambiariaIva(Poliza p) {
+
+        def grupos = p.partidas.findAll {it.moneda == 'USD' && ( it.cuenta.clave.startsWith('208') || it.cuenta.clave.startsWith('209') )}
+                .groupBy { it.origen }
+
+        grupos.each {
+            BigDecimal debe = it.value.sum 0.0, {r -> r.debe}
+            BigDecimal haber = it.value.sum 0.0, {r -> r.haber}
+
+            BigDecimal dif = debe - haber
+            if(dif.abs() > 1.0 ){
+                log.info("Registrando IVA de la variacion cambiaria: ${it.key} Debe: ${debe} Haber: ${haber} Dif: ${dif}")
+
+                def det = it.value.find {it.cuenta.clave.startsWith('208')}
+
+                if(dif > 0.0) {
+                    PolizaDet pdet = new PolizaDet()
+                    pdet.cuenta = buscarCuenta('702-0004-0000-0000')
+                    pdet.sucursal = det.sucursal
+                    pdet.origen = det.origen
+                    pdet.referencia = det.referencia
+                    pdet.referencia2 = det.referencia2
+                    pdet.haber = dif.abs()
+                    pdet.descripcion = det.descripcion
+                    pdet.entidad = det.entidad
+                    pdet.asiento = det.asiento + '_VC_IVA'
+                    pdet.documentoTipo = det.documentoTipo
+                    pdet.documentoFecha = det.documentoFecha
+                    pdet.documento = det.documento
+                    p.addToPartidas(pdet)
+
+                } else {
+                    PolizaDet pdet = new PolizaDet()
+                    pdet.cuenta = buscarCuenta('701-0001-0000-0000')
+                    pdet.sucursal = det.sucursal
+                    pdet.origen = det.origen
+                    pdet.referencia = det.referencia
+                    pdet.referencia2 = det.referencia2
+                    pdet.debe = dif.abs()
+                    pdet.descripcion = det.descripcion
+                    pdet.entidad = det.entidad
+                    pdet.asiento = det.asiento+ '_VC_IVA'
+                    pdet.documentoTipo = det.documentoTipo
+                    pdet.documentoFecha = det.documentoFecha
+                    pdet.documento = det.documento
+                    p.addToPartidas(pdet)
+                }
+            }
+
+        }
     }
 
     def generarCuadre(Poliza p) {
@@ -150,7 +275,6 @@ class CobranzaDepositosCreTask implements  AsientoBuilder {
             if(dif.abs() > 0.0 &&  dif.abs()<=1.0){
                 log.info("Generando cuadre para: ${it.key} Debe: ${debe} Haber: ${haber} Dif: ${dif}")
                 def det = it.value.find {it.cuenta.clave.startsWith('102')}
-                def descripcion = det.descripcion
                 if(dif > 0.0) {
                     PolizaDet pdet = new PolizaDet()
                     pdet.cuenta = buscarCuenta('704-0003-0000-0000')
@@ -232,7 +356,9 @@ class CobranzaDepositosCreTask implements  AsientoBuilder {
         x.montoTotal,
         x.cta_contable_fac,
         x.cta_iva_pend,
-        x.cta_iva_pag
+        x.cta_iva_pag,
+        CASE WHEN MONTH('@FECHA')=MONTH(x.fecha_fac)  and x.moneda='USD' then (SELECT t.tipo_de_cambio FROM tipo_de_cambio t where t.fecha=DATE_ADD(x.FECHA_fac, INTERVAL -1 DAY) )
+        WHEN MONTH('@FECHA')<>MONTH(x.fecha_fac) and x.moneda='USD' then (SELECT t.tipo_de_cambio FROM tipo_de_cambio t where t.fecha=DATE_ADD( CONCAT(YEAR('@FECHA'),'/',MONTH('@FECHA'),'/',01) , INTERVAL -2 DAY) ) else 1.00 end as tc_var
         FROM (    
         SELECT 
         (case when M.por_identificar is true then 'COB_TRANSF_CRE_xIDENT' else 'COB_TRANSF_CRE' end) as asiento,b.moneda,b.tipo_de_cambio tc,s.nombre sucursal, s.clave suc

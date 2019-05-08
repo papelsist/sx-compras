@@ -3,6 +3,7 @@ package sx.contabilidad.diario
 import groovy.util.logging.Slf4j
 import org.springframework.stereotype.Component
 import sx.contabilidad.*
+import sx.core.Empresa
 import sx.tesoreria.CorteDeTarjeta
 import sx.tesoreria.CorteDeTarjetaAplicacion
 
@@ -21,6 +22,8 @@ class ComisionesTarjetaProc implements  ProcesadorDePoliza, AsientoBuilder{
         generarAsientos(poliza, [:])
         return poliza
     }
+
+    private Empresa empresa
 
     @Override
     def generarAsientos(Poliza poliza, Map params) {
@@ -138,7 +141,7 @@ class ComisionesTarjetaProc implements  ProcesadorDePoliza, AsientoBuilder{
                 debe: debe.abs(),
                 haber: haber.abs()
         )
-
+        asignarComplementoDePago(det, row.corte)
         return det
     }
 
@@ -168,10 +171,27 @@ class ComisionesTarjetaProc implements  ProcesadorDePoliza, AsientoBuilder{
                 debe: debe.abs(),
                 haber: haber.abs()
         )
-
+        asignarComplementoDePago(det, row)
         return det
     }
 
+    void asignarComplementoDePago(PolizaDet det, CorteDeTarjeta row) {
+        det.montoTotalPago = row.total
+        det.metodoDePago = '03'
+        det.bancoOrigen = row.cuentaDeBanco.bancoSat.clave
+        det.bancoDestino = det.bancoOrigen
+        det.ctaOrigen = row.cuentaDeBanco.numero
+        det.ctaDestino = det.ctaOrigen
+        det.rfc = getEmpresa().rfc
+        det.referenciaBancaria = ''
+
+    }
 
 
+    Empresa getEmpresa() {
+        if(empresa == null) {
+            empresa = Empresa.first()
+        }
+        return empresa
+    }
 }
