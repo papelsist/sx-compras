@@ -86,7 +86,12 @@ abstract class VentasProc implements  ProcesadorMultipleDePolizas {
         if(row.cta_cliente == null) {
             throw new RuntimeException("No existe cuenta operativa para el cliente:  ${row.referencia2} Id:${row.cliente} ")
         }
-        CuentaContable cuenta = buscarCuenta(row.cta_cliente)//CuentaContable.findByClave(row.cta_cliente)
+
+        String claveCta = row.cta_cliente
+        if(row.moneda == 'USD') {
+            claveCta = claveCta.replaceAll("105-0003","105-0005")
+        }
+        CuentaContable cuenta = buscarCuenta(claveCta)//CuentaContable.findByClave(row.cta_cliente)
 
         String descripcion  = "F: ${row.documento} ${row.fecha.format('dd/MM/yyyy')} ${row.documentoTipo} ${row.sucursal}"
         if(row.tc > 1.0 ) {

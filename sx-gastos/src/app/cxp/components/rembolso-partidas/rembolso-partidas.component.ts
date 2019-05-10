@@ -44,6 +44,7 @@ export class RembolsoPartidasComponent implements OnInit, OnChanges {
     'documentoFolio',
     'documentoFecha',
     'total',
+    'apagar',
     'factura',
     'comentario',
     'operaciones'

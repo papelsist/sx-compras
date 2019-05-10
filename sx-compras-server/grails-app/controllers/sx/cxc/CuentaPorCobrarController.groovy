@@ -37,6 +37,7 @@ class CuentaPorCobrarController extends RestfulController<CuentaPorCobrar> {
                     "from CuentaPorCobrar c  where c.cliente = ?  and c.total - c.pagos > 0 ",
                     [cliente])
         } else {
+            log.info('Pendientes de {} {}', cliente, params)
             rows = CuentaPorCobrar.findAll(
                     "from CuentaPorCobrar c  where c.cliente = ? and c.tipo = ? and c.saldoReal > 0 ",
                     [cliente, cartera])

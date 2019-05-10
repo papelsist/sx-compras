@@ -37,37 +37,52 @@ class ComisionesTarjetaProc implements  ProcesadorDePoliza, AsientoBuilder{
     }
 
     void generarAsientosVisaMasterCard(Poliza poliza, List<CorteDeTarjeta> cortes) {
+
         cortes.each { corte ->
 
             List<CorteDeTarjetaAplicacion> comisiones = corte.aplicaciones.findAll{it.tipo.toString().endsWith('COMISION')}
+
+
+
             comisiones.each { comision ->
                 // 1. - Cargar al banco el importe de la comision y el iva
-                poliza.addToPartidas(mapRow(
+                PolizaDet d1 = mapRow(
                         "102-0001-${corte.cuentaDeBanco.subCuentaOperativa.padLeft(4,'0')}-0000",
                         comision,
                         0.0,
                         comision.ingreso.importe
-                ))
-                poliza.addToPartidas(mapRow(
+                )
+                asignarComplementoDePago(d1, comision, comision.importe)
+                poliza.addToPartidas(d1)
+
+                PolizaDet d2 = mapRow(
                         "107-0009-0001-0000",
                         comision,
                         comision.ingreso.importe
-                ))
+                )
+
+                asignarComplementoDePago(d1, comision, comision.importe)
+                poliza.addToPartidas(d2)
 
             }
             List<CorteDeTarjetaAplicacion> impuestos = corte.aplicaciones.findAll{it.tipo.toString().endsWith('IVA')}
             impuestos.each { impuesto ->
-                poliza.addToPartidas(mapRow(
+                PolizaDet d3 = mapRow(
                         "102-0001-${corte.cuentaDeBanco.subCuentaOperativa.padLeft(4,'0')}-0000",
                         impuesto,
                         0.0,
                         impuesto.ingreso.importe
-                ))
-                poliza.addToPartidas(mapRow(
+                )
+                asignarComplementoDePago(d3, impuesto, impuesto.importe)
+                poliza.addToPartidas(d3)
+
+                PolizaDet d4 = mapRow(
                         "118-0002-0000-0000",
                         impuesto,
                         impuesto.ingreso.importe
-                ))
+                )
+                asignarComplementoDePago(d4, impuesto, impuesto.importe)
+                poliza.addToPartidas(d4)
             }
 
         }
@@ -87,26 +102,34 @@ class ComisionesTarjetaProc implements  ProcesadorDePoliza, AsientoBuilder{
             ))
             CorteDeTarjetaAplicacion comision = corte.aplicaciones.find{it.tipo.toString().endsWith('AMEX_COMISION')}
             CorteDeTarjetaAplicacion iva = corte.aplicaciones.find{it.tipo.toString().endsWith('AMEX_COMISION_IVA')}
+
             BigDecimal toBancos = ingreso.ingreso.importe.abs() -
                     comision.ingreso.importe.abs() -
                     iva.ingreso.importe.abs()
 
-
-            poliza.addToPartidas(mapRow(
+            PolizaDet d1 = mapRow(
                     "102-0001-${corte.cuentaDeBanco.subCuentaOperativa.padLeft(4,'0')}-0000",
                     corte,
                     toBancos
-            ))
-            poliza.addToPartidas(mapRow(
+            )
+            asignarComplementoDePago(d1, comision, comision.importe)
+            poliza.addToPartidas(d1)
+
+            PolizaDet d2 = mapRow(
                     "107-0009-0011-0000",
                     corte,
                     comision.ingreso.importe
-            ))
-            poliza.addToPartidas(mapRow(
+            )
+            asignarComplementoDePago(d2, comision, comision.importe)
+            poliza.addToPartidas(d2)
+
+            PolizaDet d3 = mapRow(
                     "118-0002-0000-0000",
                     corte,
                     iva.ingreso.importe
-            ))
+            )
+            asignarComplementoDePago(d3, iva, iva.importe)
+            poliza.addToPartidas(d3)
 
         }
     }
@@ -141,7 +164,7 @@ class ComisionesTarjetaProc implements  ProcesadorDePoliza, AsientoBuilder{
                 debe: debe.abs(),
                 haber: haber.abs()
         )
-        asignarComplementoDePago(det, row.corte)
+
         return det
     }
 
@@ -152,7 +175,7 @@ class ComisionesTarjetaProc implements  ProcesadorDePoliza, AsientoBuilder{
 
         String descripcion = "Corte: ${corte.folio} " +
                 " ${!corte.visaMaster ? 'AMEX': 'VM'}" +
-                " (${corte.corte.format('DD/MM/yyyy')}) ${corte.sucursal.nombre}"
+                " (${corte.corte.format('dd/MM/yyyy')}) ${corte.sucursal.nombre}"
 
 
         PolizaDet det = new PolizaDet(
@@ -171,20 +194,25 @@ class ComisionesTarjetaProc implements  ProcesadorDePoliza, AsientoBuilder{
                 debe: debe.abs(),
                 haber: haber.abs()
         )
-        asignarComplementoDePago(det, row)
+
         return det
     }
 
-    void asignarComplementoDePago(PolizaDet det, CorteDeTarjeta row) {
-        det.montoTotalPago = row.total
-        det.metodoDePago = '03'
-        det.bancoOrigen = row.cuentaDeBanco.bancoSat.clave
-        det.bancoDestino = det.bancoOrigen
-        det.ctaOrigen = row.cuentaDeBanco.numero
-        det.ctaDestino = det.ctaOrigen
-        det.rfc = getEmpresa().rfc
-        det.referenciaBancaria = ''
-
+    void asignarComplementoDePago(PolizaDet det,CorteDeTarjetaAplicacion row, BigDecimal importe) {
+        if(row.tipo.name().endsWith('COMISION') ) {
+            String rfc = row.tipo.name().contains('AMEX') ? 'AEC810901298' : 'BNM840515VB1'
+            String beneficiario = row.tipo.name().contains('AMEX') ? 'American Express Banck (Mexico), S.A.' : row.corte.cuentaDeBanco.bancoSat.razonSocial
+            det.montoTotalPago = importe
+            det.metodoDePago = '17'
+            det.bancoOrigen = row.corte.cuentaDeBanco.bancoSat.clave
+            det.bancoDestino = det.bancoOrigen
+            det.ctaOrigen = row.corte.cuentaDeBanco.numero
+            det.beneficiario = beneficiario
+            det.rfc = rfc
+            det.referenciaBancaria = ''
+            det.moneda = 'MXN'
+            det.tipCamb = 1.0
+        }
     }
 
 

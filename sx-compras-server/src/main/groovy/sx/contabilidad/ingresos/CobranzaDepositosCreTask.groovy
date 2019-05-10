@@ -121,8 +121,12 @@ class CobranzaDepositosCreTask implements  AsientoBuilder {
             }
 
             // Abono a clientes (Provision)
+            String ctaCliente = row.cta_contable_fac.toString()
+            if(row.moneda == 'USD') {
+                ctaCliente = ctaCliente.replaceAll("105-0003","105-0005")
+            }
             PolizaDet clienteDet = buildRegistro(
-                    row.cta_contable_fac.toString(),
+                    ctaCliente,
                     descripcion,
                     row)
             clienteDet.haber = round(row.cobro_aplic * row.tc_var)

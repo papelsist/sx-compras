@@ -29,8 +29,9 @@ class FacturistaEstadoDeCuentaService implements  LogUser, FolioLog {
         }
     }
 
-    List<FacturistaEstadoDeCuenta> calcularInteresesPorFacturista(Date corte, BigDecimal tasa, FacturistaDeEmbarque f) {
-        log.info('Calculando intereses de {} al {} Tasa: {}', f.nombre, corte, MonedaUtils.round(tasa, 4))
+    List<FacturistaEstadoDeCuenta> calcularInteresesPorFacturista(Date corte, BigDecimal stasa, FacturistaDeEmbarque f) {
+        BigDecimal tasa = MonedaUtils.round(stasa, 4)
+        log.info('Calculando intereses de {} al {} Tasa: {}', f.nombre, corte, tasa)
         List<FacturistaEstadoDeCuenta> rows = FacturistaEstadoDeCuenta
                 .where{facturista == f}
                 .list([sort: 'fecha', 'order': 'asc'])
@@ -43,6 +44,7 @@ class FacturistaEstadoDeCuentaService implements  LogUser, FolioLog {
 
         if(saldo) {
             tasa = (tasa * 2) / 365
+            tasa = MonedaUtils.round(tasa, 4)
             BigDecimal intereses = MonedaUtils.round(saldo * tasa/100.00)
             movs << generarMovimiento(f, corte, 'INTERESES', intereses, tasa)
             BigDecimal impuesto = MonedaUtils.calcularImpuesto(intereses)
@@ -134,13 +136,14 @@ class FacturistaEstadoDeCuentaService implements  LogUser, FolioLog {
 
         nc.addToPartidas(det)
         logEntity(nc)
+        logEntity(nc.cuentaPorCobrar)
 
-        /***** TEMPO **/
-        nc.createUser = 'aa'
-        nc.updateUser = 'aa'
-        nc.cuentaPorCobrar.createUser = 'aa'
-        nc.cuentaPorCobrar.updateUser = 'aa'
-        /********/
+        /** TEMPO **/
+        nc.createUser = 'admin'
+        nc.updateUser = 'admin'
+        nc.cuentaPorCobrar.createUser = 'admin'
+        nc.cuentaPorCobrar.updateUser = 'admin'
+        /** END TEMPO **/
 
         nc = nc.save failOnError: true, flush: true
 

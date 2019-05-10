@@ -47,6 +47,10 @@ class EstadoDeCuentaListenerService implements  LogUser{
                 log.info('Actualizar estado de cuenta.....{}', cargo)
                 registrarCargo(cargo)
             }
+            if(event instanceof PostDeleteEvent) {
+                log.debug('Eliminar cargo del estado de cuenta')
+                eliminarCargo(cargo)
+            }
         }
 
         if(event.entityObject instanceof FacturistaPrestamo) {
@@ -122,6 +126,19 @@ class EstadoDeCuentaListenerService implements  LogUser{
         }
         logEntity(mov)
         mov.save()
+    }
+
+    private eliminarCargo(FacturistaOtroCargo otroCargo) {
+        FacturistaEstadoDeCuenta.withNewTransaction {
+            FacturistaEstadoDeCuenta mov = FacturistaEstadoDeCuenta
+                    .where{facturista == otroCargo.facturista && origen == otroCargo.id.toString()}.find()
+
+            if(mov) {
+                log.debug("Eliminando registro de estado de cuenta ${}", mov.id)
+                mov.delete flush: true
+            }
+        }
+
     }
 
 

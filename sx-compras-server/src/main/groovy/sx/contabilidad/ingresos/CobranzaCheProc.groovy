@@ -28,6 +28,10 @@ class CobranzaCheProc implements  ProcesadorMultipleDePolizas{
     @Qualifier('cobranzaPagosDiffTask')
     CobranzaPagosDiffTask cobranzaPagosDiffTask
 
+    @Autowired
+    @Qualifier('cobranzaTarjetaCheTask')
+    CobranzaTarjetaCheTask cobranzaTarjetaCheTask
+
     @Override
     String definirConcepto(Poliza poliza) {
         return "COBRANZA CHE"
@@ -37,6 +41,7 @@ class CobranzaCheProc implements  ProcesadorMultipleDePolizas{
     Poliza recalcular(Poliza poliza) {
         poliza.partidas.clear()
         cobranzaEfectivoCheTask.generarAsientos(poliza, [tipo: 'CHE'])
+        cobranzaTarjetaCheTask.generarAsientos(poliza, [tipo: 'CHE'])
         cobranzaDepositosCheTask.generarAsientos(poliza, [tipo: 'CHE'])
         cobranzaSaldosAFavorTask.generarAsientos(poliza, [tipo: 'CHE'])
         cobranzaPagosDiffTask.generarAsientos(poliza, [tipo: 'CHE'])

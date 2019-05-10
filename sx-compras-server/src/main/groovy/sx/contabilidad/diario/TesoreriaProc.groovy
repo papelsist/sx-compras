@@ -39,10 +39,10 @@ class TesoreriaProc implements  ProcesadorDePoliza{
     @Override
     Poliza recalcular(Poliza poliza) {
         poliza.partidas.clear()
-        //traspasoTask.generarAsientos(poliza, [:])
-        //comisionBancariaTask.generarAsientos(poliza, [:])
-        //morrallaTask.generarAsientos(poliza, [:])
-        //inversionTask.generarAsientos(poliza, [:])
+        traspasoTask.generarAsientos(poliza, [:])
+        comisionBancariaTask.generarAsientos(poliza, [:])
+        morrallaTask.generarAsientos(poliza, [:])
+        inversionTask.generarAsientos(poliza, [:])
         movimientoTesoreriaTask.generarAsientos(poliza, [:])
         poliza = poliza.save flush: true
         poliza.refresh()

@@ -29,6 +29,7 @@ class MovimientoTesoreriaTask implements  AsientoBuilder{
        //procesarRetencionesIsr(poliza)
        procesarDepositosPorIdentificar(poliza)
     }
+
     void procesarIntereses(Poliza poliza){
         def movimientosTes = MovimientoDeTesoreria.executeQuery("from MovimientoDeTesoreria where fecha= ? and concepto ='DEPOSITO' and  comentario like '%INTERES%'",[poliza.fecha])
         movimientosTes.each{mov ->mov.movimiento.moneda
@@ -50,6 +51,7 @@ class MovimientoTesoreriaTask implements  AsientoBuilder{
             poliza.addToPartidas(mapRow('702-0001-0000-0000',desc,row,0.00,mov.importe)) 
         }
     }
+
     void procesarRetencionesIsr(Poliza poliza){
         def movimientosTes = MovimientoDeTesoreria.executeQuery("from MovimientoDeTesoreria where fecha= ? and concepto ='CARGO' and  comentario like '%RET%ISR%'",[poliza.fecha])
         movimientosTes.each{mov ->mov.movimiento.moneda
