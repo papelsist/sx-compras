@@ -102,6 +102,7 @@ class EnvioComisionController extends RestfulController<EnvioComision> {
         Map repParams = [
                 FECHA_INI: periodo.fechaInicial,
                 FECHA_FIN: periodo.fechaFinal,
+                FECHA_CORTE: params.date('fechaPago', 'dd/MM/yyyy'),
                 FACTURISTA: params.facturista
         ]
         repParams.MONEDA = params.moneda
@@ -134,7 +135,7 @@ class EnvioComisionController extends RestfulController<EnvioComision> {
         Map repParams = [
                 FECHA_INI: periodo.fechaInicial,
                 FECHA_FIN: periodo.fechaFinal,
-                FECHA_PAGO: params.getDate('fechaPago', 'dd/MM/yyyy')
+                FECHA_CORTE: params.getDate('fechaPago', 'dd/MM/yyyy')
 
         ]
         def pdf =  reportService.run('embarques/RelacionDePagosDeFletes.jrxml', repParams)

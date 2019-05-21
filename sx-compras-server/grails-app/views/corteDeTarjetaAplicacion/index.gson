@@ -1,0 +1,8 @@
+import sx.tesoreria.CorteDeTarjetaAplicacion
+
+model {
+	Iterable<CorteDeTarjetaAplicacion> corteDeTarjetaAplicacionList
+}
+
+json tmpl.corteDeTarjetaAplicacion(corteDeTarjetaAplicacionList ?: [])
+

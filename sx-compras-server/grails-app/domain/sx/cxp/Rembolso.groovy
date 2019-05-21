@@ -3,6 +3,7 @@ package sx.cxp
 import grails.compiler.GrailsCompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
+import sx.contabilidad.CuentaContable
 import sx.core.Proveedor
 import sx.core.Sucursal
 import sx.tesoreria.MovimientoDeCuenta
@@ -44,6 +45,8 @@ class Rembolso {
 
     Pago pago
 
+    CuentaContable cuentaContable
+
     String createUser
     String updateUser
     Date dateCreated
@@ -64,15 +67,18 @@ class Rembolso {
         comision nullable: true
         pago nullable: true
         proveedor nullable: true
-        concepto inList: ['REMBOLSO',
+        cuentaContable nullable: true
+        concepto inList: ['PAGO',
+                          'REMBOLSO',
                           'PAGO_TARJETA',
                           'PAGO_CONTABLE',
                           'CARGA_SOCIAL',
                           'PRESTAMO_CHOFER',
                           'PRESTAMO_EMPLEADO',
                           'PAGO_CHOFER',
-                           'CUOTA_SINDICAL'
-        ]
+                           'CUOTA_SINDICAL']
+
+
     }
 
     static mapping = {

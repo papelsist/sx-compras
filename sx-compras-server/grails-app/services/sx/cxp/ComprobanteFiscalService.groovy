@@ -106,7 +106,7 @@ class ComprobanteFiscalService implements  LogUser{
         def tipoDeCamio = data['TipoCambio'] as BigDecimal
 
         def impuestos = xml.breadthFirst().find { it.name() == 'Impuestos'}
-        // XmlUtil.serialize()
+        XmlUtil.serialize()
         def trasladados = 0.0
         def retenidos =  0.0
         if(impuestos) {

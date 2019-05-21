@@ -1,4 +1,4 @@
-package sx.tesoreria
+ package sx.tesoreria
 
 import grails.compiler.GrailsCompileStatic
 import grails.gorm.transactions.Transactional

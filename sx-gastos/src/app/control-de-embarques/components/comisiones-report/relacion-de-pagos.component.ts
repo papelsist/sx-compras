@@ -32,7 +32,7 @@ import { FacturistaDeEmbarque } from 'app/control-de-embarques/model';
       </mat-form-field>
 
       <mat-form-field >
-        <input matInput [matDatepicker]="myDatepicker3" placeholder="Fecha Pago" formControlName="fechaPago">
+        <input matInput [matDatepicker]="myDatepicker3" placeholder="Fecha corte" formControlName="fechaPago">
         <mat-datepicker-toggle matSuffix [for]="myDatepicker3"></mat-datepicker-toggle>
         <mat-datepicker #myDatepicker3></mat-datepicker>
       </mat-form-field>
@@ -78,7 +78,7 @@ export class RelacionDePagosComponent implements OnInit {
     if (this.form.valid) {
       const fechaInicial: Date = this.form.get('fechaInicial').value;
       const fechaFinal: Date = this.form.get('fechaFinal').value;
-      const fechaPago = moment(this.form.get('fechaFinal').value);
+      const fechaPago = moment(this.form.get('fechaPago').value);
       const { facturista } = this.form.value;
       const data = {
         fechaInicial: fechaInicial.toISOString(),

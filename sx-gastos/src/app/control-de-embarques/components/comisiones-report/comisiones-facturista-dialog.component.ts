@@ -10,6 +10,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import * as moment from 'moment';
 import { Periodo } from 'app/_core/models/periodo';
 import { FacturistaDeEmbarque } from 'app/control-de-embarques/model';
+import { makeParamDecorator } from '@angular/core/src/util/decorators';
 
 @Component({
   selector: 'sx-comisiones-facturista-report',
@@ -32,6 +33,13 @@ import { FacturistaDeEmbarque } from 'app/control-de-embarques/model';
         <input matInput [matDatepicker]="myDatepicker2" placeholder="Fecha final" formControlName="fechaFinal">
         <mat-datepicker-toggle matSuffix [for]="myDatepicker2"></mat-datepicker-toggle>
         <mat-datepicker #myDatepicker2></mat-datepicker>
+      </mat-form-field>
+    </div>
+    <div layout>
+      <mat-form-field >
+        <input matInput [matDatepicker]="myDatepicker3" placeholder="Fecha corte" formControlName="fechaPago">
+        <mat-datepicker-toggle matSuffix [for]="myDatepicker3"></mat-datepicker-toggle>
+        <mat-datepicker #myDatepicker3></mat-datepicker>
       </mat-form-field>
     </div>
 
@@ -67,7 +75,8 @@ export class ComisionesPorFacturistaDialogComponent implements OnInit {
     this.form = this.fb.group({
       facturista: [this.facturista, [Validators.required]],
       fechaInicial: [this.periodo.fechaInicial, [Validators.required]],
-      fechaFinal: [this.periodo.fechaFinal, [Validators.required]]
+      fechaFinal: [this.periodo.fechaFinal, [Validators.required]],
+      fechaPago: [null, [Validators.required]]
     });
   }
 
@@ -75,11 +84,13 @@ export class ComisionesPorFacturistaDialogComponent implements OnInit {
     if (this.form.valid) {
       const fechaInicial: Date = this.form.get('fechaInicial').value;
       const fechaFinal: Date = this.form.get('fechaFinal').value;
+      const fechaPago: Date = this.form.get('fechaPago').value;
       const { facturista } = this.form.value;
       const data = {
         fechaInicial: fechaInicial.toISOString(),
         fechaFinal: fechaFinal.toISOString(),
-        facturista: facturista.id
+        facturista: facturista.id,
+        fechaPago: moment(fechaPago).format('DD/MM/YYYY')
       };
       this.dialogRef.close(data);
     }

@@ -25,6 +25,8 @@ class Chofer {
 
     String sw2
 
+    Boolean activo
+
     FacturistaDeEmbarque facturista
 
     BigDecimal comision = 0.0

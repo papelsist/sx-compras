@@ -3,4 +3,10 @@ import sx.tesoreria.CorteDeTarjetaAplicacion
 
 @Field CorteDeTarjetaAplicacion corteDeTarjetaAplicacion
 
-json g.render(corteDeTarjetaAplicacion)
+json g.render(corteDeTarjetaAplicacion) {
+    sucursal corteDeTarjetaAplicacion.corte.sucursal.nombre
+    folio corteDeTarjetaAplicacion.corte.folio
+    fecha corteDeTarjetaAplicacion.corte.corte
+    modificado corteDeTarjetaAplicacion.corte.lastUpdated
+    usuario corteDeTarjetaAplicacion.corte.updateUser
+}

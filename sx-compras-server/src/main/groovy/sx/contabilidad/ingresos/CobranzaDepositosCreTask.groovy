@@ -137,9 +137,9 @@ class CobranzaDepositosCreTask implements  AsientoBuilder {
 
                 PolizaDet ivaPend = buildRegistro(
                         row.cta_iva_pend.toString(),
-                        descripcion,
+                        row.tc > 1.0 ? "${desc} TC: ${row.tc_iva_fac}": descripcion,
                         row)
-                ivaPend.debe = round(row.impuesto_apl.abs() * row.tc_var)
+                ivaPend.debe = round(row.impuesto_apl.abs() * row.tc_iva_fac)
                 poliza.addToPartidas(ivaPend)
 
                 if(row.tc > 1.0) {
@@ -361,11 +361,12 @@ class CobranzaDepositosCreTask implements  AsientoBuilder {
         x.cta_contable_fac,
         x.cta_iva_pend,
         x.cta_iva_pag,
+        x.tc_iva_fac,
         CASE WHEN MONTH('@FECHA')=MONTH(x.fecha_fac)  and x.moneda='USD' then (SELECT t.tipo_de_cambio FROM tipo_de_cambio t where t.fecha=DATE_ADD(x.FECHA_fac, INTERVAL -1 DAY) )
         WHEN MONTH('@FECHA')<>MONTH(x.fecha_fac) and x.moneda='USD' then (SELECT t.tipo_de_cambio FROM tipo_de_cambio t where t.fecha=DATE_ADD( CONCAT(YEAR('@FECHA'),'/',MONTH('@FECHA'),'/',01) , INTERVAL -2 DAY) ) else 1.00 end as tc_var
         FROM (    
         SELECT 
-        (case when M.por_identificar is true then 'COB_TRANSF_CRE_xIDENT' else 'COB_TRANSF_CRE' end) as asiento,b.moneda,b.tipo_de_cambio tc,s.nombre sucursal, s.clave suc
+        (case when M.por_identificar is true then 'COB_TRANSF_CRE_xIDENT' else 'COB_TRANSF_CRE' end) as asiento,b.moneda,b.tipo_de_cambio tc,c.tipo_de_cambio tc_iva_fac,s.nombre sucursal, s.clave suc
         ,concat((case when M.por_identificar is true then '205-0002-' else (case when b.moneda='USD' then '102-0002-' else '102-0001-' end) end),z.sub_cuenta_operativa,'-0000') as cta_contable,(case when m.por_identificar is true then '208-0003-0000-0000' else '000-0000-0000-0000' end) cta_contable2
         ,z.numero ctaDestino,z.descripcion bancoDestino,'PAPEL SA DE CV' beneficiario,b.forma_de_pago,'03' metodoDePago,b.id origen,x.folio documento,b.referencia referenciaBancaria,b.importe total,(case when b.diferencia_fecha='@FECHA' then b.diferencia else 0 end) diferencia
         ,b.importe-(case when b.diferencia_fecha='@FECHA' then b.diferencia else 0 end)-ifnull((SELECT sum(a.importe) FROM aplicacion_de_cobro a where a.cobro_id=b.id and a.fecha='@FECHA'),0) SAF
@@ -376,7 +377,7 @@ class CobranzaDepositosCreTask implements  AsientoBuilder {
         where M.fecha='@FECHA' and date(b.primera_aplicacion)=a.fecha and b.tipo ='CRE'
         UNION
         SELECT 
-        (case when M.por_identificar is true then 'COB_DEP_EFE_CRE_xIDENT' else 'COB_DEP_EFE_CRE' end) as asiento,b.moneda,b.tipo_de_cambio tc,s.nombre sucursal, s.clave suc
+        (case when M.por_identificar is true then 'COB_DEP_EFE_CRE_xIDENT' else 'COB_DEP_EFE_CRE' end) as asiento,b.moneda,b.tipo_de_cambio tc,c.tipo_de_cambio tc_iva_fac,s.nombre sucursal, s.clave suc
         ,concat((case when M.por_identificar is true then '205-0002-' else '102-0001-' end),z.sub_cuenta_operativa,'-0000') as cta_contable,(case when m.por_identificar is true then '208-0003-0000-0000' else '000-0000-0000-0000' end) cta_contable2
         ,z.numero cta_dest,z.descripcion banco_dest,'PAPEL SA DE CV' benerficiario,b.forma_de_pago,'01' met_pago_pol,b.id origen,x.folio documento,b.referencia referenciaBancaria,b.importe total,(case when b.diferencia_fecha='@FECHA' then b.diferencia else 0 end) diferencia
         ,b.importe-(case when b.diferencia_fecha='@FECHA' then b.diferencia else 0 end)-ifnull((SELECT sum(a.importe) FROM aplicacion_de_cobro a where a.cobro_id=b.id and a.fecha='@FECHA'),0) SAF
@@ -387,7 +388,7 @@ class CobranzaDepositosCreTask implements  AsientoBuilder {
         where M.fecha='@FECHA' and date(b.primera_aplicacion)=a.fecha and b.tipo ='CRE' and x.total_efectivo>0 and x.total_efectivo>=x.total_cheque 
         UNION
         SELECT 
-        (case when M.por_identificar is true then 'COB_DEP_CHE_CRE_xIDENT' else 'COB_DEP_CHE_CRE' end) as asiento,b.moneda,b.tipo_de_cambio tc,s.nombre sucursal, s.clave suc
+        (case when M.por_identificar is true then 'COB_DEP_CHE_CRE_xIDENT' else 'COB_DEP_CHE_CRE' end) as asiento,b.moneda,b.tipo_de_cambio tc,c.tipo_de_cambio tc_iva_fac,s.nombre sucursal, s.clave suc
         ,concat((case when M.por_identificar is true then '205-0002-' else '102-0001-' end),z.sub_cuenta_operativa,'-0000') as cta_contable,(case when m.por_identificar is true then '208-0003-0000-0000' else '000-0000-0000-0000' end) cta_contable2
         ,z.numero ctaDestino,z.descripcion bancoDestino,'PAPEL SA DE CV' beneficiario,b.forma_de_pago,'02' metodoDePago,b.id origen,x.folio documento,b.referencia referenciaBancaria,b.importe total,(case when b.diferencia_fecha='@FECHA' then b.diferencia else 0 end) diferencia
         ,b.importe-(case when b.diferencia_fecha='@FECHA' then b.diferencia else 0 end)-ifnull((SELECT sum(a.importe) FROM aplicacion_de_cobro a where a.cobro_id=b.id and a.fecha='@FECHA'),0) SAF

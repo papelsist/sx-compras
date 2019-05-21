@@ -61,7 +61,7 @@ class ComisionesTarjetaProc implements  ProcesadorDePoliza, AsientoBuilder{
                         comision.ingreso.importe
                 )
 
-                asignarComplementoDePago(d1, comision, comision.importe)
+                asignarComplementoDePago(d2, comision, comision.importe)
                 poliza.addToPartidas(d2)
 
             }
@@ -145,7 +145,7 @@ class ComisionesTarjetaProc implements  ProcesadorDePoliza, AsientoBuilder{
         CorteDeTarjeta corte = row.corte
         String descripcion = "Corte: ${corte.folio} " +
                 " ${!corte.visaMaster ? 'AMEX': 'VM'}" +
-                " (${corte.corte.format('DD/MM/yyyy')}) ${corte.sucursal.nombre}"
+                " (${corte.corte.format('dd/MM/yyyy')}) ${corte.sucursal.nombre}"
 
 
         PolizaDet det = new PolizaDet(
@@ -199,20 +199,18 @@ class ComisionesTarjetaProc implements  ProcesadorDePoliza, AsientoBuilder{
     }
 
     void asignarComplementoDePago(PolizaDet det,CorteDeTarjetaAplicacion row, BigDecimal importe) {
-        if(row.tipo.name().endsWith('COMISION') ) {
-            String rfc = row.tipo.name().contains('AMEX') ? 'AEC810901298' : 'BNM840515VB1'
-            String beneficiario = row.tipo.name().contains('AMEX') ? 'American Express Banck (Mexico), S.A.' : row.corte.cuentaDeBanco.bancoSat.razonSocial
-            det.montoTotalPago = importe
-            det.metodoDePago = '17'
-            det.bancoOrigen = row.corte.cuentaDeBanco.bancoSat.clave
-            det.bancoDestino = det.bancoOrigen
-            det.ctaOrigen = row.corte.cuentaDeBanco.numero
-            det.beneficiario = beneficiario
-            det.rfc = rfc
-            det.referenciaBancaria = ''
-            det.moneda = 'MXN'
-            det.tipCamb = 1.0
-        }
+        String rfc = row.tipo.name().contains('AMEX') ? 'AEC810901298' : 'BNM840515VB1'
+        String beneficiario = row.tipo.name().contains('AMEX') ? 'American Express Banck (Mexico), S.A.' : row.corte.cuentaDeBanco.bancoSat.razonSocial
+        det.montoTotalPago = importe
+        det.metodoDePago = '17'
+        det.bancoOrigen = row.corte.cuentaDeBanco.bancoSat.clave
+        det.bancoDestino = det.bancoOrigen
+        det.ctaOrigen = row.corte.cuentaDeBanco.numero
+        det.beneficiario = beneficiario
+        det.rfc = rfc
+        det.referenciaBancaria = ''
+        det.moneda = 'MXN'
+        det.tipCamb = 1.0
     }
 
 

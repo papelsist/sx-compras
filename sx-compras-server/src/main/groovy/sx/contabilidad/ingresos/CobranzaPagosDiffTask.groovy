@@ -117,7 +117,10 @@ class CobranzaPagosDiffTask implements  AsientoBuilder{
             // Abono al cliente
             Cobro cob = it.cobro
             CuentaOperativaCliente co = CuentaOperativaCliente.where{cliente == cob.cliente}.find()
-            def clienteClave = "105-0003-${co.cuentaOperativa}-0000"
+            String subCta = '0003'
+            if(co.cuentaOperativa == '0266')
+                subCta = '0004'
+            def clienteClave = "105-${subCta}-${co.cuentaOperativa}-0000"
             poliza.addToPartidas(buildDet(
                     clienteClave,
                     desc,

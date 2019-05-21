@@ -29,8 +29,9 @@
 	<parameter name="FECHA_INI" isForPrompting="true" class="java.util.Date"/>
 	<parameter name="FACTURISTA" isForPrompting="true" class="java.lang.String"/>
 	<parameter name="FECHA_FIN" isForPrompting="true" class="java.util.Date"/>
+	<parameter name="FECHA_CORTE" isForPrompting="true" class="java.util.Date"/>
 	<queryString><![CDATA[SELECT 'COMISION' TIPO,FACTURISTA,VTA,CHOFER,SUCURSAL,SUM(VALOR) VALOR,SUM(VALOR_CAJAS) CAJAS,SUM(VALOR+(VALOR_CAJAS*2)) IMPORTE,SUM(KILOS) KILOS,SUM(MANIOBRA) FLETE
-,(CASE WHEN COMISION>0 THEN COMISION ELSE PRECIO_TONELADA END) FACTOR,SUM(IMPORTE_COMISION) IMP_COMISION,0.00 SALDO,0.00 INT_E_IVA,0.00 DESCTO
+,(CASE WHEN COMISION>0 THEN COMISION ELSE PRECIO_TONELADA END) FACTOR,SUM(IMPORTE_COMISION) IMP_COMISION,0.00 SALDO,0.00 INT_E_IVA,0.0 MATERIAL,0.0 CELULAR,0.0 PATIN,0.0 MANIOBRA_LOCAL,0.0 MANIOBRA_FORANEA,0.0 VALES,0.0 OTROS,0.00 DESCTO
 FROM (
 SELECT P.NOMBRE FACTURISTA,S.NOMBRE AS SUCURSAL,C.NOMBRE AS CHOFER ,F.VALOR ,0 AS CANTIDAD,F.KILOS 
 ,CASE WHEN X.PRECIO_TONELADA>0 THEN 'POR_TONELADA' WHEN F.tipo_documento='CRE' THEN 'CREDITO' ELSE 'CONTADO' END AS VTA
@@ -56,7 +57,7 @@ WHERE  P.ID=$P{FACTURISTA} AND DATE(X.REGRESO) BETWEEN $P{FECHA_INI} AND $P{FECH
 GROUP BY A.CHOFER,A.VTA,A.COMISION,A.PRECIO_TONELADA,A.SUCURSAL
 UNION
 SELECT 'POR CHOFER' TIPO,FACTURISTA,'CHOFER' VTA,CHOFER,SUCURSAL,SUM(VALOR) VALOR,SUM(VALOR_CAJAS) CAJAS,SUM(VALOR+(VALOR_CAJAS*2)) IMPORTE,SUM(KILOS) KILOS,SUM(MANIOBRA) FLETE
-,(CASE WHEN COMISION>0 THEN COMISION ELSE PRECIO_TONELADA END) FACTOR,SUM(IMPORTE_COMISION) IMP_COMISION,0.00 SALDO,0.00 INT_E_IVA,0.00 DESCTO
+,(CASE WHEN COMISION>0 THEN COMISION ELSE PRECIO_TONELADA END) FACTOR,SUM(IMPORTE_COMISION) IMP_COMISION,0.00 SALDO,0.00 INT_E_IVA,0 MATERIAL,0 CELULAR,0 PATIN,0 MANIOBRA_LOCAL,0 MANIOBRA_FORANEA,0 VALES,0 OTROS,0.00 DESCTO
 FROM (
 SELECT P.NOMBRE FACTURISTA,S.NOMBRE AS SUCURSAL,C.NOMBRE AS CHOFER ,F.VALOR ,0 AS CANTIDAD,F.KILOS 
 ,CASE WHEN X.PRECIO_TONELADA>0 THEN 'POR_TONELADA' WHEN F.tipo_documento='CRE' THEN 'CREDITO' ELSE 'CONTADO' END AS VTA
@@ -82,7 +83,7 @@ WHERE  P.ID=$P{FACTURISTA} AND DATE(X.REGRESO) BETWEEN $P{FECHA_INI} AND $P{FECH
 GROUP BY A.CHOFER
 UNION
 SELECT 'POR SUCURSAL' TIPO,FACTURISTA,'SUCURSAL' VTA,CHOFER,SUCURSAL,SUM(VALOR) VALOR,SUM(VALOR_CAJAS) CAJAS,SUM(VALOR+(VALOR_CAJAS*2)) IMPORTE,SUM(KILOS) KILOS,SUM(MANIOBRA) FLETE
-,(CASE WHEN COMISION>0 THEN COMISION ELSE PRECIO_TONELADA END) FACTOR,SUM(IMPORTE_COMISION) IMP_COMISION,0.00 SALDO,0.00 INT_E_IVA,0.00 DESCTO
+,(CASE WHEN COMISION>0 THEN COMISION ELSE PRECIO_TONELADA END) FACTOR,SUM(IMPORTE_COMISION) IMP_COMISION,0.00 SALDO,0.00 INT_E_IVA,0 MATERIAL,0 CELULAR,0 PATIN,0 MANIOBRA_LOCAL,0 MANIOBRA_FORANEA,0 VALES,0 OTROS,0.00 DESCTO
 FROM (
 SELECT P.NOMBRE FACTURISTA,S.NOMBRE AS SUCURSAL,C.NOMBRE AS CHOFER ,F.VALOR ,0 AS CANTIDAD,F.KILOS 
 ,CASE WHEN X.PRECIO_TONELADA>0 THEN 'POR_TONELADA' WHEN F.tipo_documento='CRE' THEN 'CREDITO' ELSE 'CONTADO' END AS VTA
@@ -110,15 +111,26 @@ GROUP BY A.SUCURSAL
 UNION
 
 SELECT 'XDESGLOSE' TIPO,FACTURISTA,'FACTURISTA' VTA,CHOFER,SUCURSAL,SUM(VALOR) VALOR,SUM(VALOR_CAJAS) CAJAS,SUM(VALOR+(VALOR_CAJAS*2)) IMPORTE,SUM(KILOS) KILOS,SUM(MANIOBRA) FLETE
-,(CASE WHEN COMISION>0 THEN COMISION ELSE PRECIO_TONELADA END) FACTOR,SUM(IMPORTE_COMISION) IMP_COMISION,SALDO,INT_E_IVA
-,CASE WHEN SALDO<=round((ROUND((SUM(IMPORTE_COMISION)+SUM(MANIOBRA))*1.12,2)*0.30),0) THEN SALDO ELSE round((ROUND((SUM(IMPORTE_COMISION)+SUM(MANIOBRA))*1.12,2)*0.30),0) END DESCTO
+,(CASE WHEN COMISION>0 THEN COMISION ELSE PRECIO_TONELADA END) FACTOR,SUM(IMPORTE_COMISION) IMP_COMISION,SALDO
+,(SELECT SUM(C.TOTAL)-SUM(IFNULL((SELECT SUM(A.IMPORTE) FROM aplicacion_de_cobro A WHERE A.cuenta_por_cobrar_id=C.ID),0)) 
+	FROM cuenta_por_cobrar C JOIN cliente T ON(C.cliente_id=T.ID) JOIN facturista_de_embarque F ON(F.RFC=T.RFC) 
+	WHERE F.ID=A.FACT_ID AND C.TIPO='CHO' AND C.tipo_documento='NOTA_DE_CARGO' AND C.FECHA>'2019-04-26') INT_E_IVA
+,MATERIAL,CELULAR,PATIN,MANIOBRA_LOCAL,MANIOBRA_FORANEA,VALES,OTROS
+,CASE WHEN SALDO=0.0 THEN 0.0 WHEN SALDO<=round((ROUND((SUM(IMPORTE_COMISION)+SUM(MANIOBRA))*1.12,2)*0.30),0) THEN SALDO ELSE round((ROUND((SUM(IMPORTE_COMISION)+SUM(MANIOBRA))*1.12,2)*0.30),0) END DESCTO
 FROM (
 SELECT P.ID FACT_ID,P.NOMBRE FACTURISTA,S.NOMBRE AS SUCURSAL,C.NOMBRE AS CHOFER ,F.VALOR ,0 AS CANTIDAD,F.KILOS 
 ,CASE WHEN X.PRECIO_TONELADA>0 THEN 'POR_TONELADA' WHEN F.tipo_documento='CRE' THEN 'CREDITO' ELSE 'CONTADO' END AS VTA
 ,IFNULL((SELECT V.cargos_por_maniobra FROM VENTA V WHERE V.ID=F.ORIGEN),0) AS FLETE
 ,X.ID,X.MANIOBRA,X.COMISION/100 COMISION,X.PRECIO_TONELADA,X.IMPORTE_COMISION,X.VALOR_CAJAS
-,IFNULL((SELECT SUM(Y.importe) FROM facturista_estado_de_cuenta Y WHERE Y.facturista_id=P.ID),0) AS SALDO
-,IFNULL((SELECT SUM(Y.importe) FROM facturista_estado_de_cuenta Y WHERE Y.facturista_id=P.ID AND Y.CONCEPTO='INTERESES' AND Y.ORIGEN IS NULL),0) AS INT_E_IVA
+,IFNULL((SELECT SUM(Y.importe) FROM facturista_estado_de_cuenta Y WHERE Y.facturista_id=P.ID AND Y.FECHA<$P{FECHA_CORTE}),0) AS SALDO
+,0.0 AS INT_E_IVA
+,IFNULL((SELECT SUM(Y.importe) FROM facturista_estado_de_cuenta Y WHERE Y.facturista_id=P.ID AND Y.CONCEPTO='MATERIAL'  AND Y.FECHA = $P{FECHA_CORTE} ),0) AS MATERIAL
+,IFNULL((SELECT SUM(Y.importe) FROM facturista_estado_de_cuenta Y WHERE Y.facturista_id=P.ID AND Y.CONCEPTO='CELULAR'  AND Y.FECHA = $P{FECHA_CORTE} ),0) AS CELULAR
+,IFNULL((SELECT SUM(Y.importe) FROM facturista_estado_de_cuenta Y WHERE Y.facturista_id=P.ID AND Y.CONCEPTO='PATIN'  AND Y.FECHA = $P{FECHA_CORTE} ),0) AS PATIN
+,IFNULL((SELECT SUM(Y.importe) FROM facturista_estado_de_cuenta Y WHERE Y.facturista_id=P.ID AND Y.CONCEPTO='MANIOBRA_LOCAL'  AND Y.FECHA = $P{FECHA_CORTE} ),0) AS MANIOBRA_LOCAL
+,IFNULL((SELECT SUM(Y.importe) FROM facturista_estado_de_cuenta Y WHERE Y.facturista_id=P.ID AND Y.CONCEPTO='MANIOBRA_FORANEA'  AND Y.FECHA = $P{FECHA_CORTE} ),0) AS MANIOBRA_FORANEA
+,IFNULL((SELECT SUM(Y.importe) FROM facturista_estado_de_cuenta Y WHERE Y.facturista_id=P.ID AND Y.CONCEPTO='VALES'  AND Y.FECHA = $P{FECHA_CORTE} ),0) AS VALES
+,IFNULL((SELECT SUM(Y.importe) FROM facturista_estado_de_cuenta Y WHERE Y.facturista_id=P.ID AND Y.CONCEPTO='OTROS' AND Y.TIPO<>'ABONO'  AND Y.FECHA = $P{FECHA_CORTE} ),0) AS OTROS
 from embarque E 
 JOIN envio F ON(E.ID=F.EMBARQUE_ID)
 JOIN envio_comision X ON(X.ENVIO_ID=F.ID)
@@ -128,8 +140,16 @@ JOIN sucursal S ON(S.ID=E.sucursal_id)
 WHERE  P.ID=$P{FACTURISTA} AND DATE(X.REGRESO) BETWEEN $P{FECHA_INI} AND $P{FECHA_FIN}
 UNION
 SELECT P.ID,P.NOMBRE,S.NOMBRE AS SUCURSAL,C.NOMBRE AS CHOFER,X.IMPORTE_COMISION VALOR ,0 AS CANTIDAD,x.KILOS,'TRASLADO' AS VTA,0 AS FLETE,X.ID,0 MANIOBRA
-,X.COMISION/100 COMISION,X.PRECIO_TONELADA,X.IMPORTE_COMISION,X.VALOR_CAJAS,IFNULL((SELECT SUM(Y.importe) FROM facturista_estado_de_cuenta Y WHERE Y.facturista_id=P.ID),0) AS SALDO
-,IFNULL((SELECT SUM(Y.importe) FROM facturista_estado_de_cuenta Y WHERE Y.facturista_id=P.ID AND Y.CONCEPTO='INTERESES' AND Y.ORIGEN IS NULL),0) AS INT_E_IVA
+,X.COMISION/100 COMISION,X.PRECIO_TONELADA,X.IMPORTE_COMISION,X.VALOR_CAJAS
+,IFNULL((SELECT SUM(Y.importe) FROM facturista_estado_de_cuenta Y WHERE Y.facturista_id=P.ID AND Y.FECHA<$P{FECHA_CORTE}),0) AS SALDO
+,0.0 AS INT_E_IVA
+,IFNULL((SELECT SUM(Y.importe) FROM facturista_estado_de_cuenta Y WHERE Y.facturista_id=P.ID AND Y.CONCEPTO='MATERIAL'  AND Y.FECHA = $P{FECHA_CORTE} ),0) AS MATERIAL
+,IFNULL((SELECT SUM(Y.importe) FROM facturista_estado_de_cuenta Y WHERE Y.facturista_id=P.ID AND Y.CONCEPTO='CELULAR'  AND Y.FECHA = $P{FECHA_CORTE} ),0) AS CELULAR
+,IFNULL((SELECT SUM(Y.importe) FROM facturista_estado_de_cuenta Y WHERE Y.facturista_id=P.ID AND Y.CONCEPTO='PATIN'  AND Y.FECHA = $P{FECHA_CORTE} ),0) AS PATIN
+,IFNULL((SELECT SUM(Y.importe) FROM facturista_estado_de_cuenta Y WHERE Y.facturista_id=P.ID AND Y.CONCEPTO='MANIOBRA_LOCAL'  AND Y.FECHA = $P{FECHA_CORTE} ),0) AS MANIOBRA_LOCAL
+,IFNULL((SELECT SUM(Y.importe) FROM facturista_estado_de_cuenta Y WHERE Y.facturista_id=P.ID AND Y.CONCEPTO='MANIOBRA_FORANEA'  AND Y.FECHA = $P{FECHA_CORTE} ),0) AS MANIOBRA_FORANEA
+,IFNULL((SELECT SUM(Y.importe) FROM facturista_estado_de_cuenta Y WHERE Y.facturista_id=P.ID AND Y.CONCEPTO='VALES'  AND Y.FECHA = $P{FECHA_CORTE} ),0) AS VALES
+,IFNULL((SELECT SUM(Y.importe) FROM facturista_estado_de_cuenta Y WHERE Y.facturista_id=P.ID AND Y.CONCEPTO='OTROS' AND Y.TIPO<>'ABONO' AND Y.FECHA = $P{FECHA_CORTE} ),0) AS OTROS
 FROM traslado E 
 JOIN envio_comision X ON(X.traslado_id=E.ID)
 JOIN CHOFER C ON(C.ID=E.chofer_ID)
@@ -137,8 +157,7 @@ join facturista_de_embarque P ON(C.facturista_id=P.id)
 JOIN sucursal S ON(S.ID=E.sucursal_id)
 WHERE  P.ID=$P{FACTURISTA} AND DATE(X.REGRESO) BETWEEN $P{FECHA_INI} AND $P{FECHA_FIN} 
 ) AS A 
-GROUP BY FACTURISTA
-]]></queryString>
+GROUP BY FACTURISTA]]></queryString>
 
 	<field name="TIPO" class="java.lang.String"/>
 	<field name="FACTURISTA" class="java.lang.String"/>
@@ -154,6 +173,13 @@ GROUP BY FACTURISTA
 	<field name="IMP_COMISION" class="java.math.BigDecimal"/>
 	<field name="SALDO" class="java.math.BigDecimal"/>
 	<field name="INT_E_IVA" class="java.math.BigDecimal"/>
+	<field name="MATERIAL" class="java.math.BigDecimal"/>
+	<field name="CELULAR" class="java.math.BigDecimal"/>
+	<field name="PATIN" class="java.math.BigDecimal"/>
+	<field name="MANIOBRA_LOCAL" class="java.math.BigDecimal"/>
+	<field name="MANIOBRA_FORANEA" class="java.math.BigDecimal"/>
+	<field name="VALES" class="java.math.BigDecimal"/>
+	<field name="OTROS" class="java.math.BigDecimal"/>
 	<field name="DESCTO" class="java.math.BigDecimal"/>
 
 	<sortField name="TIPO" />
@@ -204,12 +230,12 @@ GROUP BY FACTURISTA
 		<group  name="TIPO" >
 			<groupExpression><![CDATA[$F{TIPO}]]></groupExpression>
 			<groupHeader>
-			<band height="17"  isSplitAllowed="true" >
+			<band height="12"  isSplitAllowed="true" >
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="128"
-						y="3"
-						width="78"
+						x="30"
+						y="1"
+						width="176"
 						height="11"
 						key="textField-81">
 							<printWhenExpression><![CDATA[new Boolean(!$F{TIPO}.equals( "COMISION" ) && !$F{TIPO}.equals( "XDESGLOSE" ))]]></printWhenExpression>
@@ -223,11 +249,11 @@ GROUP BY FACTURISTA
 			</band>
 			</groupHeader>
 			<groupFooter>
-			<band height="15"  isSplitAllowed="true" >
+			<band height="12"  isSplitAllowed="true" >
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="365"
-						y="5"
+						y="2"
 						width="48"
 						height="10"
 						key="textField-74">
@@ -247,7 +273,7 @@ GROUP BY FACTURISTA
 				<staticText>
 					<reportElement
 						x="135"
-						y="5"
+						y="2"
 						width="91"
 						height="10"
 						key="staticText-76">
@@ -262,7 +288,7 @@ GROUP BY FACTURISTA
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="226"
-						y="5"
+						y="2"
 						width="39"
 						height="10"
 						key="textField-75">
@@ -282,7 +308,7 @@ GROUP BY FACTURISTA
 				<textField isStretchWithOverflow="false" pattern="#,##0" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="492"
-						y="5"
+						y="2"
 						width="32"
 						height="10"
 						key="textField-76">
@@ -302,7 +328,7 @@ GROUP BY FACTURISTA
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="444"
-						y="5"
+						y="2"
 						width="48"
 						height="10"
 						key="textField-77">
@@ -322,7 +348,7 @@ GROUP BY FACTURISTA
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="265"
-						y="5"
+						y="2"
 						width="50"
 						height="10"
 						key="textField-78">
@@ -342,7 +368,7 @@ GROUP BY FACTURISTA
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="315"
-						y="5"
+						y="2"
 						width="50"
 						height="10"
 						key="textField-79">
@@ -362,7 +388,7 @@ GROUP BY FACTURISTA
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="524"
-						y="5"
+						y="2"
 						width="48"
 						height="10"
 						key="textField-80">
@@ -389,7 +415,7 @@ GROUP BY FACTURISTA
 			</band>
 			</groupHeader>
 			<groupFooter>
-			<band height="15"  isSplitAllowed="true" >
+			<band height="13"  isSplitAllowed="true" >
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="135"
@@ -565,6 +591,22 @@ GROUP BY FACTURISTA
 					</textElement>
 				<textFieldExpression   class="java.lang.Double"><![CDATA[$V{CAJAS_CH}]]></textFieldExpression>
 				</textField>
+				<staticText>
+					<reportElement
+						x="413"
+						y="2"
+						width="159"
+						height="10"
+						key="staticText-94">
+							<printWhenExpression><![CDATA[new Boolean($F{TIPO}.equals( "XDESGLOSE" ))]]></printWhenExpression>
+						</reportElement>
+					<box>					<bottomPen lineWidth="3.5" lineStyle="Double"/>
+</box>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" pdfFontName="Helvetica-BoldOblique" size="8" isBold="true" isItalic="true"/>
+					</textElement>
+				<text><![CDATA[RESUMEN]]></text>
+				</staticText>
 			</band>
 			</groupFooter>
 		</group>
@@ -653,9 +695,9 @@ GROUP BY FACTURISTA
 				</staticText>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="139"
+						x="413"
 						y="8"
-						width="437"
+						width="163"
 						height="13"
 						key="textField"/>
 					<box></box>
@@ -667,7 +709,7 @@ GROUP BY FACTURISTA
 				<staticText>
 					<reportElement
 						x="4"
-						y="29"
+						y="21"
 						width="67"
 						height="12"
 						key="staticText-39"/>
@@ -680,7 +722,7 @@ GROUP BY FACTURISTA
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="71"
-						y="29"
+						y="21"
 						width="231"
 						height="12"
 						key="textField-14"/>
@@ -798,7 +840,7 @@ GROUP BY FACTURISTA
 				<staticText>
 					<reportElement
 						x="341"
-						y="29"
+						y="37"
 						width="84"
 						height="13"
 						key="staticText-77"/>
@@ -811,7 +853,7 @@ GROUP BY FACTURISTA
 				<textField isStretchWithOverflow="false" pattern="dd-MMM-yy" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="425"
-						y="29"
+						y="37"
 						width="66"
 						height="13"
 						key="textField-84"/>
@@ -824,7 +866,7 @@ GROUP BY FACTURISTA
 				<staticText>
 					<reportElement
 						x="491"
-						y="29"
+						y="37"
 						width="20"
 						height="13"
 						key="staticText-78"/>
@@ -837,7 +879,7 @@ GROUP BY FACTURISTA
 				<textField isStretchWithOverflow="false" pattern="dd-MMM-yy" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="511"
-						y="29"
+						y="37"
 						width="66"
 						height="13"
 						key="textField-85"/>
@@ -847,10 +889,36 @@ GROUP BY FACTURISTA
 					</textElement>
 				<textFieldExpression   class="java.util.Date"><![CDATA[$P{FECHA_FIN}]]></textFieldExpression>
 				</textField>
+				<staticText>
+					<reportElement
+						x="5"
+						y="37"
+						width="98"
+						height="13"
+						key="staticText-95"/>
+					<box></box>
+					<textElement textAlignment="Left">
+						<font fontName="SansSerif" pdfFontName="Helvetica-Oblique" size="9" isBold="false" isItalic="true"/>
+					</textElement>
+				<text><![CDATA[FECHA DE CORTE : ]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="dd-MMM-yy" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="103"
+						y="37"
+						width="66"
+						height="13"
+						key="textField-103"/>
+					<box></box>
+					<textElement textAlignment="Left">
+						<font pdfFontName="Helvetica-BoldOblique" size="9" isBold="true" isItalic="true" isUnderline="false"/>
+					</textElement>
+				<textFieldExpression   class="java.util.Date"><![CDATA[$P{FECHA_CORTE}]]></textFieldExpression>
+				</textField>
 			</band>
 		</columnHeader>
 		<detail>
-			<band height="14"  isSplitAllowed="true" >
+			<band height="13"  isSplitAllowed="true" >
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="2"
@@ -1234,12 +1302,12 @@ GROUP BY FACTURISTA
 			</band>
 		</pageFooter>
 		<lastPageFooter>
-			<band height="18"  isSplitAllowed="true" >
+			<band height="32"  isSplitAllowed="true" >
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
 						x="225"
-						y="5"
+						y="20"
 						width="48"
 						height="10"
 						forecolor="#666666"
@@ -1259,7 +1327,7 @@ GROUP BY FACTURISTA
 					<reportElement
 						mode="Transparent"
 						x="270"
-						y="5"
+						y="20"
 						width="31"
 						height="10"
 						forecolor="#666666"
@@ -1279,7 +1347,7 @@ GROUP BY FACTURISTA
 					<reportElement
 						mode="Opaque"
 						x="414"
-						y="5"
+						y="20"
 						width="75"
 						height="12"
 						forecolor="#666666"
@@ -1299,7 +1367,7 @@ GROUP BY FACTURISTA
 					<reportElement
 						mode="Transparent"
 						x="490"
-						y="5"
+						y="20"
 						width="84"
 						height="12"
 						forecolor="#666666"
@@ -1319,7 +1387,7 @@ GROUP BY FACTURISTA
 					<reportElement
 						mode="Opaque"
 						x="0"
-						y="2"
+						y="17"
 						width="584"
 						height="1"
 						forecolor="#999999"
@@ -1327,22 +1395,58 @@ GROUP BY FACTURISTA
 						key="line-9"/>
 					<graphicElement stretchType="NoStretch" fill="Solid" />
 				</line>
+				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="188"
+						y="1"
+						width="47"
+						height="11"
+						key="textField-95"/>
+					<box>					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{DESCTO}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="5"
+						y="1"
+						width="183"
+						height="11"
+						key="staticText-86"/>
+					<box>					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" pdfFontName="Helvetica-Oblique" size="8" isBold="false" isItalic="true"/>
+					</textElement>
+				<text><![CDATA[* 30 % DESCTO (INTERESES + PRESTAMO) =]]></text>
+				</staticText>
 			</band>
 		</lastPageFooter>
 		<summary>
-			<band height="91"  isSplitAllowed="true" >
+			<band height="161"  isSplitAllowed="true" >
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="524"
-						y="5"
-						width="47"
+						x="511"
+						y="2"
+						width="60"
 						height="11"
 						key="textField-88"/>
 					<box>					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
-					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#CCCCCC"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
-					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
 </box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Arial" size="8"/>
@@ -1351,30 +1455,38 @@ GROUP BY FACTURISTA
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="524"
-						y="53"
-						width="47"
+						x="511"
+						y="46"
+						width="60"
 						height="11"
 						key="textField-89"/>
 					<box>					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
-					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#CCCCCC"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
-					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
 </box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Arial" size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{INT_E_IVA}]]></textFieldExpression>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[(
+$F{INT_E_IVA}.doubleValue()==0.00 ? new BigDecimal(0) :
+($F{INT_E_IVA}.doubleValue())>$F{DESCTO}.doubleValue() ? $F{DESCTO} : $F{INT_E_IVA}
+)]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
-						x="413"
-						y="5"
+						x="400"
+						y="2"
 						width="111"
 						height="11"
 						key="staticText-79"/>
-					<box></box>
+					<box>					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+</box>
 					<textElement textAlignment="Right">
 						<font fontName="Arial" pdfFontName="Helvetica-BoldOblique" size="8" isBold="true" isItalic="true"/>
 					</textElement>
@@ -1382,93 +1494,119 @@ GROUP BY FACTURISTA
 				</staticText>
 				<staticText>
 					<reportElement
-						x="374"
-						y="53"
-						width="150"
+						x="400"
+						y="46"
+						width="111"
 						height="11"
 						key="staticText-80"/>
-					<box></box>
+					<box>					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+</box>
 					<textElement textAlignment="Right">
 						<font fontName="Arial" pdfFontName="Helvetica-BoldOblique" size="8" isBold="true" isItalic="true"/>
 					</textElement>
-				<text><![CDATA[INTERES + IVA DE LA SEMANA   -]]></text>
+				<text><![CDATA[INTERESES   -]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="524"
-						y="65"
-						width="47"
+						x="511"
+						y="57"
+						width="60"
 						height="11"
 						key="textField-90"/>
 					<box>					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
-					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#CCCCCC"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
-					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
 </box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Arial" size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{DESCTO}.subtract( $F{INT_E_IVA} )]]></textFieldExpression>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[(
+$F{DESCTO}.doubleValue()==0.00 ? new BigDecimal(0) :
+($F{INT_E_IVA}.doubleValue())>$F{DESCTO}.doubleValue() ? new BigDecimal(0) : $F{DESCTO}.subtract( $F{INT_E_IVA} )
+)]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
-						x="365"
-						y="65"
-						width="159"
+						x="400"
+						y="57"
+						width="111"
 						height="11"
 						key="staticText-81"/>
-					<box></box>
+					<box>					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+</box>
 					<textElement textAlignment="Right">
 						<font fontName="Arial" pdfFontName="Helvetica-BoldOblique" size="8" isBold="true" isItalic="true"/>
 					</textElement>
-				<text><![CDATA[DESCUENTO PRESTAMO Y OTROS   -]]></text>
+				<text><![CDATA[PRESTAMO  -]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="524"
-						y="77"
-						width="47"
-						height="11"
+						x="511"
+						y="145"
+						width="60"
+						height="15"
 						key="textField-91"/>
 					<box>					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
-					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#CCCCCC"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
-					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
 </box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="8"/>
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
 					</textElement>
 				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[($F{IMP_COMISION}.add($F{FLETE})).add(
-($F{IMP_COMISION}.add($F{FLETE})).multiply( new BigDecimal(0.12) ).setScale(2,BigDecimal.ROUND_HALF_EVEN)
-).subtract( $F{DESCTO})]]></textFieldExpression>
+($F{IMP_COMISION}.add($F{FLETE})).multiply( new BigDecimal(0.16) ).setScale(2,BigDecimal.ROUND_HALF_EVEN).subtract(
+($F{IMP_COMISION}.add($F{FLETE})).multiply( new BigDecimal(0.04) ).setScale(2,BigDecimal.ROUND_HALF_EVEN) ) ).subtract(
+ $F{DESCTO}).subtract(
+$F{MATERIAL}).subtract(
+$F{CELULAR}).subtract(
+$F{PATIN}).subtract(
+$F{MANIOBRA_LOCAL}).subtract(
+$F{MANIOBRA_FORANEA}).subtract(
+$F{VALES}).subtract(
+$F{OTROS})]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
-						x="374"
-						y="77"
-						width="150"
-						height="11"
+						x="400"
+						y="145"
+						width="111"
+						height="15"
 						key="staticText-82"/>
-					<box></box>
-					<textElement textAlignment="Right">
-						<font fontName="Arial" pdfFontName="Helvetica-BoldOblique" size="8" isBold="true" isItalic="true"/>
+					<box>					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-BoldOblique" size="10" isBold="true" isItalic="true"/>
 					</textElement>
 				<text><![CDATA[A PAGAR   =]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="523"
-						y="17"
-						width="47"
+						x="511"
+						y="13"
+						width="60"
 						height="11"
 						key="textField-92"/>
 					<box>					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
-					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#CCCCCC"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
-					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
 </box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Arial" size="8"/>
@@ -1477,12 +1615,17 @@ GROUP BY FACTURISTA
 				</textField>
 				<staticText>
 					<reportElement
-						x="412"
-						y="17"
+						x="400"
+						y="13"
 						width="111"
 						height="11"
 						key="staticText-83"/>
-					<box></box>
+					<box>					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+</box>
 					<textElement textAlignment="Right">
 						<font fontName="Arial" pdfFontName="Helvetica-BoldOblique" size="8" isBold="true" isItalic="true"/>
 					</textElement>
@@ -1490,16 +1633,16 @@ GROUP BY FACTURISTA
 				</staticText>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="523"
-						y="29"
-						width="47"
+						x="511"
+						y="24"
+						width="60"
 						height="11"
 						key="textField-93"/>
 					<box>					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
-					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#CCCCCC"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
-					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
 </box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Arial" size="8"/>
@@ -1508,12 +1651,17 @@ GROUP BY FACTURISTA
 				</textField>
 				<staticText>
 					<reportElement
-						x="412"
-						y="29"
+						x="400"
+						y="24"
 						width="111"
 						height="11"
 						key="staticText-84"/>
-					<box></box>
+					<box>					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+</box>
 					<textElement textAlignment="Right">
 						<font fontName="Arial" pdfFontName="Helvetica-BoldOblique" size="8" isBold="true" isItalic="true"/>
 					</textElement>
@@ -1521,36 +1669,293 @@ GROUP BY FACTURISTA
 				</staticText>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="523"
-						y="41"
-						width="47"
+						x="511"
+						y="35"
+						width="60"
 						height="11"
 						key="textField-94"/>
 					<box>					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
-					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#CCCCCC"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
-					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
 </box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Arial" size="8"/>
 					</textElement>
 				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[($F{IMP_COMISION}.add($F{FLETE})).add(
-($F{IMP_COMISION}.add($F{FLETE})).multiply( new BigDecimal(0.12) ).setScale(2,BigDecimal.ROUND_HALF_EVEN)
-)]]></textFieldExpression>
+($F{IMP_COMISION}.add($F{FLETE})).multiply( new BigDecimal(0.16) ).setScale(2,BigDecimal.ROUND_HALF_EVEN).subtract(
+($F{IMP_COMISION}.add($F{FLETE})).multiply( new BigDecimal(0.04) ).setScale(2,BigDecimal.ROUND_HALF_EVEN) ) )]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
-						x="412"
-						y="41"
+						x="400"
+						y="35"
 						width="111"
 						height="11"
 						key="staticText-85"/>
-					<box></box>
+					<box>					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+</box>
 					<textElement textAlignment="Right">
 						<font fontName="Arial" pdfFontName="Helvetica-BoldOblique" size="8" isBold="true" isItalic="true"/>
 					</textElement>
 				<text><![CDATA[TOTAL   =]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="511"
+						y="68"
+						width="60"
+						height="11"
+						key="textField-96"/>
+					<box>					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{MATERIAL}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="400"
+						y="68"
+						width="111"
+						height="11"
+						key="staticText-87"/>
+					<box>					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" pdfFontName="Helvetica-BoldOblique" size="8" isBold="true" isItalic="true"/>
+					</textElement>
+				<text><![CDATA[MATERIAL   -]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="511"
+						y="79"
+						width="60"
+						height="11"
+						key="textField-97"/>
+					<box>					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{CELULAR}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="400"
+						y="79"
+						width="111"
+						height="11"
+						key="staticText-88"/>
+					<box>					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" pdfFontName="Helvetica-BoldOblique" size="8" isBold="true" isItalic="true"/>
+					</textElement>
+				<text><![CDATA[CELULAR   -]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="511"
+						y="90"
+						width="60"
+						height="11"
+						key="textField-98"/>
+					<box>					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{PATIN}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="400"
+						y="90"
+						width="111"
+						height="11"
+						key="staticText-89"/>
+					<box>					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" pdfFontName="Helvetica-BoldOblique" size="8" isBold="true" isItalic="true"/>
+					</textElement>
+				<text><![CDATA[PATIN   -]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="511"
+						y="101"
+						width="60"
+						height="11"
+						key="textField-99"/>
+					<box>					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{MANIOBRA_LOCAL}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="400"
+						y="101"
+						width="111"
+						height="11"
+						key="staticText-90"/>
+					<box>					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" pdfFontName="Helvetica-BoldOblique" size="8" isBold="true" isItalic="true"/>
+					</textElement>
+				<text><![CDATA[MANIOBRA_LOCAL   -]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="511"
+						y="112"
+						width="60"
+						height="11"
+						key="textField-100"/>
+					<box>					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{MANIOBRA_FORANEA}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="400"
+						y="112"
+						width="111"
+						height="11"
+						key="staticText-91"/>
+					<box>					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" pdfFontName="Helvetica-BoldOblique" size="8" isBold="true" isItalic="true"/>
+					</textElement>
+				<text><![CDATA[MANIOBRA_FORANEA   -]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="511"
+						y="123"
+						width="60"
+						height="11"
+						key="textField-101"/>
+					<box>					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{VALES}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="400"
+						y="123"
+						width="111"
+						height="11"
+						key="staticText-92"/>
+					<box>					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" pdfFontName="Helvetica-BoldOblique" size="8" isBold="true" isItalic="true"/>
+					</textElement>
+				<text><![CDATA[VALES   -]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="511"
+						y="134"
+						width="60"
+						height="11"
+						key="textField-102"/>
+					<box>					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{OTROS}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="400"
+						y="134"
+						width="111"
+						height="11"
+						key="staticText-93"/>
+					<box>					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" pdfFontName="Helvetica-BoldOblique" size="8" isBold="true" isItalic="true"/>
+					</textElement>
+				<text><![CDATA[OTROS   -]]></text>
 				</staticText>
 			</band>
 		</summary>

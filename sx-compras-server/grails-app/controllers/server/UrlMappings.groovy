@@ -1,4 +1,4 @@
-package server
+ package server
 
 class UrlMappings {
 
@@ -57,6 +57,8 @@ class UrlMappings {
         "/api/tesoreria/cortesTarjeta/aplicar/$id"( controller: 'corteDeTarjeta', action: 'aplicar', method: 'PUT')
         "/api/tesoreria/cortesTarjeta/cancelarAplicacion/$id"( controller: 'corteDeTarjeta', action: 'cancelarAplicacion', method: 'PUT')
         "/api/tesoreria/cortesTarjeta/reporteDeComisionesTarjeta"(controller: 'corteDeTarjeta', action: 'reporteDeComisionesTarjeta', method: 'GET')
+
+        "/api/tesoreria/cortesTarjetaAplicacion"(resources: 'corteDeTarjetaAplicacion', excludes: ['create', 'edit','patch'] )
 
         // Traspaso e inversiones
         "/api/tesoreria/traspasos"(resources: 'traspaso', excludes:['create', 'edit','patch'] )

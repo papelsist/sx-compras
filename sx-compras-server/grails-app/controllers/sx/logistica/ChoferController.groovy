@@ -16,7 +16,7 @@ class ChoferController extends RestfulController<Chofer>{
 
     @Override
     protected List<Chofer> listAllResources(Map params) {
-        def query = Chofer.where{}
+        def query = Chofer.where{activo == true}
         return query.list(params)
     }
 }

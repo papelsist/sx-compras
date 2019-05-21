@@ -1,0 +1,7 @@
+import sx.tesoreria.CorteDeTarjetaAplicacion
+
+model {
+	CorteDeTarjetaAplicacion corteDeTarjetaAplicacion
+}
+
+json tmpl.corteDeTarjetaAplicacion(corteDeTarjetaAplicacion)
