@@ -137,8 +137,12 @@ class CobranzaSaldosAFavorTask implements  AsientoBuilder{
 
             // Abono al cliente
             Cobro cob = it.cobro
+            def ctaClave = "105-0003-"
             CuentaOperativaCliente co = CuentaOperativaCliente.where{cliente == cob.cliente}.find()
-            def clienteClave = "105-0003-${co.cuentaOperativa}-0000"
+            if(co.cuentaOperativa == "0266"){
+                ctaClave = "105-0004-"
+            }
+            def clienteClave = "${ctaClave}${co.cuentaOperativa}-0000"
             poliza.addToPartidas(buildDet(
                     clienteClave,
                     desc,

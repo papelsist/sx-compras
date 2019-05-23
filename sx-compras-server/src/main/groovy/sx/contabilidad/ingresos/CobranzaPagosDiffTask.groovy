@@ -8,9 +8,11 @@ import sx.contabilidad.CuentaContable
 import sx.contabilidad.CuentaOperativaCliente
 import sx.contabilidad.Poliza
 import sx.contabilidad.PolizaDet
+import sx.core.TipoDeCambio
 import sx.cxc.AplicacionDeCobro
 import sx.cxc.Cobro
 import sx.utils.MonedaUtils
+import sx.utils.Periodo
 
 @Slf4j
 @Component
@@ -29,7 +31,11 @@ class CobranzaPagosDiffTask implements  AsientoBuilder{
             aplicaciones = aplicaciones.findAll{it.cobro.sucursal.nombre == poliza.sucursal}
             generarCod(poliza, aplicaciones)
         } else if(tipo == 'CRE') {
-            generarCredito(poliza, aplicaciones)
+            List<AplicacionDeCobro> aplicacionesMxn = aplicaciones.findAll{it.cobro.moneda.currencyCode == 'MXN'}
+            List<AplicacionDeCobro> aplicacionesUsd = aplicaciones.findAll{it.cobro.moneda.currencyCode == 'USD'}
+            generarCredito(poliza, aplicacionesMxn)
+            generarCreditoDolares(poliza, aplicacionesUsd)
+            registrarVariacionCambiaria(poliza)
         } else  if(tipo == 'CHE') {
             generarChe(poliza, aplicaciones)
         } else  if(tipo == 'JUR') {
@@ -105,11 +111,12 @@ class CobranzaPagosDiffTask implements  AsientoBuilder{
 
         aplicaciones.each {
 
-            Map row = buildRow(it, 'CON')
+            Map row = buildRow(it, 'CRE')
 
             String desc = row.descripcion
 
             String cta = '703-0001-0000-0000'
+
             // Cargo a Aplicacion de saldos a favor
             poliza.addToPartidas(buildDet(cta, desc, row, it.importe))
 
@@ -127,6 +134,72 @@ class CobranzaPagosDiffTask implements  AsientoBuilder{
                     row,
                     0.0,
                     it.importe))
+        }
+    }
+
+    private generarCreditoDolares(Poliza poliza, List<AplicacionDeCobro> aplicaciones) {
+
+        aplicaciones.each {
+
+            Map row = buildRow(it, 'CRE')
+
+
+            BigDecimal tc = it.cuentaPorCobrar.tipoDeCambio
+            String descOrigen = row.desctipcion
+
+            String desc = "${row.descripcion} ${tc}"
+
+
+            String cta = '703-0001-0000-0000'
+
+            BigDecimal total = MonedaUtils.round(it.importe * tc, 2)
+            BigDecimal base = MonedaUtils.calcularImporteDelTotal(total)
+            BigDecimal iva = total - base
+
+            // Cargo a Aplicacion de saldos a favor
+            PolizaDet det1 = buildDet(cta, desc, row, base)
+            det1.moneda = 'USD'
+            det1.tipCamb = tc
+            poliza.addToPartidas(det1)
+
+            String ctaIva = '209-0001-0000-0000'
+            PolizaDet det2 = buildDet(ctaIva, desc, row,iva)
+            det2.moneda = 'USD'
+            det2.tipCamb = tc
+            poliza.addToPartidas(det2)
+
+
+            // Abono al cliente
+            Cobro cob = it.cobro
+            Date fFactura = it.cuentaPorCobrar.fecha
+            Date fAplica = it.fecha
+            log.info("Fecha factura: {} Fecha aplicacion: {}", fFactura, fAplica)
+            boolean mismoMes = fFactura[Calendar.MONTH] == fAplica[Calendar.MONTH]
+
+            if(!mismoMes) {
+                log.info('No son del mismo mes {} {}',fFactura, fAplica)
+                Date fTc = Periodo.inicioDeMes(fAplica) - 2
+                TipoDeCambio enTc = TipoDeCambio.where{moneda == 'USD' && fecha == fTc}.find()
+                if(enTc == null) {
+                    throw new RuntimeException("No existe Tipo de cambio para el ${fTc.format('dd/MM/yyyy')}")
+                }
+                tc = enTc.tipoDeCambio
+            }
+            BigDecimal importe = MonedaUtils.round(it.importe * tc)
+            CuentaOperativaCliente co = CuentaOperativaCliente.where{cliente == cob.cliente}.find()
+            String subCta = '0003'
+            if(co.cuentaOperativa == '0266')
+                subCta = '0004'
+            def clienteClave = "105-${subCta}-${co.cuentaOperativa}-0000"
+            PolizaDet det4 = buildDet(
+                    clienteClave,
+                    "${row.descripcion} ${tc}",
+                    row,
+                    0.0,
+                    importe)
+            det4.tipCamb = tc
+            det4.moneda = 'USD'
+            poliza.addToPartidas(det4)
         }
     }
 
@@ -207,6 +280,8 @@ class CobranzaPagosDiffTask implements  AsientoBuilder{
         map.documentoTipo =  a.cuentaPorCobrar.tipoDocumento
         map.documentoFecha = a.cuentaPorCobrar.fecha
         map.sucursal = a.cuentaPorCobrar.sucursal.nombre
+        map.moneda = cobro.moneda.currencyCode
+        map.tipCamb = a.cuentaPorCobrar.tipoDeCambio
 
         return map
     }
@@ -240,5 +315,59 @@ class CobranzaPagosDiffTask implements  AsientoBuilder{
                 haber: haber.abs()
         )
         return det
+    }
+
+    def registrarVariacionCambiaria(Poliza p) {
+
+        def grupos = p.partidas.findAll {
+            it.moneda == 'USD' &&
+                    ( it.cuenta.clave.startsWith('703') || it.cuenta.clave.startsWith('209') ||  it.cuenta.clave.startsWith('105'))}
+        .groupBy { it.origen }
+
+        grupos.each {
+            BigDecimal debe = it.value.sum 0.0, {r -> r.debe}
+            BigDecimal haber = it.value.sum 0.0, {r -> r.haber}
+
+            BigDecimal dif = debe - haber
+            if(dif.abs() > 1.0 ){
+                log.info("Registrando variacion cambiaria: ${it.key} Debe: ${debe} Haber: ${haber} Dif: ${dif}")
+
+                def det = it.value.find {it.cuenta.clave.startsWith('105')}
+
+                if(dif > 0.0) {
+                    PolizaDet pdet = new PolizaDet()
+                    pdet.cuenta = buscarCuenta('702-0004-0000-0000')
+                    pdet.sucursal = det.sucursal
+                    pdet.origen = det.origen
+                    pdet.referencia = det.referencia
+                    pdet.referencia2 = det.referencia2
+                    pdet.haber = dif.abs()
+                    pdet.descripcion = det.descripcion
+                    pdet.entidad = det.entidad
+                    pdet.asiento = det.asiento+ '_VC'
+                    pdet.documentoTipo = det.documentoTipo
+                    pdet.documentoFecha = det.documentoFecha
+                    pdet.documento = det.documento
+                    p.addToPartidas(pdet)
+
+                } else {
+                    PolizaDet pdet = new PolizaDet()
+                    pdet.cuenta = buscarCuenta('701-0001-0000-0000')
+                    pdet.sucursal = det.sucursal
+                    pdet.origen = det.origen
+                    pdet.referencia = det.referencia
+                    pdet.referencia2 = det.referencia2
+                    pdet.debe = dif.abs()
+                    pdet.descripcion = det.descripcion
+                    pdet.entidad = det.entidad
+                    pdet.asiento = det.asiento+ '_VC'
+                    pdet.documentoTipo = det.documentoTipo
+                    pdet.documentoFecha = det.documentoFecha
+                    pdet.documento = det.documento
+                    p.addToPartidas(pdet)
+                }
+            }
+
+        }
     }
 }

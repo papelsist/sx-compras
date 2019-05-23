@@ -33,6 +33,8 @@ class Proveedor {
 
     String	cuentaBancaria
 
+    String banco
+
     Integer plazo = 0
 
     BigDecimal limiteDeCredito = 0.0
@@ -71,6 +73,7 @@ class Proveedor {
         updateUser nullable: true
         createUser nullable: true
         comentario nullable: true
+        banco nullable: true
     }
 
     static embedded = ['direccion']

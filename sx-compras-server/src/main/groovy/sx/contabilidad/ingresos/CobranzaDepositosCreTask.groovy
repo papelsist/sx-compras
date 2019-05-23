@@ -168,7 +168,9 @@ class CobranzaDepositosCreTask implements  AsientoBuilder {
 
     def registrarVariacionCambiaria(Poliza p) {
 
-        def grupos = p.partidas.findAll {it.moneda == 'USD' && ( it.cuenta.clave.startsWith('102') || it.cuenta.clave.startsWith('105') )}
+        def grupos = p.partidas.findAll {
+            it.moneda == 'USD' &&
+                    ( it.cuenta.clave.startsWith('102') || it.cuenta.clave.startsWith('105')  )}
                 .groupBy { it.origen }
 
         grupos.each {
@@ -279,6 +281,9 @@ class CobranzaDepositosCreTask implements  AsientoBuilder {
             if(dif.abs() > 0.0 &&  dif.abs()<=1.0){
                 log.info("Generando cuadre para: ${it.key} Debe: ${debe} Haber: ${haber} Dif: ${dif}")
                 def det = it.value.find {it.cuenta.clave.startsWith('102')}
+                if(det == null) {
+                    det = it.value.find {it.cuenta.clave.startsWith('205-0002')}
+                }
                 if(dif > 0.0) {
                     PolizaDet pdet = new PolizaDet()
                     pdet.cuenta = buscarCuenta('704-0003-0000-0000')
@@ -322,7 +327,7 @@ class CobranzaDepositosCreTask implements  AsientoBuilder {
 
         String res = """
          SELECT          
-        'DEP_TRANSF_COD' tipo_Cob,
+        'DEP_TRANSF_CRE' tipo_Cob,
         x.asiento,       
         x.moneda,
         x.tc,
