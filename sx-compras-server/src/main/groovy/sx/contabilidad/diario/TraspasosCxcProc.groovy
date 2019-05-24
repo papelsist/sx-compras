@@ -188,9 +188,18 @@ class TraspasosCxcProc implements  ProcesadorDePoliza{
 
         CuentaPorCobrar cxc = CuentaPorCobrar.get(row.origen) 
 
-        MovimientoDeCuenta movCuenta = ChequeDevuelto.findByCxc(cxc).egreso
+        def cheque =  ChequeDevuelto.findByCxc(cxc)
+        
+        CuentaContable cuenta =  buscarCuenta("102-0001-0002-0000")
+        
+        if (cheque) {
+            MovimientoDeCuenta movCuenta =cheque.egreso
+            cuenta = buscarCuenta('102-0001-'+movCuenta.cuenta.subCuentaOperativa+"-0000")
+        }
+           
+        
 
-        CuentaContable cuenta = buscarCuenta('102-0001-'+movCuenta.cuenta.subCuentaOperativa+"-0000")
+        
 
         if(!cuenta)
             throw new RuntimeException("No existe cuenta contable para el abono a ventas del reg: ${row}")
@@ -307,17 +316,25 @@ class TraspasosCxcProc implements  ProcesadorDePoliza{
         x.cliente,
         x.cta_cliente,
         x.rfc,
-        x.uuid
+        x.uuid,
+        x.entidad
         FROM (
         SELECT concat(f.tipo_documento,'_',f.tipo) as asiento,f.id as origen,f.tipo as documentoTipo,f.fecha,f.documento
         ,f.moneda,f.tipo_de_cambio as tc,f.subtotal,f.impuesto,f.total,c.nombre referencia2,s.nombre as sucursal,f.cliente_id as cliente
-        ,concat('106-0001-',(SELECT x.cuenta_operativa FROM cuenta_operativa_cliente x where x.cliente_id=c.id ),'-0000') as cta_cliente, c.rfc,null uuid    
+        ,concat('106-0001-',(SELECT x.cuenta_operativa FROM cuenta_operativa_cliente x where x.cliente_id=c.id ),'-0000') as cta_cliente, c.rfc,null uuid,'cuentaPorCobrar' entidad   
         FROM cuenta_por_cobrar f join cliente c on(f.cliente_id=c.id)  join sucursal s on(f.sucursal_id=s.id) 
-        where  f.fecha='@FECHA' and f.tipo_documento in('CHEQUE_DEVUELTO') and f.tipo='CHE' and f.sw2 is nulL     
+        where  f.fecha='@FECHA' and f.tipo_documento in('CHEQUE_DEVUELTO') and f.tipo='CHE' and f.sw2 is null
+        union        
+        SELECT 'CHEQUE_DEVUELTO_CHE' as asiento,convert(f.id,char) as origen,'CHE' as documentoTipo,f.fecha,f.referencia documento
+        ,'MXN' moneda,1.00 as tc,round(-f.importe/1.16,2) subtotal,-f.importe - round(-f.importe/1.16,2) impuesto,-f.importe total
+        ,'MOSTRADOR' referencia2,'OFICINAS' as sucursal,'402880fc5e4ec411015e4ecc5dfc0554' as cliente
+        ,'106-0001-0510-0000' as cta_cliente,'XAXX010101000' rfc,null uuid,'movimientoDeTesoreria' entidad
+        FROM movimiento_de_tesoreria f 
+        where  f.fecha='@FECHA' and f.comentario like '%CHEQ%DEV%'       
         UNION   
         SELECT concat('TRASPASO_JUR') as asiento,f.id as origen,f.tipo as documentoTipo,f.fecha,f.documento
         ,f.moneda,f.tipo_de_cambio as tc,f.subtotal,f.impuesto,f.total,c.nombre referencia2,s.nombre sucursal,f.cliente_id   
-        ,concat('106-0002-',(SELECT x.cuenta_operativa FROM cuenta_operativa_cliente x where x.cliente_id=c.id ),'-0000') as cta_cliente, c.rfc, x.uuid 
+        ,concat('106-0002-',(SELECT x.cuenta_operativa FROM cuenta_operativa_cliente x where x.cliente_id=c.id ),'-0000') as cta_cliente, c.rfc, x.uuid,'cuentaPorCobrar' entidad
         FROM cuenta_por_cobrar f join cliente c on(f.cliente_id=c.id)  
         join sucursal s on(f.sucursal_id=s.id) left  join cfdi x on(f.cfdi_id=x.id)
         join juridico j on(j.cxc_id=f.id)
