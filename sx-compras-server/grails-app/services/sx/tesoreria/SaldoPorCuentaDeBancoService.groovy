@@ -66,6 +66,7 @@ abstract class SaldoPorCuentaDeBancoService implements  LogUser{
 
     @CompileDynamic
     void  ingresos(SaldoPorCuentaDeBanco saldo) {
+        /*
         def c = MovimientoDeCuenta.createCriteria()
         def res = c.get {
             eq("cuenta", saldo.cuenta)
@@ -76,10 +77,19 @@ abstract class SaldoPorCuentaDeBancoService implements  LogUser{
             }
         }
         saldo.ingresos = res?: 0.0
+        */
+        def res = MovimientoDeCuenta.findAll(
+                "select sum(m.importe) from MovimientoDeCuenta m where m.cuenta = ? and year(m.fecha)= ? " +
+                        " and month(m.fecha) = ?" +
+                        " and m.importe > 0 " +
+                        " and m.porIdentificar = false",
+                [saldo.cuenta, 2019, 1])[0]?: 0.0
+        saldo.ingresos = res
     }
 
     @CompileDynamic
     void egresos(SaldoPorCuentaDeBanco saldo) {
+        /*
         def c = MovimientoDeCuenta.createCriteria()
         def res = c.get {
             eq("cuenta", saldo.cuenta)
@@ -90,6 +100,11 @@ abstract class SaldoPorCuentaDeBancoService implements  LogUser{
             }
         }
         saldo.egresos = res?: 0.0
+        */
+        def res = MovimientoDeCuenta.findAll(
+                "select sum(m.importe) from MovimientoDeCuenta m where m.cuenta = ? and year(m.fecha)= ? and month(m.fecha) = ? and m.importe < 0 and m.porIdentificar = false",
+                [saldo.cuenta, 2019, 1])[0]?: 0.0
+        saldo.egresos = res
 
     }
 

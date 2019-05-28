@@ -1,0 +1,30 @@
+table {
+  width: 100%;
+  max-height: 500px;
+  overflow: auto;
+}
+.mat-column-tipo {
+  width: 50px;
+}
+.mat-column-fecha,
+.mat-column-formaDePago {
+  width: 90px;
+}
+.mat-column-nombre {
+  max-width: 250px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mat-column-comentario {
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mat-cell {
+  font-size: 11px;
+}
+.mat-row {
+  height: 30px;
+}

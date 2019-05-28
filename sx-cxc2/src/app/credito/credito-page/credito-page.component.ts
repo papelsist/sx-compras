@@ -13,11 +13,11 @@ import { FechaDialogComponent } from 'app/_shared/components';
 import { MatDialog } from '@angular/material';
 
 @Component({
-  selector: 'sx-cobranza-page',
-  templateUrl: './cobranza-page.component.html',
-  styleUrls: ['./cobranza-page.component.scss']
+  selector: 'sx-credito-page',
+  templateUrl: './credito-page.component.html',
+  styleUrls: ['./credito-page.component.scss']
 })
-export class CobranzaPageComponent implements OnInit {
+export class CreditoPageComponent implements OnInit {
   navmenu: Object[] = [
     {
       route: 'cobros',
@@ -62,7 +62,7 @@ export class CobranzaPageComponent implements OnInit {
 
   reporteDeCobranza() {
     const dialogRef = this.dialog.open(FechaDialogComponent, {
-      data: { title: `Reporte de cobranza CHO` }
+      data: { title: `Reporte de cobranza Credito` }
     });
     dialogRef.afterClosed().subscribe(fecha => {
       if (fecha) {
