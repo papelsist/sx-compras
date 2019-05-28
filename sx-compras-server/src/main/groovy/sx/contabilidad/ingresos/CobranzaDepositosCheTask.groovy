@@ -190,6 +190,14 @@ class CobranzaDepositosCheTask implements  AsientoBuilder {
         join sucursal s on(b.sucursal_id=s.id) join aplicacion_de_cobro a on(a.cobro_id=b.id) join cuenta_por_cobrar c on(a.cuenta_por_cobrar_id=c.id) left join cfdi i on(c.cfdi_id=i.id)
         where M.fecha='@FECHA' and date(b.primera_aplicacion)=a.fecha and b.tipo ='CHE'
         UNION
+        SELECT 'COB_TRANSF_CHE' asiento,'MXN' moneda,1.00 tc,'OFICINAS' sucursal,1 suc
+        ,concat('102-0001-',z.sub_cuenta_operativa,'-0000') as cta_contable,'000-0000-0000-0000' cta_contable2
+        ,z.numero ctaDestino,z.descripcion bancoDestino,'PAPEL SA DE CV' beneficiario,'TRANSFERENCIA' forma_de_pago,'03' metodoDePago,convert(b.id,char) origen,b.referencia documento,b.referencia referenciaBancaria,b.importe total,0 diferencia,0 SAF
+        ,null ctaOrigen,'402880fe603c7c9c01603c8a63220169' banco_origen_id,'BANAMEX SA' bancoOrigen,'XAXX010101000' rfc,'MOSTRADOR' cliente,convert(b.id,char) cxc_id,b.referencia factura,'MOS' tipo,b.fecha fecha_fac,null uuid,b.importe cobro_aplic,b.importe montoTotal
+        ,'106-0001-0510-0000' cta_contable_fac,'209-0001-0000-0000' cta_iva_pend,'208-0001-0000-0000' cta_iva_pag
+        FROM movimiento_de_cuenta m  join cuenta_de_banco z on(m.cuenta_id=z.id) join movimiento_de_tesoreria b on(m.id=b.movimiento_id)         
+        where M.fecha='@FECHA'  and b.comentario like '%CHEQ%DEV%'   
+        UNION
         SELECT 
         (case when M.por_identificar is true then 'COB_DEP_EFE_CHE_xIDENT' else 'COB_DEP_EFE_CHE' end) as asiento,b.moneda,b.tipo_de_cambio tc,s.nombre sucursal, s.clave suc
         ,concat((case when M.por_identificar is true then '205-0002-' else '102-0001-' end),z.sub_cuenta_operativa,'-0000') as cta_contable,(case when m.por_identificar is true then '208-0003-0000-0000' else '000-0000-0000-0000' end) cta_contable2

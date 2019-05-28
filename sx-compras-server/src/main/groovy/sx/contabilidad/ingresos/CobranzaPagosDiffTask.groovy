@@ -187,7 +187,7 @@ class CobranzaPagosDiffTask implements  AsientoBuilder{
             }
             BigDecimal importe = MonedaUtils.round(it.importe * tc)
             CuentaOperativaCliente co = CuentaOperativaCliente.where{cliente == cob.cliente}.find()
-            String subCta = '0003'
+            String subCta = '0005'
             if(co.cuentaOperativa == '0266')
                 subCta = '0004'
             def clienteClave = "105-${subCta}-${co.cuentaOperativa}-0000"
@@ -320,7 +320,7 @@ class CobranzaPagosDiffTask implements  AsientoBuilder{
     def registrarVariacionCambiaria(Poliza p) {
 
         def grupos = p.partidas.findAll {
-            it.moneda == 'USD' &&
+            it.moneda == 'USD' && it.asiento == 'COB_OGST_CRE' &&
                     ( it.cuenta.clave.startsWith('703') || it.cuenta.clave.startsWith('209') ||  it.cuenta.clave.startsWith('105'))}
         .groupBy { it.origen }
 
