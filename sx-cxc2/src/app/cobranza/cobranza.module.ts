@@ -4,9 +4,8 @@ import { SharedModule } from 'app/_shared/shared.module';
 import { CobranzaRoutingModule } from './cobranza-routing.module';
 
 import { StoreModule } from '@ngrx/store';
-import { reducers, effects } from './store';
-
 import { EffectsModule } from '@ngrx/effects';
+import { reducers, effects } from './store';
 
 import { containers } from './containers';
 import { components, entryComponents } from './components';

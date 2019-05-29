@@ -10,8 +10,6 @@ export interface NotaDeCredito {
   folio: number;
   tipo: 'BONIFICACION' | 'DEVOLUCION';
   tipoCartera: 'CRE' | 'CON' | 'CHE' | 'JUR' | 'COD';
-  tipoDeCalculo: 'PORCENTAJE' | 'PRORRATEO';
-  baseDelCalculo: 'Saldo' | 'Importe';
   moneda: 'MXN' | 'USD';
   tc: number;
   importe: number;
@@ -26,7 +24,6 @@ export interface NotaDeCredito {
   sucursal: string;
   cobro?: any;
   usoDeCfdi: string;
-  devolucion?: any;
   formaDePago: string;
   partidas: Partial<NotaDeCreditoDet>[];
   dateCreated: string;

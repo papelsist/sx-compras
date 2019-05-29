@@ -14,6 +14,6 @@ export const CARTERAS: { [key: string]: Cartera } = {
   CHO: new Cartera('CHO', 'CHOFER')
 };
 
-export function resolve(key: string) {
+export function resolveCartera(key: string) {
   return CARTERAS[key];
 }

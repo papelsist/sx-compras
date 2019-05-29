@@ -14,7 +14,9 @@
     <button mat-icon-button tdLayoutNavListOpen [hideWhenOpened]="true">
       <mat-icon>arrow_back</mat-icon>
     </button>
-    <span tdLayoutNavListToggle class="cursor-pointer">Cartéra de CREDITO</span>
+    <span tdLayoutNavListToggle class="cursor-pointer"
+      >Cartéra de {{ (cartera$ | async).descripcion }}</span
+    >
     <span flex></span>
   </div>
   <mat-nav-list

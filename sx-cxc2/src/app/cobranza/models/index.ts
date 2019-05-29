@@ -8,3 +8,5 @@ export * from './aplicacionDeCobro';
 export * from './nota-de-cargo';
 export * from './nota-de-credito';
 export * from './nota-de-credito-det';
+export * from './bonificacion';
+export * from './devolucion';

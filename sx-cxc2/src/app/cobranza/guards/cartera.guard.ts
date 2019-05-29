@@ -8,31 +8,21 @@ import * as fromActions from '../store/actions/cobro.actions';
 
 import { Observable, of } from 'rxjs';
 import { tap, map, catchError } from 'rxjs/operators';
-import { CobroService } from '../services/cobro.service';
+import { SetCartera } from '../store';
 
+/**
+ * Very simple CanActivate Guard to dispatch an Action. The action being the set cartera
+ *  SetCartera
+ */
 @Injectable({
   providedIn: 'root'
 })
 export class CarteraGuard implements CanActivate {
-  constructor(
-    private store: Store<fromStore.State>,
-    private service: CobroService
-  ) {}
+  constructor(private store: Store<fromStore.State>) {}
 
   canActivate(route: ActivatedRouteSnapshot): Observable<boolean> {
-    console.log('Route: ', route.data);
+    const cartera = route.data.cartera;
+    this.store.dispatch(new SetCartera({ cartera }));
     return of(true);
-  }
-
-  hasInApi(id: string): Observable<boolean> {
-    return this.service.get(id).pipe(
-      map(cobro => new fromActions.UpsertCobro({ cobro })),
-      tap(action => this.store.dispatch(action)),
-      map(action => !!action.payload.cobro),
-      catchError(() => {
-        console.error('Not in AIP Guard error');
-        return of(false);
-      })
-    );
   }
 }

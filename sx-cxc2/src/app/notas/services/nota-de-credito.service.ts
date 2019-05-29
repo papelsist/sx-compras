@@ -3,9 +3,16 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { ConfigService } from 'app/utils/config.service';
-import { NotaDeCredito, CarteraFilter } from '../models';
+
 import { Update } from '@ngrx/entity';
+
+import { ConfigService } from 'app/utils/config.service';
+import {
+  NotaDeCredito,
+  Bonificacion,
+  Devolucion,
+  CarteraFilter
+} from 'app/cobranza/models';
 
 @Injectable({
   providedIn: 'root'
@@ -17,13 +24,16 @@ export class NotaDeCreditoService {
     this.apiUrl = config.buildApiUrl('cxc/notas');
   }
 
-  get(id: string): Observable<NotaDeCredito> {
+  get(id: string): Observable<NotaDeCredito | Bonificacion | Devolucion> {
     const url = `${this.apiUrl}/${id}`;
     return this.http.get<NotaDeCredito>(url);
   }
 
-  list(cartera: string, filter?: CarteraFilter): Observable<NotaDeCredito[]> {
-    let params = new HttpParams().set('tipo', cartera);
+  list(
+    cartera: string,
+    filter?: CarteraFilter
+  ): Observable<NotaDeCredito[] | Bonificacion[] | Devolucion[]> {
+    let params = new HttpParams().set('cartera', cartera);
     if (filter) {
       params = params
         .set('registros', filter.registros.toString())
@@ -34,17 +44,23 @@ export class NotaDeCreditoService {
       }
     }
     return this.http
-      .get<NotaDeCredito[]>(this.apiUrl, { params: params })
+      .get<NotaDeCredito[] | Bonificacion[] | Devolucion[]>(this.apiUrl, {
+        params: params
+      })
       .pipe(catchError((error: any) => throwError(error)));
   }
 
-  save(nota: NotaDeCredito): Observable<NotaDeCredito> {
+  save(
+    nota: NotaDeCredito
+  ): Observable<NotaDeCredito | Bonificacion | Devolucion> {
     return this.http
       .post<NotaDeCredito>(this.apiUrl, nota)
       .pipe(catchError((error: any) => throwError(error)));
   }
 
-  update(nota: Update<NotaDeCredito>): Observable<NotaDeCredito> {
+  update(
+    nota: Update<NotaDeCredito | Bonificacion | Devolucion>
+  ): Observable<NotaDeCredito | Bonificacion | Devolucion> {
     const url = `${this.apiUrl}/${nota.id}`;
     return this.http
       .put<NotaDeCredito>(url, nota.changes)

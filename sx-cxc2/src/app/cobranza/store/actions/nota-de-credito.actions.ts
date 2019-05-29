@@ -4,9 +4,9 @@ import { NotaDeCredito, Cartera, CarteraFilter } from '../../models';
 import { Update } from '@ngrx/entity';
 
 export enum NotaDeCreditoActionTypes {
-  LoadNotasDeCargo = '[NotaDeCredito Component] Load NotaDeCreditos',
-  LoadNotasDeCargoSuccess = '[NotaDeCredito Effect] Load NotaDeCreditos Success',
-  LoadNotasDeCargoFail = '[NotaDeCredito Effect] Load NotaDeCreditos Fail',
+  LoadNotasDeCredito = '[NotaDeCredito Component] Load NotaDeCreditos',
+  LoadNotasDeCreditoSuccess = '[NotaDeCredito Effect] Load NotaDeCreditos Success',
+  LoadNotasDeCreditoFail = '[NotaDeCredito Effect] Load NotaDeCreditos Fail',
 
   // Create
   CreateNotaDeCredito = '[NotaDeCredito component] Create NotaDeCredito',
@@ -26,25 +26,27 @@ export enum NotaDeCreditoActionTypes {
   UpsertNotaDeCredito = '[NotaDeCredito component] Upsert NotaDeCredito'
 }
 
-export class LoadNotasDeCargo implements Action {
-  readonly type = NotaDeCreditoActionTypes.LoadNotasDeCargo;
-  constructor(public payload: { cartera: Cartera; filter?: CarteraFilter }) {}
+export class LoadNotasDeCredito implements Action {
+  readonly type = NotaDeCreditoActionTypes.LoadNotasDeCredito;
+  constructor(
+    public payload: { cartera: Cartera; tipo: string; filter?: CarteraFilter }
+  ) {}
 }
 
-export class LoadNotasDeCargoSuccess implements Action {
-  readonly type = NotaDeCreditoActionTypes.LoadNotasDeCargoSuccess;
+export class LoadNotasDeCreditoSuccess implements Action {
+  readonly type = NotaDeCreditoActionTypes.LoadNotasDeCreditoSuccess;
   constructor(public payload: { notas: NotaDeCredito[] }) {}
 }
 
-export class LoadNotasDeCargoFail implements Action {
-  readonly type = NotaDeCreditoActionTypes.LoadNotasDeCargoFail;
+export class LoadNotasDeCreditoFail implements Action {
+  readonly type = NotaDeCreditoActionTypes.LoadNotasDeCreditoFail;
   constructor(public payload: { response: any }) {}
 }
 
 // Create
 export class CreateNotaDeCredito implements Action {
   readonly type = NotaDeCreditoActionTypes.CreateNotaDeCredito;
-  constructor(public payload: { nota: Partial<NotaDeCredito> }) {}
+  constructor(public payload: { nota: NotaDeCredito }) {}
 }
 export class CreateNotaDeCreditoFail implements Action {
   readonly type = NotaDeCreditoActionTypes.CreateNotaDeCreditoFail;
@@ -89,9 +91,9 @@ export class UpsertNotaDeCredito implements Action {
 }
 
 export type NotaDeCreditoActions =
-  | LoadNotasDeCargo
-  | LoadNotasDeCargoFail
-  | LoadNotasDeCargoSuccess
+  | LoadNotasDeCredito
+  | LoadNotasDeCreditoFail
+  | LoadNotasDeCreditoSuccess
   | CreateNotaDeCredito
   | CreateNotaDeCreditoFail
   | CreateNotaDeCreditoSuccess

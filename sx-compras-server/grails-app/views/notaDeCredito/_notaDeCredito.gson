@@ -4,4 +4,7 @@ model {
 	NotaDeCredito notaDeCredito
 }
 
-json g.render(notaDeCredito, [resolveTemplate: false])
+json g.render(notaDeCredito, [excludes:['moneda'], resolveTemplate: false]) {
+    moneda notaDeCredito.moneda.currencyCode
+
+}

@@ -27,13 +27,15 @@ class NotaDeCreditoController extends RestfulController<NotaDeCredito> implement
 
     @CompileDynamic
     protected List<NotaDeCredito> listAllResources(Map params) {
+
         params.sort = params.sort ?: 'lastUpdated'
         params.order = params.order ?: 'desc'
         params.max = params.registros ?: 20
         def cartera = params.cartera ?: 'CRE'
         def stipo = params.tipo ?: 'BONIFICACION'
 
-        log.info('List: {} tipo: {}', params, cartera)
+        log.info('List: params:{} ', params)
+        log.info('Cartera: {} Tipo:{} ', cartera, stipo)
 
         def query = NotaDeCredito.where {tipoCartera == cartera && tipo == stipo}
 

@@ -1,22 +1,24 @@
 import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 
-import { NotaDeCredito } from 'app/cobranza/models';
+import { Bonificacion, Cartera } from 'app/cobranza/models';
 
 import {
   BonificacionActions,
   BonificacionActionTypes
 } from '../actions/bonificacion.actions';
 
-export interface State extends EntityState<NotaDeCredito> {
+export interface State extends EntityState<Bonificacion> {
   loading: boolean;
+  loaded: boolean;
 }
 
-export const adapter: EntityAdapter<NotaDeCredito> = createEntityAdapter<
-  NotaDeCredito
+export const adapter: EntityAdapter<Bonificacion> = createEntityAdapter<
+  Bonificacion
 >();
 
 export const initialState: State = adapter.getInitialState({
-  loading: false
+  loading: false,
+  loaded: false
 });
 
 export function reducer(
@@ -26,7 +28,8 @@ export function reducer(
   switch (action.type) {
     case BonificacionActionTypes.DeleteBonificacion:
     case BonificacionActionTypes.UpdateBonificacion:
-    case BonificacionActionTypes.CreateBonificacion: {
+    case BonificacionActionTypes.CreateBonificacion:
+    case BonificacionActionTypes.LoadBonificaciones: {
       return {
         ...state,
         loading: true
@@ -35,7 +38,8 @@ export function reducer(
 
     case BonificacionActionTypes.DeleteBonificacionFail:
     case BonificacionActionTypes.UpdateBonificacionFail:
-    case BonificacionActionTypes.CreateBonificacionFail: {
+    case BonificacionActionTypes.CreateBonificacionFail:
+    case BonificacionActionTypes.LoadBonificacionesFail: {
       return {
         ...state,
         loading: false
@@ -45,7 +49,8 @@ export function reducer(
     case BonificacionActionTypes.LoadBonificacionesSuccess: {
       return adapter.addAll(action.payload.bonificaciones, {
         ...state,
-        loading: false
+        loading: false,
+        loaded: true
       });
     }
 
@@ -93,3 +98,4 @@ export const {
 } = adapter.getSelectors();
 
 export const getLoading = (state: State) => state.loading;
+export const getLoaded = (state: State) => state.loaded;

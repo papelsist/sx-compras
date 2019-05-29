@@ -1,19 +1,19 @@
 import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 
-import { NotaDeCredito } from 'app/cobranza/models';
+import { Devolucion, Cartera } from 'app/cobranza/models';
 
 import {
   DevolucionActions,
   DevolucionActionTypes
 } from '../actions/devolucion.actions';
 
-export interface State extends EntityState<NotaDeCredito> {
+export interface State extends EntityState<Devolucion> {
   loading: boolean;
   loaded: boolean;
 }
 
-export const adapter: EntityAdapter<NotaDeCredito> = createEntityAdapter<
-  NotaDeCredito
+export const adapter: EntityAdapter<Devolucion> = createEntityAdapter<
+  Devolucion
 >();
 
 export const initialState: State = adapter.getInitialState({

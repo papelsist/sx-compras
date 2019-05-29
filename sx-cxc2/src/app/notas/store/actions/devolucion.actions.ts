@@ -1,8 +1,7 @@
 import { Action } from '@ngrx/store';
 
+import { Devolucion, Cartera, CarteraFilter } from '../../../cobranza/models';
 import { Update } from '@ngrx/entity';
-
-import { Cartera, CarteraFilter, NotaDeCredito } from 'app/cobranza/models';
 
 export enum DevolucionActionTypes {
   LoadDevoluciones = '[Devolucion Component] Load Devolucions',
@@ -34,7 +33,7 @@ export class LoadDevoluciones implements Action {
 
 export class LoadDevolucionesSuccess implements Action {
   readonly type = DevolucionActionTypes.LoadDevolucionesSuccess;
-  constructor(public payload: { devoluciones: NotaDeCredito[] }) {}
+  constructor(public payload: { devoluciones: Devolucion[] }) {}
 }
 
 export class LoadDevolucionesFail implements Action {
@@ -45,7 +44,7 @@ export class LoadDevolucionesFail implements Action {
 // Create
 export class CreateDevolucion implements Action {
   readonly type = DevolucionActionTypes.CreateDevolucion;
-  constructor(public payload: { devolucion: NotaDeCredito }) {}
+  constructor(public payload: { devolucion: Devolucion }) {}
 }
 export class CreateDevolucionFail implements Action {
   readonly type = DevolucionActionTypes.CreateDevolucionFail;
@@ -53,13 +52,13 @@ export class CreateDevolucionFail implements Action {
 }
 export class CreateDevolucionSuccess implements Action {
   readonly type = DevolucionActionTypes.CreateDevolucionSuccess;
-  constructor(public payload: { devolucion: NotaDeCredito }) {}
+  constructor(public payload: { devolucion: Devolucion }) {}
 }
 
 // Update
 export class UpdateDevolucion implements Action {
   readonly type = DevolucionActionTypes.UpdateDevolucion;
-  constructor(public payload: { update: Update<NotaDeCredito> }) {}
+  constructor(public payload: { update: Update<Devolucion> }) {}
 }
 export class UpdateDevolucionFail implements Action {
   readonly type = DevolucionActionTypes.UpdateDevolucionFail;
@@ -67,13 +66,13 @@ export class UpdateDevolucionFail implements Action {
 }
 export class UpdateDevolucionSuccess implements Action {
   readonly type = DevolucionActionTypes.UpdateDevolucionSuccess;
-  constructor(public payload: { devolucion: NotaDeCredito }) {}
+  constructor(public payload: { devolucion: Devolucion }) {}
 }
 
 // Delete
 export class DeleteDevolucion implements Action {
   readonly type = DevolucionActionTypes.DeleteDevolucion;
-  constructor(public payload: { devolucion: NotaDeCredito }) {}
+  constructor(public payload: { devolucion: Devolucion }) {}
 }
 export class DeleteDevolucionFail implements Action {
   readonly type = DevolucionActionTypes.DeleteDevolucionFail;
@@ -81,12 +80,12 @@ export class DeleteDevolucionFail implements Action {
 }
 export class DeleteDevolucionSuccess implements Action {
   readonly type = DevolucionActionTypes.DeleteDevolucionSuccess;
-  constructor(public payload: { devolucion: NotaDeCredito }) {}
+  constructor(public payload: { devolucion: Devolucion }) {}
 }
 
 export class UpsertDevolucion implements Action {
   readonly type = DevolucionActionTypes.UpsertDevolucion;
-  constructor(public payload: { devolucion: NotaDeCredito }) {}
+  constructor(public payload: { devolucion: Devolucion }) {}
 }
 
 export type DevolucionActions =

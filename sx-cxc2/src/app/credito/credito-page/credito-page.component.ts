@@ -5,12 +5,15 @@ import { TdMediaService } from '@covalent/core';
 import { Store, select } from '@ngrx/store';
 import * as fromStore from '../../store';
 import * as fromAuth from 'app/auth/store';
+import * as fromCartera from 'app/cobranza/store';
 
 import { Observable } from 'rxjs';
 import { User } from 'app/auth/models/user';
 import { ReportService } from 'app/reportes/services/report.service';
 import { FechaDialogComponent } from 'app/_shared/components';
 import { MatDialog } from '@angular/material';
+
+import { Cartera } from 'app/cobranza/models';
 
 @Component({
   selector: 'sx-credito-page',
@@ -48,6 +51,8 @@ export class CreditoPageComponent implements OnInit {
   user$: Observable<User>;
   api$: Observable<any>;
 
+  cartera$: Observable<Cartera>;
+
   constructor(
     public media: TdMediaService,
     private store: Store<fromStore.State>,
@@ -58,6 +63,7 @@ export class CreditoPageComponent implements OnInit {
   ngOnInit() {
     this.user$ = this.store.pipe(select(fromAuth.getUser));
     this.api$ = this.store.pipe(select(fromAuth.getApiInfo));
+    this.cartera$ = this.store.pipe(select(fromCartera.getCartera));
   }
 
   reporteDeCobranza() {

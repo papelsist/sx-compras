@@ -1,8 +1,7 @@
 import { Action } from '@ngrx/store';
 
+import { Bonificacion, Cartera, CarteraFilter } from '../../../cobranza/models';
 import { Update } from '@ngrx/entity';
-
-import { Cartera, CarteraFilter, NotaDeCredito } from 'app/cobranza/models';
 
 export enum BonificacionActionTypes {
   LoadBonificaciones = '[Bonificacion Component] Load Bonificacions',
@@ -34,7 +33,7 @@ export class LoadBonificaciones implements Action {
 
 export class LoadBonificacionesSuccess implements Action {
   readonly type = BonificacionActionTypes.LoadBonificacionesSuccess;
-  constructor(public payload: { bonificaciones: NotaDeCredito[] }) {}
+  constructor(public payload: { bonificaciones: Bonificacion[] }) {}
 }
 
 export class LoadBonificacionesFail implements Action {
@@ -45,7 +44,7 @@ export class LoadBonificacionesFail implements Action {
 // Create
 export class CreateBonificacion implements Action {
   readonly type = BonificacionActionTypes.CreateBonificacion;
-  constructor(public payload: { bonificacion: NotaDeCredito }) {}
+  constructor(public payload: { bonificacion: Bonificacion }) {}
 }
 export class CreateBonificacionFail implements Action {
   readonly type = BonificacionActionTypes.CreateBonificacionFail;
@@ -53,13 +52,13 @@ export class CreateBonificacionFail implements Action {
 }
 export class CreateBonificacionSuccess implements Action {
   readonly type = BonificacionActionTypes.CreateBonificacionSuccess;
-  constructor(public payload: { bonificacion: NotaDeCredito }) {}
+  constructor(public payload: { bonificacion: Bonificacion }) {}
 }
 
 // Update
 export class UpdateBonificacion implements Action {
   readonly type = BonificacionActionTypes.UpdateBonificacion;
-  constructor(public payload: { update: Update<NotaDeCredito> }) {}
+  constructor(public payload: { update: Update<Bonificacion> }) {}
 }
 export class UpdateBonificacionFail implements Action {
   readonly type = BonificacionActionTypes.UpdateBonificacionFail;
@@ -67,13 +66,13 @@ export class UpdateBonificacionFail implements Action {
 }
 export class UpdateBonificacionSuccess implements Action {
   readonly type = BonificacionActionTypes.UpdateBonificacionSuccess;
-  constructor(public payload: { bonificacion: NotaDeCredito }) {}
+  constructor(public payload: { bonificacion: Bonificacion }) {}
 }
 
 // Delete
 export class DeleteBonificacion implements Action {
   readonly type = BonificacionActionTypes.DeleteBonificacion;
-  constructor(public payload: { bonificacion: NotaDeCredito }) {}
+  constructor(public payload: { bonificacion: Bonificacion }) {}
 }
 export class DeleteBonificacionFail implements Action {
   readonly type = BonificacionActionTypes.DeleteBonificacionFail;
@@ -81,12 +80,12 @@ export class DeleteBonificacionFail implements Action {
 }
 export class DeleteBonificacionSuccess implements Action {
   readonly type = BonificacionActionTypes.DeleteBonificacionSuccess;
-  constructor(public payload: { bonificacion: NotaDeCredito }) {}
+  constructor(public payload: { bonificacion: Bonificacion }) {}
 }
 
 export class UpsertBonificacion implements Action {
   readonly type = BonificacionActionTypes.UpsertBonificacion;
-  constructor(public payload: { bonificacion: NotaDeCredito }) {}
+  constructor(public payload: { bonificacion: Bonificacion }) {}
 }
 
 export type BonificacionActions =

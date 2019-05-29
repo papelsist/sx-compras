@@ -131,7 +131,7 @@ class UrlMappings {
         // "/api/cxc/notasDeCargo/reporteDeNotasDeCargo"(controller: 'notaDeCargo', action: 'reporteDeNotasDeCargo', method: 'GET')
 
         // CXC Notas de credito
-        "/api/cxc/notasDeCredito"(resources: "notaDeCredito", excludes: ['create', 'edit','patch'])
+        "/api/cxc/notas"(resources: "notaDeCredito", excludes: ['create', 'edit','patch'])
 
 
         "/api/listaDePreciosProveedor"(resources: 'listaDePreciosProveedor')
