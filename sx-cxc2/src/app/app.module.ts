@@ -26,6 +26,7 @@ import { ConfigService } from './utils/config.service';
 import { environment } from 'environments/environment.prod';
 
 import { AuthModule } from './auth/auth.module';
+import { SelectiveLoader } from './utils/selective-loader';
 
 export const metaReducers: MetaReducer<any>[] = !environment.production
   ? [storeFreeze]
@@ -56,13 +57,14 @@ export function onAppInit(configService: ConfigService): () => Promise<any> {
   ],
   providers: [
     ConfigService,
+    SelectiveLoader,
     {
       provide: APP_INITIALIZER,
       useFactory: onAppInit,
       multi: true,
       deps: [ConfigService]
     },
-    { provide: RouterStateSerializer, useClass: CustomSerializer }
+    { provide: RouterStateSerializer, useClass: CustomSerializer },
   ],
   declarations: [AppComponent],
   bootstrap: [AppComponent]

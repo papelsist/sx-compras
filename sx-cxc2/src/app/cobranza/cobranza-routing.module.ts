@@ -6,14 +6,17 @@ import * as containers from './containers';
 import { CobroExistsGuard } from './guards/cobro-exist.guard';
 import { NotaDeCargoExistsGuard } from './guards/nota-de-cargo-exists.guard';
 
+import { CarteraGuard } from './guards/cartera.guard';
+
 export const routes: Route[] = [
   {
     path: '',
     component: containers.CobranzaPageComponent,
+    data: { cartera: 'CRE' },
+    canActivate: [CarteraGuard],
     children: [
       {
         path: 'cobros',
-        // data: { cartera: new Cartera('CHO', 'CHOFER') },
         component: containers.CobrosComponent
       },
       {
@@ -23,7 +26,6 @@ export const routes: Route[] = [
       },
       {
         path: 'solicitudes',
-        // data: { cartera: new Cartera('CHO', 'CHOFER') },
         component: containers.SolicitudesComponent
       },
       {

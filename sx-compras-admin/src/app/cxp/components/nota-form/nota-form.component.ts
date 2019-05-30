@@ -40,7 +40,7 @@ export class NotaFormComponent implements OnInit, OnChanges {
 
   @Input() cuentasPorPagar: CuentaPorPagar[] = [];
 
-  tipos = ['DESCUENTO', 'DESCUENTO_FINANCIERO', 'BONIFICACION'];
+  tipos = ['DESCUENTO', 'DESCUENTO_FINANCIERO', 'BONIFICACION', 'DEVOLUCION'];
 
   search$ = new Subject();
 

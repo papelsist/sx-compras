@@ -8,6 +8,6 @@ export const effects: any[] = [
   NotaDeCargoEffects
 ];
 
-export * from '../effects/cobro.effects';
-export * from '../effects/solicitudes.effects';
-export * from '../effects/nota-de-cargo.effects';
+export * from './cobro.effects';
+export * from './solicitudes.effects';
+export * from './nota-de-cargo.effects';

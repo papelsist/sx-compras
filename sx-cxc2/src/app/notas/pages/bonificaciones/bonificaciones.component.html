@@ -1,0 +1,14 @@
+<mat-card>
+  <ng-template
+    tdLoading
+    [tdLoadingUntil]="!(loading$ | async)"
+    tdLoadingStrategy="overlay"
+  >
+    <sx-search-title title="Bonificaciones" (search)="search = $event">
+      <button mat-menu-item class="actions">
+        <mat-icon>refresh</mat-icon> Recargar
+      </button>
+    </sx-search-title>
+    <mat-divider></mat-divider>
+  </ng-template>
+</mat-card>

@@ -32,6 +32,12 @@ export class CobranzaPageComponent implements OnInit {
       description: 'Solicitudes de deposito'
     },
     {
+      route: 'bonificaciones',
+      title: 'Bonificaciones',
+      description: 'Notas de bonificación',
+      icon: 'B'
+    },
+    {
       route: 'notas-de-cargo',
       title: 'N.Cargo',
       icon: 'queue',

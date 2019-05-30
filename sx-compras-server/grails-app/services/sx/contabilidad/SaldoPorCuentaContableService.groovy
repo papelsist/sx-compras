@@ -46,7 +46,7 @@ class SaldoPorCuentaContableService {
                 actualizarSaldoCuentaDetalle(cuenta, ejercicio, mes)
             } else {
                 CuentaContable cuenta = (CuentaContable)children[0]
-                log.info('Acumular saldos en: {}', children[0])
+                log.info('Acumular saldos en cta acumulativa: {}', children[0])
                 actualizarSaldoCuentaAcumulativa(cuenta, ejercicio, mes)
 
             }
@@ -68,6 +68,7 @@ class SaldoPorCuentaContableService {
         }
 
 
+
         def row = PolizaDet
                 .executeQuery("""
                     select sum(d.debe),sum(d.haber) 
@@ -81,6 +82,8 @@ class SaldoPorCuentaContableService {
 
         BigDecimal debe=row.get(0)[0]?:0.0
         BigDecimal haber=row.get(0)[1]?:0.0
+
+        log.info('Movimientos de {} / {} Debe: {}  Haber: {}', ejercicio, mes, debe, haber)
 
 
         SaldoPorCuentaContable saldo = SaldoPorCuentaContable

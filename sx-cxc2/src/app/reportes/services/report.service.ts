@@ -14,7 +14,7 @@ import { TdLoadingService } from '@covalent/core';
 import { finalize } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class ReportService {
   constructor(
     private http: HttpClient,

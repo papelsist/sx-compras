@@ -1,0 +1,8 @@
+import sx.cxc.NotaDeCredito
+
+model {
+	Iterable<NotaDeCredito> notaDeCreditoList
+}
+
+json tmpl.notaDeCredito(notaDeCreditoList ?: [])
+

@@ -53,7 +53,7 @@ class Poliza {
         mes inList:(1..13)
         tipo inList:['INGRESO','EGRESO','DIARIO']
         subtipo minSize:5,maxSize:50
-        folio unique:['ejercicio','mes','subtipo']
+        // folio unique:['ejercicio','mes','subtipo']
         concepto maxSize:300
         cierre nullable:true
         createUser nullable: true

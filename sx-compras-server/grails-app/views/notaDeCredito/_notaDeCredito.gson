@@ -1,0 +1,10 @@
+import sx.cxc.NotaDeCredito
+
+model {
+	NotaDeCredito notaDeCredito
+}
+
+json g.render(notaDeCredito, [excludes:['moneda'], resolveTemplate: false]) {
+    moneda notaDeCredito.moneda.currencyCode
+
+}

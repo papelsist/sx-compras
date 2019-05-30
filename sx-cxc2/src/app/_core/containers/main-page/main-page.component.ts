@@ -20,8 +20,8 @@ export class MainPageComponent implements OnInit {
       title: 'Inicio'
     },
     {
-      icon: 'CRE',
-      route: '/cobranza/cre',
+      icon: '',
+      route: '/credito',
       title: 'Crédito'
     }
   ];

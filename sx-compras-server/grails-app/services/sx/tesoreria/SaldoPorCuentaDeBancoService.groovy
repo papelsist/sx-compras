@@ -66,6 +66,7 @@ abstract class SaldoPorCuentaDeBancoService implements  LogUser{
 
     @CompileDynamic
     void  ingresos(SaldoPorCuentaDeBanco saldo) {
+        /*
         def c = MovimientoDeCuenta.createCriteria()
         def res = c.get {
             eq("cuenta", saldo.cuenta)
@@ -76,10 +77,19 @@ abstract class SaldoPorCuentaDeBancoService implements  LogUser{
             }
         }
         saldo.ingresos = res?: 0.0
+        */
+        def res = MovimientoDeCuenta.findAll(
+                "select sum(m.importe) from MovimientoDeCuenta m where m.cuenta = ? and year(m.fecha)= ? " +
+                        " and month(m.fecha) = ?" +
+                        " and m.importe > 0 " +
+                        " and m.porIdentificar = false",
+                [saldo.cuenta, saldo.ejercicio, saldo.mes])[0]?: 0.0
+        saldo.ingresos = res
     }
 
     @CompileDynamic
     void egresos(SaldoPorCuentaDeBanco saldo) {
+        /*
         def c = MovimientoDeCuenta.createCriteria()
         def res = c.get {
             eq("cuenta", saldo.cuenta)
@@ -90,6 +100,17 @@ abstract class SaldoPorCuentaDeBancoService implements  LogUser{
             }
         }
         saldo.egresos = res?: 0.0
+        */
+        def res = MovimientoDeCuenta.findAll(
+                "select sum(m.importe) from " +
+                        "MovimientoDeCuenta m " +
+                        " where m.cuenta = ? " +
+                        " and year(m.fecha)= ? " +
+                        " and month(m.fecha) = ? " +
+                        " and m.importe < 0 " +
+                        " and m.porIdentificar = false",
+                [saldo.cuenta, saldo.ejercicio, saldo.mes])[0]?: 0.0
+        saldo.egresos = res.abs()
 
     }
 
@@ -207,17 +228,16 @@ abstract class SaldoPorCuentaDeBancoService implements  LogUser{
         SaldoPorCuentaDeBanco saldo = find(cta, e, m)
         if(!saldo) throw new RuntimeException("No existe Saldo para la cuenta ${cta} en el periodo ${e}-${m}")
         saldo.cierre = new Date()
+        ingresos(saldo)
+        egresos(saldo)
+        saldo.saldoFinal = saldo.saldoInicial + saldo.ingresos - saldo.egresos
 
         Integer mes = saldo.mes == 12 ? 1 : saldo.mes + 1
         Integer ejercicio = saldo.mes == 12 ? saldo.ejercicio + 1 : saldo.ejercicio
 
         SaldoPorCuentaDeBanco next = SaldoPorCuentaDeBanco
                 .where{ejercicio == ejercicio && mes == mes && cuenta == saldo.cuenta}.find()
-        if(next) {
-            next.saldoInicial = saldo.saldoFinal
-            ingresos(next)
-            egresos(next)
-        } else {
+        if(!next) {
             next = new SaldoPorCuentaDeBanco()
             next.ejercicio = ejercicio
             next.mes = mes
@@ -228,8 +248,9 @@ abstract class SaldoPorCuentaDeBancoService implements  LogUser{
             next.descripcion = saldo.descripcion
             next.numero = saldo.numero
         }
+        ingresos(next)
+        egresos(next)
         next.saldoFinal = next.saldoInicial + next.ingresos - next.egresos
-        next.cuenta = saldo.cuenta
         salvar(saldo)
         return salvar(next)
 

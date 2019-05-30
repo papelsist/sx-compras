@@ -1,0 +1,7 @@
+import sx.cxc.NotaDeCreditoDet
+
+model {
+	NotaDeCreditoDet notaDeCreditoDet
+}
+
+json g.render(notaDeCreditoDet, [resolveTemplate: false])

@@ -5,7 +5,7 @@ export class Cartera {
   ) {}
 }
 
-export const CARTERAS = {
+export const CARTERAS: { [key: string]: Cartera } = {
   CRE: new Cartera('CRE', 'CREDITO'),
   COD: new Cartera('COD', 'CONTRA ENTREGA'),
   CON: new Cartera('CON', 'CONTADO'),
@@ -13,3 +13,7 @@ export const CARTERAS = {
   JUR: new Cartera('JUR', 'JURIDICO'),
   CHO: new Cartera('CHO', 'CHOFER')
 };
+
+export function resolveCartera(key: string) {
+  return CARTERAS[key];
+}
