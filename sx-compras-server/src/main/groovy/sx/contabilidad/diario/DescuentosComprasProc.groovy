@@ -32,20 +32,22 @@ class DescuentosComprasProc implements  ProcesadorDePoliza, AsientoBuilder{
             // Cargo a proveedores
             String descripcion = generarDescripcion(row)
             if(!notas.contains(row.origen)) {
+              /*
                 poliza.addToPartidas(mapRow(
                         row.cta_proveedor.toString(),
                         generarDescripcionDeNota(row),
                         row,
                         row.total))
                 notas.add(row.origen)
+                */
 
                 // IVA GLOBAL
-                poliza.addToPartidas(mapRow(
+               /* poliza.addToPartidas(mapRow(
                         row.cta_contable_iva.toString(),
                         generarDescripcionDeNota(row),
                         row,
                         0.0,
-                        row.impuesto_total))
+                        row.impuesto_total))*/
                 BigDecimal impuestoTotal = row.impuesto_total as BigDecimal
                 BigDecimal impuestoAcumulado = rows.sum 0.0, {
                     if(it.origen == row.origen) {
@@ -54,7 +56,7 @@ class DescuentosComprasProc implements  ProcesadorDePoliza, AsientoBuilder{
                         return 0.0
                 }
                 BigDecimal dif = impuestoTotal - impuestoAcumulado
-
+/*
                 if(dif < 0.0) {
                     poliza.addToPartidas(mapRow(
                             '704-0005-0000-0000',
@@ -70,19 +72,41 @@ class DescuentosComprasProc implements  ProcesadorDePoliza, AsientoBuilder{
                             row,
                             dif))
                 }
-
-
+             
+*/
                 if(row.diferencia > 0.0) {
+                     poliza.addToPartidas(mapRow(
+                           row.cta_proveedor.toString(),
+                             generarDescripcionDeNota(row),
+                            row,
+                            row.diferencia,
+                            0.0))
+
+                    notas.add(row.origen)
+
                     poliza.addToPartidas(mapRow(
                             '704-0005-0000-0000',
-                            descripcion,
+                             generarDescripcionDeNota(row),
                             row,
                             0.0,
                             row.diferencia))
+
                     notas.add(row.origen)
+
+                    
 
                 }
             }
+
+            // Cargo a proveedor
+
+             poliza.addToPartidas(mapRow(
+                    row.cta_proveedor.toString(),
+                    descripcion,
+                    row,
+                    row.total_det,
+                    0.0))
+
 
             // Abono a
             poliza.addToPartidas(mapRow(
@@ -92,14 +116,16 @@ class DescuentosComprasProc implements  ProcesadorDePoliza, AsientoBuilder{
                     0.0,
                     row.subtotal))
             // Abono a IVA
-            /*
+            
             poliza.addToPartidas(mapRow(
                     row.cta_contable_iva.toString(),
                     descripcion,
                     row,
                     0.0,
                     row.impuesto))
-                    */
+
+
+                    
 
 
         }
@@ -114,9 +140,9 @@ class DescuentosComprasProc implements  ProcesadorDePoliza, AsientoBuilder{
 
     String generarDescripcion(Map row) {
         if(row.tc > 1.0) {
-            return "NC:${row.folio} F: ${row.documento} (${row.fecha_documento}) T.C. ${row.tc}"
+            return "NC:${row.folio} F: ${row.serie}${row.documento} (${row.fecha_documento}) T.C. ${row.tc}"
         }
-        return "NC:${row.folio} F: ${row.documento} (${row.fecha_documento}) "
+        return "NC:${row.folio} F: ${row.serie}${row.documento} (${row.fecha_documento}) "
     }
 
     String generarDescripcionDeNota(Map row) {
@@ -156,11 +182,12 @@ class DescuentosComprasProc implements  ProcesadorDePoliza, AsientoBuilder{
     String getSelect() {
         String query =
         """
-                SELECT 
+        SELECT 
         x.subtotal,        
         CASE WHEN MONEDA='USD' THEN round(X.TOTAL_DET-X.SUBTOTAL,2) ELSE x.impuesto END impuesto,
         x.total_det,
         x.fecha_documento,
+        ifnull(x.serie,'') as serie,
         x.documento,        
         x.sucursal,
         x.suc,
@@ -178,7 +205,7 @@ class DescuentosComprasProc implements  ProcesadorDePoliza, AsientoBuilder{
         x.origen,
         x.uuid,x.rfc,
         x.proveedor,
-        (case when asiento like '%FINANCIERO%' then concat('702-0003-',x.cta_operativa_prov,'-0000')  else (case when x.cta_operativa_prov in('0038','0061') then concat('115-',(case when asiento like '%DEVOLUCION%' then '0005-' else '0007-' end),x.cta_operativa_prov,'-0000') 
+        (case when asiento like '%FINANCIERO%' or asiento = 'BONIFICACION' then concat('702-0003-',x.cta_operativa_prov,'-0000')  else (case when x.cta_operativa_prov in('0038','0061') then concat('115-',(case when asiento like '%DEVOLUCION%' then '0005-' else '0007-' end),x.cta_operativa_prov,'-0000') 
         else concat('115-',(case when asiento like '%DEVOLUCION%' then '0006-' else '0008-' end),x.cta_operativa_prov,'-0000') end) end) as cta_contable ,'119-0001-0000-0000' cta_contable_iva,
         (case when x.moneda='USD' then concat('201-0003-',x.cta_operativa_prov,'-0000') when x.cta_operativa_prov in('0038','0061') then concat('201-0001-',x.cta_operativa_prov,'-0000') else concat('201-0002-',x.cta_operativa_prov,'-0000') end) cta_proveedor
         FROM (        
@@ -186,8 +213,8 @@ class DescuentosComprasProc implements  ProcesadorDePoliza, AsientoBuilder{
         ,round(n.total * n.tipo_de_cambio,2) total
         ,round(n.impuesto_trasladado * n.tipo_de_cambio,2) impuesto_total
         ,(case when n.diferencia_fecha='@FECHA' then n.diferencia else 0.0 end) as diferencia,n.folio,n.fecha,n.concepto documentoTipo,n.moneda,n.tipo_de_cambio tc,n.proveedor_id proveedor,n.nombre referencia2
-        ,round(a.importe * n.tipo_de_cambio,2) total_det,round((a.importe * n.tipo_de_cambio) / 1.16,2) subtotal,round(a.importe - round(a.importe/1.16,2) * n.tipo_de_cambio,2) impuesto
-        ,c.folio documento,c.fecha fecha_documento,'OFICINAS' sucursal,1 suc
+        ,round(a.importe * n.tipo_de_cambio,2) total_det,round((a.importe * n.tipo_de_cambio) / 1.16,2) subtotal,round(a.importe * n.tipo_de_cambio,2) - round((a.importe * n.tipo_de_cambio) / 1.16,2) impuesto
+        ,c.serie,c.folio documento,c.fecha fecha_documento,'OFICINAS' sucursal,1 suc
         ,(SELECT x.cuenta_operativa FROM cuenta_operativa_proveedor x where x.proveedor_id=n.proveedor_id ) as cta_operativa_prov,n.uuid,p.rfc
         FROM nota_de_credito_cxp n join aplicacion_de_pago a on(a.nota_id=n.id) join cuenta_por_pagar c on(a.cxp_id=c.id)  join proveedor p on(n.proveedor_id=p.id)
         where n.fecha = '@FECHA'
