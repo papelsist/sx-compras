@@ -80,8 +80,8 @@ class PagoDeGastosTask implements  AsientoBuilder, EgresoTask {
 
             poliza.addToPartidas(mapRow(cv, desc, row, MonedaUtils.round(it.apagar  * r.tipoDeCambio)))
 
-
-             if(egreso.cheque.fecha.format('dd/MM/yyyy') == egreso.cheque.fechaTransito.format('dd/MM/yyyy')){
+             def fechaTransito = egreso.cheque.fechaTransito?: egreso.cheque.fecha
+             if(egreso.cheque.fecha.format('dd/MM/yyyy') == fechaTransito.format('dd/MM/yyyy')){
                  // IVA
                 BigDecimal importe = MonedaUtils.calcularImporteDelTotal(it.apagar * r.tipoDeCambio)
                 BigDecimal impuesto = it.apagar - importe

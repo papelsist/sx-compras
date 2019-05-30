@@ -68,6 +68,9 @@ class Rembolso {
         pago nullable: true
         proveedor nullable: true
         cuentaContable nullable: true
+        concepto inList: ['REMBOLSO','PAGO','GASTO','PRESTAMO','DEVOLUCION']
+    }
+    /*
         concepto inList: ['PAGO',
                           'REMBOLSO',
                           'PAGO_TARJETA',
@@ -77,9 +80,7 @@ class Rembolso {
                           'PRESTAMO_EMPLEADO',
                           'PAGO_CHOFER',
                            'CUOTA_SINDICAL']
-
-
-    }
+                           */
 
     static mapping = {
         partidas cascade: "all-delete-orphan"

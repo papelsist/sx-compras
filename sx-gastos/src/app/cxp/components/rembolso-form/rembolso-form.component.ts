@@ -55,7 +55,7 @@ export class RembolsoFormComponent implements OnInit, OnChanges, OnDestroy {
   destroy$ = new Subject();
 
   form: FormGroup;
-
+  /*
   conceptos = [
     'REMBOLSO',
     'PAGO_TARJETA',
@@ -65,6 +65,14 @@ export class RembolsoFormComponent implements OnInit, OnChanges, OnDestroy {
     'CARGA_SOCIAL',
     'PAGO_CHOFER',
     'CUOTA_SINDICAL'
+  ];
+  */
+  conceptos = [
+    'REMBOLSO',
+    'PAGO',
+    'GASTO',
+    'PRESTAMO',
+    'DEVOLUCION'
   ];
 
   constructor(private fb: FormBuilder, private dialog: MatDialog) {}
@@ -120,6 +128,7 @@ export class RembolsoFormComponent implements OnInit, OnChanges, OnDestroy {
         ],
         apagar: [0.0, Validators.required],
         comentario: [],
+        cuentaContable: [null],
         partidas: this.fb.array([])
       });
     }
@@ -168,6 +177,9 @@ export class RembolsoFormComponent implements OnInit, OnChanges, OnDestroy {
         total,
         apagar: total
       };
+      if(this.form.get('cuentaContable').value) {
+        entity.cuentaContable = this.form.get('cuentaContable').value.id
+      } 
       this.save.emit(entity);
     }
   }

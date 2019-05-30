@@ -1,0 +1,28 @@
+<mat-card *ngIf="bonificacion$ | async as bonificacion">
+  <sx-nota-header [nota]="bonificacion"></sx-nota-header>
+  <mat-card-content>
+    <div layout="column">
+      <td-json-formatter
+        [data]="bonificacion"
+        key="Nota"
+        [levelsOpen]="0"
+      ></td-json-formatter>
+      <td-json-formatter
+        [data]="bonificacion.cobro"
+        key="Cobro"
+      ></td-json-formatter>
+      <td-json-formatter
+        [data]="bonificacion.cfdi"
+        key="CFDI"
+      ></td-json-formatter>
+      <td-json-formatter
+        [data]="bonificacion.partidas"
+        key="Partidas"
+      ></td-json-formatter>
+      <td-json-formatter
+        [data]="bonificacion.aplicaciones"
+        key="Aplicaciones"
+      ></td-json-formatter>
+    </div>
+  </mat-card-content>
+</mat-card>

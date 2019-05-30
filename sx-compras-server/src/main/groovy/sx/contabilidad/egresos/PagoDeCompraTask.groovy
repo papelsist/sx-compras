@@ -46,13 +46,14 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
 
     /**
      * Genera n cargos a proveedor, uno por cada factura mencionada en la requisicion
-     *
+     * 
      * @param poliza
      * @param r
      */
     void cargoProveedor(Poliza poliza, Requisicion r) {
         CuentaOperativaProveedor co = buscarCuentaOperativa(r.proveedor)
         MovimientoDeCuenta egreso = r.egreso
+        log.info('Evaluando egreso: {}', egreso)
         r.partidas.each {
             CuentaPorPagar cxp = it.cxp
             String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} F:${cxp.serie?:''} ${cxp.folio}" +
@@ -80,6 +81,7 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
                 cv = "201-0001-${co.cuentaOperativa}-0000"
             }
             poliza.addToPartidas(mapRow(cv, desc, row, MonedaUtils.round(it.apagar  * r.tipoDeCambio)))
+            log.info('Cheque: {}', egreso.cheque)
 
             if(egreso.cheque.fecha != egreso.cheque.fechaTransito){
                  // IVA

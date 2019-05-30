@@ -13,26 +13,27 @@ import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 import { NotaDeCredito } from 'app/cobranza/models';
 import { PagosUtils } from 'app/_core/services/pagos-utils.service';
 
+
 @Component({
-  selector: 'sx-notas-table',
+  selector: 'sx-bonificaciones-table',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './notas-table.component.html',
-  styleUrls: ['./notas-table.component.scss']
+  templateUrl: './bonificaciones-table.component.html',
+  styleUrls: ['./bonificaciones-table.component.scss']
 })
-export class NotasTableComponent implements OnInit, OnChanges {
+export class BonificacionesTableComponent implements OnInit, OnChanges {
   @Input()
   notas: NotaDeCredito[] = [];
   @Input()
   filter: string;
   dataSource = new MatTableDataSource<NotaDeCredito>([]);
 
-  @Input() displayColumns = [
-    // 'tipoCartera',
+  displayColumns = [
+    'tipo',
     'fecha',
-    // 'serie',
+    'serie',
     'folio',
     'nombre',
-    'uuid',
+    'formaDePago',
     'moneda',
     'importe',
     'aplicado',

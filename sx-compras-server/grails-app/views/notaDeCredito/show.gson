@@ -1,7 +1,22 @@
 import sx.cxc.NotaDeCredito
+import sx.inventario.DevolucionDeVenta
 
 model {
 	NotaDeCredito notaDeCredito
 }
 
-json tmpl.notaDeCredito(notaDeCredito)
+json g.render(notaDeCredito, [excludes:['moneda', 'partidas'], resolveTemplate: false]) {
+    moneda notaDeCredito.moneda.currencyCode
+    cobro g.render(notaDeCredito.cobro)
+    if(notaDeCredito.cfdi) {
+    	uuid notaDeCredito.cfdi.uuid
+    }
+    cfdi g.render(notaDeCredito.cfdi)
+    if(notaDeCredito.tipo == 'DEVOLUCION' && notaDeCredito.cobro) {
+    	devolucion g.render(DevolucionDeVenta.where{cobro == notaDeCredito.cobro}.find())
+    }
+    partidas g.render(notaDeCredito.partidas)
+    if(notaDeCredito.cobro)
+    	aplicaciones g.render(notaDeCredito.cobro.aplicaciones)
+
+}

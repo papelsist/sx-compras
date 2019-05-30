@@ -47,11 +47,12 @@ class RembolsoService implements  LogUser{
      * forma de pago por COMPENSACION em las cuentas por pagar de los Proveedores de flete
      *
      */
-    def generarCobroDeFlete(Rembolso rembolso) {
+    def generarCobrosDeFlete(Rembolso rembolso) {
         if(!rembolso.egreso) {
-            throw new RuntimeException("El rembolso ${rembolso.id} no esta PAGADO")
+            // throw new RuntimeException("El rembolso ${rembolso.id} no esta PAGADO")
         }
         if(rembolso.cuentaContable && rembolso.cuentaContable.clave.startsWith('205-0004')) {
+            log.info('Procesando: ', rembolso)
             rembolso.partidas.each { det ->
                 CuentaPorPagar cxp = det.cxp
                 if(cxp) {
@@ -61,8 +62,8 @@ class RembolsoService implements  LogUser{
                         if(!cobro)
                             cobro = generarCobro(cxp, diff)
                         logEntity(cobro)
-                        cobro.sw2 = det.id
-                        cobro.save failOnError: true
+
+
                     }
                 }
 
@@ -71,7 +72,7 @@ class RembolsoService implements  LogUser{
     }
 
     /**
-     *
+     * PENDIENTE
      * @param rembolso
      * @return
      */

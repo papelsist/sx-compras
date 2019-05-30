@@ -10,7 +10,9 @@
       "schematics": {
         "@schematics/angular:component": {
           "prefix": "sx",
-          "style": "scss"
+          "style": "scss",
+          "changeDetection": "OnPush",
+          "skipImport": true
         }
       },
       "architect": {

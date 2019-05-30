@@ -35,7 +35,7 @@ export class CreditoPageComponent implements OnInit {
       description: 'Solicitudes de deposito'
     },
     {
-      route: 'bonificaciones',
+      route: 'notas/bonificaciones',
       title: 'Bonificaciones',
       description: 'Notas de bonificación',
       icon: 'B'

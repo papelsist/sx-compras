@@ -9,6 +9,12 @@
         <mat-icon>refresh</mat-icon> Recargar
       </button>
     </sx-search-title>
+    <div>
+      <sx-notas-table
+        [notas]="bonificaciones$ | async"
+        (select)="onSelect($event)"
+      ></sx-notas-table>
+    </div>
     <mat-divider></mat-divider>
   </ng-template>
 </mat-card>

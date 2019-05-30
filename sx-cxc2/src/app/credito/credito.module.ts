@@ -6,10 +6,9 @@ import { CreditoRoutingModule } from './credito-routing.module';
 import { CreditoPageComponent } from './credito-page/credito-page.component';
 
 import { CobranzaModule } from 'app/cobranza/cobranza.module';
-import { NotasModule } from 'app/notas/notas.module';
 
 @NgModule({
   declarations: [CreditoPageComponent],
-  imports: [SharedModule, CreditoRoutingModule, CobranzaModule, NotasModule]
+  imports: [SharedModule, CreditoRoutingModule, CobranzaModule]
 })
 export class CreditoModule {}

@@ -5,12 +5,6 @@
       {{ row.tipo }}
     </td>
   </ng-container>
-  <ng-container matColumnDef="tipoCartera">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Cartera</th>
-    <td mat-cell *matCellDef="let row">
-      {{ row.tipoCartera }}
-    </td>
-  </ng-container>
 
   <ng-container matColumnDef="fecha">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
@@ -28,22 +22,17 @@
   </ng-container>
   <ng-container matColumnDef="folio">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Folio</th>
-    <td mat-cell *matCellDef="let row">
-      {{ row.folio }}
-    </td>
+    <td mat-cell *matCellDef="let row">{{ row.folio }}</td>
   </ng-container>
 
-  <ng-container matColumnDef="uuid">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>CFDI</th>
-    <td mat-cell *matCellDef="let row" matTooltip="{{ row.uuid }}">
-      <span *ngIf="row.uuid; else uuidPendiente">{{
-        row.uuid.substr(-12, 12)
-      }}</span>
-      <ng-template #uuidPendiente>
-        <span class="tc-orange-700">
-          {{ row.cobro ? 'PENDIENTE' : 'CANCELADA' }}
-        </span>
-      </ng-template>
+  <ng-container matColumnDef="formaDePago">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>F. Pago</th>
+    <td
+      mat-cell
+      *matCellDef="let row"
+      matTooltip="{{ row.tarjeta | json }} {{ row.cheque | json }}"
+    >
+      {{ getForma(row) }}
     </td>
   </ng-container>
 
@@ -64,9 +53,7 @@
 
   <ng-container matColumnDef="disponible">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Disponible</th>
-    <td mat-cell *matCellDef="let row">
-      {{ row?.cobro?.saldo | currency }}
-    </td>
+    <td mat-cell *matCellDef="let row">{{ row.saldo | currency }}</td>
   </ng-container>
 
   <ng-container matColumnDef="comentario">
@@ -88,7 +75,7 @@
   </ng-container>
 
   <ng-container matColumnDef="lastUpdated">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Modificado</th>
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Cliente</th>
     <td mat-cell *matCellDef="let row">
       {{ row.lastUpdated | date: 'dd/MM/yyyy : HH:mm' }}
     </td>
@@ -97,9 +84,6 @@
   <ng-container matColumnDef="operaciones">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>...</th>
     <td mat-cell *matCellDef="let row">
-      <mat-icon [routerLink]="['edit/', row.id]">
-        edit
-      </mat-icon>
       <mat-icon
         color="warn"
         *ngIf="row.aplicado <= 0"
@@ -114,6 +98,7 @@
     mat-row
     *matRowDef="let row; columns: displayColumns"
     class="cursor-pointer"
+    (click)="doSelect($event, row)"
   ></tr>
 </table>
 

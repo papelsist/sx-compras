@@ -104,6 +104,7 @@ export class RequisicionFormComponent implements OnInit, OnDestroy, OnChanges {
         apagar: [0.0],
         porComprobar: [false],
         comentario: [],
+        cuentaContable: [null],
         partidas: this.fb.array([])
       });
     }

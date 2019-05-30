@@ -1,0 +1,30 @@
+<div layout class="mat-title pad" layout-align="space-around center">
+  <mat-form-field>
+    <input
+      matInput
+      [disabled]="true"
+      [value]="nota.folio"
+      placeholder="Nota de crédito"
+    />
+  </mat-form-field>
+  <mat-form-field class="pad-left">
+    <input matInput [disabled]="true" [value]="nota.tipo" placeholder="Tipo" />
+  </mat-form-field>
+  <mat-form-field flex class="pad-left">
+    <input
+      matInput
+      [disabled]="true"
+      [value]="nota.nombre"
+      placeholder="Cliente"
+    />
+  </mat-form-field>
+
+  <mat-form-field class="pad-left">
+    <input
+      matInput
+      value="{{ nota.fecha | date: 'dd/MM/yyyy' }}"
+      placeholder="Fecha"
+      [disabled]="true"
+    />
+  </mat-form-field>
+</div>

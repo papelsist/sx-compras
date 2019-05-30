@@ -61,11 +61,13 @@ class PagoDeRequisicionService implements  LogUser {
         log.info('Egreso generado {}', egreso.importe)
 
         if(requisicion.formaDePago == 'TRANSFERENCIA') {
+            /*
             MovimientoDeCuenta comision = movimientoDeCuentaService.generarComisionPorTransferencia(requisicion)
             if(comision) {
                 requisicion.comision = comision
                 log.info("Comision por transrerencia  generada ${comision.importe}")
             }
+             */
         }
 
         Pago pago = pagoService.pagar(requisicion)

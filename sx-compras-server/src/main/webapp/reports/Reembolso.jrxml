@@ -42,7 +42,9 @@
 	<parameter name="AUTORIZADO" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="ID" isForPrompting="true" class="java.lang.String"/>
 	<queryString><![CDATA[SELECT r.id,r.ID folio,r.nombre afavor,s.nombre as sucursal,r.fecha,r.fecha_de_pago ,r.moneda,r.tipo_de_cambio,r.forma_de_pago,r.comentario
-,d.nombre proveedor,concat(ifnull(d.documento_serie,''),ifnull(d.documento_folio,'')) as documento,d.documento_fecha,r.concepto,d.total,d.apagar,SUBSTR(c.uuid,LENGTH(c.uuid)-12,LENGTH(c.uuid)) uuid ,f.acuse
+,d.nombre proveedor,concat(ifnull(d.documento_serie,''),ifnull(d.documento_folio,'')) as documento,d.documento_fecha,r.concepto
+,case when c.id is null then d.total else c.total end as total
+,d.apagar,SUBSTR(c.uuid,LENGTH(c.uuid)-12,LENGTH(c.uuid)) uuid ,f.acuse
 FROM rembolso R join sucursal s on(r.sucursal_id=s.id)
 LEFT JOIN rembolso_det  D ON(D.rembolso_id=R.id) 
 left join cuenta_por_pagar c on(d.cxp_id=c.id)
@@ -976,7 +978,7 @@ $P{MONEDA}.equals( "MXN" ) ? $F{apagar}.multiply( new BigDecimal($F{tipo_de_camb
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="278"
+						x="331"
 						y="12"
 						width="125"
 						height="13"
@@ -1005,20 +1007,6 @@ $P{MONEDA}.equals( "MXN" ) ? $F{apagar}.multiply( new BigDecimal($F{tipo_de_camb
 					</textElement>
 				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{moneda}.equals( "MXN" ) ? $V{SUMAPAGAR}.multiply( new BigDecimal($F{tipo_de_cambio}.doubleValue()) ) : 
 $P{MONEDA}.equals( "MXN" ) ? $V{SUMAPAGAR}.multiply( new BigDecimal($F{tipo_de_cambio}.doubleValue()) ) : $V{SUMAPAGAR}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="403"
-						y="12"
-						width="55"
-						height="13"
-						key="textField"/>
-					<box></box>
-					<textElement textAlignment="Right">
-						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{moneda}.equals( "MXN" ) ? $V{SUMAFAC}.multiply( new BigDecimal($F{tipo_de_cambio}.doubleValue()) ) : 
-$P{MONEDA}.equals( "MXN" ) ? $V{SUMAFAC}.multiply( new BigDecimal($F{tipo_de_cambio}.doubleValue()) ) : $V{SUMAFAC}]]></textFieldExpression>
 				</textField>
 				<line direction="TopDown">
 					<reportElement
@@ -1066,16 +1054,6 @@ $P{MONEDA}.equals( "MXN" ) ? $V{SUMA_ANALISIS}.multiply( new BigDecimal($F{tipo_
 						height="0"
 						forecolor="#999999"
 						key="line-12"/>
-					<graphicElement stretchType="NoStretch"/>
-				</line>
-				<line direction="TopDown">
-					<reportElement
-						x="407"
-						y="9"
-						width="49"
-						height="0"
-						forecolor="#999999"
-						key="line-13"/>
 					<graphicElement stretchType="NoStretch"/>
 				</line>
 			</band>

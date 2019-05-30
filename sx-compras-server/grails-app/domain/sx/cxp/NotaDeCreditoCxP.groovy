@@ -65,7 +65,7 @@ class NotaDeCreditoCxP {
 
     String tipoDeRelacion
 
-    BigDecimal diferencia
+    BigDecimal diferencia = 0.0
     Date diferenciaFecha
 
     BigDecimal disponibleReal
@@ -88,6 +88,7 @@ class NotaDeCreditoCxP {
         comentario nullable: true
         tipoDeRelacion nullable: true ,maxSize: 10
         tcContable nullable: true
+        diferencia nullable: true
         diferenciaFecha nullable: true
     }
 

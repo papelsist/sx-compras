@@ -5,7 +5,7 @@ import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.*
 
 import groovy.util.logging.Slf4j
-import sx.cfdi.Cfdi
+
 import sx.reports.ReportService
 import sx.utils.Periodo
 

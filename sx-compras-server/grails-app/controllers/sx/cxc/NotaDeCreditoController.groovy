@@ -30,7 +30,7 @@ class NotaDeCreditoController extends RestfulController<NotaDeCredito> implement
 
         params.sort = params.sort ?: 'lastUpdated'
         params.order = params.order ?: 'desc'
-        params.max = params.registros ?: 20
+        params.max = params.registros ?: 15
         def cartera = params.cartera ?: 'CRE'
         def stipo = params.tipo ?: 'BONIFICACION'
 
@@ -65,6 +65,7 @@ class NotaDeCreditoController extends RestfulController<NotaDeCredito> implement
         super.deleteResource(resource)
     }
 
+    @CompileDynamic
     def handleException(Exception e) {
         String message = ExceptionUtils.getRootCauseMessage(e)
         log.error(message, ExceptionUtils.getRootCause(e))

@@ -6,5 +6,9 @@ model {
 
 json g.render(notaDeCredito, [excludes:['moneda'], resolveTemplate: false]) {
     moneda notaDeCredito.moneda.currencyCode
+    cobro g.render(notaDeCredito.cobro)
+    if(notaDeCredito.cfdi) {
+    	uuid notaDeCredito.cfdi.uuid
+    }
 
 }

@@ -34,6 +34,7 @@ export const getSelectedNotaDeCredito = createSelector(
   getNotaDeCreditoEntities,
   fromRoot.getRouterState,
   (entities, router): NotaDeCredito => {
+    console.log('Locating: ', router);
     return router.state && entities[router.state.params.notaId];
   }
 );

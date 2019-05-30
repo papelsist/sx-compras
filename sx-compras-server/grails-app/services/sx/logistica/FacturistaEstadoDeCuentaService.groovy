@@ -42,7 +42,7 @@ class FacturistaEstadoDeCuentaService implements  LogUser, FolioLog {
         }
         List<FacturistaEstadoDeCuenta> movs = []
 
-        if(saldo) {
+        if(saldo > 10.00) {
             tasa = (tasa * 2) / 365
             tasa = MonedaUtils.round(tasa, 4)
             BigDecimal intereses = MonedaUtils.round(saldo * tasa/100.00)

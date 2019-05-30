@@ -13,11 +13,12 @@ export interface NotaDeCredito {
   moneda: 'MXN' | 'USD';
   tc: number;
   importe: number;
+  descuento: number;
+  descuento2: number;
   impuesto: number;
   impuestoTasa: number;
   total: number;
-  descuento: number;
-  descuento2: number;
+  disponible?: number;
   financiero: boolean;
   comentario: string;
   cfdi: { id: string; uuid: string };

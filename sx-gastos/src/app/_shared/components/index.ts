@@ -21,6 +21,7 @@ import { TipoCambioFieldComponent } from './tipo-cambio-field/tipo-cambio-field.
 import { ProveedorProductoFieldComponent } from './proveedor-productos-field/proveedor-productos-field.component';
 import { ProductoFieldComponent } from './producto-field/producto-field.component';
 import { ClienteFieldComponent } from './cliente-field/cliente-field.component';
+import { CuentaContableFieldComponent } from './cuenta-contable-field/cuenta-contable-field.componet';
 
 export const components = [
   DireccionComponent,
@@ -45,7 +46,8 @@ export const components = [
   TipoCambioFieldComponent,
   ProveedorProductoFieldComponent,
   ProductoFieldComponent,
-  ClienteFieldComponent
+  ClienteFieldComponent,
+  CuentaContableFieldComponent
 ];
 
 export const entyComponents: any[] = [
@@ -74,3 +76,4 @@ export * from './tipo-cambio-field/tipo-cambio-field.component';
 export * from './proveedor-productos-field/proveedor-productos-field.component';
 export * from './producto-field/producto-field.component';
 export * from './cliente-field/cliente-field.component';
+export * from './cuenta-contable-field/cuenta-contable-field.componet';

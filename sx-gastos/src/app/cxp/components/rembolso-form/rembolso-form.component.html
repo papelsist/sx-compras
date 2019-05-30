@@ -75,7 +75,7 @@
       ></sx-upper-case-field>
     </div>
     <div layout class="pad-left pad-right">
-      <mat-form-field flex="25">
+      <mat-form-field >
         <mat-select placeholder="Concepto" formControlName="concepto">
           <mat-option *ngFor="let c of conceptos" [value]="c">
             {{ c }}
@@ -87,11 +87,18 @@
         flex
         class="pad-left pad-right"
       ></sx-proveedor-field>
+      
       <sx-upper-case-field
         flex
         formControlName="nombre"
         placeholder="A Favor"
       ></sx-upper-case-field>
+    </div>
+    <div class="pad-left pad-right">
+        <sx-cuenta-contable-field formControlName="cuentaContable" flex class="pad-right" placeholder="cuentaContable">
+
+          </sx-cuenta-contable-field>
+      
     </div>
 
     <div class="partidas-panel">
