@@ -51,9 +51,10 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
      * @param r
      */
     void cargoProveedor(Poliza poliza, Requisicion r) {
+        log.info('Generando cargo al proveedor {}  Partidas de Req:{} = {}', r.nombre, r.folio, r.partidas.size())
         CuentaOperativaProveedor co = buscarCuentaOperativa(r.proveedor)
         MovimientoDeCuenta egreso = r.egreso
-        log.info('Evaluando egreso: {}', egreso)
+
         r.partidas.each {
             CuentaPorPagar cxp = it.cxp
             String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} F:${cxp.serie?:''} ${cxp.folio}" +
@@ -81,16 +82,28 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
                 cv = "201-0001-${co.cuentaOperativa}-0000"
             }
             poliza.addToPartidas(mapRow(cv, desc, row, MonedaUtils.round(it.apagar  * r.tipoDeCambio)))
-            log.info('Cheque: {}', egreso.cheque)
-
-            if(egreso.cheque.fecha != egreso.cheque.fechaTransito){
-                 // IVA
-                BigDecimal importe = MonedaUtils.calcularImporteDelTotal(it.apagar * r.tipoDeCambio)
-                BigDecimal impuesto = it.apagar - importe
-                poliza.addToPartidas(mapRow('118-0001-0000-0000', desc, row, impuesto))
-                poliza.addToPartidas(mapRow('119-0001-0000-0000', desc, row, 0.0, impuesto))
+            if(egreso.cheque) {
+                /*
+                log.info('Cheque: {}', egreso.cheque)
+                if(egreso.cheque.fecha != egreso.cheque.fechaTransito){
+                    // IVA
+                    BigDecimal importe = MonedaUtils.calcularImporteDelTotal(it.apagar * r.tipoDeCambio)
+                    BigDecimal impuesto = it.apagar - importe
+                    BigDecimal ivaCfdi = cxp.impuestoTrasladado
+                    log.info('IVA del CFDI:{}  Calculado: {}', ivaCfdi, impuesto)
+                    poliza.addToPartidas(mapRow('118-0001-0000-0000', desc, row, impuesto))
+                    poliza.addToPartidas(mapRow('119-0001-0000-0000', desc, row, 0.0, impuesto))
+                }
+                */
             }
 
+            // IVA
+            BigDecimal importe = MonedaUtils.calcularImporteDelTotal(it.apagar * r.tipoDeCambio)
+            BigDecimal impuesto = it.apagar - importe
+            BigDecimal ivaCfdi = cxp.impuestoTrasladado
+           // log.info('IVA del CFDI:{}  Calculado: {}', ivaCfdi, impuesto)
+            poliza.addToPartidas(mapRow('118-0001-0000-0000', desc, row, ivaCfdi))
+            poliza.addToPartidas(mapRow('119-0001-0000-0000', desc, row, 0.0, ivaCfdi))
            
         }
 
