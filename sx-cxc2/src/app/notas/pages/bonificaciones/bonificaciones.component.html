@@ -18,3 +18,8 @@
     <mat-divider></mat-divider>
   </ng-template>
 </mat-card>
+<sx-nota-create-btn
+  (create)="onCreate($event)"
+  tipo="BONIFICACION"
+  [cartera]="cartera$ | async"
+></sx-nota-create-btn>

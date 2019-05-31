@@ -7,6 +7,7 @@ import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.exception.ExceptionUtils
 import sx.core.LogUser
+import sx.core.Sucursal
 import sx.reports.ReportService
 import sx.utils.Periodo
 
@@ -63,6 +64,17 @@ class NotaDeCreditoController extends RestfulController<NotaDeCredito> implement
     @Override
     protected void deleteResource(NotaDeCredito resource) {
         super.deleteResource(resource)
+    }
+
+    @Override
+    protected NotaDeCredito createResource() {
+        NotaDeCredito nota = new NotaDeCredito(folio: -1L)
+        bindData(nota, getObjectToBind())
+        nota.sucursal = Sucursal.where{nombre == 'OFICINAS'}.find()
+        String prefix = nota.tipo == 'BONIFICACION' ? 'BON' : 'DEV'
+        String serie = "${prefix}${nota.tipoCartera}"
+        nota.serie = serie
+        return nota
     }
 
     @CompileDynamic

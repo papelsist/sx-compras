@@ -44,7 +44,7 @@ export class LoadBonificacionesFail implements Action {
 // Create
 export class CreateBonificacion implements Action {
   readonly type = BonificacionActionTypes.CreateBonificacion;
-  constructor(public payload: { bonificacion: Bonificacion }) {}
+  constructor(public payload: { bonificacion: Partial<Bonificacion> }) {}
 }
 export class CreateBonificacionFail implements Action {
   readonly type = BonificacionActionTypes.CreateBonificacionFail;

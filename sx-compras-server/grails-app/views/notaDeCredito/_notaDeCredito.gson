@@ -10,5 +10,9 @@ json g.render(notaDeCredito, [excludes:['moneda'], resolveTemplate: false]) {
     if(notaDeCredito.cfdi) {
     	uuid notaDeCredito.cfdi.uuid
     }
+    cliente {
+        id notaDeCredito.cliente.id
+        nombre notaDeCredito.cliente.nombre
+    }
 
 }

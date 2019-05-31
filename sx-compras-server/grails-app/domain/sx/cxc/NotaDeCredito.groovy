@@ -92,7 +92,7 @@ class NotaDeCredito {
         })
         comentario nullable:true
         cfdi nullable:true
-        // cobro nullable: true
+        cobro nullable: true
         sw2 nullable: true
         createUser nullable: true
         updateUser nullable: true

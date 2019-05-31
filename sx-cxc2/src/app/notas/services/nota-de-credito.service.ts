@@ -51,7 +51,7 @@ export class NotaDeCreditoService {
   }
 
   save(
-    nota: NotaDeCredito
+    nota: Partial<NotaDeCredito>
   ): Observable<NotaDeCredito | Bonificacion | Devolucion> {
     return this.http
       .post<NotaDeCredito>(this.apiUrl, nota)

@@ -12,9 +12,15 @@ export interface State extends EntityState<Bonificacion> {
   loaded: boolean;
 }
 
+function sortBySeqFolio(e1: Bonificacion, e2: Bonificacion) {
+  return e2.folio - e1.folio;
+}
+
 export const adapter: EntityAdapter<Bonificacion> = createEntityAdapter<
   Bonificacion
->();
+>({
+  sortComparer: sortBySeqFolio
+});
 
 export const initialState: State = adapter.getInitialState({
   loading: false,

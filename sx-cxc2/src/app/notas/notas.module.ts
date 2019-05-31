@@ -13,6 +13,7 @@ import { NotasRoutingModule } from './notas.routing.module';
 
 @NgModule({
   declarations: [...components, ...entryComponents, ...pages],
+  entryComponents: [...entryComponents],
   imports: [
     RouterModule,
     SharedModule,
