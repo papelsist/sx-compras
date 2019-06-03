@@ -23,6 +23,8 @@ import sx.utils.MonedaUtils
 @Component
 class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
 
+
+
     /**
      * Genera los asientos requreidos por la poliza
      *
@@ -42,6 +44,9 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
         abonoBanco(poliza, r)
         registrarRetenciones(poliza, r)
         registrarDiferenciaCambiaria(poliza, r)
+        ajustarProveedorBanco(poliza)
+        return poliza
+
     }
 
     /**
@@ -73,7 +78,9 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
                     rfc: cxp.proveedor.rfc,
                     montoTotal: cxp.total,
                     moneda: cxp.moneda,
-                    tc: cxp.tipoDeCambio ? cxp.tipoDeCambio : 1.0
+                    tc: cxp.tipoDeCambio ? cxp.tipoDeCambio : 1.0,
+                    ctaDestino: cxp.proveedor.cuentaBancaria,
+                    bancoDestino: cxp.proveedor.banco
             ]
             buildComplementoDePago(row, egreso)
             // Cargo a Proveedor
@@ -98,12 +105,19 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
             }
 
             // IVA
-            BigDecimal importe = MonedaUtils.calcularImporteDelTotal(it.apagar * r.tipoDeCambio)
-            BigDecimal impuesto = it.apagar - importe
-            BigDecimal ivaCfdi = cxp.impuestoTrasladado
+            BigDecimal impuestoTrasladado = cxp.impuestoTrasladado - (cxp.impuestoRetenido?:0.0)
+            BigDecimal totalFactura = cxp.total
+            BigDecimal apagar = cxp.importePorPagar ?: 0.0
+            BigDecimal dif = totalFactura - apagar
+
+            if( dif.abs() > 10.00) {
+                BigDecimal importe = MonedaUtils.calcularImporteDelTotal(it.apagar * r.tipoDeCambio)
+                impuestoTrasladado = cxp.importePorPagar - importe
+            }
+
            // log.info('IVA del CFDI:{}  Calculado: {}', ivaCfdi, impuesto)
-            poliza.addToPartidas(mapRow('118-0001-0000-0000', desc, row, ivaCfdi))
-            poliza.addToPartidas(mapRow('119-0001-0000-0000', desc, row, 0.0, ivaCfdi))
+            poliza.addToPartidas(mapRow('118-0001-0000-0000', desc, row, impuestoTrasladado))
+            poliza.addToPartidas(mapRow('119-0001-0000-0000', desc, row, 0.0, impuestoTrasladado))
            
         }
 
@@ -114,7 +128,7 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
 
         // Abono a Banco
         String ctaBanco = "102-${egreso.moneda.currencyCode == 'MXN' ? '0001': '0002'}-${egreso.cuenta.subCuentaOperativa}-0000"
-        log.info('Cta de banco: {}, {} MXN: {}', ctaBanco, egreso.moneda, egreso.moneda == 'MXN')
+        // log.info('Cta de banco: {}, {} MXN: {}', ctaBanco, egreso.moneda, egreso.moneda == 'MXN')
         Map row = [
                 asiento: "PAGO_${egreso.tipo}",
                 referencia: r.nombre,
@@ -123,16 +137,22 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
                 documento: egreso.referencia,
                 documentoTipo: 'CXP',
                 documentoFecha: egreso.fecha,
-                sucursal: egreso.sucursal?: 'OFICINAS'
+                sucursal: egreso.sucursal?: 'OFICINAS',
+                ctaDestino: r.proveedor.cuentaBancaria,
+                bancoDestino: r.proveedor.banco
         ]
+
         buildComplementoDePago(row, egreso)
-        String desc = "Folio: ${egreso.referencia} (${egreso.fecha.format('dd/MM/yyyy')}) "
+        // String desc = "Folio: ${egreso.referencia} (${egreso.fecha.format('dd/MM/yyyy')}) "
+        String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} ${egreso.afavor} (${egreso.fecha.format('dd/MM/yyyy')})"
+
         if(r.moneda != 'MXN') {
             desc = desc + " TC: ${r.tipoDeCambio}"
         }
         poliza.addToPartidas(mapRow(ctaBanco, desc, row, 0.0, egreso.importe.abs()))
     }
 
+    @CompileDynamic
     void registrarRetenciones(Poliza poliza, Requisicion r) {
         MovimientoDeCuenta egreso = r.egreso
         Map row = [
@@ -143,7 +163,9 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
                 documento: egreso.referencia,
                 documentoTipo: 'CXP',
                 documentoFecha: egreso.fecha,
-                sucursal: egreso.sucursal?: 'OFICINAS'
+                sucursal: egreso.sucursal?: 'OFICINAS',
+                ctaDestino: r.proveedor.cuentaBancaria,
+                bancoDestino: r.proveedor.banco
         ]
         buildComplementoDePago(row, egreso)
         String desc = "Folio: ${egreso.referencia} (${egreso.fecha.format('dd/MM/yyyy')}) "
@@ -151,7 +173,13 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
             if(it.cxp.impuestoRetenido > 0) {
                 CuentaPorPagar cxp = it.cxp
                 if(cxp.impuestoRetenido > 0.0) {
+                    row.documento = cxp.folio.toString()
+                    row.documentoFecha  = cxp.fecha
+                    desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} F:${cxp.serie?:''} ${cxp.folio}" +
+                            " (${cxp.fecha.format('dd/MM/yyyy')}) ${egreso.sucursal?: 'OFICINAS'} " +
+                            " ${cxp.tipoDeCambio > 1.0 ? 'T.C:' + cxp.tipoDeCambio: ''}"
                     BigDecimal imp = cxp.impuestoRetenido
+                    // log.info('Retenido Fac: {} {} ', cxp.folio, imp)
                     poliza.addToPartidas(mapRow('118-0003-0000-0000', desc, row, imp))
                     poliza.addToPartidas(mapRow('119-0003-0000-0000', desc, row, 0.0, imp))
 
@@ -189,6 +217,63 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
             poliza.concepto = poliza.concepto + "TC: ${r.tipoDeCambio}"
         }
     }
+
+    @CompileDynamic
+    void ajustarProveedorBanco(Poliza poliza) {
+        PolizaDet abonoBanco = poliza.partidas.find {it.cuenta.clave.startsWith('102')}
+        List<PolizaDet> provs = poliza.partidas.findAll{it.cuenta.clave.startsWith('201')}
+        def debe = provs.sum 0.0, {it.debe}
+
+        def dif = abonoBanco.haber - debe
+        // log.info('Debe: {}', debe)
+        //  log.info('Cuadre especial por: {}', dif)
+
+        if(dif.abs() > 0.0 &&  dif.abs() <= 5.0){
+
+            def det = abonoBanco
+
+            if(dif < 0.0) {
+
+                PolizaDet pdet = new PolizaDet()
+                pdet.cuenta = buscarCuenta('704-0005-0000-0000')
+                pdet.concepto = pdet.cuenta.descripcion
+                pdet.sucursal = det.sucursal
+                pdet.origen = det.origen
+                pdet.referencia = det.referencia
+                pdet.referencia2 = det.referencia2
+                pdet.haber = dif.abs()
+                pdet.descripcion = det.descripcion
+                pdet.entidad = det.entidad
+                pdet.asiento = det.asiento+ '_OPRD'
+                pdet.documentoTipo = det.documentoTipo
+                pdet.documentoFecha = det.documentoFecha
+                pdet.documento = det.documento
+
+                poliza.addToPartidas(pdet)
+
+            } else {
+                PolizaDet pdet = new PolizaDet()
+                pdet.cuenta = buscarCuenta('703-0003-0000-0000')
+                pdet.concepto = pdet.cuenta.descripcion
+                pdet.sucursal = det.sucursal
+                pdet.origen = det.origen
+                pdet.referencia = det.referencia
+                pdet.referencia2 = det.referencia2
+                pdet.debe = dif.abs()
+                pdet.descripcion = det.descripcion
+                pdet.entidad = det.entidad
+                pdet.asiento = det.asiento+ '_OGST'
+                pdet.documentoTipo = det.documentoTipo
+                pdet.documentoFecha = det.documentoFecha
+                pdet.documento = det.documento
+                poliza.addToPartidas(pdet)
+            }
+        }
+
+
+    }
+
+
 
     Requisicion findRequisicion(Poliza poliza) {
         MovimientoDeCuenta egreso = MovimientoDeCuenta.get(poliza.egreso)

@@ -69,6 +69,7 @@ class PagoDeGastosTask implements  AsientoBuilder, EgresoTask {
                     tc: cxp.tipoDeCambio ? cxp.tipoDeCambio : 1.0
             ]
             buildComplementoDePago(row, egreso)
+
             // Cargo a Proveedor
             String cv = "205-0006-${co.cuentaOperativa}-0000"
             if(co.tipo != 'GASTOS') {
@@ -79,18 +80,22 @@ class PagoDeGastosTask implements  AsientoBuilder, EgresoTask {
             }
 
             poliza.addToPartidas(mapRow(cv, desc, row, MonedaUtils.round(it.apagar  * r.tipoDeCambio)))
-            BigDecimal ivaCfdi = cxp.impuestoTrasladado
 
+            /*
              def fechaTransito = egreso.cheque.fechaTransito?: egreso.cheque.fecha
+
              if(egreso.cheque.fecha.format('dd/MM/yyyy') == fechaTransito.format('dd/MM/yyyy')){
                  // IVA
-                BigDecimal importe = MonedaUtils.calcularImporteDelTotal(it.apagar * r.tipoDeCambio)
-                BigDecimal impuesto = it.apagar - importe
-                 log.info('IVA del CFDI:{}  Calculado: {}', ivaCfdi, impuesto)
-                poliza.addToPartidas(mapRow('118-0002-0000-0000', desc, row, impuesto))
-                poliza.addToPartidas(mapRow('119-0002-0000-0000', desc, row, 0.0, impuesto))
+
             }
-            
+            */
+
+            BigDecimal ivaCfdi = cxp.impuestoTrasladado
+            BigDecimal importe = MonedaUtils.calcularImporteDelTotal(it.apagar * r.tipoDeCambio)
+            BigDecimal impuesto = it.apagar - importe
+            log.info('IVA del CFDI:{}  Calculado: {}', ivaCfdi, impuesto)
+            poliza.addToPartidas(mapRow('118-0002-0000-0000', desc, row, impuesto))
+            poliza.addToPartidas(mapRow('119-0002-0000-0000', desc, row, 0.0, impuesto))
         }
 
     }
@@ -112,7 +117,7 @@ class PagoDeGastosTask implements  AsientoBuilder, EgresoTask {
                 sucursal: egreso.sucursal?: 'OFICINAS'
         ]
         buildComplementoDePago(row, egreso)
-        String desc = "Folio: ${egreso.referencia} (${egreso.fecha.format('dd/MM/yyyy')}) "
+        String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} ${egreso.afavor} (${egreso.fecha.format('dd/MM/yyyy')})"
         if(r.moneda != 'MXN') {
             desc = desc + " TC: ${r.tipoDeCambio}"
         }

@@ -29,8 +29,10 @@ import sx.tesoreria.MovimientoDeCuenta
          det.beneficiario = egreso.afavor
          det.bancoOrigen = egreso.cuenta.bancoSat.clave
          det.ctaOrigen = egreso.cuenta.numero
-         // det.bancoDestino = row.bancoDestino
-         // det.ctaDestino = row.ctaDestino
+         if(egreso.formaDePago == 'TRANSFERENCIA') {
+             det.bancoDestino = det.bancoDestino
+             det.ctaDestino = det.ctaDestino
+         }
          det.referenciaBancaria = egreso.referencia
          det.moneda = egreso.moneda.currencyCode
          det.tipCamb = egreso.tipoDeCambio ? egreso.tipoDeCambio : 1.0

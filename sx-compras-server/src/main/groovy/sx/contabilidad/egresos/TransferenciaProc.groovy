@@ -61,7 +61,7 @@ class TransferenciaProc implements  ProcesadorMultipleDePolizas {
 
         }
 
-        poliza = poliza.save flush: true
+        poliza = poliza.save failOnError: true, flush: true
         poliza.refresh()
         return poliza
     }
