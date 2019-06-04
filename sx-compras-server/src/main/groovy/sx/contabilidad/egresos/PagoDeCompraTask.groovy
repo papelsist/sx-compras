@@ -112,7 +112,8 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
 
             if( dif.abs() > 10.00) {
                 BigDecimal importe = MonedaUtils.calcularImporteDelTotal(it.apagar * r.tipoDeCambio)
-                impuestoTrasladado = cxp.importePorPagar - importe
+                impuestoTrasladado = MonedaUtils.calcularImpuesto(importe)
+                impuestoTrasladado = impuestoTrasladado - cxp.impuestoRetenido
             }
 
            // log.info('IVA del CFDI:{}  Calculado: {}', ivaCfdi, impuesto)
