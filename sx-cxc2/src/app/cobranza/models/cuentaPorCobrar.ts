@@ -12,6 +12,7 @@ export interface CuentaPorCobrar {
   subtotal: number;
   impuesto: number;
   total: number;
+  saldoReal: number;
   formaDePago: string;
   moneda: string;
   tipoDeCambio: number;

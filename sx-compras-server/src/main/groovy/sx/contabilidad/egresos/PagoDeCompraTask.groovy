@@ -55,7 +55,7 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
      * @param poliza
      * @param r
      */
-    void cargoProveedor(Poliza poliza, Requisicion r) {
+    void cargoProveedor(Poliza poliza, RequisicionDeCompras r) {
         log.info('Generando cargo al proveedor {}  Partidas de Req:{} = {}', r.nombre, r.folio, r.partidas.size())
         CuentaOperativaProveedor co = buscarCuentaOperativa(r.proveedor)
         MovimientoDeCuenta egreso = r.egreso
@@ -89,35 +89,32 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
                 cv = "201-0001-${co.cuentaOperativa}-0000"
             }
             poliza.addToPartidas(mapRow(cv, desc, row, MonedaUtils.round(it.apagar  * r.tipoDeCambio)))
-            if(egreso.cheque) {
-                /*
-                log.info('Cheque: {}', egreso.cheque)
-                if(egreso.cheque.fecha != egreso.cheque.fechaTransito){
-                    // IVA
-                    BigDecimal importe = MonedaUtils.calcularImporteDelTotal(it.apagar * r.tipoDeCambio)
-                    BigDecimal impuesto = it.apagar - importe
-                    BigDecimal ivaCfdi = cxp.impuestoTrasladado
-                    log.info('IVA del CFDI:{}  Calculado: {}', ivaCfdi, impuesto)
-                    poliza.addToPartidas(mapRow('118-0001-0000-0000', desc, row, impuesto))
-                    poliza.addToPartidas(mapRow('119-0001-0000-0000', desc, row, 0.0, impuesto))
-                }
-                */
-            }
 
-            // IVA
-            BigDecimal impuestoTrasladado = cxp.impuestoTrasladado - (cxp.impuestoRetenido?:0.0)
+
             BigDecimal totalFactura = cxp.total
             BigDecimal apagar = cxp.importePorPagar ?: 0.0
             BigDecimal dif = totalFactura - apagar
 
-            if( dif.abs() > 10.00) {
+            // IVA
+            log.info('Calculando el impuesto.....')
+            log.info('Factura: {} Analisis: {} RequisicionDet.apagar: {}', cxp.total, cxp.importePorPagar, it.apagar)
+
+            BigDecimal impuestoTrasladado = cxp.impuestoTrasladado - (cxp.impuestoRetenido?:0.0)
+
+            if( dif.abs() > 3.00) {
                 BigDecimal importe = MonedaUtils.calcularImporteDelTotal(it.apagar * r.tipoDeCambio)
                 impuestoTrasladado = MonedaUtils.calcularImpuesto(importe)
-                impuestoTrasladado = impuestoTrasladado - cxp.impuestoRetenido
-            }
 
-           // log.info('IVA del CFDI:{}  Calculado: {}', ivaCfdi, impuesto)
+                if(r.descuentof > 0.0) {
+                    BigDecimal factorDf = (100.00 - r.descuentof) / 100.00
+                    BigDecimal proporcionDelImpuestoTrasladado = MonedaUtils.round(cxp.impuestoRetenido * factorDf)
+                    impuestoTrasladado = impuestoTrasladado - proporcionDelImpuestoTrasladado
+                } else {
+                    impuestoTrasladado = impuestoTrasladado - cxp.impuestoRetenido
+                }
+            }
             poliza.addToPartidas(mapRow('118-0001-0000-0000', desc, row, impuestoTrasladado))
+
             poliza.addToPartidas(mapRow('119-0001-0000-0000', desc, row, 0.0, impuestoTrasladado))
            
         }
@@ -180,6 +177,7 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
                             " (${cxp.fecha.format('dd/MM/yyyy')}) ${egreso.sucursal?: 'OFICINAS'} " +
                             " ${cxp.tipoDeCambio > 1.0 ? 'T.C:' + cxp.tipoDeCambio: ''}"
                     BigDecimal imp = cxp.impuestoRetenido
+
                     // log.info('Retenido Fac: {} {} ', cxp.folio, imp)
                     poliza.addToPartidas(mapRow('118-0003-0000-0000', desc, row, imp))
                     poliza.addToPartidas(mapRow('119-0003-0000-0000', desc, row, 0.0, imp))

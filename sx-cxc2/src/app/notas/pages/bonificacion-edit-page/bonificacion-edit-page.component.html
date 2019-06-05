@@ -1,28 +1,40 @@
 <mat-card *ngIf="bonificacion$ | async as bonificacion">
   <sx-nota-header [nota]="bonificacion"></sx-nota-header>
+  <mat-divider></mat-divider>
   <mat-card-content>
-    <div layout="column">
-      <td-json-formatter
-        [data]="bonificacion"
-        key="Nota"
-        [levelsOpen]="0"
-      ></td-json-formatter>
-      <td-json-formatter
-        [data]="bonificacion.cobro"
-        key="Cobro"
-      ></td-json-formatter>
-      <td-json-formatter
-        [data]="bonificacion.cfdi"
-        key="CFDI"
-      ></td-json-formatter>
-      <td-json-formatter
-        [data]="bonificacion.partidas"
-        key="Partidas"
-      ></td-json-formatter>
-      <td-json-formatter
-        [data]="bonificacion.aplicaciones"
-        key="Aplicaciones"
-      ></td-json-formatter>
-    </div>
+    <sx-bonificacion-form [bonificacion]="bonificacion"></sx-bonificacion-form>
   </mat-card-content>
+  <mat-card-actions>
+    <div layout>
+      <sx-selector-cxc></sx-selector-cxc>
+      <span flex></span>
+      <span>{{ bonificacion.total }}</span>
+    </div>
+  </mat-card-actions>
 </mat-card>
+
+<pre *ngIf="bonificacion$ | async as bonificacion">
+  <div layout="column">
+    <td-json-formatter
+      [data]="bonificacion"
+      key="Nota"
+      [levelsOpen]="0"
+    ></td-json-formatter>
+    <td-json-formatter
+      [data]="bonificacion.cobro"
+      key="Cobro"
+    ></td-json-formatter>
+    <td-json-formatter
+      [data]="bonificacion.cfdi"
+      key="CFDI"
+    ></td-json-formatter>
+    <td-json-formatter
+      [data]="bonificacion.partidas"
+      key="Partidas"
+    ></td-json-formatter>
+    <td-json-formatter
+      [data]="bonificacion.aplicaciones"
+      key="Aplicaciones"
+    ></td-json-formatter>
+  </div>
+</pre>

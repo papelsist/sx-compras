@@ -71,4 +71,9 @@ export class NotaDeCreditoService {
     const url = `${this.apiUrl}/${notaId}`;
     return this.http.delete(url).pipe(catchError(error => throwError(error)));
   }
+
+  buscarFacturasPendientes(filtro?): Observable<any> {
+    const url = this.apiUrl + '/buscarFacturasPendientes';
+    return this.http.get<any>(url);
+  }
 }

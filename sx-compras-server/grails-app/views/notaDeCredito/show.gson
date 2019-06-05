@@ -18,5 +18,4 @@ json g.render(notaDeCredito, [excludes:['moneda', 'partidas'], resolveTemplate: 
     partidas g.render(notaDeCredito.partidas)
     if(notaDeCredito.cobro)
     	aplicaciones g.render(notaDeCredito.cobro.aplicaciones)
-
 }
