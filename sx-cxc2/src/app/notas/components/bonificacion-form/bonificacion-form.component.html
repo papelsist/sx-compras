@@ -1,49 +1,52 @@
-<form [formGroup]="form" layout>
-  <mat-form-field>
-    <mat-label>Tipo de cálculo</mat-label>
-    <mat-select formControlName="tipoDeCalculo">
-      <mat-option
-        *ngFor="let tipo of ['PORCENTAJE', 'PRORRATEO']"
-        [value]="tipo"
-      >
-        {{ tipo }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-  <mat-form-field>
-    <mat-label>Base de cálculo</mat-label>
-    <mat-select formControlName="baseDelCalculo">
-      <mat-option *ngFor="let tipo of ['Saldo', 'Total']" [value]="tipo">
-        {{ tipo }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
+<form [formGroup]="form">
+  <div layout>
+    <mat-form-field>
+      <mat-label>Tipo de cálculo</mat-label>
+      <mat-select formControlName="tipoDeCalculo">
+        <mat-option
+          *ngFor="let tipo of ['PORCENTAJE', 'PRORRATEO']"
+          [value]="tipo"
+        >
+          {{ tipo }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Base de cálculo</mat-label>
+      <mat-select formControlName="baseDelCalculo">
+        <mat-option *ngFor="let tipo of ['SALDO', 'TOTAL']" [value]="tipo">
+          {{ tipo }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
 
-  <mat-form-field>
-    <input
-      matInput
-      placeholder="Descuento"
-      autocomplete="off"
-      formControlName="descuento"
-      type="number"
-    />
-  </mat-form-field>
-  <mat-form-field>
-    <input
-      matInput
-      placeholder="Importe"
-      autocomplete="off"
-      formControlName="importe"
-      type="number"
-    />
-  </mat-form-field>
-  <sx-upper-case-field
-    formControlName="comentario"
-    placeholder="Comentario"
-    flex
-  ></sx-upper-case-field>
+    <mat-form-field>
+      <input
+        matInput
+        placeholder="Descuento"
+        autocomplete="off"
+        formControlName="descuento"
+        type="number"
+      />
+    </mat-form-field>
+    <mat-form-field>
+      <input
+        matInput
+        placeholder="Importe"
+        autocomplete="off"
+        formControlName="importe"
+        type="number"
+      />
+    </mat-form-field>
+    <sx-upper-case-field
+      formControlName="comentario"
+      placeholder="Comentario"
+      flex
+    ></sx-upper-case-field>
+  </div>
+  <sx-bonificacion-form-partidas
+    [parent]="form"
+    [partidas]="partidas.value"
+  ></sx-bonificacion-form-partidas>
 </form>
-<sx-bonificacion-form-partidas
-  [partidas]="bonificacion.partidas"
-></sx-bonificacion-form-partidas>
 `

@@ -1,0 +1,15 @@
+<h2 mat-dialog-title>Facturas: {{ nombre }}</h2>
+<mat-dialog-content>
+  CXC FACTURAS TABLE
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close type="button">CANCELAR</button>
+  <button
+    mat-button
+    [disabled]="selected.length <= 0"
+    color="primary"
+    (click)="select()"
+  >
+    <mat-icon>save</mat-icon> SELECCIONAR
+  </button>
+</mat-dialog-actions>

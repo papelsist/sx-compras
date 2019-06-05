@@ -14,3 +14,17 @@ export interface NotaDeCreditoDet {
   sucursal: string;
   comentario: string;
 }
+
+export function buildNotaDet(cxc: CuentaPorCobrar): Partial<NotaDeCreditoDet> {
+  const det = {
+    cuentaPorCobrar: cxc,
+    documento: cxc.documento,
+    tipoDeDocumento: cxc.tipoDocumento,
+    totalDocumento: cxc.total,
+    saldoDocumento: cxc.saldoReal,
+    fechaDocumento: cxc.fecha,
+    sucursal: cxc.sucursalNombre,
+    importe: cxc.saldoReal
+  };
+  return det;
+}

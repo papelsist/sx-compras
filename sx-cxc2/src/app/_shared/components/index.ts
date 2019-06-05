@@ -17,7 +17,6 @@ import { MesFieldComponent } from './mes-field/mes-field.component';
 import { MonedaFieldComponent } from './moneda-field/moneda-field.component';
 import { TipoCambioFieldComponent } from './tipo-cambio-field/tipo-cambio-field.component';
 import { ClienteFieldComponent } from './cliente-field/cliente-field.component';
-import { SelectorDeCuentasPorCobrarComponent } from './selector-de-cxc/selector-de-cuentas-por-cobrar.component';
 
 export const components = [
   DireccionComponent,
@@ -38,9 +37,7 @@ export const components = [
   MesFieldComponent,
   MonedaFieldComponent,
   TipoCambioFieldComponent,
-  ClienteFieldComponent,
-  // CxC
-  SelectorDeCuentasPorCobrarComponent
+  ClienteFieldComponent
 ];
 
 export const entyComponents: any[] = [
@@ -66,4 +63,3 @@ export * from './moneda-field/moneda-field.component';
 export * from './tipo-cambio-field/tipo-cambio-field.component';
 export * from './cliente-field/cliente-field.component';
 //
-export * from './selector-de-cxc/selector-de-cuentas-por-cobrar.component';

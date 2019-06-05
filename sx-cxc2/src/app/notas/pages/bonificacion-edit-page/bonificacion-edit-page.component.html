@@ -2,11 +2,18 @@
   <sx-nota-header [nota]="bonificacion"></sx-nota-header>
   <mat-divider></mat-divider>
   <mat-card-content>
-    <sx-bonificacion-form [bonificacion]="bonificacion"></sx-bonificacion-form>
+    <sx-bonificacion-form
+      [bonificacion]="bonificacion"
+      #form
+    ></sx-bonificacion-form>
   </mat-card-content>
   <mat-card-actions>
-    <div layout>
-      <sx-selector-cxc></sx-selector-cxc>
+
+      <sx-cxc-selector
+        [cliente]="bonificacion.cliente"
+        (select)="form.addFacturas($event)"
+      >
+      </sx-cxc-selector>
       <span flex></span>
       <span>{{ bonificacion.total }}</span>
     </div>

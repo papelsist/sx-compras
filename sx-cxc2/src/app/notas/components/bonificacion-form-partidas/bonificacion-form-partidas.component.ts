@@ -13,6 +13,7 @@ import { MatTableDataSource, MatSort } from '@angular/material';
 import { NotaDeCreditoDet } from 'app/cobranza/models';
 
 import * as _ from 'lodash';
+import { FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'sx-bonificacion-form-partidas',
@@ -23,6 +24,8 @@ import * as _ from 'lodash';
 export class BonificacionFormPartidasComponent implements OnInit, OnChanges {
   @Input()
   partidas: NotaDeCreditoDet[] = [];
+
+  @Input() parent: FormGroup;
 
   @Input()
   filter: string;

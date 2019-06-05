@@ -25,7 +25,7 @@
     >{{ getTotalSeleccionado() | currency }}
   </span>
   <span class="pad-left">({{ selected.length }} facturas)</span>
-  <span class="pad-left">Por aplcar: {{ getAplicable() | currency }}</span>
+  <!-- <span class="pad-left">Por aplcar: {{ getAplicable() | currency }}</span> -->
 </div>
 <mat-divider></mat-divider>
 <div class="facturas-panel">
@@ -44,12 +44,8 @@
 </div>
 
 <mat-dialog-actions class="footer">
-  <button mat-button mat-dialog-close>Cancelar</button>
-  <button
-    mat-button
-    [mat-dialog-close]="selected"
-    [disabled]="selected.length === 0 && getAplicable() < 0.0"
-  >
-    Aceptar
+  <button mat-button mat-dialog-close>CANCELAR</button>
+  <button mat-button (click)="close()" [disabled]="selected.length === 0">
+    SELECCIONAR
   </button>
 </mat-dialog-actions>

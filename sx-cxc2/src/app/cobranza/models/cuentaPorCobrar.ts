@@ -4,6 +4,7 @@ export interface CuentaPorCobrar {
   id: string;
   cliente: {};
   sucursal: any;
+  sucursalNombre: string;
   tipo: string;
   tipoDocumento: string;
   documento: number;

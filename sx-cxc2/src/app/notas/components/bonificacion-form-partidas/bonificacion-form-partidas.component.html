@@ -1,90 +1,92 @@
-<table mat-table [dataSource]="dataSource">
-  <ng-container matColumnDef="renglon">
-    <th mat-header-cell *matHeaderCellDef >Rngl</th>
-    <td mat-cell *matCellDef="let row; let i = index">
-      {{ i + 1 }}
-    </td>
-    <td mat-footer-cell *matFooterCellDef></td>
-  </ng-container>
-
-  <ng-container matColumnDef="sucursal">
-    <th mat-header-cell *matHeaderCellDef >Sucursal</th>
-    <td mat-cell *matCellDef="let row">
-      {{ row.sucursal }}
-    </td>
-    <td mat-footer-cell *matFooterCellDef></td>
-  </ng-container>
-
-  <ng-container matColumnDef="factura">
-    <th mat-header-cell *matHeaderCellDef >Factura</th>
-    <td mat-cell *matCellDef="let row">
-      {{ row.cuentaPorCobrar.documento }}
-    </td>
-    <td mat-footer-cell *matFooterCellDef></td>
-  </ng-container>
-
-  <ng-container matColumnDef="facturaFecha">
-    <th mat-header-cell *matHeaderCellDef >Fecha</th>
-    <td mat-cell *matCellDef="let row">
-      {{ row.cuentaPorCobrar.fecha | date: 'dd/MM/yyyy' }}
-    </td>
-    <td mat-footer-cell *matFooterCellDef></td>
-  </ng-container>
-
-  <ng-container matColumnDef="facturaTotal">
-    <th mat-header-cell *matHeaderCellDef >Total</th>
-    <td mat-cell *matCellDef="let row">
-      {{ row.cuentaPorCobrar.total | currency }}
-    </td>
-    <td mat-footer-cell *matFooterCellDef></td>
-  </ng-container>
-
-  <ng-container matColumnDef="facturaPagos">
-    <th mat-header-cell *matHeaderCellDef >Pagos</th>
-    <td mat-cell *matCellDef="let row">
-      {{ row.cuentaPorCobrar.pagos | currency }}
-    </td>
-    <td mat-footer-cell *matFooterCellDef></td>
-  </ng-container>
-
-  <ng-container matColumnDef="facturaSaldo">
-    <th mat-header-cell *matHeaderCellDef >Saldo</th>
-    <td mat-cell *matCellDef="let row">
-      {{ row.cuentaPorCobrar.saldoReal | currency }}
-    </td>
-    <td mat-footer-cell *matFooterCellDef>
-      <span>TOTAL: </span>
-    </td>
-  </ng-container>
-
-  <ng-container matColumnDef="importe">
-    <th mat-header-cell *matHeaderCellDef >Importe</th>
-    <td mat-cell *matCellDef="let row">
-      <span class="tc-blue-800">{{
-        row.cuentaPorCobrar.importe | currency
-      }}</span>
-    </td>
-    <td mat-footer-cell *matFooterCellDef>
-      <span class="total">{{ total | currency }}</span>
-    </td>
-  </ng-container>
-
-  <ng-container matColumnDef="operaciones">
-    <th mat-header-cell *matHeaderCellDef >...</th>
-    <td mat-cell *matCellDef="let row">
-      <mat-icon [routerLink]="['edit/', row.id]">
-        edit
-      </mat-icon>
-      <mat-icon color="warn" (click)="doDelete($event, row)">delete</mat-icon>
-    </td>
-    <td mat-footer-cell *matFooterCellDef></td>
-  </ng-container>
-
-  <tr mat-header-row *matHeaderRowDef="displayColumns; sticky: true"></tr>
-  <tr
-    mat-row
-    *matRowDef="let row; columns: displayColumns"
-    class="cursor-pointer"
-  ></tr>
-  <tr mat-footer-row *matFooterRowDef="displayColumns; sticky: true"></tr>
-</table>
+<div [formGroup]="parent">
+  <table mat-table [dataSource]="dataSource" formArrayName="partidas">
+    <ng-container matColumnDef="renglon">
+      <th mat-header-cell *matHeaderCellDef>Rngl</th>
+      <td mat-cell *matCellDef="let row; let i = index">
+        {{ i + 1 }}
+      </td>
+      <td mat-footer-cell *matFooterCellDef></td>
+    </ng-container>
+  
+    <ng-container matColumnDef="sucursal">
+      <th mat-header-cell *matHeaderCellDef>Sucursal</th>
+      <td mat-cell *matCellDef="let row">
+        {{ row.sucursal }}
+      </td>
+      <td mat-footer-cell *matFooterCellDef></td>
+    </ng-container>
+  
+    <ng-container matColumnDef="factura">
+      <th mat-header-cell *matHeaderCellDef>Factura</th>
+      <td mat-cell *matCellDef="let row">
+        {{ row.cuentaPorCobrar.documento }}
+      </td>
+      <td mat-footer-cell *matFooterCellDef></td>
+    </ng-container>
+  
+    <ng-container matColumnDef="facturaFecha">
+      <th mat-header-cell *matHeaderCellDef>Fecha</th>
+      <td mat-cell *matCellDef="let row">
+        {{ row.cuentaPorCobrar.fecha | date: 'dd/MM/yyyy' }}
+      </td>
+      <td mat-footer-cell *matFooterCellDef></td>
+    </ng-container>
+  
+    <ng-container matColumnDef="facturaTotal">
+      <th mat-header-cell *matHeaderCellDef>Total</th>
+      <td mat-cell *matCellDef="let row">
+        {{ row.cuentaPorCobrar.total | currency }}
+      </td>
+      <td mat-footer-cell *matFooterCellDef></td>
+    </ng-container>
+  
+    <ng-container matColumnDef="facturaPagos">
+      <th mat-header-cell *matHeaderCellDef>Pagos</th>
+      <td mat-cell *matCellDef="let row">
+        {{ row.cuentaPorCobrar.pagos | currency }}
+      </td>
+      <td mat-footer-cell *matFooterCellDef></td>
+    </ng-container>
+  
+    <ng-container matColumnDef="facturaSaldo">
+      <th mat-header-cell *matHeaderCellDef>Saldo</th>
+      <td mat-cell *matCellDef="let row">
+        {{ row.cuentaPorCobrar.saldoReal | currency }}
+      </td>
+      <td mat-footer-cell *matFooterCellDef>
+        <span>TOTAL: </span>
+      </td>
+    </ng-container>
+  
+    <ng-container matColumnDef="importe">
+      <th mat-header-cell *matHeaderCellDef>Importe</th>
+      <td mat-cell *matCellDef="let row">
+        <span class="tc-blue-800">{{
+          row.importe | currency
+        }}</span>
+      </td>
+      <td mat-footer-cell *matFooterCellDef>
+        <span class="total">{{ total | currency }}</span>
+      </td>
+    </ng-container>
+  
+    <ng-container matColumnDef="operaciones">
+      <th mat-header-cell *matHeaderCellDef>...</th>
+      <td mat-cell *matCellDef="let row">
+        <mat-icon [routerLink]="['edit/', row.id]">
+          edit
+        </mat-icon>
+        <mat-icon color="warn" (click)="doDelete($event, row)">delete</mat-icon>
+      </td>
+      <td mat-footer-cell *matFooterCellDef></td>
+    </ng-container>
+  
+    <tr mat-header-row *matHeaderRowDef="displayColumns; sticky: true"></tr>
+    <tr
+      mat-row
+      *matRowDef="let row; columns: displayColumns"
+      class="cursor-pointer"
+    ></tr>
+    <tr mat-footer-row *matFooterRowDef="displayColumns; sticky: true"></tr>
+  </table>
+</div>
