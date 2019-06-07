@@ -1,4 +1,6 @@
-<form [formGroup]="form">
+<mat-card [formGroup]="form" class="form">
+  <sx-nota-header [nota]="bonificacion"></sx-nota-header>
+  <mat-divider></mat-divider>
   <div layout class="form-panel">
     <mat-form-field>
       <mat-label>Tipo de cálculo</mat-label>
@@ -57,7 +59,10 @@
     ></sx-bonificacion-form-partidas>
   </div>
 
-  <div class="form-footer" layout>
+  <mat-card-actions>
+    <button mat-button (click)="cancel.emit()">
+      <mat-icon>keyboard_backspace</mat-icon> CANCELAR
+    </button>
     <button
       mat-button
       (click)="submit()"
@@ -66,13 +71,13 @@
     >
       <mat-icon>save</mat-icon> Salvar
     </button>
+
     <sx-cxc-selector
       [cliente]="bonificacion.cliente"
       (select)="addFacturas($event)"
     >
     </sx-cxc-selector>
-    <span flex></span>
-    <span>{{ bonificacion.total | currency }}</span>
-  </div>
-</form>
+    <ng-content></ng-content>
+  </mat-card-actions>
+</mat-card>
 `

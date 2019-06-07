@@ -1,16 +1,21 @@
-form {
-  padding: 5px;
-  margin: 0;
-  mat-form-field:nth-child(1n) {
-    margin: 0 10px 0 0px;
-  }
-  // border: .5px solid gray;
+mat-card {
+  width: calc(100% - 12px);
+  height: calc(100% - 12px);
+}
+.mat-card {
   display: flex;
   flex-direction: column;
-  .partidas-panel {
-    min-height: 400px;
-    flex-grow: 1;
-    overflow: auto;
+}
+
+.partidas-panel {
+  flex-grow: 1;
+  overflow: auto;
+}
+
+.form-panel {
+  padding: 10px;
+  mat-form-field:nth-child(1n) {
+    margin: 0 10px 0 0px;
   }
   .descuento {
     max-width: 100px;
@@ -19,5 +24,6 @@ form {
     max-width: 120px;
   }
 }
+
 
 

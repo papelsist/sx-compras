@@ -44,6 +44,8 @@ export class BonificacionFormComponent implements OnInit, OnDestroy, OnChanges {
 
   @Output() save = new EventEmitter();
 
+  @Output() cancel = new EventEmitter();
+
   destroy$ = new Subject<boolean>();
 
   constructor(
@@ -80,9 +82,8 @@ export class BonificacionFormComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private setBonificacion() {
-    console.log('Setting bonificacion......');
     this.cleanPartidas();
-    this.form.patchValue(this.bonificacion, { emitEvent: false });
+    this.form.patchValue(this.bonificacion);
     this.bonificacion.partidas.forEach(det => {
       this.partidas.push(new FormControl(det));
     });

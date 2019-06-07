@@ -1,11 +1,23 @@
-<mat-card *ngIf="bonificacion$ | async as bonificacion">
-  <sx-nota-header [nota]="bonificacion"></sx-nota-header>
-  <mat-divider></mat-divider>
-  <sx-bonificacion-form
-    [bonificacion]="bonificacion"
-    (save)="onSave($event)"
-    #form
-  ></sx-bonificacion-form>
-  <mat-card-content>
-  </mat-card-content>
-</mat-card>
+<div *ngIf="bonificacion$ | async as bonificacion" class="wrapper">
+  <ng-template
+    tdLoading
+    [tdLoadingUntil]="!(loading$ | async)"
+    tdLoadingStrategy="overlay"
+  >
+    <sx-bonificacion-form
+      [bonificacion]="bonificacion"
+      (save)="onSave($event)"
+      #form
+    >
+      <ng-container *ngIf="!bonificacion.cfdi">
+        <button mat-button (click)="generarCfdi(bonificacion)">
+          <mat-icon>settings_input_antenna</mat-icon> GENERAR CFDI
+        </button>
+      </ng-container>
+      <ng-container *ngIf="bonificacion.cfdi">
+        <button mat-button><mat-icon>print</mat-icon> IMPRIMIR</button>
+        <button mat-button><mat-icon>email</mat-icon> E-MAIL</button>
+      </ng-container>
+    </sx-bonificacion-form>
+  </ng-template>
+</div>

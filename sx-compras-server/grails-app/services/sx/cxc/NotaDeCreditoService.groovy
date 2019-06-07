@@ -2,12 +2,24 @@ package sx.cxc
 
 import grails.gorm.services.Service
 import groovy.util.logging.Slf4j
+import lx.cfdi.v33.Comprobante
+import org.springframework.beans.factory.annotation.Autowired
+import sx.cfdi.Cfdi
+import sx.cfdi.CfdiService
+import sx.cfdi.v33.NotaDeCreditoBuilder
 import sx.core.FolioLog
+import sx.core.LogUser
 import sx.utils.MonedaUtils
 
 @Service(NotaDeCredito)
 @Slf4j
-abstract class NotaDeCreditoService implements FolioLog{
+abstract class NotaDeCreditoService implements FolioLog, LogUser {
+
+    @Autowired
+    CfdiService cfdiService
+
+    @Autowired
+    NotaDeCreditoBuilder notaDeCreditoBuilder
 
     protected abstract NotaDeCredito save(NotaDeCredito nota)
 
@@ -57,6 +69,16 @@ abstract class NotaDeCreditoService implements FolioLog{
         }
         cobro.importe = nota.total
         cobro.updateUser = nota.updateUser
+    }
+
+    NotaDeCredito generarCfdi(NotaDeCredito nota) {
+        log.info('Builder: {}', notaDeCreditoBuilder)
+        Comprobante comprobante = notaDeCreditoBuilder.build(nota)
+        Cfdi cfdi = cfdiService.generarCfdi(comprobante, 'E', 'NOTA_CREDITO')
+        logEntity(cfdi)
+        nota.cfdi = cfdi
+        logEntity(nota)
+        return save(nota)
     }
 }
 

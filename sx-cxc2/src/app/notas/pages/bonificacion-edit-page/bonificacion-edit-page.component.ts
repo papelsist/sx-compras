@@ -14,10 +14,12 @@ import { Bonificacion, NotaDeCredito } from 'app/cobranza/models';
 })
 export class BonificacionEditPageComponent implements OnInit {
   bonificacion$: Observable<Bonificacion>;
+  loading$: Observable<boolean>;
 
   constructor(private store: Store<fromStore.State>) {}
 
   ngOnInit() {
+    this.loading$ = this.store.pipe(select(fromStore.getBonificacionLoading));
     this.bonificacion$ = this.store.pipe(
       select(fromStore.getSelectedBonificacion)
     );
@@ -25,5 +27,11 @@ export class BonificacionEditPageComponent implements OnInit {
 
   onSave(event: { id: string; changes: Partial<NotaDeCredito> }) {
     this.store.dispatch(new fromStore.UpdateBonificacion({ update: event }));
+  }
+
+  generarCfdi(bonificacion: Bonificacion) {
+    this.store.dispatch(
+      new fromStore.GenerarBonificacionCfdi({ notaId: bonificacion.id })
+    );
   }
 }

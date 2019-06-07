@@ -94,8 +94,8 @@ class PagoDeGastosTask implements  AsientoBuilder, EgresoTask {
             BigDecimal importe = MonedaUtils.calcularImporteDelTotal(it.apagar * r.tipoDeCambio)
             BigDecimal impuesto = it.apagar - importe
             log.info('IVA del CFDI:{}  Calculado: {}', ivaCfdi, impuesto)
-            poliza.addToPartidas(mapRow('118-0002-0000-0000', desc, row, impuesto))
-            poliza.addToPartidas(mapRow('119-0002-0000-0000', desc, row, 0.0, impuesto))
+            poliza.addToPartidas(mapRow('118-0002-0000-0000', desc, row, ivaCfdi))
+            poliza.addToPartidas(mapRow('119-0002-0000-0000', desc, row, 0.0, ivaCfdi))
         }
 
     }

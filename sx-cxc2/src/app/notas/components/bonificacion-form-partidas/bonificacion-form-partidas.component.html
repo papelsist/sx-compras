@@ -66,7 +66,7 @@
 
     <ng-container matColumnDef="base">
       <th mat-header-cell *matHeaderCellDef>Importe</th>
-      <td mat-cell *matCellDef="let row" >
+      <td mat-cell *matCellDef="let row">
         <span class="tc-blue-800">{{ row.base | currency }}</span>
       </td>
       <td mat-footer-cell *matFooterCellDef>
@@ -75,7 +75,7 @@
     </ng-container>
 
     <ng-container matColumnDef="impuesto">
-      <th mat-header-cell *matHeaderCellDef >Impuesto</th>
+      <th mat-header-cell *matHeaderCellDef>Impuesto</th>
       <td mat-cell *matCellDef="let row">
         <span class="tc-blue-800">{{ row.impuesto | currency }}</span>
       </td>
@@ -85,8 +85,8 @@
     </ng-container>
 
     <ng-container matColumnDef="importe">
-      <th mat-header-cell *matHeaderCellDef >Total</th>
-      <td mat-cell *matCellDef="let row" >
+      <th mat-header-cell *matHeaderCellDef>Total</th>
+      <td mat-cell *matCellDef="let row">
         <span class="tc-blue-800">{{ row.importe | currency }}</span>
       </td>
       <td mat-footer-cell *matFooterCellDef>
@@ -96,11 +96,13 @@
 
     <ng-container matColumnDef="operaciones">
       <th mat-header-cell *matHeaderCellDef>...</th>
-      <td mat-cell *matCellDef="let row, let i = index">
+      <td mat-cell *matCellDef="let row; let i = index">
         <mat-icon [routerLink]="['edit/', row.id]">
           edit
         </mat-icon>
-        <mat-icon color="warn" (click)="doDelete($event, i, row)">delete</mat-icon>
+        <mat-icon color="warn" (click)="doDelete($event, i, row)"
+          >delete</mat-icon
+        >
       </td>
       <td mat-footer-cell *matFooterCellDef></td>
     </ng-container>

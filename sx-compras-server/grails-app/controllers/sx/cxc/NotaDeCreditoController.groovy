@@ -84,6 +84,16 @@ class NotaDeCreditoController extends RestfulController<NotaDeCredito> implement
     }
 
     @CompileDynamic
+    def generarCfdi(NotaDeCredito nota) {
+        if(nota == null) {
+            notFound()
+            return
+        }
+        nota = notaDeCreditoService.generarCfdi(nota)
+        respond nota, view: 'show'
+    }
+
+    @CompileDynamic
     def handleException(Exception e) {
         String message = ExceptionUtils.getRootCauseMessage(e)
         log.error(message, ExceptionUtils.getRootCause(e))

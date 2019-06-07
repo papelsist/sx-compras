@@ -76,4 +76,13 @@ export class NotaDeCreditoService {
     const url = this.apiUrl + '/buscarFacturasPendientes';
     return this.http.get<any>(url);
   }
+
+  gemerarCfdi(
+    notaId: string
+  ): Observable<NotaDeCredito | Bonificacion | Devolucion> {
+    const url = `${this.apiUrl}/generarCfdi/${notaId}`;
+    return this.http
+      .post<NotaDeCredito>(url, {})
+      .pipe(catchError(error => throwError(error)));
+  }
 }

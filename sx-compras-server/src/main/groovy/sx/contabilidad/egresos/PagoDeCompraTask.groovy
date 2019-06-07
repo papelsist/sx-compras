@@ -86,7 +86,7 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
             Map row = [
                     asiento: "PAGO_${egreso.tipo}",
                     referencia: r.proveedor.nombre,
-                    referencia2: egreso.cuenta.descripcion,
+                    referencia2: r.proveedor.nombre,
                     origen: egreso.id,
                     documento: cxp.folio,
                     documentoTipo: 'CXP',
@@ -111,27 +111,45 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
 
             BigDecimal totalFactura = cxp.total
             BigDecimal apagar = cxp.importePorPagar ?: 0.0
-            BigDecimal dif = totalFactura - apagar
+            BigDecimal dif = totalFactura - apagar // Diferencia para saber si existe DESCUENTO NORMAL
+            log.info('Fac {} Diferencia entre factura y requisicion: {}', cxp.folio, dif)
+
+
 
             // Impuesto trasladado
             BigDecimal impuestoTrasladado = cxp.impuestoTrasladado - (cxp.impuestoRetenido?:0.0)
             BigDecimal impuestoTrasladadoPara118 = MonedaUtils.round(impuestoTrasladado * egreso.tipoDeCambio)
             BigDecimal impuestoTrasladadoPara119 = MonedaUtils.round(impuestoTrasladado * cxp.tipoDeCambio)
 
-            if( dif.abs() > (3.00 * egreso.tipoDeCambio)) {
-                log.info('Factura con algun tipo de descuento. El impuesto trasladado es calculado')
+            if( dif.abs() > (3.00 * egreso.tipoDeCambio) ) {
+                log.info('Factura con descuento NORMAL')
                 BigDecimal baseConIva = it.total + (cxp.impuestoRetenido?:0.0)
                 BigDecimal base = MonedaUtils.calcularImporteDelTotal(baseConIva)
                 BigDecimal impuesto  = MonedaUtils.calcularImpuesto(base)
                 impuestoTrasladado = impuesto - cxp.impuestoRetenido?:0.0
                 impuestoTrasladado = MonedaUtils.round(impuestoTrasladado * egreso.tipoDeCambio)
+
+                impuestoTrasladadoPara118 = MonedaUtils.round(impuestoTrasladado * egreso.tipoDeCambio)
+                impuestoTrasladadoPara119 = MonedaUtils.round(impuestoTrasladado * cxp.tipoDeCambio)
+
+            } else if (r.descuentof > 0.0) {
+
+                log.info('Factura con descuento FINANCIERO')
+                BigDecimal baseConIva = it.apagar + (cxp.impuestoRetenido?:0.0)
+                BigDecimal base = MonedaUtils.calcularImporteDelTotal(baseConIva)
+                BigDecimal impuesto  = MonedaUtils.calcularImpuesto(base)
+                impuestoTrasladado = impuesto - cxp.impuestoRetenido?:0.0
+                impuestoTrasladado = MonedaUtils.round(impuestoTrasladado * egreso.tipoDeCambio)
+
                 impuestoTrasladadoPara118 = MonedaUtils.round(impuestoTrasladado * egreso.tipoDeCambio)
                 impuestoTrasladadoPara119 = MonedaUtils.round(impuestoTrasladado * cxp.tipoDeCambio)
 
             }
+
             desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} F:${cxp.serie?:''} ${cxp.folio}" +
                     " (${cxp.fecha.format('dd/MM/yyyy')}) ${egreso.sucursal?: 'OFICINAS'} " +
                     " ${cxp.tipoDeCambio > 1.0 ? 'T.C:' + egreso.tipoDeCambio : ''}"
+
             poliza.addToPartidas(mapRow('118-0001-0000-0000', desc, row, impuestoTrasladadoPara118))
 
             desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} F:${cxp.serie?:''} ${cxp.folio}" +
@@ -144,11 +162,7 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
 
     }
 
-    private String getDescripcion() {
-        String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} F:${cxp.serie?:''} ${cxp.folio}" +
-                " (${cxp.fecha.format('dd/MM/yyyy')}) ${egreso.sucursal?: 'OFICINAS'} " +
-                " ${cxp.tipoDeCambio > 1.0 ? 'T.C:' + tipoDeCambio: ''}"
-    }
+
 
     void abonoBanco(Poliza poliza, Requisicion r) {
         MovimientoDeCuenta egreso = r.egreso
@@ -159,25 +173,26 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
         Map row = [
                 asiento: "PAGO_${egreso.tipo}",
                 referencia: r.nombre,
-                referencia2: egreso.cuenta.descripcion,
+                referencia2: r.nombre,
                 origen: egreso.id,
                 documento: egreso.referencia,
                 documentoTipo: 'CXP',
                 documentoFecha: egreso.fecha,
                 sucursal: egreso.sucursal?: 'OFICINAS',
                 ctaDestino: r.proveedor.cuentaBancaria,
-                bancoDestino: r.proveedor.banco
+                bancoDestino: r.proveedor.banco,
         ]
 
-        buildComplementoDePago(row, egreso)
-        // String desc = "Folio: ${egreso.referencia} (${egreso.fecha.format('dd/MM/yyyy')}) "
         String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} ${egreso.afavor} (${egreso.fecha.format('dd/MM/yyyy')})"
 
         if(r.moneda != 'MXN') {
             desc = desc + " TC: ${r.egreso.tipoDeCambio}"
         }
         BigDecimal importe = MonedaUtils.round(egreso.importe.abs() * egreso.tipoDeCambio)
-        poliza.addToPartidas(mapRow(ctaBanco, desc, row, 0.0, importe))
+        buildComplementoDePago(row, egreso)
+
+        PolizaDet det = mapRow(ctaBanco, desc, row, 0.0, importe)
+        poliza.addToPartidas(det)
     }
 
     @CompileDynamic
@@ -186,7 +201,7 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
         Map row = [
                 asiento: "PAGO_${egreso.tipo}",
                 referencia: r.nombre,
-                referencia2: egreso.cuenta.descripcion,
+                referencia2: r.nombre,
                 origen: egreso.id,
                 documento: egreso.referencia,
                 documentoTipo: 'CXP',
@@ -283,7 +298,7 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
 
             } else {
                 PolizaDet pdet = new PolizaDet()
-                pdet.cuenta = buscarCuenta('703-0003-0000-0000')
+                pdet.cuenta = buscarCuenta('703-0001-0000-0000')
                 pdet.concepto = pdet.cuenta.descripcion
                 pdet.sucursal = det.sucursal
                 pdet.origen = det.origen
@@ -336,12 +351,16 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
                 sucursal: row.sucursal,
                 debe: debe.abs() ,
                 haber: haber.abs(),
+                moneda: row.moneda,
+                tipCamb: row.tipCamb
         )
         // Datos del complemento
         if(row.uuid)
             asignarComprobanteNacional(det, row)
-        if(row.metodoDePago)
+        if(row.metodoDePago){
             asignarComplementoDePago(det, row)
+        }
+
         return det
     }
 
@@ -375,6 +394,8 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
                     pdet.documentoTipo = det.documentoTipo
                     pdet.documentoFecha = det.documentoFecha
                     pdet.documento = det.documento
+                    pdet.moneda = 'MXN'
+                    pdet.tipCamb = 1.0
                     p.addToPartidas(pdet)
 
                 } else {
@@ -392,6 +413,8 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
                     pdet.documentoTipo = det.documentoTipo
                     pdet.documentoFecha = det.documentoFecha
                     pdet.documento = det.documento
+                    pdet.moneda = 'MXN'
+                    pdet.tipCamb = 1.0
                     p.addToPartidas(pdet)
                 }
             }
@@ -402,16 +425,16 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
     def registrarVariacionCambiaria(Poliza p) {
 
         PolizaDet banco = p.partidas.find {it.cuenta.clave.startsWith('102')}
+
         if(banco.moneda == null || banco.moneda == 'MXN') {
             return
         }
-            log.info('Det: {}', banco.moneda)
         List<PolizaDet> procs = p.partidas.findAll {it.cuenta.clave.startsWith('201')}
         BigDecimal debe = procs.sum 0.0, {r -> r.debe}
         BigDecimal haber = banco.haber
 
         BigDecimal dif = debe - haber
-        log.info('DEBE: {} HABER: {} DIF: {}', debe, haber, dif)
+
         if(dif.abs() > 1.0 ){
 
             def det = banco
@@ -431,6 +454,8 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
                 pdet.documentoTipo = det.documentoTipo
                 pdet.documentoFecha = det.documentoFecha
                 pdet.documento = det.documento
+                pdet.moneda = 'MXN'
+                pdet.tipCamb = 1.0
                 p.addToPartidas(pdet)
 
             } else {
@@ -448,6 +473,8 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
                 pdet.documentoTipo = det.documentoTipo
                 pdet.documentoFecha = det.documentoFecha
                 pdet.documento = det.documento
+                pdet.moneda = 'MXN'
+                pdet.tipCamb = 1.0
                 p.addToPartidas(pdet)
             }
         }
