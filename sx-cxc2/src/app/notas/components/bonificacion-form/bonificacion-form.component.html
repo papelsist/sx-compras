@@ -1,5 +1,5 @@
 <form [formGroup]="form">
-  <div layout>
+  <div layout class="form-panel">
     <mat-form-field>
       <mat-label>Tipo de cálculo</mat-label>
       <mat-select formControlName="tipoDeCalculo">
@@ -11,7 +11,8 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
-    <mat-form-field>
+
+    <mat-form-field class="descuento">
       <mat-label>Base de cálculo</mat-label>
       <mat-select formControlName="baseDelCalculo">
         <mat-option *ngFor="let tipo of ['SALDO', 'TOTAL']" [value]="tipo">
@@ -20,7 +21,7 @@
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field>
+    <mat-form-field class="descuento">
       <input
         matInput
         placeholder="Descuento"
@@ -28,8 +29,10 @@
         formControlName="descuento"
         type="number"
       />
+      <mat-error>Descuento invalido</mat-error>
     </mat-form-field>
-    <mat-form-field>
+
+    <mat-form-field class="importe">
       <input
         matInput
         placeholder="Importe"
@@ -38,15 +41,38 @@
         type="number"
       />
     </mat-form-field>
+
     <sx-upper-case-field
       formControlName="comentario"
       placeholder="Comentario"
       flex
     ></sx-upper-case-field>
   </div>
-  <sx-bonificacion-form-partidas
-    [parent]="form"
-    [partidas]="partidas.value"
-  ></sx-bonificacion-form-partidas>
+
+  <div class="partidas-panel">
+    <sx-bonificacion-form-partidas
+      [parent]="form"
+      [partidas]="partidas.value"
+      (delete)="onDelete($event)"
+    ></sx-bonificacion-form-partidas>
+  </div>
+
+  <div class="form-footer" layout>
+    <button
+      mat-button
+      (click)="submit()"
+      [disabled]="form.invalid || form.pristine"
+      color="accent"
+    >
+      <mat-icon>save</mat-icon> Salvar
+    </button>
+    <sx-cxc-selector
+      [cliente]="bonificacion.cliente"
+      (select)="addFacturas($event)"
+    >
+    </sx-cxc-selector>
+    <span flex></span>
+    <span>{{ bonificacion.total | currency }}</span>
+  </div>
 </form>
 `

@@ -14,5 +14,4 @@ json g.render(notaDeCredito, [excludes:['moneda'], resolveTemplate: false]) {
         id notaDeCredito.cliente.id
         nombre notaDeCredito.cliente.nombre
     }
-
 }

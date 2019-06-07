@@ -24,7 +24,11 @@ class NotaDeCreditoDet {
 
     BigDecimal totalDocumento = 0.0
 
+    BigDecimal pagosDocumento = 0.0
+
     BigDecimal saldoDocumento = 0.0
+
+    String uuid
 
     String sucursal
 
@@ -32,14 +36,15 @@ class NotaDeCreditoDet {
 
     static constraints = {
         comentario nullable:true
-    }
-
-    static mapping={
-        id generator:'uuid'
-        fechaDocumento type: 'date'
+        uuid nullable: true, maxSize: 30
         tipoDeDocumento maxSize:10
         sucursal maxSize: 20
     }
 
-    static belongsTo =[nota:NotaDeCredito]
+    static mapping = {
+        id generator:'uuid'
+        fechaDocumento type: 'date'
+    }
+
+    static belongsTo = [nota:NotaDeCredito]
 }

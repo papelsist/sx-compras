@@ -5,7 +5,7 @@ import * as fromStore from '../../store';
 
 import { Observable } from 'rxjs';
 
-import { Bonificacion } from 'app/cobranza/models';
+import { Bonificacion, NotaDeCredito } from 'app/cobranza/models';
 
 @Component({
   selector: 'sx-bonificacion-edit-page',
@@ -21,5 +21,9 @@ export class BonificacionEditPageComponent implements OnInit {
     this.bonificacion$ = this.store.pipe(
       select(fromStore.getSelectedBonificacion)
     );
+  }
+
+  onSave(event: { id: string; changes: Partial<NotaDeCredito> }) {
+    this.store.dispatch(new fromStore.UpdateBonificacion({ update: event }));
   }
 }

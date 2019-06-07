@@ -39,8 +39,7 @@ export class NotasTableComponent implements OnInit, OnChanges {
     'disponible',
     'comentario',
     'updateUser',
-    'lastUpdated',
-    'operaciones'
+    'lastUpdated'
   ];
 
   @ViewChild(MatSort)

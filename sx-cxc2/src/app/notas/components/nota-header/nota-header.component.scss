@@ -1,15 +1,29 @@
 .header {
   // border: .3px solid green;
-  padding: 10px;
-  margin: 0 0 2px 0;
-  font-size: 18px;
+  padding: 0px;
+  margin: 10px;
+
+  .title {
+    font-size: 18px;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+    line-height: 30px;
+    font-weight: bold;
+  }
+
+  .sub-header {
+    margin: 0px 0px 0px 0px;
+    padding: 0px;
+    font-size: 14px;
+  }
 }
+
+
 label {
   margin: 0 10px 0 0;
 }
 .field {
   span {
-    padding: 0 10px 0 0;
+    padding: 0 0px 0 0;
   }
 }
 

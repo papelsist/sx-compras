@@ -1,47 +1,11 @@
 <mat-card *ngIf="bonificacion$ | async as bonificacion">
   <sx-nota-header [nota]="bonificacion"></sx-nota-header>
   <mat-divider></mat-divider>
+  <sx-bonificacion-form
+    [bonificacion]="bonificacion"
+    (save)="onSave($event)"
+    #form
+  ></sx-bonificacion-form>
   <mat-card-content>
-    <sx-bonificacion-form
-      [bonificacion]="bonificacion"
-      #form
-    ></sx-bonificacion-form>
   </mat-card-content>
-  <mat-card-actions>
-
-      <sx-cxc-selector
-        [cliente]="bonificacion.cliente"
-        (select)="form.addFacturas($event)"
-      >
-      </sx-cxc-selector>
-      <span flex></span>
-      <span>{{ bonificacion.total }}</span>
-    </div>
-  </mat-card-actions>
 </mat-card>
-
-<pre *ngIf="bonificacion$ | async as bonificacion">
-  <div layout="column">
-    <td-json-formatter
-      [data]="bonificacion"
-      key="Nota"
-      [levelsOpen]="0"
-    ></td-json-formatter>
-    <td-json-formatter
-      [data]="bonificacion.cobro"
-      key="Cobro"
-    ></td-json-formatter>
-    <td-json-formatter
-      [data]="bonificacion.cfdi"
-      key="CFDI"
-    ></td-json-formatter>
-    <td-json-formatter
-      [data]="bonificacion.partidas"
-      key="Partidas"
-    ></td-json-formatter>
-    <td-json-formatter
-      [data]="bonificacion.aplicaciones"
-      key="Aplicaciones"
-    ></td-json-formatter>
-  </div>
-</pre>

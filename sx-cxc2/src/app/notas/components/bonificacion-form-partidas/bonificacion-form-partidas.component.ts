@@ -40,6 +40,8 @@ export class BonificacionFormPartidasComponent implements OnInit, OnChanges {
     'facturaTotal',
     'facturaPagos',
     'facturaSaldo',
+    'base',
+    'impuesto',
     'importe',
     'operaciones'
   ];
@@ -72,9 +74,9 @@ export class BonificacionFormPartidasComponent implements OnInit, OnChanges {
     }
   }
 
-  doDelete(event: Event, row: NotaDeCreditoDet) {
+  doDelete(event: Event, index: number, row: Partial<NotaDeCreditoDet>) {
     event.stopPropagation();
-    this.delete.emit(row);
+    this.delete.emit({index, row});
   }
 
   doSelect(event: Event, row: NotaDeCreditoDet) {
@@ -82,7 +84,7 @@ export class BonificacionFormPartidasComponent implements OnInit, OnChanges {
     this.select.emit(row);
   }
 
-  get total() {
-    return _.sumBy(this.partidas, item => item.importe);
+  sumBy(property: string) {
+    return _.sumBy(this.partidas, property);
   }
 }

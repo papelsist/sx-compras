@@ -62,6 +62,12 @@ class NotaDeCreditoController extends RestfulController<NotaDeCredito> implement
     }
 
     @Override
+    protected NotaDeCredito updateResource(NotaDeCredito resource) {
+        logEntity(resource)
+        return notaDeCreditoService.updateNota(resource)
+    }
+
+    @Override
     protected void deleteResource(NotaDeCredito resource) {
         super.deleteResource(resource)
     }
