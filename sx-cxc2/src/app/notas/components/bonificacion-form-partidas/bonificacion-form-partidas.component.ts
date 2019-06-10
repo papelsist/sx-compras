@@ -36,6 +36,7 @@ export class BonificacionFormPartidasComponent implements OnInit, OnChanges {
     'renglon',
     'sucursal',
     'factura',
+    'uuid',
     'facturaFecha',
     'facturaTotal',
     'facturaPagos',
@@ -76,7 +77,7 @@ export class BonificacionFormPartidasComponent implements OnInit, OnChanges {
 
   doDelete(event: Event, index: number, row: Partial<NotaDeCreditoDet>) {
     event.stopPropagation();
-    this.delete.emit({index, row});
+    this.delete.emit({ index, row });
   }
 
   doSelect(event: Event, row: NotaDeCreditoDet) {

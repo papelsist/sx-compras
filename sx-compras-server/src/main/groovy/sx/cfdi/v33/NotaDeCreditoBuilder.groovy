@@ -294,8 +294,8 @@ class NotaDeCreditoBuilder {
         if (this.rmd) {
             relacionados.tipoRelacion = '03'
             Comprobante.CfdiRelacionados.CfdiRelacionado relacionado = factory.createComprobanteCfdiRelacionadosCfdiRelacionado()
-            assert rmd.venta.cuentaPorCobrar, 'RMD sin CxC timbrada'
             def cxc = rmd.venta.cuentaPorCobrar
+
             def uuid = cxc.uuid
             if(uuid == null) {
                 if (cxc.cfdi) {
@@ -312,7 +312,7 @@ class NotaDeCreditoBuilder {
 
                 Comprobante.CfdiRelacionados.CfdiRelacionado relacionado = factory.createComprobanteCfdiRelacionadosCfdiRelacionado()
                 def cxc = det.cuentaPorCobrar
-                def uuid = cxc.uuid
+                def uuid = det.uuid
                 if(uuid == null) {
                     throw new RuntimeException("No existe UUID de la Cuenta por cobrar ${cxc.getFolio()}")
                 }

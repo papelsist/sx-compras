@@ -77,6 +77,8 @@ export class BonificacionFormComponent implements OnInit, OnDestroy, OnChanges {
           this.partidas.push(new FormControl(det));
         });
         */
+      } else {
+        console.log('Editando: ', changes.bonificacion.currentValue);
       }
     }
   }

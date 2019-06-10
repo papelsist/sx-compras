@@ -36,7 +36,7 @@ class NotaDeCreditoDet {
 
     static constraints = {
         comentario nullable:true
-        uuid nullable: true, maxSize: 30
+        uuid nullable: true, maxSize: 100
         tipoDeDocumento maxSize:10
         sucursal maxSize: 20
     }

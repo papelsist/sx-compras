@@ -6,6 +6,7 @@ import lx.cfdi.v33.Comprobante
 import org.springframework.beans.factory.annotation.Autowired
 import sx.cfdi.Cfdi
 import sx.cfdi.CfdiService
+import sx.cfdi.CfdiTimbradoService
 import sx.cfdi.v33.NotaDeCreditoBuilder
 import sx.core.FolioLog
 import sx.core.LogUser
@@ -20,6 +21,9 @@ abstract class NotaDeCreditoService implements FolioLog, LogUser {
 
     @Autowired
     NotaDeCreditoBuilder notaDeCreditoBuilder
+
+    @Autowired
+    CfdiTimbradoService cfdiTimbradoService
 
     protected abstract NotaDeCredito save(NotaDeCredito nota)
 
@@ -38,22 +42,26 @@ abstract class NotaDeCreditoService implements FolioLog, LogUser {
         nota.impuesto = nota.partidas.sum 0.0, {it.impuesto}
         nota.total = nota.partidas.sum 0.0, {it.importe}
         actualizarCobro(nota)
-
         return save(nota)
     }
 
     private actualizarPartidas(NotaDeCredito nota) {
+
         nota.partidas.each { det ->
+
             det.base = MonedaUtils.calcularImporteDelTotal(det.importe)
             det.impuesto = MonedaUtils.calcularImpuesto(det.base)
-            det.importe = det.base + det.impuesto
+            det.importe = MonedaUtils.round(det.base + det.impuesto)
+            if(det.cuentaPorCobrar && det.cuentaPorCobrar.cfdi) {
+                det.uuid = det.cuentaPorCobrar.cfdi.uuid
+            }
         }
+
     }
 
     private actualizarCobro(NotaDeCredito nota) {
-        Cobro cobro = nota.cobro
-        if(nota.cobro) {
-            cobro = new Cobro()
+        if(nota.cobro == null) {
+            Cobro cobro = new Cobro()
             cobro.setCliente(nota.cliente)
             cobro.setFecha(nota.fecha)
             cobro.moneda = nota.moneda
@@ -66,20 +74,32 @@ abstract class NotaDeCreditoService implements FolioLog, LogUser {
             cobro.referencia = nota.folio.toString()
             cobro.formaDePago = nota.tipo
             cobro.createUser = nota.createUser
+            nota.cobro = cobro
         }
-        cobro.importe = nota.total
-        cobro.updateUser = nota.updateUser
+        nota.cobro.importe = nota.total
+        nota.cobro.updateUser = nota.updateUser
     }
 
     NotaDeCredito generarCfdi(NotaDeCredito nota) {
         log.info('Builder: {}', notaDeCreditoBuilder)
         Comprobante comprobante = notaDeCreditoBuilder.build(nota)
         Cfdi cfdi = cfdiService.generarCfdi(comprobante, 'E', 'NOTA_CREDITO')
-        logEntity(cfdi)
+        cfdi = cfdiTimbradoService.timbrar(cfdi)
         nota.cfdi = cfdi
         logEntity(nota)
-        return save(nota)
+        nota.save failOnError: true, flush: true
+        return nota
     }
+
+    NotaDeCredito timbrarCfdi(NotaDeCredito nota) {
+        Cfdi cfdi = nota.cfdi
+        if(!cfdi.uuid) {
+            cfdiTimbradoService.timbrar(cfdi)
+        }
+        return nota
+    }
+
+
 }
 
 

@@ -1,8 +1,10 @@
 package sx.cxc
 
 import grails.compiler.GrailsCompileStatic
+
 import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.RestfulController
+
 import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.exception.ExceptionUtils
@@ -10,6 +12,8 @@ import sx.core.LogUser
 import sx.core.Sucursal
 import sx.reports.ReportService
 import sx.utils.Periodo
+
+
 
 @Slf4j
 @GrailsCompileStatic
@@ -54,6 +58,7 @@ class NotaDeCreditoController extends RestfulController<NotaDeCredito> implement
         }
         return query.list(params)
     }
+
 
     @Override
     protected NotaDeCredito saveResource(NotaDeCredito resource) {

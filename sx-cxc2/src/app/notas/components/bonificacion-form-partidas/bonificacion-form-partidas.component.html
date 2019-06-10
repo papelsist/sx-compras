@@ -26,6 +26,16 @@
       <td mat-footer-cell *matFooterCellDef></td>
     </ng-container>
 
+    <ng-container matColumnDef="uuid">
+      <th mat-header-cell *matHeaderCellDef>UUID</th>
+      <td mat-cell *matCellDef="let row">
+        <mat-icon *ngIf="row.uuid" matTooltip="{{ row.uuid }}" color="accent"
+          >checked</mat-icon
+        >
+      </td>
+      <td mat-footer-cell *matFooterCellDef></td>
+    </ng-container>
+
     <ng-container matColumnDef="facturaFecha">
       <th mat-header-cell *matHeaderCellDef>Fecha Fac</th>
       <td mat-cell *matCellDef="let row">

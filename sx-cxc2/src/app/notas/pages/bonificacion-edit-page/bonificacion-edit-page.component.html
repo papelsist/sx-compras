@@ -9,11 +9,15 @@
       (save)="onSave($event)"
       #form
     >
-      <ng-container *ngIf="!bonificacion.cfdi">
-        <button mat-button (click)="generarCfdi(bonificacion)">
-          <mat-icon>settings_input_antenna</mat-icon> GENERAR CFDI
-        </button>
-      </ng-container>
+      <sx-nota-delete
+        [nota]="bonificacion"
+        (delete)="onDelete($event)"
+      ></sx-nota-delete>
+      <sx-nota-cfdi-create
+        [nota]="bonificacion"
+        (generate)="generarCfdi(bonificacion)"
+      ></sx-nota-cfdi-create>
+      <ng-container *ngIf="!bonificacion.cfdi"> </ng-container>
       <ng-container *ngIf="bonificacion.cfdi">
         <button mat-button><mat-icon>print</mat-icon> IMPRIMIR</button>
         <button mat-button><mat-icon>email</mat-icon> E-MAIL</button>

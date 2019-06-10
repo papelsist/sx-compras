@@ -28,6 +28,9 @@ export class BonificacionEditPageComponent implements OnInit {
   onSave(event: { id: string; changes: Partial<NotaDeCredito> }) {
     this.store.dispatch(new fromStore.UpdateBonificacion({ update: event }));
   }
+  onDelete(bonificacion: Bonificacion) {
+    this.store.dispatch(new fromStore.DeleteBonificacion({ bonificacion }));
+  }
 
   generarCfdi(bonificacion: Bonificacion) {
     this.store.dispatch(
