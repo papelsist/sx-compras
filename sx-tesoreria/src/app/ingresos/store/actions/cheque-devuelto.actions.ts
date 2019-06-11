@@ -17,7 +17,11 @@ export enum ChequeDevueltoActionTypes {
   DeleteChequeDevuelto = '[ChequeDevuelto Component] Delete ChequeDevuelto',
   DeleteChequeDevueltoSuccess = '[ChequeDevuelto API] Delete ChequeDevuelto Success',
 
-  ChequeDevueltosFail = '[ChequeDevuelto API] ChequeDevueltos fail'
+  ChequeDevueltosFail = '[ChequeDevuelto API] ChequeDevueltos fail',
+  UpserChequeDevuelto = '[Cheque DevueltoExists Guard] Upser ChequeDevuelto ',
+
+  GenerarNotaDeCargo = '[ChequeDevuelto Component] GenerarNotaDeCargoo',
+  GenerarNotaDeCargoSuccess = '[ChequeDevuelto API] GenerarNotaDeCargoo Success'
 }
 
 export class SetChequeDevueltosFilter implements Action {
@@ -67,6 +71,22 @@ export class ChequeDevueltosFail implements Action {
   constructor(public payload: { response: any }) {}
 }
 
+export class UpsertChequeDevuelto implements Action {
+  readonly type = ChequeDevueltoActionTypes.UpserChequeDevuelto;
+  constructor(public payload: { cheque: ChequeDevuelto }) {}
+}
+
+export class GenerarNotaDeCargo implements Action {
+  readonly type = ChequeDevueltoActionTypes.GenerarNotaDeCargo;
+
+  constructor(public payload: { cheque: ChequeDevuelto }) {}
+}
+
+export class GenerarNotaDeCargoSuccess implements Action {
+  readonly type = ChequeDevueltoActionTypes.GenerarNotaDeCargoSuccess;
+  constructor(public payload: { cheque: ChequeDevuelto }) {}
+}
+
 export type ChequeDevueltoActions =
   | SetChequeDevueltosFilter
   | SetChequeDevueltosSearchTerm
@@ -76,4 +96,7 @@ export type ChequeDevueltoActions =
   | CreateChequeDevueltoSuccess
   | DeleteChequeDevuelto
   | DeleteChequeDevueltoSuccess
-  | ChequeDevueltosFail;
+  | ChequeDevueltosFail
+  | UpsertChequeDevuelto
+  | GenerarNotaDeCargo
+  | GenerarNotaDeCargoSuccess;

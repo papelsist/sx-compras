@@ -49,7 +49,7 @@ class ChequeDevueltoService implements  LogUser, FolioLog{
         CuentaPorCobrar cxc = new CuentaPorCobrar()
         cxc.cliente = cobroCheque.cobro.cliente
         cxc.sucursal = cobroCheque.cobro.sucursal
-        cxc.formaDePago = cobroCheque.cobro.formaDePago
+        cxc.formaDePago = 'POR DEFINIR'
         cxc.documento = nextFolio('CHEQUE_DEVUELTO', cxc.tipo)
         cxc.comentario = 'Cargo por cheque devuelto'
         cxc.fecha = chequeDevuelto.fecha
@@ -115,7 +115,7 @@ class ChequeDevueltoService implements  LogUser, FolioLog{
         nc.cliente = che.cxc.cliente
         nc.sucursal = Sucursal.where{nombre == 'OFICINAS'}.find()
         nc.fecha = new Date()
-        nc.comentario = "CARGO POR CHEQUE DEVUELTO ${che.toString()} "
+        nc.comentario = "CARGO POR CHEQUE DEVUELTO "
         nc.importe = importe as BigDecimal
         nc.impuesto = impuesto
         nc.total = total
