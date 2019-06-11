@@ -8,7 +8,7 @@ import sx.contabilidad.*
 import sx.core.Proveedor
 import sx.cxp.CuentaPorPagar
 import sx.cxp.Requisicion
-
+import sx.cxp.RequisicionDet
 import sx.tesoreria.MovimientoDeCuenta
 import sx.utils.MonedaUtils
 
@@ -33,9 +33,12 @@ class PagoDeGastosTask implements  AsientoBuilder, EgresoTask {
 
         ajustarConcepto(poliza, r)
         cargoProveedor(poliza, r)
+
+        registrarRetenciones(poliza, r)
+
         abonoBanco(poliza, r)
         ajustarProveedorBanco(poliza)
-        registrarRetenciones(poliza, r)
+
         registrarDiferenciaCambiaria(poliza, r)
     }
 
@@ -49,7 +52,8 @@ class PagoDeGastosTask implements  AsientoBuilder, EgresoTask {
         CuentaOperativaProveedor co = buscarCuentaOperativa(r.proveedor)
         log.info('Cuenta Operativa: {}', co)
         MovimientoDeCuenta egreso = r.egreso
-        r.partidas.each {
+        List<RequisicionDet> partidas = r.partidas.sort {it.cxp.folio}
+        partidas.each {
             CuentaPorPagar cxp = it.cxp
             String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} F:${cxp.serie?:''} ${cxp.folio}" +
                     " (${cxp.fecha.format('dd/MM/yyyy')}) ${egreso.sucursal?: 'OFICINAS'} " +
@@ -87,19 +91,11 @@ class PagoDeGastosTask implements  AsientoBuilder, EgresoTask {
 
             poliza.addToPartidas(mapRow(cv, desc, row, total))
 
-            /*
-             def fechaTransito = egreso.cheque.fechaTransito?: egreso.cheque.fecha
 
-             if(egreso.cheque.fecha.format('dd/MM/yyyy') == fechaTransito.format('dd/MM/yyyy')){
-                 // IVA
-
-            }
-            */
-
-            BigDecimal ivaCfdi = cxp.impuestoTrasladado
-            BigDecimal importe = MonedaUtils.calcularImporteDelTotal(it.apagar * r.tipoDeCambio)
-            BigDecimal impuesto = it.apagar - importe
-            log.info('IVA del CFDI:{}  Calculado: {}', ivaCfdi, impuesto)
+            BigDecimal ivaCfdi = cxp.impuestoTrasladado - cxp.impuestoRetenidoIva
+            // BigDecimal importe = MonedaUtils.calcularImporteDelTotal(it.apagar * r.tipoDeCambio)
+            // BigDecimal impuesto = it.apagar - importe
+            // log.info('IVA del CFDI:{}  Calculado: {}', ivaCfdi, impuesto)
             poliza.addToPartidas(mapRow('118-0002-0000-0000', desc, row, ivaCfdi))
             poliza.addToPartidas(mapRow('119-0002-0000-0000', desc, row, 0.0, ivaCfdi))
         }
@@ -143,17 +139,27 @@ class PagoDeGastosTask implements  AsientoBuilder, EgresoTask {
                 sucursal: egreso.sucursal?: 'OFICINAS'
         ]
         buildComplementoDePago(row, egreso)
-        String desc = "Folio: ${egreso.referencia} (${egreso.fecha.format('dd/MM/yyyy')}) "
+        String desc2 = "Folio: ${egreso.referencia} (${egreso.fecha.format('dd/MM/yyyy')}) "
+
         r.partidas.each {
             if(it.cxp.impuestoRetenido > 0) {
+
                 CuentaPorPagar cxp = it.cxp
-                if(cxp.impuestoRetenido > 0.0) {
-                    BigDecimal imp = cxp.impuestoRetenido
+                String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} F:${cxp.serie?:''} ${cxp.folio}" +
+                        " (${poliza.fecha.format('dd/MM/yyyy')}) ${egreso.sucursal?: 'OFICINAS'} " +
+                        " ${cxp.tipoDeCambio > 1.0 ? 'T.C:' + cxp.tipoDeCambio: ''}"
+                if(cxp.impuestoRetenidoIva > 0.0) {
+                    BigDecimal imp = cxp.impuestoRetenidoIva
                     poliza.addToPartidas(mapRow('118-0003-0000-0000', desc, row, imp))
                     poliza.addToPartidas(mapRow('119-0003-0000-0000', desc, row, 0.0, imp))
 
                     poliza.addToPartidas(mapRow('216-0001-0000-0000', desc, row, imp))
                     poliza.addToPartidas(mapRow('213-0011-0000-0000', desc, row, 0.0, imp))
+                }
+                if(cxp.impuestoRetenidoIsr > 0.0) {
+                    BigDecimal imp = cxp.impuestoRetenidoIsr
+                    poliza.addToPartidas(mapRow('216-0002-0000-0000', desc, row, imp))
+                    poliza.addToPartidas(mapRow('213-0010-0000-0000', desc, row, 0.0, imp))
                 }
 
             }
