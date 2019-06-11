@@ -92,7 +92,7 @@ class ChequeDevueltoController extends RestfulController<ChequeDevuelto> {
             return
         }
         chequeDevuelto = chequeDevueltoService.generarNotaDeCargo(chequeDevuelto)
-        responde chequeDevuelto, view: 'show'
+        respond chequeDevuelto, view: 'show'
 
     }
 
