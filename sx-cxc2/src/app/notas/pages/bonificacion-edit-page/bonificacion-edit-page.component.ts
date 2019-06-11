@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { Store, select } from '@ngrx/store';
+import * as fromRoot from 'app/store';
 import * as fromStore from '../../store';
 
 import { Observable } from 'rxjs';
@@ -32,9 +33,23 @@ export class BonificacionEditPageComponent implements OnInit {
     this.store.dispatch(new fromStore.DeleteBonificacion({ bonificacion }));
   }
 
+  onAplicar(bonificacion: Bonificacion) {
+    this.store.dispatch(
+      new fromStore.AplicarBonificacion({ notaId: bonificacion.id })
+    );
+  }
+
   generarCfdi(bonificacion: Bonificacion) {
     this.store.dispatch(
       new fromStore.GenerarBonificacionCfdi({ notaId: bonificacion.id })
     );
+  }
+
+  onCancel() {
+    this.store.dispatch(new fromRoot.Back());
+  }
+
+  cancelarBonificacion(bonificacion: Bonificacion) {
+    console.log('Cancelar bonificacion: ', bonificacion);
   }
 }

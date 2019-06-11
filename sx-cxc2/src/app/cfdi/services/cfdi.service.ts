@@ -2,9 +2,10 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 
 import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, finalize } from 'rxjs/operators';
 
 import { ConfigService } from '../../utils/config.service';
+import { TdLoadingService } from '@covalent/core';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,11 @@ import { ConfigService } from '../../utils/config.service';
 export class CfdiService {
   private apiUrl: string;
 
-  constructor(private http: HttpClient, private config: ConfigService) {
+  constructor(
+    private http: HttpClient,
+    private config: ConfigService,
+    private loadingService: TdLoadingService
+  ) {
     this.apiUrl = config.buildApiUrl('cfdi');
   }
 
@@ -38,5 +43,19 @@ export class CfdiService {
       },
       error => console.error('Error descrgando XML de CFDI: ', cfdiId)
     );
+  }
+
+  email(cfdiId: string, target: string): Observable<any> {
+    const url = `${this.apiUrl}/email/${cfdiId}`;
+    const params = new HttpParams().set('target', target);
+    this.loadingService.register();
+    return this.http
+      .get(url, {
+        params
+      })
+      .pipe(
+        finalize(() => this.loadingService.resolve()),
+        catchError((error: any) => throwError(error))
+      );
   }
 }

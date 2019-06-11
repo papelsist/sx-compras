@@ -7,21 +7,31 @@
     <sx-bonificacion-form
       [bonificacion]="bonificacion"
       (save)="onSave($event)"
+      (cancel)="onCancel()"
       #form
     >
       <sx-nota-delete
         [nota]="bonificacion"
         (delete)="onDelete($event)"
       ></sx-nota-delete>
+      <sx-nota-cancel
+        [nota]="bonificacion"
+        (cancel)="cancelarBonificacion(bonificacion)"
+      ></sx-nota-cancel>
       <sx-nota-cfdi-create
         [nota]="bonificacion"
         (generate)="generarCfdi(bonificacion)"
       ></sx-nota-cfdi-create>
-      <ng-container *ngIf="!bonificacion.cfdi"> </ng-container>
-      <ng-container *ngIf="bonificacion.cfdi">
-        <button mat-button><mat-icon>print</mat-icon> IMPRIMIR</button>
-        <button mat-button><mat-icon>email</mat-icon> E-MAIL</button>
-      </ng-container>
+      <sx-aplicar-nota
+        (aplicar)="onAplicar(bonificacion)"
+        [nota]="bonificacion"
+      ></sx-aplicar-nota>
+      <sx-print-cfdi [cfdi]="bonificacion.cfdi"></sx-print-cfdi>
+      <sx-cfdi-xml [cfdi]="bonificacion.cfdi"></sx-cfdi-xml>
+      <sx-email-cfdi
+        [cfdi]="bonificacion.cfdi"
+        [target]="bonificacion.cliente.email"
+      ></sx-email-cfdi>
     </sx-bonificacion-form>
   </ng-template>
 </div>

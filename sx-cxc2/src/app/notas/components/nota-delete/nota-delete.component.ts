@@ -7,7 +7,7 @@ import { TdDialogService } from '@covalent/core';
 @Component({
   selector: 'sx-nota-delete',
   template: `
-    <button mat-button [disabled]="nota.cfdi" (click)="onDelete()" color="warn">
+    <button mat-button (click)="onDelete()" color="warn" *ngIf="!nota.cfdi">
       <mat-icon>delete</mat-icon> {{ label }}
     </button>
   `

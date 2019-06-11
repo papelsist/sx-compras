@@ -19,10 +19,26 @@
       <span>{{ nota.moneda }}</span>
       <span class="pad-left">(T.C: {{ nota.tc }})</span>
     </div>
+
+    <div class="disponible pad-left">
+      <label>Disponible:</label>
+      <span class="pad-left tc-indigo-700">{{
+        nota?.cobro?.saldo | currency
+      }}</span>
+    </div>
   </div>
-  <div layout class="sub-header">
-    <span>Usuario: {{ nota.updateUser }}</span>
+  <div layout class="cfdi-panel" *ngIf="nota.cfdi">
     <span flex></span>
-    <span>Modificado: {{ nota.lastUpdated | date: 'dd/MM/yyyy HH:mm' }}</span>
+    <span>CFDI: </span>
+    <span class="uuid">{{ nota?.cfdi?.uuid }}</span>
+  </div>
+  <div layout class="user-log">
+    <span flex></span>
+    <span> Creado por: {{ nota.createUser }} </span>
+    <span class="pad-left"
+      >U. Modificación: {{ nota.lastUpdated | date: 'dd/MM/yyyy HH:mm' }} ({{
+        nota.updateUser
+      }})
+    </span>
   </div>
 </div>

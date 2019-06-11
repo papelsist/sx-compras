@@ -42,7 +42,9 @@ class PagoDeNominaTask implements  AsientoBuilder, EgresoTask {
     void cargoNominasPorPagar(Poliza poliza, PagoDeNomina nomina) {
         log.info('Cargo a nominas por pagar {}', nomina.egreso)
         MovimientoDeCuenta egreso = nomina.egreso
-        String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia}  ${egreso.afavor} "
+
+        String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} ${egreso.afavor} (${egreso.fecha.format('dd/MM/yyyy')})"
+
         Map row = [
                 asiento: "${egreso.tipo}",
                 referencia: nomina.afavor,
@@ -60,7 +62,7 @@ class PagoDeNominaTask implements  AsientoBuilder, EgresoTask {
         if(nomina.pensionAlimenticia) {
             // poliza.concepto = poliza.concepto + " PA"
             MovimientoDeCuenta mov = nomina.egreso
-            poliza.concepto = "CH ${mov.referencia} ${mov.afavor} (${mov.fecha.format('dd/MM/yyyy')})" +
+            poliza.concepto = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${mov.referencia} ${mov.afavor} (${mov.fecha.format('dd/MM/yyyy')})" +
                     " (${mov.tipo} ${mov.tipo != mov.concepto ? mov.concepto : ''}) PA"
             cv = "205-D007-${nomina.pensionAlimenticiaId.toString().padLeft(4, '0')}-0000"
         }
@@ -83,7 +85,8 @@ class PagoDeNominaTask implements  AsientoBuilder, EgresoTask {
         buildComplementoDePago(row, egreso)
         row.rfc = Empresa.first().rfc
 
-        String desc = row.descripcion
+        String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} ${egreso.afavor} (${egreso.fecha.format('dd/MM/yyyy')})"
+
         poliza.addToPartidas(toPolizaDet(
                 buildCuentaDeBanco(egreso),
                 desc,

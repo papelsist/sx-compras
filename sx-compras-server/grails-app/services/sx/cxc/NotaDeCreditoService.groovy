@@ -25,6 +25,9 @@ abstract class NotaDeCreditoService implements FolioLog, LogUser {
     @Autowired
     CfdiTimbradoService cfdiTimbradoService
 
+    @Autowired
+    CobroService cobroService
+
     protected abstract NotaDeCredito save(NotaDeCredito nota)
 
     abstract void delete(Serializable id)
@@ -96,6 +99,51 @@ abstract class NotaDeCreditoService implements FolioLog, LogUser {
         if(!cfdi.uuid) {
             cfdiTimbradoService.timbrar(cfdi)
         }
+        return nota
+    }
+
+    NotaDeCredito aplicar(NotaDeCredito nota) {
+        registrarAplicaciones(nota)
+        logEntity(nota)
+        nota.save flush: true
+        return nota
+    }
+
+
+
+
+    private Cobro registrarAplicaciones(NotaDeCredito nota){
+        Cobro cobro = nota.cobro
+        if(cobro.cfdi) {
+            throw new RuntimeException(
+                    "Cobro con recibo de pago (CFDI)  ${cobro.cfdi.uuid} " +
+                            "NO SE PUEDENDE MODIFICAR ")
+        }
+        def fecha = new Date()
+        def disponible = cobro.disponible
+        if (disponible <= 0)
+            return cobro
+        nota.partidas.each { det ->
+            CuentaPorCobrar cxc = det.cuentaPorCobrar
+            AplicacionDeCobro aplicacion = new AplicacionDeCobro()
+            aplicacion.importe = det.importe
+            aplicacion.formaDePago = cobro.formaDePago
+            aplicacion.cuentaPorCobrar = cxc
+            aplicacion.fecha = fecha
+
+            cobro.addToAplicaciones(aplicacion)
+            if(cobro.primeraAplicacion == null)
+                cobro.primeraAplicacion = fecha
+        }
+        logEntity(cobro)
+        return cobro
+    }
+
+    NotaDeCredito cancelarAplicacion(NotaDeCredito nota) {
+        Cobro cobro = nota.cobro
+        cobroService.cancelarAplicaciones(cobro)
+        logEntity(nota)
+        nota.save flush: true
         return nota
     }
 

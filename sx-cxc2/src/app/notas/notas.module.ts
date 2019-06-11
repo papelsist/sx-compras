@@ -11,6 +11,7 @@ import { components, entryComponents } from './components';
 import { pages } from './pages';
 import { NotasRoutingModule } from './notas.routing.module';
 import { CobranzaModule } from 'app/cobranza/cobranza.module';
+import { CfdiModule } from 'app/cfdi/cfdi.module';
 
 @NgModule({
   declarations: [...components, ...entryComponents, ...pages],
@@ -19,6 +20,7 @@ import { CobranzaModule } from 'app/cobranza/cobranza.module';
     RouterModule,
     SharedModule,
     CobranzaModule,
+    CfdiModule,
     NotasRoutingModule,
     StoreModule.forFeature('notas', reducers),
     EffectsModule.forFeature(effects)

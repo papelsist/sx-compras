@@ -143,16 +143,18 @@ class EstadoDeCuentaListenerService implements  LogUser{
 
 
     private atenderAplicacion(AplicacionDeCobro aplicacion, AbstractPersistenceEvent event) {
-        if(event.eventType == EventType.PostDelete) {
-            log.info("Eliminando abono cancelacion de apliacion: {}", aplicacion.id)
-            eliminarAbono(aplicacion)
-        } else {
-            registrarAbono(aplicacion)
+        if(aplicacion.cobro.tipo == 'CHO') {
+            if(event.eventType == EventType.PostDelete) {
+                log.info("Eliminando abono cancelacion de apliacion: {}", aplicacion.id)
+                eliminarAbono(aplicacion)
+            } else {
+                registrarAbono(aplicacion)
+            }
         }
-
     }
 
     private registrarAbono(AplicacionDeCobro a) {
+
         log.info('Registrando abono en estado de cuenta aplicacion: {}', a.id)
         FacturistaDeEmbarque f = FacturistaDeEmbarque.where{rfc == a.cobro.cliente.rfc}.find()
         FacturistaEstadoDeCuenta.withNewSession {

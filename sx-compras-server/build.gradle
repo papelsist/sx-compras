@@ -10,7 +10,7 @@ buildscript {
     }
 }
 
-version "1.0.9"
+version "1.0.10"
 group "sx.compras"
 
 apply plugin:"idea"
@@ -96,6 +96,9 @@ dependencies {
 
     //Firebase sdk
     implementation 'com.google.firebase:firebase-admin:6.8.0'
+
+    // Mail service
+    compile 'org.grails.plugins:mail:2.0.0'
 
 }
 

@@ -123,6 +123,7 @@ class UrlMappings {
         "/api/cxc/chequesDevuetos"(resources: 'chequeDevuelto')
         "/api/cxc/chequesDevuetos/cobros"(controller: 'chequeDevuelto', action: 'cobros', method: 'GET')
         "/api/cxc/chequesDevuetos/reporteDeChequesDevueltos"(controller: "chequeDevuelto", action:'reporteDeChequesDevueltos', method: 'GET')
+        "/api/cxc/chequesDevuetos/generarNotaDeCargo/$id"(controller: 'chequeDevuelto', action: 'generarNotaDeCargo', method: 'POST')
 
         // Notas de Cargo
         "/api/cxc/notasDeCargo"(resources: "notaDeCargo")
@@ -133,6 +134,7 @@ class UrlMappings {
         // CXC Notas de credito
         "/api/cxc/notas"(resources: "notaDeCredito", excludes: ['create', 'edit','patch'])
         "/api/cxc/notas/generarCfdi/$id"(controller: 'notaDeCredito', action: 'generarCfdi', method: 'POST')
+        "/api/cxc/notas/aplicar/$id"(controller: 'notaDeCredito', action: 'aplicar', method: 'PUT')
 
 
 
@@ -287,7 +289,8 @@ class UrlMappings {
         "/api/cfdi"(resources: 'cfdi', excludes:['create', 'edit', 'patch', 'update', 'save', 'delete'])
         "/api/cfdi/print/$id"(controller:"cfdi", action:"print")
         "/api/cfdi/mostrarXml/$id?"(controller:"cfdi", action:"mostrarXml")
-        "/api/cfdis/descargarXml/$id?"(controller:"cfdi", action:"descargarXml", method: 'GET')
+        "/api/cfdi/descargarXml/$id?"(controller:"cfdi", action:"descargarXml", method: 'GET')
+        "/api/cfdi/email/$id?"(controller:"cfdi", action:"email", method: 'GET')
 
 
         "/api/cfdi/cancelacion"(resources: 'cancelacionDeCfdi', excludes:['create', 'edit','patch', 'save'])

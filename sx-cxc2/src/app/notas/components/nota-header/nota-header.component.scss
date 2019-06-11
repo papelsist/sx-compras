@@ -10,8 +10,16 @@
     font-weight: bold;
   }
 
-  .sub-header {
+  .cfdi-panel {
     margin: 0px 0px 0px 0px;
+    .uuid {
+      padding-left: 10px;
+      font-weight: bold;
+      // font-style: italic;
+    }
+  }
+  .user-log {
+    margin: 4px 0px 0px 0px;
     padding: 0px;
     font-size: 14px;
   }

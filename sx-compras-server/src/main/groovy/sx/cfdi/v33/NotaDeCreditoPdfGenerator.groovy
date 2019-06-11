@@ -1,35 +1,32 @@
 package sx.cfdi.v33
 
 
-
-import net.glxn.qrgen.QRCode
-import net.glxn.qrgen.image.ImageType
-
-
 import lx.cfdi.v33.CfdiUtils
 import lx.cfdi.v33.Comprobante
-
+import net.glxn.qrgen.QRCode
+import net.glxn.qrgen.image.ImageType
+import org.apache.commons.io.FileUtils
 import sx.cfdi.Cfdi
 import sx.cfdi.CfdiTimbre
-import sx.cxc.NotaDeCargo
+import sx.cxc.NotaDeCredito
 import sx.utils.ImporteALetra
 
 import java.text.MessageFormat
 
 /**
  *
+ *
  */
-class NotaDeCargoPdfGenerator {
+class NotaDeCreditoPdfGenerator {
 
-    static getReportData(NotaDeCargo nota, Byte[] xmlFile){
+    static getReportData(NotaDeCredito nota, byte[] xmlData){
 
         Cfdi cfdi = nota.cfdi
-
-        Comprobante comprobante = CfdiUtils.read(xmlFile)
+        // File xmlFile = FileUtils.toFile(cfdi.url)
+        Comprobante comprobante = CfdiUtils.read(xmlData)
 
         def conceptos = comprobante.conceptos.concepto
 
-        def index = 0
         def modelData=conceptos.collect { cc ->
             def traslado = cc.impuestos.traslados.traslado[0]
             def res=[
@@ -41,7 +38,7 @@ class NotaDeCargoPdfGenerator {
                     'Importe':cc.importe,
                     'ClaveProdServ': cc.claveProdServ,
                     'ClaveUnidad': cc.claveUnidad,
-                    'Descuento': '0.0',
+                    'Descuento': cc.descuento.toString(),
                     'Impuesto': traslado.impuesto.toString(),
                     'TasaOCuota': traslado.tasaOCuota.toString(),
                     'TipoFactor': traslado.tipoFactor.value().toString(),
@@ -50,7 +47,7 @@ class NotaDeCargoPdfGenerator {
             ]
             return res
         }
-        def params = getParametros(nota, cfdi, comprobante, xmlFile)
+        def params = getParametros(nota,cfdi, comprobante, xmlData)
         def data = [:]
         data['CONCEPTOS'] = modelData
         data['PARAMETROS'] = params
@@ -58,7 +55,7 @@ class NotaDeCargoPdfGenerator {
         return data
     }
 
-    public static  generarQR(Cfdi cfdi) {
+    static  generarQR(Cfdi cfdi) {
         String pattern="?re=${0}&rr={1}&tt={2,number,##########.######}&id,{3}"
         String qq=MessageFormat.format(pattern, cfdi.emisorRfc,cfdi.receptorRfc,cfdi.total,cfdi.uuid)
         File file=QRCode.from(qq).to(ImageType.GIF).withSize(250, 250).file()
@@ -66,7 +63,7 @@ class NotaDeCargoPdfGenerator {
 
     }
 
-    static getParametros(NotaDeCargo nota, Cfdi cfdi, Comprobante comprobante, Byte[] xmlFile){
+    static getParametros(NotaDeCredito nota, Cfdi cfdi, Comprobante comprobante, byte[] xmlData){
         def params=[:]
         params["VERSION"] = comprobante.version
         params["SERIE"] = comprobante.getSerie()
@@ -80,7 +77,10 @@ class NotaDeCargoPdfGenerator {
         params["RECEPTOR_DIRECCION"] = 'ND'
         params["METODO_PAGO"] = comprobante.metodoPago.toString()
         params["FORMA_PAGO"] = comprobante.formaPago
-        params["IMP_CON_LETRA"] = ImporteALetra.aLetra(comprobante.getTotal());
+        if (nota.moneda.currencyCode == 'USD') {
+            params["IMP_CON_LETRA"] = ImporteALetra.aLetraDolares(comprobante.getTotal())
+        } else
+            params["IMP_CON_LETRA"] = ImporteALetra.aLetra(comprobante.getTotal());
         params['FORMA_DE_PAGO']=comprobante.formaPago
         params['UsoCFDI'] = comprobante.receptor.usoCFDI.value().toString()
         params['Moneda'] = comprobante.moneda.value().toString()
@@ -95,14 +95,14 @@ class NotaDeCargoPdfGenerator {
         if(cfdi.uuid!=null){
             def img = generarQR(cfdi)
             params.put("QR_CODE",img);
-            CfdiTimbre timbre = new CfdiTimbre(xmlFile)
-            params.put("FECHA_TIMBRADO", timbre.fechaTimbrado);
-            params.put("FOLIO_FISCAL", timbre.uuid);
-            params.put("SELLO_DIGITAL_SAT", timbre.selloSAT);
-            params.put("CERTIFICADO_SAT", timbre.noCertificadoSAT);
-            params.put("CADENA_ORIGINAL_SAT", timbre.cadenaOriginal());
+            CfdiTimbre timbre = new CfdiTimbre(xmlData)
+            params.put("FECHA_TIMBRADO", timbre.fechaTimbrado)
+            params.put("FOLIO_FISCAL", timbre.uuid)
+            params.put("SELLO_DIGITAL_SAT", timbre.selloSAT)
+            params.put("CERTIFICADO_SAT", timbre.noCertificadoSAT)
+            params.put("CADENA_ORIGINAL_SAT", timbre.cadenaOriginal())
             params.put("RfcProvCertif", timbre.rfcProvCertif)
-            params.put("TIPO_DE_COMPROBANTE", "I (Ingreso)")
+            params.put("TIPO_DE_COMPROBANTE", "E (Egreso)")
         }
         params.FECHA = comprobante.fecha
         BigDecimal descuento = comprobante.getDescuento() ?: 0.0
@@ -112,13 +112,11 @@ class NotaDeCargoPdfGenerator {
         params['PINT_IVA']='16 '
         params["IVA"] = (comprobante?.getImpuestos()?.getTotalImpuestosTrasladados()?: 0.0) as String
 
-        if(nota.tipo != 'CHE' && nota.tipo != 'CHO'){
-            String relacionados = comprobante.cfdiRelacionados.cfdiRelacionado.collect{it.UUID}.join(', ')
-            //println 'RELACIONADOS: '+ relacionados
-            params['RelacionUUID'] = relacionados
-            params['COMENTARIOS'] = nota.comentario
-        }
+        String relacionados = comprobante.cfdiRelacionados.cfdiRelacionado.collect{it.UUID}.join(', ')
+
+        params['RelacionUUID'] = relacionados
         params['COMENTARIOS'] = nota.comentario
-        return params;
+
+        return params
     }
 }

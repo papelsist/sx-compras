@@ -39,3 +39,16 @@ grails.plugin.springsecurity.filterChain.chainMap = [
 ]
 grails.plugin.console.enabled = true
 
+grails {
+	mail{
+		port= 465
+		host= '${mail.host}'
+		username='${mail.user}'
+		password='${mail.password}'
+		props= ["mail.smtp.auth":"true",
+				"mail.smtp.socketFactory.port":"465",
+				"mail.smtp.socketFactory.class":"javax.net.ssl.SSLSocketFactory",
+				"mail.smtp.socketFactory.fallback":"false"
+		]
+	}
+}

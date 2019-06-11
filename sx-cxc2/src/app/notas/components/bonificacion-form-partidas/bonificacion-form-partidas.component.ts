@@ -30,6 +30,8 @@ export class BonificacionFormPartidasComponent implements OnInit, OnChanges {
   @Input()
   filter: string;
 
+  @Input() disabled = false;
+
   dataSource = new MatTableDataSource<NotaDeCreditoDet>([]);
 
   @Input() displayColumns = [

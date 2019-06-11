@@ -23,6 +23,8 @@ class CfdiController extends RestfulController<Cfdi> {
 
     CfdiPrintService cfdiPrintService
 
+    CfdiMailService cfdiMailService
+
     CfdiController() {
         super(Cfdi)
     }
@@ -57,6 +59,8 @@ class CfdiController extends RestfulController<Cfdi> {
         respond criteria.list(params)
     }
 
+
+
     def print( Cfdi cfdi) {
         log.info('Imprimiendo CFDI: {}', params)
         def pdf = cfdiPrintService.getPdf(cfdi)
@@ -83,6 +87,17 @@ class CfdiController extends RestfulController<Cfdi> {
         InputStream contentStream = file.newInputStream()
         webRequest.renderView = false
         response.outputStream << contentStream
+    }
+
+    def email(Cfdi cfdi) {
+        log.info('email {}', params)
+        if(cfdi == null) {
+            notFound()
+            return
+        }
+        String target = params['target']
+        Cfdi res = cfdiMailService.email(cfdi, target)
+        respond res
     }
 
 

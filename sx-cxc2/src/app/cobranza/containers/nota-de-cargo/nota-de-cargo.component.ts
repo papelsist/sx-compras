@@ -6,8 +6,9 @@ import * as fromStore from '../../store';
 
 import { Observable } from 'rxjs';
 import { NotaDeCargo } from 'app/cobranza/models';
-import { CfdiService } from 'app/cobranza/services/cfdi.service';
+
 import { ReportService } from 'app/reportes/services/report.service';
+import { CfdiService } from 'app/cfdi/services/cfdi.service';
 
 @Component({
   selector: 'sx-nota-de-cargo',

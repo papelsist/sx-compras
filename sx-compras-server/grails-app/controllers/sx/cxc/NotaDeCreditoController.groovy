@@ -1,11 +1,10 @@
 package sx.cxc
 
-import grails.compiler.GrailsCompileStatic
 
 import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.RestfulController
 
-import groovy.transform.CompileDynamic
+
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.exception.ExceptionUtils
 import sx.core.LogUser
@@ -16,7 +15,6 @@ import sx.utils.Periodo
 
 
 @Slf4j
-@GrailsCompileStatic
 @Secured(['ROLE_CREDITO_CXC',  'ROLE_GASTOS', 'ROLE_CONTABILIDAD'])
 class NotaDeCreditoController extends RestfulController<NotaDeCredito> implements LogUser {
 
@@ -30,7 +28,6 @@ class NotaDeCreditoController extends RestfulController<NotaDeCredito> implement
         super(NotaDeCredito)
     }
 
-    @CompileDynamic
     protected List<NotaDeCredito> listAllResources(Map params) {
 
         params.sort = params.sort ?: 'lastUpdated'
@@ -88,7 +85,6 @@ class NotaDeCreditoController extends RestfulController<NotaDeCredito> implement
         return nota
     }
 
-    @CompileDynamic
     def generarCfdi(NotaDeCredito nota) {
         if(nota == null) {
             notFound()
@@ -98,7 +94,16 @@ class NotaDeCreditoController extends RestfulController<NotaDeCredito> implement
         respond nota, view: 'show'
     }
 
-    @CompileDynamic
+    def aplicar(NotaDeCredito nota) {
+        if(nota == null) {
+            notFound()
+            return
+        }
+        nota = notaDeCreditoService.aplicar(nota)
+        respond nota, view: 'show'
+    }
+
+
     def handleException(Exception e) {
         String message = ExceptionUtils.getRootCauseMessage(e)
         log.error(message, ExceptionUtils.getRootCause(e))

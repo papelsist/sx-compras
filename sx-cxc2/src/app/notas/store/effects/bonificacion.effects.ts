@@ -140,6 +140,25 @@ export class BonificacionEffects {
   );
 
   @Effect()
+  aplicar$ = this.actions$.pipe(
+    ofType<fromActions.AplicarBonificacion>(
+      BonificacionActionTypes.AplicarBonificacion
+    ),
+    map(action => action.payload.notaId),
+    switchMap(notaId =>
+      this.service.aplicar(notaId).pipe(
+        map(
+          (bonificacion: Bonificacion) =>
+            new fromActions.UpdateBonificacionSuccess({ bonificacion })
+        ),
+        catchError(response =>
+          of(new fromActions.UpdateBonificacionFail({ response }))
+        )
+      )
+    )
+  );
+
+  @Effect()
   fail$ = this.actions$.pipe(
     ofType<
       | fromActions.LoadBonificacionesFail

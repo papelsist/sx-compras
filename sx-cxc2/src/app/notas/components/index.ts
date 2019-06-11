@@ -7,6 +7,9 @@ import { BonificacionFormComponent } from './bonificacion-form/bonificacion-form
 import { BonificacionFormPartidasComponent } from './bonificacion-form-partidas/bonificacion-form-partidas.component';
 import { NotaDeleteComponent } from './nota-delete/nota-delete.component';
 import { NotaCfdiCreateComponent } from './nota-cfdi-create/nota-cfdi-create.component';
+import { AplicarNotaComponent } from './aplicar-nota/aplicar-nota.component';
+import { AplicacionesNotaComponent } from './aplicaciones-nota/aplicaciones-nota.component';
+import { NotaCancelComponent } from './nota-cancel/nota-cancel.component';
 
 export const components: any[] = [
   NotasTableComponent,
@@ -16,7 +19,10 @@ export const components: any[] = [
   NotaCfdiCreateComponent,
   NotaDeleteComponent,
   BonificacionFormComponent,
-  BonificacionFormPartidasComponent
+  BonificacionFormPartidasComponent,
+  AplicarNotaComponent,
+  AplicacionesNotaComponent,
+  NotaCancelComponent
 ];
 export const entryComponents: any[] = [NotaCreateModalComponent];
 
@@ -29,3 +35,6 @@ export * from './nota-delete/nota-delete.component';
 export * from './nota-cfdi-create/nota-cfdi-create.component';
 export * from './bonificacion-form/bonificacion-form.component';
 export * from './bonificacion-form-partidas/bonificacion-form-partidas.component';
+export * from './aplicar-nota/aplicar-nota.component';
+export * from './aplicaciones-nota/aplicaciones-nota.component';
+export * from './nota-cancel/nota-cancel.component';

@@ -10,8 +10,10 @@ import org.springframework.core.io.ResourceLoader
 import grails.web.context.ServletContextHolder
 
 import sx.cfdi.v33.NotaDeCargoPdfGenerator
+import sx.cfdi.v33.NotaDeCreditoPdfGenerator
 import sx.cfdi.v33.V33PdfGenerator
 import sx.cxc.NotaDeCargo
+import sx.cxc.NotaDeCredito
 import sx.reports.ReportService
 
 /**
@@ -56,8 +58,11 @@ class CfdiPrintService implements  ResourceLoaderAware {
             case 'NOTA_CARGO':
                 NotaDeCargo notaDeCargo = NotaDeCargo.where{cfdi == cfdi}.find()
                 return generarPdfNotaDeCargo(notaDeCargo, xmlData)
+            case 'NOTA_CREDITO':
+                NotaDeCredito nota = NotaDeCredito.where{cfdi == cfdi}.find()
+                return generarPdfNotaDeCredito(nota, xmlData)
             default:
-                throw new RuntimeException('ORIGEN DE CFDI INCORRECTO. NO AS PUEDE GENERAR PDF CFDI: {}', cfdi.id)
+                throw new RuntimeException("ORIGEN DE CFDI INCORRECTO. NO AS PUEDE GENERAR PDF CFDI: ${cfdi.id} Oigen: ${cfdi.origen}")
         }
     }
 
@@ -75,22 +80,18 @@ class CfdiPrintService implements  ResourceLoaderAware {
 
         def realPath = grailsApplication.mainContext.servletContext.getRealPath("/reports") ?: 'reports'
         parametros.LOGO = realPath + '/PAPEL_CFDI_LOGO.jpg'
-        // Resource logoResource = resourceLoader.getResource("/reports/PAPEL_CFDI_LOGO.jpg")
-        // log.info('Logo exists: {}, Path{}', logoResource.exists(), logoResource.getURI().path)
-        // parametros.LOGO = 'reports/PAPEL_CFDI_LOGO.jpg'
-        // parametros.LOGO = logoResource.getURL().path
-
         return reportService.run('cfdis/PapelCFDI3Nota.jrxml', data['PARAMETROS'], data['CONCEPTOS'])
 
     }
 
-    def generarPdfFactura(Cfdi cfdi){
-        def realPath = ServletContextHolder.getServletContext().getRealPath("reports") ?: 'reports'
-        def data = V33PdfGenerator.getReportData(cfdi, cfdiLocationService.getXml(cfdi), true)
+    def generarPdfNotaDeCredito(NotaDeCredito nota, Byte[] xmlData) {
+        def data = NotaDeCreditoPdfGenerator.getReportData(nota, xmlData)
         Map parametros = data['PARAMETROS']
-        parametros.PAPELSA = realPath + '/PAPEL_CFDI_LOGO.jpg'
-        parametros.IMPRESO_IMAGEN = realPath + '/Impreso.jpg'
-        parametros.FACTURA_USD = realPath + '/facUSD.jpg'
-        return reportService.run('PapelCFDI3.jrxml', data['PARAMETROS'], data['CONCEPTOS'])
+        // LOGO
+        def realPath = grailsApplication.mainContext.servletContext.getRealPath("/reports") ?: 'reports'
+        parametros.LOGO = realPath + '/PAPEL_CFDI_LOGO.jpg'
+        return reportService.run('cfdis/PapelCFDI3Nota.jrxml', data['PARAMETROS'], data['CONCEPTOS'])
     }
+
+
 }

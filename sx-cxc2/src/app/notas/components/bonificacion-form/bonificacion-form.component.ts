@@ -57,7 +57,7 @@ export class BonificacionFormComponent implements OnInit, OnDestroy, OnChanges {
   ngOnInit() {
     this.buildForm();
     this.registerTipoListener();
-    this.setBonificacion();
+    this.setBonificacion(this.bonificacion);
     this.eventBus();
   }
 
@@ -71,24 +71,26 @@ export class BonificacionFormComponent implements OnInit, OnDestroy, OnChanges {
       if (!changes.bonificacion.firstChange) {
         const b: Bonificacion = changes.bonificacion.currentValue;
         console.log('After success save: ', b);
-        /*
-        this.cleanPartidas();
-        b.partidas.forEach(det => {
-          this.partidas.push(new FormControl(det));
-        });
-        */
+        this.setBonificacion(changes.bonificacion.currentValue, false);
       } else {
         console.log('Editando: ', changes.bonificacion.currentValue);
+        // this.setBonificacion(changes.bonificacion.currentValue, false);
       }
     }
   }
 
-  private setBonificacion() {
+  private setBonificacion(
+    bonificacion: Bonificacion,
+    dispatchEvent: boolean = true
+  ) {
     this.cleanPartidas();
     this.form.patchValue(this.bonificacion);
     this.bonificacion.partidas.forEach(det => {
       this.partidas.push(new FormControl(det));
     });
+    if (this.bonificacion.cfdi) {
+      this.form.disable({ emitEvent: dispatchEvent });
+    }
   }
 
   private cleanPartidas() {
@@ -133,6 +135,10 @@ export class BonificacionFormComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private eventBus() {
+    if (this.bonificacion.cfdi) {
+      console.log('ReadOnly bonificacion');
+      return;
+    }
     const tipo$ = this.form
       .get('tipoDeCalculo')
       .valueChanges.pipe(takeUntil(this.destroy$));

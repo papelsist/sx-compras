@@ -85,4 +85,13 @@ export class NotaDeCreditoService {
       .post<NotaDeCredito>(url, {})
       .pipe(catchError(error => throwError(error)));
   }
+
+  aplicar(
+    notaId: string
+  ): Observable<NotaDeCredito | Bonificacion | Devolucion> {
+    const url = `${this.apiUrl}/aplicar/${notaId}`;
+    return this.http
+      .put<NotaDeCredito>(url, {})
+      .pipe(catchError(error => throwError(error)));
+  }
 }

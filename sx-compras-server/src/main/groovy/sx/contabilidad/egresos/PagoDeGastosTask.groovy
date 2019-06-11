@@ -34,6 +34,7 @@ class PagoDeGastosTask implements  AsientoBuilder, EgresoTask {
         ajustarConcepto(poliza, r)
         cargoProveedor(poliza, r)
         abonoBanco(poliza, r)
+        ajustarProveedorBanco(poliza)
         registrarRetenciones(poliza, r)
         registrarDiferenciaCambiaria(poliza, r)
     }
@@ -56,7 +57,7 @@ class PagoDeGastosTask implements  AsientoBuilder, EgresoTask {
             Map row = [
                     asiento: "PAGO_${egreso.tipo}",
                     referencia: r.proveedor.nombre,
-                    referencia2: egreso.cuenta.descripcion,
+                    referencia2: r.proveedor.nombre,
                     origen: egreso.id,
                     documento: cxp.folio,
                     documentoTipo: 'CXP',
@@ -78,8 +79,13 @@ class PagoDeGastosTask implements  AsientoBuilder, EgresoTask {
             if(['0038','0061'].contains(co.cuentaOperativa)) {
                 cv = "201-0001-${co.cuentaOperativa}-0000"
             }
+            BigDecimal total = MonedaUtils.round(it.apagar  * r.tipoDeCambio)
 
-            poliza.addToPartidas(mapRow(cv, desc, row, MonedaUtils.round(it.apagar  * r.tipoDeCambio)))
+            if(['0331','0380'].contains(co.cuentaOperativa)) {
+                total = it.cxp.total
+            }
+
+            poliza.addToPartidas(mapRow(cv, desc, row, total))
 
             /*
              def fechaTransito = egreso.cheque.fechaTransito?: egreso.cheque.fecha
@@ -109,7 +115,7 @@ class PagoDeGastosTask implements  AsientoBuilder, EgresoTask {
         Map row = [
                 asiento: "PAGO_${egreso.tipo}",
                 referencia: r.nombre,
-                referencia2: egreso.cuenta.descripcion,
+                referencia2:r.proveedor.nombre,
                 origen: egreso.id,
                 documento: egreso.referencia,
                 documentoTipo: 'CXP',
@@ -129,7 +135,7 @@ class PagoDeGastosTask implements  AsientoBuilder, EgresoTask {
         Map row = [
                 asiento: "PAGO_${egreso.tipo}",
                 referencia: r.nombre,
-                referencia2: egreso.cuenta.descripcion,
+                referencia2: r.proveedor.nombre,
                 origen: egreso.id,
                 documento: egreso.referencia,
                 documentoTipo: 'CXP',
@@ -219,6 +225,61 @@ class PagoDeGastosTask implements  AsientoBuilder, EgresoTask {
         if(row.metodoDePago)
             asignarComplementoDePago(det, row)
         return det
+    }
+
+    @CompileDynamic
+    void ajustarProveedorBanco(Poliza poliza) {
+        PolizaDet abonoBanco = poliza.partidas.find {it.cuenta.clave.startsWith('102')}
+        List<PolizaDet> provs = poliza.partidas.findAll{ it.cuenta.clave.startsWith('201') || it.cuenta.clave.startsWith('205')}
+        def debe = provs.sum 0.0, {it.debe}
+
+        def dif = abonoBanco.haber - debe
+        // log.info('Debe: {}', debe)
+        //  log.info('Cuadre especial por: {}', dif)
+
+        if(dif.abs() > 0.0 &&  dif.abs() <= 5.0){
+
+            def det = abonoBanco
+
+            if(dif < 0.0) {
+
+                PolizaDet pdet = new PolizaDet()
+                pdet.cuenta = buscarCuenta('704-0005-0000-0000')
+                pdet.concepto = pdet.cuenta.descripcion
+                pdet.sucursal = det.sucursal
+                pdet.origen = det.origen
+                pdet.referencia = det.referencia
+                pdet.referencia2 = det.referencia2
+                pdet.haber = dif.abs()
+                pdet.descripcion = det.descripcion
+                pdet.entidad = det.entidad
+                pdet.asiento = det.asiento+ '_OPRD'
+                pdet.documentoTipo = det.documentoTipo
+                pdet.documentoFecha = det.documentoFecha
+                pdet.documento = det.documento
+
+                poliza.addToPartidas(pdet)
+
+            } else {
+                PolizaDet pdet = new PolizaDet()
+                pdet.cuenta = buscarCuenta('703-0001-0000-0000')
+                pdet.concepto = pdet.cuenta.descripcion
+                pdet.sucursal = det.sucursal
+                pdet.origen = det.origen
+                pdet.referencia = det.referencia
+                pdet.referencia2 = det.referencia2
+                pdet.debe = dif.abs()
+                pdet.descripcion = det.descripcion
+                pdet.entidad = det.entidad
+                pdet.asiento = det.asiento+ '_OGST'
+                pdet.documentoTipo = det.documentoTipo
+                pdet.documentoFecha = det.documentoFecha
+                pdet.documento = det.documento
+                poliza.addToPartidas(pdet)
+            }
+        }
+
+
     }
 
 }

@@ -56,12 +56,14 @@
       [parent]="form"
       [partidas]="partidas.value"
       (delete)="onDelete($event)"
+      [disabled]="form.disabled"
     ></sx-bonificacion-form-partidas>
   </div>
+  <sx-aplicaciones-nota [nota]="bonificacion"></sx-aplicaciones-nota>
 
   <mat-card-actions>
     <button mat-button (click)="cancel.emit()">
-      <mat-icon>keyboard_backspace</mat-icon> CANCELAR
+      <mat-icon>keyboard_backspace</mat-icon> REGRESAR
     </button>
     <button
       mat-button
@@ -75,6 +77,7 @@
     <sx-cxc-selector
       [cliente]="bonificacion.cliente"
       (select)="addFacturas($event)"
+      *ngIf="!bonificacion.cfdi"
     >
     </sx-cxc-selector>
     <ng-content></ng-content>
