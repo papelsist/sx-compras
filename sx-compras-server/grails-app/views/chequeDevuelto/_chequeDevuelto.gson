@@ -9,4 +9,5 @@ json g.render(chequeDevuelto, [ excludes: ['lastUpdated', 'dateCreated', 'create
 	modificado chequeDevuelto.lastUpdated
 	usuario chequeDevuelto.updateUser
 
+
 }

@@ -109,7 +109,11 @@ export class ChequesDevueltosComponent implements OnInit {
       });
   }
 
-  onEdit(event: ChequeDevuelto) {}
+  onEdit(event: ChequeDevuelto) {
+    this.store.dispatch(
+      new fromRoot.Go({ path: ['ingresos/chequesdevueltos', event.id] })
+    );
+  }
 
   onDelete(event: ChequeDevuelto) {
     this.dialogService

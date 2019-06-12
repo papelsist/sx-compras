@@ -49,7 +49,7 @@ class ChequeDevueltoService implements  LogUser, FolioLog{
         CuentaPorCobrar cxc = new CuentaPorCobrar()
         cxc.cliente = cobroCheque.cobro.cliente
         cxc.sucursal = cobroCheque.cobro.sucursal
-        cxc.formaDePago = cobroCheque.cobro.formaDePago
+        cxc.formaDePago = 'POR DEFINIR'
         cxc.documento = nextFolio('CHEQUE_DEVUELTO', cxc.tipo)
         cxc.comentario = 'Cargo por cheque devuelto'
         cxc.fecha = chequeDevuelto.fecha
@@ -102,7 +102,7 @@ class ChequeDevueltoService implements  LogUser, FolioLog{
     @Transactional
     ChequeDevuelto generarNotaDeCargo(ChequeDevuelto che) {
 
-        def importe = MonedaUtils.calcularImporteDelTotal(che.importe)
+        def importe = MonedaUtils.round(che.importe * 0.2, 2)
         def impuesto = MonedaUtils.calcularImpuesto(importe)
         def total = importe + impuesto
 
@@ -111,11 +111,11 @@ class ChequeDevueltoService implements  LogUser, FolioLog{
 
         NotaDeCargo nc = new NotaDeCargo()
         nc.tipo = 'CHE'
-        nc.formaDePago = 'COMPENSACION'
+        nc.formaDePago = 'POR DEFINIR'
         nc.cliente = che.cxc.cliente
         nc.sucursal = Sucursal.where{nombre == 'OFICINAS'}.find()
         nc.fecha = new Date()
-        nc.comentario = "CARGO POR CHEQUE DEVUELTO ${che.toString()} "
+        nc.comentario = "CARGO POR CHEQUE DEVUELTO "
         nc.importe = importe as BigDecimal
         nc.impuesto = impuesto
         nc.total = total
@@ -136,7 +136,7 @@ class ChequeDevueltoService implements  LogUser, FolioLog{
         det.documentoTipo = 'ND'
         det.documentoSaldo = 0.0
         det.documentoTotal = 0.0
-        det.documentoFecha = nc.fecha
+        det.documentoFecha = che.fecha
         det.sucursal = nc.sucursal.nombre
 
         nc.addToPartidas(det)

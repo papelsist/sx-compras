@@ -57,6 +57,7 @@ export function reducer(
         term
       };
     }
+    case ChequeDevueltoActionTypes.GenerarNotaDeCargo:
     case ChequeDevueltoActionTypes.DeleteChequeDevuelto:
     case ChequeDevueltoActionTypes.CreateChequeDevuelto:
     case ChequeDevueltoActionTypes.LoadChequeDevueltos: {
@@ -89,6 +90,17 @@ export function reducer(
 
     case ChequeDevueltoActionTypes.DeleteChequeDevueltoSuccess: {
       return adapter.removeOne(action.payload.cheque.id, {
+        ...state,
+        loading: false
+      });
+    }
+
+    case ChequeDevueltoActionTypes.UpserChequeDevuelto: {
+      return adapter.upsertOne(action.payload.cheque, { ...state });
+    }
+
+    case ChequeDevueltoActionTypes.GenerarNotaDeCargoSuccess: {
+      return adapter.upsertOne(action.payload.cheque, {
         ...state,
         loading: false
       });
