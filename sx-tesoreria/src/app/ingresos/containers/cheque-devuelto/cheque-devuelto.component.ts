@@ -46,9 +46,11 @@ import { ChequeDevueltoService } from 'app/ingresos/services';
             <input matInput placeholder="Comentario" [value] = "cheque.comentario" [readOnly]="true">
           </mat-form-field>
 
-          <mat-form-field>
-            <input matInput placeholder="CFDI" [value] = "cheque.notaDeCargo.cfdi.uuid" [readOnly]="true" *ngIf="cheque.notaDeCargo">
-          </mat-form-field>
+          <ng-container *ngIf="cheque.notaDeCargo">
+            <mat-form-field>
+              <input matInput placeholder="CFDI" value = "{{cheque?.notaDeCargo?.cfdi?.uuid}}" [readOnly]="true" >
+            </mat-form-field>
+          </ng-container>
 
         </div>
       <mat-card-actions>
@@ -57,13 +59,15 @@ import { ChequeDevueltoService } from 'app/ingresos/services';
           <mat-icon>settings</mat-icon> GENERAR NOTA
           </button>
         </ng-template>
-        <button mat-raised-button color="primary"
-          (click)="onImprimir(cheque.notaDeCargo.cfdi.id)" *ngIf="cheque.notaDeCargo">
-          <mat-icon>print</mat-icon> IMPRIMIR CFDI
-        </button>
-        <button mat-raised-button (click)="onXml(cheque)">
-          <mat-icon>settings_ethernet</mat-icon> CFDI XML
-        </button>
+        <ng-container *ngIf="cheque.notaDeCargo">
+          <button mat-raised-button color="primary"
+            (click)="onImprimir(cheque.notaDeCargo.cfdi.id)" >
+            <mat-icon>print</mat-icon> IMPRIMIR CFDI
+          </button>
+          <button mat-raised-button (click)="onXml(cheque)">
+            <mat-icon>settings_ethernet</mat-icon> CFDI XML
+          </button>
+        </ng-container>
       </mat-card-actions>
     </mat-card>
   </div>
