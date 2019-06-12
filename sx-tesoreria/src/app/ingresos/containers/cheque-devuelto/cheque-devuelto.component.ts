@@ -62,10 +62,10 @@ import { ChequeDevueltoService } from 'app/ingresos/services';
         <ng-container *ngIf="cheque.notaDeCargo">
           <button mat-raised-button color="primary"
             (click)="onImprimir(cheque.notaDeCargo.cfdi.id)" >
-            <mat-icon>print</mat-icon> IMPRIMIR CFDI
+            <mat-icon>print</mat-icon> IMPRIMIR NOTA
           </button>
           <button mat-raised-button (click)="onXml(cheque)">
-            <mat-icon>settings_ethernet</mat-icon> CFDI XML
+            <mat-icon>settings_ethernet</mat-icon> N.C CFDI XML
           </button>
         </ng-container>
       </mat-card-actions>
