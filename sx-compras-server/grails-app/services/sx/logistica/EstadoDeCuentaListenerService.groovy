@@ -66,7 +66,7 @@ class EstadoDeCuentaListenerService implements  LogUser{
     private registrarPrestamo(FacturistaPrestamo prestamo) {
         log.info('Registrando prestamo: {}', prestamo)
         FacturistaEstadoDeCuenta mov = FacturistaEstadoDeCuenta
-                .where{facturista == prestamo.facturista && origen == prestamo.id.toString()}.find()
+                .where{facturista == prestamo.facturista && origen == prestamo.id.toString() && tipo == 'PRESTAMO'}.find()
 
         FacturistaEstadoDeCuenta last = FacturistaEstadoDeCuenta.where{
             facturista == prestamo.facturista &&
@@ -99,7 +99,7 @@ class EstadoDeCuentaListenerService implements  LogUser{
 
     private registrarCargo(FacturistaOtroCargo otroCargo) {
         FacturistaEstadoDeCuenta mov = FacturistaEstadoDeCuenta
-                .where{facturista == otroCargo.facturista && origen == otroCargo.id.toString()}.find()
+                .where{facturista == otroCargo.facturista && origen == otroCargo.id.toString() && tipo == 'OTROS_CARGOS'}.find()
 
         FacturistaEstadoDeCuenta last = FacturistaEstadoDeCuenta.where{
             facturista == otroCargo.facturista &&
@@ -131,7 +131,7 @@ class EstadoDeCuentaListenerService implements  LogUser{
     private eliminarCargo(FacturistaOtroCargo otroCargo) {
         FacturistaEstadoDeCuenta.withNewTransaction {
             FacturistaEstadoDeCuenta mov = FacturistaEstadoDeCuenta
-                    .where{facturista == otroCargo.facturista && origen == otroCargo.id.toString()}.find()
+                    .where{facturista == otroCargo.facturista && origen == otroCargo.id.toString() && tipo == 'OTROS_CARGOS'}.find()
 
             if(mov) {
                 log.debug("Eliminando registro de estado de cuenta ${}", mov.id)

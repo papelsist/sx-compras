@@ -25,7 +25,10 @@ export enum BonificacionActionTypes {
 
   UpsertBonificacion = '[Bonificacion component] Upsert Bonificacion',
   GenerarBonificacionCfdi = '[Bonificacion  Component] Generar CFDI de Bonificacion',
-  AplicarBonificacion = '[Bonificacion edit pate] Aplicar bonificacion'
+  AplicarBonificacion = '[Bonificacion edit pate] Aplicar bonificacion',
+
+  CancelarBonificacionCfdi = '[Bonificacion edit page] Cancelar Bonificacion CFDI',
+  CambiarBonificacionCfdi = '[Bonificacion edit page] Cambiar Bonificacion CFDI'
 }
 
 export class LoadBonificaciones implements Action {
@@ -100,6 +103,15 @@ export class AplicarBonificacion implements Action {
   constructor(public payload: { notaId: string }) {}
 }
 
+export class CancelarBonificacionCfdi implements Action {
+  readonly type = BonificacionActionTypes.CancelarBonificacionCfdi;
+  constructor(public payload: { notaId: string }) {}
+}
+export class CambiarBonificacionCfdi implements Action {
+  readonly type = BonificacionActionTypes.CambiarBonificacionCfdi;
+  constructor(public payload: { notaId: string }) {}
+}
+
 export type BonificacionActions =
   | LoadBonificaciones
   | LoadBonificacionesFail
@@ -115,4 +127,6 @@ export type BonificacionActions =
   | DeleteBonificacionSuccess
   | UpsertBonificacion
   | GenerarBonificacionCfdi
-  | AplicarBonificacion;
+  | AplicarBonificacion
+  | CancelarBonificacionCfdi
+  | CambiarBonificacionCfdi;

@@ -288,7 +288,7 @@ class NotaDeCreditoBuilder {
         return this
     }
 
-    def buildRelacionados() {
+    def buildRelacionados(List<String> anterior = []) {
         Comprobante.CfdiRelacionados relacionados = factory.createComprobanteCfdiRelacionados()
         relacionados.tipoRelacion = '01'
         if (this.rmd) {
@@ -323,6 +323,7 @@ class NotaDeCreditoBuilder {
         }
         comprobante.cfdiRelacionados = relacionados
     }
+
 
     def buildCertificado(){
         comprobante.setNoCertificado(empresa.numeroDeCertificado)

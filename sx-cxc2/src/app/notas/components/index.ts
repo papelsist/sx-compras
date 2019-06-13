@@ -10,6 +10,8 @@ import { NotaCfdiCreateComponent } from './nota-cfdi-create/nota-cfdi-create.com
 import { AplicarNotaComponent } from './aplicar-nota/aplicar-nota.component';
 import { AplicacionesNotaComponent } from './aplicaciones-nota/aplicaciones-nota.component';
 import { NotaCancelComponent } from './nota-cancel/nota-cancel.component';
+import { NotaCfdiCancelComponent } from './nota-cfdi-cancel/nota-cfdi-cancel.component';
+import { NotaCfdiCambioComponent } from './nota-cfdi-cambio/nota-cfdi-cambio.component';
 
 export const components: any[] = [
   NotasTableComponent,
@@ -22,7 +24,9 @@ export const components: any[] = [
   BonificacionFormPartidasComponent,
   AplicarNotaComponent,
   AplicacionesNotaComponent,
-  NotaCancelComponent
+  NotaCancelComponent,
+  NotaCfdiCancelComponent,
+  NotaCfdiCambioComponent
 ];
 export const entryComponents: any[] = [NotaCreateModalComponent];
 
@@ -38,3 +42,5 @@ export * from './bonificacion-form-partidas/bonificacion-form-partidas.component
 export * from './aplicar-nota/aplicar-nota.component';
 export * from './aplicaciones-nota/aplicaciones-nota.component';
 export * from './nota-cancel/nota-cancel.component';
+export * from './nota-cfdi-cancel/nota-cfdi-cancel.component';
+export * from './nota-cfdi-cambio/nota-cfdi-cambio.component';

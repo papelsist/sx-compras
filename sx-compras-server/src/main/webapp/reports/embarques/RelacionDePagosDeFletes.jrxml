@@ -29,7 +29,7 @@
 	<parameter name="FECHA_INI" isForPrompting="true" class="java.util.Date"/>
 	<parameter name="FECHA_FIN" isForPrompting="true" class="java.util.Date"/>
 	<parameter name="FECHA_CORTE" isForPrompting="true" class="java.util.Date"/>
-	<queryString><![CDATA[SELECT FACTURISTA,ORDEN,CLAVE,CTA_BANCARIA
+	<queryString><![CDATA[SELECT FACTURISTA,ORDEN,CLAVE,CTA_BANCARIA,descuent_en_prestamo
 ,IFNULL((SELECT SUM(Y.importe) FROM facturista_estado_de_cuenta Y WHERE Y.facturista_id=A.FACT_ID AND Y.FECHA<$P{FECHA_CORTE}),0) AS SALDO
 ,(SUM(IMPORTE_COMISION)+SUM(FLETE)) + ROUND((SUM(IMPORTE_COMISION)+SUM(FLETE))*0.16,2) - ROUND((SUM(IMPORTE_COMISION)+SUM(FLETE))*0.04,2) TOTAL
 
@@ -41,6 +41,7 @@ AND Y.tipo='OTROS_CARGOS'  AND Y.FECHA = $P{FECHA_CORTE}
 FROM (
 SELECT P.ID FACT_ID,P.ORDEN,P.CLAVE,P.NOMBRE FACTURISTA,P.EMAIL,SUM(X.IMPORTE_COMISION) IMPORTE_COMISION,SUM(X.MANIOBRA) FLETE
 ,(SELECT Y.CUENTA_BANCARIA FROM PROVEEDOR Y WHERE P.PROVEEDOR_ID=Y.ID) AS CTA_BANCARIA
+,P.descuent_en_prestamo
 from envio_comision X 
 JOIN CHOFER C ON(C.ID=X.chofer_ID)
 join facturista_de_embarque P ON(C.facturista_id=P.id)
@@ -49,6 +50,7 @@ GROUP BY P.NOMBRE
 UNION
 SELECT P.ID,P.ORDEN,P.CLAVE,P.NOMBRE,P.EMAIL,SUM(X.IMPORTE_COMISION) IMPORTE_COMISION,SUM(X.MANIOBRA) FLETE
 ,(SELECT Y.CUENTA_BANCARIA FROM PROVEEDOR Y WHERE P.PROVEEDOR_ID=Y.ID) AS CTA_BANCARIA
+,P.descuent_en_prestamo
 FROM envio_comision X 
 JOIN CHOFER C ON(C.ID=X.chofer_ID)
 join facturista_de_embarque P ON(C.facturista_id=P.id)
@@ -62,6 +64,7 @@ HAVING ( (SUM(IMPORTE_COMISION)+SUM(FLETE)) + ROUND((SUM(IMPORTE_COMISION)+SUM(F
 	<field name="ORDEN" class="java.lang.Integer"/>
 	<field name="CLAVE" class="java.lang.Integer"/>
 	<field name="CTA_BANCARIA" class="java.lang.String"/>
+	<field name="descuent_en_prestamo" class="java.math.BigDecimal"/>
 	<field name="SALDO" class="java.math.BigDecimal"/>
 	<field name="TOTAL" class="java.math.BigDecimal"/>
 	<field name="OTROS_CARGOS" class="java.math.BigDecimal"/>
@@ -83,8 +86,10 @@ HAVING ( (SUM(IMPORTE_COMISION)+SUM(FLETE)) + ROUND((SUM(IMPORTE_COMISION)+SUM(F
 	</variable>
 	<variable name="DESCTO" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
 		<variableExpression><![CDATA[(  $F{SALDO}.doubleValue()==0.00 ? new BigDecimal(0) :
-($F{TOTAL}.doubleValue()*0.30)>$F{SALDO}.doubleValue() ? $F{SALDO} :
- $F{TOTAL}.multiply( new BigDecimal(0.30)).setScale(0,BigDecimal.ROUND_HALF_EVEN)  )]]></variableExpression>
+($F{TOTAL}.doubleValue()*($F{descuent_en_prestamo}.doubleValue()/100.00))>$F{SALDO}.doubleValue() ? $F{SALDO} :
+ $F{TOTAL}.multiply($F{descuent_en_prestamo}).divide( new BigDecimal(100.00) )
+.setScale(0,BigDecimal.ROUND_HALF_EVEN)  )
+]]></variableExpression>
 	</variable>
 		<background>
 			<band height="0"  isSplitAllowed="true" >
@@ -370,9 +375,11 @@ HAVING ( (SUM(IMPORTE_COMISION)+SUM(FLETE)) + ROUND((SUM(IMPORTE_COMISION)+SUM(F
 					</textElement>
 				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{TOTAL}.subtract($F{OTROS_CARGOS}).subtract(
 (  $F{SALDO}.doubleValue()==0.00 ? new BigDecimal(0) :
-($F{TOTAL}.doubleValue()*0.30)>$F{SALDO}.doubleValue() ? $F{SALDO} :
- $F{TOTAL}.multiply( new BigDecimal(0.30)).setScale(0,BigDecimal.ROUND_HALF_EVEN)  )
-)]]></textFieldExpression>
+($F{TOTAL}.doubleValue()*($F{descuent_en_prestamo}.doubleValue()/100.00))>$F{SALDO}.doubleValue() ? $F{SALDO} :
+ $F{TOTAL}.multiply( $F{descuent_en_prestamo}).divide( new BigDecimal(100.00) )
+.setScale(0,BigDecimal.ROUND_HALF_EVEN)  )
+)
+]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -475,8 +482,9 @@ HAVING ( (SUM(IMPORTE_COMISION)+SUM(FLETE)) + ROUND((SUM(IMPORTE_COMISION)+SUM(F
 						<font fontName="Arial" size="9"/>
 					</textElement>
 				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[(  $F{SALDO}.doubleValue()==0.00 ? new BigDecimal(0) :
-($F{TOTAL}.doubleValue()*0.30)>$F{SALDO}.doubleValue() ? $F{SALDO} :
- $F{TOTAL}.multiply( new BigDecimal(0.30)).setScale(0,BigDecimal.ROUND_HALF_EVEN)  )]]></textFieldExpression>
+($F{TOTAL}.doubleValue()*($F{descuent_en_prestamo}.doubleValue()/100.00))>$F{SALDO}.doubleValue() ? $F{SALDO} :
+ $F{TOTAL}.multiply( $F{descuent_en_prestamo}).divide( new BigDecimal(100.00) )
+.setScale(0,BigDecimal.ROUND_HALF_EVEN)  )]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement

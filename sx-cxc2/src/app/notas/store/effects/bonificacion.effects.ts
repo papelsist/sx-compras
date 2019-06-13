@@ -140,6 +140,25 @@ export class BonificacionEffects {
   );
 
   @Effect()
+  cancelarCfdi$ = this.actions$.pipe(
+    ofType<fromActions.CancelarBonificacionCfdi>(
+      BonificacionActionTypes.CancelarBonificacionCfdi
+    ),
+    map(action => action.payload.notaId),
+    switchMap(notaId =>
+      this.service.gemerarCfdi(notaId).pipe(
+        map(
+          (bonificacion: Bonificacion) =>
+            new fromActions.UpdateBonificacionSuccess({ bonificacion })
+        ),
+        catchError(response =>
+          of(new fromActions.UpdateBonificacionFail({ response }))
+        )
+      )
+    )
+  );
+
+  @Effect()
   aplicar$ = this.actions$.pipe(
     ofType<fromActions.AplicarBonificacion>(
       BonificacionActionTypes.AplicarBonificacion

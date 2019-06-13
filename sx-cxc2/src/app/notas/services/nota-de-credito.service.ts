@@ -86,6 +86,24 @@ export class NotaDeCreditoService {
       .pipe(catchError(error => throwError(error)));
   }
 
+  cancelarCfdi(
+    notaId: string
+  ): Observable<NotaDeCredito | Bonificacion | Devolucion> {
+    const url = `${this.apiUrl}/cancelarCfdi/${notaId}`;
+    return this.http
+      .post<NotaDeCredito>(url, {})
+      .pipe(catchError(error => throwError(error)));
+  }
+
+  cambiarCfdi(
+    notaId: string
+  ): Observable<NotaDeCredito | Bonificacion | Devolucion> {
+    const url = `${this.apiUrl}/cambiarCfdi/${notaId}`;
+    return this.http
+      .post<NotaDeCredito>(url, {})
+      .pipe(catchError(error => throwError(error)));
+  }
+
   aplicar(
     notaId: string
   ): Observable<NotaDeCredito | Bonificacion | Devolucion> {

@@ -106,6 +106,9 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
             buildComplementoDePago(row, egreso)
             // Cargo a Proveedor
             String cv = "201-0002-${co.cuentaOperativa}-0000"
+            if(tipoDeCambio > 0.0) {
+                cv = "201-0003-${co.cuentaOperativa}-0000"
+            }
             if(['0038','0061'].contains(co.cuentaOperativa)) {
                 cv = "201-0001-${co.cuentaOperativa}-0000"
             }
@@ -116,21 +119,18 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
             BigDecimal apagar = cxp.importePorPagar ?: 0.0
             BigDecimal dif = totalFactura - apagar // Diferencia para saber si existe DESCUENTO NORMAL
             // log.info('Fac {} Diferencia entre factura y requisicion: {}', cxp.folio, dif)
-
-
-
             // Impuesto trasladado
             BigDecimal impuestoTrasladado = cxp.impuestoTrasladado - (cxp.impuestoRetenido?:0.0)
             BigDecimal impuestoTrasladadoPara118 = MonedaUtils.round(impuestoTrasladado * egreso.tipoDeCambio)
             BigDecimal impuestoTrasladadoPara119 = MonedaUtils.round(impuestoTrasladado * cxp.tipoDeCambio)
 
-            if( dif.abs() > (3.00 * egreso.tipoDeCambio) ) {
-                log.info('Factura con descuento NORMAL')
+            if( (dif.abs() * egreso.tipoDeCambio ) > (3.00 * egreso.tipoDeCambio) ) {
+
                 BigDecimal baseConIva = it.total + (cxp.impuestoRetenido?:0.0)
                 BigDecimal base = MonedaUtils.calcularImporteDelTotal(baseConIva)
                 BigDecimal impuesto  = MonedaUtils.calcularImpuesto(base)
+                log.info("Factura con descuento Folio:: ${cxp.folio} Pago: ${it.total} Base: {} Iva: {}", base, impuesto)
                 impuestoTrasladado = impuesto - cxp.impuestoRetenido?:0.0
-                impuestoTrasladado = MonedaUtils.round(impuestoTrasladado * egreso.tipoDeCambio)
 
                 impuestoTrasladadoPara118 = MonedaUtils.round(impuestoTrasladado * egreso.tipoDeCambio)
                 impuestoTrasladadoPara119 = MonedaUtils.round(impuestoTrasladado * cxp.tipoDeCambio)
@@ -185,7 +185,7 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
                         BigDecimal importe = MonedaUtils.round(cxp.diferencia * egreso.tipoDeCambio)
                         buildComplementoDePago(row, egreso)
 
-                        String cv = "201-0002-${co.cuentaOperativa}-0000"
+                        String cv = "201-0003-${co.cuentaOperativa}-0000"
                         BigDecimal tipoDeCambio = cxp.tipoDeCambio
 
                         if(cxp.fecha.getMonth() != egreso.fecha.month) {

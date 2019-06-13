@@ -31,7 +31,7 @@
 	<parameter name="FECHA_FIN" isForPrompting="true" class="java.util.Date"/>
 	<parameter name="FECHA_CORTE" isForPrompting="true" class="java.util.Date"/>
 	<queryString><![CDATA[SELECT 'COMISION' TIPO,FACTURISTA,VTA,CHOFER,SUCURSAL,SUM(VALOR) VALOR,SUM(VALOR_CAJAS) CAJAS,SUM(VALOR+(VALOR_CAJAS*2)) IMPORTE,SUM(KILOS) KILOS,SUM(MANIOBRA) FLETE
-,(CASE WHEN COMISION>0 THEN COMISION ELSE PRECIO_TONELADA END) FACTOR,SUM(IMPORTE_COMISION) IMP_COMISION,0.00 SALDO,0.00 INT_E_IVA,0.0 MATERIAL,0.0 CELULAR,0.0 PATIN,0.0 MANIOBRA_LOCAL,0.0 MANIOBRA_FORANEA,0.0 VALES,0.0 OTROS,0.00 DESCTO
+,(CASE WHEN COMISION>0 THEN COMISION ELSE PRECIO_TONELADA END) FACTOR,SUM(IMPORTE_COMISION) IMP_COMISION,0.00 SALDO,0.00 INT_E_IVA,0.0 MATERIAL,0.0 CELULAR,0.0 PATIN,0.0 MANIOBRA_LOCAL,0.0 MANIOBRA_FORANEA,0.0 VALES,0.0 OTROS,0.00 DESCTO,0.00 descuent_en_prestamo
 FROM (
 SELECT P.NOMBRE FACTURISTA,S.NOMBRE AS SUCURSAL,C.NOMBRE AS CHOFER ,F.VALOR ,0 AS CANTIDAD,F.KILOS 
 ,CASE WHEN X.PRECIO_TONELADA>0 THEN 'POR_TONELADA' WHEN F.tipo_documento='CRE' THEN 'CREDITO' ELSE 'CONTADO' END AS VTA
@@ -57,7 +57,7 @@ WHERE  P.ID=$P{FACTURISTA} AND DATE(X.REGRESO) BETWEEN $P{FECHA_INI} AND $P{FECH
 GROUP BY A.CHOFER,A.VTA,A.COMISION,A.PRECIO_TONELADA,A.SUCURSAL
 UNION
 SELECT 'POR CHOFER' TIPO,FACTURISTA,'CHOFER' VTA,CHOFER,SUCURSAL,SUM(VALOR) VALOR,SUM(VALOR_CAJAS) CAJAS,SUM(VALOR+(VALOR_CAJAS*2)) IMPORTE,SUM(KILOS) KILOS,SUM(MANIOBRA) FLETE
-,(CASE WHEN COMISION>0 THEN COMISION ELSE PRECIO_TONELADA END) FACTOR,SUM(IMPORTE_COMISION) IMP_COMISION,0.00 SALDO,0.00 INT_E_IVA,0 MATERIAL,0 CELULAR,0 PATIN,0 MANIOBRA_LOCAL,0 MANIOBRA_FORANEA,0 VALES,0 OTROS,0.00 DESCTO
+,(CASE WHEN COMISION>0 THEN COMISION ELSE PRECIO_TONELADA END) FACTOR,SUM(IMPORTE_COMISION) IMP_COMISION,0.00 SALDO,0.00 INT_E_IVA,0 MATERIAL,0 CELULAR,0 PATIN,0 MANIOBRA_LOCAL,0 MANIOBRA_FORANEA,0 VALES,0 OTROS,0.00 DESCTO,0.00 descuent_en_prestamo
 FROM (
 SELECT P.NOMBRE FACTURISTA,S.NOMBRE AS SUCURSAL,C.NOMBRE AS CHOFER ,F.VALOR ,0 AS CANTIDAD,F.KILOS 
 ,CASE WHEN X.PRECIO_TONELADA>0 THEN 'POR_TONELADA' WHEN F.tipo_documento='CRE' THEN 'CREDITO' ELSE 'CONTADO' END AS VTA
@@ -83,7 +83,7 @@ WHERE  P.ID=$P{FACTURISTA} AND DATE(X.REGRESO) BETWEEN $P{FECHA_INI} AND $P{FECH
 GROUP BY A.CHOFER
 UNION
 SELECT 'POR SUCURSAL' TIPO,FACTURISTA,'SUCURSAL' VTA,CHOFER,SUCURSAL,SUM(VALOR) VALOR,SUM(VALOR_CAJAS) CAJAS,SUM(VALOR+(VALOR_CAJAS*2)) IMPORTE,SUM(KILOS) KILOS,SUM(MANIOBRA) FLETE
-,(CASE WHEN COMISION>0 THEN COMISION ELSE PRECIO_TONELADA END) FACTOR,SUM(IMPORTE_COMISION) IMP_COMISION,0.00 SALDO,0.00 INT_E_IVA,0 MATERIAL,0 CELULAR,0 PATIN,0 MANIOBRA_LOCAL,0 MANIOBRA_FORANEA,0 VALES,0 OTROS,0.00 DESCTO
+,(CASE WHEN COMISION>0 THEN COMISION ELSE PRECIO_TONELADA END) FACTOR,SUM(IMPORTE_COMISION) IMP_COMISION,0.00 SALDO,0.00 INT_E_IVA,0 MATERIAL,0 CELULAR,0 PATIN,0 MANIOBRA_LOCAL,0 MANIOBRA_FORANEA,0 VALES,0 OTROS,0.00 DESCTO,0.00 descuent_en_prestamo
 FROM (
 SELECT P.NOMBRE FACTURISTA,S.NOMBRE AS SUCURSAL,C.NOMBRE AS CHOFER ,F.VALOR ,0 AS CANTIDAD,F.KILOS 
 ,CASE WHEN X.PRECIO_TONELADA>0 THEN 'POR_TONELADA' WHEN F.tipo_documento='CRE' THEN 'CREDITO' ELSE 'CONTADO' END AS VTA
@@ -112,18 +112,19 @@ UNION
 
 SELECT 'XDESGLOSE' TIPO,FACTURISTA,'FACTURISTA' VTA,CHOFER,SUCURSAL,SUM(VALOR) VALOR,SUM(VALOR_CAJAS) CAJAS,SUM(VALOR+(VALOR_CAJAS*2)) IMPORTE,SUM(KILOS) KILOS,SUM(MANIOBRA) FLETE
 ,(CASE WHEN COMISION>0 THEN COMISION ELSE PRECIO_TONELADA END) FACTOR,SUM(IMPORTE_COMISION) IMP_COMISION,SALDO
-,(SELECT SUM(C.TOTAL)-SUM(IFNULL((SELECT SUM(A.IMPORTE) FROM aplicacion_de_cobro A WHERE A.cuenta_por_cobrar_id=C.ID AND A.FECHA<='2019-05-16'),0)) 
+,(SELECT SUM(C.TOTAL)-SUM(IFNULL((SELECT SUM(A.IMPORTE) FROM aplicacion_de_cobro A WHERE A.cuenta_por_cobrar_id=C.ID AND A.FECHA<=$P{FECHA_CORTE}),0)) 
 	FROM cuenta_por_cobrar C JOIN cliente T ON(C.cliente_id=T.ID) JOIN facturista_de_embarque F ON(F.RFC=T.RFC) 
-	WHERE F.ID=A.FACT_ID AND C.TIPO='CHO' AND C.tipo_documento='NOTA_DE_CARGO' AND C.FECHA<='2019-05-16') INT_E_IVA
+	WHERE F.ID=A.FACT_ID AND C.TIPO='CHO' AND C.tipo_documento='NOTA_DE_CARGO' AND C.FECHA<=$P{FECHA_CORTE})
+ INT_E_IVA
 ,MATERIAL,CELULAR,PATIN,MANIOBRA_LOCAL,MANIOBRA_FORANEA,VALES,OTROS
 ,CASE WHEN SALDO=0.0 THEN 0.0 
-WHEN SALDO<=round((ROUND((SUM(IMPORTE_COMISION)+SUM(MANIOBRA))*1.12,2)*0.30),0) THEN SALDO ELSE round((ROUND((SUM(IMPORTE_COMISION)+SUM(MANIOBRA))*1.12,2)*0.30),0) END DESCTO
+WHEN SALDO<=round((ROUND((SUM(IMPORTE_COMISION)+SUM(MANIOBRA))*1.12,2)*a.descuent_en_prestamo/100.00),0) THEN SALDO ELSE round((ROUND((SUM(IMPORTE_COMISION)+SUM(MANIOBRA))*1.12,2)*a.descuent_en_prestamo/100.00),0) END DESCTO,a.descuent_en_prestamo
 FROM (
-SELECT P.ID FACT_ID,P.NOMBRE FACTURISTA,S.NOMBRE AS SUCURSAL,C.NOMBRE AS CHOFER ,F.VALOR ,0 AS CANTIDAD,F.KILOS 
+SELECT P.ID FACT_ID,P.descuent_en_prestamo,P.NOMBRE FACTURISTA,S.NOMBRE AS SUCURSAL,C.NOMBRE AS CHOFER ,F.VALOR ,0 AS CANTIDAD,F.KILOS 
 ,CASE WHEN X.PRECIO_TONELADA>0 THEN 'POR_TONELADA' WHEN F.tipo_documento='CRE' THEN 'CREDITO' ELSE 'CONTADO' END AS VTA
 ,IFNULL((SELECT V.cargos_por_maniobra FROM VENTA V WHERE V.ID=F.ORIGEN),0) AS FLETE
 ,X.ID,X.MANIOBRA,X.COMISION/100 COMISION,X.PRECIO_TONELADA,X.IMPORTE_COMISION,X.VALOR_CAJAS
-,IFNULL((SELECT SUM(Y.importe) FROM facturista_estado_de_cuenta Y WHERE Y.facturista_id=P.ID AND Y.FECHA<=$P{FECHA_FIN}),0) AS SALDO
+,IFNULL((SELECT SUM(Y.importe) FROM facturista_estado_de_cuenta Y WHERE Y.facturista_id=P.ID AND Y.FECHA<$P{FECHA_CORTE}),0) AS SALDO
 ,IFNULL((SELECT SUM(Y.importe) FROM facturista_estado_de_cuenta Y WHERE Y.facturista_id=P.ID AND Y.CONCEPTO='MATERIAL'  AND Y.FECHA = $P{FECHA_CORTE} ),0) AS MATERIAL
 ,IFNULL((SELECT SUM(Y.importe) FROM facturista_estado_de_cuenta Y WHERE Y.facturista_id=P.ID AND Y.CONCEPTO='CELULAR'  AND Y.FECHA = $P{FECHA_CORTE} ),0) AS CELULAR
 ,IFNULL((SELECT SUM(Y.importe) FROM facturista_estado_de_cuenta Y WHERE Y.facturista_id=P.ID AND Y.CONCEPTO='PATIN'  AND Y.FECHA = $P{FECHA_CORTE} ),0) AS PATIN
@@ -139,9 +140,9 @@ join facturista_de_embarque P ON(C.facturista_id=P.id)
 JOIN sucursal S ON(S.ID=E.sucursal_id)
 WHERE  P.ID=$P{FACTURISTA} AND DATE(X.REGRESO) BETWEEN $P{FECHA_INI} AND $P{FECHA_FIN}
 UNION
-SELECT P.ID,P.NOMBRE,S.NOMBRE AS SUCURSAL,C.NOMBRE AS CHOFER,X.IMPORTE_COMISION VALOR ,0 AS CANTIDAD,x.KILOS,'TRASLADO' AS VTA,0 AS FLETE,X.ID,0 MANIOBRA
+SELECT P.ID,P.descuent_en_prestamo,P.NOMBRE,S.NOMBRE AS SUCURSAL,C.NOMBRE AS CHOFER,X.IMPORTE_COMISION VALOR ,0 AS CANTIDAD,x.KILOS,'TRASLADO' AS VTA,0 AS FLETE,X.ID,0 MANIOBRA
 ,X.COMISION/100 COMISION,X.PRECIO_TONELADA,X.IMPORTE_COMISION,X.VALOR_CAJAS
-,IFNULL((SELECT SUM(Y.importe) FROM facturista_estado_de_cuenta Y WHERE Y.facturista_id=P.ID AND Y.FECHA<=$P{FECHA_FIN}),0) AS SALDO
+,IFNULL((SELECT SUM(Y.importe) FROM facturista_estado_de_cuenta Y WHERE Y.facturista_id=P.ID AND Y.FECHA<$P{FECHA_CORTE}),0) AS SALDO
 ,IFNULL((SELECT SUM(Y.importe) FROM facturista_estado_de_cuenta Y WHERE Y.facturista_id=P.ID AND Y.CONCEPTO='MATERIAL'  AND Y.FECHA = $P{FECHA_CORTE} ),0) AS MATERIAL
 ,IFNULL((SELECT SUM(Y.importe) FROM facturista_estado_de_cuenta Y WHERE Y.facturista_id=P.ID AND Y.CONCEPTO='CELULAR'  AND Y.FECHA = $P{FECHA_CORTE} ),0) AS CELULAR
 ,IFNULL((SELECT SUM(Y.importe) FROM facturista_estado_de_cuenta Y WHERE Y.facturista_id=P.ID AND Y.CONCEPTO='PATIN'  AND Y.FECHA = $P{FECHA_CORTE} ),0) AS PATIN
@@ -180,6 +181,7 @@ GROUP BY FACTURISTA]]></queryString>
 	<field name="VALES" class="java.math.BigDecimal"/>
 	<field name="OTROS" class="java.math.BigDecimal"/>
 	<field name="DESCTO" class="java.math.BigDecimal"/>
+	<field name="descuent_en_prestamo" class="java.math.BigDecimal"/>
 
 	<sortField name="TIPO" />
 	<sortField name="VTA" />
@@ -1399,7 +1401,7 @@ GROUP BY FACTURISTA]]></queryString>
 						x="188"
 						y="1"
 						width="47"
-						height="11"
+						height="13"
 						key="textField-95"/>
 					<box>					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
@@ -1407,17 +1409,17 @@ GROUP BY FACTURISTA]]></queryString>
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
 </box>
-					<textElement textAlignment="Left" verticalAlignment="Middle">
+					<textElement textAlignment="Left" verticalAlignment="Top">
 						<font fontName="Arial" size="8"/>
 					</textElement>
 				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{DESCTO}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
-						x="5"
+						x="30"
 						y="1"
-						width="183"
-						height="11"
+						width="158"
+						height="13"
 						key="staticText-86"/>
 					<box>					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
@@ -1425,11 +1427,24 @@ GROUP BY FACTURISTA]]></queryString>
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
 </box>
-					<textElement textAlignment="Right">
+					<textElement textAlignment="Left" verticalAlignment="Top">
 						<font fontName="Arial" pdfFontName="Helvetica-Oblique" size="8" isBold="false" isItalic="true"/>
 					</textElement>
-				<text><![CDATA[* 30 % DESCTO (INTERESES + PRESTAMO) =]]></text>
+				<text><![CDATA[ % DESCTO (INTERESES + PRESTAMO) =]]></text>
 				</staticText>
+				<textField isStretchWithOverflow="false" pattern="#,##0" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="14"
+						y="1"
+						width="16"
+						height="13"
+						key="textField-104"/>
+					<box></box>
+					<textElement textAlignment="Right" verticalAlignment="Top">
+						<font pdfFontName="Helvetica-Oblique" size="9" isBold="false" isItalic="true" isUnderline="false"/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{descuent_en_prestamo}]]></textFieldExpression>
+				</textField>
 			</band>
 		</lastPageFooter>
 		<summary>
@@ -1469,9 +1484,8 @@ GROUP BY FACTURISTA]]></queryString>
 						<font fontName="Arial" size="8"/>
 					</textElement>
 				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[(
-$F{INT_E_IVA}.doubleValue()==0.00 ? new BigDecimal(0) :
-$F{DESCTO}.doubleValue()==0 && $F{INT_E_IVA}.doubleValue()>0 ? $F{INT_E_IVA} :
-($F{INT_E_IVA}.doubleValue())>$F{DESCTO}.doubleValue() ? $F{DESCTO} : $F{INT_E_IVA}
+$F{INT_E_IVA}.doubleValue()==0.00 ? new BigDecimal(0.0) :
+($F{INT_E_IVA}.doubleValue())>$F{DESCTO}.doubleValue() ? $F{DESCTO} :  $F{INT_E_IVA} 
 )]]></textFieldExpression>
 				</textField>
 				<staticText>
@@ -1527,7 +1541,7 @@ $F{DESCTO}.doubleValue()==0 && $F{INT_E_IVA}.doubleValue()>0 ? $F{INT_E_IVA} :
 						<font fontName="Arial" size="8"/>
 					</textElement>
 				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[(
-$F{DESCTO}.doubleValue()==0.00 ? new BigDecimal(0) :
+$F{DESCTO}.doubleValue()==0.00 ? new BigDecimal(0.0) :
 ($F{INT_E_IVA}.doubleValue())>$F{DESCTO}.doubleValue() ? new BigDecimal(0) : $F{DESCTO}.subtract( $F{INT_E_IVA} )
 )]]></textFieldExpression>
 				</textField>

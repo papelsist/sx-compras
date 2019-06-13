@@ -32,6 +32,8 @@ export function reducer(
   action: BonificacionActions
 ): State {
   switch (action.type) {
+    case BonificacionActionTypes.CambiarBonificacionCfdi:
+    case BonificacionActionTypes.CancelarBonificacionCfdi:
     case BonificacionActionTypes.AplicarBonificacion:
     case BonificacionActionTypes.GenerarBonificacionCfdi:
     case BonificacionActionTypes.DeleteBonificacion:

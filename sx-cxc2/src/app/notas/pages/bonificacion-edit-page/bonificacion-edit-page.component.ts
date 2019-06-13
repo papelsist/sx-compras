@@ -49,7 +49,19 @@ export class BonificacionEditPageComponent implements OnInit {
     this.store.dispatch(new fromRoot.Back());
   }
 
-  cancelarBonificacion(bonificacion: Bonificacion) {
-    console.log('Cancelar bonificacion: ', bonificacion);
+  onCancelBonificacion(bonificacion: Bonificacion) {
+    // this.store.dispatch(new fromStore.Cancelar)
+  }
+
+  onCancelCfdi(bonificacion: Bonificacion) {
+    this.store.dispatch(
+      new fromStore.CancelarBonificacionCfdi({ notaId: bonificacion.id })
+    );
+  }
+
+  onCamiarCfdi(bonificacion: Bonificacion) {
+    this.store.dispatch(
+      new fromStore.CancelarBonificacionCfdi({ notaId: bonificacion.id })
+    );
   }
 }

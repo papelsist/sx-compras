@@ -33,7 +33,6 @@ abstract class NotaDeCreditoService implements FolioLog, LogUser {
     abstract void delete(Serializable id)
 
     NotaDeCredito saveNota(NotaDeCredito nota) {
-
         nota.folio = nextFolio('NOTA_DE_CREDITO', nota.serie)
         return save(nota)
     }
@@ -142,6 +141,21 @@ abstract class NotaDeCreditoService implements FolioLog, LogUser {
     NotaDeCredito cancelarAplicacion(NotaDeCredito nota) {
         Cobro cobro = nota.cobro
         cobroService.cancelarAplicaciones(cobro)
+        logEntity(nota)
+        nota.save flush: true
+        return nota
+    }
+
+    NotaDeCredito cancelarCfdi(NotaDeCredito nota) {
+        if(!nota.cfdi)
+            throw new RuntimeException("Nota de credito sin timbrar ${nota.id}")
+        Cfdi cfdi = nota.cfdi
+        cfdi.status = "CANCELACION_PENDIENTE"
+        logEntity(cfdi)
+        cfdi.save flush: true
+
+
+        nota.cfdi = null
         logEntity(nota)
         nota.save flush: true
         return nota
