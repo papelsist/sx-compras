@@ -205,7 +205,7 @@ class DescuentosComprasProc implements  ProcesadorDePoliza, AsientoBuilder{
         x.origen,
         x.uuid,x.rfc,
         x.proveedor,
-        (case when asiento like '%FINANCIERO%' or asiento = 'BONIFICACION' then concat('702-0003-',x.cta_operativa_prov,'-0000')  else (case when x.cta_operativa_prov in('0038','0061') then concat('115-',(case when asiento like '%DEVOLUCION%' then '0005-' else '0007-' end),x.cta_operativa_prov,'-0000') 
+        (case when asiento like '%FINANCIERO%' or asiento like  '%BONIFICACION%'  then concat('702-0003-',x.cta_operativa_prov,'-0000')  else (case when x.cta_operativa_prov in('0038','0061') then concat('115-',(case when asiento like '%DEVOLUCION%' then '0005-' else '0007-' end),x.cta_operativa_prov,'-0000') 
         else concat('115-',(case when asiento like '%DEVOLUCION%' then '0006-' else '0008-' end),x.cta_operativa_prov,'-0000') end) end) as cta_contable ,'119-0001-0000-0000' cta_contable_iva,
         (case when x.moneda='USD' then concat('201-0003-',x.cta_operativa_prov,'-0000') when x.cta_operativa_prov in('0038','0061') then concat('201-0001-',x.cta_operativa_prov,'-0000') else concat('201-0002-',x.cta_operativa_prov,'-0000') end) cta_proveedor
         FROM (        
