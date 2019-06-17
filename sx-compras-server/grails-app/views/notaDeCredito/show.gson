@@ -5,9 +5,14 @@ model {
 	NotaDeCredito notaDeCredito
 }
 
-json g.render(notaDeCredito, [excludes:['moneda', 'partidas'], resolveTemplate: false]) {
+json g.render(notaDeCredito, [excludes:['moneda', 'partidas', 'cliente'], resolveTemplate: false]) {
     moneda notaDeCredito.moneda.currencyCode
     cobro g.render(notaDeCredito.cobro)
+    cliente {
+        id notaDeCredito.cliente.id
+        nombre notaDeCredito.cliente.nombre
+        email notaDeCredito.cliente.getCfdiMail()
+    }
     if(notaDeCredito.cfdi) {
     	uuid notaDeCredito.cfdi.uuid
     }
@@ -18,5 +23,4 @@ json g.render(notaDeCredito, [excludes:['moneda', 'partidas'], resolveTemplate: 
     partidas g.render(notaDeCredito.partidas)
     if(notaDeCredito.cobro)
     	aplicaciones g.render(notaDeCredito.cobro.aplicaciones)
-
 }

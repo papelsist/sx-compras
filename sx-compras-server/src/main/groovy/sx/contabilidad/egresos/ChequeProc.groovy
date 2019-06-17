@@ -81,8 +81,10 @@ class ChequeProc implements  ProcesadorMultipleDePolizas {
     @Override
     List<Poliza> generarPolizas(PolizaCreateCommand command) {
         List<Poliza> polizas = []
-        List<MovimientoDeCuenta> movimientos = MovimientoDeCuenta.where{fecha == command.fecha && cheque != null}.list()
+        List<MovimientoDeCuenta> movimientos = MovimientoDeCuenta.where{fecha == command.fecha && cheque != null}
+                .list([sort: 'fecha', order: 'asc'])
         movimientos = movimientos.sort {it.cheque.folio}.reverse()
+
         movimientos.each{ mov ->
 
             Poliza p = Poliza.where{

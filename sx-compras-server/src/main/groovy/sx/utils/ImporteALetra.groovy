@@ -314,48 +314,67 @@ class ImporteALetra {
     }
 
     private String decmillon(int numero){
+
         if (numero == 10000000)
-            num_letradmm = "DIEZ MILLONES";
+            num_letradmm = "DIEZ MILLONES"
+
         if (numero > 10000000 && numero <20000000){
-            flag=1;
-            num_letradmm = decena(numero/1000000).concat("MILLONES ").concat(cienmiles(numero%1000000));
+            flag=1
+            num_letradmm = decena(numero/1000000).concat("MILLONES ").concat(cienmiles(numero%1000000))
         }
+
         if (numero >= 20000000 && numero <100000000){
-            flag=1;
-            num_letradmm = decena(numero/1000000).concat(" MILLONES ").concat(millon(numero%1000000));
+            flag=1
+            num_letradmm = decena(numero/1000000).concat(" MILLONES ").concat(millon(numero%1000000))
         }
 
 
         if (numero < 10000000)
-            num_letradmm = millon(numero);
+            num_letradmm =  millon(numero)
 
-        return num_letradmm;
+        return num_letradmm
     }
 
 
-    public String convertirLetras(final BigDecimal importe){
-        //println "El importe a convertir en letras es: " +importe
-        double  val1=importe.abs().doubleValue();
-        int entero=importe.intValue();
-        double cent=val1-(double)entero;
-        long valor=Math.round(cent*100);
-        final String svalor=String.valueOf(valor);
-        final String ok=StringUtils.leftPad(svalor,2,'0');
-        num_letras = decmillon(importe.intValue());
-        num_letras+=" PESOS {0}/100 M.N.";
-        if(entero<1){
-            num_letras=" CERO PESOS {0}/100 M.N.";
+    String convertirLetras(final BigDecimal importe){
+        double  val1=importe.abs().doubleValue()
+        int entero=importe.intValue()
+        double cent=val1-(double)entero
+        long valor=Math.round(cent*100)
+        final String svalor=String.valueOf(valor)
+        final String ok=StringUtils.leftPad(svalor,2,'0')
+        num_letras = decmillon(importe.intValue())
+        num_letras += " PESOS {0}/100 M.N."
+        if(entero < 1) {
+            num_letras = " CERO PESOS {0}/100 M.N."
         }
-        //println "Importe con letra  " +num_letras
-        return MessageFormat.format(num_letras, ok);
+        return MessageFormat.format(num_letras, ok)
     }
 
-    private static   INSTANCE;
+    String convertirLetrasDolares(final BigDecimal importe){
+        double  val1 = importe.abs().doubleValue()
+        int entero = importe.intValue()
+        double cent = val1 - (double)entero
+        long valor=Math.round(cent * 100)
+        final String svalor=String.valueOf(valor)
+        final String ok=StringUtils.leftPad(svalor,2,'0')
+        num_letras = decmillon(importe.intValue())
+        num_letras += " DOLARES AMERICANOS {0}/100 USD"
+        return MessageFormat.format(num_letras, ok)
+    }
 
-    public static String aLetra(final BigDecimal importe){
+    private static   ImporteALetra INSTANCE
+
+    static String aLetra(final BigDecimal importe){
         if(INSTANCE==null)
             INSTANCE=new ImporteALetra();
         return INSTANCE.convertirLetras(importe);
+    }
+
+    static String aLetraDolares(final BigDecimal importe){
+        if(INSTANCE==null)
+            INSTANCE=new ImporteALetra()
+        return INSTANCE.convertirLetrasDolares(importe)
     }
 
 

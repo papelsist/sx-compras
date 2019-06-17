@@ -22,6 +22,7 @@ import { Cartera } from 'app/cobranza/models';
 })
 export class CreditoPageComponent implements OnInit {
   navmenu: Object[] = [
+    /*
     {
       route: 'cobros',
       title: 'Cobros',
@@ -34,18 +35,21 @@ export class CreditoPageComponent implements OnInit {
       icon: 'event_available',
       description: 'Solicitudes de deposito'
     },
+    */
     {
       route: 'notas/bonificaciones',
       title: 'Bonificaciones',
       description: 'Notas de bonificación',
       icon: 'B'
     },
+    /*
     {
       route: 'notas-de-cargo',
       title: 'N.Cargo',
       icon: 'queue',
       description: 'Notas de cargo'
     }
+    */
   ];
 
   user$: Observable<User>;

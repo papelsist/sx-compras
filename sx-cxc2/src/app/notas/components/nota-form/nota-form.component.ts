@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 @Component({
   selector: 'sx-nota-form',
@@ -6,10 +7,18 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./nota-form.component.scss']
 })
 export class NotaFormComponent implements OnInit {
+  form: FormGroup;
 
-  constructor() { }
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit() {
+    this.buildForm();
   }
 
+  private buildForm() {
+    this.form = this.fb.group({
+      tipoDeCalculo: ['PORCENTAJE', [Validators.required]],
+      comentario: []
+    });
+  }
 }

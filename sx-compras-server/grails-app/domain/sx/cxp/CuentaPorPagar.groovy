@@ -35,6 +35,8 @@ class CuentaPorPagar {
     BigDecimal descuento = 0.0
     BigDecimal impuestoTrasladado = 0.0
     BigDecimal impuestoRetenido = 0.0
+    BigDecimal impuestoRetenidoIva = 0.0
+    BigDecimal impuestoRetenidoIsr = 0.0
     BigDecimal total = 0.0
 
     BigDecimal descuentoFinanciero

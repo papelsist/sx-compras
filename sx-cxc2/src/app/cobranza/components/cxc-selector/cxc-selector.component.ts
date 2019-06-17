@@ -6,15 +6,15 @@ import { CxCSelectorDialogComponent } from './cxc-selector-dialog.component';
   selector: 'sx-cxc-selector',
   template: `
     <button mat-button (click)="lookup()" type="button" [disabled]="disabled">
-      <span>{{title}}</span>
       <mat-icon>add</mat-icon>
+      <span>{{ title }}</span>
     </button>
   `,
   styles: []
 })
 export class CxCSelectorComponent implements OnInit {
   @Input()
-  title = 'Buscar cuentas por cobrar';
+  title = 'FACTURAS';
 
   @Output()
   select = new EventEmitter();

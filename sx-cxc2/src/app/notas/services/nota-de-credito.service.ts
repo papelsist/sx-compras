@@ -71,4 +71,45 @@ export class NotaDeCreditoService {
     const url = `${this.apiUrl}/${notaId}`;
     return this.http.delete(url).pipe(catchError(error => throwError(error)));
   }
+
+  buscarFacturasPendientes(filtro?): Observable<any> {
+    const url = this.apiUrl + '/buscarFacturasPendientes';
+    return this.http.get<any>(url);
+  }
+
+  gemerarCfdi(
+    notaId: string
+  ): Observable<NotaDeCredito | Bonificacion | Devolucion> {
+    const url = `${this.apiUrl}/generarCfdi/${notaId}`;
+    return this.http
+      .post<NotaDeCredito>(url, {})
+      .pipe(catchError(error => throwError(error)));
+  }
+
+  cancelarCfdi(
+    notaId: string
+  ): Observable<NotaDeCredito | Bonificacion | Devolucion> {
+    const url = `${this.apiUrl}/cancelarCfdi/${notaId}`;
+    return this.http
+      .post<NotaDeCredito>(url, {})
+      .pipe(catchError(error => throwError(error)));
+  }
+
+  cambiarCfdi(
+    notaId: string
+  ): Observable<NotaDeCredito | Bonificacion | Devolucion> {
+    const url = `${this.apiUrl}/cambiarCfdi/${notaId}`;
+    return this.http
+      .post<NotaDeCredito>(url, {})
+      .pipe(catchError(error => throwError(error)));
+  }
+
+  aplicar(
+    notaId: string
+  ): Observable<NotaDeCredito | Bonificacion | Devolucion> {
+    const url = `${this.apiUrl}/aplicar/${notaId}`;
+    return this.http
+      .put<NotaDeCredito>(url, {})
+      .pipe(catchError(error => throwError(error)));
+  }
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -12,7 +12,7 @@ import { PeriodoFilter } from 'app/models';
 export class ChequeDevueltoService {
   private apiUrl: string;
 
-  constructor(private http: HttpClient, config: ConfigService) {
+  constructor(private http: HttpClient, private config: ConfigService) {
     this.apiUrl = config.buildApiUrl('cxc/chequesDevuetos');
   }
 
@@ -54,5 +54,36 @@ export class ChequeDevueltoService {
     return this.http
       .put<ChequeDevuelto>(url, update.changes)
       .pipe(catchError((error: any) => throwError(error)));
+  }
+
+  generarNota(id: string): Observable<ChequeDevuelto> {
+    const url = `${this.apiUrl}/generarNotaDeCargo/${id}`;
+    return this.http
+      .post<ChequeDevuelto>(url, {})
+      .pipe(catchError((error: any) => throwError(error)));
+  }
+
+  fetchXml(id: string): Observable<any> {
+    const url = `${this.config.buildApiUrl('cfdi')}/mostrarXml/${id}`;
+    const headers = new HttpHeaders().set('Content-type', 'text/xml');
+    return this.http
+      .get(url, {
+        headers: headers,
+        responseType: 'blob'
+      })
+      .pipe(catchError((error: any) => throwError(error)));
+  }
+
+  mostrarXml(cfdiId: string) {
+    this.fetchXml(cfdiId).subscribe(
+      res => {
+        const blob = new Blob([res], {
+          type: 'text/xml'
+        });
+        const fileURL = window.URL.createObjectURL(blob);
+        window.open(fileURL, '_blank');
+      },
+      error => console.error('Error descrgando XML de CFDI: ', cfdiId)
+    );
   }
 }

@@ -64,6 +64,7 @@ export class ChequesDevueltosTableComponent implements OnInit, OnChanges {
     'nombre',
     'importe',
     'comentario',
+    'nc',
     'modificado',
     'usuario',
     'operaciones'

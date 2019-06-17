@@ -18,6 +18,7 @@ import { components, entryComponents } from './components';
     CobranzaRoutingModule,
     StoreModule.forFeature('cobranza', reducers),
     EffectsModule.forFeature(effects)
-  ]
+  ],
+  exports: [...components, ...entryComponents]
 })
 export class CobranzaModule {}

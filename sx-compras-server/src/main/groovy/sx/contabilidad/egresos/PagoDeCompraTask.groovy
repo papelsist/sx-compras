@@ -11,15 +11,17 @@ import sx.contabilidad.CuentaOperativaProveedor
 import sx.contabilidad.Poliza
 import sx.contabilidad.PolizaDet
 import sx.core.Proveedor
+import sx.core.TipoDeCambio
 import sx.cxp.AnalisisDeFactura
 import sx.cxp.CuentaPorPagar
 import sx.cxp.Requisicion
 import sx.cxp.RequisicionDeCompras
+import sx.cxp.RequisicionDet
 import sx.tesoreria.MovimientoDeCuenta
 import sx.utils.MonedaUtils
+import sx.utils.Periodo
 
 @Slf4j
-@GrailsCompileStatic
 @Component
 class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
 
@@ -41,10 +43,13 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
 
         ajustarConcepto(poliza, r)
         cargoProveedor(poliza, r)
-        abonoBanco(poliza, r)
+
         registrarRetenciones(poliza, r)
         registrarDiferenciaCambiaria(poliza, r)
+        abonoBanco(poliza, r)
         ajustarProveedorBanco(poliza)
+        registrarVariacionCambiaria(poliza)
+        registrarVariacionCambiariaIva(poliza)
         return poliza
 
     }
@@ -55,20 +60,36 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
      * @param poliza
      * @param r
      */
-    void cargoProveedor(Poliza poliza, Requisicion r) {
+    @CompileDynamic
+    void cargoProveedor(Poliza poliza, RequisicionDeCompras r) {
         log.info('Generando cargo al proveedor {}  Partidas de Req:{} = {}', r.nombre, r.folio, r.partidas.size())
         CuentaOperativaProveedor co = buscarCuentaOperativa(r.proveedor)
         MovimientoDeCuenta egreso = r.egreso
 
-        r.partidas.each {
+        List<RequisicionDet> partidas = r.partidas.sort { it.cxp.serie + it.cxp.folio}
+
+        partidas.each {
+
             CuentaPorPagar cxp = it.cxp
+            BigDecimal tipoDeCambio = cxp.tipoDeCambio
+
+            if(egreso.moneda.currencyCode != 'MXN' && cxp.fecha.getMonth() != egreso.fecha.month) {
+
+                Date nvaFecha = Periodo.inicioDeMes(egreso.fecha) - 2
+                TipoDeCambio tc = TipoDeCambio.where{fecha == nvaFecha}.find()
+                if(!tc) {
+                    throw new RuntimeException("No existe Tipo de cambio para el ${nvaFecha}")
+                }
+                tipoDeCambio = tc.tipoDeCambio
+            }
+
             String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} F:${cxp.serie?:''} ${cxp.folio}" +
                     " (${cxp.fecha.format('dd/MM/yyyy')}) ${egreso.sucursal?: 'OFICINAS'} " +
-                    " ${cxp.tipoDeCambio > 1.0 ? 'T.C:' + cxp.tipoDeCambio: ''}"
+                    " ${cxp.tipoDeCambio > 1.0 ? 'T.C:' + tipoDeCambio : ''}"
             Map row = [
                     asiento: "PAGO_${egreso.tipo}",
                     referencia: r.proveedor.nombre,
-                    referencia2: egreso.cuenta.descripcion,
+                    referencia2: r.proveedor.nombre,
                     origen: egreso.id,
                     documento: cxp.folio,
                     documentoTipo: 'CXP',
@@ -85,44 +106,120 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
             buildComplementoDePago(row, egreso)
             // Cargo a Proveedor
             String cv = "201-0002-${co.cuentaOperativa}-0000"
+            if(tipoDeCambio > 0.0) {
+                cv = "201-0003-${co.cuentaOperativa}-0000"
+            }
             if(['0038','0061'].contains(co.cuentaOperativa)) {
                 cv = "201-0001-${co.cuentaOperativa}-0000"
             }
-            poliza.addToPartidas(mapRow(cv, desc, row, MonedaUtils.round(it.apagar  * r.tipoDeCambio)))
-            if(egreso.cheque) {
-                /*
-                log.info('Cheque: {}', egreso.cheque)
-                if(egreso.cheque.fecha != egreso.cheque.fechaTransito){
-                    // IVA
-                    BigDecimal importe = MonedaUtils.calcularImporteDelTotal(it.apagar * r.tipoDeCambio)
-                    BigDecimal impuesto = it.apagar - importe
-                    BigDecimal ivaCfdi = cxp.impuestoTrasladado
-                    log.info('IVA del CFDI:{}  Calculado: {}', ivaCfdi, impuesto)
-                    poliza.addToPartidas(mapRow('118-0001-0000-0000', desc, row, impuesto))
-                    poliza.addToPartidas(mapRow('119-0001-0000-0000', desc, row, 0.0, impuesto))
-                }
-                */
-            }
+            poliza.addToPartidas(mapRow(cv, desc, row, MonedaUtils.round(it.apagar  * tipoDeCambio)))
 
-            // IVA
-            BigDecimal impuestoTrasladado = cxp.impuestoTrasladado - (cxp.impuestoRetenido?:0.0)
+
             BigDecimal totalFactura = cxp.total
             BigDecimal apagar = cxp.importePorPagar ?: 0.0
-            BigDecimal dif = totalFactura - apagar
+            BigDecimal dif = totalFactura - apagar // Diferencia para saber si existe DESCUENTO NORMAL
+            // log.info('Fac {} Diferencia entre factura y requisicion: {}', cxp.folio, dif)
+            // Impuesto trasladado
+            BigDecimal impuestoTrasladado = cxp.impuestoTrasladado - (cxp.impuestoRetenido?:0.0)
+            BigDecimal impuestoTrasladadoPara118 = MonedaUtils.round(impuestoTrasladado * egreso.tipoDeCambio)
+            BigDecimal impuestoTrasladadoPara119 = MonedaUtils.round(impuestoTrasladado * cxp.tipoDeCambio)
 
-            if( dif.abs() > 10.00) {
-                BigDecimal importe = MonedaUtils.calcularImporteDelTotal(it.apagar * r.tipoDeCambio)
-                impuestoTrasladado = MonedaUtils.calcularImpuesto(importe)
-                impuestoTrasladado = impuestoTrasladado - cxp.impuestoRetenido
+            if( (dif.abs() * egreso.tipoDeCambio ) > (3.00 * egreso.tipoDeCambio) ) {
+
+                BigDecimal baseConIva = it.total + (cxp.impuestoRetenido?:0.0)
+                BigDecimal base = MonedaUtils.calcularImporteDelTotal(baseConIva)
+                BigDecimal impuesto  = MonedaUtils.calcularImpuesto(base)
+                log.info("Factura con descuento Folio:: ${cxp.folio} Pago: ${it.total} Base: {} Iva: {}", base, impuesto)
+                impuestoTrasladado = impuesto - cxp.impuestoRetenido?:0.0
+
+                impuestoTrasladadoPara118 = MonedaUtils.round(impuestoTrasladado * egreso.tipoDeCambio)
+                impuestoTrasladadoPara119 = MonedaUtils.round(impuestoTrasladado * cxp.tipoDeCambio)
+
+            } else if (r.descuentof > 0.0) {
+
+                log.info('Factura con descuento FINANCIERO')
+                BigDecimal baseConIva = it.apagar + (cxp.impuestoRetenido?:0.0)
+                BigDecimal base = MonedaUtils.calcularImporteDelTotal(baseConIva)
+                BigDecimal impuesto  = MonedaUtils.calcularImpuesto(base)
+                impuestoTrasladado = impuesto - cxp.impuestoRetenido?:0.0
+                impuestoTrasladado = MonedaUtils.round(impuestoTrasladado * egreso.tipoDeCambio)
+
+                impuestoTrasladadoPara118 = MonedaUtils.round(impuestoTrasladado * egreso.tipoDeCambio)
+                impuestoTrasladadoPara119 = MonedaUtils.round(impuestoTrasladado * cxp.tipoDeCambio)
+
             }
 
-           // log.info('IVA del CFDI:{}  Calculado: {}', ivaCfdi, impuesto)
-            poliza.addToPartidas(mapRow('118-0001-0000-0000', desc, row, impuestoTrasladado))
-            poliza.addToPartidas(mapRow('119-0001-0000-0000', desc, row, 0.0, impuestoTrasladado))
+            desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} F:${cxp.serie?:''} ${cxp.folio}" +
+                    " (${cxp.fecha.format('dd/MM/yyyy')}) ${egreso.sucursal?: 'OFICINAS'} " +
+                    " ${cxp.tipoDeCambio > 1.0 ? 'T.C:' + egreso.tipoDeCambio : ''}"
+
+            poliza.addToPartidas(mapRow('118-0001-0000-0000', desc, row, impuestoTrasladadoPara118))
+
+            desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} F:${cxp.serie?:''} ${cxp.folio}" +
+                    " (${cxp.fecha.format('dd/MM/yyyy')}) ${egreso.sucursal?: 'OFICINAS'} " +
+                    " ${cxp.tipoDeCambio > 1.0 ? 'T.C:' + cxp.tipoDeCambio : ''}"
+
+            poliza.addToPartidas(mapRow('119-0001-0000-0000', desc, row, 0.0, impuestoTrasladadoPara119))
            
+        }
+        log.info('Prov: {} MON: {}', r.proveedor.clave, r.egreso.moneda)
+        if(r.proveedor.clave == 'A001' && r.egreso.moneda == MonedaUtils.DOLARES) {
+            r.partidas.each { det ->
+                def cxp = det.cxp
+                if(cxp) {
+                    if(cxp.diferencia == 10.00) {
+                        log.info('CASO AVERY  Dif:{}',cxp.diferencia)
+                        Map row = [
+                                asiento: "PAGO_${egreso.tipo}",
+                                referencia: r.nombre,
+                                referencia2: r.nombre,
+                                origen: egreso.id,
+                                documento: egreso.referencia,
+                                documentoTipo: 'CXP',
+                                documentoFecha: egreso.fecha,
+                                sucursal: egreso.sucursal?: 'OFICINAS',
+                                ctaDestino: r.proveedor.cuentaBancaria,
+                                bancoDestino: r.proveedor.banco,
+                        ]
+
+                        BigDecimal importe = MonedaUtils.round(cxp.diferencia * egreso.tipoDeCambio)
+                        buildComplementoDePago(row, egreso)
+
+                        String cv = "201-0003-${co.cuentaOperativa}-0000"
+                        BigDecimal tipoDeCambio = cxp.tipoDeCambio
+
+                        if(cxp.fecha.getMonth() != egreso.fecha.month) {
+
+                            Date nvaFecha = Periodo.inicioDeMes(egreso.fecha) - 2
+                            TipoDeCambio tc = TipoDeCambio.where{fecha == nvaFecha}.find()
+                            if(!tc) {
+                                throw new RuntimeException("No existe Tipo de cambio para el ${nvaFecha}")
+                            }
+                            tipoDeCambio = tc.tipoDeCambio
+                        }
+                        String desc = """
+                            ${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} 
+                            ${egreso.referencia} ${egreso.afavor} (${egreso.fecha.format('dd/MM/yyyy')})
+                            TC: ${tipoDeCambio} 
+                        """
+
+                        poliza.addToPartidas(mapRow(cv, desc, row, MonedaUtils.round(cxp.diferencia  * tipoDeCambio)))
+
+                        desc = """
+                            ${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} 
+                            ${egreso.referencia} ${egreso.afavor} (${egreso.fecha.format('dd/MM/yyyy')})
+                            TC: ${r.egreso.tipoDeCambio} 
+                        """
+                        poliza.addToPartidas(mapRow('704-0005-0000-0000', desc, row, 0.0, importe))
+
+                    }
+                }
+            }
         }
 
     }
+
+
 
     void abonoBanco(Poliza poliza, Requisicion r) {
         MovimientoDeCuenta egreso = r.egreso
@@ -133,24 +230,26 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
         Map row = [
                 asiento: "PAGO_${egreso.tipo}",
                 referencia: r.nombre,
-                referencia2: egreso.cuenta.descripcion,
+                referencia2: r.nombre,
                 origen: egreso.id,
                 documento: egreso.referencia,
                 documentoTipo: 'CXP',
                 documentoFecha: egreso.fecha,
                 sucursal: egreso.sucursal?: 'OFICINAS',
                 ctaDestino: r.proveedor.cuentaBancaria,
-                bancoDestino: r.proveedor.banco
+                bancoDestino: r.proveedor.banco,
         ]
 
-        buildComplementoDePago(row, egreso)
-        // String desc = "Folio: ${egreso.referencia} (${egreso.fecha.format('dd/MM/yyyy')}) "
         String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} ${egreso.afavor} (${egreso.fecha.format('dd/MM/yyyy')})"
 
         if(r.moneda != 'MXN') {
-            desc = desc + " TC: ${r.tipoDeCambio}"
+            desc = desc + " TC: ${r.egreso.tipoDeCambio}"
         }
-        poliza.addToPartidas(mapRow(ctaBanco, desc, row, 0.0, egreso.importe.abs()))
+        BigDecimal importe = MonedaUtils.round(egreso.importe.abs() * egreso.tipoDeCambio)
+        buildComplementoDePago(row, egreso)
+
+        PolizaDet det = mapRow(ctaBanco, desc, row, 0.0, importe)
+        poliza.addToPartidas(det)
     }
 
     @CompileDynamic
@@ -159,7 +258,7 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
         Map row = [
                 asiento: "PAGO_${egreso.tipo}",
                 referencia: r.nombre,
-                referencia2: egreso.cuenta.descripcion,
+                referencia2: r.nombre,
                 origen: egreso.id,
                 documento: egreso.referencia,
                 documentoTipo: 'CXP',
@@ -180,6 +279,7 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
                             " (${cxp.fecha.format('dd/MM/yyyy')}) ${egreso.sucursal?: 'OFICINAS'} " +
                             " ${cxp.tipoDeCambio > 1.0 ? 'T.C:' + cxp.tipoDeCambio: ''}"
                     BigDecimal imp = cxp.impuestoRetenido
+
                     // log.info('Retenido Fac: {} {} ', cxp.folio, imp)
                     poliza.addToPartidas(mapRow('118-0003-0000-0000', desc, row, imp))
                     poliza.addToPartidas(mapRow('119-0003-0000-0000', desc, row, 0.0, imp))
@@ -214,8 +314,9 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
     }
 
     void ajustarConcepto(Poliza poliza, Requisicion r) {
+        poliza.concepto = "TR: ${r.egreso.referencia} ${r.egreso.afavor} (${r.egreso.fecha.format('dd/MM/yyyy')}) (${r.egreso.tipo})"
         if(r.moneda != 'MXN') {
-            poliza.concepto = poliza.concepto + "TC: ${r.tipoDeCambio}"
+            poliza.concepto = poliza.concepto + "TC: ${r.egreso.tipoDeCambio}"
         }
     }
 
@@ -254,7 +355,7 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
 
             } else {
                 PolizaDet pdet = new PolizaDet()
-                pdet.cuenta = buscarCuenta('703-0003-0000-0000')
+                pdet.cuenta = buscarCuenta('703-0001-0000-0000')
                 pdet.concepto = pdet.cuenta.descripcion
                 pdet.sucursal = det.sucursal
                 pdet.origen = det.origen
@@ -307,13 +408,137 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
                 sucursal: row.sucursal,
                 debe: debe.abs() ,
                 haber: haber.abs(),
+                moneda: row.moneda,
+                tipCamb: row.tipCamb
         )
         // Datos del complemento
         if(row.uuid)
             asignarComprobanteNacional(det, row)
-        if(row.metodoDePago)
+        if(row.metodoDePago){
             asignarComplementoDePago(det, row)
+        }
+
         return det
     }
 
+    def registrarVariacionCambiariaIva(Poliza p) {
+
+        def grupos = p.partidas.findAll {it.moneda == 'USD' && ( it.cuenta.clave.startsWith('118') || it.cuenta.clave.startsWith('119') )}
+                .groupBy { it.origen }
+
+        grupos.each {
+            BigDecimal debe = it.value.sum 0.0, {r -> r.debe}
+            BigDecimal haber = it.value.sum 0.0, {r -> r.haber}
+
+            BigDecimal dif = debe - haber
+            if(dif.abs() > 1.0 ){
+                log.info("Registrando IVA de la variacion cambiaria: ${it.key} Debe: ${debe} Haber: ${haber} Dif: ${dif}")
+
+                def det = it.value.find {it.cuenta.clave.startsWith('118')}
+
+                if(dif > 0.0) {
+                    PolizaDet pdet = new PolizaDet()
+                    pdet.cuenta = buscarCuenta('702-0004-0000-0000')
+                    pdet.concepto = pdet.cuenta.descripcion
+                    pdet.sucursal = det.sucursal
+                    pdet.origen = det.origen
+                    pdet.referencia = det.referencia
+                    pdet.referencia2 = det.referencia2
+                    pdet.haber = dif.abs()
+                    pdet.descripcion = det.descripcion
+                    pdet.entidad = det.entidad
+                    pdet.asiento = det.asiento + '_VC_IVA'
+                    pdet.documentoTipo = det.documentoTipo
+                    pdet.documentoFecha = det.documentoFecha
+                    pdet.documento = det.documento
+                    pdet.moneda = 'MXN'
+                    pdet.tipCamb = 1.0
+                    p.addToPartidas(pdet)
+
+                } else {
+                    PolizaDet pdet = new PolizaDet()
+                    pdet.cuenta = buscarCuenta('701-0001-0000-0000')
+                    pdet.concepto = pdet.cuenta.descripcion
+                    pdet.sucursal = det.sucursal
+                    pdet.origen = det.origen
+                    pdet.referencia = det.referencia
+                    pdet.referencia2 = det.referencia2
+                    pdet.debe = dif.abs()
+                    pdet.descripcion = det.descripcion
+                    pdet.entidad = det.entidad
+                    pdet.asiento = det.asiento+ '_VC_IVA'
+                    pdet.documentoTipo = det.documentoTipo
+                    pdet.documentoFecha = det.documentoFecha
+                    pdet.documento = det.documento
+                    pdet.moneda = 'MXN'
+                    pdet.tipCamb = 1.0
+                    p.addToPartidas(pdet)
+                }
+            }
+
+        }
+    }
+
+    def registrarVariacionCambiaria(Poliza p) {
+
+        PolizaDet banco = p.partidas.find {it.cuenta.clave.startsWith('102')}
+        PolizaDet otrosProductosAnt = p.partidas.find {it.cuenta.clave.startsWith('704-0005')} // Caso AVERY
+
+        if(banco.moneda == null || banco.moneda == 'MXN') {
+            return
+        }
+        List<PolizaDet> procs = p.partidas.findAll {it.cuenta.clave.startsWith('201')}
+        BigDecimal debe = procs.sum 0.0, {r -> r.debe}
+        BigDecimal haber = banco.haber
+        if(otrosProductosAnt) {
+            haber = haber +otrosProductosAnt.haber
+        }
+
+        BigDecimal dif = debe - haber
+
+        if(dif.abs() > 1.0 ){
+
+            def det = banco
+
+            if(dif > 0.0) {
+                PolizaDet pdet = new PolizaDet()
+                pdet.cuenta = buscarCuenta('702-0004-0000-0000')
+                pdet.concepto = pdet.cuenta.descripcion
+                pdet.sucursal = det.sucursal
+                pdet.origen = det.origen
+                pdet.referencia = det.referencia
+                pdet.referencia2 = det.referencia2
+                pdet.haber = dif.abs()
+                pdet.descripcion = det.descripcion
+                pdet.entidad = det.entidad
+                pdet.asiento = det.asiento+ '_VC'
+                pdet.documentoTipo = det.documentoTipo
+                pdet.documentoFecha = det.documentoFecha
+                pdet.documento = det.documento
+                pdet.moneda = 'MXN'
+                pdet.tipCamb = 1.0
+                p.addToPartidas(pdet)
+
+            } else {
+                PolizaDet pdet = new PolizaDet()
+                pdet.cuenta = buscarCuenta('701-0001-0000-0000')
+                pdet.concepto = pdet.cuenta.descripcion
+                pdet.sucursal = det.sucursal
+                pdet.origen = det.origen
+                pdet.referencia = det.referencia
+                pdet.referencia2 = det.referencia2
+                pdet.debe = dif.abs()
+                pdet.descripcion = det.descripcion
+                pdet.entidad = det.entidad
+                pdet.asiento = det.asiento+ '_VC'
+                pdet.documentoTipo = det.documentoTipo
+                pdet.documentoFecha = det.documentoFecha
+                pdet.documento = det.documento
+                pdet.moneda = 'MXN'
+                pdet.tipCamb = 1.0
+                p.addToPartidas(pdet)
+            }
+        }
+
+    }
 }

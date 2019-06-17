@@ -11,6 +11,7 @@ import { components, entyComponents } from './components';
 import { directives } from './directives';
 import { pipes } from './pipes';
 import { MAT_DATE_LOCALE } from '@angular/material';
+import { SelectorCxcModule } from './selector-cxc/selector-cxc.module';
 
 @NgModule({
   imports: [
@@ -18,7 +19,8 @@ import { MAT_DATE_LOCALE } from '@angular/material';
     FormsModule,
     ReactiveFormsModule,
     MaterialModule,
-    CovalentModule
+    CovalentModule,
+    SelectorCxcModule
   ],
   exports: [
     CommonModule,
@@ -29,7 +31,8 @@ import { MAT_DATE_LOCALE } from '@angular/material';
     ...components,
     ...entyComponents,
     ...directives,
-    ...pipes
+    ...pipes,
+    SelectorCxcModule
   ],
   declarations: [...components, ...directives, ...pipes],
   entryComponents: [...entyComponents],

@@ -87,16 +87,22 @@ class CobroService implements  LogUser{
         return cobro
     }
 
+    Cobro cancelarAplicaciones(Cobro cobro) {
+        cobro.aplicaciones.clear()
+        logEntity(cobro)
+        cobro.save flush: true
+    }
+
 
     Cobro eliminarAplicacion(AplicacionDeCobro aplicacionDeCobro) {
         Cobro cobro = aplicacionDeCobro.cobro
-        /*
+
         if(cobro.cfdi) {
             throw new RuntimeException(
                     "Cobro con recibo de pago (CFDI)  ${cobro.cfdi.uuid} " +
                             "NO SE PUEDENDE MODIFICAR ")
         }
-        */
+
         cobro.removeFromAplicaciones(aplicacionDeCobro)
         if(!cobro.aplicaciones) {
             cobro.primeraAplicacion = null

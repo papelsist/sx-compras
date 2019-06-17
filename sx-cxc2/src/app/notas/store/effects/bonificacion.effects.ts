@@ -55,6 +55,20 @@ export class BonificacionEffects {
   );
 
   @Effect()
+  createSuccess$ = this.actions$.pipe(
+    ofType<fromActions.CreateBonificacionSuccess>(
+      BonificacionActionTypes.CreateBonificacionSuccess
+    ),
+    map(action => action.payload.bonificacion),
+    map(
+      bonificacion =>
+        new fromRoot.Go({
+          path: ['credito/notas/bonificaciones/edit', bonificacion.id]
+        })
+    )
+  );
+
+  @Effect()
   updateNota$ = this.actions$.pipe(
     ofType<fromActions.UpdateBonificacion>(
       BonificacionActionTypes.UpdateBonificacion
@@ -83,10 +97,81 @@ export class BonificacionEffects {
       this.service.delete(nota.id).pipe(
         map(
           res =>
-            new fromActions.DeleteBonificacionSuccess({ bonificacion: res })
+            new fromActions.DeleteBonificacionSuccess({ bonificacion: nota })
         ),
         catchError(response =>
           of(new fromActions.DeleteBonificacionFail({ response }))
+        )
+      )
+    )
+  );
+
+  @Effect()
+  deleteSuccess$ = this.actions$.pipe(
+    ofType<fromActions.DeleteBonificacionSuccess>(
+      BonificacionActionTypes.DeleteBonificacionSuccess
+    ),
+    map(action => action.payload.bonificacion),
+    map(
+      () =>
+        new fromRoot.Go({
+          path: ['credito/notas/bonificaciones']
+        })
+    )
+  );
+
+  @Effect()
+  generarCfdi$ = this.actions$.pipe(
+    ofType<fromActions.GenerarBonificacionCfdi>(
+      BonificacionActionTypes.GenerarBonificacionCfdi
+    ),
+    map(action => action.payload.notaId),
+    switchMap(notaId =>
+      this.service.gemerarCfdi(notaId).pipe(
+        map(
+          (bonificacion: Bonificacion) =>
+            new fromActions.UpdateBonificacionSuccess({ bonificacion })
+        ),
+        catchError(response =>
+          of(new fromActions.UpdateBonificacionFail({ response }))
+        )
+      )
+    )
+  );
+
+  @Effect()
+  cancelarCfdi$ = this.actions$.pipe(
+    ofType<fromActions.CancelarBonificacionCfdi>(
+      BonificacionActionTypes.CancelarBonificacionCfdi
+    ),
+    map(action => action.payload.notaId),
+    switchMap(notaId =>
+      this.service.gemerarCfdi(notaId).pipe(
+        map(
+          (bonificacion: Bonificacion) =>
+            new fromActions.UpdateBonificacionSuccess({ bonificacion })
+        ),
+        catchError(response =>
+          of(new fromActions.UpdateBonificacionFail({ response }))
+        )
+      )
+    )
+  );
+
+  @Effect()
+  aplicar$ = this.actions$.pipe(
+    ofType<fromActions.AplicarBonificacion>(
+      BonificacionActionTypes.AplicarBonificacion
+    ),
+    map(action => action.payload.notaId),
+    switchMap(notaId =>
+      this.service.aplicar(notaId).pipe(
+        map(
+          (bonificacion: Bonificacion) =>
+            new fromActions.UpdateBonificacionSuccess({ bonificacion })
+        ),
+        catchError(response =>
+          of(new fromActions.UpdateBonificacionFail({ response }))
         )
       )
     )

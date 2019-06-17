@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 
 import * as fromContainers from './containers';
 import * as fromGuards from './guards';
+import { ChequesDevueltoExistsGuard } from './guards/cheque-devuelto.exists.guard';
 
 const routes: Routes = [
   {
@@ -18,6 +19,11 @@ const routes: Routes = [
         path: 'chequesdevueltos',
         canActivate: [fromGuards.ChequesDevueltosGuard],
         component: fromContainers.ChequesDevueltosComponent
+      },
+      {
+        path: 'chequesdevueltos/:chequeId',
+        canActivate: [fromGuards.ChequesDevueltoExistsGuard],
+        component: fromContainers.ChequeDevueltoComponent
       },
       {
         path: 'fichas',

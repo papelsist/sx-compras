@@ -1,30 +1,44 @@
-<div layout class="mat-title pad" layout-align="space-around center">
-  <mat-form-field>
-    <input
-      matInput
-      [disabled]="true"
-      [value]="nota.folio"
-      placeholder="Nota de crédito"
-    />
-  </mat-form-field>
-  <mat-form-field class="pad-left">
-    <input matInput [disabled]="true" [value]="nota.tipo" placeholder="Tipo" />
-  </mat-form-field>
-  <mat-form-field flex class="pad-left">
-    <input
-      matInput
-      [disabled]="true"
-      [value]="nota.nombre"
-      placeholder="Cliente"
-    />
-  </mat-form-field>
+<div class="header">
+  <div layout class="title">
+    <div class=" ">
+      <label>Nota </label>
+      <span>{{ nota.tipo }}:</span>
+      <span class="pad-left">{{ nota.folio }}</span>
+    </div>
 
-  <mat-form-field class="pad-left">
-    <input
-      matInput
-      value="{{ nota.fecha | date: 'dd/MM/yyyy' }}"
-      placeholder="Fecha"
-      [disabled]="true"
-    />
-  </mat-form-field>
+    <div class=" text-center" flex>
+      <span class="text-center">{{ nota.nombre }}</span>
+    </div>
+
+    <div class="fecha">
+      <label>Fecha:</label>
+      <span>{{ nota.fecha | date: 'dd/MM/yyyy' }}</span>
+    </div>
+
+    <div *ngIf="nota.moneda !== 'MXN'">
+      <span>{{ nota.moneda }}</span>
+      <span class="pad-left">(T.C: {{ nota.tc }})</span>
+    </div>
+
+    <div class="disponible pad-left">
+      <label>Disponible:</label>
+      <span class="pad-left tc-indigo-700">{{
+        nota?.cobro?.saldo | currency
+      }}</span>
+    </div>
+  </div>
+  <div layout class="cfdi-panel" *ngIf="nota.cfdi">
+    <span flex></span>
+    <span>CFDI: </span>
+    <span class="uuid">{{ nota?.cfdi?.uuid }}</span>
+  </div>
+  <div layout class="user-log">
+    <span flex></span>
+    <span> Creado por: {{ nota.createUser }} </span>
+    <span class="pad-left"
+      >U. Modificación: {{ nota.lastUpdated | date: 'dd/MM/yyyy HH:mm' }} ({{
+        nota.updateUser
+      }})
+    </span>
+  </div>
 </div>

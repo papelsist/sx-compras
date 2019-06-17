@@ -34,6 +34,8 @@ class ChequeDevuelto {
 
     String	sw2
 
+    NotaDeCargo notaDeCargo
+
     Date dateCreated
 
     Date lastUpdated
@@ -54,6 +56,7 @@ class ChequeDevuelto {
         fecha nullable: true
         importe nullable: true
         numero nullable: true
+        notaDeCargo nullable: true
     }
 
     static mapping = {

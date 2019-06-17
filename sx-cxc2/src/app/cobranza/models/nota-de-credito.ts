@@ -1,5 +1,6 @@
 import { Cliente } from 'app/models';
 import { NotaDeCreditoDet } from './nota-de-credito-det';
+import { AplicacionDeCobro } from './aplicacionDeCobro';
 
 export interface NotaDeCredito {
   id?: string;
@@ -27,6 +28,7 @@ export interface NotaDeCredito {
   usoDeCfdi: string;
   formaDePago: string;
   partidas: Partial<NotaDeCreditoDet>[];
+  aplicaciones?: Partial<AplicacionDeCobro>[];
   dateCreated: string;
   lastUpdated: string;
   createUser: string;

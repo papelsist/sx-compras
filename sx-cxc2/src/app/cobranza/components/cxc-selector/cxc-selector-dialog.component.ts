@@ -79,12 +79,13 @@ export class CxCSelectorDialogComponent implements OnInit {
   }
 
   close() {
-    this.dialogRef.close('close');
+    this.dialogRef.close(this.selected);
   }
 
   onSearch(event: string) {
     this.search = event;
   }
+
   onSelect(event: CuentaPorCobrar[]) {
     this.selected = [...event];
   }

@@ -1,6 +1,6 @@
 import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 
-import { Bonificacion, Cartera } from 'app/cobranza/models';
+import { Bonificacion } from 'app/cobranza/models';
 
 import {
   BonificacionActions,
@@ -32,6 +32,10 @@ export function reducer(
   action: BonificacionActions
 ): State {
   switch (action.type) {
+    case BonificacionActionTypes.CambiarBonificacionCfdi:
+    case BonificacionActionTypes.CancelarBonificacionCfdi:
+    case BonificacionActionTypes.AplicarBonificacion:
+    case BonificacionActionTypes.GenerarBonificacionCfdi:
     case BonificacionActionTypes.DeleteBonificacion:
     case BonificacionActionTypes.UpdateBonificacion:
     case BonificacionActionTypes.CreateBonificacion:

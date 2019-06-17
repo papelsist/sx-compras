@@ -4,6 +4,7 @@ export interface CuentaPorCobrar {
   id: string;
   cliente: {};
   sucursal: any;
+  sucursalNombre: string;
   tipo: string;
   tipoDocumento: string;
   documento: number;
@@ -12,6 +13,7 @@ export interface CuentaPorCobrar {
   subtotal: number;
   impuesto: number;
   total: number;
+  saldoReal: number;
   formaDePago: string;
   moneda: string;
   tipoDeCambio: number;

@@ -8,7 +8,7 @@ import grails.util.Environment
 import groovy.util.logging.Slf4j
 
 import org.apache.commons.io.FileUtils
-
+import org.apache.commons.lang3.exception.ExceptionUtils
 import sx.cfdi.providers.edicom.CFDi
 
 import sx.core.Empresa
@@ -39,30 +39,46 @@ class CfdiTimbradoService {
      */
     Cfdi timbrarEdicom(Cfdi cfdi) {
         File file = FileUtils.toFile(cfdi.url)
-        // log.debug('Timbrando archivo {}' ,file.getPath())
         byte[] res = null
         if (this.isTimbradoDePrueba()) {
             log.debug('Timbrado de prueba')
-            // res = edicomService.getCfdiTest('PAP830101CR3','yqjvqfofb', file.bytes)
             res = cfdiEdicomService.getCfdiTest(file.bytes)
         } else {
             res = cfdiEdicomService.getCfdi(file.bytes)
         }
 
         Map map = ZipUtils.descomprimir(res)
-
         def entry = map.entrySet().iterator().next()
-        def targetName = file.getName().replaceAll(".xml", "_SIGNED.xml")
-        File target = new File(file.getParent(), targetName)
 
-        FileUtils.writeByteArrayToFile(target, entry.getValue())
-        log.debug('Timbrado OK Archio: {}', target.getPath())
+
         CfdiTimbre timbre = new CfdiTimbre(entry.getValue())
         cfdi.uuid = timbre.uuid
-        cfdi.url = target.toURI().toURL()
-        cfdi.fileName = targetName
-        cfdi.save flush: true
+        log.debug('Timbrado exitoso UUID: {}', cfdi.uuid)
+
+        File target = saveToDisk(cfdi, file, entry.getValue())
+        if(target) {
+            cfdi.url = target.toURI().toURL()
+            cfdi.fileName = target.getName()
+        }
+        cfdi.save failOnError: true, flush: true
         return cfdi
+    }
+
+    private File saveToDisk(Cfdi cfdi, File file, byte[] xmlSignedData) {
+        try {
+
+            String targetName = file.getName().replaceAll(".xml", "_SIGNED.xml")
+            File target = new File(file.getParent(), targetName)
+            FileUtils.writeByteArrayToFile(target, xmlSignedData)
+            log.debug('{} en Archivo: {}', cfdi.uuid, target.getPath())
+            return target
+        }catch( Exception ex) {
+            Throwable c = ExceptionUtils.getRootCause(ex)
+            String msg = ExceptionUtils.getRootCauseMessage(ex)
+            log.error('Error al salvar en archivo UUID: {} Error: {} ', cfdi.uuid, msg, c)
+            cfdi.comentario = 'NO SE PUDO SALVAR EN ARCHIVO'
+        }
+
     }
 
 

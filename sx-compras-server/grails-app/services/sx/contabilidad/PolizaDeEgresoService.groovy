@@ -50,6 +50,7 @@ abstract class PolizaDeEgresoService  implements  LogUser{
             p.egreso = it.id
             p.save failOnError: true, flush: true
             folio.save flush: true
+            log.info('Poliza de Egreso generado: {}', p)
             polizas << p
         }
         return polizas
@@ -57,7 +58,7 @@ abstract class PolizaDeEgresoService  implements  LogUser{
 
     List<MovimientoDeCuenta> findCheques(Date fecha) {
         List<MovimientoDeCuenta> egresos = MovimientoDeCuenta.where {
-            fecha == fecha && formaDePago == 'CHEQUE' && importe < 0.0}.list()
+            fecha == fecha && formaDePago == 'CHEQUE' && importe < 0.0}.list([sort: 'fecha', order: 'asc']).sort {it.cuenta.descripcion}
         log.info('Cheques a procesar: {}', egresos.size())
         return egresos
     }

@@ -4,4 +4,12 @@ model {
 	ChequeDevuelto chequeDevuelto
 }
 
-json tmpl.chequeDevuelto(chequeDevuelto)
+json g.render(chequeDevuelto, [ excludes: ['notaDeCargo','egreso'], resolveTemplate: false]) {
+	creado chequeDevuelto.dateCreated
+	modificado chequeDevuelto.lastUpdated
+	usuario chequeDevuelto.updateUser
+    notaDeCargo g.render(chequeDevuelto.notaDeCargo)
+	egreso g.render(chequeDevuelto.egreso)
+    cuenta chequeDevuelto.egreso.cuenta.descripcion
+}
+

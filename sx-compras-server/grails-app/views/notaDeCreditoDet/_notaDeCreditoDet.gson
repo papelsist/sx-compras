@@ -4,4 +4,6 @@ model {
 	NotaDeCreditoDet notaDeCreditoDet
 }
 
-json g.render(notaDeCreditoDet, [resolveTemplate: false])
+json g.render(notaDeCreditoDet, [excludes: ['cuentaPorCobrar'], resolveTemplate: false]) {
+    cuentaPorCobrar g.render(notaDeCreditoDet.cuentaPorCobrar)
+}

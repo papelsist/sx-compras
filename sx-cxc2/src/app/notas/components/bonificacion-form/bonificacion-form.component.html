@@ -1,0 +1,86 @@
+<mat-card [formGroup]="form" class="form">
+  <sx-nota-header [nota]="bonificacion"></sx-nota-header>
+  <mat-divider></mat-divider>
+  <div layout class="form-panel">
+    <mat-form-field>
+      <mat-label>Tipo de cálculo</mat-label>
+      <mat-select formControlName="tipoDeCalculo">
+        <mat-option
+          *ngFor="let tipo of ['PORCENTAJE', 'PRORRATEO']"
+          [value]="tipo"
+        >
+          {{ tipo }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="descuento">
+      <mat-label>Base de cálculo</mat-label>
+      <mat-select formControlName="baseDelCalculo">
+        <mat-option *ngFor="let tipo of ['SALDO', 'TOTAL']" [value]="tipo">
+          {{ tipo }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="descuento">
+      <input
+        matInput
+        placeholder="Descuento"
+        autocomplete="off"
+        formControlName="descuento"
+        type="number"
+      />
+      <mat-error>Descuento invalido</mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="importe">
+      <input
+        matInput
+        placeholder="Importe"
+        autocomplete="off"
+        formControlName="importe"
+        type="number"
+      />
+    </mat-form-field>
+
+    <sx-upper-case-field
+      formControlName="comentario"
+      placeholder="Comentario"
+      flex
+    ></sx-upper-case-field>
+  </div>
+
+  <div class="partidas-panel">
+    <sx-bonificacion-form-partidas
+      [parent]="form"
+      [partidas]="partidas.value"
+      (delete)="onDelete($event)"
+      [disabled]="form.disabled"
+    ></sx-bonificacion-form-partidas>
+  </div>
+  <sx-aplicaciones-nota [nota]="bonificacion"></sx-aplicaciones-nota>
+
+  <mat-card-actions>
+    <button mat-button (click)="cancel.emit()">
+      <mat-icon>keyboard_backspace</mat-icon> REGRESAR
+    </button>
+    <button
+      mat-button
+      (click)="submit()"
+      [disabled]="form.invalid || form.pristine"
+      color="accent"
+    >
+      <mat-icon>save</mat-icon> Salvar
+    </button>
+
+    <sx-cxc-selector
+      [cliente]="bonificacion.cliente"
+      (select)="addFacturas($event)"
+      *ngIf="!bonificacion.cfdi"
+    >
+    </sx-cxc-selector>
+    <ng-content></ng-content>
+  </mat-card-actions>
+</mat-card>
+`

@@ -16,4 +16,6 @@ export interface ChequeDevuelto {
   creado?: string;
   modificado?: string;
   usuario?: string;
+  notaDeCargo?: any;
+  cuenta?: string;
 }

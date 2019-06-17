@@ -34,7 +34,7 @@ export const getSelectedChequeDevuelto = createSelector(
   getChequeDevueltosEntities,
   fromRoot.getRouterState,
   (entities, router): ChequeDevuelto => {
-    return router.state && entities[router.state.params.cobroId];
+    return router.state && entities[router.state.params.chequeId];
   }
 );
 

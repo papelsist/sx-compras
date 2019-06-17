@@ -121,6 +121,22 @@ export class ChequeDevueltoEffects {
   );
 
   @Effect()
+  generarNota$ = this.actions$.pipe(
+    ofType<fromActions.GenerarNotaDeCargo>(
+      ChequeDevueltoActionTypes.GenerarNotaDeCargo
+    ),
+    map(action => action.payload.cheque),
+    switchMap(cheque => {
+      return this.service.generarNota(cheque.id).pipe(
+        map(res => new fromActions.GenerarNotaDeCargoSuccess({ cheque: res })),
+        catchError(error =>
+          of(new fromActions.ChequeDevueltosFail({ response: error }))
+        )
+      );
+    })
+  );
+
+  @Effect()
   fail$ = this.actions$.pipe(
     ofType<fromActions.ChequeDevueltosFail>(
       ChequeDevueltoActionTypes.ChequeDevueltosFail

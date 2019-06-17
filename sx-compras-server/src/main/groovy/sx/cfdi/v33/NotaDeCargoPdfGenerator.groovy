@@ -22,7 +22,7 @@ import java.text.MessageFormat
 class NotaDeCargoPdfGenerator {
 
     static getReportData(NotaDeCargo nota, Byte[] xmlFile){
-        println 'GENERANDO......'
+
         Cfdi cfdi = nota.cfdi
 
         Comprobante comprobante = CfdiUtils.read(xmlFile)

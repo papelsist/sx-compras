@@ -33,9 +33,7 @@ export class BonificacionesComponent implements OnInit {
   }
 
   onSelect(nota: NotaDeCredito) {
-    if (nota.disponible > 0.0) {
-      this.doEdit(nota);
-    }
+    this.doEdit(nota);
   }
 
   onCreate(event: Partial<Bonificacion>) {

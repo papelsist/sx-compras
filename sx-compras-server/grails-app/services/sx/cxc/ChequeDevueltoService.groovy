@@ -2,10 +2,13 @@ package sx.cxc
 
 import grails.compiler.GrailsCompileStatic
 import grails.gorm.transactions.Transactional
+
+import sx.core.Cliente
 import sx.core.Empresa
-import sx.core.Folio
 import sx.core.FolioLog
 import sx.core.LogUser
+import sx.core.Sucursal
+
 import sx.tesoreria.MovimientoDeCuenta
 import sx.utils.MonedaUtils
 
@@ -13,6 +16,8 @@ import sx.utils.MonedaUtils
 @GrailsCompileStatic
 @Transactional
 class ChequeDevueltoService implements  LogUser, FolioLog{
+
+    NotaDeCargoService notaDeCargoService
 
     ChequeDevuelto save(ChequeDevuelto che) {
 
@@ -44,7 +49,7 @@ class ChequeDevueltoService implements  LogUser, FolioLog{
         CuentaPorCobrar cxc = new CuentaPorCobrar()
         cxc.cliente = cobroCheque.cobro.cliente
         cxc.sucursal = cobroCheque.cobro.sucursal
-        cxc.formaDePago = cobroCheque.cobro.formaDePago
+        cxc.formaDePago = 'POR DEFINIR'
         cxc.documento = nextFolio('CHEQUE_DEVUELTO', cxc.tipo)
         cxc.comentario = 'Cargo por cheque devuelto'
         cxc.fecha = chequeDevuelto.fecha
@@ -91,6 +96,66 @@ class ChequeDevueltoService implements  LogUser, FolioLog{
         egreso.delete flush: true
         cxc.delete flush: true
 
+    }
+
+
+    @Transactional
+    ChequeDevuelto generarNotaDeCargo(ChequeDevuelto che) {
+
+        def importe = MonedaUtils.round(che.importe * 0.2, 2)
+        def impuesto = MonedaUtils.calcularImpuesto(importe)
+        def total = importe + impuesto
+
+        if( (importe as BigDecimal) <= 0.0)
+            return null
+
+        NotaDeCargo nc = new NotaDeCargo()
+        nc.tipo = 'CHE'
+        nc.formaDePago = 'POR DEFINIR'
+        nc.cliente = che.cxc.cliente
+        nc.sucursal = Sucursal.where{nombre == 'OFICINAS'}.find()
+        nc.fecha = new Date()
+        nc.comentario = "CARGO POR CHEQUE DEVUELTO "
+        nc.importe = importe as BigDecimal
+        nc.impuesto = impuesto
+        nc.total = total
+        nc.tipoDeCalculo = 'NINGUNO'
+        nc.serie = 'CHE'
+        nc.folio = nextFolio('NOTA_DE_CARGO', nc.serie)
+        nc.usoDeCfdi = 'G03'
+        nc.cuentaPorCobrar = notaDeCargoService.generarCuentaPorCobrar(nc)
+
+        NotaDeCargoDet det = new NotaDeCargoDet()
+        det.comentario = nc.comentario
+        det.concepto = '84101700'
+        det.importe = nc.importe
+        det.impuesto = nc.impuesto
+        det.total = nc.total
+
+        det.documento = 0L
+        det.documentoTipo = 'ND'
+        det.documentoSaldo = 0.0
+        det.documentoTotal = 0.0
+        det.documentoFecha = che.fecha
+        det.sucursal = nc.sucursal.nombre
+
+        nc.addToPartidas(det)
+        logEntity(nc)
+        logEntity(nc.cuentaPorCobrar)
+
+        /** TEMPO **/
+        nc.createUser = 'admin'
+        nc.updateUser = 'admin'
+        nc.cuentaPorCobrar.createUser = 'admin'
+        nc.cuentaPorCobrar.updateUser = 'admin'
+        /** END TEMPO **/
+
+        nc = nc.save failOnError: true, flush: true
+        notaDeCargoService.generarCfdi(nc)
+        notaDeCargoService.timbrar(nc)
+        che.notaDeCargo = nc
+        che.save flush: true
+        return che
     }
 
 

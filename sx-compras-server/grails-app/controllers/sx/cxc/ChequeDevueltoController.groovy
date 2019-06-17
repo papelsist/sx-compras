@@ -82,6 +82,20 @@ class ChequeDevueltoController extends RestfulController<ChequeDevuelto> {
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'ChequesDevueltos.pdf')
     }
 
+    def generarNotaDeCargo(ChequeDevuelto chequeDevuelto) {
+        if(chequeDevuelto == null) {
+            notFound()
+            return
+        }
+        if(chequeDevuelto.notaDeCargo) {
+            throw new RuntimeException("Nota de cargo ya generada")
+            return
+        }
+        chequeDevuelto = chequeDevueltoService.generarNotaDeCargo(chequeDevuelto)
+        respond chequeDevuelto, view: 'show'
+
+    }
+
 
     def handleException(Exception e) {
         String message = ExceptionUtils.getRootCauseMessage(e)
