@@ -161,6 +161,28 @@ abstract class NotaDeCreditoService implements FolioLog, LogUser {
         return nota
     }
 
+    NotaDeCredito cambiarCfdi(NotaDeCredito nota) {
+        if(!nota.cfdi)
+            throw new RuntimeException("Nota de credito sin timbrar ${nota.id}")
+        Cfdi cfdiOld = nota.cfdi
+        Comprobante comprobante = notaDeCreditoBuilder.build(nota)
+        comprobante = notaDeCreditoBuilder.addRelacionado(comprobante, cfdiOld.uuid, '04')
+
+        Cfdi cfdi = cfdiService.generarCfdi(comprobante, 'E', 'NOTA_CREDITO')
+        cfdi = cfdiTimbradoService.timbrar(cfdi)
+        nota.cfdi = cfdi
+        logEntity(nota)
+        nota = nota.save failOnError: true, flush: true
+
+        // Mandar cancelar el CFDI Original
+        cfdiOld.status = "CANCELACION_PENDIENTE"
+        logEntity(cfdiOld)
+        cfdiOld.save flush: true
+
+        return nota
+
+    }
+
 
 }
 

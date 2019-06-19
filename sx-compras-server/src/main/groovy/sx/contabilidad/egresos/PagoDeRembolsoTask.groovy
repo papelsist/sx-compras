@@ -9,6 +9,7 @@ import sx.core.Empresa
 
 import sx.cxp.CuentaPorPagar
 import sx.cxp.Rembolso
+import sx.cxp.RembolsoDet
 import sx.tesoreria.MovimientoDeCuenta
 import sx.utils.MonedaUtils
 
@@ -27,6 +28,7 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
     @CompileDynamic
     def generarAsientos(Poliza poliza, Map params = [:]) {
         Rembolso r = findRembolso(poliza)
+        ajustarConcepto(poliza, r)
         log.info("Pago de REMBOLSO: {} {}", r.concepto, r.id)
         switch (r.concepto) {
             case 'REMBOLSO':
@@ -34,6 +36,32 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
                 break
             case 'GASTO':
                 atenderGasto(poliza, r)
+                break
+            case 'DEVOLUCION':
+                atenderPorCuentaContableRembolso(poliza , r)
+                break
+            case 'PRESTAMO' :
+                atenderPorCuentaContableRembolso(poliza, r)
+                break
+            case 'PAGO':
+
+                CuentaContable cta = r.cuentaContable
+                if(cta == null) throw new RuntimeException("No exister cuenta contable asignada al rembolso ${r.id}")
+
+                if(cta.clave.startsWith('205-0008')) {
+                    atenderDividendosHonorarios(poliza, r)
+                } else if(cta.clave.startsWith('210-0001')) {
+                    atenderPagoDeNomina(poliza, r)
+                } else if(cta.clave.startsWith('205-D014')) {
+                    atenderPagoFonacot(poliza, r)
+                } else if(cta.clave.startsWith('213-0001')) {
+                    atenderPagoSatImss(poliza, r)
+                } else if(cta.clave.startsWith('213-0006')) {
+                    atenderPagoSatImss(poliza, r)
+                } else if(cta.clave.startsWith('205-0004')) {
+                    atenderPagoFlete(poliza, r)
+                }
+                break
             default:
                 log.info('No hay handler para: {}', r.concepto)
         }
@@ -47,9 +75,7 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
         // String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia}  ${r.sucursal.nombre} "
         String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} ${egreso.afavor} (${egreso.fecha.format('dd/MM/yyyy')})"
         Map row = [
-                asiento: "PAGO_${egreso.tipo}_${r.concepto}",
-                referencia: r.nombre,
-                referencia2: egreso.cuenta.descripcion,
+                asiento: "REM: ${r.concepto}",
                 origen: egreso.id,
                 documentoTipo: 'REMBOLSO',
                 sucursal: r.sucursal.nombre
@@ -58,7 +84,12 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
         row.rfc = Empresa.first().rfc
         // Cargo a caja
         String cv = "101-0002-${r.sucursal.clave.padLeft(4,'0')}-0000"
-        poliza.addToPartidas(mapRow(cv, desc, row, egreso.importe))
+        referencia: r.nombre
+        referencia2: egreso.cuenta.descripcion
+        PolizaDet det = mapRow(cv, desc, row, egreso.importe)
+        det.referencia = det.cuenta.descripcion
+        det.referencia2 = det.cuenta.descripcion
+        poliza.addToPartidas(det)
     }
 
     void abonoBanco(Poliza poliza, Rembolso r) {
@@ -67,6 +98,7 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
 
         // Abono a Banco
         Map row = buildDataRow(egreso)
+        row.asiento = "REM: ${r.concepto}"
         buildComplementoDePago(row, egreso)
         row.rfc = Empresa.first().rfc
 
@@ -79,31 +111,212 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
                 egreso.importe.abs()))
     }
 
+
+
     def atenderGasto(Poliza poliza, Rembolso r) {
         MovimientoDeCuenta egreso = r.egreso
         CuentaContable ctaPadre = r.cuentaContable
         Map row = buildDataRow(egreso)
         r.partidas.each { d ->
             CuentaPorPagar cxp = d.cxp
-            String ctaOperativa = '0999'
-            if(cxp) {
-                CuentaOperativaProveedor co = CuentaOperativaProveedor.where{ proveedor == cxp.proveedor}.find()
-                if(!co) throw new RuntimeException("No existe cuenta operativa para el proveedor: ${cxp.proveedor}")
-                ctaOperativa = co.getCuentaOperativa()
+
+            CuentaContable cuenta
+            if(!ctaPadre.detalle) {
+                String ctaOperativa = '0999'
+                if(cxp) {
+                    row.referencia = cxp.nombre
+                    row.referencia2 = cxp.nombre
+                    CuentaOperativaProveedor co = CuentaOperativaProveedor.where{ proveedor == cxp.proveedor}.find()
+                    if(!co) throw new RuntimeException("No existe cuenta operativa para el proveedor: ${cxp.proveedor}")
+                    ctaOperativa = co.getCuentaOperativa()
+                }
+                log.info('Buscando subcuenta de{} de {}',ctaOperativa, ctaPadre.clave)
+                cuenta = ctaPadre.subcuentas.find{it.clave.contains(ctaOperativa)}
+            } else {
+                cuenta = ctaPadre
             }
-            CuentaContable cuenta = ctaPadre.subcuentas.find{it.clave.contains(ctaOperativa)}
             BigDecimal importe = d.apagar
-            String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} F:${cxp.serie?:''} ${cxp.folio}" +
+            String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} F:${cxp?.serie?:''} ${cxp?.folio?: ''}" +
+                    " (${poliza.fecha.format('dd/MM/yyyy')}) ${egreso.sucursal?: 'OFICINAS'} "
+            poliza.addToPartidas(mapRow(cuenta, desc, row, importe))
+            if(cxp) {
+                BigDecimal ivaCfdi = cxp.impuestoTrasladado - cxp.impuestoRetenidoIva?: 0.0
+
+                if(d.comentario == 'ALIMENTOS') {
+                    BigDecimal ivaAlimientos = cxp.impuestoTrasladado * 0.085
+                    // BigDecimal noDeducible = cxp.impuestoTrasladado - ivaAlimientos
+                    poliza.addToPartidas(mapRow('118-0002-0000-0000', desc, row, ivaAlimientos))
+                    poliza.addToPartidas(mapRow('119-0002-0000-0000', desc, row, 0.0,  ivaAlimientos))
+                }else {
+                    poliza.addToPartidas(mapRow('118-0002-0000-0000', desc, row, ivaCfdi))
+                    poliza.addToPartidas(mapRow('119-0002-0000-0000', desc, row, 0.0, ivaCfdi))
+                }
+
+
+            }
+
+        }
+    }
+
+    def atenderPorCuentaContableRembolso(Poliza poliza, Rembolso r) {
+        MovimientoDeCuenta egreso = r.egreso
+        String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} ${egreso.afavor} (${egreso.fecha.format('dd/MM/yyyy')})"
+        Map row = [
+                asiento: "REM: ${r.concepto}",
+                origen: egreso.id,
+                documentoTipo: 'REMBOLSO',
+                sucursal: r.sucursal.nombre
+        ]
+        buildComplementoDePago(row, egreso)
+        row.rfc = Empresa.first().rfc
+
+        row.referencia = r.cuentaContable.descripcion
+        row.referencia2 = r.cuentaContable.descripcion
+        CuentaContable cuenta = r.cuentaContable
+        if(!cuenta) {
+            throw new RuntimeException("No exister cuenta contable asignada al rembolso ${r.id}")
+        }
+        poliza.addToPartidas(mapRow(cuenta, desc, row, egreso.importe))
+
+    }
+
+    def atenderPagoDeNomina(Poliza poliza, Rembolso r) {
+        MovimientoDeCuenta egreso = r.egreso
+        RembolsoDet det = r.partidas[0]
+
+        String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} ${det.nombre} (${egreso.fecha.format('dd/MM/yyyy')})"
+        poliza.concepto = "${r.egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'}  ${r.egreso.referencia} ${det.nombre}" +
+                " (${r.egreso.fecha.format('dd/MM/yyyy')}) (REM: ${r.concepto})"
+        Map row = [
+                asiento: "REM: ${r.concepto}",
+                referencia: det.nombre,
+                referencia2: det.nombre,
+                origen: egreso.id,
+                documentoTipo: 'REMBOLSO',
+                sucursal: r.sucursal.nombre
+        ]
+        buildComplementoDePago(row, egreso)
+        row.rfc = Empresa.first().rfc
+        CuentaContable cuenta = r.cuentaContable
+
+        poliza.addToPartidas(mapRow(cuenta, desc, row, egreso.importe))
+
+    }
+
+
+
+    def atenderPagoFonacot(Poliza poliza, Rembolso r) {
+
+        MovimientoDeCuenta egreso = r.egreso
+        CuentaContable ctaPadre = r.cuentaContable
+        Map row = buildDataRow(egreso)
+        r.partidas.each { d ->
+            CuentaPorPagar cxp = d.cxp
+            row.referencia = d.nombre
+            row.referencia2 = d.nombre
+            String ctaOperativa = d.comentario
+            CuentaContable cuenta = ctaPadre.subcuentas.find{it.clave.contains(ctaOperativa)}
+            if(!cuenta) throw new RuntimeException("No existe subcuenta ${d.comentario?: 'FALTA CO'} de ${ctaPadre.clave}")
+            BigDecimal importe = d.apagar
+            String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} F:${cxp?.serie?:''} ${cxp?.folio?: ''}" +
                     " (${poliza.fecha.format('dd/MM/yyyy')}) ${egreso.sucursal?: 'OFICINAS'} "
             poliza.addToPartidas(mapRow(cuenta, desc, row, importe))
         }
     }
 
+    def atenderPagoSatImss(Poliza poliza, Rembolso r) {
+
+        MovimientoDeCuenta egreso = r.egreso
+
+        Map row = buildDataRow(egreso)
+        r.partidas.each { d ->
+            String ctaClave = d.comentario // Debe traer la cuenta contable completa
+            if(!ctaClave) throw new RuntimeException("No se definio la clave de la cuenta contable para el detalle ${d.id} del rembolso ${r.id}")
+            BigDecimal importe = d.apagar
+            String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} ${egreso.afavor}" +
+                    " (${poliza.fecha.format('dd/MM/yyyy')}) "
+            poliza.addToPartidas(mapRow(ctaClave, desc, row, importe))
+        }
+    }
+
+    def atenderPagoFlete(Poliza poliza, Rembolso r) {
+        MovimientoDeCuenta egreso = r.egreso
+        CuentaContable ctaPadre = r.cuentaContable
+        Map row = buildDataRow(egreso)
+        r.partidas.each { d ->
+            CuentaPorPagar cxp = d.cxp
+
+            row.referencia = d.nombre
+            row.referencia2 = d.nombre
+            CuentaOperativaProveedor co = CuentaOperativaProveedor.where{ proveedor == cxp.proveedor}.find()
+            if(!co) throw new RuntimeException("No existe cuenta operativa para el proveedor: ${cxp.proveedor}")
+            String ctaOperativa = co.getCuentaOperativa()
+            log.info('Buscando subcuenta de{} de {}',ctaOperativa, ctaPadre.clave)
+            CuentaContable cuenta = ctaPadre.subcuentas.find{it.clave.contains(ctaOperativa)}
+
+            BigDecimal importe = d.apagar
+            BigDecimal ivaCfdi = cxp.impuestoTrasladado - cxp.impuestoRetenidoIva
+            log.info('Iva: {}', ivaCfdi)
+
+            String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} F:${cxp?.serie?:''} ${cxp?.folio?: ''}" +
+                    " (${poliza.fecha.format('dd/MM/yyyy')}) ${egreso.sucursal?: 'OFICINAS'} "
+            poliza.addToPartidas(mapRow(cuenta, desc, row, importe))
+
+            poliza.addToPartidas(mapRow('118-0002-0000-0000', desc, row, ivaCfdi))
+            poliza.addToPartidas(mapRow('119-0002-0000-0000', desc, row, 0.0, ivaCfdi))
+
+            if(cxp.impuestoRetenidoIva > 0.0) {
+                BigDecimal imp = cxp.impuestoRetenidoIva
+                poliza.addToPartidas(mapRow('118-0003-0000-0000', desc, row, imp))
+                poliza.addToPartidas(mapRow('119-0003-0000-0000', desc, row, 0.0, imp))
+
+                poliza.addToPartidas(mapRow('216-0001-0000-0000', desc, row, imp))
+                poliza.addToPartidas(mapRow('213-0011-0000-0000', desc, row, 0.0, imp))
+            }
+
+
+        }
+    }
+
+    def atenderDividendosHonorarios(Poliza poliza, Rembolso r) {
+        MovimientoDeCuenta egreso = r.egreso
+
+        Map row = [
+                asiento: "REM: ${r.concepto}",
+                origen: egreso.id,
+                documentoTipo: 'REMBOLSO',
+                sucursal: r.sucursal.nombre
+        ]
+        buildComplementoDePago(row, egreso)
+        row.rfc = Empresa.first().rfc
+
+        row.referencia = r.cuentaContable.descripcion
+        row.referencia2 = r.cuentaContable.descripcion
+        CuentaContable cuenta = r.cuentaContable
+        if(!cuenta) {
+            throw new RuntimeException("No exister cuenta contable asignada al rembolso ${r.id}")
+        }
+
+        String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} ${egreso.afavor} (${egreso.fecha.format('dd/MM/yyyy')})"
+
+        poliza.addToPartidas(mapRow(cuenta, desc, row, egreso.importe))
+        r.partidas.each { d ->
+
+            BigDecimal importe = d.apagar
+            String comentario = d.comentario
+            if(comentario == '213-0009-0000-0000') {
+                BigDecimal value = (importe * 35) / 65
+                value = MonedaUtils.round(value, 2)
+                poliza.addToPartidas(mapRow('213-0009-0000-0000', desc, row, value))
+                poliza.addToPartidas(mapRow('216-0003-0000-0000', desc, row, 0.0, value))
+            }
+        }
+
+    }
 
 
 
-
-    Rembolso findRembolso(Poliza poliza) {
+     Rembolso findRembolso(Poliza poliza) {
         MovimientoDeCuenta egreso = MovimientoDeCuenta.get(poliza.egreso)
         Rembolso r = Rembolso.where{ egreso == egreso}.find()
         if(!r) throw new RuntimeException("Egreso ${egreso.id} de ${egreso.tipo} no tiene Requisicion")
@@ -112,7 +325,7 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
 
 
 
-    PolizaDet mapRow(CuentaContable cuenta, Map row, BigDecimal debe = 0.0, BigDecimal haber = 0.0) {
+    PolizaDet mapRow(CuentaContable cuenta, String descripcion, Map row, BigDecimal debe = 0.0, BigDecimal haber = 0.0) {
 
         PolizaDet det = new PolizaDet(
                 cuenta: cuenta,
@@ -142,6 +355,7 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
 
         return det
     }
+
     PolizaDet mapRow(String cuentaClave, String descripcion, Map row, BigDecimal debe = 0.0, BigDecimal haber = 0.0) {
 
         CuentaContable cuenta = buscarCuenta(cuentaClave)
@@ -172,6 +386,12 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
         }
 
         return det
+    }
+
+    void ajustarConcepto(Poliza poliza, Rembolso r) {
+        poliza.concepto = "${r.egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'}  ${r.egreso.referencia} ${r.egreso.afavor}" +
+                " (${r.egreso.fecha.format('dd/MM/yyyy')}) (REM: ${r.concepto})"
+
     }
 
 }

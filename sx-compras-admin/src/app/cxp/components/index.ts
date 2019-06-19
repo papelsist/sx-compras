@@ -10,6 +10,7 @@ import { ComsSelectorComponent } from './coms-selector/coms-selector.component';
 import { ComsTableComponent } from './coms-table/coms-table.component';
 import { AnalisisEditFormComponent } from './analisis-edit-form/analisis-edit-form.component';
 import { AnalisisPartidasTableComponent } from './analisis-edit-form/analisis-partidas-table.component';
+
 // Requisiciones
 import { RequisicionesTableComponent } from './requisiciones-table/requisiciones-table.component';
 import { RequisicionFormComponent } from './requisicion-form/requisicion-form.component';
@@ -17,6 +18,11 @@ import { RequisicionPartidasComponent } from './requisicion-partidas/requisicion
 import { AgregarFacturasComponent } from './requisicion-form/agregar-facturas.component';
 import { PrintAnalisisComponent } from './print-analisis/print-analisis.component';
 import { PrintRequisicionComponent } from './print-requisicion/print-requisicion.component';
+
+import { RequisicionesFilterComponent } from './requisiciones-filter/requisiciones-filter.component';
+import { RequisicionesFilterLabelComponent } from './requisiciones-filter/requisiciones-filter-label.component';
+import { RequisicionesFilterBtnComponent } from './requisiciones-filter/requisiciones-filter-btn.component';
+
 // Notas
 import { NotasTableComponent } from './notas-table/notas-table.component';
 import { ReportComsSinAnalizarComponent } from './report-coms-sin-analizar/report-coms-sin-analizar.component';
@@ -72,7 +78,11 @@ export const components: any[] = [
 
   ProveedorPeriodoFilterDialogComponent,
   ProveedorPeriodoFilterBtnComponent,
-  ProveedorPeriodoFilterLabelComponent
+  ProveedorPeriodoFilterLabelComponent,
+
+  RequisicionesFilterComponent,
+  RequisicionesFilterLabelComponent,
+  RequisicionesFilterBtnComponent
 ];
 
 export const entryComponents = [
@@ -80,7 +90,8 @@ export const entryComponents = [
   ComsSelectorComponent,
   ReportComsSinAnalizarComponent,
   AplicacionFormComponent,
-  ProveedorPeriodoFilterDialogComponent
+  ProveedorPeriodoFilterDialogComponent,
+  RequisicionesFilterComponent
 ];
 
 export * from './cfdis-table/cfdis-table.component';
@@ -105,6 +116,10 @@ export * from './requisicion-form/requisicion-form.component';
 export * from './requisicion-partidas/requisicion-partidas.component';
 export * from './requisicion-form/agregar-facturas.component';
 export * from './print-requisicion/print-requisicion.component';
+
+export * from './requisiciones-filter/requisiciones-filter.component';
+export * from './requisiciones-filter/requisiciones-filter-label.component';
+export * from './requisiciones-filter/requisiciones-filter-btn.component';
 
 // Notas de credito
 export * from './notas-table/notas-table.component';

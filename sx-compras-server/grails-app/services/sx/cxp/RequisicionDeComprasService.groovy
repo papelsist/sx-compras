@@ -40,6 +40,14 @@ class RequisicionDeComprasService implements LogUser, FolioLog{
         log.debug('Actualizando importes de la requisicion {}', requisicion)
         requisicion.partidas.each {RequisicionDet det ->
             CuentaPorPagar cxp = det.cxp
+            det.total = cxp.getSaldo()
+            det.apagar = det.total
+            if(requisicion.descuentof > 0.0){
+                det.descuentofImporte = (det.descuentof/100) * det.total
+                BigDecimal apagar = det.total - det.descuentofImporte
+                det.apagar = MonedaUtils.round(apagar, 2)
+            }
+            /*
             def compensaciones = AplicacionDePago.where{cxp == cxp && (nota.concepto != 'DESCUENTO') }.list().sum 0.0, { it.importe}
             det.total = cxp.importePorPagar - compensaciones
             log.info("Fac {} Total docto: {} Analizado: {}", cxp.folio, cxp.total, cxp.importePorPagar)
@@ -52,6 +60,8 @@ class RequisicionDeComprasService implements LogUser, FolioLog{
                 det.descuentofImporte = 0.0
                 det.apagar = det.total
             }
+            */
+            log.info('Partida Total: {} Apagar:{} Saldo:{}', det.total, det.apagar, cxp.saldoReal)
         }
         requisicion.total = requisicion.partidas.sum 0.0, {RequisicionDet det -> det.total}
         requisicion.descuentofImporte = requisicion.partidas.sum 0.0, {RequisicionDet det -> det.descuentofImporte}

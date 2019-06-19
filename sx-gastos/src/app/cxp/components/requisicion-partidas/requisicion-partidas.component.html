@@ -51,11 +51,12 @@
     <ng-container matColumnDef="apagar">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Por Pagar</th>
       <td mat-cell *matCellDef="let row; let i = index">
-          <input
+        <input
           [(ngModel)]="row.apagar"
           [ngModelOptions]="{ standalone: true }"
           (input)="update.emit(row, i)"
           [disabled]="readOnly"
+          type="number"
         />
         <!-- {{ row.apagar | currency }} -->
       </td>

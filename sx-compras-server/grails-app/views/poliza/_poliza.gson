@@ -8,7 +8,7 @@ model {
 json g.render(poliza, [resolveTemplate: false]) {
 	cuadre poliza.debe - poliza.haber
 	if(poliza.egreso) {
-	    banco MovimientoDeCuenta.get(poliza.egreso).cuenta.descripcion
+	    banco MovimientoDeCuenta.get(poliza.egreso)?.cuenta?.descripcion
 	}
 
 }

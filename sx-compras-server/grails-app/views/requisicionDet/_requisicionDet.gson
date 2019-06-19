@@ -9,4 +9,7 @@ json g.render(requisicionDet, [excludes: ['dateCreated','lastUpdated'], resolveT
     documentoSaldo requisicionDet.cxp.saldo
     documentoPagos requisicionDet.cxp.pagos
     documentoCompensaciones requisicionDet.cxp.compensaciones
-}
+    if(requisicionDet.cxp) {
+        analizado requisicionDet.cxp.importePorPagar
+    }
+ }

@@ -108,7 +108,7 @@ class FacturistaEstadoDeCuentaService implements  LogUser, FolioLog {
         nc.formaDePago = 'COMPENSACION'
         nc.cliente = Cliente.where{rfc == f.rfc}.find()
         nc.sucursal = Sucursal.where{nombre == 'OFICINAS'}.find()
-        nc.fecha = corte
+        nc.fecha = new Date()
         // nc.comentario = 'INTERESES POR PRESTAMO DE ENERO A DICIEMBRE 2018'
         nc.comentario = comentario
         nc.importe = importe as BigDecimal

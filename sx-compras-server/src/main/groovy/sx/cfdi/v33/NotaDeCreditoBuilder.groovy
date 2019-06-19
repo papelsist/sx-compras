@@ -312,7 +312,9 @@ class NotaDeCreditoBuilder {
 
                 Comprobante.CfdiRelacionados.CfdiRelacionado relacionado = factory.createComprobanteCfdiRelacionadosCfdiRelacionado()
                 def cxc = det.cuentaPorCobrar
-                def uuid = det.uuid
+                def rcfdi = cxc.cfdi
+                log.info('CFDI UUID:{} CXC UUID: {}', rcfdi?.uuid, cxc.uuid)
+                def uuid = cxc.uuid
                 if(uuid == null) {
                     throw new RuntimeException("No existe UUID de la Cuenta por cobrar ${cxc.getFolio()}")
                 }
@@ -331,5 +333,23 @@ class NotaDeCreditoBuilder {
         comprobante.setCertificado(new String(encodedCert))
         return this
 
+    }
+
+
+    Comprobante  addRelacionado(Comprobante comprobante, String uuid, String tipoDeRelacion = null) {
+
+        Comprobante.CfdiRelacionados relacionados = comprobante.getCfdiRelacionados()
+        if(tipoDeRelacion) {
+            relacionados.setTipoRelacion(tipoDeRelacion)
+        }
+        Comprobante.CfdiRelacionados.CfdiRelacionado relacionado = factory.createComprobanteCfdiRelacionadosCfdiRelacionado()
+        relacionado.UUID = uuid
+        relacionados.cfdiRelacionado.add(relacionado)
+        println "CFDI nvo:"
+        println CfdiUtils.serialize(comprobante)
+
+        // Sellar de nuevo el comprobante
+        comprobante = sellador.sellar(comprobante, empresa)
+        return comprobante
     }
 }

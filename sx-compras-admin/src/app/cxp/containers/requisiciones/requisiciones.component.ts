@@ -71,8 +71,7 @@ export class RequisicionesComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.periodo =
-      Periodo.fromJson('sx-compras.requisiciones.periodo') ||
+    this.periodo = Periodo.fromStorage('sx-compras.requisiciones.periodo') ||
       Periodo.fromNow(30);
     this.filtro = {
       ...this.periodo.toApiJSON()
@@ -92,6 +91,7 @@ export class RequisicionesComponent implements OnInit, OnDestroy {
   cambiarPeriodo(event: Periodo) {
     if (event) {
       this.periodo = event;
+      Periodo.saveOnStorage('sx-compras.requisiciones.periodo', this.periodo);
       this.filtro = {
         ...this.filtro,
         ...this.periodo.toApiJSON()

@@ -20,15 +20,18 @@ class ChequeDevueltoService implements  LogUser, FolioLog{
     NotaDeCargoService notaDeCargoService
 
     ChequeDevuelto save(ChequeDevuelto che) {
+        if(che.id == null) {
+            che.folio = nextFolio('CHEQUE_DEVUELTO', 'CHE')
+        }
 
         che.importe = che.cheque.cobro.importe
         che.numero = che.cheque.numero.toString()
         che.comentario = "CHEQUE DEVUELTO EL ${che.fecha.format('dd/MM/yyyy')} "
 
+
         CuentaPorCobrar cxc = generarCuentaPorCobrar(che)
         logEntity(cxc)
         che.cxc = cxc
-        che.folio = cxc.documento
         cxc.save flush: true
 
         MovimientoDeCuenta egreso = generarEgreso(che)
@@ -50,7 +53,7 @@ class ChequeDevueltoService implements  LogUser, FolioLog{
         cxc.cliente = cobroCheque.cobro.cliente
         cxc.sucursal = cobroCheque.cobro.sucursal
         cxc.formaDePago = 'POR DEFINIR'
-        cxc.documento = nextFolio('CHEQUE_DEVUELTO', cxc.tipo)
+        cxc.documento = chequeDevuelto.folio
         cxc.comentario = 'Cargo por cheque devuelto'
         cxc.fecha = chequeDevuelto.fecha
         cxc.tipo = 'CHE'
@@ -126,6 +129,11 @@ class ChequeDevueltoService implements  LogUser, FolioLog{
         nc.cuentaPorCobrar = notaDeCargoService.generarCuentaPorCobrar(nc)
 
         NotaDeCargoDet det = new NotaDeCargoDet()
+        det.cuentaPorCobrar = che.cxc
+        det.documento = che.cxc.documento
+        det.documentoFecha = che.cxc.fecha
+        det.documentoTotal = che.cxc.total
+
         det.comentario = nc.comentario
         det.concepto = '84101700'
         det.importe = nc.importe

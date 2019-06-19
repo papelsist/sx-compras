@@ -9,7 +9,11 @@ import sx.contabilidad.AsientoBuilder
 import sx.contabilidad.CuentaContable
 import sx.contabilidad.Poliza
 import sx.contabilidad.PolizaDet
+import sx.cxc.CobroTarjeta
+import sx.tesoreria.CorteDeTarjeta
+import sx.tesoreria.CorteDeTarjetaAplicacion
 import sx.tesoreria.MovimientoDeCuenta
+import sx.tesoreria.TipoDeAplicacion
 import sx.utils.MonedaUtils
 import sx.contabilidad.CuentaOperativaCliente
 import sx.tesoreria.DevolucionCliente
@@ -159,13 +163,21 @@ class DevolucionClienteTask implements  AsientoBuilder, EgresoTask {
         switch(c.formaDePago){
             case 'TRANSFERENCIA':
                 return c.transferencia.cuentaDestino.subCuentaOperativa
-                break;
             case 'DEPOSITO_CHEQUE':
             case 'DEPOSITO_EFECTIVO':
             case 'DEPOSITO_MIXTO':
             case 'DEPOSITO':
                 return c.deposito.cuentaDestino.subCuentaOperativa
-                break;
+            case 'TARJETA_CREDITO':
+                CobroTarjeta ct = c.tarjeta
+                CorteDeTarjeta corte = CorteDeTarjeta.get(ct.corte)
+                if(!corte) throw new RuntimeException("No existe CorteDeTarjeta para el cobro: ${c.id}")
+
+                CorteDeTarjetaAplicacion ca = corte.aplicaciones.find {it.tipo.toString().contains('INGRESO')}
+
+                return ca.ingreso.cuenta.subCuentaOperativa
+            default:
+                throw new RuntimeException("No existe subcuenta oprativa para fomra de pago: ${c.formaDePago}")
         }
 
     }

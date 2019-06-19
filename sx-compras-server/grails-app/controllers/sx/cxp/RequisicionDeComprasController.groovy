@@ -32,7 +32,7 @@ class RequisicionDeComprasController extends RestfulController<RequisicionDeComp
 
         params.sort = 'lastUpdated'
         params.order = 'desc'
-        params.max = params.registros?: 20
+        params.max = params.registros?: 100
         def query = RequisicionDeCompras.where{}
 
         if(params.periodo) {

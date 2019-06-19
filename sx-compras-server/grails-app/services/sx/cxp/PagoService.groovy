@@ -63,18 +63,20 @@ abstract class PagoService implements  LogUser{
     Pago aplicarPago(Pago pago) {
         // Pago pago = Pago.get(pagoId)
         Requisicion requisicion = pago.requisicion
-        if(requisicion) {
+        if(requisicion && pago.disponible > 0.0) {
             requisicion.partidas.each { RequisicionDet det ->
-                BigDecimal importe = det.apagar
-                AplicacionDePago apl = new AplicacionDePago(
-                        pago: pago,
-                        fecha: requisicion.fechaDePago,
-                        cxp: det.cxp,
-                        importe: importe,
-                        comentario: "Pago de Requisicion ${requisicion.folio}",
-                        formaDePago: requisicion.formaDePago
-                )
-                apl.save flush: true
+                BigDecimal importe = det.apagar <= pago.disponible ? det.apagar : pago.disponible
+                if(importe ) {
+                    AplicacionDePago apl = new AplicacionDePago(
+                            pago: pago,
+                            fecha: requisicion.fechaDePago,
+                            cxp: det.cxp,
+                            importe: importe,
+                            comentario: "Pago de Requisicion ${requisicion.folio}",
+                            formaDePago: requisicion.formaDePago
+                    )
+                    apl.save flush: true
+                }
             }
             requisicion.aplicada = requisicion.fechaDePago
             requisicion.save flush: true

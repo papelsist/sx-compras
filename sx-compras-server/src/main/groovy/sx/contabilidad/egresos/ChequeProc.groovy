@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component
 import sx.contabilidad.Poliza
 import sx.contabilidad.PolizaCreateCommand
 import sx.contabilidad.ProcesadorMultipleDePolizas
+import sx.tesoreria.Cheque
 import sx.tesoreria.MovimientoDeCuenta
 
 /**
@@ -40,6 +41,10 @@ class ChequeProc implements  ProcesadorMultipleDePolizas {
     @Qualifier('devolucionClienteTask')
     DevolucionClienteTask devolucionClienteTask
 
+    @Autowired
+    @Qualifier('chequeCanceladoTask')
+    ChequeCanceladoTask chequeCanceladoTask
+
 
 
     @Override
@@ -51,24 +56,28 @@ class ChequeProc implements  ProcesadorMultipleDePolizas {
     Poliza recalcular(Poliza poliza) {
         poliza.partidas.clear()
         MovimientoDeCuenta egreso = MovimientoDeCuenta.get(poliza.egreso)
+        if(egreso) {
+            log.info("Generando poliza de egreso: {} Id:{}", egreso.tipo, poliza.egreso)
+            switch (egreso.tipo) {
+                case 'COMPRA':
+                    pagoDeCompraTask.generarAsientos(poliza, [:])
+                    break
+                case 'GASTO' :
+                    pagoDeGastosTask.generarAsientos(poliza, [:])
+                    break
+                case 'REMBOLSO':
+                    pagoDeRembolsoTask.generarAsientos(poliza, [:])
+                    break
+                case 'PAGO_NOMINA':
+                    pagoDeNominaTask.generarAsientos(poliza, [:])
+                    break
+                case 'DEVOLUCION_CLIENTE':
+                    devolucionClienteTask.generarAsientos(poliza, [:])
+                    break
+            }
 
-        log.info("Generando poliza de egreso: {} Id:{}", egreso.tipo, poliza.egreso)
-        switch (egreso.tipo) {
-            case 'COMPRA':
-                pagoDeCompraTask.generarAsientos(poliza, [:])
-                break
-            case 'GASTO' :
-                pagoDeGastosTask.generarAsientos(poliza, [:])
-                break
-            case 'REMBOLSO':
-                pagoDeRembolsoTask.generarAsientos(poliza, [:])
-                break
-            case 'PAGO_NOMINA':
-                pagoDeNominaTask.generarAsientos(poliza, [:])
-                break
-            case 'DEVOLUCION_CLIENTE':
-                devolucionClienteTask.generarAsientos(poliza, [:])
-            break
+        } else {
+            chequeCanceladoTask.generarAsientos(poliza, [:])
         }
 
         poliza = poliza.save flush: true
@@ -81,9 +90,13 @@ class ChequeProc implements  ProcesadorMultipleDePolizas {
     @Override
     List<Poliza> generarPolizas(PolizaCreateCommand command) {
         List<Poliza> polizas = []
-        List<MovimientoDeCuenta> movimientos = MovimientoDeCuenta.where{fecha == command.fecha && cheque != null}
+
+        List<MovimientoDeCuenta> movimientos = MovimientoDeCuenta.where{fecha == command.fecha && formaDePago == 'CHEQUE' && cheque !=null}
                 .list([sort: 'fecha', order: 'asc'])
-        movimientos = movimientos.sort {it.cheque.folio}.reverse()
+
+        movimientos.addAll(buscarChequesCancelados(command.fecha))
+
+        movimientos = movimientos.sort {it.cheque.folio}
 
         movimientos.each{ mov ->
 
@@ -102,7 +115,7 @@ class ChequeProc implements  ProcesadorMultipleDePolizas {
                 p.concepto = "CH ${mov.referencia} ${mov.afavor} (${mov.fecha.format('dd/MM/yyyy')})" +
                         " (${mov.tipo} ${mov.tipo != mov.concepto ? mov.concepto : ''})"
                 p.sucursal = mov.sucursal?: 'OFICINAS'
-                p.egreso = mov.id
+                p.egreso = "${mov.id}"
                 polizas << p
             } else
                 log.info('Poliza ya existente  {}', p)
@@ -110,4 +123,36 @@ class ChequeProc implements  ProcesadorMultipleDePolizas {
         }
         return polizas
     }
+
+    List<MovimientoDeCuenta> buscarChequesCancelados(Date fecha){
+        List<Cheque> cancelados = Cheque
+                .findAll(
+                "from Cheque c where c.fecha = ?  and c.cancelado != null",
+                [fecha])
+        List<MovimientoDeCuenta> res = []
+        cancelados.each {
+            MovimientoDeCuenta mv = new MovimientoDeCuenta()
+            mv.id = it.id
+            mv.cuenta = it.cuenta
+            mv.fecha = it.fecha
+            mv.referencia = it.folio.toString()
+            mv.comentario = it.nombre
+            mv.afavor = it.nombre
+            mv.cheque = it
+            mv.formaDePago = 'CHEQUE'
+            mv.tipo = 'CHE_CANCELADO'
+            mv.sucursal = 'OFICINAS'
+            mv.importe = 0.0
+            mv.conceptoReporte = "CHEQUE CANCELADO: ${it.folio}"
+            mv.concepto = 'CHE_CANCELADO'
+            mv.dateCreated = it.dateCreated
+            mv.lastUpdated = it.lastUpdated
+            mv.createUser = it.createUser
+            mv.updateUser = it.updateUser
+            res << mv
+        }
+        return res
+    }
+
+
 }

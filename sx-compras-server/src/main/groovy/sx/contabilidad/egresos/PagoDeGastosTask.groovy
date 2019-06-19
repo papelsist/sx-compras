@@ -77,12 +77,21 @@ class PagoDeGastosTask implements  AsientoBuilder, EgresoTask {
 
             // Cargo a Proveedor
             String cv = "205-0006-${co.cuentaOperativa}-0000"
+
             if(co.tipo != 'GASTOS') {
                 cv = "201-0002-${co.cuentaOperativa}-0000"
             }
+            if(co.tipo == 'FLETES') {
+                cv = "205-0004-${co.cuentaOperativa}-0000"
+            }
+            if(co.tipo == 'SEGUROS') {
+                cv = "205-0003-${co.cuentaOperativa}-0000"
+            }
+
             if(['0038','0061'].contains(co.cuentaOperativa)) {
                 cv = "201-0001-${co.cuentaOperativa}-0000"
             }
+
             BigDecimal total = MonedaUtils.round(it.apagar  * r.tipoDeCambio)
 
             if(['0331','0380'].contains(co.cuentaOperativa)) {
@@ -93,9 +102,6 @@ class PagoDeGastosTask implements  AsientoBuilder, EgresoTask {
 
 
             BigDecimal ivaCfdi = cxp.impuestoTrasladado - cxp.impuestoRetenidoIva
-            // BigDecimal importe = MonedaUtils.calcularImporteDelTotal(it.apagar * r.tipoDeCambio)
-            // BigDecimal impuesto = it.apagar - importe
-            // log.info('IVA del CFDI:{}  Calculado: {}', ivaCfdi, impuesto)
             poliza.addToPartidas(mapRow('118-0002-0000-0000', desc, row, ivaCfdi))
             poliza.addToPartidas(mapRow('119-0002-0000-0000', desc, row, 0.0, ivaCfdi))
         }
@@ -187,9 +193,11 @@ class PagoDeGastosTask implements  AsientoBuilder, EgresoTask {
         }
     }
 
+
     void ajustarConcepto(Poliza poliza, Requisicion r) {
+        poliza.concepto = "${r.egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'}  ${r.egreso.referencia} ${r.egreso.afavor} (${r.egreso.fecha.format('dd/MM/yyyy')}) (${r.egreso.tipo})"
         if(r.moneda != 'MXN') {
-            poliza.concepto = poliza.concepto + "TC: ${r.tipoDeCambio}"
+            poliza.concepto = poliza.concepto + "TC: ${r.egreso.tipoDeCambio}"
         }
     }
 

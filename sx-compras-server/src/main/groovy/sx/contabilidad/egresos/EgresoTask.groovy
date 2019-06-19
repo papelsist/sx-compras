@@ -43,7 +43,7 @@ import sx.tesoreria.MovimientoDeCuenta
          Map row = [
                  asiento: "${egreso.tipo}",
                  referencia: egreso.afavor,
-                 referencia2: egreso.cuenta.descripcion,
+                 referencia2: egreso.afavor,
                  origen: egreso.id,
                  documento: egreso.referencia,
                  documentoTipo: 'MovimientoDeCuenta',
