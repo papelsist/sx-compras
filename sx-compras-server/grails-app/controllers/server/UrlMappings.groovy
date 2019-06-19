@@ -59,6 +59,7 @@ class UrlMappings {
         "/api/tesoreria/cortesTarjeta/reporteDeComisionesTarjeta"(controller: 'corteDeTarjeta', action: 'reporteDeComisionesTarjeta', method: 'GET')
 
         "/api/tesoreria/cortesTarjetaAplicacion"(resources: 'corteDeTarjetaAplicacion', excludes: ['create', 'edit','patch'] )
+        "/api/tesoreria/updateDeposito"(controller: 'corteDeTarjetaAplicacion',action: 'actualizarCorte' , method: 'GET' )
 
         // Traspaso e inversiones
         "/api/tesoreria/traspasos"(resources: 'traspaso', excludes:['create', 'edit','patch'] )

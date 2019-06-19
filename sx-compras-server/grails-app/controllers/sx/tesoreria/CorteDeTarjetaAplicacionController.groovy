@@ -7,6 +7,7 @@ import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
 import sx.core.LogUser
 import sx.utils.Periodo
+import java.text.SimpleDateFormat;
 
 @Slf4j
 @GrailsCompileStatic
@@ -42,4 +43,21 @@ class CorteDeTarjetaAplicacionController extends RestfulController<CorteDeTarjet
 
         return query.list(params)
     }
+
+    @CompileDynamic
+    def actualizarCorte() {
+        
+        def aplicacion = CorteDeTarjetaAplicacion.get(params.id)
+        def corte = aplicacion.corte
+        
+        if(params.fechaDeposito){
+            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Date date = inputFormat.parse(params.fechaDeposito);
+            corte.fechaDeposito = date
+            corte.save failOnError:true, flush:true
+        }
+        respond aplicacion
+    }
+
+
 }
