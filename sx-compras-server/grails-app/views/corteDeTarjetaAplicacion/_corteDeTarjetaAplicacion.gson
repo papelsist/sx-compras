@@ -7,6 +7,7 @@ json g.render(corteDeTarjetaAplicacion) {
     sucursal corteDeTarjetaAplicacion.corte.sucursal.nombre
     folio corteDeTarjetaAplicacion.corte.folio
     fecha corteDeTarjetaAplicacion.corte.corte
+    fechaDeposito corteDeTarjetaAplicacion.corte.fechaDeposito
     modificado corteDeTarjetaAplicacion.corte.lastUpdated
     usuario corteDeTarjetaAplicacion.corte.updateUser
 }
