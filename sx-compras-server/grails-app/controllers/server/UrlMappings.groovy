@@ -349,6 +349,9 @@ class UrlMappings {
 
         // SolicitudDeDepositos
 
+        // Activo Fijo
+        "/api/activoFijo"(resources: 'activoFijo', excludes:['create', 'edit','patch'])
+
         "/"(controller: 'application', action:'index')
         "/api/session"(controller: 'application', action: 'session')
         "500"(view: '/error')

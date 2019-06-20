@@ -1,0 +1,7 @@
+import sx.activo.ActivoFijo
+
+model {
+	ActivoFijo activoFijo
+}
+
+json tmpl.activoFijo(activoFijo)
