@@ -1,14 +1,16 @@
 package sx.activo
 
-import grails.compiler.GrailsCompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
+
+import grails.compiler.GrailsCompileStatic
+
 import sx.contabilidad.CuentaContable
-import sx.core.TipoDeCambio
+import sx.cxp.ConceptoDeGasto
 
 @GrailsCompileStatic
-@ToString(excludes ='id,version,dateCreated,lastUpdated,sw2,partidas',includeNames=true,includePackage=false)
-@EqualsAndHashCode(includes='id')
+@ToString(includes ='id, facturaSerie, facturaFolio, facturaFecha',includeNames=true,includePackage=false)
+@EqualsAndHashCode(includes='id, facturaSerie, facturaFolio, facturaFecha')
 class ActivoFijo {
 
     // static hasMany = [partidas: RequisicionDet]
@@ -21,17 +23,39 @@ class ActivoFijo {
     String serie
     String modelo
 
-    BigDecimal montoOriginal
+    ConceptoDeGasto conceptoDeGasto
+    Integer renglon
+    String proveedor
+
+    String sucursalOrigen
+    String sucursalActual
+    String departamentoOrigen
+    String departamentoActual
+    String consignatario
+    String estado
+
 
     String tipo
     CuentaContable cuentaContable
     BigDecimal tasaDepreciacion
 
+    BigDecimal montoOriginal
+    BigDecimal costoActualizado
+
     BigDecimal depreciacionAcumulada
     BigDecimal remanente
 
+    String venta
+    String ventaFactura
+    String ventaFecha
+    BigDecimal ventaImporte
+
 
     BigDecimal porcentajeDepreciado
+
+    SortedSet<ActivoDepreciacion> depreciaciones
+
+    String comentario
 
     String createUser
     String updateUser
@@ -48,6 +72,15 @@ class ActivoFijo {
         modelo nullable: true
         cuentaContable nullable: true
         tasaDepreciacion scale: 4
+        conceptoDeGasto nullable: true
+        estado inList: ['VIGENTE', 'DEPRECIADO', 'VENDIDO']
+        sucursalOrigen nullable: true
+        sucursalActual nullable: true
+        departamentoOrigen nullable: true
+        departamentoActual nullable: true
+        consignatario nullable: true
+        renglon nullable: true
+        comentario nullable: true
     }
 
     static transients = {
@@ -55,8 +88,9 @@ class ActivoFijo {
     }
 
     static mapping = {
-        partidas cascade: "all-delete-orphan"
-        facturaFecha type:'date' , index: 'REQ_IDX2'
-        fecha type:'date', index: 'REQ_IDX3'
+        depreciaciones cascade: "all-delete-orphan"
+        fecha type:'date', index: 'AF_IDX1'
+        facturaFecha type:'date' , index: 'AF_IDX2'
+
     }
 }
