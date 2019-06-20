@@ -35,12 +35,12 @@ export class RequisicionPartidasComponent implements OnInit, OnChanges {
     'documentoFolio',
     'documentoFecha',
     'documentoTotal',
+    'analizado',
     'documentoCompensaciones',
     'documentoPagos',
     'documentoSaldo',
     'descuentof',
     'apagar',
-    'analizado',
     'comentario',
     'operaciones'
   ];

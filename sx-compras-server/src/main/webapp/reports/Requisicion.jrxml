@@ -591,7 +591,7 @@ $P{MONEDA}.equals( "MXN" ) ? "(MONEDA NACIONAL)" : "(MONEDA ORIGEN)"]]></textFie
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="463"
+						x="517"
 						y="8"
 						width="58"
 						height="26"
@@ -651,7 +651,7 @@ $P{MONEDA}.equals( "MXN" ) ? "(MONEDA NACIONAL)" : "(MONEDA ORIGEN)"]]></textFie
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="521"
+						x="304"
 						y="8"
 						width="54"
 						height="26"
@@ -693,7 +693,7 @@ $P{MONEDA}.equals( "MXN" ) ? "(MONEDA NACIONAL)" : "(MONEDA ORIGEN)"]]></textFie
 						mode="Transparent"
 						x="4"
 						y="21"
-						width="67"
+						width="80"
 						height="13"
 						forecolor="#000000"
 						backcolor="#999999"
@@ -711,9 +711,9 @@ $P{MONEDA}.equals( "MXN" ) ? "(MONEDA NACIONAL)" : "(MONEDA ORIGEN)"]]></textFie
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="71"
+						x="84"
 						y="21"
-						width="49"
+						width="36"
 						height="13"
 						forecolor="#000000"
 						backcolor="#999999"
@@ -731,7 +731,7 @@ $P{MONEDA}.equals( "MXN" ) ? "(MONEDA NACIONAL)" : "(MONEDA ORIGEN)"]]></textFie
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="304"
+						x="358"
 						y="8"
 						width="100"
 						height="13"
@@ -751,7 +751,7 @@ $P{MONEDA}.equals( "MXN" ) ? "(MONEDA NACIONAL)" : "(MONEDA ORIGEN)"]]></textFie
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="305"
+						x="359"
 						y="21"
 						width="51"
 						height="13"
@@ -771,7 +771,7 @@ $P{MONEDA}.equals( "MXN" ) ? "(MONEDA NACIONAL)" : "(MONEDA ORIGEN)"]]></textFie
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="356"
+						x="410"
 						y="21"
 						width="48"
 						height="13"
@@ -791,7 +791,7 @@ $P{MONEDA}.equals( "MXN" ) ? "(MONEDA NACIONAL)" : "(MONEDA ORIGEN)"]]></textFie
 				<staticText>
 					<reportElement
 						mode="Transparent"
-						x="404"
+						x="458"
 						y="8"
 						width="59"
 						height="26"
@@ -855,7 +855,7 @@ $P{MONEDA}.equals( "MXN" ) ? $F{documento_total}.multiply( new BigDecimal($F{tip
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="462"
+						x="516"
 						y="0"
 						width="58"
 						height="13"
@@ -869,7 +869,7 @@ $P{MONEDA}.equals( "MXN" ) ? $F{apagar}.multiply( new BigDecimal($F{tipo_de_camb
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="521"
+						x="304"
 						y="0"
 						width="54"
 						height="13"
@@ -886,7 +886,7 @@ $P{MONEDA}.equals( "MXN" ) ? $F{analizado}.multiply( new BigDecimal($F{tipo_de_c
 					<reportElement
 						x="3"
 						y="0"
-						width="67"
+						width="80"
 						height="13"
 						key="textField-52"/>
 					<box></box>
@@ -897,9 +897,9 @@ $P{MONEDA}.equals( "MXN" ) ? $F{analizado}.multiply( new BigDecimal($F{tipo_de_c
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="70"
+						x="84"
 						y="0"
-						width="50"
+						width="36"
 						height="13"
 						key="textField-53"/>
 					<box></box>
@@ -910,7 +910,7 @@ $P{MONEDA}.equals( "MXN" ) ? $F{analizado}.multiply( new BigDecimal($F{tipo_de_c
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="305"
+						x="359"
 						y="0"
 						width="51"
 						height="13"
@@ -925,7 +925,7 @@ $P{MONEDA}.equals( "MXN" ) ? $F{notas}.multiply( new BigDecimal($F{tipo_de_cambi
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="357"
+						x="411"
 						y="0"
 						width="47"
 						height="13"
@@ -940,7 +940,7 @@ $P{MONEDA}.equals( "MXN" ) ? $F{pagos}.multiply( new BigDecimal($F{tipo_de_cambi
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="404"
+						x="458"
 						y="0"
 						width="58"
 						height="13"
@@ -1233,7 +1233,7 @@ $P{MONEDA}.equals( "MXN" ) ? $F{saldo}.multiply( new BigDecimal($F{tipo_de_cambi
 				</staticText>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="463"
+						x="517"
 						y="12"
 						width="57"
 						height="13"
@@ -1276,7 +1276,7 @@ $P{MONEDA}.equals( "MXN" ) ? $V{SUMAFAC}.multiply( new BigDecimal($F{tipo_de_cam
 				</line>
 				<line direction="TopDown">
 					<reportElement
-						x="469"
+						x="523"
 						y="9"
 						width="51"
 						height="0"
@@ -1288,7 +1288,7 @@ $P{MONEDA}.equals( "MXN" ) ? $V{SUMAFAC}.multiply( new BigDecimal($F{tipo_de_cam
 				</line>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="520"
+						x="303"
 						y="12"
 						width="55"
 						height="13"
@@ -1302,7 +1302,7 @@ $P{MONEDA}.equals( "MXN" ) ? $V{SUMA_ANALISIS}.multiply( new BigDecimal($F{tipo_
 				</textField>
 				<line direction="TopDown">
 					<reportElement
-						x="525"
+						x="308"
 						y="9"
 						width="50"
 						height="0"
@@ -1322,7 +1322,7 @@ $P{MONEDA}.equals( "MXN" ) ? $V{SUMA_ANALISIS}.multiply( new BigDecimal($F{tipo_
 				</line>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="304"
+						x="358"
 						y="12"
 						width="52"
 						height="13"
@@ -1337,7 +1337,7 @@ $P{MONEDA}.equals( "MXN" ) ? $V{SUMNOTAS}.multiply( new BigDecimal($F{tipo_de_ca
 				</textField>
 				<line direction="TopDown">
 					<reportElement
-						x="308"
+						x="362"
 						y="9"
 						width="46"
 						height="0"
@@ -1347,7 +1347,7 @@ $P{MONEDA}.equals( "MXN" ) ? $V{SUMNOTAS}.multiply( new BigDecimal($F{tipo_de_ca
 				</line>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="356"
+						x="410"
 						y="12"
 						width="48"
 						height="13"
@@ -1362,7 +1362,7 @@ $P{MONEDA}.equals( "MXN" ) ? $V{SUMPAGOS}.multiply( new BigDecimal($F{tipo_de_ca
 				</textField>
 				<line direction="TopDown">
 					<reportElement
-						x="360"
+						x="414"
 						y="9"
 						width="42"
 						height="0"
@@ -1372,7 +1372,7 @@ $P{MONEDA}.equals( "MXN" ) ? $V{SUMPAGOS}.multiply( new BigDecimal($F{tipo_de_ca
 				</line>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="404"
+						x="458"
 						y="12"
 						width="59"
 						height="13"
@@ -1387,7 +1387,7 @@ $P{MONEDA}.equals( "MXN" ) ? $V{SUMSALDO}.multiply( new BigDecimal($F{tipo_de_ca
 				</textField>
 				<line direction="TopDown">
 					<reportElement
-						x="409"
+						x="463"
 						y="9"
 						width="54"
 						height="0"
