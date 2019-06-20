@@ -258,7 +258,10 @@ class PagoDeGastosTask implements  AsientoBuilder, EgresoTask {
     @CompileDynamic
     void ajustarProveedorBanco(Poliza poliza) {
         PolizaDet abonoBanco = poliza.partidas.find {it.cuenta.clave.startsWith('102')}
-                  abonoBanco = poliza.partidas.find {it.cuenta.clave.startsWith('103')}
+
+        if(poliza.partidas.find {it.cuenta.clave.startsWith('103')}){
+            abonoBanco = poliza.partidas.find {it.cuenta.clave.startsWith('103')}
+        }       
          
         List<PolizaDet> provs = poliza.partidas.findAll{ it.cuenta.clave.startsWith('201') || it.cuenta.clave.startsWith('205')}
         def debe = provs.sum 0.0, {it.debe}
