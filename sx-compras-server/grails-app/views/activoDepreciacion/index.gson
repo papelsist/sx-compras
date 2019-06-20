@@ -1,0 +1,8 @@
+import sx.activo.ActivoDepreciacion
+
+model {
+	Iterable<ActivoDepreciacion> activoDepreciacionList
+}
+
+json tmpl.activoDepreciacion(activoDepreciacionList ?: [])
+

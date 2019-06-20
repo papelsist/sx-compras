@@ -1,0 +1,8 @@
+import sx.activo.ActivoFijo
+
+model {
+	Iterable<ActivoFijo> activoFijoList
+}
+
+json tmpl.activoFijo(activoFijoList ?: [])
+

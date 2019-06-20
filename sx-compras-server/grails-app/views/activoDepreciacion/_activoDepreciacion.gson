@@ -1,0 +1,7 @@
+import sx.activo.ActivoDepreciacion
+
+model {
+	ActivoDepreciacion activoDepreciacion
+}
+
+json g.render(activoDepreciacion, [resolveTemplate: false])
