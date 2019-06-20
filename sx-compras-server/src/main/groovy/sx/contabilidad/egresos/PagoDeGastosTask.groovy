@@ -119,7 +119,14 @@ class PagoDeGastosTask implements  AsientoBuilder, EgresoTask {
         MovimientoDeCuenta egreso = r.egreso
 
         // Abono a Banco
-        String ctaBanco = "102-${egreso.moneda.currencyCode == 'MXN' ? '0001': '0002'}-${egreso.cuenta.subCuentaOperativa}-0000"
+
+        def prebanco= '102'
+
+        if(egreso.cuenta.tipo == 'INVERSION'){
+            prebanco = '103'
+        }
+
+        String ctaBanco = "${prebanco}-${egreso.moneda.currencyCode == 'MXN' ? '0001': '0002'}-${egreso.cuenta.subCuentaOperativa}-0000"
         // log.info('Cta de banco: {}, {} MXN: {}', ctaBanco, egreso.moneda, egreso.moneda == 'MXN')
         Map row = [
                 asiento: "PAGO_${egreso.tipo}",
@@ -251,6 +258,8 @@ class PagoDeGastosTask implements  AsientoBuilder, EgresoTask {
     @CompileDynamic
     void ajustarProveedorBanco(Poliza poliza) {
         PolizaDet abonoBanco = poliza.partidas.find {it.cuenta.clave.startsWith('102')}
+                  abonoBanco = poliza.partidas.find {it.cuenta.clave.startsWith('103')}
+         
         List<PolizaDet> provs = poliza.partidas.findAll{ it.cuenta.clave.startsWith('201') || it.cuenta.clave.startsWith('205')}
         def debe = provs.sum 0.0, {it.debe}
 
