@@ -109,6 +109,13 @@ class PagoDeGastosTask implements  AsientoBuilder, EgresoTask {
 
 
             BigDecimal ivaCfdi = cxp.impuestoTrasladado - cxp.impuestoRetenidoIva
+            BigDecimal dif = cxp.total -it.apagar
+
+            // println "******"+cxp.total+" -- "+it.apagar+" -- "+dif
+              if(dif.abs() > 3.00) {
+                    BigDecimal ii = MonedaUtils.calcularImporteDelTotal(it.apagar)
+                    ivaCfdi = MonedaUtils.calcularImpuesto(ii)
+                }
             poliza.addToPartidas(mapRow('118-0002-0000-0000', desc, row, ivaCfdi))
             poliza.addToPartidas(mapRow('119-0002-0000-0000', desc, row, 0.0, ivaCfdi))
         }

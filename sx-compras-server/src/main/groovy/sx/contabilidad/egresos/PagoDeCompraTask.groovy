@@ -116,7 +116,8 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
 
 
             BigDecimal totalFactura = cxp.total
-            BigDecimal apagar = cxp.importePorPagar ?: 0.0
+           // BigDecimal apagar = cxp.importePorPagar ?: 0.0
+            BigDecimal apagar = it.apagar ?: 0.0  // a pagar requisicion
             BigDecimal dif = totalFactura - apagar // Diferencia para saber si existe DESCUENTO NORMAL
             // log.info('Fac {} Diferencia entre factura y requisicion: {}', cxp.folio, dif)
             // Impuesto trasladado
@@ -131,11 +132,12 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
             BigDecimal impuestoTrasladadoPara118 = MonedaUtils.round(impuestoTrasladado * tipoDeCambio)
             BigDecimal impuestoTrasladadoPara119 = MonedaUtils.round(impuestoTrasladado * cxp.tipoDeCambio)
 
-            println "******"+totalFactura+" -- "+apagar+" -- "+dif
+            // println "******"+totalFactura+" -- "+apagar+" -- "+dif
 
             if( (dif.abs() * egreso.tipoDeCambio ) > (3.00 * egreso.tipoDeCambio) ) {
 
-                BigDecimal baseConIva = it.total + (cxp.impuestoRetenido?:0.0)
+                // BigDecimal baseConIva = it.total + (cxp.impuestoRetenido?:0.0) 
+                BigDecimal baseConIva = it.apagar + (cxp.impuestoRetenido?:0.0) // iva de lo pagado
                 BigDecimal base = MonedaUtils.calcularImporteDelTotal(baseConIva)
                 BigDecimal impuesto  = MonedaUtils.calcularImpuesto(base)
                 log.info("Factura con descuento Folio:: ${cxp.folio} Pago: ${it.total} Base: {} Iva: {}", base, impuesto)
