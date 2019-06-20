@@ -43,6 +43,7 @@ class RequisicionDeComprasService implements LogUser, FolioLog{
             det.total = cxp.getSaldo()
             det.apagar = det.total
             if(requisicion.descuentof > 0.0){
+                det.descuentof = requisicion.descuentof
                 det.descuentofImporte = (det.descuentof/100) * det.total
                 BigDecimal apagar = det.total - det.descuentofImporte
                 det.apagar = MonedaUtils.round(apagar, 2)

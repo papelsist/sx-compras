@@ -141,3 +141,16 @@ task buildConf() {
 
 war.finalizedBy(buildConf)
 
+task tesoreria(type: GradleBuild) {
+    System.setProperty('grails.env', 'tesoreria')
+    tasks = ['assemble']
+}
+task contabilidad(type: GradleBuild) {
+    System.setProperty('grails.env', 'contabilidad')
+    tasks = ['assemble']
+}
+task compras(type: GradleBuild) {
+    System.setProperty('grails.env', 'compras')
+    tasks = ['assemble']
+}
+
