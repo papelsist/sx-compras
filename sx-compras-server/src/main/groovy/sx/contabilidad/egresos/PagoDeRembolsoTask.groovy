@@ -62,6 +62,10 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
                     atenderPagoFlete(poliza, r)
                 }
                 break
+            case 'ESPECIAL':
+                CuentaContable cta = r.cuentaContable
+                if(cta == null) throw new RuntimeException("No exister cuenta contable asignada al rembolso ${r.id}")
+                atenderEspecial(poliza, r)
             default:
                 log.info('No hay handler para: {}', r.concepto)
         }
@@ -118,6 +122,7 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
         CuentaContable ctaPadre = r.cuentaContable
         Map row = buildDataRow(egreso)
         r.partidas.each { d ->
+            log.info('DET: {}', d)
             CuentaPorPagar cxp = d.cxp
 
             CuentaContable cuenta
@@ -132,6 +137,12 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
                 }
                 log.info('Buscando subcuenta de{} de {}',ctaOperativa, ctaPadre.clave)
                 cuenta = ctaPadre.subcuentas.find{it.clave.contains(ctaOperativa)}
+                if(d.comentario) {
+                    CuentaContable found = CuentaContable.where{clave == d.comentario}.find()
+                    if(found)
+                        cuenta = found
+                }
+
             } else {
                 cuenta = ctaPadre
             }
@@ -141,6 +152,11 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
             poliza.addToPartidas(mapRow(cuenta, desc, row, importe))
             if(cxp) {
                 BigDecimal ivaCfdi = cxp.impuestoTrasladado - cxp.impuestoRetenidoIva?: 0.0
+                BigDecimal dif = cxp.total - d.apagar
+                if(dif.abs() > 3.00) {
+                    BigDecimal ii = MonedaUtils.calcularImporteDelTotal(d.apagar)
+                    ivaCfdi = MonedaUtils.calcularImpuesto(ii)
+                }
 
                 if(d.comentario == 'ALIMENTOS') {
                     BigDecimal ivaAlimientos = cxp.impuestoTrasladado * 0.085
@@ -235,7 +251,12 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
             BigDecimal importe = d.apagar
             String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} ${egreso.afavor}" +
                     " (${poliza.fecha.format('dd/MM/yyyy')}) "
-            poliza.addToPartidas(mapRow(ctaClave, desc, row, importe))
+            if(importe > 0) {
+                poliza.addToPartidas(mapRow(ctaClave, desc, row, importe))
+            } else {
+                poliza.addToPartidas(mapRow(ctaClave, desc, row, 0.0,  importe))
+            }
+
         }
     }
 
@@ -301,17 +322,43 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
 
         poliza.addToPartidas(mapRow(cuenta, desc, row, egreso.importe))
         r.partidas.each { d ->
-
-            BigDecimal importe = d.apagar
             String comentario = d.comentario
             if(comentario == '213-0009-0000-0000') {
-                BigDecimal value = (importe * 35) / 65
+                BigDecimal value =d.apagar
                 value = MonedaUtils.round(value, 2)
                 poliza.addToPartidas(mapRow('213-0009-0000-0000', desc, row, value))
                 poliza.addToPartidas(mapRow('216-0003-0000-0000', desc, row, 0.0, value))
             }
         }
 
+    }
+
+
+    def atenderEspecial(Poliza poliza, Rembolso r) {
+
+        MovimientoDeCuenta egreso = r.egreso
+        CuentaContable ctaPadre = r.cuentaContable
+        Map row = buildDataRow(egreso)
+
+        def det = r.partidas.find {it.cxp}
+        CuentaPorPagar cxp = det.cxp
+        String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} F:${cxp?.serie?:''} ${cxp?.folio?: ''}" +
+                " (${poliza.fecha.format('dd/MM/yyyy')}) ${egreso.sucursal?: 'OFICINAS'} "
+        if(cxp) {
+            row.referencia = cxp.nombre
+            row.referencia2 = cxp.nombre
+        }
+
+        r.partidas.each { d ->
+
+            CuentaContable cuenta = buscarCuenta(d.comentario)
+            BigDecimal importe = d.apagar
+            if(importe > 0.0)
+                poliza.addToPartidas(mapRow(cuenta, desc, row, importe))
+            else
+                poliza.addToPartidas(mapRow(cuenta, desc, row, 0.0, importe))
+
+        }
     }
 
 

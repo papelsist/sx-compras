@@ -32,7 +32,8 @@ class ComisionBancariaTask implements  AsientoBuilder{
           List<ComisionBancaria> comisiones = ComisionBancaria.where{fecha == poliza.fecha}list()
         comisiones.each{ comision ->
                 comision.movimientos.sort{-it.importe}.each{ mov ->
-                    
+                    // log.info('Procesando: {} {} T.C:{}', mov, mov.moneda.currencyCode, mov.tipoDeCambio)
+                    // log.info('CTA: {}  ', mov.cuenta.moneda)
                     Map row = [
                         asiento: "${mov.tipo} ${mov.concepto}",
                         referencia: mov.comentario,

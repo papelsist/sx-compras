@@ -78,8 +78,14 @@ class PagoDeGastosTask implements  AsientoBuilder, EgresoTask {
             // Cargo a Proveedor
             String cv = "205-0006-${co.cuentaOperativa}-0000"
 
-            if(co.tipo != 'GASTOS') {
+            if(co.tipo == 'COMPRAS') {
                 cv = "201-0002-${co.cuentaOperativa}-0000"
+            }
+            if(co.tipo == 'RELACIONADAS') {
+                cv = "205-0009-${co.cuentaOperativa}-0000"
+            }
+            if(co.tipo == 'RELACIONADAS' && (co.cuentaOperativa == '0038' || co.cuentaOperativa == '0061')) {
+                cv = "201-0001-${co.cuentaOperativa}-0000"
             }
             if(co.tipo == 'FLETES') {
                 cv = "205-0004-${co.cuentaOperativa}-0000"
@@ -87,6 +93,7 @@ class PagoDeGastosTask implements  AsientoBuilder, EgresoTask {
             if(co.tipo == 'SEGUROS') {
                 cv = "205-0003-${co.cuentaOperativa}-0000"
             }
+
 
             if(['0038','0061'].contains(co.cuentaOperativa)) {
                 cv = "201-0001-${co.cuentaOperativa}-0000"

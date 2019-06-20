@@ -80,8 +80,10 @@ class CuentaPorPagar {
         tipoDeCambio(scale:6)
         subTotal(scale:4)
         descuento(scale: 4)
-        impuestoTrasladado(scale:4)
-        impuestoRetenido(sacle:4)
+        impuestoTrasladado nullable: true, scale:4
+        impuestoRetenido nullable: true, sacle:4
+        impuestoRetenidoIsr nullable: true
+        impuestoRetenidoIva nullable: true
         total(scale:4)
         comentario(nullable:true)
         /*

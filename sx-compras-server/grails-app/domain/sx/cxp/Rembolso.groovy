@@ -68,7 +68,7 @@ class Rembolso {
         pago nullable: true
         proveedor nullable: true
         cuentaContable nullable: true
-        concepto inList: ['REMBOLSO','PAGO','GASTO','PRESTAMO','DEVOLUCION']
+        concepto inList: ['REMBOLSO','PAGO','GASTO','PRESTAMO','DEVOLUCION', 'ESPECIAL']
     }
     /*
         concepto inList: ['PAGO',

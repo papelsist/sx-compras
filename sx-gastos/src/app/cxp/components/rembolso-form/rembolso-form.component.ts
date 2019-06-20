@@ -72,7 +72,8 @@ export class RembolsoFormComponent implements OnInit, OnChanges, OnDestroy {
     'PAGO',
     'GASTO',
     'PRESTAMO',
-    'DEVOLUCION'
+    'DEVOLUCION',
+    'ESPECIAL'
   ];
 
   constructor(private fb: FormBuilder, private dialog: MatDialog) {}
@@ -179,7 +180,7 @@ export class RembolsoFormComponent implements OnInit, OnChanges, OnDestroy {
       };
       if(this.form.get('cuentaContable').value) {
         entity.cuentaContable = this.form.get('cuentaContable').value.id
-      } 
+      }
       this.save.emit(entity);
     }
   }

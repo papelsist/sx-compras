@@ -51,11 +51,11 @@ class DevolucionClienteTask implements  AsientoBuilder, EgresoTask {
         CuentaOperativaCliente co = buscarCuentaOperativa(d.cliente)
         MovimientoDeCuenta egreso = d.egreso
         String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia}" +
-                      " (${d.fecha.format('dd/MM/yyyy')}) ${egreso.sucursal?: 'OFICINAS'} " 
+                      " (${d.fecha.format('dd/MM/yyyy')}) ${egreso.afavor} "
         Map row = [
             asiento: "PAGO_${egreso.tipo}",
             referencia: d.cliente.nombre,
-            referencia2: egreso.cuenta.descripcion,
+            referencia2: d.cliente.nombre,
             origen: egreso.id,
             documento: egreso.referencia, 
             documentoTipo: 'DEV', 
@@ -119,10 +119,10 @@ class DevolucionClienteTask implements  AsientoBuilder, EgresoTask {
                 // IVA
                 poliza.addToPartidas(mapRow('209-0001-0000-0000', desc, row, impuesto))
                 if(d.cobro.formaDePago == 'BONIFICACION'){
-                    poliza.addToPartidas(mapRow('209-0003-0000-0000', desc, row, 0.0, impuesto))
+                    poliza.addToPartidas(mapRow('209-0001-0000-0000', desc, row, 0.0, impuesto))
                 }
                 if(d.cobro.formaDePago == 'DEVOLUCION'){
-                    poliza.addToPartidas(mapRow('209-0002-0000-0000', desc, row, 0.0, impuesto))
+                    poliza.addToPartidas(mapRow('209-0001-0000-0000', desc, row, 0.0, impuesto))
                 }
             }
         }     

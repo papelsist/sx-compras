@@ -49,6 +49,7 @@
 ,IFNULL((SELECT SUM(A.IMPORTE) FROM aplicacion_de_pago A WHERE A.cxp_id=D.cxp_id AND A.FECHA <DATE(R.FECHA_DE_PAGO) and a.pago_id is not null ),0) pagos
 ,d.documento_total - IFNULL((SELECT SUM(A.IMPORTE) FROM aplicacion_de_pago A WHERE A.cxp_id=D.cxp_id AND A.FECHA <=DATE(R.FECHA_DE_PAGO) and a.nota_id is not null ),0) 
 	-  IFNULL((SELECT SUM(A.IMPORTE) FROM aplicacion_de_pago A WHERE A.cxp_id=D.cxp_id AND A.FECHA <DATE(R.FECHA_DE_PAGO) and a.pago_id is not null ),0) saldo
+,(SELECT x.importe_por_pagar FROM cuenta_por_pagar X WHERE D.cxp_id=x.id) as analizado
 FROM requisicion R 
 LEFT JOIN requisicion_det  D ON(D.requisicion_id=R.id) 
 WHERE R.ID=$P{ID}]]></queryString>
@@ -77,6 +78,7 @@ WHERE R.ID=$P{ID}]]></queryString>
 	<field name="notas" class="java.math.BigDecimal"/>
 	<field name="pagos" class="java.math.BigDecimal"/>
 	<field name="saldo" class="java.math.BigDecimal"/>
+	<field name="analizado" class="java.math.BigDecimal"/>
 
 	<sortField name="documento" />
 
@@ -93,7 +95,7 @@ WHERE R.ID=$P{ID}]]></queryString>
 		<variableExpression><![CDATA[$V{DIFERENCIA}]]></variableExpression>
 	</variable>
 	<variable name="SUMA_ANALISIS" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
-		<variableExpression><![CDATA[$F{total}]]></variableExpression>
+		<variableExpression><![CDATA[$F{analizado}]]></variableExpression>
 	</variable>
 	<variable name="SUMNOTAS" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
 		<variableExpression><![CDATA[$F{notas}]]></variableExpression>
@@ -877,8 +879,8 @@ $P{MONEDA}.equals( "MXN" ) ? $F{apagar}.multiply( new BigDecimal($F{tipo_de_camb
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica" size="8" isBold="false"/>
 					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{moneda}.equals( "MXN" ) ? $F{total}.multiply( new BigDecimal($F{tipo_de_cambio}.doubleValue()) ) : 
-$P{MONEDA}.equals( "MXN" ) ? $F{total}.multiply( new BigDecimal($F{tipo_de_cambio}.doubleValue()) ) : $F{total}]]></textFieldExpression>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{moneda}.equals( "MXN" ) ? $F{analizado}.multiply( new BigDecimal($F{tipo_de_cambio}.doubleValue()) ) : 
+$P{MONEDA}.equals( "MXN" ) ? $F{analizado}.multiply( new BigDecimal($F{tipo_de_cambio}.doubleValue()) ) : $F{analizado}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement

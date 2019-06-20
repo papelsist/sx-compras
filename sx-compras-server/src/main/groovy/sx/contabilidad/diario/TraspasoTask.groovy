@@ -32,7 +32,8 @@ class TraspasoTask implements  AsientoBuilder{
         List<Traspaso> traspasos = Traspaso.where{fecha == poliza.fecha}list()
         traspasos.each{ traspaso ->
                 traspaso.movimientos.sort{-it.importe}.each{ mov ->
-                   
+                   //log.info('Procesando: {} {} T.C:{}', mov, mov.moneda.currencyCode, mov.tipoDeCambio)
+                   //  log.info('CTA: {}  ', mov.cuenta.moneda)
                     Map row = [
                         asiento: "TRASPASO ENTRE CUENTAS ${mov.concepto}",
                         referencia: mov.comentario,
@@ -47,6 +48,9 @@ class TraspasoTask implements  AsientoBuilder{
                     ] 
                     String desc = generarDescripcion(row, mov.concepto)
                     String ctaBanco = "102-${mov.moneda.currencyCode == 'MXN' ? '0001': '0002'}-${mov.cuenta.subCuentaOperativa}-0000"
+                    if(mov.cuenta.tipo == 'INVERSION') {
+                        ctaBanco = "103-${mov.moneda.currencyCode == 'MXN' ? '0001': '0002'}-${mov.cuenta.subCuentaOperativa}-0000"
+                    }
                     
                     if(mov.concepto =='DEPOSITO' ){
                         poliza.addToPartidas(mapRow(ctaBanco,desc,row,mov.importe))

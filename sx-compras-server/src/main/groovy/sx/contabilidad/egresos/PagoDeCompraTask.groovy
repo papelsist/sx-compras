@@ -131,6 +131,8 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
             BigDecimal impuestoTrasladadoPara118 = MonedaUtils.round(impuestoTrasladado * tipoDeCambio)
             BigDecimal impuestoTrasladadoPara119 = MonedaUtils.round(impuestoTrasladado * cxp.tipoDeCambio)
 
+            println "******"+totalFactura+" -- "+apagar+" -- "+dif
+
             if( (dif.abs() * egreso.tipoDeCambio ) > (3.00 * egreso.tipoDeCambio) ) {
 
                 BigDecimal baseConIva = it.total + (cxp.impuestoRetenido?:0.0)
@@ -139,19 +141,20 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
                 log.info("Factura con descuento Folio:: ${cxp.folio} Pago: ${it.total} Base: {} Iva: {}", base, impuesto)
                 impuestoTrasladado = impuesto - cxp.impuestoRetenido?:0.0
 
-                impuestoTrasladadoPara118 = MonedaUtils.round(impuestoTrasladado * egreso.tipoDeCambio)
+                impuestoTrasladadoPara118 = MonedaUtils.round(impuestoTrasladado * r.tipoDeCambio)
                 impuestoTrasladadoPara119 = MonedaUtils.round(impuestoTrasladado * cxp.tipoDeCambio)
 
-            } else if (r.descuentof > 0.0) {
+            } //else
+            if (r.descuentof > 0.0) {
 
                 log.info('Factura con descuento FINANCIERO')
                 BigDecimal baseConIva = it.apagar + (cxp.impuestoRetenido?:0.0)
                 BigDecimal base = MonedaUtils.calcularImporteDelTotal(baseConIva)
                 BigDecimal impuesto  = MonedaUtils.calcularImpuesto(base)
                 impuestoTrasladado = impuesto - cxp.impuestoRetenido?:0.0
-                impuestoTrasladado = MonedaUtils.round(impuestoTrasladado * egreso.tipoDeCambio)
+                impuestoTrasladado = MonedaUtils.round(impuestoTrasladado * r.tipoDeCambio)
 
-                impuestoTrasladadoPara118 = MonedaUtils.round(impuestoTrasladado * egreso.tipoDeCambio)
+                impuestoTrasladadoPara118 = MonedaUtils.round(impuestoTrasladado * r.tipoDeCambio)
                 impuestoTrasladadoPara119 = MonedaUtils.round(impuestoTrasladado * cxp.tipoDeCambio)
 
             }
@@ -327,7 +330,7 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
     void ajustarConcepto(Poliza poliza, Requisicion r) {
         poliza.concepto = "${r.egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} : ${r.egreso.referencia} ${r.egreso.afavor} (${r.egreso.fecha.format('dd/MM/yyyy')}) (${r.egreso.tipo})"
         if(r.moneda != 'MXN') {
-            poliza.concepto = poliza.concepto + "TC: ${r.egreso.tipoDeCambio}"
+            poliza.concepto = poliza.concepto + "TC: ${r.tipoDeCambio}"
         }
     }
 
