@@ -39,26 +39,27 @@ class ProvisionNominaProc implements  ProcesadorMultipleDePolizas, AsientoBuilde
     @Override
     def generarAsientos(Poliza poliza, Map params) {
         log.info('Generando asientos de provision de nomina {}', poliza)
-        PagoDeNomina pago = PagoDeNomina.where{egreso.id == poliza.egreso}.find()
-        List rows = loadRegistros(getSelect(), [pago.nomina])
+        // PagoDeNomina pago = PagoDeNomina.where{nomina == poliza.egreso}.find()
+        List rows = loadRegistros(getSelect(), [poliza.egreso])
         // rows.groupBy {it.cta_contable}
         validarCuentas(rows)
 
         Map map = rows.groupBy {it.ne_id}
+
         map.entrySet().each {
             List data = it.value
             data.each { row ->
                 if(row.tipo == 'P'){
                     BigDecimal importe = row.importe_excento + row.importe_gravado
-                    poliza.addToPartidas(mapRow(pago, row, importe))
+                    poliza.addToPartidas(mapRow(poliza.concepto, row, importe))
                 } else if(row.tipo == 'D') {
                     BigDecimal importe = row.importe_excento + row.importe_gravado
-                    poliza.addToPartidas(mapRow(pago, row, 0, importe))
+                    poliza.addToPartidas(mapRow(poliza.concepto, row, 0, importe))
                 } else if(row.tipo == 'A') {
                     if(row.importe_gravado > 0.0)
-                        poliza.addToPartidas(mapRow(pago, row, row.importe_gravado))
+                        poliza.addToPartidas(mapRow(poliza.concepto, row, row.importe_gravado))
                     if(row.importe_excento > 0.0) {
-                        PolizaDet det = mapRow(pago, row,  row.importe_excento)
+                        PolizaDet det = mapRow(poliza.concepto, row,  row.importe_excento)
                         det.cuenta = buscarCuenta(row.cta_contable_exe)
                         det.concepto = det.cuenta.descripcion
                         poliza.addToPartidas(det)
@@ -66,7 +67,7 @@ class ProvisionNominaProc implements  ProcesadorMultipleDePolizas, AsientoBuilde
                 }
             }
             def row = data[0]
-            PolizaDet partidaDePago = mapRow(pago, row, 0.0, row.montoTotal)
+            PolizaDet partidaDePago = mapRow(poliza.concepto, row, 0.0, row.montoTotal)
             partidaDePago.cuenta = buscarCuenta(row.cta_nomina_por_pagar.toString())
             partidaDePago.concepto = partidaDePago.cuenta.descripcion
             poliza.addToPartidas(partidaDePago)
@@ -110,7 +111,37 @@ class ProvisionNominaProc implements  ProcesadorMultipleDePolizas, AsientoBuilde
 
     @Override
     List<Poliza> generarPolizas(PolizaCreateCommand command) {
+        println "Generando Polizssss"
+        String query = "select id,folio,tipo,forma_de_pago as formaDePago ,pago, substr(periodicidad,1,1) as per  from nomina where pago = ?"
         List<Poliza> polizas = []
+        def polizasRow = loadRegistros(query,[command.fecha])
+        polizasRow.each{
+            Map map = it
+            println map.id
+            Poliza p = Poliza.where{
+                ejercicio == command.ejercicio &&
+                mes == command.mes &&
+                subtipo == command.subtipo &&
+                tipo == command.tipo &&
+                fecha == command.fecha &&
+                egreso == map.id
+            }.find()
+            
+
+            if(p == null) {
+
+                p = new Poliza(command.properties)
+                p.concepto = "NOMINA: ${map.id} Folio:${map.folio} ${map.tipo} ${map.formaDePago} " +
+                        "(${map.pago.format('dd/MM/yyyy')})  ${map.per}"
+                p.sucursal = 'OFICINAS'
+                p.egreso = map.id
+                polizas << p
+            } else
+                log.info('Poliza ya existente  {}', p)
+              
+            
+        }
+        /*
         List<PagoDeNomina> pagos = PagoDeNomina.where{pago == command.fecha && pensionAlimenticia == false}.list()
         Map<Long, PagoDeNomina> map = pagos.collectEntries {
             [(it.nomina): it]
@@ -139,7 +170,7 @@ class ProvisionNominaProc implements  ProcesadorMultipleDePolizas, AsientoBuilde
             } else
                 log.info('Poliza ya existente  {}', p)
         }
-
+*/
 
         return polizas
     }
@@ -147,11 +178,12 @@ class ProvisionNominaProc implements  ProcesadorMultipleDePolizas, AsientoBuilde
 
 
 
-    PolizaDet mapRow(PagoDeNomina pago, Map row, def debe = 0.0, def haber = 0.0) {
+    PolizaDet mapRow(String concepto, Map row, def debe = 0.0, def haber = 0.0) {
 
         CuentaContable cuenta = buscarCuenta(row.cta_contable)
-        String descripcion = "NOMINA: ${pago.nomina} Folio:${pago.folio} ${pago.tipo} ${pago.formaDePago} " +
-                "(${pago.pago.format('dd/MM/yyyy')})"
+       // String descripcion = "NOMINA: ${pago.nomina} Folio:${pago.folio} ${pago.tipo} ${pago.formaDePago} " +
+         //       "(${pago.pago.format('dd/MM/yyyy')})"
+         String descripcion = concepto
 
         PolizaDet det = new PolizaDet(
                 cuenta: cuenta,
@@ -165,7 +197,7 @@ class ProvisionNominaProc implements  ProcesadorMultipleDePolizas, AsientoBuilde
                 documento: row.ne_id.toString(),
                 documentoTipo: 'NOM',
                 documentoFecha: row.fechaDocumento,
-                sucursal: 'OFICINAS',
+                sucursal: row.ubicacion,
                 debe: debe.abs(),
                 haber: haber.abs()
         )
