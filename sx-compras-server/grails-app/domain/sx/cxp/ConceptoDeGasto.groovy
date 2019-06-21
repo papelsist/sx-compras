@@ -33,6 +33,8 @@ class ConceptoDeGasto {
 
     Date lastUpdated
 
+    static belongsTo = [cfdiDet:ComprobanteFiscalConcepto]
+
     static constraints = {
         sucursal nullable: true
         cuentaContable nullable: true

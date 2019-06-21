@@ -66,6 +66,8 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
                 CuentaContable cta = r.cuentaContable
                 if(cta == null) throw new RuntimeException("No exister cuenta contable asignada al rembolso ${r.id}")
                 atenderEspecial(poliza, r)
+            case 'ESPECIALM':
+                atenderEspecialMultiple(poliza, r)
             default:
                 log.info('No hay handler para: {}', r.concepto)
         }
@@ -124,7 +126,9 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
         r.partidas.each { d ->
             log.info('DET: {}', d)
             CuentaPorPagar cxp = d.cxp
-
+            if(cxp) {
+                row.uuid = cxp.uuid
+            }
             CuentaContable cuenta
             if(!ctaPadre.detalle) {
                 String ctaOperativa = '0999'
@@ -230,6 +234,7 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
             CuentaPorPagar cxp = d.cxp
             row.referencia = d.nombre
             row.referencia2 = d.nombre
+            row.uuid = cxp.uuid
             String ctaOperativa = d.comentario
             CuentaContable cuenta = ctaPadre.subcuentas.find{it.clave.contains(ctaOperativa)}
             if(!cuenta) throw new RuntimeException("No existe subcuenta ${d.comentario?: 'FALTA CO'} de ${ctaPadre.clave}")
@@ -269,6 +274,8 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
 
             row.referencia = d.nombre
             row.referencia2 = d.nombre
+            row.uuid = cxp.uuid
+
             CuentaOperativaProveedor co = CuentaOperativaProveedor.where{ proveedor == cxp.proveedor}.find()
             if(!co) throw new RuntimeException("No existe cuenta operativa para el proveedor: ${cxp.proveedor}")
             String ctaOperativa = co.getCuentaOperativa()
@@ -339,14 +346,19 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
         MovimientoDeCuenta egreso = r.egreso
         CuentaContable ctaPadre = r.cuentaContable
         Map row = buildDataRow(egreso)
-
-        def det = r.partidas.find {it.cxp}
-        CuentaPorPagar cxp = det.cxp
-        String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} F:${cxp?.serie?:''} ${cxp?.folio?: ''}" +
+        String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} " +
                 " (${poliza.fecha.format('dd/MM/yyyy')}) ${egreso.sucursal?: 'OFICINAS'} "
-        if(cxp) {
-            row.referencia = cxp.nombre
-            row.referencia2 = cxp.nombre
+
+        def det = r.partidas.find{it.cxp != null}
+        if(det) {
+            CuentaPorPagar cxp = det.cxp
+            desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} F:${cxp?.serie?:''} ${cxp?.folio?: ''}" +
+                    " (${poliza.fecha.format('dd/MM/yyyy')}) ${egreso.sucursal?: 'OFICINAS'} "
+            if(cxp) {
+                row.referencia = cxp.nombre
+                row.referencia2 = cxp.nombre
+                row.uuid = cxp.uuid
+            }
         }
 
         r.partidas.each { d ->
@@ -358,6 +370,38 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
             else
                 poliza.addToPartidas(mapRow(cuenta, desc, row, 0.0, importe))
 
+        }
+
+
+    }
+
+    def atenderEspecialMultiple(Poliza poliza, Rembolso r) {
+
+        MovimientoDeCuenta egreso = r.egreso
+        Map row = buildDataRow(egreso)
+        Map<String, List<RembolsoDet>> grupos = r.partidas.groupBy {it.documentoFolio}
+        grupos.each {
+            String documento = it.getKey()
+            List<RembolsoDet> partidas = it.value
+            def det = partidas.find{it.cxp != null}
+            CuentaPorPagar cxp = det.cxp
+            String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} F:${cxp.serie?:''} ${cxp.folio?: ''}" +
+                    " (${poliza.fecha.format('dd/MM/yyyy')}) ${egreso.sucursal?: 'OFICINAS'} "
+            if(cxp) {
+                row.referencia = cxp.nombre
+                row.referencia2 = cxp.nombre
+                row.uuid = cxp.uuid
+            }
+            partidas.each { d ->
+
+                CuentaContable cuenta = buscarCuenta(d.comentario)
+                BigDecimal importe = d.apagar
+                if(importe > 0.0)
+                    poliza.addToPartidas(mapRow(cuenta, desc, row, importe))
+                else
+                    poliza.addToPartidas(mapRow(cuenta, desc, row, 0.0, importe))
+
+            }
         }
     }
 
@@ -437,7 +481,7 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
 
     void ajustarConcepto(Poliza poliza, Rembolso r) {
         poliza.concepto = "${r.egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'}  ${r.egreso.referencia} ${r.egreso.afavor}" +
-                " (${r.egreso.fecha.format('dd/MM/yyyy')}) (REM: ${r.concepto})"
+                " (${r.egreso.fecha.format('dd/MM/yyyy')}) (REM: ${r.id} ${r.concepto})"
 
     }
 

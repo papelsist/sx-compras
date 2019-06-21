@@ -23,7 +23,11 @@ class ComprobanteFiscalConcepto {
 
     BigDecimal importe
 
+    List<ConceptoDeGasto> conceptos = []
+
     static belongsTo = [comprobante: ComprobanteFiscal]
+
+    static hasMany = [conceptos: ConceptoDeGasto]
 
     static constraints = {
         claveProdServ nullable: true
@@ -37,5 +41,7 @@ class ComprobanteFiscalConcepto {
 
     static mapping = {
         id generator: 'uuid'
+        conceptos cascade: "all-delete-orphan"
     }
+
 }
