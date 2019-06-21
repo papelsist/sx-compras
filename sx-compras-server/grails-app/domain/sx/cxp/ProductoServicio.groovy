@@ -2,6 +2,7 @@ package sx.cxp
 
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
+import sx.contabilidad.CuentaContable
 
 /**
  *
@@ -10,16 +11,18 @@ import groovy.transform.ToString
 @EqualsAndHashCode(includeFields = true,includes = ['id'])
 class ProductoServicio {
 
-    String id
+    Long id
+
+    CuentaContable cuentaContable
 
     String descripcion
 
-    String cuentaContable
+    String clasificacion
 
     Boolean inversion = false
 
     static  mapping={
-        id generator:'uuid'
+        // id generator:'uuid'
     }
 
 }
