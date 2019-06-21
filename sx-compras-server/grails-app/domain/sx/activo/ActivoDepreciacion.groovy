@@ -6,11 +6,11 @@ import groovy.transform.ToString
 
 import grails.compiler.GrailsCompileStatic
 
-@Sortable(includes = ['ejercicio', 'mes'])
+// @Sortable(includes = ['ejercicio', 'mes'])
 @ToString(includes ='ejercicio, mes, actualizacion, depreciacion',includeNames=true,includePackage=false)
 @EqualsAndHashCode(includes='ejercicio, mes')
 @GrailsCompileStatic
-class ActivoDepreciacion {
+class ActivoDepreciacion implements  Comparable<ActivoDepreciacion>{
 
     Integer ejercicio
     Integer mes
@@ -32,6 +32,8 @@ class ActivoDepreciacion {
     BigDecimal depreciacion = 0.0
 
 
+
+
     static constraints = {
     }
 
@@ -39,5 +41,12 @@ class ActivoDepreciacion {
 
     static mapping = {
         actualizacion type:'date'
+    }
+
+    @Override
+    int compareTo(ActivoDepreciacion other) {
+        return this.ejercicio == other.ejercicio ?
+                this.mes.compareTo(other.mes) :
+                this.ejercicio.compareTo(other.ejercicio)
     }
 }
