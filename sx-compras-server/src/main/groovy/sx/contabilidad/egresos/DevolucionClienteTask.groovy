@@ -117,7 +117,7 @@ class DevolucionClienteTask implements  AsientoBuilder, EgresoTask {
             poliza.addToPartidas(mapRow(cv, desc, row,d.importe))
             if(egreso.cheque.fecha.format('dd/MM/yyyy') == egreso.cheque.fechaTransito.format('dd/MM/yyyy')){
                 // IVA
-                poliza.addToPartidas(mapRow('209-0001-0000-0000', desc, row, impuesto))
+                poliza.addToPartidas(mapRow('208-0001-0000-0000', desc, row, impuesto))
                 if(d.cobro.formaDePago == 'BONIFICACION'){
                     poliza.addToPartidas(mapRow('209-0001-0000-0000', desc, row, 0.0, impuesto))
                 }

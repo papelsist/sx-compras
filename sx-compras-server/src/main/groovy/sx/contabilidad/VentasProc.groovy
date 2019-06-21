@@ -47,10 +47,10 @@ abstract class VentasProc implements  ProcesadorMultipleDePolizas {
         SELECT concat('VENTAS_',f.tipo) as asiento,f.id as origen,f.tipo as documentoTipo,f.fecha,f.documento
         ,f.moneda,f.tipo_de_cambio,f.subtotal,f.impuesto,f.total,c.nombre referencia2,s.nombre sucursal, s.clave as suc
         ,concat(s.nombre,"_",f.tipo_documento,"_",f.tipo) cliente_id 
-        ,concat('105-',(case when f.tipo='CON' then '0001-' when f.tipo='COD' then '0002-' else 'nd' end ),(case when s.clave>9 then concat('00',s.clave) else concat('000',s.clave) end),'-0000') as cta_cliente, c.rfc, x.uuid
+        ,concat('105-',(case when f.tipo='CON' then '0001-' when f.tipo='COD' || f.tipo='OTR' || f.tipo='ACF' then '0002-' else 'nd' end ),(case when s.clave>9 then concat('00',s.clave) else concat('000',s.clave) end),'-0000') as cta_cliente, c.rfc, x.uuid
         FROM cuenta_por_cobrar f join cliente c on(f.cliente_id=c.id)  
         join sucursal s on(f.sucursal_id=s.id) join cfdi x on(f.cfdi_id=x.id)
-        where f.fecha='@FECHA' and tipo in('CON','COD') and f.tipo_documento='VENTA'and f.cancelada is null and f.sw2 is null              
+        where f.fecha='@FECHA' and tipo in('CON','COD','ACF','OTR') and f.tipo_documento='VENTA'and f.cancelada is null and f.sw2 is null              
         ) as x
     """
 
@@ -61,17 +61,21 @@ abstract class VentasProc implements  ProcesadorMultipleDePolizas {
 
     @Override
     Poliza recalcular(Poliza poliza) {
-        // log.info('Recalculando poliza {}', poliza)
+       //  log.info('Recalculando -- poliza {}', poliza)
         poliza.partidas.clear()
 
         String select = QUERY.replaceAll('@FECHA', toSqlDate(poliza.fecha))
         List rows = getAllRows(select, [])
+        
         rows = rows.findAll {it.sucursal == poliza.sucursal && it.documentoTipo == this.getTipo()}
         log.info('Actualizando poliza {} procesando {} registros', poliza.id, rows.size())
         rows.each { row ->
+
+        println row.id
             if(!row.uuid) {
                 throw new RuntimeException("Venta facturada ${row.documento} sin UUID. No se puede generar el complemento CompNac(SAT)")
             }
+        
             cargoClientes(poliza, row)
             abonoVentas(poliza, row)
             abonoIvaNoTrasladado(poliza, row)
@@ -86,7 +90,6 @@ abstract class VentasProc implements  ProcesadorMultipleDePolizas {
         if(row.cta_cliente == null) {
             throw new RuntimeException("No existe cuenta operativa para el cliente:  ${row.referencia2} Id:${row.cliente} ")
         }
-
         String claveCta = row.cta_cliente
         if(row.moneda == 'USD') {
             claveCta = claveCta.replaceAll("105-0003","105-0005")
@@ -132,11 +135,21 @@ abstract class VentasProc implements  ProcesadorMultipleDePolizas {
         CuentaContable mayor = buscarCuenta('401-0000-0000-0000')
 
         String tipo = row.documentoTipo
+        println "Documento:  "+ tipo
         switch (tipo) {
+            
+            case 'ACF': 
+                CuentaContable subcta = mayor.subcuentas.find {it.clave == '401-0002-0000-0000'}
+                cuenta = subcta.subcuentas.find {it.descripcion == row.sucursal}
+                break
+            case 'OTR': 
+                CuentaContable subcta = mayor.subcuentas.find {it.clave == '401-0002-0000-0000'}
+                cuenta = subcta.subcuentas.find {it.descripcion == row.sucursal}
+                break
             case 'CON':
                 CuentaContable subcta = mayor.subcuentas.find {it.clave == '401-0001-0000-0000'}
                 cuenta = subcta.subcuentas.find {it.descripcion == row.sucursal}
-                break
+                break    
             case 'COD':
                 CuentaContable subcta = mayor.subcuentas.find {it.clave == '401-0002-0000-0000'}
                 cuenta = subcta.subcuentas.find {it.descripcion == row.sucursal}
@@ -238,9 +251,9 @@ abstract class VentasProc implements  ProcesadorMultipleDePolizas {
     */
 
     List<Poliza> generarPolizas(PolizaCreateCommand command) {
-        // log.info('Generando polizas  para {}', command)
+         log.info('Generando polizas  para {}', command)
         List<Sucursal> sucursals = getSucursales()
-        // log.info("Generando polizas de ventas {} para {} sucursales", getTipoLabel(), sucursals.size())
+         log.info("Generando polizas de ventas {} para {} sucursales", getTipoLabel(), sucursals.size())
 
         List<Poliza> polizas = []
         sucursals.each {
