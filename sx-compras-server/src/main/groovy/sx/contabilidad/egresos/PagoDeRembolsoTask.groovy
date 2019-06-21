@@ -128,6 +128,10 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
             CuentaPorPagar cxp = d.cxp
             if(cxp) {
                 row.uuid = cxp.uuid
+                row.rfc = r.proveedor.rfc
+                row.montoTotal = cxp.total
+                row.moneda = cxp.moneda
+                row.tipCamb = cxp.tipoDeCambio ?: 0.0
             }
             CuentaContable cuenta
             if(!ctaPadre.detalle) {
@@ -275,6 +279,10 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
             row.referencia = d.nombre
             row.referencia2 = d.nombre
             row.uuid = cxp.uuid
+            row.rfc = r.proveedor.rfc
+            row.montoTotal = cxp.total
+            row.moneda = cxp.moneda
+            row.tipCamb = cxp.tipoDeCambio
 
             CuentaOperativaProveedor co = CuentaOperativaProveedor.where{ proveedor == cxp.proveedor}.find()
             if(!co) throw new RuntimeException("No existe cuenta operativa para el proveedor: ${cxp.proveedor}")
@@ -358,6 +366,10 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
                 row.referencia = cxp.nombre
                 row.referencia2 = cxp.nombre
                 row.uuid = cxp.uuid
+                row.rfc = r.proveedor.rfc
+                row.montoTotal = cxp.total
+                row.moneda = cxp.moneda
+                row.tipCamb = cxp.tipoDeCambio
             }
         }
 
@@ -383,15 +395,25 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
         grupos.each {
             String documento = it.getKey()
             List<RembolsoDet> partidas = it.value
-            def det = partidas.find{it.cxp != null}
-            CuentaPorPagar cxp = det.cxp
-            String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} F:${cxp.serie?:''} ${cxp.folio?: ''}" +
+            String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} " +
                     " (${poliza.fecha.format('dd/MM/yyyy')}) ${egreso.sucursal?: 'OFICINAS'} "
-            if(cxp) {
-                row.referencia = cxp.nombre
-                row.referencia2 = cxp.nombre
-                row.uuid = cxp.uuid
+
+            def det = partidas.find{it.cxp != null}
+            if(det) {
+                CuentaPorPagar cxp = det.cxp
+                desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} F:${cxp.serie?:''} ${cxp.folio?: ''}" +
+                        " (${poliza.fecha.format('dd/MM/yyyy')}) ${egreso.sucursal?: 'OFICINAS'} "
+                if(cxp) {
+                    row.referencia = cxp.nombre
+                    row.referencia2 = cxp.nombre
+                    row.uuid = cxp.uuid
+                    row.rfc = r.proveedor.rfc
+                    row.montoTotal = cxp.total
+                    row.moneda = cxp.moneda
+                    row.tipCamb = cxp.tipoDeCambio ?: 1.0
+                }
             }
+
             partidas.each { d ->
 
                 CuentaContable cuenta = buscarCuenta(d.comentario)
@@ -435,8 +457,11 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
                 haber: haber.abs(),
         )
         // Datos del complemento
-        if(row.uuid)
+        if(row.uuid){
             asignarComprobanteNacional(det, row)
+            det.tipCamb = row.tipCamb as BigDecimal
+        }
+
         if(row.metodoDePago) {
             asignarComplementoDePago(det, row)
             det.moneda = row.moneda
