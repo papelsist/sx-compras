@@ -341,8 +341,8 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
             if(comentario == '213-0009-0000-0000') {
                 BigDecimal value =d.apagar
                 value = MonedaUtils.round(value, 2)
-                poliza.addToPartidas(mapRow('213-0009-0000-0000', desc, row, value))
-                poliza.addToPartidas(mapRow('216-0003-0000-0000', desc, row, 0.0, value))
+                poliza.addToPartidas(mapRow('216-0003-0000-0000', desc, row, value))
+                poliza.addToPartidas(mapRow('213-0009-0000-0000', desc, row, 0.0, value))
             }
         }
 

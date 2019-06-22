@@ -34,6 +34,7 @@ class MorrallaTask implements  AsientoBuilder{
     void procesarMorralla(Poliza poliza){
         List<PagoDeMorralla> morrallas = PagoDeMorralla.where{fecha == poliza.fecha}list()
         morrallas.each{ morralla ->
+            ajustarConcepto(poliza, morralla.egreso)
             morralla.partidas.each{salida ->
                 def suc = salida.sucursal.clave.padLeft(4,'0')
                 List<Morralla> list = Morralla.executeQuery("from Morralla where date(fecha) = date(?) and  sucursal = ? and tipo ='SALIDA' ",[salida.fecha,salida.sucursal])
@@ -46,25 +47,25 @@ class MorrallaTask implements  AsientoBuilder{
 
                     Map row = [
                             asiento: "CAJA MORRALLA",
-                            referencia: salida.comentario,
-                            referencia2: salida.comentario,
+                            referencia: morralla.proveedor.nombre,
+                            referencia2: morralla.proveedor.nombre,
                             origen: morralla.id,
                             documento: morralla.id,
                             documentoTipo: 'TES',
                             documentoFecha: salida.fecha,
-                            sucursal: salida.sucursal.nombre,
+                            sucursal: morralla.egreso.sucursal,
                             montoTotal: salida.importe,
                             moneda: 'MXN',
                     ]
                     Map rowEnt = [
                             asiento: "CAJA MORRALLA ",
-                            referencia: entrada.comentario,
-                            referencia2: entrada.comentario,
+                            referencia: morralla.proveedor.nombre,
+                            referencia2: morralla.proveedor.nombre,
                             origen: morralla.id,
                             documento: morralla.id,
                             documentoTipo: 'TES',
                             documentoFecha: entrada.fecha,
-                            sucursal: entrada.sucursal.nombre,
+                            sucursal: morralla.egreso.sucursal,
                             montoTotal: entrada.importe,
                             moneda: 'MXN',
                     ]
@@ -109,6 +110,15 @@ class MorrallaTask implements  AsientoBuilder{
         asignarComprobanteNacional(det, row)
         // asignarComplementoDePago(det, row)
         return det
+    }
+
+    void ajustarConcepto(Poliza poliza, PagoDeMorralla r) {
+        poliza.concepto = """
+        ${r.egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'}  ${r.egreso.referencia} ${r.egreso.afavor} 
+        (${r.egreso.fecha.format('dd/MM/yyyy')}) (${r.egreso.tipo} : ·${r.id})
+        """
+
+
     }
 
 }
