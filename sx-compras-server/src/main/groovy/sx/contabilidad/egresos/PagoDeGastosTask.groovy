@@ -127,6 +127,8 @@ class PagoDeGastosTask implements  AsientoBuilder, EgresoTask {
 
         // Abono a Banco
 
+       
+
         def prebanco= '102'
 
         if(egreso.cuenta.tipo == 'INVERSION'){

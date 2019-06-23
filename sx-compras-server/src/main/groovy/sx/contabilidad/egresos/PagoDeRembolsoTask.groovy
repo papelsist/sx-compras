@@ -44,7 +44,7 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
                 atenderPorCuentaContableRembolso(poliza, r)
                 break
             case 'PAGO':
-
+                    
                 CuentaContable cta = r.cuentaContable
                 if(cta == null) throw new RuntimeException("No exister cuenta contable asignada al rembolso ${r.id}")
 
@@ -66,10 +66,13 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
                 CuentaContable cta = r.cuentaContable
                 if(cta == null) throw new RuntimeException("No exister cuenta contable asignada al rembolso ${r.id}")
                 atenderEspecial(poliza, r)
+                break
             case 'ESPECIALM':
                 atenderEspecialMultiple(poliza, r)
+                break
             default:
                 log.info('No hay handler para: {}', r.concepto)
+                break
         }
         abonoBanco(poliza, r)
 
@@ -238,7 +241,7 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
             CuentaPorPagar cxp = d.cxp
             row.referencia = d.nombre
             row.referencia2 = d.nombre
-            row.uuid = cxp.uuid
+            //row.uuid = cxp.uuid
             String ctaOperativa = d.comentario
             CuentaContable cuenta = ctaPadre.subcuentas.find{it.clave.contains(ctaOperativa)}
             if(!cuenta) throw new RuntimeException("No existe subcuenta ${d.comentario?: 'FALTA CO'} de ${ctaPadre.clave}")
@@ -252,6 +255,8 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
     def atenderPagoSatImss(Poliza poliza, Rembolso r) {
 
         MovimientoDeCuenta egreso = r.egreso
+
+        println "Pago SAT"
 
         Map row = buildDataRow(egreso)
         r.partidas.each { d ->
@@ -279,7 +284,7 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
             row.referencia = d.nombre
             row.referencia2 = d.nombre
             row.uuid = cxp.uuid
-            row.rfc = r.proveedor.rfc
+            row.rfc = cxp.proveedor.rfc
             row.montoTotal = cxp.total
             row.moneda = cxp.moneda
             row.tipCamb = cxp.tipoDeCambio

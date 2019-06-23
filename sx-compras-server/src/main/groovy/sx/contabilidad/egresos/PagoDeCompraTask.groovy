@@ -132,16 +132,20 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
             BigDecimal impuestoTrasladadoPara118 = MonedaUtils.round(impuestoTrasladado * tipoDeCambio)
             BigDecimal impuestoTrasladadoPara119 = MonedaUtils.round(impuestoTrasladado * cxp.tipoDeCambio)
 
-            // println "******"+totalFactura+" -- "+apagar+" -- "+dif
+             println "******"+totalFactura+" -- "+apagar+" -- "
+
 
             if( (dif.abs() * egreso.tipoDeCambio ) > (3.00 * egreso.tipoDeCambio) ) {
-
-                // BigDecimal baseConIva = it.total + (cxp.impuestoRetenido?:0.0) 
+                // Reactivar para los casos de 10 dls de avery
+                 // BigDecimal baseConIva = it.total + (cxp.impuestoRetenido?:0.0) 
                 BigDecimal baseConIva = it.apagar + (cxp.impuestoRetenido?:0.0) // iva de lo pagado
                 BigDecimal base = MonedaUtils.calcularImporteDelTotal(baseConIva)
                 BigDecimal impuesto  = MonedaUtils.calcularImpuesto(base)
                 log.info("Factura con descuento Folio:: ${cxp.folio} Pago: ${it.total} Base: {} Iva: {}", base, impuesto)
                 impuestoTrasladado = impuesto - cxp.impuestoRetenido?:0.0
+
+                // Reactivar para los casos de 10 dls de avery
+                //impuestoTrasladadoPara118 = MonedaUtils.round(cxp.impuestoTrasladado * r.tipoDeCambio)
 
                 impuestoTrasladadoPara118 = MonedaUtils.round(impuestoTrasladado * r.tipoDeCambio)
                 impuestoTrasladadoPara119 = MonedaUtils.round(impuestoTrasladado * cxp.tipoDeCambio)
