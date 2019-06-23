@@ -111,8 +111,8 @@ class ProvisionNominaProc implements  ProcesadorMultipleDePolizas, AsientoBuilde
 
     @Override
     List<Poliza> generarPolizas(PolizaCreateCommand command) {
-        println "Generando Polizssss"
         String query = "select id,folio,tipo,forma_de_pago as formaDePago ,pago, substr(periodicidad,1,1) as per  from nomina where pago = ?"
+        println "SQL: ${query}"
         List<Poliza> polizas = []
         def polizasRow = loadRegistros(query,[command.fecha])
         polizasRow.each{
@@ -141,36 +141,7 @@ class ProvisionNominaProc implements  ProcesadorMultipleDePolizas, AsientoBuilde
               
             
         }
-        /*
-        List<PagoDeNomina> pagos = PagoDeNomina.where{pago == command.fecha && pensionAlimenticia == false}.list()
-        Map<Long, PagoDeNomina> map = pagos.collectEntries {
-            [(it.nomina): it]
-        }
 
-        map.entrySet().each {
-            PagoDeNomina pago = it.value
-            MovimientoDeCuenta mov = pago.egreso
-            Poliza p = Poliza.where{
-                ejercicio == command.ejercicio &&
-                mes == command.mes &&
-                subtipo == command.subtipo &&
-                tipo == command.tipo &&
-                fecha == command.fecha &&
-                egreso == mov.id
-            }.find()
-
-            if(p == null) {
-
-                p = new Poliza(command.properties)
-                p.concepto = "NOMINA: ${pago.nomina} Folio:${pago.folio} ${pago.tipo} ${pago.formaDePago} " +
-                        "(${pago.pago.format('dd/MM/yyyy')})"
-                p.sucursal = 'OFICINAS'
-                p.egreso = mov.id
-                polizas << p
-            } else
-                log.info('Poliza ya existente  {}', p)
-        }
-*/
 
         return polizas
     }
@@ -200,15 +171,24 @@ class ProvisionNominaProc implements  ProcesadorMultipleDePolizas, AsientoBuilde
                 sucursal: row.ubicacion,
                 debe: debe.abs(),
                 haber: haber.abs()
+
         )
         // Datos del complemento
-        //asignarComprobanteNacional(det, row)
+        // asignarComprobanteNacional(det, row)
         //
+
         det.uuid = row.uuid
         det.rfc = row.rfc
-        det.montoTotal = row.montoTotal
+        det.montoTotal = row.montoTotal as BigDecimal
+        det.montoTotalPago = row.montoTotal as BigDecimal
         det.moneda = 'MXN'
         det.tipCamb = 1.0
+        det.beneficiario = row.nombre
+        det.metodoDePago = row.forma_De_Pago.startsWith('T')? '03' : '02'
+        det.bancoOrigen = row.banco_ori
+        det.ctaOrigen = row.cta_ori
+        det.bancoDestino = row.banco_clave_dest
+        det.ctaDestino = row.cta_banco_empleado_dest
 
         return det
     }
@@ -246,18 +226,18 @@ class ProvisionNominaProc implements  ProcesadorMultipleDePolizas, AsientoBuilde
             ,NE.TOTAL AS montoTotal,'210-0001-0000-0000' cta_nomina_por_pagar
             ,(SELECT X.UUID FROM CFDI X WHERE NE.CFDI_ID=X.ID) AS uuid
             ,(SELECT X.FECHA FROM CFDI X WHERE NE.CFDI_ID=X.ID) AS fechaDocumento
-            ,(CASE WHEN N.FORMA_DE_PAGO ='CHEQUE' THEN '044' ELSE '002' END) AS CTA_ORI
-            ,(CASE WHEN N.FORMA_DE_PAGO ='CHEQUE' THEN 'SCOTIABANK' ELSE 'BANAMEX' END) AS BANCO_ORI
+            ,(CASE WHEN N.FORMA_DE_PAGO ='CHEQUE' THEN '1691945' ELSE '1858193' END) AS CTA_ORI
+            ,(CASE WHEN N.FORMA_DE_PAGO ='CHEQUE' THEN '044' ELSE '002' END)  AS BANCO_ORI
             ,(SELECT CASE WHEN X.CLABE IS NULL THEN X.NUMERO_DE_CUENTA ELSE X.CLABE END FROM salario X WHERE X.EMPLEADO_ID=E.ID) AS CTA_BANCO_EMPLEADO_DEST
             ,(CASE WHEN N.FORMA_DE_PAGO ='CHEQUE' THEN '' ELSE '002' END) AS BANCO_CLAVE_DEST
             ,(CASE WHEN N.FORMA_DE_PAGO ='CHEQUE' THEN '' ELSE 'BANAMEX' END) AS BANCO_NOMBRE_DEST,
-            c.clave,c.descripcion,ned.importe_gravado ,ned.importe_excento ,(SELECT x.numero from ubicacion x where x.id=p.ubicacion_id) ubic
+            c.clave,c.descripcion,ned.importe_gravado ,ned.importe_excento ,(SELECT U.numero FROM ubicacion U WHERE ne.UBICACION_ID=U.ID) ubic
             ,(case when c.clave in('D004','D005','D006','D014','P039') THEN concat(c.clase,'-',p.numero_de_trabajador,'-0000')
             when c.clave='D007' then concat(c.clase,(SELECT concat((case when x.id>9 then '-00' else '-000' end),cast(x.id as char(4))) from pension_alimenticia x where x.empleado_id=e.id),'-0000')
-            when c.clave in('D012','P001','P007','P009','P010','P011','P023','P025','P026','P029','P032','P034','P035','P037','P038') then concat(c.clase,(SELECT concat((case when x.numero>9 then '-00' else '-000' end),x.numero) from ubicacion x where x.id=p.ubicacion_id),'-0000')
+            when c.clave in('D012','P001','P007','P009','P010','P011','P023','P025','P026','P029','P032','P034','P035','P037','P038') then concat(c.clase,(SELECT concat((case when x.numero>9 then '-00' else '-000' end),x.numero) from ubicacion x where ne.UBICACION_ID=x.ID),'-0000')
             when c.clave in('P002','P003','P022','P024','P028','P030') then concat(c.clase,(SELECT concat((case when x.numero>9 then '-00' else '-000' end),x.numero) from ubicacion x where x.id=p.ubicacion_id),'-0002')
             else c.clase end) cta_contable
-            ,(case when ned.importe_excento>0 and c.clave in('P002','P003','P022','P024','P028','P030')  then concat(c.clase,(SELECT concat((case when x.numero>9 then '-00' else '-000' end),x.numero) from ubicacion x where x.id=p.ubicacion_id),'-0001')
+            ,(case when ned.importe_excento>0 and c.clave in('P002','P003','P022','P024','P028','P030')  then concat(c.clase,(SELECT concat((case when x.numero>9 then '-00' else '-000' end),x.numero) from ubicacion x where ne.UBICACION_ID=x.ID),'-0001')
             else '000-0000-0000-0000'end) cta_contable_exe
             ,(case when c.clave in('P002','P003','P022','P024','P026','P028','P030') then 'A' when substr(c.clave,1,1)='P' then 'P'  else 'D' end) tipo
             FROM nomina_por_empleado_det ned 

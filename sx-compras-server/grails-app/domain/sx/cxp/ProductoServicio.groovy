@@ -3,6 +3,8 @@ package sx.cxp
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import sx.contabilidad.CuentaContable
+import sx.sat.ProductoSat
+import sx.sat.ProductoSatClase
 
 /**
  *
@@ -21,8 +23,11 @@ class ProductoServicio {
 
     Boolean inversion = false
 
+    ProductoSatClase clase
+
     static  mapping={
         // id generator:'uuid'
+        clase nullable: true
     }
 
 }
