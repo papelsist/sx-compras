@@ -18,6 +18,8 @@ import java.sql.SQLException
 @Slf4j
 class ImportadorDeReqsuicionesDeCompras {
 
+
+
     ImportadorDeReqsuicionesDeCompras importarEgresos(int ejercicio, int mes){
         List<Map> rows = getRows("""
         select * from sw_bcargoabono 
@@ -57,6 +59,39 @@ class ImportadorDeReqsuicionesDeCompras {
         db.close()
         return this
 
+    }
+
+    RequisicionDeCompras findRequisicionById( Long id) {
+        String SELECT = """
+            select * from sw_trequisicion where requisicion_id = ?
+        """
+        Sql db = getSql()
+        Map row = db.firstRow(SELECT,[id])
+
+        RequisicionDeCompras found = RequisicionDeCompras.where{sw2 == row.requisicion_id}.find()
+        if(found){
+            log.info('Req ya iportada: {} ', id)
+            return null
+        }
+        Proveedor proveedor = Proveedor.where{rfc == row.rfc}.find()
+        if(!proveedor)
+            throw new RuntimeException("No existe el proveedor RFC: ${row.rfc}  ${row.afavor}")
+        RequisicionDeCompras req = new RequisicionDeCompras()
+        req.folio = row.requisicion_id
+        req.proveedor = proveedor
+        req.nombre = row.afavor
+        req.moneda = row.MONEDA
+        req.tipoDeCambio = row.tc
+        req.fecha = row.fecha
+        req.fechaDePago = row.fechaDePago
+        req.formaDePago = row.FORMADEPAGO == 1 ? 'CHEQUE' : 'TRANSFERENCIA'
+        req.total = row.total
+        req.apagar = row.total
+        req.comentario = row.COMENTARIO
+        req.sw2 = req.folio
+        req.createUser = 'ADMIN'
+        req.updateUser = 'ADMIN'
+        return req
     }
 
 

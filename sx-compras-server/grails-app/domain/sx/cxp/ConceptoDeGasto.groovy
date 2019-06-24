@@ -25,7 +25,7 @@ class ConceptoDeGasto {
 
     String comentario
 
-    ComprobanteFiscalConcepto cfdiDet
+    //  ComprobanteFiscalConcepto cfdiDet
 
     Boolean inversion = false
 

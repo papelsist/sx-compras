@@ -25,9 +25,13 @@ class ProductoServicio {
 
     ProductoSatClase clase
 
-    static  mapping={
-        // id generator:'uuid'
+    static constraints = {
         clase nullable: true
+    }
+
+    static  mapping = {
+        // id generator:'uuid'
+
     }
 
 }
