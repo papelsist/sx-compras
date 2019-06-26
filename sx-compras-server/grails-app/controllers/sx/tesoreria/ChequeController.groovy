@@ -11,7 +11,7 @@ import sx.utils.ImporteALetra
 import sx.utils.Periodo
 
 @GrailsCompileStatic
-@Secured("ROLE_TESORERIA")
+@Secured(['ROLE_TESORERIA', 'ROLE_CONTABILIDAD'])
 class ChequeController extends RestfulController<Cheque> {
 
     static responseFormats = ['json']

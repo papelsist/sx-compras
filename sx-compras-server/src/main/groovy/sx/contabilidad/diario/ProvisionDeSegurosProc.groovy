@@ -19,8 +19,7 @@ import sx.utils.MonedaUtils
 
 @Slf4j
 @Component
-class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
-
+class ProvisionDeSegurosProc implements  ProcesadorDePoliza, AsientoBuilder {
     @Override
     String definirConcepto(Poliza poliza) {
         return "PROVISION DE GASTOS ${poliza.fecha.format('dd/MM/yyyy')}"
@@ -34,32 +33,40 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
     }
 
     def generarAsientos(Poliza poliza, Map params) {
-
-        List<RequisicionDet> requisiciones = RequisicionDet
+    
+    List<RequisicionDet> requisiciones = RequisicionDet
                 .findAll("from RequisicionDet d where date(d.cxp.fecha) = ? and d.cxp.tipo = 'GASTOS'",
                 [poliza.fecha])
         requisiciones.each { req ->
             CuentaPorPagar cxp = req.cxp
             CuentaOperativaProveedor co = CuentaOperativaProveedor.findByProveedor(cxp.proveedor)
-            if(co.tipo == 'GASTOS'){
-                cargoGasto(poliza, cxp, 'OFICINAS')
-                log.info('REQUISICION: {}', req.requisicion.folio)
-                abonoProveedorGasto(poliza, cxp, 'OFICINAS')
-            }
+            if(co){
+                if(co.tipo == 'SEGUROS'){
+                    cargoGasto(poliza, cxp, 'OFICINAS')
+                    log.info('REQUISICION: {}', req.requisicion.folio)
+                    abonoProveedorGasto(poliza, cxp, 'OFICINAS')
+                }
+            }  
         }
-        List<RembolsoDet> rembolsos = RembolsoDet
-                .findAll("from RembolsoDet d where date(d.cxp.fecha) = ?",
+
+    List<RembolsoDet> rembolsos = RembolsoDet
+                .findAll("from RembolsoDet d where date(d.cxp.fecha) = ? ",
                 [poliza.fecha])
         rembolsos.each { r ->
-            CuentaPorPagar cxp = r.cxp
-            CuentaOperativaProveedor co = CuentaOperativaProveedor.findByProveedor(cxp.proveedor)
-
-                 String suc = r.rembolso.sucursal.nombre
-                cargoGasto(poliza, cxp, suc)
-               // log.info('REMBOLSO {} : {}', r.rembolso.concepto, r.rembolso.id)
-                abonoProveedorGastoRembolso(poliza, cxp, r)
+            if(r.cxp ){
+                CuentaPorPagar cxp = r.cxp
+                println cxp.proveedor 
+                CuentaOperativaProveedor co = CuentaOperativaProveedor.findByProveedor(cxp.proveedor)
+                if(co){
+                    if(co.tipo == 'SEGUROS'){
+                        String suc = r.rembolso.sucursal.nombre
+                        cargoGasto(poliza, cxp, suc)
+                        log.info('REMBOLSO {} : {}', r.rembolso.concepto, r.rembolso.id)
+                        abonoProveedorGastoRembolso(poliza, cxp, r)
+                    }
+                }
+            }
         }
-
         poliza.validate()
         poliza = poliza.save failOnError: true, flush: true
         return poliza
@@ -77,32 +84,26 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
 
         cfdi.conceptos.each { gasto ->
             gasto.conceptos.each { con ->
-                PolizaDet det = build(cxp, con.cuentaContable, desc, con.sucursal.nombre, con.importe)
+
+                println "Cuenta Contable que trae "+ con.cuentaContable.clave.substring(0,9)
+                CuentaContable cuenta = buscarCuenta("${con.cuentaContable.clave.substring(0,9)}${con.sucursal.clave.padLeft(4,'0')}-0000")
+                PolizaDet det = build(cxp, cuenta, desc, con.sucursal.nombre, con.importe)
                 poliza.addToPartidas(det)
             }
         }
 
         def impuestoNeto = (cxp.impuestoTrasladado ?: 0.00) - (cxp.impuestoRetenidoIva ?: 0.00)
-
         CuentaContable ivaPendiente = buscarCuenta('119-0002-0000-0000')
+
         poliza.addToPartidas(build(cxp, ivaPendiente, desc, suc, impuestoNeto ))
 
-
-        if(cxp.impuestoRetenidoIva > 0.0) {
-           
+         if(cxp.impuestoRetenidoIva > 0.0) {      
+            
             CuentaContable ivaRet2 = buscarCuenta('119-0003-0000-0000')
             CuentaContable ivaRet3 = buscarCuenta('216-0001-0000-0000')
-            
+    
             poliza.addToPartidas(build(cxp,ivaRet2, desc, suc, cxp.impuestoRetenidoIva))
-
             poliza.addToPartidas(build(cxp,ivaRet3, desc, suc,0.00, cxp.impuestoRetenidoIva))
-            
-        }
-        if(cxp.impuestoRetenidoIsr > 0.0) {
-
-            CuentaContable ivaIsr1 = buscarCuenta('216-0002-0000-0000')
-            BigDecimal imp = cxp.impuestoRetenidoIsr
-            poliza.addToPartidas(build(cxp,ivaIsr1, desc, suc,0.00, cxp.impuestoRetenidoIsr))
        
         }
 
@@ -129,21 +130,7 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
         """
         CuentaContable cuenta
         String cv = resolverClaveDeCuenta(cxp)
-        if(cv) {
-            cuenta = buscarCuenta(cv)
-        } else {
-            log.info('Armando cuenta: ')
-            
-          
-                cuenta = buscarCuenta('205-0005-0999-0000')
-            
-        }
-
-        if(rembolsoDet.rembolso.concepto == 'REMBOLSO') {
-            cv = "101-0002-${sucursal.clave.padLeft(4, '0')}-0000"
-            cuenta = buscarCuenta(cv)
-        } 
-
+        cuenta = buscarCuenta(cv)
         BigDecimal total = cxp.total
         poliza.addToPartidas(build(cxp,cuenta,desc, sucursal.nombre, 0.0, total ))
     }
@@ -160,11 +147,13 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
 
         PolizaDet det = new PolizaDet()
 
+        println cxp.folio
+
         det.with {
             cuenta = cta
             concepto = cta.descripcion
             descripcion = desc
-            asiento =  "PROVISION_DE_GASTO"
+            asiento =  "PROVISION_DE_SEGURO"
             referencia =  cxp.proveedor.nombre
             referencia2 =cxp.proveedor.nombre
             origen =  cxp.id
@@ -187,27 +176,12 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
 
         CuentaOperativaProveedor co = buscarCuentaOperativa(cxp.proveedor)
         if(co == null) return null
-        // Cargo a Proveedor
-        String cv = "205-0006-${co.cuentaOperativa}-0000"
-
-        if(co.tipo == 'COMPRAS') {
-            cv = "201-0002-${co.cuentaOperativa}-0000"
-        }
-        if(co.tipo == 'RELACIONADAS') {
-            cv = "205-0009-${co.cuentaOperativa}-0000"
-        }
-        if(co.tipo == 'RELACIONADAS' && (co.cuentaOperativa == '0038' || co.cuentaOperativa == '0061')) {
-            cv = "201-0001-${co.cuentaOperativa}-0000"
-        }
-        if(co.tipo == 'FLETES') {
-            cv = "205-0004-${co.cuentaOperativa}-0000"
-        }
+        
+           String cv = "205-0006-${co.cuentaOperativa}-0000"
         if(co.tipo == 'SEGUROS') {
             cv = "205-0003-${co.cuentaOperativa}-0000"
         }
-        if(['0038','0061'].contains(co.cuentaOperativa)) {
-            cv = "201-0001-${co.cuentaOperativa}-0000"
-        }
+       
         return cv
     }
 
