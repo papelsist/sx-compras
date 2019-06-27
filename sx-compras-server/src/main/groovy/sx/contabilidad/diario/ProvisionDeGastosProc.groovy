@@ -47,20 +47,27 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
                 abonoProveedorGasto(poliza, cxp, 'OFICINAS')
             }
         }
+
         List<RembolsoDet> rembolsos = RembolsoDet
-                .findAll("from RembolsoDet d where date(d.cxp.fecha) = ? and d.cxp is not null and d.rembolso.concepto <> 'REMBOLSO'",
+                .findAll("from RembolsoDet d where date(d.cxp.fecha) = ? and d.rembolso.concepto <> 'REMBOLSO'",
                 [poliza.fecha])
         rembolsos.each { r ->
             CuentaPorPagar cxp = r.cxp
             CuentaOperativaProveedor co = CuentaOperativaProveedor.findByProveedor(cxp.proveedor)
-
             if(co.tipo !='FLETES'){
-                 String suc = r.rembolso.sucursal.nombre
+                String suc = r.rembolso.sucursal.nombre
                 cargoGasto(poliza, cxp, suc)
-               // log.info('REMBOLSO {} : {}', r.rembolso.concepto, r.rembolso.id)
                 abonoProveedorGastoRembolso(poliza, cxp, r)
             }
+        }
 
+
+        List<RembolsoDet> rembolsosNoDeducibles = RembolsoDet
+                .findAll("from RembolsoDet d where date(d.rembolso.egreso.fecha) = ? and d.cxp is null and d.rembolso.concepto <> 'REMBOLSO'",
+                [poliza.fecha])
+        rembolsosNoDeducibles.each { r ->
+            cargoNoDeducible(poliza, r)
+            abonoNoDeducible(poliza, r)
         }
 
         poliza.validate()
@@ -151,6 +158,60 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
     }
 
 
+    def cargoNoDeducible(Poliza poliza,  RembolsoDet det) {
+        Sucursal suc = det.rembolso.sucursal
+        String desc = """
+            Docto:${det.documentoSerie?:''} ${det.documentoFolio?:''} (${det.documentoFecha?.format('dd/MM/yyyy')})
+        """
+        def cv = "600-0031-${suc.clave.padLeft(4, '0')}-0000"
+        CuentaContable cta = buscarCuenta(cv)
+
+        PolizaDet polizaDet = new PolizaDet()
+
+        polizaDet.with {
+            cuenta = cta
+            concepto = cta.descripcion
+            descripcion = desc
+            asiento =  "PROVISION_DE_REMBOLSO"
+            referencia =  det.rembolso.nombre
+            referencia2 = det.rembolso.nombre
+            origen =  det.rembolso.id.toString()
+            documento =  det.rembolso.id.toString()
+            documentoTipo =  'REMBOLSO'
+            documentoFecha =  det.rembolso.fecha
+            sucursal =  suc.nombre
+            debe = det.apagar.abs()
+            haber = 0.00
+        }
+        poliza.addToPartidas(polizaDet)
+    }
+
+    def abonoNoDeducible(Poliza poliza, RembolsoDet det) {
+        Sucursal suc = det.rembolso.sucursal
+        String desc = """
+            Dcto:${det.documentoSerie?:''} ${det.documentoFolio?:''} (${det.documentoFecha?.format('dd/MM/yyyy')})
+        """
+        CuentaContable  cta = buscarCuenta("205-0006-0999-0000")
+
+        PolizaDet polizaDet = new PolizaDet()
+
+        polizaDet.with {
+            cuenta = cta
+            concepto = cta.descripcion
+            descripcion = desc
+            asiento =  "PROVISION_DE_REMBOLSO"
+            referencia =  det.rembolso.nombre
+            referencia2 = det.rembolso.nombre
+            origen =  det.rembolso.id.toString()
+            documento =  det.rembolso.id.toString()
+            documentoTipo =  'REMBOLSO'
+            documentoFecha =  det.rembolso.fecha
+            sucursal =  suc.nombre
+            debe =  0.00
+            haber = det.apagar.abs()
+        }
+        poliza.addToPartidas(polizaDet)
+    }
 
 
     private PolizaDet build(CuentaPorPagar  cxp,

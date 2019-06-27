@@ -38,6 +38,7 @@ class ProvisionDeRembolsoProc implements  ProcesadorDePoliza, AsientoBuilder {
         List<RembolsoDet> rembolsos = RembolsoDet
                 .findAll("from RembolsoDet d where date(d.rembolso.fechaDePago) = ?  and d.rembolso.concepto = 'REMBOLSO'",
                 [poliza.fecha])
+
         rembolsos.each { r ->
             CuentaPorPagar cxp = r.cxp
             if (cxp){
@@ -47,8 +48,8 @@ class ProvisionDeRembolsoProc implements  ProcesadorDePoliza, AsientoBuilder {
                 // log.info('REMBOLSO {} : {}', r.rembolso.concepto, r.rembolso.id)
                 abonoProveedor(poliza, cxp, r)
             }else{
-                abonoGastoNoDeducible(poliza, r)
                 cargoProveedorNoDeducible(poliza, r)
+                abonoGastoNoDeducible(poliza, r)
             }
         }
 
