@@ -12,8 +12,13 @@ json g.render(polizaDet, [excludes: ['poliza','nacionales', 'extranjeros', 'tran
 }
 */
 
-json g.render(polizaDet, [excludes: ['poliza','nacionales', 'extranjeros', 'transferencias', 'cheques', 'otros'] ,resolveTemplate: false]) {
+json g.render(polizaDet, [excludes: ['poliza','nacionales', 'extranjeros', 'transferencias', 'cheques', 'otros', 'cuenta'] ,resolveTemplate: false]) {
 	clave polizaDet.cuenta.clave
+	cuenta {
+	    id polizaDet.cuenta.id
+	    clave polizaDet.cuenta.clave
+	    descripcion polizaDet.cuenta.descripcion
+	}
     // nacionales g.render(polizaDet.nacionales)
     // extranjeros g.render(polizaDet.extranjeros)
     // transferencias g.render(polizaDet.transferencias)
