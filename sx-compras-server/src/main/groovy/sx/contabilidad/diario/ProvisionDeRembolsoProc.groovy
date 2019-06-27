@@ -47,8 +47,8 @@ class ProvisionDeRembolsoProc implements  ProcesadorDePoliza, AsientoBuilder {
                 // log.info('REMBOLSO {} : {}', r.rembolso.concepto, r.rembolso.id)
                 abonoProveedor(poliza, cxp, r)
             }else{
-                cargoGastoNoDeducible(poliza, r)
-                abonoProveedorNoDeducible(poliza, r)
+                abonoGastoNoDeducible(poliza, r)
+                cargoProveedorNoDeducible(poliza, r)
             }
         }
 
@@ -121,12 +121,12 @@ class ProvisionDeRembolsoProc implements  ProcesadorDePoliza, AsientoBuilder {
         poliza.addToPartidas(build(cxp,cuenta,desc, sucursal.nombre, 0.0, total ))
     }
 
-    def cargoGastoNoDeducible(Poliza poliza, RembolsoDet det) {
+    def abonoGastoNoDeducible(Poliza poliza, RembolsoDet det) {
         Sucursal suc = det.rembolso.sucursal
         String desc = """
             F:${det.documentoSerie?:''} ${det.documentoFolio?:''} (${det.documentoFecha?.format('dd/MM/yyyy')})
         """
-        CuentaContable  cta = buscarCuenta('205-0006-0999-0000')
+        CuentaContable  cta = buscarCuenta("101-0002-${suc.clave.padLeft(4, '0')}-0000")
         log.info("cta: {} sucursal: {} ",cta,suc )
         PolizaDet polizaDet = new PolizaDet()
 
@@ -142,18 +142,18 @@ class ProvisionDeRembolsoProc implements  ProcesadorDePoliza, AsientoBuilder {
             documentoTipo =  'REMBOLSO'
             documentoFecha =  det.rembolso.fecha
             sucursal =  suc.nombre
-            debe = det.apagar.abs()
-            haber = 0.00
+            debe =  0.00
+            haber = det.apagar.abs()
         }
         poliza.addToPartidas(polizaDet)
     }
 
-    def abonoProveedorNoDeducible(Poliza poliza,  RembolsoDet det) {
+    def cargoProveedorNoDeducible(Poliza poliza,  RembolsoDet det) {
         Sucursal suc = det.rembolso.sucursal
         String desc = """
             F:${det.documentoSerie?:''} ${det.documentoFolio?:''} (${det.documentoFecha?.format('dd/MM/yyyy')})
         """
-        def cv = "101-0002-${suc.clave.padLeft(4, '0')}-0000"
+        def cv = "600-0031-${suc.clave.padLeft(4, '0')}-0000"
         CuentaContable cta = buscarCuenta(cv)
 
         PolizaDet polizaDet = new PolizaDet()
@@ -170,8 +170,8 @@ class ProvisionDeRembolsoProc implements  ProcesadorDePoliza, AsientoBuilder {
             documentoTipo =  'REMBOLSO'
             documentoFecha =  det.rembolso.fecha
             sucursal =  suc.nombre
-            debe = 0.00
-            haber = det.apagar.abs()
+            debe = det.apagar.abs()
+            haber = 0.00
         }
         poliza.addToPartidas(polizaDet)
     }

@@ -442,7 +442,7 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
     }
 
 
-
+    
     PolizaDet mapRow(CuentaContable cuenta, String descripcion, Map row, BigDecimal debe = 0.0, BigDecimal haber = 0.0) {
 
         PolizaDet det = new PolizaDet(

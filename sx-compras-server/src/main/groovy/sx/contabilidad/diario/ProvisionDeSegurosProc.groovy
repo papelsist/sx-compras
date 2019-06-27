@@ -87,7 +87,12 @@ class ProvisionDeSegurosProc implements  ProcesadorDePoliza, AsientoBuilder {
 
                 println "Cuenta Contable que trae "+ con.cuentaContable.clave.substring(0,9)
                 CuentaContable cuenta = buscarCuenta("${con.cuentaContable.clave.substring(0,9)}${con.sucursal.clave.padLeft(4,'0')}-0000")
-                PolizaDet det = build(cxp, cuenta, desc, con.sucursal.nombre, con.importe)
+                def importe = con.importe
+                def descuento = gasto.descuento ?: 0.0
+                if(descuento > 0.0){
+                    importe = importe - descuento
+                }
+                PolizaDet det = build(cxp, cuenta, desc, con.sucursal.nombre, importe)
                 poliza.addToPartidas(det)
             }
         }

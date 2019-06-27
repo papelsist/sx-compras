@@ -14,7 +14,6 @@ import sx.utils.MonedaUtils
 import sx.tesoreria.Cheque
 
 @Slf4j
-@GrailsCompileStatic
 @Component
 class PagoDeGastosTask implements  AsientoBuilder, EgresoTask {
 
@@ -26,7 +25,6 @@ class PagoDeGastosTask implements  AsientoBuilder, EgresoTask {
      * @return
      */
     @Override
-    @CompileDynamic
     def generarAsientos(Poliza poliza, Map params = [:]) {
         Requisicion r = findRequisicion(poliza)
 
@@ -40,7 +38,7 @@ class PagoDeGastosTask implements  AsientoBuilder, EgresoTask {
         abonoBanco(poliza, r)
         ajustarProveedorBanco(poliza)
 
-        registrarDiferenciaCambiaria(poliza, r)
+        registrarVariacionCambiaria(poliza, r)
     }
 
     /**
@@ -119,7 +117,8 @@ class PagoDeGastosTask implements  AsientoBuilder, EgresoTask {
                 }
 
             def cheque = Cheque.findByEgreso(egreso)
-            if(cheque && cheque.fecha == cheque.fechaTransito ){
+            log.info(" Ceque {} and  {}",cheque.fecha.format('dd/MM/yyyy'), cheque.fechaTransito.format('dd/MM/yyyy'))
+            if(cheque && cheque.fecha.format('dd/MM/yyyy') == cheque.fechaTransito.format('dd/MM/yyyy') ){
                 poliza.addToPartidas(mapRow('118-0002-0000-0000', desc, row, ivaCfdi))
                 poliza.addToPartidas(mapRow('119-0002-0000-0000', desc, row, 0.0, ivaCfdi))
             }
@@ -211,21 +210,6 @@ class PagoDeGastosTask implements  AsientoBuilder, EgresoTask {
      * @param poliza
      * @param r
      */
-    void registrarDiferenciaCambiaria(Poliza poliza, Requisicion r) {
-        if(r.moneda != 'MXN') {
-            BigDecimal tcPago = r.tipoDeCambio
-            r.partidas.each {
-                CuentaPorPagar cxp = it.cxp
-                BigDecimal apagar = it.apagar
-                BigDecimal tc = cxp.tipoDeCambio
-                BigDecimal apagarInicial = MonedaUtils.round(apagar * tc)
-                BigDecimal apagarActualizado = MonedaUtils.round(apagar * tcPago)
-                BigDecimal difCambiaria = apagarInicial - apagarActualizado
-
-            }
-        }
-    }
-
 
     void ajustarConcepto(Poliza poliza, Requisicion r) {
         poliza.concepto = "${r.egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'}  ${r.egreso.referencia} ${r.egreso.afavor} (${r.egreso.fecha.format('dd/MM/yyyy')}) (${r.egreso.tipo})"
@@ -331,6 +315,120 @@ class PagoDeGastosTask implements  AsientoBuilder, EgresoTask {
             }
         }
 
+    }
+    
+    def registrarVariacionCambiaria(Poliza p, Requisicion requisicion) {
+
+        String desc = "${requisicion.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} "+
+                        " (${poliza.fecha.format('dd/MM/yyyy')}) OFICINAS" +
+                        " ${requisicion.tipoDeCambio > 1.0 ? 'T.C:' + requisicion.tipoDeCambio: ''}"
+
+            requisicion.partidas.each{ det ->
+                def cxp = det.cxp
+                if(cxp.moneda != requisicion.moneda){
+                    def importeOriginal = cxp.total * cxp.tipoDeCambio
+                    def importeActualizado = det.apagar 
+                    def dif = importeActualizado - importeOriginal
+                    log.info("Ori: {} Act: {}",importeOriginal,importeActualizado)
+
+                if(dif > 0.0) {
+                    PolizaDet pdet = new PolizaDet()
+                    pdet.cuenta = buscarCuenta('702-0004-0000-0000')
+                    pdet.concepto = pdet.cuenta.descripcion
+                    pdet.sucursal = 'OFICINAS'
+                    pdet.origen = det.id
+                    pdet.referencia = requisicion.nombre
+                    pdet.referencia2 = requisicion.nombre
+                    pdet.haber = dif.abs()
+                    pdet.descripcion = desc
+                    pdet.entidad = 'Requisicion'
+                    pdet.asiento = 'Variacion Cambiaria'
+                    pdet.documentoTipo = cxp.tipo
+                    pdet.documentoFecha = cxp.fecha
+                    pdet.documento = cxp.documento
+                    pdet.moneda = requisicion.moneda
+                    pdet.tipCamb = requisicion.tipoDeCambio
+                    p.addToPartidas(pdet)
+
+                } else {
+                    PolizaDet pdet = new PolizaDet()
+                    pdet.cuenta = buscarCuenta('701-0001-0000-0000')
+                    pdet.concepto = pdet.cuenta.descripcion
+                    pdet.sucursal = 'OFICINAS'
+                    pdet.origen = det.id
+                    pdet.referencia = requisicion.nombre
+                    pdet.referencia2 = requisicion.nombre
+                    pdet.debe = dif.abs()
+                    pdet.descripcion = desc
+                    pdet.entidad = 'Requisicion'
+                    pdet.asiento = 'Variacion Cambiaria'
+                    pdet.documentoTipo = cxp.tipo
+                    pdet.documentoFecha = cxp.fecha
+                    pdet.documento = cxp.documento
+                    pdet.moneda = requisicion.moneda
+                    pdet.tipCamb = requisicion.tipoDeCambio
+                    p.addToPartidas(pdet)
+                }
+
+                }
+            }
+        
+
+     /*    if(banco.moneda == null || requisicion.moneda == 'MXN') {
+            return
+        }
+     */
+        
+   /*      List<PolizaDet> procs = p.partidas.findAll {it.cuenta.clave.startsWith('201')}
+        def debe = procs.sum 0.0, {r -> r.debe}
+        def haber = banco.haber
+        
+
+        def dif = debe - haber
+
+        if(dif.abs() > 1.0 ){
+
+            def det = banco
+
+            if(dif > 0.0) {
+                PolizaDet pdet = new PolizaDet()
+                pdet.cuenta = buscarCuenta('702-0004-0000-0000')
+                pdet.concepto = pdet.cuenta.descripcion
+                pdet.sucursal = det.sucursal
+                pdet.origen = det.origen
+                pdet.referencia = det.referencia
+                pdet.referencia2 = det.referencia2
+                pdet.haber = dif.abs()
+                pdet.descripcion = det.descripcion
+                pdet.entidad = det.entidad
+                pdet.asiento = det.asiento+ '_VC'
+                pdet.documentoTipo = det.documentoTipo
+                pdet.documentoFecha = det.documentoFecha
+                pdet.documento = det.documento
+                pdet.moneda = 'MXN'
+                pdet.tipCamb = 1.0
+                p.addToPartidas(pdet)
+
+            } else {
+                PolizaDet pdet = new PolizaDet()
+                pdet.cuenta = buscarCuenta('701-0001-0000-0000')
+                pdet.concepto = pdet.cuenta.descripcion
+                pdet.sucursal = det.sucursal
+                pdet.origen = det.origen
+                pdet.referencia = det.referencia
+                pdet.referencia2 = det.referencia2
+                pdet.debe = dif.abs()
+                pdet.descripcion = det.descripcion
+                pdet.entidad = det.entidad
+                pdet.asiento = det.asiento+ '_VC'
+                pdet.documentoTipo = det.documentoTipo
+                pdet.documentoFecha = det.documentoFecha
+                pdet.documento = det.documento
+                pdet.moneda = 'MXN'
+                pdet.tipCamb = 1.0
+                p.addToPartidas(pdet)
+            }
+        } */
 
     }
 
