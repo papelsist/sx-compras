@@ -132,8 +132,6 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
             BigDecimal impuestoTrasladadoPara118 = MonedaUtils.round(impuestoTrasladado * tipoDeCambio)
             BigDecimal impuestoTrasladadoPara119 = MonedaUtils.round(impuestoTrasladado * cxp.tipoDeCambio)
 
-             println "******"+totalFactura+" -- "+apagar+" -- "
-
 
             if( (dif.abs() * egreso.tipoDeCambio ) > (3.00 * egreso.tipoDeCambio) ) {
                 // Reactivar para los casos de 10 dls de avery

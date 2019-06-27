@@ -19,11 +19,11 @@ import sx.utils.MonedaUtils
 
 @Slf4j
 @Component
-class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
+class ProvisionDeRembolsoProc implements  ProcesadorDePoliza, AsientoBuilder {
 
     @Override
     String definirConcepto(Poliza poliza) {
-        return "PROVISION DE GASTOS ${poliza.fecha.format('dd/MM/yyyy')}"
+        return "PROVISION DE REMBOLSO ${poliza.fecha.format('dd/MM/yyyy')}"
     }
 
     @Override
@@ -35,32 +35,21 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
 
     def generarAsientos(Poliza poliza, Map params) {
 
-        List<RequisicionDet> requisiciones = RequisicionDet
-                .findAll("from RequisicionDet d where date(d.cxp.fecha) = ? and d.cxp.tipo = 'GASTOS'",
-                [poliza.fecha])
-        requisiciones.each { req ->
-            CuentaPorPagar cxp = req.cxp
-            CuentaOperativaProveedor co = CuentaOperativaProveedor.findByProveedor(cxp.proveedor)
-            if(co.tipo == 'GASTOS'){
-                cargoGasto(poliza, cxp, 'OFICINAS')
-                log.info('REQUISICION: {}', req.requisicion.folio)
-                abonoProveedorGasto(poliza, cxp, 'OFICINAS')
-            }
-        }
         List<RembolsoDet> rembolsos = RembolsoDet
-                .findAll("from RembolsoDet d where date(d.cxp.fecha) = ? and d.cxp is not null and d.rembolso.concepto <> 'REMBOLSO'",
+                .findAll("from RembolsoDet d where date(d.rembolso.fechaDePago) = ?  and d.rembolso.concepto = 'REMBOLSO'",
                 [poliza.fecha])
         rembolsos.each { r ->
             CuentaPorPagar cxp = r.cxp
-            CuentaOperativaProveedor co = CuentaOperativaProveedor.findByProveedor(cxp.proveedor)
-
-            if(co.tipo !='FLETES'){
-                 String suc = r.rembolso.sucursal.nombre
+            if (cxp){
+                CuentaOperativaProveedor co = CuentaOperativaProveedor.findByProveedor(cxp.proveedor)
+                String suc = r.rembolso.sucursal.nombre
                 cargoGasto(poliza, cxp, suc)
-               // log.info('REMBOLSO {} : {}', r.rembolso.concepto, r.rembolso.id)
-                abonoProveedorGastoRembolso(poliza, cxp, r)
+                // log.info('REMBOLSO {} : {}', r.rembolso.concepto, r.rembolso.id)
+                abonoProveedor(poliza, cxp, r)
+            }else{
+                cargoGastoNoDeducible(poliza, r)
+                abonoProveedorNoDeducible(poliza, r)
             }
-
         }
 
         poliza.validate()
@@ -87,7 +76,7 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
 
         def impuestoNeto = (cxp.impuestoTrasladado ?: 0.00) - (cxp.impuestoRetenidoIva ?: 0.00)
 
-        CuentaContable ivaPendiente = buscarCuenta('119-0002-0000-0000')
+        CuentaContable ivaPendiente = buscarCuenta('118-0002-0000-0000')
         poliza.addToPartidas(build(cxp, ivaPendiente, desc, suc, impuestoNeto ))
 
 
@@ -111,47 +100,81 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
 
     }
 
-    def abonoProveedorGasto(Poliza poliza, CuentaPorPagar cxp,  String suc) {
-
-        String desc = """
-            F:${cxp.serie?:''} ${cxp.folio} (${cxp.fecha.format('dd/MM/yyyy')})
-        """
-        CuentaContable cuenta
-        String cv = resolverClaveDeCuenta(cxp)
-        cuenta = buscarCuenta(cv)
-        BigDecimal total = cxp.total
-        poliza.addToPartidas(build(cxp,cuenta,desc, suc, 0.0, total ))
-    }
-
-    def abonoProveedorGastoRembolso(Poliza poliza, CuentaPorPagar cxp,  RembolsoDet rembolsoDet) {
-
+    def abonoProveedor(Poliza poliza, CuentaPorPagar cxp,  RembolsoDet rembolsoDet) {
         Sucursal sucursal = rembolsoDet.rembolso.sucursal
 
         String desc = """
-            F:${cxp.serie?:''} ${cxp.folio} (${cxp.fecha.format('dd/MM/yyyy')})
+            F:${cxp.serie?:''} ${cxp.folio?:''} (${cxp.fecha.format('dd/MM/yyyy')})
         """
         CuentaContable cuenta
         String cv = resolverClaveDeCuenta(cxp)
         if(cv) {
             cuenta = buscarCuenta(cv)
         } else {
-            log.info('Armando cuenta: ')
-            
-                cuenta = buscarCuenta('205-0006-0999-0000')
-            
+            cuenta = buscarCuenta('205-0006-0999-0000')   
         }
-
         if(rembolsoDet.rembolso.concepto == 'REMBOLSO') {
             cv = "101-0002-${sucursal.clave.padLeft(4, '0')}-0000"
             cuenta = buscarCuenta(cv)
         } 
-
         BigDecimal total = cxp.total
         poliza.addToPartidas(build(cxp,cuenta,desc, sucursal.nombre, 0.0, total ))
     }
 
+    def cargoGastoNoDeducible(Poliza poliza, RembolsoDet det) {
+        Sucursal suc = det.rembolso.sucursal
+        String desc = """
+            F:${det.documentoSerie?:''} ${det.documentoFolio?:''} (${det.documentoFecha?.format('dd/MM/yyyy')})
+        """
+        CuentaContable  cta = buscarCuenta('205-0006-0999-0000')
+        log.info("cta: {} sucursal: {} ",cta,suc )
+        PolizaDet polizaDet = new PolizaDet()
 
+        polizaDet.with {
+            cuenta = cta
+            concepto = cta.descripcion
+            descripcion = desc
+            asiento =  "PROVISION_DE_REMBOLSO"
+            referencia =  det.rembolso.nombre
+            referencia2 = det.rembolso.nombre
+            origen =  det.rembolso.id.toString()
+            documento =  det.rembolso.id.toString()
+            documentoTipo =  'REMBOLSO'
+            documentoFecha =  det.rembolso.fecha
+            sucursal =  suc.nombre
+            debe = det.apagar.abs()
+            haber = 0.00
+        }
+        poliza.addToPartidas(polizaDet)
+    }
 
+    def abonoProveedorNoDeducible(Poliza poliza,  RembolsoDet det) {
+        Sucursal suc = det.rembolso.sucursal
+        String desc = """
+            F:${det.documentoSerie?:''} ${det.documentoFolio?:''} (${det.documentoFecha?.format('dd/MM/yyyy')})
+        """
+        def cv = "101-0002-${suc.clave.padLeft(4, '0')}-0000"
+        CuentaContable cta = buscarCuenta(cv)
+
+        PolizaDet polizaDet = new PolizaDet()
+
+        polizaDet.with {
+            cuenta = cta
+            concepto = cta.descripcion
+            descripcion = desc
+            asiento =  "PROVISION_DE_REMBOLSO"
+            referencia =  det.rembolso.nombre
+            referencia2 = det.rembolso.nombre
+            origen =  det.rembolso.id.toString()
+            documento =  det.rembolso.id.toString()
+            documentoTipo =  'REMBOLSO'
+            documentoFecha =  det.rembolso.fecha
+            sucursal =  suc.nombre
+            debe = 0.00
+            haber = det.apagar.abs()
+        }
+        poliza.addToPartidas(polizaDet)
+    }
 
     private PolizaDet build(CuentaPorPagar  cxp,
                             CuentaContable cta,

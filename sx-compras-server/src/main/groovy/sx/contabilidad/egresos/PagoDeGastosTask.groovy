@@ -11,6 +11,7 @@ import sx.cxp.Requisicion
 import sx.cxp.RequisicionDet
 import sx.tesoreria.MovimientoDeCuenta
 import sx.utils.MonedaUtils
+import sx.tesoreria.Cheque
 
 @Slf4j
 @GrailsCompileStatic
@@ -116,8 +117,17 @@ class PagoDeGastosTask implements  AsientoBuilder, EgresoTask {
                     BigDecimal ii = MonedaUtils.calcularImporteDelTotal(it.apagar)
                     ivaCfdi = MonedaUtils.calcularImpuesto(ii)
                 }
-            poliza.addToPartidas(mapRow('118-0002-0000-0000', desc, row, ivaCfdi))
-            poliza.addToPartidas(mapRow('119-0002-0000-0000', desc, row, 0.0, ivaCfdi))
+
+            def cheque = Cheque.findByEgreso(egreso)
+            if(cheque && cheque.fecha == cheque.fechaTransito ){
+                poliza.addToPartidas(mapRow('118-0002-0000-0000', desc, row, ivaCfdi))
+                poliza.addToPartidas(mapRow('119-0002-0000-0000', desc, row, 0.0, ivaCfdi))
+            }
+            if(!cheque){
+                poliza.addToPartidas(mapRow('118-0002-0000-0000', desc, row, ivaCfdi))
+                poliza.addToPartidas(mapRow('119-0002-0000-0000', desc, row, 0.0, ivaCfdi))
+            }
+
         }
 
     }
