@@ -23,6 +23,8 @@ class ComprobanteFiscalConcepto {
 
     BigDecimal importe
 
+    BigDecimal descuento = 0.0
+
     List<ConceptoDeGasto> conceptos = []
 
     static belongsTo = [comprobante: ComprobanteFiscal]
@@ -37,6 +39,7 @@ class ComprobanteFiscalConcepto {
         cantidad nullable: true
         valorUnitario nullable: true
         importe nullable: true
+        descuento nullable: true
     }
 
     static mapping = {
