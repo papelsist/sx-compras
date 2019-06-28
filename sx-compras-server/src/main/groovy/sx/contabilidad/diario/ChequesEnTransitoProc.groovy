@@ -49,24 +49,28 @@ class ChequesEnTransitoProc implements  ProcesadorMultipleDePolizas {
 
         println "egreso__"+poliza.id+"  "+ egreso + "   "+poliza.egreso
 
-        log.info("Generando poliza de egreso: {} Id:{}", egreso.tipo, poliza.egreso)
-        switch (egreso.tipo) {
-            case 'COMPRA':
-            println "Recalculando compra"
-                pagoDeCompraTransitoTask.generarAsientos(poliza, [:])
-                break
-            case 'GASTO' :
-                pagoDeGastosTransitoTask.generarAsientos(poliza, [:])
-                break
-            
-            case 'REMBOLSO':
-               pagoDeRembolsoTransitoTask.generarAsientos(poliza, [:])
-                break
+        if(egreso){
+            log.info("Generando poliza de egreso: {} Id:{}", egreso.tipo, poliza.egreso)
+            switch (egreso.tipo) {
+                case 'COMPRA':
+                println "Recalculando compra"
+                    pagoDeCompraTransitoTask.generarAsientos(poliza, [:])
+                    break
+                case 'GASTO' :
+                    pagoDeGastosTransitoTask.generarAsientos(poliza, [:])
+                    break
+                
+                case 'REMBOLSO':
+                pagoDeRembolsoTransitoTask.generarAsientos(poliza, [:])
+                    break
            
         }
 
         poliza = poliza.save flush: true
         poliza.refresh()
+        }
+
+  
         return poliza
     }
 
@@ -74,17 +78,15 @@ class ChequesEnTransitoProc implements  ProcesadorMultipleDePolizas {
 
     @Override
     List<Poliza> generarPolizas(PolizaCreateCommand command) {
-
         log.info('Generando  polizas...')
         List<Poliza> polizas = []
-        List<MovimientoDeCuenta> movimientos = MovimientoDeCuenta.where{cheque.fechaTransito == command.fecha && cheque != null}.list()
+        // List<MovimientoDeCuenta> movimientos = MovimientoDeCuenta.where{cheque.fechaTransito == command.fecha && cheque != null && cheque.fechaTransito == cheque.fecha }.list()
+        List<MovimientoDeCuenta> movimientos = MovimientoDeCuenta.findAll("from MovimientoDeCuenta where cheque.fechaTransito  = ? and date(cheque.fechaTransito) != date(cheque.fecha) and cheque is not null ",[command.fecha])
         movimientos = movimientos.sort {it.cheque.folio}.reverse()
-
            log.info('Movimientos:  ', movimientos.size())
-
         movimientos.each{ mov ->
 
-               log.info('Movi id: ',mov.id)
+               log.info('Movi id: {}',mov.id)
 
             Poliza p = Poliza.where{
                 ejercicio == command.ejercicio &&
@@ -94,7 +96,6 @@ class ChequesEnTransitoProc implements  ProcesadorMultipleDePolizas {
                 fecha == command.fecha &&
                 egreso == mov.id
             }.find()
-
             if(p == null) {
 
                 p = new Poliza(command.properties)
@@ -105,7 +106,6 @@ class ChequesEnTransitoProc implements  ProcesadorMultipleDePolizas {
                 polizas << p
             } else
                 log.info('Poliza ya existente  {}', p)
-
         }
         return polizas
     }

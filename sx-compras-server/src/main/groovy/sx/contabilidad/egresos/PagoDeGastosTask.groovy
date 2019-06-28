@@ -135,9 +135,7 @@ class PagoDeGastosTask implements  AsientoBuilder, EgresoTask {
                 poliza.addToPartidas(mapRow('118-0002-0000-0000', desc, row, ivaCfdi))
                 poliza.addToPartidas(mapRow('119-0002-0000-0000', desc, row, 0.0, ivaCfdi))
             }
-
         }
-
     }
 
     void abonoBanco(Poliza poliza, Requisicion r) {
