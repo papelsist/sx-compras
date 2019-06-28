@@ -61,6 +61,9 @@ class ChequesEnTransitoProc implements  ProcesadorMultipleDePolizas {
                     break
                 
                 case 'REMBOLSO':
+                case 'ESPECIAL':
+                case 'ESPECIALM':
+                case 'PAGO':
                 pagoDeRembolsoTransitoTask.generarAsientos(poliza, [:])
                     break
            
@@ -81,7 +84,7 @@ class ChequesEnTransitoProc implements  ProcesadorMultipleDePolizas {
         log.info('Generando  polizas...')
         List<Poliza> polizas = []
         // List<MovimientoDeCuenta> movimientos = MovimientoDeCuenta.where{cheque.fechaTransito == command.fecha && cheque != null && cheque.fechaTransito == cheque.fecha }.list()
-        List<MovimientoDeCuenta> movimientos = MovimientoDeCuenta.findAll("from MovimientoDeCuenta where cheque.fechaTransito  = ? and date(cheque.fechaTransito) != date(cheque.fecha) and cheque is not null ",[command.fecha])
+        List<MovimientoDeCuenta> movimientos = MovimientoDeCuenta.findAll("from MovimientoDeCuenta where date(cheque.fechaTransito)  = ? and date(cheque.fechaTransito) != date(cheque.fecha) and cheque is not null ",[command.fecha])
         movimientos = movimientos.sort {it.cheque.folio}.reverse()
            log.info('Movimientos:  ', movimientos.size())
         movimientos.each{ mov ->

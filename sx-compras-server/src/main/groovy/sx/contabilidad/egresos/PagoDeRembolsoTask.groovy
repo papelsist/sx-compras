@@ -168,7 +168,21 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
                     BigDecimal ii = MonedaUtils.calcularImporteDelTotal(d.apagar)
                     ivaCfdi = MonedaUtils.calcularImpuesto(ii)
                 }
-
+            def cheque = Cheque.findByEgreso(egreso)
+            
+            if(cheque && cheque.fecha.format('dd/MM/yyyy') == cheque.fechaTransito.format('dd/MM/yyyy') ){
+               if(d.comentario == 'ALIMENTOS') {
+                    BigDecimal ivaAlimientos = cxp.impuestoTrasladado * 0.085
+                    // BigDecimal noDeducible = cxp.impuestoTrasladado - ivaAlimientos
+                    poliza.addToPartidas(mapRow('118-0002-0000-0000', desc, row, ivaAlimientos))
+                    poliza.addToPartidas(mapRow('119-0002-0000-0000', desc, row, 0.0,  ivaAlimientos))
+                }else {
+                    poliza.addToPartidas(mapRow('118-0002-0000-0000', desc, row, ivaCfdi))
+                    poliza.addToPartidas(mapRow('119-0002-0000-0000', desc, row, 0.0, ivaCfdi))
+                }
+              
+            }
+            if(!cheque){
                 if(d.comentario == 'ALIMENTOS') {
                     BigDecimal ivaAlimientos = cxp.impuestoTrasladado * 0.085
                     // BigDecimal noDeducible = cxp.impuestoTrasladado - ivaAlimientos
@@ -178,7 +192,7 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
                     poliza.addToPartidas(mapRow('118-0002-0000-0000', desc, row, ivaCfdi))
                     poliza.addToPartidas(mapRow('119-0002-0000-0000', desc, row, 0.0, ivaCfdi))
                 }
-
+            }
 
             }
 
@@ -293,8 +307,7 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
             if(!co) throw new RuntimeException("No existe cuenta operativa para el proveedor: ${cxp.proveedor}")
             String ctaOperativa = co.getCuentaOperativa()
             log.info('Buscando subcuenta de{} de {}',ctaOperativa, ctaPadre.clave)
-            println "********"+ctaPadre
-            println "********"+ctaOperativa
+
             CuentaContable cuenta = ctaPadre.subcuentas.find{it.clave.contains(ctaOperativa)}
 
             BigDecimal importe = d.apagar

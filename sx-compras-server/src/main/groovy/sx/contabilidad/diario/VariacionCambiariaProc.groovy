@@ -16,17 +16,17 @@ import java.sql.SQLException
 
 @Slf4j
 @Component
-class VariacionCambiariaProc implements  ProcesadorDePoliza , AsientoBuilder{
+class VariacionCambiariaProc implements ProcesadorMultipleDePolizas {
 
     //@Autowired
     //@Qualifier('inventariosProcGeneralesTask')
 
-
+/*
     @Override
     String definirConcepto(Poliza poliza) {
         return "VARIACION CAMBIARIA  ${poliza.fecha.format('dd/MM/yyyy')}"
     }
-
+*/
     @Override
     Poliza recalcular(Poliza poliza) {
         poliza.partidas.clear()
@@ -34,10 +34,20 @@ class VariacionCambiariaProc implements  ProcesadorDePoliza , AsientoBuilder{
         return poliza
     }
 
-     @Override
+    
     def generarAsientos(Poliza poliza, Map params) {
-        procesarCargoProveedor(poliza)
-        procesarCargoCuentaPorCobrar(poliza)
+        if (poliza.egreso == 'PROVEEDORES') {
+             procesarCargoProveedor(poliza)
+        }
+        if (poliza.egreso == 'CLIENTES'){
+            procesarCargoCuentaPorCobrar(poliza)
+        }
+
+        if (poliza.egreso == 'BANCOS') {
+            procesarBanco(poliza)
+        }
+       
+        
     }
 
     def procesarCargoCuentaPorCobrar(Poliza poliza) {
@@ -57,6 +67,31 @@ class VariacionCambiariaProc implements  ProcesadorDePoliza , AsientoBuilder{
                 poliza.addToPartidas(mapRow(poliza,row.cta_variacion.toString(),descripcion+" TC: "+row.tc_var,row,row.variacion))
             } 
         }
+    }
+
+    def procesarBanco(Poliza poliza) {
+        CuentaContable cuenta = buscarCuenta('102-0002-0008-0000')
+        String ejercicio = poliza.fecha.format('yyyy')
+        String mes = poliza.fecha.format('MM')
+        String ref = "VARIACION (${ejercicio}-${mes})"
+        
+        PolizaDet det = new PolizaDet(
+                cuenta: cuenta,
+                concepto: cuenta.descripcion,
+                descripcion: 'VARIACION_CAMBIARIA',
+                asiento: 'VARIACION',
+                referencia: ref,
+                referencia2: ref,
+                origen: "${ejercicio}/${mes}",
+                entidad: "",
+                documento: '',
+                documentoTipo: 'FAC',
+                documentoFecha: null,
+                sucursal: 'OFICINAS',
+                debe: 1,
+                haber: 0.00
+        )
+        poliza.addToPartidas(det)
     }
 
 
@@ -110,6 +145,35 @@ class VariacionCambiariaProc implements  ProcesadorDePoliza , AsientoBuilder{
         return det
     }
 
+
+  @Override
+    List<Poliza> generarPolizas(PolizaCreateCommand command) {
+        
+        def tipos = ['PROVEEDORES','CLIENTES','BANCOS']
+        List<Poliza> polizas = []
+
+        tipos.each{ t ->
+            log.info('Generando  poliza {}', t)
+            Poliza p = Poliza.where{
+                ejercicio == command.ejercicio &&
+                mes == command.mes &&
+                subtipo == command.subtipo &&
+                tipo == command.tipo &&
+                fecha == command.fecha &&
+                egreso == t
+            }.find()
+            
+            if(p == null) {
+                p = new Poliza(command.properties)
+                p.concepto = "VARIACION CAMBIARIA ${t}"
+                p.sucursal = 'OFICINAS'
+                p.egreso = t
+                polizas << p
+            } else
+                log.info('Poliza ya existente  {}', p)
+        }
+        return polizas  
+    }
 
     String getSelect(String tipo) {
         String sql = ""
