@@ -42,16 +42,19 @@ class VariacionCambiariaProc implements  ProcesadorDePoliza , AsientoBuilder{
 
     def procesarCargoCuentaPorCobrar(Poliza poliza) {
         String select = getSelect('CXC').replaceAll('@FECHA', toSqlDate(poliza.fecha))
+
+       
         List rows = getAllRows(select, [])
         
         rows.each{ row ->
             def descripcion = generarDescripcion(row)
             if(row.variacion >0){
+                // 702
                 poliza.addToPartidas(mapRow(poliza,row.cta_cliente.toString(),descripcion+" TC: "+row.tc_ant,row,0.0,row.variacion))
                 poliza.addToPartidas(mapRow(poliza,row.cta_variacion.toString(),descripcion+" TC: "+row.tc_var,row,row.variacion))
             }else{
-                poliza.addToPartidas(mapRow(poliza,row.cta_cliente.toString(),descripcion+" TC: "+row.tc_ant,row,row.variacion))
-                poliza.addToPartidas(mapRow(poliza,row.cta_variacion.toString(),descripcion+" TC: "+row.tc_var,row,0.00,row.variacion))
+                poliza.addToPartidas(mapRow(poliza,row.cta_cliente.toString(),descripcion+" TC: "+row.tc_ant,0.00,row,row.variacion))
+                poliza.addToPartidas(mapRow(poliza,row.cta_variacion.toString(),descripcion+" TC: "+row.tc_var,row,row.variacion))
             } 
         }
     }
@@ -60,15 +63,16 @@ class VariacionCambiariaProc implements  ProcesadorDePoliza , AsientoBuilder{
     def procesarCargoProveedor(Poliza poliza) {
         String select = getSelect('CXP').replaceAll('@FECHA', toSqlDate(poliza.fecha))
         List rows = getAllRows(select, [])
-        
         rows.each{ row ->
         def descripcion = generarDescripcion(row)
-            if(row.variacion >0){
+            if(row.variacion < 0){ 
                 poliza.addToPartidas(mapRow(poliza,row.cta_proveedor.toString(),descripcion+" TC: "+row.tc_ant,row,0.0,row.variacion))
-                poliza.addToPartidas(mapRow(poliza,row.cta_variacion.toString(),descripcion+" TC: "+row.tc_var,row,row.variacion))
+                // 701
+                poliza.addToPartidas(mapRow(poliza,row.cta_variacion.toString(),descripcion+" TC:701 "+row.tc_var,row,row.variacion))
             }else{
                 poliza.addToPartidas(mapRow(poliza,row.cta_proveedor.toString(),descripcion+" TC: "+row.tc_ant,row,row.variacion))
-                poliza.addToPartidas(mapRow(poliza,row.cta_variacion.toString(),descripcion+" TC: "+row.tc_var,row,0.00,row.variacion))
+                // 702
+                poliza.addToPartidas(mapRow(poliza,row.cta_variacion.toString(),descripcion+" TC:702 "+row.tc_var,row,0.0,row.variacion))
             } 
         }
     }
@@ -137,7 +141,7 @@ class VariacionCambiariaProc implements  ProcesadorDePoliza , AsientoBuilder{
         x.saldo * x.tc_var importe_var_mxn,
         round((x.saldo*x.tc_ant) - (x.saldo*x.tc_var),2) variacion,
         concat('201-0003-',x.cta_operativa_prov,'-0000') cta_proveedor,
-        (case when (x.saldo*x.tc_ant) - (x.saldo*x.tc_var)>0 then  '701-0001-0000-0000' else '702-0004-0000-0000' end) cta_variacion,
+        (case when (x.saldo*x.tc_ant) - (x.saldo*x.tc_var)<0 then  '701-0001-0000-0000' else '702-0004-0000-0000' end) cta_variacion,
         x.uuid,
         x.rfc
         FROM (

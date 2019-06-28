@@ -293,6 +293,8 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
             if(!co) throw new RuntimeException("No existe cuenta operativa para el proveedor: ${cxp.proveedor}")
             String ctaOperativa = co.getCuentaOperativa()
             log.info('Buscando subcuenta de{} de {}',ctaOperativa, ctaPadre.clave)
+            println "********"+ctaPadre
+            println "********"+ctaOperativa
             CuentaContable cuenta = ctaPadre.subcuentas.find{it.clave.contains(ctaOperativa)}
 
             BigDecimal importe = d.apagar
@@ -301,7 +303,7 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
 
             String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} F:${cxp?.serie?:''} ${cxp?.folio?: ''}" +
                     " (${poliza.fecha.format('dd/MM/yyyy')}) ${egreso.sucursal?: 'OFICINAS'} "
-            poliza.addToPartidas(mapRow(cuenta, desc, row, importe))
+           // poliza.addToPartidas(mapRow(cuenta, desc, row, importe))
 
             poliza.addToPartidas(mapRow('118-0002-0000-0000', desc, row, ivaCfdi))
             poliza.addToPartidas(mapRow('119-0002-0000-0000', desc, row, 0.0, ivaCfdi))
