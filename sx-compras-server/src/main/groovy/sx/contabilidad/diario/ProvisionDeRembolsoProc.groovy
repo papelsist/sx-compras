@@ -67,14 +67,21 @@ class ProvisionDeRembolsoProc implements  ProcesadorDePoliza, AsientoBuilder {
         """
 
         def cfdi = cxp.comprobanteFiscal
-
+        // log.info('CXP:{} Folio:{} CfdiId:{}', cxp.nombre, cxp.folio, cxp.comprobanteFiscal.id)
+        def gasto = cfdi.conceptos.first()
+        def con = gasto.conceptos.first()
+        validarCuentaContable(con)
+        PolizaDet det = build(cxp, con.cuentaContable, desc, con.sucursal.nombre,cfdi.subTotal)
+        poliza.addToPartidas(det)
+        /*
         cfdi.conceptos.each { gasto ->
             gasto.conceptos.each { con ->
+                validarCuentaContable(con)
                 PolizaDet det = build(cxp, con.cuentaContable, desc, con.sucursal.nombre, con.importe)
                 poliza.addToPartidas(det)
             }
         }
-
+        */
         def impuestoNeto = (cxp.impuestoTrasladado ?: 0.00) - (cxp.impuestoRetenidoIva ?: 0.00)
 
         CuentaContable ivaPendiente = buscarCuenta('118-0002-0000-0000')
@@ -128,7 +135,7 @@ class ProvisionDeRembolsoProc implements  ProcesadorDePoliza, AsientoBuilder {
             F:${det.documentoSerie?:''} ${det.documentoFolio?:''} (${det.documentoFecha?.format('dd/MM/yyyy')})
         """
         CuentaContable  cta = buscarCuenta("101-0002-${suc.clave.padLeft(4, '0')}-0000")
-        log.info("cta: {} sucursal: {} ",cta,suc )
+        // log.info("cta: {} sucursal: {} ",cta,suc )
         PolizaDet polizaDet = new PolizaDet()
 
         polizaDet.with {
@@ -241,6 +248,15 @@ class ProvisionDeRembolsoProc implements  ProcesadorDePoliza, AsientoBuilder {
         CuentaOperativaProveedor co = CuentaOperativaProveedor.where{proveedor == p}.find()
 
         return co
+    }
+
+    private validarCuentaContable(ConceptoDeGasto con) {
+        if(con.cuentaContable == null) {
+            throw new RuntimeException("""
+            No existe cuenta contable asignada a la partida  (concepto de gasto) por: ${con.importe}
+            XML: ${con.cfdiDet.comprobante.uuid}
+            """)
+        }
     }
 
 

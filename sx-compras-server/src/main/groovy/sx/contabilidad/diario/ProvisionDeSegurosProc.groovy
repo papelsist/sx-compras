@@ -84,7 +84,7 @@ class ProvisionDeSegurosProc implements  ProcesadorDePoliza, AsientoBuilder {
 
         cfdi.conceptos.each { gasto ->
             gasto.conceptos.each { con ->
-
+                validarCuentaContable(con)
                 println "Cuenta Contable que trae "+ con.cuentaContable.clave.substring(0,9)
                 CuentaContable cuenta = buscarCuenta("${con.cuentaContable.clave.substring(0,9)}${con.sucursal.clave.padLeft(4,'0')}-0000")
                 def importe = con.importe
@@ -194,6 +194,15 @@ class ProvisionDeSegurosProc implements  ProcesadorDePoliza, AsientoBuilder {
         CuentaOperativaProveedor co = CuentaOperativaProveedor.where{proveedor == p}.find()
 
         return co
+    }
+
+    private validarCuentaContable(ConceptoDeGasto con) {
+        if(con.cuentaContable == null) {
+            throw new RuntimeException("""
+            No existe cuenta contable asignada a la partida  (concepto de gasto) por: ${con.importe}
+            XML: ${con.cfdiDet.comprobante.uuid}
+            """)
+        }
     }
 
 

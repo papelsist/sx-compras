@@ -44,7 +44,6 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
             // log.info('GASTO COP: {}', co)
             if(co.tipo == 'GASTOS' || co.tipo == 'RELACIONADAS'){
                 cargoGasto(poliza, cxp, 'OFICINAS')
-                // log.info('REQUISICION: {}', req.requisicion.folio)
                 abonoProveedorGasto(poliza, cxp, 'OFICINAS')
             }
         }
@@ -91,14 +90,22 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
         """
 
         def cfdi = cxp.comprobanteFiscal
-
+        // log.info('CXP:{} Folio:{} CfdiId:{}', cxp.nombre, cxp.folio, cxp.comprobanteFiscal.id)
+        def gasto = cfdi.conceptos.first()
+        def con = gasto.conceptos.first()
+        validarCuentaContable(con)
+        PolizaDet det = build(cxp, con.cuentaContable, desc, con.sucursal.nombre,cfdi.subTotal)
+        poliza.addToPartidas(det)
+        /*
         cfdi.conceptos.each { gasto ->
             gasto.conceptos.each { con ->
                 // log.info('P: {} Fac: {} Cuenta concepto: {} Id:{}', cxp.nombre, cxp.folio, con.cuentaContable.clave, con.id)
+                validarCuentaContable(con)
                 PolizaDet det = build(cxp, con.cuentaContable, desc, con.sucursal.nombre, con.importe)
                 poliza.addToPartidas(det)
             }
         }
+        */
 
         def impuestoNeto = (cxp.impuestoTrasladado ?: 0.00) - (cxp.impuestoRetenidoIva ?: 0.00)
 
@@ -286,6 +293,15 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
         CuentaOperativaProveedor co = CuentaOperativaProveedor.where{proveedor == p}.find()
 
         return co
+    }
+
+    private validarCuentaContable(ConceptoDeGasto con) {
+        if(con.cuentaContable == null) {
+            throw new RuntimeException("""
+            No existe cuenta contable asignada a la partida  (concepto de gasto) por: ${con.importe}
+            XML: ${con.cfdiDet.comprobante.uuid}
+            """)
+        }
     }
 
 
