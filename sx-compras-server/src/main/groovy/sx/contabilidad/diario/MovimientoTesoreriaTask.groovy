@@ -25,8 +25,8 @@ class MovimientoTesoreriaTask implements  AsientoBuilder{
     @Override
     @CompileDynamic
     def generarAsientos(Poliza poliza, Map params = [:]) {
-       //procesarIntereses(poliza)
-       //procesarRetencionesIsr(poliza)
+        procesarIntereses(poliza)
+        procesarRetencionesIsr(poliza)
        procesarDepositosPorIdentificar(poliza)
     }
 

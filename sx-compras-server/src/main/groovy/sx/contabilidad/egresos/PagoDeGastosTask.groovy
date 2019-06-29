@@ -115,7 +115,6 @@ class PagoDeGastosTask implements  AsientoBuilder, EgresoTask {
 
             def iva119 = cxp.impuestoTrasladado - cxp.impuestoRetenidoIva
 
-            // println "******"+cxp.total+" -- "+it.apagar+" -- "+dif
               if(dif.abs() > 3.00) {
                     BigDecimal ii = MonedaUtils.calcularImporteDelTotal(it.apagar)
                     ivaCfdi = MonedaUtils.calcularImpuesto(ii)
@@ -127,11 +126,12 @@ class PagoDeGastosTask implements  AsientoBuilder, EgresoTask {
             def cheque = Cheque.findByEgreso(egreso)
             
             if(cheque && cheque.fecha.format('dd/MM/yyyy') == cheque.fechaTransito.format('dd/MM/yyyy') ){
-                log.info(" Ceque {} and  {}",cheque.fecha.format('dd/MM/yyyy'), cheque.fechaTransito.format('dd/MM/yyyy'))
+                log.info("Fecha  Ceque {} and  {}",cheque.fecha.format('dd/MM/yyyy'), cheque.fechaTransito.format('dd/MM/yyyy'))
                 poliza.addToPartidas(mapRow('118-0002-0000-0000', desc, row, ivaCfdi))
                 poliza.addToPartidas(mapRow('119-0002-0000-0000', desc, row, 0.0, iva119))
             }
             if(!cheque){
+                log.info('No tiene cheque')
                 poliza.addToPartidas(mapRow('118-0002-0000-0000', desc, row, ivaCfdi))
                 poliza.addToPartidas(mapRow('119-0002-0000-0000', desc, row, 0.0, ivaCfdi))
             }
@@ -193,19 +193,40 @@ class PagoDeGastosTask implements  AsientoBuilder, EgresoTask {
                 String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} F:${cxp.serie?:''} ${cxp.folio}" +
                         " (${poliza.fecha.format('dd/MM/yyyy')}) ${egreso.sucursal?: 'OFICINAS'} " +
                         " ${cxp.tipoDeCambio > 1.0 ? 'T.C:' + cxp.tipoDeCambio: ''}"
-                if(cxp.impuestoRetenidoIva > 0.0) {
-                    BigDecimal imp = cxp.impuestoRetenidoIva
-                    poliza.addToPartidas(mapRow('118-0003-0000-0000', desc, row, imp))
-                    poliza.addToPartidas(mapRow('119-0003-0000-0000', desc, row, 0.0, imp))
 
-                    poliza.addToPartidas(mapRow('216-0001-0000-0000', desc, row, imp))
-                    poliza.addToPartidas(mapRow('213-0011-0000-0000', desc, row, 0.0, imp))
-                }
-                if(cxp.impuestoRetenidoIsr > 0.0) {
-                    BigDecimal imp = cxp.impuestoRetenidoIsr
-                    poliza.addToPartidas(mapRow('216-0002-0000-0000', desc, row, imp))
-                    poliza.addToPartidas(mapRow('213-0010-0000-0000', desc, row, 0.0, imp))
-                }
+                def cheque = Cheque.findByEgreso(egreso)
+                 if(cheque && cheque.fecha.format('dd/MM/yyyy') == cheque.fechaTransito.format('dd/MM/yyyy') ){
+                    if(cxp.impuestoRetenidoIva > 0.0) {
+                        BigDecimal imp = cxp.impuestoRetenidoIva
+                        poliza.addToPartidas(mapRow('118-0003-0000-0000', desc, row, imp))
+                        poliza.addToPartidas(mapRow('119-0003-0000-0000', desc, row, 0.0, imp))
+
+                        poliza.addToPartidas(mapRow('216-0001-0000-0000', desc, row, imp))
+                        poliza.addToPartidas(mapRow('213-0011-0000-0000', desc, row, 0.0, imp))
+                    }
+                    if(cxp.impuestoRetenidoIsr > 0.0) {
+                        BigDecimal imp = cxp.impuestoRetenidoIsr
+                        poliza.addToPartidas(mapRow('216-0002-0000-0000', desc, row, imp))
+                        poliza.addToPartidas(mapRow('213-0010-0000-0000', desc, row, 0.0, imp))
+                    }
+                 }
+                 if (!cheque) {
+                     if(cxp.impuestoRetenidoIva > 0.0) {
+                        BigDecimal imp = cxp.impuestoRetenidoIva
+                        poliza.addToPartidas(mapRow('118-0003-0000-0000', desc, row, imp))
+                        poliza.addToPartidas(mapRow('119-0003-0000-0000', desc, row, 0.0, imp))
+
+                        poliza.addToPartidas(mapRow('216-0001-0000-0000', desc, row, imp))
+                        poliza.addToPartidas(mapRow('213-0011-0000-0000', desc, row, 0.0, imp))
+                    }
+                    if(cxp.impuestoRetenidoIsr > 0.0) {
+                        BigDecimal imp = cxp.impuestoRetenidoIsr
+                        poliza.addToPartidas(mapRow('216-0002-0000-0000', desc, row, imp))
+                        poliza.addToPartidas(mapRow('213-0010-0000-0000', desc, row, 0.0, imp))
+                    }
+                 }
+
+                
 
             }
         }
@@ -433,87 +454,6 @@ class PagoDeGastosTask implements  AsientoBuilder, EgresoTask {
                     pdet.tipCamb = requisicion.tipoDeCambio
                     p.addToPartidas(pdet)
                 }
-/* 
-                if(dif > 0.0) {
-                    PolizaDet pdet = new PolizaDet()
-                    pdet.cuenta = buscarCuenta('702-0004-0000-0000')
-                    pdet.concepto = pdet.cuenta.descripcion
-                    pdet.sucursal = 'OFICINAS'
-                    pdet.origen = det.id
-                    pdet.referencia = requisicion.nombre
-                    pdet.referencia2 = requisicion.nombre
-                    pdet.haber = dif.abs()
-                    pdet.descripcion = desc
-                    pdet.entidad = 'Requisicion'
-                    pdet.asiento = 'Variacion Cambiaria'
-                    pdet.documentoTipo = cxp.tipo
-                    pdet.documentoFecha = cxp.fecha
-                    pdet.documento = cxp.folio
-                    pdet.moneda = requisicion.moneda
-                    pdet.tipCamb = requisicion.tipoDeCambio
-                    p.addToPartidas(pdet)
-
-                } else {
-                    PolizaDet pdet = new PolizaDet()
-                    pdet.cuenta = buscarCuenta('701-0001-0000-0000')
-                    pdet.concepto = pdet.cuenta.descripcion
-                    pdet.sucursal = 'OFICINAS'
-                    pdet.origen = det.id
-                    pdet.referencia = requisicion.nombre
-                    pdet.referencia2 = requisicion.nombre
-                    pdet.debe = dif.abs()
-                    pdet.descripcion = desc
-                    pdet.entidad = 'Requisicion'
-                    pdet.asiento = 'Variacion Cambiaria'
-                    pdet.documentoTipo = cxp.tipo
-                    pdet.documentoFecha = cxp.fecha
-                    pdet.documento = cxp.folio
-                    pdet.moneda = requisicion.moneda
-                    pdet.tipCamb = requisicion.tipoDeCambio
-                    p.addToPartidas(pdet)
-                }
-
-          
- */    
-
-/*                 if(dif > 0.0) {
-                    PolizaDet pdet = new PolizaDet()
-                    pdet.cuenta = buscarCuenta('702-0004-0000-0000')
-                    pdet.concepto = pdet.cuenta.descripcion
-                    pdet.sucursal = det.sucursal
-                    pdet.origen = det.origen
-                    pdet.referencia = det.referencia
-                    pdet.referencia2 = det.referencia2
-                    pdet.haber = dif.abs()
-                    pdet.descripcion = det.descripcion
-                    pdet.entidad = det.entidad
-                    pdet.asiento = det.asiento + '_VC_IVA'
-                    pdet.documentoTipo = det.documentoTipo
-                    pdet.documentoFecha = det.documentoFecha
-                    pdet.documento = det.documento
-                    pdet.moneda = 'MXN'
-                    pdet.tipCamb = 1.0
-                    p.addToPartidas(pdet)
-
-                } else {
-                    PolizaDet pdet = new PolizaDet()
-                    pdet.cuenta = buscarCuenta('701-0001-0000-0000')
-                    pdet.concepto = pdet.cuenta.descripcion
-                    pdet.sucursal = det.sucursal
-                    pdet.origen = det.origen
-                    pdet.referencia = det.referencia
-                    pdet.referencia2 = det.referencia2
-                    pdet.debe = dif.abs()
-                    pdet.descripcion = det.descripcion
-                    pdet.entidad = det.entidad
-                    pdet.asiento = det.asiento+ '_VC_IVA'
-                    pdet.documentoTipo = det.documentoTipo
-                    pdet.documentoFecha = det.documentoFecha
-                    pdet.documento = det.documento
-                    pdet.moneda = 'MXN'
-                    pdet.tipCamb = 1.0
-                    p.addToPartidas(pdet)
-                } */
             }
 
         }

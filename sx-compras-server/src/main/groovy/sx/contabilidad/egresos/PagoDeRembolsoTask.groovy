@@ -123,6 +123,7 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
 
 
     def atenderGasto(Poliza poliza, Rembolso r) {
+      
         MovimientoDeCuenta egreso = r.egreso
         CuentaContable ctaPadre = r.cuentaContable
         Map row = buildDataRow(egreso)
@@ -183,6 +184,7 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
               
             }
             if(!cheque){
+                log.info(" No tiene cheque")
                 if(d.comentario == 'ALIMENTOS') {
                     BigDecimal ivaAlimientos = cxp.impuestoTrasladado * 0.085
                     // BigDecimal noDeducible = cxp.impuestoTrasladado - ivaAlimientos
@@ -289,9 +291,11 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
     }
 
     def atenderPagoFlete(Poliza poliza, Rembolso r) {
+        log.info('Atendiendo pago de flete {}',r.egreso.id)
         MovimientoDeCuenta egreso = r.egreso
         CuentaContable ctaPadre = r.cuentaContable
         Map row = buildDataRow(egreso)
+        log.info('Partidas {}', r.partidas.size())
         r.partidas.each { d ->
             CuentaPorPagar cxp = d.cxp
 
@@ -306,7 +310,7 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
             CuentaOperativaProveedor co = CuentaOperativaProveedor.where{ proveedor == cxp.proveedor}.find()
             if(!co) throw new RuntimeException("No existe cuenta operativa para el proveedor: ${cxp.proveedor}")
             String ctaOperativa = co.getCuentaOperativa()
-            log.info('Buscando subcuenta de{} de {}',ctaOperativa, ctaPadre.clave)
+            log.info('Buscando subcuenta de{} de {}', ctaPadre.clave ,ctaOperativa)
 
             CuentaContable cuenta = ctaPadre.subcuentas.find{it.clave.contains(ctaOperativa)}
 
@@ -316,7 +320,8 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
 
             String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} F:${cxp?.serie?:''} ${cxp?.folio?: ''}" +
                     " (${poliza.fecha.format('dd/MM/yyyy')}) ${egreso.sucursal?: 'OFICINAS'} "
-           // poliza.addToPartidas(mapRow(cuenta, desc, row, importe))
+
+            poliza.addToPartidas(mapRow(cuenta, desc, row, importe))
 
             poliza.addToPartidas(mapRow('118-0002-0000-0000', desc, row, ivaCfdi))
             poliza.addToPartidas(mapRow('119-0002-0000-0000', desc, row, 0.0, ivaCfdi))
@@ -392,19 +397,16 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
                 row.tipCamb = cxp.tipoDeCambio
             }
         }
-
         r.partidas.each { d ->
 
             CuentaContable cuenta = buscarCuenta(d.comentario)
             BigDecimal importe = d.apagar
+
             if(importe > 0.0)
                 poliza.addToPartidas(mapRow(cuenta, desc, row, importe))
             else
                 poliza.addToPartidas(mapRow(cuenta, desc, row, 0.0, importe))
-
         }
-
-
     }
 
     def atenderEspecialMultiple(Poliza poliza, Rembolso r) {

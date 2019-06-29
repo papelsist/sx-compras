@@ -54,6 +54,19 @@ class PagoDeCompraTransitoTask implements  AsientoBuilder{
         MovimientoDeCuenta egreso = r.egreso
         r.partidas.each {
             CuentaPorPagar cxp = it.cxp
+
+            BigDecimal tipoDeCambio = cxp.tipoDeCambio
+
+            if(r.moneda != 'MXN' && cxp.fecha.getMonth() != egreso.fecha.month) {
+
+                Date nvaFecha = Periodo.inicioDeMes(egreso.fecha) - 2
+                TipoDeCambio tc = TipoDeCambio.where{fecha == nvaFecha}.find()
+                if(!tc) {
+                    throw new RuntimeException("No existe Tipo de cambio para el ${nvaFecha}")
+                }
+                tipoDeCambio = tc.tipoDeCambio
+            }
+            
             String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} F:${cxp.serie?:''} ${cxp.folio}" +
                     " (${cxp.fecha.format('dd/MM/yyyy')}) ${egreso.sucursal?: 'OFICINAS'} " +
                     " ${cxp.tipoDeCambio > 1.0 ? 'T.C:' + cxp.tipoDeCambio: ''}"
@@ -72,6 +85,14 @@ class PagoDeCompraTransitoTask implements  AsientoBuilder{
                     moneda: cxp.moneda,
                     tc: cxp.tipoDeCambio ? cxp.tipoDeCambio : 1.0
             ]
+
+                BigDecimal impuestoTrasladado = cxp.impuestoTrasladado - (cxp.impuestoRetenido?:0.0)
+                tipoDeCambio = egreso.tipoDeCambio
+                if(r.moneda != egreso.moneda.currencyCode) {
+                    tipoDeCambio = r.tipoDeCambio
+                }
+                BigDecimal impuestoTrasladadoPara118 = MonedaUtils.round(impuestoTrasladado * tipoDeCambio)
+                BigDecimal impuestoTrasladadoPara119 = MonedaUtils.round(impuestoTrasladado * cxp.tipoDeCambio)
       
                  // IVA
                 BigDecimal importe = MonedaUtils.calcularImporteDelTotal(it.apagar * r.tipoDeCambio)

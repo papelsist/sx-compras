@@ -71,7 +71,7 @@ abstract class VentasProc implements  ProcesadorMultipleDePolizas {
         log.info('Actualizando poliza {} procesando {} registros', poliza.id, rows.size())
         rows.each { row ->
 
-        println row.id
+       
             if(!row.uuid) {
                 throw new RuntimeException("Venta facturada ${row.documento} sin UUID. No se puede generar el complemento CompNac(SAT)")
             }

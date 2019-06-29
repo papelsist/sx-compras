@@ -20,6 +20,7 @@ import sx.cxp.RequisicionDet
 import sx.tesoreria.MovimientoDeCuenta
 import sx.utils.MonedaUtils
 import sx.utils.Periodo
+import sx.tesoreria.Cheque
 
 @Slf4j
 @Component
@@ -43,13 +44,26 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
 
         ajustarConcepto(poliza, r)
         cargoProveedor(poliza, r)
+       
+        def cheque = Cheque.findByEgreso(r.egreso)
 
-        registrarRetenciones(poliza, r)
+        log.info("Ch fecha: ${cheque.fecha.format('dd/MM/yyyy')}  fecha Transito ${cheque.fechaTransito.format('dd/MM/yyyy')} ")    
+        
+        if(cheque && cheque.fecha.format('dd/MM/yyyy') == cheque.fechaTransito.format('dd/MM/yyyy') ){
+            registrarRetenciones(poliza, r) 
+            registrarVariacionCambiariaIva(poliza, r)
+        }
+        if( !cheque ){
+            registrarRetenciones(poliza, r) 
+            registrarVariacionCambiariaIva(poliza, r)
+        }
+        
         registrarDiferenciaCambiaria(poliza, r)
         abonoBanco(poliza, r)
         ajustarProveedorBanco(poliza)
         registrarVariacionCambiaria(poliza, r)
-        registrarVariacionCambiariaIva(poliza, r)
+
+        
         return poliza
 
     }
@@ -167,14 +181,26 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
                     " (${cxp.fecha.format('dd/MM/yyyy')}) ${egreso.sucursal?: 'OFICINAS'} " +
                     " ${cxp.tipoDeCambio > 1.0 ? 'T.C:' + tipoDeCambio : ''}"
 
-            poliza.addToPartidas(mapRow('118-0001-0000-0000', desc, row, impuestoTrasladadoPara118))
+            def cheque = Cheque.findByEgreso(egreso)
+            
+            if(cheque && cheque.fecha.format('dd/MM/yyyy') == cheque.fechaTransito.format('dd/MM/yyyy') ){
+                poliza.addToPartidas(mapRow('118-0001-0000-0000', desc, row, impuestoTrasladadoPara118))
 
-            desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} F:${cxp.serie?:''} ${cxp.folio}" +
+                desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} F:${cxp.serie?:''} ${cxp.folio}" +
                     " (${cxp.fecha.format('dd/MM/yyyy')}) ${egreso.sucursal?: 'OFICINAS'} " +
                     " ${cxp.tipoDeCambio > 1.0 ? 'T.C:' + cxp.tipoDeCambio : ''}"
 
-            poliza.addToPartidas(mapRow('119-0001-0000-0000', desc, row, 0.0, impuestoTrasladadoPara119))
-           
+                poliza.addToPartidas(mapRow('119-0001-0000-0000', desc, row, 0.0, impuestoTrasladadoPara119))
+            }
+            if(!cheque){
+                poliza.addToPartidas(mapRow('118-0001-0000-0000', desc, row, impuestoTrasladadoPara118))
+
+                desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} F:${cxp.serie?:''} ${cxp.folio}" +
+                    " (${cxp.fecha.format('dd/MM/yyyy')}) ${egreso.sucursal?: 'OFICINAS'} " +
+                    " ${cxp.tipoDeCambio > 1.0 ? 'T.C:' + cxp.tipoDeCambio : ''}"
+
+                poliza.addToPartidas(mapRow('119-0001-0000-0000', desc, row, 0.0, impuestoTrasladadoPara119))
+            }  
         }
         log.info('Prov: {} MON: {}', r.proveedor.clave, r.egreso.moneda)
         if(r.proveedor.clave == 'A001' && r.egreso.moneda == MonedaUtils.DOLARES) {
