@@ -94,7 +94,7 @@ class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaC
     @CompileDynamic
     def loadMovimientos() {
         log.info('Localizando movimientos: {}', params)
-        CuentaContable cuenta = CuentaContable.get(params.cuentaId)
+        CuentaContable cuenta = CuentaContable.get(params.cuenta)
         Periodo periodo = params.periodo
         List res = PolizaDet.findAll(
                 """
@@ -107,7 +107,19 @@ class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaC
                         group by d.poliza.tipo, d.poliza.subtipo, d.poliza.fecha
                 """,
                 [cuenta,periodo.fechaInicial, periodo.fechaFinal])
+        if (cuenta.subcuentas) {
+           List<SaldoPorCuentaContable> saldos = SaldoPorCuentaContable.where {
+                        cuenta.padre ==  cuenta &&
+                        ejercicio == Periodo.obtenerMes(periodo.fechaInicial) &&
+                        mes == Periodo.obtenerMes(periodo.fechaInicial)
+           }.list()
+            log.info('Saldos: {}', saldos.collect {it.clave})
+        }
         respond res
+    }
+
+    def drill() {
+
     }
 
 

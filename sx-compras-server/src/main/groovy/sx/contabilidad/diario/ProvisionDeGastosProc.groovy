@@ -41,9 +41,10 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
         requisiciones.each { req ->
             CuentaPorPagar cxp = req.cxp
             CuentaOperativaProveedor co = CuentaOperativaProveedor.findByProveedor(cxp.proveedor)
-            if(co.tipo == 'GASTOS'){
+            // log.info('GASTO COP: {}', co)
+            if(co.tipo == 'GASTOS' || co.tipo == 'RELACIONADAS'){
                 cargoGasto(poliza, cxp, 'OFICINAS')
-                log.info('REQUISICION: {}', req.requisicion.folio)
+                // log.info('REQUISICION: {}', req.requisicion.folio)
                 abonoProveedorGasto(poliza, cxp, 'OFICINAS')
             }
         }
@@ -54,20 +55,26 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
         rembolsos.each { r ->
             CuentaPorPagar cxp = r.cxp
             CuentaOperativaProveedor co = CuentaOperativaProveedor.findByProveedor(cxp.proveedor)
-            if(co.tipo !='FLETES'){
+            log.info('REMBOLSO: {} COP: {}', r.rembolso.id, co)
+            if(co.tipo !='FLETES' &&  co.tipo !='SEGUROS'){
                 String suc = r.rembolso.sucursal.nombre
                 cargoGasto(poliza, cxp, suc)
                 abonoProveedorGastoRembolso(poliza, cxp, r)
             }
         }
 
-
+        def incluir = ['GASTO', 'ESPECIAL']
         List<RembolsoDet> rembolsosNoDeducibles = RembolsoDet
                 .findAll("from RembolsoDet d where date(d.rembolso.egreso.fecha) = ? and d.cxp is null and d.rembolso.concepto <> 'REMBOLSO'",
                 [poliza.fecha])
         rembolsosNoDeducibles.each { r ->
-            cargoNoDeducible(poliza, r)
-            abonoNoDeducible(poliza, r)
+
+            if(incluir.contains(r.rembolso.concepto)) {
+                log.info('REMBOLSO: {} CONCEPTO: {} ', r.rembolso.id, r.rembolso.concepto)
+                cargoNoDeducible(poliza, r)
+                abonoNoDeducible(poliza, r)
+            }
+
         }
 
         poliza.validate()
@@ -87,6 +94,7 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
 
         cfdi.conceptos.each { gasto ->
             gasto.conceptos.each { con ->
+                // log.info('P: {} Fac: {} Cuenta concepto: {} Id:{}', cxp.nombre, cxp.folio, con.cuentaContable.clave, con.id)
                 PolizaDet det = build(cxp, con.cuentaContable, desc, con.sucursal.nombre, con.importe)
                 poliza.addToPartidas(det)
             }
