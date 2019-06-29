@@ -34,16 +34,12 @@ class ProvisionDeFletesProc implements  ProcesadorDePoliza, AsientoBuilder {
     }
 
     def generarAsientos(Poliza poliza, Map params) {
-
-   
-
-    List<RembolsoDet> rembolsos = RembolsoDet
-                .findAll("from RembolsoDet d where date(d.cxp.fecha) = ? ",
+        List<RembolsoDet> rembolsos = RembolsoDet
+                .findAll("from RembolsoDet d where date(d.rembolso.egreso.fecha) = ? ",
                 [poliza.fecha])
         rembolsos.each { r ->
             if(r.cxp ){
                 CuentaPorPagar cxp = r.cxp
-                println cxp.proveedor 
                 CuentaOperativaProveedor co = CuentaOperativaProveedor.findByProveedor(cxp.proveedor)
                 if(co){
                     if(co.tipo == 'FLETES'){
@@ -69,21 +65,12 @@ class ProvisionDeFletesProc implements  ProcesadorDePoliza, AsientoBuilder {
         """
 
         def cfdi = cxp.comprobanteFiscal
-        // log.info('CXP:{} Folio:{} CfdiId:{}', cxp.nombre, cxp.folio, cxp.comprobanteFiscal.id)
         def gasto = cfdi.conceptos.first()
         def con = gasto.conceptos.first()
         validarCuentaContable(con)
         PolizaDet det = build(cxp, con.cuentaContable, desc, con.sucursal.nombre,cfdi.subTotal)
         poliza.addToPartidas(det)
-        /*
-        cfdi.conceptos.each { gasto ->
-            gasto.conceptos.each { con ->
-                validarCuentaContable(con)
-                PolizaDet det = build(cxp, con.cuentaContable, desc, con.sucursal.nombre, con.importe)
-                poliza.addToPartidas(det)
-            }
-        }
-        */
+
 
         def impuestoNeto = (cxp.impuestoTrasladado ?: 0.00) - (cxp.impuestoRetenidoIva ?: 0.00)
         CuentaContable ivaPendiente = buscarCuenta('119-0002-0000-0000')
@@ -174,10 +161,13 @@ class ProvisionDeFletesProc implements  ProcesadorDePoliza, AsientoBuilder {
 
     private validarCuentaContable(ConceptoDeGasto con) {
         if(con.cuentaContable == null) {
+            con.cuentaContable = buscarCuenta('600-0000-0000-0000')
+            /*
             throw new RuntimeException("""
             No existe cuenta contable asignada a la partida  (concepto de gasto) por: ${con.importe}
             XML: ${con.cfdiDet.comprobante.uuid}
             """)
+            */
         }
     }
 

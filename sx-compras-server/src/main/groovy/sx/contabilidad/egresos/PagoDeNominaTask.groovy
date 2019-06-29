@@ -27,7 +27,6 @@ class PagoDeNominaTask implements  AsientoBuilder, EgresoTask {
     @CompileDynamic
     def generarAsientos(Poliza poliza, Map params = [:]) {
         PagoDeNomina nomina = findPago(poliza)
-
         log.info("Pago de Nomina: {} {}", nomina.folio, nomina.egreso)
         cargoNominasPorPagar(poliza, nomina)
         abonoBanco(poliza, nomina)

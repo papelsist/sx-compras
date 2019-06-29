@@ -297,10 +297,13 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
 
     private validarCuentaContable(ConceptoDeGasto con) {
         if(con.cuentaContable == null) {
+            con.cuentaContable = buscarCuenta('600-0000-0000-0000')
+            /*
             throw new RuntimeException("""
             No existe cuenta contable asignada a la partida  (concepto de gasto) por: ${con.importe}
             XML: ${con.cfdiDet.comprobante.uuid}
             """)
+            */
         }
     }
 

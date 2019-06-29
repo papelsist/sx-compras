@@ -11,15 +11,16 @@ import sx.contabilidad.CuentaOperativaProveedor
 import sx.contabilidad.Poliza
 import sx.contabilidad.PolizaDet
 import sx.core.Proveedor
+import sx.core.TipoDeCambio
 import sx.cxp.AnalisisDeFactura
 import sx.cxp.CuentaPorPagar
 import sx.cxp.Requisicion
 import sx.cxp.RequisicionDeCompras
 import sx.tesoreria.MovimientoDeCuenta
 import sx.utils.MonedaUtils
+import sx.utils.Periodo
 
 @Slf4j
-@GrailsCompileStatic
 @Component
 class PagoDeCompraTransitoTask implements  AsientoBuilder{
 
@@ -31,7 +32,6 @@ class PagoDeCompraTransitoTask implements  AsientoBuilder{
      * @return
      */
     @Override
-    @CompileDynamic
     def generarAsientos(Poliza poliza, Map params = [:]) {
         Requisicion r = findRequisicion(poliza)
 
