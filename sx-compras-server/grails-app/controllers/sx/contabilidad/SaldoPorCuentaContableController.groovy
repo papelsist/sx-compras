@@ -41,12 +41,14 @@ class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaC
 
         Integer ejercicio = this.params.getInt('ejercicio')?: Periodo.currentYear()
         Integer mes = this.params.getInt('mes')?: Periodo.currentMes()
+        Integer nivel = this.params.getInt('nivel',1)
 
-        // log.info('List {} {}', ejercicio, mes)
+        log.info('List {} {}', ejercicio, mes)
 
         def criteria = new DetachedCriteria(SaldoPorCuentaContable).build {
             eq('ejercicio', ejercicio)
             eq('mes', mes)
+            // eq('nivel', nivel)
         }
         return criteria.list(params)
     }
@@ -91,6 +93,8 @@ class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaC
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'Poliza.pdf')
     }
 
+
+
     @CompileDynamic
     def loadMovimientos() {
         log.info('Localizando movimientos: {}', params)
@@ -107,19 +111,36 @@ class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaC
                         group by d.poliza.tipo, d.poliza.subtipo, d.poliza.fecha
                 """,
                 [cuenta,periodo.fechaInicial, periodo.fechaFinal])
-        if (cuenta.subcuentas) {
-           List<SaldoPorCuentaContable> saldos = SaldoPorCuentaContable.where {
-                        cuenta.padre ==  cuenta &&
-                        ejercicio == Periodo.obtenerMes(periodo.fechaInicial) &&
-                        mes == Periodo.obtenerMes(periodo.fechaInicial)
-           }.list()
-            log.info('Saldos: {}', saldos.collect {it.clave})
-        }
         respond res
     }
 
-    def drill() {
+    @Override
+    protected SaldoPorCuentaContable queryForResource(Serializable id) {
+        SaldoPorCuentaContable saldo = SaldoPorCuentaContable.get(id)
+        saldo.children = SaldoPorCuentaContable
+                .where {cuenta.padre ==  saldo.cuenta &&
+                        ejercicio == saldo.ejercicio &&
+                        mes == saldo.mes
+        }.list()
+        return saldo
+    }
 
+    def drill(SaldoPorCuentaContable saldo) {
+        if(saldo == null) {
+            notFound()
+            return
+        }
+        SaldoDrillResult result = new SaldoDrillResult()
+        result.parent = saldo
+        if(saldo.cuenta.subcuentas) {
+
+            result.children = SaldoPorCuentaContable.where {
+                            cuenta.padre ==  saldo.cuenta &&
+                            ejercicio == saldo.ejercicio &&
+                            mes == saldo.mes
+            }.list()
+        }
+        respond result
     }
 
 
@@ -217,5 +238,12 @@ class PorPeriodoDTO {
     Date fecha
     BigDecimal debe
     BigDecimal haber
+
+}
+
+@Canonical
+class SaldoDrillResult {
+    SaldoPorCuentaContable parent
+    List<SaldoPorCuentaContable> children
 
 }
