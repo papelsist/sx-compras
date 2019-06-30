@@ -160,6 +160,19 @@ class PolizaController extends RestfulController<Poliza> {
 
     }
 
+    @CompileDynamic
+    def prorratearPartida() {
+        Poliza poliza = Poliza.get(params.id)
+        if (poliza == null) {
+            notFound()
+            return
+        }
+        ProrratearCommand command = new ProrratearCommand()
+        command.properties = getObjectToBind()
+        log.info('Prorratear poliza {} con: {}', poliza.id, command)
+        respond poliza, [view: 'show']
+    }
+
     def generarComplementos(Poliza poliza) {
         if(poliza == null) {
             notFound()
@@ -220,4 +233,10 @@ class PolizaCreateCommand implements  WebDataBinding {
         importFrom Poliza
     }
 
+}
+
+@ToString
+class ProrratearCommand implements WebDataBinding {
+    PolizaDet polizaDet
+    List data
 }
