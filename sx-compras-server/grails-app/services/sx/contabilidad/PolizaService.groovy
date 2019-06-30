@@ -10,7 +10,6 @@ import groovy.util.logging.Slf4j
 import sx.core.LogUser
 
 @Slf4j
-@GrailsCompileStatic
 @Service(Poliza)
 abstract class PolizaService implements  LogUser{
 
@@ -112,6 +111,11 @@ abstract class PolizaService implements  LogUser{
         List<Poliza> polizas = Poliza.where{
             subtipo == subtipo && ejercicio == ejercicio && mes == mes
         }.list([sort: 'fecha', order: 'asc'])
+
+        polizas.each{ p ->
+            p.folio = - folio
+            p.save(flush: true)
+        }
 
         int folio = 0
         polizas.each { p ->
