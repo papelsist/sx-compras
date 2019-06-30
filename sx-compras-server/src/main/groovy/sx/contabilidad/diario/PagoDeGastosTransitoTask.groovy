@@ -13,7 +13,6 @@ import sx.tesoreria.MovimientoDeCuenta
 import sx.utils.MonedaUtils
 
 @Slf4j
-@GrailsCompileStatic
 @Component
 class PagoDeGastosTransitoTask implements  AsientoBuilder{
 
@@ -29,13 +28,12 @@ class PagoDeGastosTransitoTask implements  AsientoBuilder{
     def generarAsientos(Poliza poliza, Map params = [:]) {
         Requisicion r = findRequisicion(poliza)
 
-        log.info("Pago de GASTO: {}", r.egreso)
+        log.info("Pago de GASTO dada     : {}", r.egreso)
 
         ajustarConcepto(poliza, r)
         cargoProveedor(poliza, r)
-       
         registrarRetenciones(poliza, r)
-        registrarDiferenciaCambiaria(poliza, r)
+       // registrarDiferenciaCambiaria(poliza, r)
     }
 
     /**
@@ -69,18 +67,73 @@ class PagoDeGastosTransitoTask implements  AsientoBuilder{
                     tc: cxp.tipoDeCambio ? cxp.tipoDeCambio : 1.0
             ]
 
+            BigDecimal ivaCfdi = cxp.impuestoTrasladado - cxp.impuestoRetenidoIva
+            BigDecimal dif = cxp.total -it.apagar
+
+            def iva119 = cxp.impuestoTrasladado - cxp.impuestoRetenidoIva
+
+              if(dif.abs() > 3.00) {
+                    BigDecimal ii = MonedaUtils.calcularImporteDelTotal(it.apagar)
+                    ivaCfdi = MonedaUtils.calcularImpuesto(ii)
+                    
+                    BigDecimal iii = MonedaUtils.calcularImporteDelTotal(cxp.total * cxp.tipoDeCambio)
+                    iva119 = MonedaUtils.calcularImpuesto(iii) 
+                }
+
                  // IVA
+                poliza.addToPartidas(mapRow('118-0002-0000-0000', desc, row, ivaCfdi))
+                poliza.addToPartidas(mapRow('119-0002-0000-0000', desc, row, 0.0, ivaCfdi))
+              /*   
                 BigDecimal importe = MonedaUtils.calcularImporteDelTotal(it.apagar * r.tipoDeCambio)
                 BigDecimal impuesto = it.apagar - importe
                 poliza.addToPartidas(mapRow('118-0002-0000-0000', desc, row, impuesto))
                 poliza.addToPartidas(mapRow('119-0002-0000-0000', desc, row, 0.0, impuesto))
-            
+            */
             
         }
 
     }
 
     void registrarRetenciones(Poliza poliza, Requisicion r) {
+        MovimientoDeCuenta egreso = r.egreso
+        Map row = [
+                asiento: "PAGO_${egreso.tipo}",
+                referencia: r.nombre,
+                referencia2: r.proveedor.nombre,
+                origen: egreso.id,
+                documento: egreso.referencia,
+                documentoTipo: 'CXP',
+                documentoFecha: egreso.fecha,
+                sucursal: egreso.sucursal?: 'OFICINAS'
+        ]
+
+        String desc2 = "Folio: ${egreso.referencia} (${egreso.fecha.format('dd/MM/yyyy')}) "
+
+        r.partidas.each {
+            if(it.cxp.impuestoRetenido > 0) {
+
+                CuentaPorPagar cxp = it.cxp
+                String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} F:${cxp.serie?:''} ${cxp.folio}" +
+                        " (${poliza.fecha.format('dd/MM/yyyy')}) ${egreso.sucursal?: 'OFICINAS'} " +
+                        " ${cxp.tipoDeCambio > 1.0 ? 'T.C:' + cxp.tipoDeCambio: ''}"
+                    if(cxp.impuestoRetenidoIva > 0.0) {
+                        BigDecimal imp = cxp.impuestoRetenidoIva
+                        poliza.addToPartidas(mapRow('118-0003-0000-0000', desc, row, imp))
+                        poliza.addToPartidas(mapRow('119-0003-0000-0000', desc, row, 0.0, imp))
+
+                        poliza.addToPartidas(mapRow('216-0001-0000-0000', desc, row, imp))
+                        poliza.addToPartidas(mapRow('213-0011-0000-0000', desc, row, 0.0, imp))
+                    }
+                    if(cxp.impuestoRetenidoIsr > 0.0) {
+                        BigDecimal imp = cxp.impuestoRetenidoIsr
+                        poliza.addToPartidas(mapRow('216-0002-0000-0000', desc, row, imp))
+                        poliza.addToPartidas(mapRow('213-0010-0000-0000', desc, row, 0.0, imp))
+                    }
+            }
+        }
+    }
+
+/*     void registrarRetenciones(Poliza poliza, Requisicion r) {
         MovimientoDeCuenta egreso = r.egreso
         Map row = [
                 asiento: "PAGO_${egreso.tipo}",
@@ -108,7 +161,7 @@ class PagoDeGastosTransitoTask implements  AsientoBuilder{
 
             }
         }
-    }
+    }  */
 
     /**
      * Asientos requeridos para registrar la diferencia cambiaria
