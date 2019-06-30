@@ -113,9 +113,10 @@ abstract class PolizaService implements  LogUser{
         }.list([sort: 'fecha', order: 'asc'])
 
         polizas.each{ p ->
-            p.folio = - folio
+            p.folio = - p.folio
             p.save(flush: true)
         }
+
 
         int folio = 0
         polizas.each { p ->
