@@ -210,7 +210,8 @@ class VariacionCambiariaProc implements ProcesadorMultipleDePolizas {
         concat('201-0003-',x.cta_operativa_prov,'-0000') cta_proveedor,
         (case when (x.saldo*x.tc_ant) - (x.saldo*x.tc_var)<0 then  '701-0001-0000-0000' else '702-0004-0000-0000' end) cta_variacion,
         x.uuid,
-        x.rfc
+        x.rfc,
+         x.fecha_entrada
         FROM (
         SELECT c.id origen,P.id AS proveedor,P.nombre referencia2,'OFICINAS' AS sucursal
         ,concat(ifnull(c.serie,''),(case when c.serie is null or c.folio is null then '' else '-' end),ifnull(C.folio,'')) documento,C.fecha fecha_doc
@@ -224,8 +225,9 @@ class VariacionCambiariaProc implements ProcesadorMultipleDePolizas {
         ,c.total - ifnull((SELECT d.diferencia FROM cuenta_por_pagar d where d.id=c.id and d.diferencia_fecha <='@FECHA'),0.0)
         	- ifnull((SELECT d.apagar FROM requisicion_det d join requisicion r on(d.requisicion_id=r.id) where d.cxp_id=c.id and r.fecha_de_pago<='@FECHA'),0.0)
         	- ifnull((SELECT sum(d.importe) FROM aplicacion_de_pago d where d.cxp_id=c.id and d.fecha<='@FECHA'),0.0) as saldo
+        ,(select fecha_entrada from analisis_de_factura a where a.factura_id = c.id ) as fecha_entrada
         FROM cuenta_por_pagar C  JOIN proveedor p on(c.proveedor_id=p.id)         
-        WHERE  C.FECHA <= '@FECHA' AND C.MONEDA='USD'    and
+        WHERE   (select fecha_entrada from analisis_de_factura a where a.factura_id = c.id )  <= '@FECHA' AND C.MONEDA='USD'    and
         (c.total - ifnull((SELECT d.diferencia FROM cuenta_por_pagar d where d.id=c.id and d.diferencia_fecha <='@FECHA'),0.0)
         - ifnull((SELECT d.apagar FROM requisicion_det d join requisicion r on(d.requisicion_id=r.id) where d.cxp_id=c.id and r.fecha_de_pago<='@FECHA'),0.0)
         - ifnull((SELECT sum(d.importe) FROM aplicacion_de_pago d where d.cxp_id=c.id and d.fecha<='@FECHA'),0.0)  ) > 10  
