@@ -1,0 +1,7 @@
+import sx.contabilidad.SaldoDrillResult
+
+model {
+    SaldoDrillResult result
+}
+
+json g.render(result, [resolveTemplate: false])

@@ -18,9 +18,6 @@ import java.sql.SQLException
 @Component
 class ProvisionNominaProc implements  ProcesadorMultipleDePolizas, AsientoBuilder{
 
-    //@Autowired
-    //@Qualifier('inventariosProcGeneralesTask')
-
 
     @Override
     String definirConcepto(Poliza poliza) {
@@ -74,8 +71,6 @@ class ProvisionNominaProc implements  ProcesadorMultipleDePolizas, AsientoBuilde
 
         }
 
-
-        // poliza.refresh()
         return poliza
     }
 

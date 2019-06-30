@@ -10,9 +10,4 @@ json g.render(saldoPorCuentaContable, [resolveTemplate: false]){
     if(saldoPorCuentaContable.cuenta.padre){
         padre saldoPorCuentaContable.cuenta.padre.descripcion
     }
-    /*
-    if(saldoPorCuentaContable.cuenta.padre) {
-        descripcion  "${saldoPorCuentaContable.cuenta.padre.descripcion} / ${saldoPorCuentaContable.cuenta.descripcion}"
-    }
-    */
 }

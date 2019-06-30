@@ -30,6 +30,9 @@ class SaldoPorCuentaContable {
 
     Date cierre
 
+    List<SaldoPorCuentaContable> children = []
+    Set<PolizaDet> movimientos = []
+
     Date dateCreated
     Date lastUpdated
 
@@ -49,5 +52,7 @@ class SaldoPorCuentaContable {
     static mapping ={
         cierre type: 'date'
     }
+
+    static transients = ['children', 'movimientos']
 
 }
