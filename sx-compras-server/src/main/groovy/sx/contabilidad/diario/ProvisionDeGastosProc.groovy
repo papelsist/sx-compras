@@ -38,10 +38,11 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
         List<RequisicionDet> requisiciones = RequisicionDet
                 .findAll("from RequisicionDet d where date(d.cxp.fecha) = ? and d.cxp.tipo = 'GASTOS'",
                 [poliza.fecha])
+        log.info('Partidas de requisicion: {}', requisiciones.size())
         requisiciones.each { req ->
             CuentaPorPagar cxp = req.cxp
             CuentaOperativaProveedor co = CuentaOperativaProveedor.findByProveedor(cxp.proveedor)
-            // log.info('GASTO COP: {}', co)
+            //log.info('GASTO COP: {}', co)
             if(co.tipo == 'GASTOS' || co.tipo == 'RELACIONADAS'){
                 cargoGasto(poliza, cxp, 'OFICINAS')
                 abonoProveedorGasto(poliza, cxp, 'OFICINAS')
@@ -54,7 +55,7 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
         rembolsos.each { r ->
             CuentaPorPagar cxp = r.cxp
             CuentaOperativaProveedor co = CuentaOperativaProveedor.findByProveedor(cxp.proveedor)
-            // log.info('REMBOLSO: {} COP: {}', r.rembolso.id, co)
+            // log.info('REMBOLSO: {} COP: {} {}', r.rembolso.id, co, r.comentario)
             if(co.tipo !='FLETES' &&  co.tipo !='SEGUROS'){
                 String suc = r.rembolso.sucursal.nombre
                 cargoGasto(poliza, cxp, suc)
@@ -69,9 +70,18 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
         rembolsosNoDeducibles.each { r ->
 
             if(incluir.contains(r.rembolso.concepto)) {
-                // log.info('REMBOLSO: {} CONCEPTO: {} ', r.rembolso.id, r.rembolso.concepto)
-                cargoNoDeducible(poliza, r)
-                abonoNoDeducible(poliza, r)
+                Proveedor proveedor = r.rembolso.proveedor
+                if(proveedor) {
+                    CuentaOperativaProveedor co = CuentaOperativaProveedor.findByProveedor(proveedor)
+                    // log.info('Proveedor: {}', co)
+                    if(co.tipo != 'SEGUROS') {
+                        cargoNoDeducible(poliza, r)
+                        abonoNoDeducible(poliza, r)
+                    }
+                } else {
+                    cargoNoDeducible(poliza, r)
+                    abonoNoDeducible(poliza, r)
+                }
             }
 
         }
@@ -193,7 +203,7 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
 
         if(det.rembolso.proveedor && det.rembolso.proveedor.rfc == 'AEC810901298') {
 
-            cv = "600-0014-log.${suc.clave.padLeft(4, '0')}-0000"
+            cv = "600-0014-${suc.clave.padLeft(4, '0')}-0000"
             if(det.comentario && det.comentario.startsWith('118')) {
                 def clave = det.comentario.replaceAll('118', '119')
                 cv = clave

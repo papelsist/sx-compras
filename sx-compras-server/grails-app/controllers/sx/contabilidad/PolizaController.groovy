@@ -170,6 +170,17 @@ class PolizaController extends RestfulController<Poliza> {
         ProrratearCommand command = new ProrratearCommand()
         command.properties = getObjectToBind()
         log.info('Prorratear poliza {} con: {}', poliza.id, command)
+        if(command.polizaDetId) {
+            PolizaDet found = poliza.partidas.find {it.id == command.polizaDetId}
+            if(found){
+                log.info('Reclasificar partida: {} Debe: {} Haber: {}', found.cuenta, found.debe, found.haber)
+                command.data.each {
+                    log.info("{}  {}",it.key, it.value )
+                }
+
+            }
+        }
+
         respond poliza, [view: 'show']
     }
 
@@ -237,6 +248,6 @@ class PolizaCreateCommand implements  WebDataBinding {
 
 @ToString
 class ProrratearCommand implements WebDataBinding {
-    PolizaDet polizaDet
-    List data
+    Long polizaDetId
+    Map data
 }
