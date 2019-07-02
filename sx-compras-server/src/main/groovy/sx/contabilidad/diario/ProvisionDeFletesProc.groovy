@@ -136,7 +136,8 @@ class ProvisionDeFletesProc implements  ProcesadorDePoliza, AsientoBuilder {
             }
 
             det.entidad = 'RembolsoDet'
-            det.sucursal = 'OFICINAS'
+            //det.sucursal = 'OFICINAS'
+            det.sucursal = sucursal.nombre
             poliza.addToPartidas(det)
         }
     }
