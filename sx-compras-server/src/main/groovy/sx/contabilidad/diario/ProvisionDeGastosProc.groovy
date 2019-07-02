@@ -38,10 +38,11 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
         List<RequisicionDet> requisiciones = RequisicionDet
                 .findAll("from RequisicionDet d where date(d.cxp.fecha) = ? and d.cxp.tipo = 'GASTOS'",
                 [poliza.fecha])
+        log.info('Partidas de requisicion: {}', requisiciones.size())
         requisiciones.each { req ->
             CuentaPorPagar cxp = req.cxp
             CuentaOperativaProveedor co = CuentaOperativaProveedor.findByProveedor(cxp.proveedor)
-            // log.info('GASTO COP: {}', co)
+            //log.info('GASTO COP: {}', co)
             if(co.tipo == 'GASTOS' || co.tipo == 'RELACIONADAS'){
                 cargoGasto(poliza, cxp, 'OFICINAS')
                 abonoProveedorGasto(poliza, cxp, 'OFICINAS')
@@ -54,7 +55,7 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
         rembolsos.each { r ->
             CuentaPorPagar cxp = r.cxp
             CuentaOperativaProveedor co = CuentaOperativaProveedor.findByProveedor(cxp.proveedor)
-            log.info('REMBOLSO: {} COP: {}', r.rembolso.id, co)
+            // log.info('REMBOLSO: {} COP: {} {}', r.rembolso.id, co, r.comentario)
             if(co.tipo !='FLETES' &&  co.tipo !='SEGUROS'){
                 String suc = r.rembolso.sucursal.nombre
                 cargoGasto(poliza, cxp, suc)
@@ -69,9 +70,18 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
         rembolsosNoDeducibles.each { r ->
 
             if(incluir.contains(r.rembolso.concepto)) {
-                log.info('REMBOLSO: {} CONCEPTO: {} ', r.rembolso.id, r.rembolso.concepto)
-                cargoNoDeducible(poliza, r)
-                abonoNoDeducible(poliza, r)
+                Proveedor proveedor = r.rembolso.proveedor
+                if(proveedor) {
+                    CuentaOperativaProveedor co = CuentaOperativaProveedor.findByProveedor(proveedor)
+                    // log.info('Proveedor: {}', co)
+                    if(co.tipo != 'SEGUROS') {
+                        cargoNoDeducible(poliza, r)
+                        abonoNoDeducible(poliza, r)
+                    }
+                } else {
+                    cargoNoDeducible(poliza, r)
+                    abonoNoDeducible(poliza, r)
+                }
             }
 
         }
@@ -90,12 +100,24 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
         """
 
         def cfdi = cxp.comprobanteFiscal
-        // log.info('CXP:{} Folio:{} CfdiId:{}', cxp.nombre, cxp.folio, cxp.comprobanteFiscal.id)
+        log.info('CXP:{} Folio:{} CfdiId:{}', cxp.nombre, cxp.folio, cxp.comprobanteFiscal.id)
+
+        if(!cfdi.conceptos) {
+            throw new RuntimeException("XML sin partidas UUID: ${cfdi.uuid}  CFDI_ID: ${ cfdi.id}")
+        }
+
         def gasto = cfdi.conceptos.first()
+
+        if(!gasto.conceptos) {
+            throw new RuntimeException("XML sin CONCEPTO DE GASTOS UUID: ${cfdi.uuid}  CFDI_ID: ${ cfdi.id}")
+        }
         def con = gasto.conceptos.first()
         validarCuentaContable(con)
-        PolizaDet det = build(cxp, con.cuentaContable, desc, con.sucursal.nombre,cfdi.subTotal)
+        def impt = cfdi.subTotal - (cfdi.descuento?: 0.0)
+        PolizaDet det = build(cxp, con.cuentaContable, desc, con.sucursal.nombre, impt)
         poliza.addToPartidas(det)
+
+
         /*
         cfdi.conceptos.each { gasto ->
             gasto.conceptos.each { con ->
@@ -157,9 +179,7 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
         if(cv) {
             cuenta = buscarCuenta(cv)
         } else {
-            log.info('Armando cuenta: ')
-            
-                cuenta = buscarCuenta('205-0006-0999-0000')
+            cuenta = buscarCuenta('205-0006-0999-0000')
             
         }
 
@@ -179,6 +199,16 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
             Docto:${det.documentoSerie?:''} ${det.documentoFolio?:''} (${det.documentoFecha?.format('dd/MM/yyyy')})
         """
         def cv = "600-0031-${suc.clave.padLeft(4, '0')}-0000"
+
+
+        if(det.rembolso.proveedor && det.rembolso.proveedor.rfc == 'AEC810901298') {
+
+            cv = "600-0014-${suc.clave.padLeft(4, '0')}-0000"
+            if(det.comentario && det.comentario.startsWith('118')) {
+                def clave = det.comentario.replaceAll('118', '119')
+                cv = clave
+            }
+        }
         CuentaContable cta = buscarCuenta(cv)
 
         PolizaDet polizaDet = new PolizaDet()
@@ -207,6 +237,9 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
             Dcto:${det.documentoSerie?:''} ${det.documentoFolio?:''} (${det.documentoFecha?.format('dd/MM/yyyy')})
         """
         CuentaContable  cta = buscarCuenta("205-0006-0999-0000")
+        if(det.rembolso.proveedor && det.rembolso.proveedor.rfc == 'AEC810901298') {
+            cta = buscarCuenta("107-0009-0011-0000")
+        }
 
         PolizaDet polizaDet = new PolizaDet()
 

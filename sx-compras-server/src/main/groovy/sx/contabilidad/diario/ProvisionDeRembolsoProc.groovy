@@ -36,7 +36,7 @@ class ProvisionDeRembolsoProc implements  ProcesadorDePoliza, AsientoBuilder {
     def generarAsientos(Poliza poliza, Map params) {
 
         List<RembolsoDet> rembolsos = RembolsoDet
-                .findAll("from RembolsoDet d where date(d.rembolso.fechaDePago) = ?  and d.rembolso.concepto = 'REMBOLSO'",
+                .findAll("from RembolsoDet d where date(d.rembolso.egreso.fecha) = ?  and d.rembolso.concepto = 'REMBOLSO' order by d.rembolso.egreso.referencia",
                 [poliza.fecha])
 
         rembolsos.each { r ->
@@ -44,7 +44,7 @@ class ProvisionDeRembolsoProc implements  ProcesadorDePoliza, AsientoBuilder {
             if (cxp){
                 CuentaOperativaProveedor co = CuentaOperativaProveedor.findByProveedor(cxp.proveedor)
                 String suc = r.rembolso.sucursal.nombre
-                cargoGasto(poliza, cxp, suc)
+                cargoGasto(poliza, cxp, suc, r)
                 // log.info('REMBOLSO {} : {}', r.rembolso.concepto, r.rembolso.id)
                 abonoProveedor(poliza, cxp, r)
             }else{
@@ -59,11 +59,11 @@ class ProvisionDeRembolsoProc implements  ProcesadorDePoliza, AsientoBuilder {
     }
 
 
-    def cargoGasto(Poliza poliza, CuentaPorPagar cxp, String suc) {
+    def cargoGasto(Poliza poliza, CuentaPorPagar cxp, String suc, RembolsoDet r) {
 
         String desc = """
             F:${cxp.serie?:''} ${cxp.folio} (${cxp.fecha.format('dd/MM/yyyy')})
-            ${cxp.tipoDeCambio > 1.0 ? 'T.C:' + cxp.tipoDeCambio: ''} 
+            ${cxp.tipoDeCambio > 1.0 ? 'T.C:' + cxp.tipoDeCambio: ''}
         """
 
         def cfdi = cxp.comprobanteFiscal
@@ -71,7 +71,9 @@ class ProvisionDeRembolsoProc implements  ProcesadorDePoliza, AsientoBuilder {
         def gasto = cfdi.conceptos.first()
         def con = gasto.conceptos.first()
         validarCuentaContable(con)
-        PolizaDet det = build(cxp, con.cuentaContable, desc, con.sucursal.nombre,cfdi.subTotal)
+        def impt = cfdi.subTotal - (cfdi.descuento?: 0.0)
+        PolizaDet det = build(cxp, con.cuentaContable, desc, con.sucursal.nombre, impt)
+        // PolizaDet det = build(cxp, con.cuentaContable, desc, con.sucursal.nombre,cfdi.subTotal)
         poliza.addToPartidas(det)
         /*
         cfdi.conceptos.each { gasto ->
@@ -112,7 +114,7 @@ class ProvisionDeRembolsoProc implements  ProcesadorDePoliza, AsientoBuilder {
         Sucursal sucursal = rembolsoDet.rembolso.sucursal
 
         String desc = """
-            F:${cxp.serie?:''} ${cxp.folio?:''} (${cxp.fecha.format('dd/MM/yyyy')})
+            F:${cxp.serie?:''} ${cxp.folio?:''} (${cxp.fecha.format('dd/MM/yyyy')}) CH: ${rembolsoDet.rembolso.egreso.referencia}
         """
         CuentaContable cuenta
         String cv = resolverClaveDeCuenta(cxp)
@@ -133,6 +135,7 @@ class ProvisionDeRembolsoProc implements  ProcesadorDePoliza, AsientoBuilder {
         Sucursal suc = det.rembolso.sucursal
         String desc = """
             F:${det.documentoSerie?:''} ${det.documentoFolio?:''} (${det.documentoFecha?.format('dd/MM/yyyy')})
+            CH: ${det.rembolso?.egreso?.referencia}
         """
         CuentaContable  cta = buscarCuenta("101-0002-${suc.clave.padLeft(4, '0')}-0000")
         // log.info("cta: {} sucursal: {} ",cta,suc )
@@ -162,7 +165,12 @@ class ProvisionDeRembolsoProc implements  ProcesadorDePoliza, AsientoBuilder {
             F:${det.documentoSerie?:''} ${det.documentoFolio?:''} (${det.documentoFecha?.format('dd/MM/yyyy')})
         """
         def cv = "600-0031-${suc.clave.padLeft(4, '0')}-0000"
+
+        log.info('Prov Imorte: {} {} {} ID: {}', det.apagar.abs(), det.concepto, det.comentario, det.rembolso.id)
         CuentaContable cta = buscarCuenta(cv)
+        if(det.comentario && det.comentario.startsWith('107')) {
+            cta = buscarCuenta(det.comentario)
+        }
 
         PolizaDet polizaDet = new PolizaDet()
 

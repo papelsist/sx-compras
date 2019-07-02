@@ -49,6 +49,9 @@ class ProvisionDeFletesProc implements  ProcesadorDePoliza, AsientoBuilder {
                         abonoProveedorGastoRembolso(poliza, cxp, r)
                     }
                 }
+            } else {
+                // log.info('Abono a {}, Cta:{} Imp: {}',r.nombre,  r.comentario, r.apagar)
+                abonoProveedorDescuentos(poliza, r)
             }
         }
         poliza.validate()
@@ -102,8 +105,40 @@ class ProvisionDeFletesProc implements  ProcesadorDePoliza, AsientoBuilder {
         cuenta = buscarCuenta(cv)
    
 
-        BigDecimal total = cxp.total
+        BigDecimal total = rembolsoDet.apagar // cxp.total
         poliza.addToPartidas(build(cxp,cuenta,desc, sucursal.nombre, 0.0, total ))
+    }
+
+    def abonoProveedorDescuentos(Poliza poliza, RembolsoDet rembolsoDet) {
+
+        Sucursal sucursal = rembolsoDet.rembolso.sucursal
+
+        String desc = """
+            ${rembolsoDet.nombre} F: ${rembolsoDet.documentoFolio?: ''}
+        """
+        CuentaContable cta = CuentaContable.where{clave == rembolsoDet.comentario}.find()
+        if(cta) {
+            BigDecimal total = rembolsoDet.apagar
+            PolizaDet det = new PolizaDet()
+            det.with {
+                cuenta = cta
+                concepto = cta.descripcion
+                descripcion = desc
+                asiento =  "PROVISION_DE_FLETE"
+                referencia = rembolsoDet.rembolso.nombre
+                referencia2 = rembolsoDet.rembolso.nombre
+                origen =  rembolsoDet.id
+                documento =  rembolsoDet.rembolso.id
+                documentoTipo =  rembolsoDet.nombre
+                documentoFecha =  rembolsoDet.rembolso.fecha
+                debe = 0.0
+                haber = total
+            }
+
+            det.entidad = 'RembolsoDet'
+            det.sucursal = 'OFICINAS'
+            poliza.addToPartidas(det)
+        }
     }
 
 
