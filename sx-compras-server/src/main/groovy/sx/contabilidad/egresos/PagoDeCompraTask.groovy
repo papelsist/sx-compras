@@ -47,13 +47,15 @@ class PagoDeCompraTask implements  AsientoBuilder, EgresoTask {
        
         def cheque = Cheque.findByEgreso(r.egreso)
 
-        log.info("Ch fecha: ${cheque.fecha.format('dd/MM/yyyy')}  fecha Transito ${cheque.fechaTransito.format('dd/MM/yyyy')} ")    
+     
         
         if(cheque && cheque.fecha.format('dd/MM/yyyy') == cheque.fechaTransito.format('dd/MM/yyyy') ){
+            log.info("Si tiene cheque")
             registrarRetenciones(poliza, r) 
             registrarVariacionCambiariaIva(poliza, r)
         }
         if( !cheque ){
+            log.info("No tiene Cheque")
             registrarRetenciones(poliza, r) 
             registrarVariacionCambiariaIva(poliza, r)
         }

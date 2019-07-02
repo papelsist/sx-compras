@@ -38,10 +38,8 @@ class MorrallaTask implements  AsientoBuilder{
             ajustarConcepto(poliza, morralla)
             morralla.partidas.each{salida ->
                 def suc = salida.sucursal.clave.padLeft(4,'0')
-                List<Morralla> list = Morralla.executeQuery("from Morralla where date(fecha) = date(?) and  sucursal = ? and tipo ='SALIDA' ",[salida.fecha,salida.sucursal])
-                log.info('List: {}', list)
-                if(list) {
-                    Morralla entrada = list.get(0)
+              //  List<Morralla> list = Morralla.executeQuery("from Morralla where date(fecha) = date(?) and  sucursal = ? and tipo ='SALIDA' ",[salida.fecha,salida.sucursal])
+              //  log.info('List: {}', list)
                     String ctaCaja = "101-0001-${suc}-0000"
                     String ctaValores = "107-0006-${suc}-0000"
                     String ctaBanco = "102-0001-0002-0000"
@@ -61,13 +59,16 @@ class MorrallaTask implements  AsientoBuilder{
                             metodoDePago: '03',
                             beneficiario: morralla.proveedor.nombre,
                             bancoOrigen: egreso.cuenta.bancoSat.clave,
-                            // bancoDestino: egreso.
-                           // ctaOrigen = egreso.
-                            //ctaDestino = row.ctaDestino
-                            // rfc:rfc,
-                            //referenciaBancaria: egreso.referencia
-
                     ]
+
+                String desc = generarDescripcion(row, morralla.proveedor.nombre, salida.tipo)
+                poliza.addToPartidas(mapRow(ctaValores,desc,row,salida.importe))
+                poliza.addToPartidas(mapRow(ctaBanco,desc,row,0.00,salida.importe))
+                poliza.addToPartidas(mapRow(ctaCaja,desc,row,salida.importe))
+                 poliza.addToPartidas(mapRow(ctaValores,desc,row,0.00,salida.importe))
+                /*
+                if (list){
+                    Morralla entrada = list.get(0)
                     Map rowEnt = [
                             asiento: "CAJA MORRALLA ",
                             referencia: morralla.proveedor.nombre,
@@ -80,24 +81,9 @@ class MorrallaTask implements  AsientoBuilder{
                             montoTotal: entrada.importe,
                             moneda: 'MXN',
                     ]
-                    String desc = generarDescripcion(row, morralla.proveedor.nombre, salida.tipo)
-                    poliza.addToPartidas(mapRow(ctaValores,desc,row,salida.importe))
-                    poliza.addToPartidas(mapRow(ctaCaja,generarDescripcion(row, morralla.proveedor.nombre, entrada.tipo) ,rowEnt,0.00,entrada.importe))
-                    poliza.addToPartidas(mapRow(ctaCaja,desc,row,salida.importe))
-                    poliza.addToPartidas(mapRow(ctaBanco,desc,row,0.00,salida.importe))
-
-                }
-                /*
-                det.montoTotalPago = row.montoTotalPago
-        det.metodoDePago = row.metodoDePago
-        det.beneficiario = row.beneficiario
-        det.bancoOrigen = row.bancoOrigen
-        det.bancoDestino = row.bancoDestino
-        det.ctaOrigen = row.ctaOrigen
-        det.ctaDestino = row.ctaDestino
-        det.rfc = row.rfc
-        det.referenciaBancaria = row.referenciaBancaria
-                 */
+                    
+                   // poliza.addToPartidas(mapRow(ctaCaja,generarDescripcion(row, morralla.proveedor.nombre, entrada.tipo) ,rowEnt,0.00,entrada.importe))s 
+                }*/
 
             } 
         }

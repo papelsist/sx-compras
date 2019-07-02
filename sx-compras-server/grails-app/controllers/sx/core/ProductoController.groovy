@@ -44,6 +44,7 @@ class ProductoController extends RestfulController<Producto> {
             query = query.where {deLinea == deLinea}
         }
         List<Producto> res =  query.list(params)
+
         respond res
     }
 

@@ -32,6 +32,10 @@ class TesoreriaProc implements  ProcesadorDePoliza{
     @Qualifier('movimientoTesoreriaTask')
     MovimientoTesoreriaTask movimientoTesoreriaTask
 
+    @Autowired
+    @Qualifier('retornoMorrallaTask')
+    RetornoMorrallaTask retornoMorrallaTask
+
     @Override
     String definirConcepto(Poliza poliza) {
         return "Tesoreria ${poliza.fecha.format('dd/MM/yyyy')}"
@@ -45,6 +49,7 @@ class TesoreriaProc implements  ProcesadorDePoliza{
        // morrallaTask.generarAsientos(poliza, [:])
        // inversionTask.generarAsientos(poliza, [:])
         movimientoTesoreriaTask.generarAsientos(poliza, [:])
+        retornoMorrallaTask.generarAsientos(poliza, [:])
         poliza = poliza.save flush: true
         poliza.refresh()
         return poliza

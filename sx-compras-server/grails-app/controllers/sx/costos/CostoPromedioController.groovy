@@ -134,10 +134,8 @@ class CostoPromedioController extends RestfulController<CostoPromedio> {
         Periodo periodo  = (Periodo)params.periodo
         repParams.FECHA_INI = periodo.fechaInicial
         repParams.FECHA_FIN = periodo.fechaFinal
-
         Proveedor proveedor = Proveedor.get(params.proveedor.toString())
         repParams.PROVEEDOR = proveedor.clave
-
         def pdf =  reportService.run('FacturasAnalizadasPorProveedor.jrxml', repParams)
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'FacturasAnalizadasPorProveedor.pdf')
     }
@@ -145,7 +143,6 @@ class CostoPromedioController extends RestfulController<CostoPromedio> {
     def movimientosCosteadosDeDocumentos(MovimientosCosteadosCommand command) {
 
         Map repParams = [:]
-
 
         repParams.FECHA_INICIAL = command.fechaIni
         repParams.FECHA_FINAL = command.fechaFin
