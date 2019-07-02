@@ -49,8 +49,13 @@ class ComisionBancariaTask implements  AsientoBuilder{
                     String desc = generarDescripcion(row, mov.concepto)
                     String ctaBanco = "102-${mov.moneda.currencyCode == 'MXN' ? '0001': '0002'}-${mov.cuenta.subCuentaOperativa}-0000"
                    
+                    
+
                     if(mov.tipo =='COMISION' ){
                         String ctaComision ="107-0009-${mov.cuenta.subCuentaOperativa}-0000"
+                        if (mov.cuenta.moneda.currencyCode == 'USD') {
+                            ctaComision = "102-0002-0008-0000"
+                        }   
                         poliza.addToPartidas(mapRow(ctaComision,desc,row,mov.importe))
                         poliza.addToPartidas(mapRow(ctaBanco,desc,row,0.00,mov.importe))
                     }

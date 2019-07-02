@@ -11,7 +11,7 @@ import sx.contabilidad.*
 @Component
 class TesoreriaProc implements  ProcesadorDePoliza{
 
-/*
+
     @Autowired
     @Qualifier('traspasoTask')
     TraspasoTask traspasoTask
@@ -27,7 +27,7 @@ class TesoreriaProc implements  ProcesadorDePoliza{
     @Autowired
     @Qualifier('inversionTask')
     InversionTask inversionTask
-*/
+
     @Autowired
     @Qualifier('movimientoTesoreriaTask')
     MovimientoTesoreriaTask movimientoTesoreriaTask
@@ -44,11 +44,12 @@ class TesoreriaProc implements  ProcesadorDePoliza{
     @Override
     Poliza recalcular(Poliza poliza) {
         poliza.partidas.clear()
-       // traspasoTask.generarAsientos(poliza, [:])
-       // comisionBancariaTask.generarAsientos(poliza, [:])
-       // morrallaTask.generarAsientos(poliza, [:])
-       // inversionTask.generarAsientos(poliza, [:])
+        
+        traspasoTask.generarAsientos(poliza, [:])
+        inversionTask.generarAsientos(poliza, [:])
+        comisionBancariaTask.generarAsientos(poliza, [:])
         movimientoTesoreriaTask.generarAsientos(poliza, [:])
+        morrallaTask.generarAsientos(poliza, [:])
         retornoMorrallaTask.generarAsientos(poliza, [:])
         poliza = poliza.save flush: true
         poliza.refresh()
