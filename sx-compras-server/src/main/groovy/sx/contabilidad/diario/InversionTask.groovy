@@ -82,7 +82,7 @@ class InversionTask implements  AsientoBuilder{
             }
             String ctaBanco = "${bco}-${mov.moneda.currencyCode == 'MXN' ? '0001': '0002'}-${mov.cuenta.subCuentaOperativa}-0000"
             Map row = [
-                    asiento: "INVERSION ",
+                    asiento: "INVERSION",
                     referencia: mov.conceptoReporte,
                     referencia2: mov.comentario,
                     origen: inv.id,
@@ -95,11 +95,11 @@ class InversionTask implements  AsientoBuilder{
                 ] 
             String desc = generarDescripcion(row, inv.tasa)  
             if(mov.concepto == 'DEPOSITO'){
-                poliza.addToPartidas(mapRow(ctaBanco,desc,row,mov.importe))
+                poliza.addToPartidas(mapRow(ctaBanco,desc,row,mov.importe - inv.rendimientoReal))
             }
             if(mov.concepto == 'RETIRO'){
-                poliza.addToPartidas(mapRow(ctaBanco,desc,row,0.00,mov.importe))
-                poliza.addToPartidas(mapRow('702-0001-0000-0000',desc,row,0.00,inv.rendimientoReal))
+                poliza.addToPartidas(mapRow(ctaBanco,desc,row,0.00,mov.importe  ))
+               // poliza.addToPartidas(mapRow('702-0001-0000-0000',desc,row,0.00,inv.rendimientoReal))
             }   
         }  
     }
@@ -122,13 +122,13 @@ class InversionTask implements  AsientoBuilder{
                     moneda: inv.moneda, 
                 ] 
         String desc = generarDescripcion(row, inv.tasa)  
-        poliza.addToPartidas(mapRow(ctaDestino,desc,row,rendimientoNeto)) 
+        poliza.addToPartidas(mapRow(ctaDestino,desc,row,inv.rendimientoReal)) 
         poliza.addToPartidas(mapRow('750-0002-0000-0000',desc,row,inv.isrImporte))
-        poliza.addToPartidas(mapRow('702-0001-0000-0000',desc,row,0.00,inv.rendimientoReal))
+        poliza.addToPartidas(mapRow('702-0001-0000-0000',desc,row,0.00,inv.rendimientoReal+inv.isrImporte))
         row = [
                     asiento: "INVERSION RETORNO",
-                    referencia: "Retorno Inversion de : ${inv.cuentaDestino.descripcion} (${inv.cuentaDestino.numero})",
-                    referencia2: "Retorno Inversion de : ${inv.cuentaDestino.descripcion} (${inv.cuentaDestino.numero})",
+                    referencia: "Retorno Inversion : ${inv.cuentaDestino.descripcion} (${inv.cuentaDestino.numero})",
+                    referencia2: "Retorno Inversion : ${inv.cuentaDestino.descripcion} (${inv.cuentaDestino.numero})",
                     origen: inv.id,
                     documento: inv.id,
                     documentoTipo: 'TES',
@@ -138,11 +138,11 @@ class InversionTask implements  AsientoBuilder{
                     moneda: inv.moneda, 
                 ]  
         desc = generarDescripcion(row, inv.tasa)  
-        poliza.addToPartidas(mapRow(ctaOrigen,desc,row,inv.importe + rendimientoNeto))   
+        poliza.addToPartidas(mapRow(ctaOrigen,desc,row,inv.importe + inv.rendimientoReal))   
         row = [
                     asiento: "INVERSION RETORNO ",
-                    referencia: "Retorno Inversion a : ${inv.cuentaOrigen.descripcion} (${inv.cuentaOrigen.numero})",
-                    referencia2: "Retorno Inversion a : ${inv.cuentaOrigen.descripcion} (${inv.cuentaOrigen.numero})",
+                    referencia: "Retorno Inversion : ${inv.cuentaOrigen.descripcion} (${inv.cuentaOrigen.numero})",
+                    referencia2: "Retorno Inversion : ${inv.cuentaOrigen.descripcion} (${inv.cuentaOrigen.numero})",
                     origen: inv.id,
                     documento: inv.id,
                     documentoTipo: 'TES',
@@ -152,7 +152,7 @@ class InversionTask implements  AsientoBuilder{
                     moneda: inv.moneda, 
                 ] 
         desc = generarDescripcion(row, inv.tasa)  
-        poliza.addToPartidas(mapRow(ctaDestino,desc,row,0.00,inv.importe + rendimientoNeto))
+        poliza.addToPartidas(mapRow(ctaDestino,desc,row,0.00,inv.importe + inv.rendimientoReal))
          
     }
 
