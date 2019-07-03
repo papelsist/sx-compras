@@ -67,23 +67,28 @@ class ProvisionDeRembolsoProc implements  ProcesadorDePoliza, AsientoBuilder {
         """
 
         def cfdi = cxp.comprobanteFiscal
-        // log.info('CXP:{} Folio:{} CfdiId:{}', cxp.nombre, cxp.folio, cxp.comprobanteFiscal.id)
+
+        /*
         def gasto = cfdi.conceptos.first()
         def con = gasto.conceptos.first()
         validarCuentaContable(con)
         def impt = cfdi.subTotal - (cfdi.descuento?: 0.0)
         PolizaDet det = build(cxp, con.cuentaContable, desc, con.sucursal.nombre, impt)
-        // PolizaDet det = build(cxp, con.cuentaContable, desc, con.sucursal.nombre,cfdi.subTotal)
         poliza.addToPartidas(det)
-        /*
-        cfdi.conceptos.each { gasto ->
-            gasto.conceptos.each { con ->
-                validarCuentaContable(con)
-                PolizaDet det = build(cxp, con.cuentaContable, desc, con.sucursal.nombre, con.importe)
-                poliza.addToPartidas(det)
-            }
-        }
         */
+
+        def gasto = cfdi.conceptos.first()
+        def cta = CuentaContable.where{clave: '600-0004-0000-0000'}.find()
+        def sucursal = Sucursal.where{nombre == 'OFICINAS'}.find()
+        if(gasto.conceptos) {
+            def con = gasto.conceptos.first()
+            validarCuentaContable(con)
+            cta = con.cuentaContable
+            sucursal = con.sucursal
+        }
+        PolizaDet det = build(cxp, cta, desc, sucursal.nombre, cfdi.subTotal)
+        poliza.addToPartidas(det)
+
         def impuestoNeto = (cxp.impuestoTrasladado ?: 0.00) - (cxp.impuestoRetenidoIva ?: 0.00)
 
         CuentaContable ivaPendiente = buscarCuenta('118-0002-0000-0000')

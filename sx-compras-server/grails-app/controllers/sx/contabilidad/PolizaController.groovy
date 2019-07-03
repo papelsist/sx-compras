@@ -3,6 +3,7 @@ package sx.contabilidad
 import grails.compiler.GrailsCompileStatic
 import grails.core.GrailsApplication
 import grails.gorm.DetachedCriteria
+import grails.gorm.transactions.Transactional
 import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.*
 import grails.transaction.NotTransactional
@@ -78,7 +79,9 @@ class PolizaController extends RestfulController<Poliza> {
         log.info("Generando poliza(s) con procesador: {}", pname)
         ProcesadorDePoliza procesador = (ProcesadorDePoliza)grailsApplication.mainContext.getBean(pname)
         poliza.concepto = procesador.definirConcepto(poliza)
-
+        if(poliza.subtipo == 'CIERRE_MENSUAL') {
+            poliza.manual = true
+        }
         poliza = polizaService.salvarPolza(poliza)
         respond poliza
 
@@ -123,6 +126,45 @@ class PolizaController extends RestfulController<Poliza> {
         poliza = polizaService.updatePoliza(poliza)
         respond poliza, [status: OK, view:'show']
 
+    }
+
+    @Transactional
+    @CompileDynamic
+    def copiar() {
+        Poliza poliza = Poliza.get(params.id)
+        if (poliza == null) {
+            notFound()
+            return
+        }
+
+        Poliza target = new Poliza()
+        target.tipo = poliza.tipo
+        target.subtipo = poliza.subtipo
+        target.manual = poliza.manual
+        target.concepto = poliza.concepto
+
+        target.fecha = Periodo.finDeMes(poliza.fecha) + 1
+        target.ejercicio = poliza.ejercicio
+        target.mes = poliza.mes + 1
+
+        if(poliza.mes == 12) {
+            target.mes = 1
+            target.ejercicio = poliza.ejercicio + 1
+        }
+
+
+
+        poliza.partidas.each { source ->
+            PolizaDet det = new PolizaDet()
+            det.properties = source.properties
+            det.poliza = null
+            target.addToPartidas(det)
+        }
+        target.debe =  target.partidas.sum 0.0, {it.debe}
+        target.haber = target.partidas.sum 0.0, {it.haber}
+        target = polizaService.salvarPolza(target)
+
+        respond target
     }
 
     @CompileDynamic
@@ -271,11 +313,13 @@ class PolizaCreateCommand implements  WebDataBinding {
     Integer mes
     String tipo
     String subtipo
+    String concepto
     Integer folio
     Date fecha
 
     static constraints = {
         importFrom Poliza
+        concepto nullable: true
     }
 
 }

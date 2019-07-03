@@ -112,6 +112,14 @@ class Periodo implements Comparable<Periodo>, WebDataBinding {
         return cal.getTime()
     }
 
+	static Date finDeMes(Date fecha) {
+		Calendar cal=Calendar.getInstance()
+		cal.setTime(fecha)
+        int last=cal.getActualMaximum(Calendar.DAY_OF_MONTH)
+        cal.set(Calendar.DATE,last)
+		return cal.getTime()
+	}
+
 	public static Periodo getPeriodoEnUnMes(int mes,int ano){
 		Calendar cal=Calendar.getInstance()
 		cal.clear()

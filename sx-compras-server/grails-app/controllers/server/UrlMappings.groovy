@@ -275,6 +275,7 @@ class UrlMappings {
         "/api/contabilidad/polizas/generarComplementos/$id"(controller: 'poliza', action: 'generarComplementos', method: 'PUT')
         "/api/contabilidad/polizas/generarFolios/$subtipo/$ejercicio/$mes"(controller: 'poliza', action: 'generarFolios', method: 'PUT')
         "/api/contabilidad/polizas/prorratearPartida/$id"(controller: 'poliza', action: 'prorratearPartida', method: 'PUT')
+        "/api/contabilidad/polizas/copiar/$id"(controller: 'poliza', action: 'copiar', method: 'POST')
 
         "/api/contabilidad/saldos"(resources: 'saldoPorCuentaContable', excludes: ['create', 'edit', 'patch'])
         "/api/contabilidad/saldos/actualizar/$ejercicio/$mes"(controller: 'saldoPorCuentaContable', action: 'actualizarSaldos', method: 'PUT')
