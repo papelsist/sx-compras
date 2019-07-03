@@ -11,6 +11,7 @@ import groovy.transform.CompileDynamic
 import groovy.transform.ToString
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.exception.ExceptionUtils
+import sx.core.Sucursal
 import sx.reports.ReportService
 import sx.utils.Periodo
 
@@ -169,19 +170,52 @@ class PolizaController extends RestfulController<Poliza> {
         }
         ProrratearCommand command = new ProrratearCommand()
         command.properties = getObjectToBind()
-        log.info('Prorratear poliza {} con: {}', poliza.id, command)
-        if(command.polizaDetId) {
-            PolizaDet found = poliza.partidas.find {it.id == command.polizaDetId}
-            if(found){
-                log.info('Reclasificar partida: {} Debe: {} Haber: {}', found.cuenta, found.debe, found.haber)
-                command.data.each {
-                    log.info("{}  {}",it.key, it.value )
-                }
 
+        log.info('Prorratear poliza {} con: {}', poliza.id, command)
+
+        if(command.polizaDetId && command.data) {
+            PolizaDet found = poliza.partidas.find {it.id == command.polizaDetId}
+            int index = poliza.partidas.findIndexOf {it.id == command.polizaDetId}
+            if(found){
+                command.data.each {
+                    if(it.value) {
+                        Map map = it.value
+
+                        Sucursal sucursal = Sucursal.where{clave == map.key.toString()}.find()
+                        PolizaDet det = new PolizaDet()
+                        det.properties = found.properties
+                        det.poliza = null
+                        det.poliza = poliza
+                        if(sucursal) {
+                            CuentaContable nvaCta = resolverCuentaPorSucursal(found.cuenta, sucursal)
+                            if(nvaCta) {
+                                det.cuenta = nvaCta
+                            }
+                            det.sucursal = sucursal.nombre
+                        }
+                        det.debe = found.debe ? map.value : 0.0
+                        det.haber = found.haber ? map.value : 0.0
+
+                        poliza.partidas.add(index, det)
+                        index = index + 1
+                    }
+                }
+                poliza.removeFromPartidas(found)
+                poliza = polizaService.updatePoliza(poliza)
             }
         }
 
         respond poliza, [view: 'show']
+    }
+
+    private CuentaContable resolverCuentaPorSucursal(CuentaContable cta, Sucursal sucursal) {
+        String clave = cta.clave
+        String[] parts = clave.split('-')
+        String suc = sucursal.clave.padLeft(4, '0')
+        String nvaClave = "${parts[0]}-${parts[1]}-${suc}-${parts[3]}"
+        CuentaContable cuentaContable = CuentaContable.where{clave == nvaClave}.find()
+        log.info('Source: {} Suc: {}: Res: {}', cta.clave, sucursal.clave, nvaClave)
+        return cuentaContable
     }
 
     def generarComplementos(Poliza poliza) {

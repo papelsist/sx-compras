@@ -48,7 +48,7 @@ class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaC
         def criteria = new DetachedCriteria(SaldoPorCuentaContable).build {
             eq('ejercicio', ejercicio)
             eq('mes', mes)
-            // eq('nivel', nivel)
+            eq('nivel', nivel)
         }
         return criteria.list(params)
     }
@@ -98,20 +98,33 @@ class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaC
     @CompileDynamic
     def loadMovimientos() {
         log.info('Localizando movimientos: {}', params)
-        CuentaContable cuenta = CuentaContable.get(params.cuenta)
+        CuentaContable cta = CuentaContable.get(params.cuenta)
         Periodo periodo = params.periodo
-        List res = PolizaDet.findAll(
-                """
-                select new sx.contabilidad.PorPeriodoDTO(
-                    d.poliza.tipo, d.poliza.subtipo, d.poliza.folio, d.poliza.fecha, sum(d.debe), sum(d.haber)
-                    )  
-                    from PolizaDet d 
-                        where d.cuenta = ? 
-                        and d.poliza.fecha between ? and ?
-                        group by d.poliza.tipo, d.poliza.subtipo, d.poliza.fecha
-                """,
-                [cuenta,periodo.fechaInicial, periodo.fechaFinal])
-        respond res
+
+        log.info("Cta: {} Detalle: {} Padre: {}", cta.clave, cta.detalle, cta.padre)
+        List movimientos = []
+        if(cta.detalle) {
+            Integer eje = Periodo.obtenerYear(periodo.fechaInicial)
+            Integer m = Periodo.obtenerMes(periodo.fechaInicial) + 1
+
+            movimientos = PolizaDet.where{
+                poliza.ejercicio == eje && poliza.mes == m && cuenta == cta
+            }.list()
+            log.info("Ejercicio: {} Mes: {} Rows: {}", eje, m, movimientos.size())
+
+        }
+        if(cta.padre == null ) {
+            Integer eje = Periodo.obtenerYear(periodo.fechaInicial)
+            Integer m = Periodo.obtenerMes(periodo.fechaInicial) + 1
+            String sclave = cta.clave.split('-')[0]
+            String term = "${sclave}%"
+            movimientos = PolizaDet.where{
+                poliza.ejercicio == eje && poliza.mes == m && cuenta.clave =~ term
+            }.list(max: 10000)
+            log.info("Ejercicio: {} Mes: {} Rows: {}", eje, m, movimientos.size())
+        }
+        respond movimientos
+
     }
 
     @Override
@@ -122,6 +135,18 @@ class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaC
                         ejercicio == saldo.ejercicio &&
                         mes == saldo.mes
         }.list()
+        List res = PolizaDet.findAll(
+            """
+            select new sx.contabilidad.PorPeriodoDTO(
+                d.poliza.tipo, d.poliza.subtipo, d.poliza.folio, d.poliza.fecha, d.debe, d.haber
+                )  
+                from PolizaDet d 
+                    where d.cuenta.clave = ? 
+                    and d.poliza.ejercicio = ?
+                    and d.poliza.mes = ?
+            """,
+            [saldo.cuenta.clave, saldo.ejercicio, saldo.mes])
+
         return saldo
     }
 

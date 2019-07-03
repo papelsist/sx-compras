@@ -68,10 +68,21 @@ class ProvisionDeFletesProc implements  ProcesadorDePoliza, AsientoBuilder {
         """
 
         def cfdi = cxp.comprobanteFiscal
+        if(!cfdi.conceptos) {
+            throw new RuntimeException("XML sin partidas UUID: ${cfdi.uuid}  CFDI_ID: ${ cfdi.id}")
+        }
+
         def gasto = cfdi.conceptos.first()
-        def con = gasto.conceptos.first()
-        validarCuentaContable(con)
-        PolizaDet det = build(cxp, con.cuentaContable, desc, con.sucursal.nombre,cfdi.subTotal)
+        def cta = CuentaContable.where{clave: '600-0004-0000-0000'}.find()
+        def sucursal = Sucursal.where{nombre == 'OFICINAS'}.find()
+        if(gasto.conceptos) {
+            // throw new RuntimeException("XML sin CONCEPTO DE GASTOS UUID: ${cfdi.uuid}  CFDI_ID: ${ cfdi.id}")
+            def con = gasto.conceptos.first()
+            validarCuentaContable(con)
+            cta = con.cuentaContable
+            sucursal = con.sucursal
+        }
+        PolizaDet det = build(cxp, cta, desc, sucursal.nombre, cfdi.subTotal)
         poliza.addToPartidas(det)
 
 
