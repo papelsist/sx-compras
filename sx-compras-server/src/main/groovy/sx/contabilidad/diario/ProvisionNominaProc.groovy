@@ -28,50 +28,82 @@ class ProvisionNominaProc implements  ProcesadorMultipleDePolizas, AsientoBuilde
     Poliza recalcular(Poliza poliza) {
         poliza.partidas.clear()
         generarAsientos(poliza, [:])
-        poliza = poliza.save flush: true
+        poliza.save failOnError:true, flush: true
         poliza.refresh()
         return poliza
     }
 
     @Override
     def generarAsientos(Poliza poliza, Map params) {
-        log.info('Generando asientos de provision de nomina {}', poliza)
-        // PagoDeNomina pago = PagoDeNomina.where{nomina == poliza.egreso}.find()
-        List rows = loadRegistros(getSelect(), [poliza.egreso])
-        // rows.groupBy {it.cta_contable}
-        validarCuentas(rows)
 
-        Map map = rows.groupBy {it.ne_id}
+        log.info('Generando asientos de provision de nomina {}', poliza.egreso)
 
-        map.entrySet().each {
-            List data = it.value
-            data.each { row ->
-                if(row.tipo == 'P'){
-                    BigDecimal importe = row.importe_excento + row.importe_gravado
-                    poliza.addToPartidas(mapRow(poliza.concepto, row, importe))
-                } else if(row.tipo == 'D') {
-                    BigDecimal importe = row.importe_excento + row.importe_gravado
-                    poliza.addToPartidas(mapRow(poliza.concepto, row, 0, importe))
-                } else if(row.tipo == 'A') {
-                    if(row.importe_gravado > 0.0)
-                        poliza.addToPartidas(mapRow(poliza.concepto, row, row.importe_gravado))
-                    if(row.importe_excento > 0.0) {
-                        PolizaDet det = mapRow(poliza.concepto, row,  row.importe_excento)
-                        det.cuenta = buscarCuenta(row.cta_contable_exe)
-                        det.concepto = det.cuenta.descripcion
-                        poliza.addToPartidas(det)
-                    }
+        def pms = poliza.egreso.split(';')
+        log.info('Params {}',  pms[1])
+        String select = getSelect().replaceAll('@PAGO', pms[0]).replaceAll('@PERIODICIDAD', pms[1])
+        List rows = loadRegistros(select, [])
+
+        rows.each{row ->
+            if(row.tipo == 'P'){
+                BigDecimal importe = row.importe_excento + row.importe_gravado
+                poliza.addToPartidas(mapRow(poliza.concepto, row, importe))
+            } else if(row.tipo == 'D') {
+                BigDecimal importe = row.importe_excento + row.importe_gravado
+                poliza.addToPartidas(mapRow(poliza.concepto, row, 0, importe))
+            } else if(row.tipo == 'A') {
+                if(row.importe_gravado > 0.0)
+                    poliza.addToPartidas(mapRow(poliza.concepto, row, row.importe_gravado))
+                if(row.importe_excento > 0.0) {
+                    PolizaDet det = mapRow(poliza.concepto, row,  row.importe_excento)
+                    det.cuenta = buscarCuenta(row.cta_contable_exe)
+                    det.concepto = det.cuenta.descripcion
+                    poliza.addToPartidas(det)
                 }
             }
-            def row = data[0]
-            PolizaDet partidaDePago = mapRow(poliza.concepto, row, 0.0, row.montoTotal)
-            partidaDePago.cuenta = buscarCuenta(row.cta_nomina_por_pagar.toString())
-            partidaDePago.concepto = partidaDePago.cuenta.descripcion
-            poliza.addToPartidas(partidaDePago)
-
         }
 
-        return poliza
+        Map rowTotal = [
+            cta_contable: '210-0001-0000-0000',
+            nombre: 'OFICINAS',
+            periodicidad: pms[1],
+            folio: pms[3],
+            pago: poliza.fecha,
+            ubicacion:'OFICINAS'
+        ]
+        def montoTotal = new BigDecimal(pms[2])
+        log.info("Monto total {}",montoTotal)
+        log.info("Row ----- {}",rowTotal)
+        PolizaDet detTotal = mapRow(poliza.concepto,rowTotal,0.00,montoTotal)
+        //log.info("Det: {}", detTotal.validate())
+        //log.info("Det: {}", detTotal.errors)
+        poliza.addToPartidas(detTotal)
+
+      //  return poliza
+    }
+
+
+    PolizaDet mapRow(String concepto, Map row, def debe = 0.0, def haber = 0.0) {
+        CuentaContable cuenta = buscarCuenta(row.cta_contable)
+        String descripcion = concepto
+
+        PolizaDet det = new PolizaDet(
+                cuenta: cuenta,
+                concepto: cuenta.descripcion,
+                descripcion: descripcion,
+                asiento: "PROVISION_NOMINA",
+                referencia: row.nombre,
+                referencia2: row.periodicidad,
+                //origen: row.ne_id.toString(),
+                entidad: 'Nomina',
+                documento: row.folio,
+                documentoTipo: 'NOM',
+                documentoFecha: row.pago,
+                sucursal: row.ubicacion,
+                debe: debe.abs(),
+                haber: haber.abs()
+        )
+        
+        return det
     }
 
     def validarCuentas(List rows) {
@@ -106,30 +138,27 @@ class ProvisionNominaProc implements  ProcesadorMultipleDePolizas, AsientoBuilde
 
     @Override
     List<Poliza> generarPolizas(PolizaCreateCommand command) {
-        String query = "select id,folio,tipo,forma_de_pago as formaDePago ,pago, substr(periodicidad,1,1) as per  from nomina where pago = ?"
+        String query = "select folio,periodicidad,pago,sum(total) as total from nomina where pago = ? group by folio,periodicidad"
         println "SQL: ${query}"
         List<Poliza> polizas = []
         def polizasRow = loadRegistros(query,[command.fecha])
         polizasRow.each{
             Map map = it
-            println map.id
             Poliza p = Poliza.where{
                 ejercicio == command.ejercicio &&
                 mes == command.mes &&
                 subtipo == command.subtipo &&
                 tipo == command.tipo &&
-                fecha == command.fecha &&
-                egreso == map.id
+                fecha == command.fecha
+                
             }.find()
             
 
             if(p == null) {
-
                 p = new Poliza(command.properties)
-                p.concepto = "NOMINA: ${map.id} Folio:${map.folio} ${map.tipo} ${map.formaDePago} " +
-                        "(${map.pago.format('dd/MM/yyyy')})  ${map.per}"
+                p.concepto = "NOMINA: ${map.folio} (${map.pago.format('dd/MM/yyyy')})  ${map.periodicidad} "         
                 p.sucursal = 'OFICINAS'
-                p.egreso = map.id
+                p.egreso = "${map.pago.format('yyyy/MM/dd')};${map.periodicidad};${map.total};${map.folio}"
                 polizas << p
             } else
                 log.info('Poliza ya existente  {}', p)
@@ -139,53 +168,6 @@ class ProvisionNominaProc implements  ProcesadorMultipleDePolizas, AsientoBuilde
 
 
         return polizas
-    }
-
-
-
-
-    PolizaDet mapRow(String concepto, Map row, def debe = 0.0, def haber = 0.0) {
-
-        CuentaContable cuenta = buscarCuenta(row.cta_contable)
-       // String descripcion = "NOMINA: ${pago.nomina} Folio:${pago.folio} ${pago.tipo} ${pago.formaDePago} " +
-         //       "(${pago.pago.format('dd/MM/yyyy')})"
-         String descripcion = concepto
-
-        PolizaDet det = new PolizaDet(
-                cuenta: cuenta,
-                concepto: cuenta.descripcion,
-                descripcion: descripcion,
-                asiento: "NOMINA ${row.tipo}",
-                referencia: row.nombre,
-                referencia2: row.periodicidad,
-                origen: row.ne_id.toString(),
-                entidad: 'NominaEmpleado',
-                documento: row.ne_id.toString(),
-                documentoTipo: 'NOM',
-                documentoFecha: row.fechaDocumento,
-                sucursal: row.ubicacion,
-                debe: debe.abs(),
-                haber: haber.abs()
-
-        )
-        // Datos del complemento
-        // asignarComprobanteNacional(det, row)
-        //
-
-        det.uuid = row.uuid
-        det.rfc = row.rfc
-        det.montoTotal = row.montoTotal as BigDecimal
-        det.montoTotalPago = row.montoTotal as BigDecimal
-        det.moneda = 'MXN'
-        det.tipCamb = 1.0
-        det.beneficiario = row.nombre
-        det.metodoDePago = row.forma_De_Pago.startsWith('T')? '03' : '02'
-        det.bancoOrigen = row.banco_ori
-        det.ctaOrigen = row.cta_ori
-        det.bancoDestino = row.banco_clave_dest
-        det.ctaDestino = row.cta_banco_empleado_dest
-
-        return det
     }
 
     def loadRegistros(String sql, List params) {
@@ -215,26 +197,14 @@ class ProvisionNominaProc implements  ProcesadorMultipleDePolizas, AsientoBuilde
 
     String getSelect() {
         String sql = """
-            SELECT E.id,E.clave,CONCAT(ifnull(E.apellido_paterno,'')," ",ifnull(E.apellido_materno,'')," ",E.nombres) AS nombre,P.numero_de_trabajador,e.rfc as rfc
-            ,(SELECT U.descripcion FROM ubicacion U WHERE ne.UBICACION_ID=U.ID) AS ubicacion,e.alta,e.status
-            ,n.id n_id,N.tipo,n.forma_de_pago,n.periodicidad,n.folio,n.pago,ne.id ne_id,(ne.salario_diario_base) as sdb,ned.id ne_det_id
+        	SELECT 'DET' AGR,CONCAT(ifnull(E.apellido_paterno,'')," ",ifnull(E.apellido_materno,'')," ",E.nombres) AS nombre 
+            ,(SELECT U.descripcion FROM ubicacion U WHERE ne.UBICACION_ID=U.ID) AS ubicacion,(SELECT U.numero FROM ubicacion U WHERE ne.UBICACION_ID=U.ID) ubic
+		    ,n.pago,n.periodicidad
             ,NE.TOTAL AS montoTotal,'210-0001-0000-0000' cta_nomina_por_pagar
-            ,(SELECT X.UUID FROM CFDI X WHERE NE.CFDI_ID=X.ID) AS uuid
-            ,(SELECT X.FECHA FROM CFDI X WHERE NE.CFDI_ID=X.ID) AS fechaDocumento
-            ,(CASE WHEN N.FORMA_DE_PAGO ='CHEQUE' THEN '1691945' ELSE '1858193' END) AS CTA_ORI
-            ,(CASE WHEN N.FORMA_DE_PAGO ='CHEQUE' THEN '044' ELSE '002' END)  AS BANCO_ORI
-            ,(SELECT CASE WHEN X.CLABE IS NULL THEN X.NUMERO_DE_CUENTA ELSE X.CLABE END FROM salario X WHERE X.EMPLEADO_ID=E.ID) AS CTA_BANCO_EMPLEADO_DEST
-            ,(CASE WHEN N.FORMA_DE_PAGO ='CHEQUE' THEN '' ELSE '002' END) AS BANCO_CLAVE_DEST
-            ,(CASE WHEN N.FORMA_DE_PAGO ='CHEQUE' THEN '' ELSE 'BANAMEX' END) AS BANCO_NOMBRE_DEST,
-            c.clave,c.descripcion,ned.importe_gravado ,ned.importe_excento ,(SELECT U.numero FROM ubicacion U WHERE ne.UBICACION_ID=U.ID) ubic
+		    ,c.clave,c.descripcion,sum(ned.importe_gravado) importe_gravado ,sum(ned.importe_excento) importe_excento
             ,(case when c.clave in('D004','D005','D006','D014','P039') THEN concat(c.clase,'-',p.numero_de_trabajador,'-0000')
             when c.clave='D007' then concat(c.clase,(SELECT concat((case when x.id>9 then '-00' else '-000' end),cast(x.id as char(4))) from pension_alimenticia x where x.empleado_id=e.id),'-0000')
-            when c.clave in('D012','P001','P007','P009','P010','P011','P023','P025','P026','P029','P032','P034','P035','P037','P038') then concat(c.clase,(SELECT concat((case when x.numero>9 then '-00' else '-000' end),x.numero) from ubicacion x where ne.UBICACION_ID=x.ID),'-0000')
-            when c.clave in('P002','P003','P022','P024','P028','P030') then concat(c.clase,(SELECT concat((case when x.numero>9 then '-00' else '-000' end),x.numero) from ubicacion x where x.id=p.ubicacion_id),'-0002')
-            else c.clase end) cta_contable
-            ,(case when ned.importe_excento>0 and c.clave in('P002','P003','P022','P024','P028','P030')  then concat(c.clase,(SELECT concat((case when x.numero>9 then '-00' else '-000' end),x.numero) from ubicacion x where ne.UBICACION_ID=x.ID),'-0001')
-            else '000-0000-0000-0000'end) cta_contable_exe
-            ,(case when c.clave in('P002','P003','P022','P024','P026','P028','P030') then 'A' when substr(c.clave,1,1)='P' then 'P'  else 'D' end) tipo
+            else c.clase end) cta_contable,'000-0000-0000-0000' cta_contable_exe,(case when substr(c.clave,1,1)='P' then 'P'  else 'D' end) tipo,n.folio
             FROM nomina_por_empleado_det ned 
             join nomina_por_empleado ne on(ne.id=ned.parent_id) 
             join nomina n on(n.id=ne.nomina_id) 
@@ -242,7 +212,31 @@ class ProvisionNominaProc implements  ProcesadorMultipleDePolizas, AsientoBuilde
             JOIN perfil_de_empleado P ON(E.ID=P.empleado_id)
             join concepto_de_nomina c on(c.id=ned.concepto_id)
             join seguridad_social s on(e.id=s.empleado_id)
-            where n.id=?
+            where c.clave in('D004','D005','D006','D007','D014','P039') AND 
+            n.pago='@PAGO' AND n.periodicidad ='@PERIODICIDAD'
+            group by 2,3,6,9,13,14,15               
+			union			
+		    SELECT	  'ACU' AGR,(SELECT U.descripcion FROM ubicacion U WHERE ne.UBICACION_ID=U.ID) AS nombre 
+            ,(SELECT U.descripcion FROM ubicacion U WHERE ne.UBICACION_ID=U.ID) AS ubicacion,(SELECT U.numero FROM ubicacion U WHERE ne.UBICACION_ID=U.ID) ubic
+		    ,n.pago,n.periodicidad
+            ,NE.TOTAL AS montoTotal,'210-0001-0000-0000' cta_nomina_por_pagar
+		    ,c.clave,c.descripcion,sum(ned.importe_gravado) importe_gravado ,sum(ned.importe_excento) importe_excento
+            ,(case when c.clave in('P001','P007','P009','P010','P011','P023','P025','P026','P029','P032','P034','P035','P037','P038') then concat(c.clase,(SELECT concat((case when x.numero>9 then '-00' else '-000' end),x.numero) from ubicacion x where ne.UBICACION_ID=x.ID),'-0000')
+            when c.clave in('P002','P003','P022','P024','P028','P030') then concat(c.clase,(SELECT concat((case when x.numero>9 then '-00' else '-000' end),x.numero) from ubicacion x where x.id=p.ubicacion_id),'-0002')
+            else c.clase end) cta_contable
+            ,(case when ned.importe_excento>0 and c.clave in('P002','P003','P022','P024','P028','P030')  then concat(c.clase,(SELECT concat((case when x.numero>9 then '-00' else '-000' end),x.numero) from ubicacion x where ne.UBICACION_ID=x.ID),'-0001')
+            else '000-0000-0000-0000'end) cta_contable_exe
+            ,(case when c.clave in('P002','P003','P022','P024','P026','P028','P030') then 'A' when substr(c.clave,1,1)='P' then 'P'  else 'D' end) tipo,n.folio
+            FROM nomina_por_empleado_det ned 
+            join nomina_por_empleado ne on(ne.id=ned.parent_id) 
+            join nomina n on(n.id=ne.nomina_id) 
+            join empleado e on(e.id=ne.empleado_id)
+            JOIN perfil_de_empleado P ON(E.ID=P.empleado_id)
+            join concepto_de_nomina c on(c.id=ned.concepto_id)
+            join seguridad_social s on(e.id=s.empleado_id)
+            where c.clave not in('D004','D005','D006','D007','D014','P039') AND  
+            n.pago='@PAGO' AND n.periodicidad ='@PERIODICIDAD'
+            group by 2,3,6,9,13,14,15
         """
         return sql
     }
