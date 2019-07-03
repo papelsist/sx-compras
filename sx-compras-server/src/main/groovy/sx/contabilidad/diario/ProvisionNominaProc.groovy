@@ -28,7 +28,7 @@ class ProvisionNominaProc implements  ProcesadorMultipleDePolizas, AsientoBuilde
     Poliza recalcular(Poliza poliza) {
         poliza.partidas.clear()
         generarAsientos(poliza, [:])
-        poliza.save failOnError:true, flush: true
+        poliza = poliza.save failOnError:true, flush: true
         poliza.refresh()
         return poliza
     }
@@ -37,9 +37,7 @@ class ProvisionNominaProc implements  ProcesadorMultipleDePolizas, AsientoBuilde
     def generarAsientos(Poliza poliza, Map params) {
 
         log.info('Generando asientos de provision de nomina {}', poliza.egreso)
-
         def pms = poliza.egreso.split(';')
-        log.info('Params {}',  pms[1])
         String select = getSelect().replaceAll('@PAGO', pms[0]).replaceAll('@PERIODICIDAD', pms[1])
         List rows = loadRegistros(select, [])
 
@@ -71,14 +69,11 @@ class ProvisionNominaProc implements  ProcesadorMultipleDePolizas, AsientoBuilde
             ubicacion:'OFICINAS'
         ]
         def montoTotal = new BigDecimal(pms[2])
-        log.info("Monto total {}",montoTotal)
-        log.info("Row ----- {}",rowTotal)
         PolizaDet detTotal = mapRow(poliza.concepto,rowTotal,0.00,montoTotal)
         //log.info("Det: {}", detTotal.validate())
         //log.info("Det: {}", detTotal.errors)
         poliza.addToPartidas(detTotal)
-
-      //  return poliza
+        return poliza
     }
 
 
