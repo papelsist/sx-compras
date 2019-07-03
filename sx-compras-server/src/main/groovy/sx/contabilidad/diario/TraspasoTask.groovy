@@ -59,7 +59,8 @@ class TraspasoTask implements  AsientoBuilder{
                         poliza.addToPartidas(mapRow(ctaBanco,desc,row,0.00,mov.importe))
                     }
                     if(mov.concepto =='COMISION' ){
-                        String ctaComision ="600-0014-0001-0000" 
+                        String ctaComision ="107-0009-${mov.cuenta.subCuentaOperativa}-0000"
+                        //String ctaComision ="600-0014-0001-0000" 
                         poliza.addToPartidas(mapRow(ctaComision,desc,row,mov.importe))
                         poliza.addToPartidas(mapRow(ctaBanco,desc,row,0.00,mov.importe))
                     }

@@ -45,12 +45,12 @@ class TesoreriaProc implements  ProcesadorDePoliza{
     Poliza recalcular(Poliza poliza) {
         poliza.partidas.clear()
         
-        traspasoTask.generarAsientos(poliza, [:])
-        inversionTask.generarAsientos(poliza, [:])
-        comisionBancariaTask.generarAsientos(poliza, [:])
-        movimientoTesoreriaTask.generarAsientos(poliza, [:])
-        morrallaTask.generarAsientos(poliza, [:])
-        retornoMorrallaTask.generarAsientos(poliza, [:])
+         traspasoTask.generarAsientos(poliza, [:])
+         inversionTask.generarAsientos(poliza, [:])
+         comisionBancariaTask.generarAsientos(poliza, [:])
+         movimientoTesoreriaTask.generarAsientos(poliza, [:])
+         morrallaTask.generarAsientos(poliza, [:])
+         retornoMorrallaTask.generarAsientos(poliza, [:])
         poliza = poliza.save flush: true
         poliza.refresh()
         return poliza
