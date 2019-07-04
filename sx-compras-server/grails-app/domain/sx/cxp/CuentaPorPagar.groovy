@@ -73,7 +73,7 @@ class CuentaPorPagar {
     Date diferenciaFecha;
 
     static constraints = {
-        tipo inList:['COMPRAS', 'GASTOS']
+        tipo inList:['COMPRAS', 'GASTOS', 'HONORARIOS', 'COMISIONES']
         folio nullable: true, maxSize: 255
         serie nullable: true, maxSize: 30
         moneda maxSize: 5

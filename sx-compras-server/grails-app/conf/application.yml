@@ -213,6 +213,8 @@ environments:
       cxp:
         cfdisDir: /Users/rubencancino/Documents/cfdis-carga/compras
         gastosDir: /Users/rubencancino/Documents/cfdis-carga/gastos
+        comisionesDir: /Users/rubencancino/Documents/cfdis-carga/comisiones
+        honorariosDir: /Users/rubencancino/Documents/cfdis-carga/honorarios
       econta:
         polizasDir: ${user.home}/Documents/econta
       cfdi:
@@ -231,6 +233,8 @@ environments:
       cxp:
         cfdisDir: /home/cfdProv
         gastosDir: /home/cfdGastos
+        comisionesDir: /home/cfdiComisiones
+        honorariosDir: /home/cfdiHonorarios
 ---
 quartz:
     autoStartup: false

@@ -30,6 +30,12 @@ class ComprobanteFiscalService implements  LogUser{
     @Value('${siipapx.cxp.gastosDir}')
     String gastosDir
 
+    @Value('${siipapx.cxp.comisionesDir}')
+    String comisionesDir
+
+    @Value('${siipapx.cxp.honorariosDir}')
+    String honorariosDir
+
     ImportadorCfdi32 importadorCfdi32
 
     @Autowired NotaDeCreditoCxPService notaDeCreditoCxPService
@@ -63,6 +69,8 @@ class ComprobanteFiscalService implements  LogUser{
             log.info('Building CFDI 3.3 con File: {} Tipo: {}', fileName, tipo)
         }
 
+        def tipoDeComprobante =  data['TipoDeComprobante']
+
         def receptorNode = xml.breadthFirst().find { it.name() == 'Receptor'}
         def receptorNombre = receptorNode.attributes()['Nombre']
         def receptorRfc = receptorNode.attributes()['Rfc']
@@ -71,7 +79,6 @@ class ComprobanteFiscalService implements  LogUser{
         def emisorNode = xml.breadthFirst().find { it.name() == 'Emisor'}
         def emisorNombre = emisorNode.attributes()['Nombre']
         String emisorRfc = emisorNode.attributes()['Rfc'] ?: 'XAXX010101000'
-
 
 
         def proveedor = Proveedor.findByRfc(emisorRfc)
@@ -101,7 +108,7 @@ class ComprobanteFiscalService implements  LogUser{
 
         def formaDePago = data['FormaPago']
         def metodoDePago = data['MetodoPago']
-        def tipoDeComprobante =  data['TipoDeComprobante']
+
         def moneda = data['Moneda']
         def tipoDeCamio = data['TipoCambio'] as BigDecimal
 
@@ -155,10 +162,11 @@ class ComprobanteFiscalService implements  LogUser{
     }
 
     CuentaPorPagar generarCuentaPorPagar(ComprobanteFiscal comprobanteFiscal, String tipo) {
-        if(comprobanteFiscal.tipoDeComprobante != 'I') return null
+
+
         CuentaPorPagar cxp  = new CuentaPorPagar(tipo: tipo)
         log.info("Generando CXP para {} Moneda: {}", comprobanteFiscal, comprobanteFiscal.moneda)
-        def mm = Currency.getInstance(comprobanteFiscal.moneda)
+
         cxp.with {
             proveedor = comprobanteFiscal.proveedor
             nombre = comprobanteFiscal.proveedor.nombre
@@ -245,7 +253,7 @@ class ComprobanteFiscalService implements  LogUser{
             }
             cf = cf.save failOnError: true, flush: true
             log.info('****** Entity CFDI generado {}', cf)
-            if (cf.tipoDeComprobante == 'I'){
+            if (cf.tipoDeComprobante == 'I' || cf.tipoDeComprobante == 'N'){
                 CuentaPorPagar cxp = this.generarCuentaPorPagar(cf, tipo)
                 cxp.comprobanteFiscal = cf
                 cxp.save failOnError: true, flush: true

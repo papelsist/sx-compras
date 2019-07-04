@@ -67,7 +67,20 @@ class ProvisionDeRembolsoProc implements  ProcesadorDePoliza, AsientoBuilder {
         """
 
         def cfdi = cxp.comprobanteFiscal
+        def cta = CuentaContable.where{clave: '600-0004-0000-0000'}.find()
+        def sucursal = Sucursal.where{nombre == 'OFICINAS'}.find()
 
+        log.info('CXP:{} Folio:{} CfdiId:{}', cxp.nombre, cxp.folio, cxp.comprobanteFiscal.id)
+        if(cfdi.conceptos) {
+            def gasto = cfdi.conceptos.first()
+
+            if(gasto.conceptos) {
+                def con = gasto.conceptos.first()
+                validarCuentaContable(con)
+                cta = con.cuentaContable
+                sucursal = con.sucursal
+            }
+        }
         /*
         def gasto = cfdi.conceptos.first()
         def con = gasto.conceptos.first()
@@ -77,15 +90,7 @@ class ProvisionDeRembolsoProc implements  ProcesadorDePoliza, AsientoBuilder {
         poliza.addToPartidas(det)
         */
 
-        def gasto = cfdi.conceptos.first()
-        def cta = CuentaContable.where{clave: '600-0004-0000-0000'}.find()
-        def sucursal = Sucursal.where{nombre == 'OFICINAS'}.find()
-        if(gasto.conceptos) {
-            def con = gasto.conceptos.first()
-            validarCuentaContable(con)
-            cta = con.cuentaContable
-            sucursal = con.sucursal
-        }
+
         PolizaDet det = build(cxp, cta, desc, sucursal.nombre, cfdi.subTotal)
         poliza.addToPartidas(det)
 

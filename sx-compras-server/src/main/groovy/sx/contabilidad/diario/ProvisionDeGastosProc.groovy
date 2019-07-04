@@ -52,14 +52,22 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
         List<RembolsoDet> rembolsos = RembolsoDet
                 .findAll("from RembolsoDet d where date(d.cxp.fecha) = ? and d.rembolso.concepto <> 'REMBOLSO'",
                 [poliza.fecha])
+        log.info('Facturas en rembolsos: {} Fecha: {}', rembolsos.size(), poliza.fecha)
         rembolsos.each { r ->
             CuentaPorPagar cxp = r.cxp
-            CuentaOperativaProveedor co = CuentaOperativaProveedor.findByProveedor(cxp.proveedor)
-            // log.info('REMBOLSO: {} COP: {} {}', r.rembolso.id, co, r.comentario)
-            if(co.tipo !='FLETES' &&  co.tipo !='SEGUROS'){
-                String suc = r.rembolso.sucursal.nombre
-                cargoGasto(poliza, cxp, suc)
-                abonoProveedorGastoRembolso(poliza, cxp, r)
+            if(cxp.tipo != 'HONORARIOS') {
+                CuentaOperativaProveedor co = CuentaOperativaProveedor.findByProveedor(cxp.proveedor)
+                log.info('REMBOLSO: {} COP: {} {}', r.rembolso.id, co, r.comentario)
+                if(co.tipo !='FLETES' &&  co.tipo !='SEGUROS'){
+                    String suc = r.rembolso.sucursal.nombre
+                    cargoGasto(poliza, cxp, suc)
+                    abonoProveedorGastoRembolso(poliza, cxp, r)
+                }
+            } else if(cxp.tipo == 'HONORARIOS'){
+                log.info('CXP: {}',cxp )
+                cargoGastoHonorarios(poliza, cxp, r)
+                abonoHonorarios(poliza, cxp, r)
+
             }
         }
 
@@ -164,6 +172,57 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
             poliza.addToPartidas(build(cxp,ivaIsr1, desc, suc,0.00, cxp.impuestoRetenidoIsr))
        
         }
+
+    }
+
+
+    def abonoHonorarios(Poliza poliza, CuentaPorPagar cxp, RembolsoDet rembolsoDet) {
+
+        def cfdi = cxp.comprobanteFiscal
+
+        String desc = """
+            
+            F:${cxp.serie?:''} ${cxp.folio?: ''} (${cxp.fecha.format('dd/MM/yyyy')})
+            ${cxp.tipoDeCambio > 1.0 ? 'T.C:' + cxp.tipoDeCambio: ''} 
+        """
+
+
+
+        def sclave = rembolsoDet.comentario
+        def cta = CuentaContable.where{clave == sclave}.find()
+        log.info('Clave: {} Cta: {} ', sclave,cta)
+        def sucursal = Sucursal.where{nombre == 'OFICINAS'}.find()
+        if(cta == null) {
+            cta = CuentaContable.where{clave == '600-0004-0000-0000'}.find()
+        }
+
+        poliza.addToPartidas(build(
+                cxp,
+                buscarCuenta('216-0003-0000-0000'),
+                desc,
+                sucursal.nombre,
+                0.0,
+                cfdi.descuento)
+        )
+
+        PolizaDet det = build(cxp, cta, desc, sucursal.nombre, 0.0, rembolsoDet.rembolso.apagar)
+        poliza.addToPartidas(det)
+
+
+
+    }
+
+    def cargoGastoHonorarios(Poliza poliza, CuentaPorPagar cxp, RembolsoDet rembolsoDet) {
+
+        Sucursal sucursal = Sucursal.where{nombre == 'OFICINAS'}.find()
+
+        String desc = """
+            F:${cxp.serie?:''} ${cxp.folio} (${cxp.fecha.format('dd/MM/yyyy')})
+        """
+        def cfdi = cxp.comprobanteFiscal
+        CuentaContable cuenta = buscarCuenta('600-P036-0000-0000')
+        BigDecimal total = rembolsoDet.apagar
+        poliza.addToPartidas(build(cxp,cuenta,desc, sucursal.nombre,  total ))
 
     }
 
@@ -282,7 +341,7 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
                             BigDecimal hab = 0.0) {
 
         PolizaDet det = new PolizaDet()
-
+        log.info('CTAAAA: {}', cta)
         det.with {
             cuenta = cta
             concepto = cta.descripcion

@@ -63,7 +63,7 @@ class ComprobanteFiscal {
         emisorRfc minSize: 12, maxSize:13
         receptorNombre nullable: true
         receptorRfc minSize: 12, maxSize:13
-        tipoDeComprobante inList: ['I','E','T', 'P']
+        tipoDeComprobante inList: ['I','E','T', 'P', 'N']
         uuid maxSize:40,unique:true
         formaDePago nullable: true, maxSize:35
         metodoDePago nullable: true, maxSize:5
@@ -81,7 +81,7 @@ class ComprobanteFiscal {
         impuestoRetenido nullable: true, scale: 4
         versionCfdi nullable:true
 
-        tipo inList: ['COMPRAS', 'GASTOS']
+        tipo inList: ['COMPRAS', 'GASTOS', 'HONORARIOS', 'COMISIONES']
 
     }
 

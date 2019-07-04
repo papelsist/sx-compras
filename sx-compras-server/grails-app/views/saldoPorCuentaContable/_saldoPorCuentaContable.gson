@@ -7,6 +7,7 @@ model {
 json g.render(saldoPorCuentaContable, [resolveTemplate: false]){
     descripcion saldoPorCuentaContable.cuenta.descripcion
     nivel saldoPorCuentaContable.cuenta.nivel
+    detalle saldoPorCuentaContable.cuenta.detalle
     if(saldoPorCuentaContable.cuenta.padre){
         padre saldoPorCuentaContable.cuenta.padre.descripcion
     }

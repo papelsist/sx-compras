@@ -103,20 +103,11 @@ class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaC
 
         log.info("Cta: {} Detalle: {} Padre: {}", cta.clave, cta.detalle, cta.padre)
         List movimientos = []
-        if(cta.detalle) {
-            Integer eje = Periodo.obtenerYear(periodo.fechaInicial)
-            Integer m = Periodo.obtenerMes(periodo.fechaInicial) + 1
+        Integer eje = Periodo.obtenerYear(periodo.fechaInicial)
+        Integer m = Periodo.obtenerMes(periodo.fechaInicial) + 1
 
-            movimientos = PolizaDet.where{
-                poliza.ejercicio == eje && poliza.mes == m && cuenta == cta
-            }.list()
-            log.info("Ejercicio: {} Mes: {} Rows: {}", eje, m, movimientos.size())
-
-        }
-        if(cta.padre == null ) {
-            Integer eje = Periodo.obtenerYear(periodo.fechaInicial)
-            Integer m = Periodo.obtenerMes(periodo.fechaInicial) + 1
-            String sclave = cta.clave.split('-')[0]
+        if(cta.padre) {
+            String sclave = cta.clave.substring(0, 7)
             String term = "${sclave}%"
             movimientos = PolizaDet.where{
                 poliza.ejercicio == eje && poliza.mes == m && cuenta.clave =~ term
