@@ -99,6 +99,7 @@ abstract class PolizaService implements  LogUser{
             // Nivel 3
              if(nivel == 3){
               	for(int i=0 ; i< sucursales.size(); i++){
+
                     if (cta.descripcion.contains(sucursales[i])) {
                         cto = cta.padre.descripcion
                         break
