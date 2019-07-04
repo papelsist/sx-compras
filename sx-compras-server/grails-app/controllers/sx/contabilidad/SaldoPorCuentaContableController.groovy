@@ -106,11 +106,11 @@ class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaC
         Integer eje = Periodo.obtenerYear(periodo.fechaInicial)
         Integer m = Periodo.obtenerMes(periodo.fechaInicial) + 1
 
-        if(cta.padre) {
-            String sclave = cta.clave.substring(0, 7)
-            String term = "${sclave}%"
+        if(cta.detalle) {
+            // String sclave = cta.clave.substring(0, 7)
+            // String term = "${sclave}%"
             movimientos = PolizaDet.where{
-                poliza.ejercicio == eje && poliza.mes == m && cuenta.clave =~ term
+                poliza.ejercicio == eje && poliza.mes == m && cuenta == cta
             }.list(max: 10000)
             log.info("Ejercicio: {} Mes: {} Rows: {}", eje, m, movimientos.size())
         }
