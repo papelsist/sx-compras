@@ -79,7 +79,7 @@ class PolizaController extends RestfulController<Poliza> {
         log.info("Generando poliza(s) con procesador: {}", pname)
         ProcesadorDePoliza procesador = (ProcesadorDePoliza)grailsApplication.mainContext.getBean(pname)
         poliza.concepto = procesador.definirConcepto(poliza)
-        if(poliza.subtipo == 'CIERRE_MENSUAL') {
+        if(poliza.subtipo == 'CIERRE_MENSUAL' || poliza.subtipo == 'COMISIONES_BANCARIA_GASTO' ) {
             poliza.manual = true
         }
         poliza = polizaService.salvarPolza(poliza)
