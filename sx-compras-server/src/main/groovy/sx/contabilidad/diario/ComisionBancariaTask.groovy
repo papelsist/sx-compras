@@ -36,7 +36,7 @@ class ComisionBancariaTask implements  AsientoBuilder{
                     // log.info('CTA: {}  ', mov.cuenta.moneda)
                     Map row = [
                         asiento: "${mov.tipo} ${mov.concepto}",
-                        referencia: mov.comentario,
+                        referencia: comision.cuenta.descripcion,
                         referencia2: mov.afavor,
                         origen: comision.id,
                         documento: comision.id,

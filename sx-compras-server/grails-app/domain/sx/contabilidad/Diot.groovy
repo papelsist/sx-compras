@@ -5,7 +5,7 @@ import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 
 @EqualsAndHashCode(includes='ejercicio,mes')
-@ToString(includes='ejercicio,mes',includeNames=true,includePackage=false)
+@ToString(includes='ejercicio,mes, proveedor, rfc',includeNames=true,includePackage=false)
 class Diot{
 
     Integer ejercicio
@@ -70,7 +70,7 @@ class Diot{
         tipoOperacion nullable: true
         rfc nullable: true
         idFiscal nullable: true
-        nombreDelExtranjero nullable: true
+        nombreExtranjero nullable: true
         paisResidencia nullable: true
         nacionalidad nullable:  true
     }

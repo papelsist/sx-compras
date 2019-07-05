@@ -54,6 +54,25 @@ class ProvisionDeFletesProc implements  ProcesadorDePoliza, AsientoBuilder {
                 abonoProveedorDescuentos(poliza, r)
             }
         }
+
+        List<RequisicionDet> requisiciones = RequisicionDet
+                .findAll("from RequisicionDet d where date(d.cxp.fecha) = ? and d.cxp.tipo = 'GASTOS'",
+                [poliza.fecha])
+        log.info('Partidas de requisicion: {}', requisiciones.size())
+        requisiciones.each { req ->
+            CuentaPorPagar cxp = req.cxp
+            CuentaOperativaProveedor co = CuentaOperativaProveedor.findByProveedor(cxp.proveedor)
+            if(co){
+                if(co.tipo == 'FLETES'){
+                    String suc = 'OFICINAS'
+                    log.info('Procesando: {}', cxp)
+                    cargoGastoRequisicion(poliza, cxp, suc)
+                    abonoProveedorGastoRequisicion(poliza, cxp)
+
+                }
+            }
+        }
+
         poliza.validate()
         poliza = poliza.save failOnError: true, flush: true
         return poliza
@@ -63,7 +82,7 @@ class ProvisionDeFletesProc implements  ProcesadorDePoliza, AsientoBuilder {
     def cargoGasto(Poliza poliza, CuentaPorPagar cxp, String suc) {
 
         String desc = """
-            F:${cxp.serie?:''} ${cxp.folio} (${cxp.fecha.format('dd/MM/yyyy')})
+            F:${cxp.serie?:''} ${cxp.folio?: ''} (${cxp.fecha.format('dd/MM/yyyy')})
             ${cxp.tipoDeCambio > 1.0 ? 'T.C:' + cxp.tipoDeCambio: ''} 
         """
 
@@ -73,7 +92,7 @@ class ProvisionDeFletesProc implements  ProcesadorDePoliza, AsientoBuilder {
         }
 
         def gasto = cfdi.conceptos.first()
-        def cta = CuentaContable.where{clave: '600-0004-0000-0000'}.find()
+        def cta = CuentaContable.where{clave == '600-0004-0000-0000'}.find()
         def sucursal = Sucursal.where{nombre == 'OFICINAS'}.find()
         if(gasto.conceptos) {
             // throw new RuntimeException("XML sin CONCEPTO DE GASTOS UUID: ${cfdi.uuid}  CFDI_ID: ${ cfdi.id}")
@@ -118,6 +137,56 @@ class ProvisionDeFletesProc implements  ProcesadorDePoliza, AsientoBuilder {
 
         BigDecimal total = rembolsoDet.apagar // cxp.total
         poliza.addToPartidas(build(cxp,cuenta,desc, sucursal.nombre, 0.0, total ))
+    }
+
+    def cargoGastoRequisicion(Poliza poliza, CuentaPorPagar cxp, String suc) {
+
+        String desc = """
+            F:${cxp.serie?:''} ${cxp.folio?: ''} (${cxp.fecha.format('dd/MM/yyyy')})
+            ${cxp.tipoDeCambio > 1.0 ? 'T.C:' + cxp.tipoDeCambio: ''} 
+        """
+
+        def cfdi = cxp.comprobanteFiscal
+
+
+        def cta = CuentaContable.where{clave == '600-0021-0000-0000'}.find()
+        CuentaOperativaProveedor co = buscarCuentaOperativa(cxp.proveedor)
+        if(co) {
+            String sclave = "600-0021-${co.cuentaOperativa}-0000"
+            cta = buscarCuenta(sclave)
+        }
+
+        PolizaDet det = build(cxp, cta, desc, 'OFICINAS', cfdi.subTotal)
+        poliza.addToPartidas(det)
+
+
+        def impuestoNeto = (cxp.impuestoTrasladado ?: 0.00) - (cxp.impuestoRetenidoIva ?: 0.00)
+        CuentaContable ivaPendiente = buscarCuenta('119-0002-0000-0000')
+
+        poliza.addToPartidas(build(cxp, ivaPendiente, desc, suc, impuestoNeto ))
+
+        if(cxp.impuestoRetenidoIva > 0.0) {
+
+            CuentaContable ivaRet2 = buscarCuenta('119-0003-0000-0000')
+            CuentaContable ivaRet3 = buscarCuenta('216-0001-0000-0000')
+
+            poliza.addToPartidas(build(cxp,ivaRet2, desc, suc, cxp.impuestoRetenidoIva))
+            poliza.addToPartidas(build(cxp,ivaRet3, desc, suc,0.00, cxp.impuestoRetenidoIva))
+
+        }
+
+    }
+
+    def abonoProveedorGastoRequisicion(Poliza poliza, CuentaPorPagar cxp) {
+
+        String desc = """
+            F:${cxp.serie?:''} ${cxp.folio?: ''} (${cxp.fecha.format('dd/MM/yyyy')})
+        """
+        CuentaContable cuenta
+        String cv = resolverClaveDeCuenta(cxp)
+        cuenta = buscarCuenta(cv)
+        BigDecimal total = cxp.total
+        poliza.addToPartidas(build(cxp,cuenta,desc, 'OFICINAS', 0.0, total ))
     }
 
     def abonoProveedorDescuentos(Poliza poliza, RembolsoDet rembolsoDet) {

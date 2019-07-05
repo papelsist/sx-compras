@@ -1,0 +1,8 @@
+import sx.contabilidad.Diot
+
+model {
+	Iterable<Diot> diotList
+}
+
+json tmpl.diot(diotList ?: [])
+
