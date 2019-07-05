@@ -39,8 +39,7 @@ class ProvisionNominaProc implements  ProcesadorMultipleDePolizas, AsientoBuilde
         log.info('Generando asientos de provision de nomina {}', poliza.egreso)
         def pms = poliza.egreso.split(';')
         String select = getSelect().replaceAll('@PAGO', pms[0]).replaceAll('@PERIODICIDAD', pms[1])
-
-        println select
+        
         List rows = loadRegistros(select, [])
 
         rows.each{row ->
