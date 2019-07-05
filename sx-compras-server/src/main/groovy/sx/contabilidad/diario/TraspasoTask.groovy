@@ -36,7 +36,7 @@ class TraspasoTask implements  AsientoBuilder{
                    //  log.info('CTA: {}  ', mov.cuenta.moneda)
                     Map row = [
                         asiento: "TRASPASO ENTRE CUENTAS ${mov.concepto}",
-                        referencia: mov.comentario,
+                        referencia: traspaso.cuentaOrigen.descripcion,
                         referencia2: mov.afavor,
                         origen: traspaso.id,
                         documento: traspaso.id,
@@ -94,7 +94,7 @@ class TraspasoTask implements  AsientoBuilder{
                 concepto: cuenta.descripcion,
                 descripcion: descripcion,
                 asiento: row.asiento,
-                referencia: row.referencia2,
+                referencia: row.referencia,
                 referencia2: row.referencia2,
                 origen: row.origen,
                 entidad: 'Traspaso',

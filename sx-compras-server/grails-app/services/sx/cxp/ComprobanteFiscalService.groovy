@@ -83,8 +83,8 @@ class ComprobanteFiscalService implements  LogUser{
 
         def proveedor = Proveedor.findByRfc(emisorRfc)
         if (!proveedor) {
-            if(tipo == 'GASTOS') {
-                proveedor = new Proveedor(nombre: emisorNombre, rfc: emisorRfc, tipo: tipo)
+            if(tipo == 'GASTOS' || tipo == 'COMISIONES') {
+                proveedor = new Proveedor(nombre: emisorNombre, rfc: emisorRfc, tipo: 'GASTOS')
                 proveedor.clave = "GS${emisorRfc[0..-4]}"
                 proveedor.save(failOnError: true, flush: true)
                 log.info('Nuevo proveedor registrado {}  ', emisorRfc)

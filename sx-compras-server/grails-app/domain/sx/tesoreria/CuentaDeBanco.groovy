@@ -52,6 +52,8 @@ class CuentaDeBanco {
     BigDecimal tasaIsr
     Integer plazo
 
+    String rfc
+
     static constraints = {
     	numero maxSize:30
         clave maxSize:30, unique: true
@@ -72,6 +74,7 @@ class CuentaDeBanco {
         rendimientoTasa nullable: true
         plazo nullable: true
         tasaIsr nullable: true
+        rfc nullable: true, maxSize: 15
     }
 
     String toString() {

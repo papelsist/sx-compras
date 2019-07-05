@@ -1,0 +1,7 @@
+import sx.contabilidad.Diot
+
+model {
+	Diot diot
+}
+
+json g.render(diot, [resolveTemplate: false])
