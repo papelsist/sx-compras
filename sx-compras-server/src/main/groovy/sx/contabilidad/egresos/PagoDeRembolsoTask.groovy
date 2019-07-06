@@ -297,42 +297,45 @@ class PagoDeRembolsoTask implements  AsientoBuilder, EgresoTask {
         Map row = buildDataRow(egreso)
         log.info('Partidas {}', r.partidas.size())
         r.partidas.each { d ->
+
             CuentaPorPagar cxp = d.cxp
+            if(cxp) {
+                row.referencia = d.nombre
+                row.referencia2 = d.nombre
+                row.uuid = cxp.uuid
+                row.rfc = cxp.proveedor.rfc
+                row.montoTotal = cxp.total
+                row.moneda = cxp.moneda
+                row.tipCamb = cxp.tipoDeCambio
 
-            row.referencia = d.nombre
-            row.referencia2 = d.nombre
-            row.uuid = cxp.uuid
-            row.rfc = cxp.proveedor.rfc
-            row.montoTotal = cxp.total
-            row.moneda = cxp.moneda
-            row.tipCamb = cxp.tipoDeCambio
+                CuentaOperativaProveedor co = CuentaOperativaProveedor.where{ proveedor == cxp.proveedor}.find()
+                if(!co) throw new RuntimeException("No existe cuenta operativa para el proveedor: ${cxp.proveedor}")
+                String ctaOperativa = co.getCuentaOperativa()
+                log.info('Buscando subcuenta de{} de {}', ctaPadre.clave ,ctaOperativa)
 
-            CuentaOperativaProveedor co = CuentaOperativaProveedor.where{ proveedor == cxp.proveedor}.find()
-            if(!co) throw new RuntimeException("No existe cuenta operativa para el proveedor: ${cxp.proveedor}")
-            String ctaOperativa = co.getCuentaOperativa()
-            log.info('Buscando subcuenta de{} de {}', ctaPadre.clave ,ctaOperativa)
+                CuentaContable cuenta = ctaPadre.subcuentas.find{it.clave.contains(ctaOperativa)}
 
-            CuentaContable cuenta = ctaPadre.subcuentas.find{it.clave.contains(ctaOperativa)}
+                BigDecimal importe = d.apagar
+                BigDecimal ivaCfdi = cxp.impuestoTrasladado - cxp.impuestoRetenidoIva
+                log.info('Iva: {}', ivaCfdi)
 
-            BigDecimal importe = d.apagar
-            BigDecimal ivaCfdi = cxp.impuestoTrasladado - cxp.impuestoRetenidoIva
-            log.info('Iva: {}', ivaCfdi)
+                String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} F:${cxp?.serie?:''} ${cxp?.folio?: ''}" +
+                        " (${poliza.fecha.format('dd/MM/yyyy')}) ${egreso.sucursal?: 'OFICINAS'} "
 
-            String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} F:${cxp?.serie?:''} ${cxp?.folio?: ''}" +
-                    " (${poliza.fecha.format('dd/MM/yyyy')}) ${egreso.sucursal?: 'OFICINAS'} "
+                poliza.addToPartidas(mapRow(cuenta, desc, row, importe))
 
-            poliza.addToPartidas(mapRow(cuenta, desc, row, importe))
+                poliza.addToPartidas(mapRow('118-0002-0000-0000', desc, row, ivaCfdi))
+                poliza.addToPartidas(mapRow('119-0002-0000-0000', desc, row, 0.0, ivaCfdi))
 
-            poliza.addToPartidas(mapRow('118-0002-0000-0000', desc, row, ivaCfdi))
-            poliza.addToPartidas(mapRow('119-0002-0000-0000', desc, row, 0.0, ivaCfdi))
+                if(cxp.impuestoRetenidoIva > 0.0) {
+                    BigDecimal imp = cxp.impuestoRetenidoIva
+                    poliza.addToPartidas(mapRow('118-0003-0000-0000', desc, row, imp))
+                    poliza.addToPartidas(mapRow('119-0003-0000-0000', desc, row, 0.0, imp))
 
-            if(cxp.impuestoRetenidoIva > 0.0) {
-                BigDecimal imp = cxp.impuestoRetenidoIva
-                poliza.addToPartidas(mapRow('118-0003-0000-0000', desc, row, imp))
-                poliza.addToPartidas(mapRow('119-0003-0000-0000', desc, row, 0.0, imp))
+                    poliza.addToPartidas(mapRow('216-0001-0000-0000', desc, row, imp))
+                    poliza.addToPartidas(mapRow('213-0011-0000-0000', desc, row, 0.0, imp))
+                }
 
-                poliza.addToPartidas(mapRow('216-0001-0000-0000', desc, row, imp))
-                poliza.addToPartidas(mapRow('213-0011-0000-0000', desc, row, 0.0, imp))
             }
 
 

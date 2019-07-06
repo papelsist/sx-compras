@@ -42,7 +42,7 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
         requisiciones.each { req ->
             CuentaPorPagar cxp = req.cxp
             CuentaOperativaProveedor co = CuentaOperativaProveedor.findByProveedor(cxp.proveedor)
-            //log.info('GASTO COP: {}', co)
+            log.info('GASTO COP: {}', co)
             if(co.tipo == 'GASTOS' || co.tipo == 'RELACIONADAS'){
                 cargoGasto(poliza, cxp, 'OFICINAS')
                 abonoProveedorGasto(poliza, cxp, 'OFICINAS')
@@ -108,46 +108,25 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
         """
 
         def cfdi = cxp.comprobanteFiscal
+        def cta = CuentaContable.where{clave == '600-0000-0000-0000'}.find()
+        def sucursal = Sucursal.where{nombre == 'OFICINAS'}.find()
+
         log.info('CXP:{} Folio:{} CfdiId:{}', cxp.nombre, cxp.folio, cxp.comprobanteFiscal.id)
-        if(!cfdi.conceptos) {
-            throw new RuntimeException("XML sin partidas UUID: ${cfdi.uuid}  CFDI_ID: ${ cfdi.id}")
+        if(cfdi.conceptos) {
+            def gasto = cfdi.conceptos.first()
+
+            if(gasto.conceptos) {
+                def con = gasto.conceptos.first()
+                validarCuentaContable(con)
+                cta = con.cuentaContable
+                sucursal = con.sucursal
+            }
         }
 
-        def gasto = cfdi.conceptos.first()
-        def cta = CuentaContable.where{clave: '600-0004-0000-0000'}.find()
-        def sucursal = Sucursal.where{nombre == 'OFICINAS'}.find()
-        if(gasto.conceptos) {
-            // throw new RuntimeException("XML sin CONCEPTO DE GASTOS UUID: ${cfdi.uuid}  CFDI_ID: ${ cfdi.id}")
-            def con = gasto.conceptos.first()
-            validarCuentaContable(con)
-            cta = con.cuentaContable
-            sucursal = con.sucursal
-        }
         PolizaDet det = build(cxp, cta, desc, sucursal.nombre, cfdi.subTotal)
         poliza.addToPartidas(det)
 
-        /*
-        def gasto = cfdi.conceptos.first()
-        if(!gasto.conceptos) {
-            throw new RuntimeException("XML sin CONCEPTO DE GASTOS UUID: ${cfdi.uuid}  CFDI_ID: ${ cfdi.id}")
-        }
-        def con = gasto.conceptos.first()
-        validarCuentaContable(con)
-        def impt = cfdi.subTotal - (cfdi.descuento?: 0.0)
-        PolizaDet det = build(cxp, con.cuentaContable, desc, con.sucursal.nombre, impt)
-        poliza.addToPartidas(det)
-        */
 
-        /*
-        cfdi.conceptos.each { gasto ->
-            gasto.conceptos.each { con ->
-                // log.info('P: {} Fac: {} Cuenta concepto: {} Id:{}', cxp.nombre, cxp.folio, con.cuentaContable.clave, con.id)
-                validarCuentaContable(con)
-                PolizaDet det = build(cxp, con.cuentaContable, desc, con.sucursal.nombre, con.importe)
-                poliza.addToPartidas(det)
-            }
-        }
-        */
 
         def impuestoNeto = (cxp.impuestoTrasladado ?: 0.00) - (cxp.impuestoRetenidoIva ?: 0.00)
 
@@ -341,7 +320,6 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
                             BigDecimal hab = 0.0) {
 
         PolizaDet det = new PolizaDet()
-        log.info('CTAAAA: {}', cta)
         det.with {
             cuenta = cta
             concepto = cta.descripcion

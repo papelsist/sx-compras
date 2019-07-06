@@ -181,7 +181,7 @@ class PolizaController extends RestfulController<Poliza> {
 
     }
 
-
+    @CompileDynamic
     def recalcular(Poliza poliza) {
         if(poliza == null){
             notFound()
@@ -190,6 +190,7 @@ class PolizaController extends RestfulController<Poliza> {
         if(poliza.manual) {
             throw new RuntimeException("Poliza ${poliza.id} es MANUAL no se puede recaluclar de manera automatica")
         }
+
         ProcesadorDePoliza procesador = getProcesador(poliza)
         poliza = procesador.recalcular(poliza)
         poliza = polizaService.updatePoliza(poliza)

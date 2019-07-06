@@ -156,7 +156,25 @@ class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaC
                             mes == saldo.mes
             }.list()
         }
-        respond result
+        respond result, view: 'list'
+    }
+
+    def balanza() {
+        params.sort = params.sort ?:'clave'
+        params.order = params.order ?:'asc'
+        params.max = 9000
+
+        Integer ejercicio = this.params.getInt('ejercicio')?: Periodo.currentYear()
+        Integer mes = this.params.getInt('mes')?: Periodo.currentMes()
+
+        log.info('List {} {}', ejercicio, mes)
+
+        def criteria = new DetachedCriteria(SaldoPorCuentaContable).build {
+            eq('ejercicio', ejercicio)
+            eq('mes', mes)
+        }
+        List<SaldoPorCuentaContable> saldos =  criteria.list(params)
+        respond saldos
     }
 
 

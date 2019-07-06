@@ -34,7 +34,7 @@ class ComisionesBancariaGastoProc implements  ProcesadorDePoliza, AsientoBuilder
         """, [Periodo.obtenerYear(poliza.fecha), Periodo.obtenerMes(poliza.fecha) + 1, 'COMISIONES'])
         log.info('Facturas {}', facturas.size())
         facturas.each { cxp ->
-            if(cxp.proveedor.rfc == 'PNA1504108Y2') {
+            if(cxp.proveedor.rfc == 'PNA1504108Y2' || cxp.proveedor.rfc == 'AEC810901298') {
                 log.info('Procesando cxp: {} Total: {}', cxp.uuid, cxp.total)
                 String desc = """
                     F:${cxp.serie?:''} ${cxp.folio} (${cxp.fecha.format('dd/MM/yyyy')})
@@ -53,12 +53,15 @@ class ComisionesBancariaGastoProc implements  ProcesadorDePoliza, AsientoBuilder
                     origen = cxp.id
                     sucursal = 'OFICINAS'
                     referencia2 = cxp.nombre
-                    referencia = 'BANAMEX'
+                    referencia = cxp.nombre
                 }
                 poliza.addToPartidas(cargo)
 
                 PolizaDet abono = new PolizaDet()
                 cta = buscarCuenta('107-0009-0001-0000')
+                if(cxp.proveedor.rfc == 'AEC810901298') {
+                    cta = buscarCuenta('107-0009-0011-0000')
+                }
                 abono.with {
                     cuenta = cta
                     concepto = "${cta.padre ?: cta.padre.descripcion} ${cta.descripcion}"
@@ -69,7 +72,7 @@ class ComisionesBancariaGastoProc implements  ProcesadorDePoliza, AsientoBuilder
                     origen = cxp.id
                     sucursal = 'OFICINAS'
                     referencia2 = cxp.nombre
-                    referencia = 'BANAMEX'
+                    referencia = cxp.nombre
                 }
                 poliza.addToPartidas(abono)
 

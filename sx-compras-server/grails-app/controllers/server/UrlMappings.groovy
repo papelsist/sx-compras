@@ -287,6 +287,7 @@ class UrlMappings {
         "/api/contabilidad/saldos/drillPeriodo"(controller: 'saldoPorCuentaContable', action: 'drillPeriodo')
         "/api/contabilidad/saldos/drillSubtipo"(controller: 'saldoPorCuentaContable', action: 'drillSubtipo', method: 'POST')
         "/api/contabilidad/saldos/drill/$id"(controller: 'saldoPorCuentaContable', action: 'drill', method: 'GET')
+        "/api/contabilidad/saldos/balanza"(controller: 'saldoPorCuentaContable', action: 'banalza', method: 'GET')
 
         "/api/contabilidad/diot"(resources: 'diot', excludes:['create', 'edit','patch'])
 

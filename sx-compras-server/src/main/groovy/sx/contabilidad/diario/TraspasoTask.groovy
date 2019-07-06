@@ -44,7 +44,8 @@ class TraspasoTask implements  AsientoBuilder{
                         documentoFecha: mov.fecha,
                         sucursal: mov.sucursal?: 'OFICINAS',
                         montoTotal: mov.importe,
-                        moneda: mov.moneda, 
+                        moneda: mov.moneda,
+                        rfc: traspaso.cuentaOrigen.rfc
                     ] 
                     String desc = generarDescripcion(row, mov.concepto)
                     String ctaBanco = "102-${mov.moneda.currencyCode == 'MXN' ? '0001': '0002'}-${mov.cuenta.subCuentaOperativa}-0000"
