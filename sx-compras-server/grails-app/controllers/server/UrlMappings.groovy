@@ -292,6 +292,9 @@ class UrlMappings {
         "/api/contabilidad/diot"(resources: 'diot', excludes:['create', 'edit','patch'])
 
         "/api/sat/cuentas"(resources: 'cuentaSat', excludes: ['create', 'edit', 'patch'])
+        // Auxiliares
+        "/api/contabilidad/auxiliarBancos"(controller: 'auxiliares', action: 'bancos', method: 'GET')
+         "/api/contabilidad/auxiliar"(controller: 'auxiliares', action: 'general', method: 'GET')
 
         // Cfdis
         "/api/cfdi"(resources: 'cfdi', excludes:['create', 'edit', 'patch', 'update', 'save', 'delete'])
