@@ -17,48 +17,80 @@ class AuxiliaresService {
         switch(tipo) {
             case 'BANCOS':
             return select = """
+            SELECT
+            p.id as poliza,p.fecha,p.tipo,p.subtipo,d.asiento,d.descripcion
+            ,d.sucursal
+            ,(d.debe) as debe,(d.haber) as haber
+            ,c.clave,c.descripcion
+            FROM poliza_det d  join poliza p on (p.id=d.poliza_id) join cuenta_contable c on (c.id= d.cuenta_id)
+            where  
+            p.fecha between '@FECHA_INICIAL'  and '@FECHA_FINAL'
+            and c.id = @CUENTA
+            AND p.subtipo not like 'COBRANZA_%' AND  p.subtipo = 'COMISIONES_TARJETA'
+            group by c.id,ASIENTO,d.descripcion,p.fecha,p.subtipo,d.sucursal
+            union 
+            SELECT
+            p.id as poliza,p.fecha,p.tipo,p.subtipo,d.asiento,d.descripcion
+            ,d.sucursal
+            ,(d.debe) as debe,(d.haber) as haber
+            ,c.clave,c.descripcion
+            FROM poliza_det d  join poliza p on (p.id=d.poliza_id) join cuenta_contable c on (c.id= d.cuenta_id)
+            where  
+            p.fecha between '@FECHA_FINAL'  and '@FECHA_FINAL'
+            and c.id = @CUENTA
+            AND p.subtipo not like 'COBRANZA_%' AND  p.subtipo <> 'COMISIONES_TARJETA'
+            union
             SELECT 
-                    month(p.fecha) as mes,
-                    year(p.fecha ) as ejercicio,
-                    p.folio as poliza,p.fecha,p.tipo,p.subtipo,d.asiento,d.descripcion as concepto
-                    ,d.sucursal
-                    ,(d.debe) as debe,(d.haber) as haber
-                    ,c.clave,c.descripcion
-                    FROM poliza_det d  join poliza p on (p.id=d.poliza_id) join cuenta_contable c on (c.id= d.cuenta_id)
-                    where  
-                    p.fecha between '@FECHA_INICIAL' and '@FECHA_FINAL'
-                    and c.id = '@CUENTA'
-                    AND p.subtipo not like 'COBRANZA_%'
-                    union
-                    SELECT 
-                    month(p.fecha) as mes,
-                    year(p.fecha ) as ejercicio,
-                    p.folio as poliza,p.fecha,p.tipo,p.subtipo,d.asiento,d.descripcion as concepto
-                    ,d.sucursal
-                    ,sum(d.debe) as debe,sum(d.haber) as haber
-                    ,c.clave,c.descripcion
-                    FROM poliza_det d  join poliza p on (p.id=d.poliza_id) join cuenta_contable c on (c.id= d.cuenta_id)
-                    where  
-                    p.fecha between '@FECHA_INICIAL'  and '@FECHA_FINAL'
-                    and c.id = '@CUENTA'
-                    and d.asiento not like 'COB_DEP_%' AND d.asiento not like 'COB_TRANSF_%' AND d.asiento not like 'COB_FICHA_CHE%'
-                    AND p.subtipo like 'COBRANZA_%'
-                    GROUP by c.id,asiento,p.subtipo,d.sucursal
-                    UNION
-                    SELECT 
-                    month(p.fecha) as mes,
-                    year(p.fecha ) as ejercicio,
-                    p.folio as poliza,p.fecha,p.tipo,p.subtipo,d.asiento,d.descripcion as concepto
-                    ,d.sucursal
-                    ,d.debe as debe,(d.haber) as haber
-                    ,c.clave,c.descripcion
-                    FROM poliza_det d  join poliza p on (p.id=d.poliza_id) join cuenta_contable c on (c.id= d.cuenta_id)
-                    where  
-                    p.fecha between '@FECHA_INICIAL' and '@FECHA_FINAL'
-                    and c.id = '@CUENTA'
-                    and (d.asiento like 'COB_DEP_%' OR d.asiento  like 'COB_TRANSF_%' OR d.asiento  like 'COB_FICHA_CHE%')
-                    AND p.subtipo like 'COBRANZA_%'
-                    order by 2,3,4,6,5
+            p.id as poliza,p.fecha,p.tipo,p.subtipo,d.asiento,d.descripcion
+            ,d.sucursal
+            ,sum(d.debe) as debe,sum(d.haber) as haber
+            ,c.clave,c.descripcion
+            FROM poliza_det d  join poliza p on (p.id=d.poliza_id) join cuenta_contable c on (c.id= d.cuenta_id)
+            where  
+            p.fecha between '@FECHA_INICIAL'  and '@FECHA_FINAL'
+            and c.id =@CUENTA
+            and d.asiento LIKE 'COB_FICHA_CHE%'
+            AND p.subtipo like 'COBRANZA_%'
+            GROUP by c.id,ASIENTO,p.fecha,p.subtipo,d.sucursal
+            union
+            SELECT
+            p.id as poliza,p.fecha,p.tipo,p.subtipo,d.asiento,d.descripcion
+            ,d.sucursal
+            ,sum(d.debe) as debe,sum(d.haber) as haber
+            ,c.clave,c.descripcion
+            FROM poliza_det d  join poliza p on (p.id=d.poliza_id) join cuenta_contable c on (c.id= d.cuenta_id)
+            where  
+            p.fecha between '@FECHA_INICIAL'  and '@FECHA_FINAL'
+            and c.id =@CUENTA
+            and d.asiento LIKE 'COB_FICHA_EFE%'
+            AND p.subtipo like 'COBRANZA_%'
+            GROUP by c.id,ASIENTO,d.descripcion,p.fecha,p.subtipo,d.sucursal
+            union
+            SELECT 
+            p.id as poliza,p.fecha,p.tipo,p.subtipo,d.asiento,d.descripcion
+            ,d.sucursal
+            ,sum(d.debe) as debe,sum(d.haber) as haber
+            ,c.clave,c.descripcion
+            FROM poliza_det d  join poliza p on (p.id=d.poliza_id) join cuenta_contable c on (c.id= d.cuenta_id)
+            where  
+            p.fecha between '@FECHA_INICIAL'  and '@FECHA_FINAL'
+            and c.id =@CUENTA
+            and d.asiento not like 'COB_DEP_%' AND d.asiento not like 'COB_TRANSF_%'  AND d.asiento not like 'COB_FICHA_%'
+            AND p.subtipo like 'COBRANZA_%'
+            GROUP by c.id,p.fecha,p.subtipo,d.sucursal
+            UNION
+            SELECT 
+            p.id as poliza,p.fecha,p.tipo,p.subtipo,d.asiento,d.descripcion
+            ,d.sucursal
+            ,d.debe as debe,(d.haber) as haber
+            ,c.clave,c.descripcion
+            FROM poliza_det d  join poliza p on (p.id=d.poliza_id) join cuenta_contable c on (c.id= d.cuenta_id)
+            where  
+            p.fecha between '@FECHA_INICIAL'  and '@FECHA_FINAL'
+            and c.id =@CUENTA
+            and (d.asiento like 'COB_DEP_%' OR d.asiento  like 'COB_TRANSF_%')
+            AND p.subtipo like 'COBRANZA_%'
+            order by 2,3,4,6,5
             """
             break
             case 'GENERAL':
