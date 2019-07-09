@@ -174,6 +174,9 @@ class PolizaController extends RestfulController<Poliza> {
             notFound()
             return
         }
+        if(poliza.cuadre > 0.0) {
+            throw new RuntimeException("La póliza ${poliza.subtipo} : ${poliza.folio} no esta cuadrada, no se puede cerrar")
+        }
         poliza.cierre = new Date()
         poliza = poliza.save flush: true
         // saldoPorCuentaContableService.actualizarSaldos(poliza)

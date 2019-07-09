@@ -283,7 +283,7 @@ class UrlMappings {
         "/api/contabilidad/saldos/cierreAnual/$ejercicio"(controller: 'saldoPorCuentaContable', action: 'cierreAnual', method: 'PUT')
         "/api/contabilidad/saldos/loadMovimientos"(controller: 'saldoPorCuentaContable', action: 'loadMovimientos')
 
-        "/api/contabilidad/saldos/printAuxiliar"(controller: 'saldoPorCuentaContable', action: 'printAuxiliar')
+
         "/api/contabilidad/saldos/drillPeriodo"(controller: 'saldoPorCuentaContable', action: 'drillPeriodo')
         "/api/contabilidad/saldos/drillSubtipo"(controller: 'saldoPorCuentaContable', action: 'drillSubtipo', method: 'POST')
         "/api/contabilidad/saldos/drill/$id"(controller: 'saldoPorCuentaContable', action: 'drill', method: 'GET')
@@ -292,9 +292,11 @@ class UrlMappings {
         "/api/contabilidad/diot"(resources: 'diot', excludes:['create', 'edit','patch'])
 
         "/api/sat/cuentas"(resources: 'cuentaSat', excludes: ['create', 'edit', 'patch'])
+
         // Auxiliares
+        "/api/contabilidad/auxiliar"(controller: 'auxiliares', action: 'auxiliar', method: 'GET')
+        "/api/contabilidad/auxiliar/printAuxiliar"(controller: 'auxiliar', action: 'printAuxiliar')
         "/api/contabilidad/auxiliarBancos"(controller: 'auxiliares', action: 'bancos', method: 'GET')
-         "/api/contabilidad/auxiliar"(controller: 'auxiliares', action: 'general', method: 'GET')
 
         // Cfdis
         "/api/cfdi"(resources: 'cfdi', excludes:['create', 'edit', 'patch', 'update', 'save', 'delete'])
