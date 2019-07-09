@@ -18,7 +18,7 @@ class AuxiliaresService {
             case 'BANCOS':
             return select = """
             SELECT
-            p.id as poliza,p.fecha,p.tipo,p.subtipo,d.asiento,d.descripcion
+            p.id as poliza,p.fecha,p.tipo,p.subtipo,d.asiento,d.descripcion as concepto
             ,d.sucursal
             ,(d.debe) as debe,(d.haber) as haber
             ,c.clave,c.descripcion
@@ -30,7 +30,7 @@ class AuxiliaresService {
             group by c.id,ASIENTO,d.descripcion,p.fecha,p.subtipo,d.sucursal
             union 
             SELECT
-            p.id as poliza,p.fecha,p.tipo,p.subtipo,d.asiento,d.descripcion
+            p.id as poliza,p.fecha,p.tipo,p.subtipo,d.asiento,d.descripcion as concepto
             ,d.sucursal
             ,(d.debe) as debe,(d.haber) as haber
             ,c.clave,c.descripcion
@@ -41,7 +41,7 @@ class AuxiliaresService {
             AND p.subtipo not like 'COBRANZA_%' AND  p.subtipo <> 'COMISIONES_TARJETA'
             union
             SELECT 
-            p.id as poliza,p.fecha,p.tipo,p.subtipo,d.asiento,d.descripcion
+            p.id as poliza,p.fecha,p.tipo,p.subtipo,d.asiento,d.descripcion as concepto
             ,d.sucursal
             ,sum(d.debe) as debe,sum(d.haber) as haber
             ,c.clave,c.descripcion
@@ -54,7 +54,7 @@ class AuxiliaresService {
             GROUP by c.id,ASIENTO,p.fecha,p.subtipo,d.sucursal
             union
             SELECT
-            p.id as poliza,p.fecha,p.tipo,p.subtipo,d.asiento,d.descripcion
+            p.id as poliza,p.fecha,p.tipo,p.subtipo,d.asiento,d.descripcion as concepto
             ,d.sucursal
             ,sum(d.debe) as debe,sum(d.haber) as haber
             ,c.clave,c.descripcion
@@ -67,7 +67,7 @@ class AuxiliaresService {
             GROUP by c.id,ASIENTO,d.descripcion,p.fecha,p.subtipo,d.sucursal
             union
             SELECT 
-            p.id as poliza,p.fecha,p.tipo,p.subtipo,d.asiento,d.descripcion
+            p.id as poliza,p.fecha,p.tipo,p.subtipo,d.asiento,d.descripcion as concepto
             ,d.sucursal
             ,sum(d.debe) as debe,sum(d.haber) as haber
             ,c.clave,c.descripcion
@@ -80,7 +80,7 @@ class AuxiliaresService {
             GROUP by c.id,p.fecha,p.subtipo,d.sucursal
             UNION
             SELECT 
-            p.id as poliza,p.fecha,p.tipo,p.subtipo,d.asiento,d.descripcion
+            p.id as poliza,p.fecha,p.tipo,p.subtipo,d.asiento,d.descripcion as concepto
             ,d.sucursal
             ,d.debe as debe,(d.haber) as haber
             ,c.clave,c.descripcion
