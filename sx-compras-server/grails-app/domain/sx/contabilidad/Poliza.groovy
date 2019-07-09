@@ -52,7 +52,7 @@ class Poliza {
         ejercicio inList:(2014..2030)
         mes inList:(1..13)
         tipo inList:['INGRESO','EGRESO','DIARIO']
-        subtipo minSize:5,maxSize:50
+        // subtipo minSize:5,maxSize:50, inList: SUBTIPOS
         // folio unique:['ejercicio','mes','subtipo']
         concepto maxSize:300
         cierre nullable:true
@@ -62,6 +62,43 @@ class Poliza {
         sucursal nullable: true
         satComplementos nullable: true
         satComprobantes nullable: true
+        subtipo inList: [
+                'COBRANZA_CON',
+                'COBRANZA_COD',
+                'COBRANZA_CRE',
+                'COBRANZA_CHE',
+                'COBRANZA_JUR',
+                'CHEQUE',
+                'TRANSFERENCIA',
+                'COMISIONES_TARJETA',
+                'VENTAS_CON',
+                'VENTAS_COD',
+                'VENTAS_CRE',
+                'VENTAS_ACF',
+                'VENTAS_OTR',
+                'NOTAS_DE_CARGO',
+                'DESCUENTOS_COMPRAS',
+                'TRASPASOS_CXC',
+                'NOTAS_DE_CREDITO_DEV',
+                'NOTAS_DE_CREDITO_BON',
+                'ANTICIPOS','COMPRAS',
+                'INVENTARIOS',
+                'ACTIVO_FIJO',
+                'CHEQUES_EN_TRANSITO',
+                'DEPOSITOS_EN_TRANSITO',
+                'DEPOSITOS_TESORERIA',
+                'TESORERIA',
+                'PROVISION_DE_GASTOS',
+                'PROVISION_DE_REMBOLSO',
+                'PROVISION_DE_FLETES',
+                'PROVISION_DE_SEGUROS',
+                'COMISIONES_BANCARIA_GASTO',
+                'PROVISION_NOMINA',
+                'PROVISION_DE_CARGA_SOCIAL',
+                'VARIACION_CAMBIARIA',
+                'IMPUESTOS_SOBRE_NOMINA',
+                'CIERRE_ANUAL',
+                'CIERRE_MENSUAL']
     }
 
     static mapping ={
@@ -78,38 +115,7 @@ class Poliza {
     }
 
 
-    static enum SubtipoIngreso {
-        COBRANZA_CON,
-        COBRANZA_COD,
-        COBRANZA_CRE,
-        COBRANZA_CHE,
-        COBRANZA_JUR,
-        INTERESES_PRESTAMO_CHOFERES,
-        DEPOSITOS_TESORERIA,
-    }
 
-    static enum SubtipoEgreso {
-        CHEQUE,
-        TRANSFERENCIA,
-        TARJETA
-    }
-
-    static enum SuttipoDiario {
-        VENTAS,
-        CARGOS,
-        NOTAS_DE_CREDITO,
-        ANTICIPOS,
-        COMPRAS,
-        DESCUENTOS_COMPRAS,
-        INVENTARIOS,
-        ACTIVO_FIJO,
-        CHEQUES_EN_TRANSITO,
-        DEPOSITOS_EN_TRANSITO,
-        TESORERIA,
-        PROVISION_DE_GASTOS,
-        PROVISION_DE_CARGA_SOCIAL,
-        CIERRE_ANUAL
-    }
 
     BigDecimal getTotalNacionales() {
         return partidas*.getTotalNacionales().sum()
@@ -118,6 +124,44 @@ class Poliza {
     BigDecimal getTotalExtranjeros() {
         return partidas*.getTotalExtranjeros().sum()
     }
+
+    public static SUBTIPOS =  [
+            'COBRANZA_CON',
+            'COBRANZA_COD',
+            'COBRANZA_CRE',
+            'COBRANZA_CHE',
+            'COBRANZA_JUR',
+            'CHEQUE',
+            'TRANSFERENCIA',
+            'COMISIONES_TARJETA',
+            'VENTAS_CON',
+            'VENTAS_COD',
+            'VENTAS_CRE',
+            'VENTAS_ACF',
+            'VENTAS_OTR',
+            'NOTAS_DE_CARGO',
+            'DESCUENTOS_COMPRAS',
+            'TRASPASOS_CXC',
+            'NOTAS_DE_CREDITO_DEV',
+            'NOTAS_DE_CREDITO_BON',
+            'ANTICIPOS','COMPRAS',
+            'INVENTARIOS',
+            'ACTIVO_FIJO',
+            'CHEQUES_EN_TRANSITO',
+            'DEPOSITOS_EN_TRANSITO',
+            'DEPOSITOS_TESORERIA',
+            'TESORERIA',
+            'PROVISION_DE_GASTOS',
+            'PROVISION_DE_REMBOLSO',
+            'PROVISION_DE_FLETES',
+            'PROVISION_DE_SEGUROS',
+            'COMISIONES_BANCARIA_GASTO',
+            'PROVISION_NOMINA',
+            'PROVISION_DE_CARGA_SOCIAL',
+            'VARIACION_CAMBIARIA',
+            'IMPUESTOS_SOBRE_NOMINA',
+            'CIERRE_ANUAL',
+            'CIERRE_MENSUAL']
 
 }
 

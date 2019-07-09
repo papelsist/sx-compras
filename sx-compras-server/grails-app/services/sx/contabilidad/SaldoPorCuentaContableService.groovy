@@ -12,7 +12,8 @@ class SaldoPorCuentaContableService {
     void actualizarSaldos(Integer ejercicio, Integer mes){
         List<CuentaContable> cuentasDeMayor = CuentaContable.where{padre == null}.list()
         cuentasDeMayor.each { cuenta ->
-            actualizarSaldos(cuenta, ejercicio, mes)
+            // actualizarSaldos(cuenta, ejercicio, mes)
+            actualizarSaldo(cuenta, ejercicio, mes)
         }
     }
 
@@ -207,26 +208,118 @@ class SaldoPorCuentaContableService {
         else
             return cuenta
     }
-    /*
-    def drillPorCuenta(DrillPorDiaCommand command) {
-    def data = PolizaDet.findAll(
-    """select new HashMap(
-        	'tipo': d.poliza.tipo,
-        	'subtipo': d.poliza.subtipo,
-            'folio': d.poliza.folio,
-            'dia': day(d.poliza.fecha),
-            'debe': sum(d.debe),
-            'haber': sum(d.haber))
-        from PolizaDet d
-        where d.cuenta=?
-         and year(d.poliza.fecha) = ?
-         and month(d.poliza.fecha)=?
-         group by d.poliza.fecha
-    """,
-    [saldo.cuenta, ejercicio,mes])
+
+
+    def actualizarSaldo(CuentaContable cta, Integer ejercicio, Integer mes) {
+        if(cta.padre)
+            actualizarSaldo(cta.padre, ejercicio, mes)
+
+        List<Map> movimientos = getMovimientosAgrupados(cta, ejercicio, mes)
+        // log.info("Movs: {}", movimientos)
+        SaldoPorCuentaContable saldo = SaldoPorCuentaContable
+                .findOrCreateWhere(cuenta: cta, clave: cta.clave, ejercicio: ejercicio, mes: mes)
+        saldo.nivel = cta.nivel
+        saldo.detalle = cta.detalle
+
+        BigDecimal saldoInicial = 0.0
+
+        if (mes == 1){
+            SaldoPorCuentaContable cierreAnual = SaldoPorCuentaContable
+                    .findByCuentaAndEjercicioAndMes(cta, ejercicio - 1, 13)
+            saldoInicial = cierreAnual?.saldoFinal?: 0.0
+        }else{
+            saldoInicial = SaldoPorCuentaContable
+                    .findByCuentaAndEjercicioAndMes(cta, ejercicio, mes-1)?.saldoFinal?:0.0
+        }
+        saldo.saldoInicial = saldoInicial
+        saldo.debe = movimientos.sum 0.0, {it.debe}
+        saldo.haber = movimientos.sum 0.0, {it.haber}
+        saldo.saldoFinal = saldo.saldoInicial + saldo.debe - saldo.haber
+        saldo.save failOnError: true, flush: true
+        log.info("{} I:{} D:{} H:{} F:{}", cta.clave, saldo.saldoInicial, saldo.debe, saldo.haber, saldo.saldoFinal)
+        cta.subcuentas.each { CuentaContable c2 ->
+            // Nivel 2
+            String sclave = c2.clave.substring(0, 8)
+            List<Map> movs2 = movimientos.findAll{ it.cuenta.startsWith(sclave) }.sort{it.clave}
+            SaldoPorCuentaContable saldo2 = findSaldo(c2, ejercicio, mes)
+
+            saldo2.debe = movs2.sum 0.0, {it.debe}
+            saldo2.haber = movs2.sum 0.0, {it.haber}
+            saldo2.saldoFinal = saldo2.saldoInicial + saldo2.debe - saldo2.haber
+            saldo2.save failOnError: true, flush: true
+            log.info("  {} I:{} D:{} H:{} F:{}", sclave, saldo2.saldoInicial, saldo2.debe, saldo2.haber, saldo2.saldoFinal)
+            c2.subcuentas.each { CuentaContable c3 ->
+                // Nivel 3
+                sclave = c3.clave.substring(0, 13)
+                List<Map> movs3 = movimientos.findAll{ it.cuenta.startsWith(sclave) }.sort{it.clave}
+                SaldoPorCuentaContable saldo3 = findSaldo(c3, ejercicio, mes)
+
+                saldo3.debe = movs3.sum 0.0, {it.debe}
+                saldo3.haber = movs3.sum 0.0, {it.haber}
+                saldo3.saldoFinal = saldo3.saldoInicial + saldo3.debe - saldo3.haber
+                saldo3.save failOnError: true, flush: true
+                log.info("    {} I:{} D:{} H:{} F:{}", sclave, saldo3.saldoInicial, saldo3.debe, saldo3.haber, saldo3.saldoFinal)
+
+                c3.subcuentas.each { CuentaContable c4 ->
+                    // Nivel 4
+                    sclave = c4.clave
+                    List<Map> movs4 = movimientos.findAll{ it.cuenta == sclave }.sort{it.clave}
+                    SaldoPorCuentaContable saldo4 = findSaldo(c4, ejercicio, mes)
+
+                    saldo4.debe = movs4.sum 0.0, {it.debe}
+                    saldo4.haber = movs4.sum 0.0, {it.haber}
+                    saldo4.saldoFinal = saldo4.saldoInicial + saldo4.debe - saldo4.haber
+                    log.info("    {} I:{} D:{} H:{} F:{}", sclave, saldo4.saldoInicial, saldo4.debe, saldo4.haber, saldo4.saldoFinal)
+                    saldo4.save failOnError: true, flush: true
+                }
+
+            }
+        }
+
+        return saldo
+
 
     }
-    */
+
+    def getMovimientosAgrupados(CuentaContable cta, Integer ej, Integer m) {
+        def sclave = cta.clave.substring(0,3)
+        log.info("SClave: {}", sclave)
+        List<Map> rows = PolizaDet
+                .executeQuery("""
+                    select d.cuenta.clave, sum(d.debe),sum(d.haber) 
+                        from PolizaDet d 
+                         where d.cuenta.clave like ?
+                         and ejercicio = ? 
+                         and mes = ? 
+                         and d.poliza.tipo != ?
+                         and d.poliza.cierre is not null
+                         group by d.cuenta.clave
+                         """
+                ,["${sclave}%", ej, m, 'CIERRE_ANUAL'])
+        def res = rows.collect {
+            [cuenta: it[0], debe: it[1], haber:it[2]]
+        }
+        return res
+    }
+
+    private SaldoPorCuentaContable findSaldo(CuentaContable cta, Integer ejercicio, Integer mes) {
+        SaldoPorCuentaContable saldo = SaldoPorCuentaContable
+                .findOrCreateWhere(cuenta: cta, clave: cta.clave, ejercicio: ejercicio, mes: mes)
+        saldo.nivel = cta.nivel
+        saldo.detalle = cta.detalle
+        BigDecimal saldoInicial = 0.0
+        if (mes == 1){
+            SaldoPorCuentaContable cierreAnual = SaldoPorCuentaContable
+                    .findByCuentaAndEjercicioAndMes(cta, ejercicio - 1, 13)
+            saldoInicial = cierreAnual?.saldoFinal?: 0.0
+        }else{
+            saldoInicial = SaldoPorCuentaContable
+                    .findByCuentaAndEjercicioAndMes(cta, ejercicio, mes-1)?.saldoFinal?:0.0
+        }
+        saldo.saldoInicial = saldoInicial
+        return saldo
+    }
+
 
 
 }

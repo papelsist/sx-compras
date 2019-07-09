@@ -19,7 +19,9 @@ class AuxiliaresController {
 	AuxiliaresService auxiliaresService
     
     def bancos(){
+
         Periodo periodo = params.periodo
+        log.info('Ejecutando: {}', params)
         String select = auxiliaresService.getSelect('BANCOS').replaceAll('@FECHA_INICIAL', auxiliaresService.toSqlDate(periodo.fechaInicial)).replaceAll('@FECHA_FINAL', auxiliaresService.toSqlDate(periodo.fechaFinal)).
         replaceAll('@CUENTA', params.cuenta)
         def rows = auxiliaresService.getAllRows(select,[])

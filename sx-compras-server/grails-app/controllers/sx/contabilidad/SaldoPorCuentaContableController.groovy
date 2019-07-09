@@ -1,22 +1,23 @@
 package sx.contabilidad
 
-import grails.compiler.GrailsCompileStatic
+import groovy.transform.Canonical
+import groovy.transform.ToString
+import groovy.util.logging.Slf4j
+
 import grails.gorm.DetachedCriteria
 import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.*
 import grails.validation.Validateable
-import groovy.transform.Canonical
-import groovy.transform.CompileDynamic
-import groovy.transform.ToString
-import groovy.util.logging.Slf4j
+
+
 import org.apache.commons.lang3.exception.ExceptionUtils
+
 import sx.reports.ReportService
 import sx.utils.Periodo
 import static org.springframework.http.HttpStatus.OK
 
 
 @Slf4j
-@GrailsCompileStatic
 @Secured("ROLE_CONTABILIDAD")
 class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaContable> {
 
@@ -33,7 +34,6 @@ class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaC
     }
 
     @Override
-    @CompileDynamic
     protected List<Poliza> listAllResources(Map params) {
         params.sort = params.sort ?:'clave'
         params.order = params.order ?:'asc'
@@ -93,26 +93,19 @@ class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaC
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'Poliza.pdf')
     }
 
-
-
-    @CompileDynamic
     def loadMovimientos() {
         log.info('Localizando movimientos: {}', params)
         CuentaContable cta = CuentaContable.get(params.cuenta)
         Periodo periodo = params.periodo
 
-        log.info("Cta: {} Detalle: {} Padre: {}", cta.clave, cta.detalle, cta.padre)
         List movimientos = []
         Integer eje = Periodo.obtenerYear(periodo.fechaInicial)
         Integer m = Periodo.obtenerMes(periodo.fechaInicial) + 1
 
         if(cta.detalle) {
-            // String sclave = cta.clave.substring(0, 7)
-            // String term = "${sclave}%"
             movimientos = PolizaDet.where{
                 poliza.ejercicio == eje && poliza.mes == m && cuenta == cta
-            }.list(max: 10000)
-            log.info("Ejercicio: {} Mes: {} Rows: {}", eje, m, movimientos.size())
+            }.list(max: 30000)
         }
         respond movimientos
 
@@ -178,18 +171,8 @@ class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaC
     }
 
 
-
-    def handleException(Exception e) {
-        String message = ExceptionUtils.getRootCauseMessage(e)
-        log.error(message, e)
-        respond([message: message], status: 500)
-    }
-
-    @CompileDynamic
     def drillPeriodo(AuxiliarContableCommand command){
-        log.info('Drill: {}', command)
-
-        SaldoPorCuentaContable saldo = SaldoPorCuentaContable
+         SaldoPorCuentaContable saldo = SaldoPorCuentaContable
                 .where{cuenta == command.cuenta && ejercicio == command.ejercicio && mes == command.mes}.find()
 
         List res = PolizaDet.findAll(
@@ -211,7 +194,6 @@ class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaC
             BigDecimal debe = list.sum{it.debe}
             BigDecimal haber = list.sum{it.haber}
             acumulado = acumulado + debe - haber
-            // log.info("{} Debe: {} Haber:{} Saldo:{}", entry.key.format('dd'),debe, haber, acumulado)
 
             Map row = [
                     ejercicio: command.ejercicio,
@@ -225,20 +207,16 @@ class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaC
 
             return row
         }
-        // log.info("Saldo final: {}", saldo.saldoFinal)
-
         Map resumen = [data: data, saldo: saldo, cuenta: saldo.cuenta]
         respond resumen
         
     }
 
-    def drillSubtipo(DrillPorSubtipo command){
-        log.info('Drill: {}', command)
-        def q = PolizaDet.where {cuenta == command.cuenta &&  poliza.subtipo in command.subtipos}
-        if(command.fecha) {
-            q = q.where {poliza.fecha == command.fecha}
-        }
-        respond q.list()
+
+    def handleException(Exception e) {
+        String message = ExceptionUtils.getRootCauseMessage(e)
+        log.error(message, e)
+        respond([message: message], status: 500)
     }
 }
 
