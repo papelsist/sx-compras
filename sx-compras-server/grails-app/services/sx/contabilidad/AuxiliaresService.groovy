@@ -40,18 +40,27 @@ class AuxiliaresService {
             and c.id = @CUENTA
             AND p.subtipo not like 'COBRANZA_%' AND  p.subtipo <> 'COMISIONES_TARJETA'
             union
-            SELECT 
-            p.id as poliza,p.fecha,p.tipo,p.subtipo,d.asiento,d.descripcion as concepto
-            ,d.sucursal
-            ,sum(d.debe) as debe,sum(d.haber) as haber
-            ,c.clave,c.descripcion
-            FROM poliza_det d  join poliza p on (p.id=d.poliza_id) join cuenta_contable c on (c.id= d.cuenta_id)
-            where  
-            p.fecha between '@FECHA_INICIAL'  and '@FECHA_FINAL'
-            and c.id =@CUENTA
-            and d.asiento LIKE 'COB_FICHA_CHE%'
-            AND p.subtipo like 'COBRANZA_%'
-            GROUP by c.id,ASIENTO,p.fecha,p.subtipo,d.sucursal
+            SELECT
+            poliza,fecha,tipo,subtipo,asiento, concepto
+            ,sucursal
+            ,sum(debe) as debe,sum(haber) as haber
+            ,clave,descripcion 
+            FROM (
+                SELECT 
+                SUBSTRING_INDEX(d.descripcion," ",2) as ficha,
+                p.id as poliza,p.fecha,p.tipo,p.subtipo,d.asiento,d.descripcion as concepto
+                ,d.sucursal
+                ,(d.debe) as debe,(d.haber) as haber
+                ,c.clave,c.descripcion
+                ,c.id as cuenta
+                FROM poliza_det d  join poliza p on (p.id=d.poliza_id) join cuenta_contable c on (c.id= d.cuenta_id)
+                where  
+                p.fecha between '@FECHA_INICIAL'  and '@FECHA_FINAL'
+                and c.id = @CUENTA
+                and d.asiento LIKE 'COB_FICHA_CHE%'
+                AND p.subtipo like 'COBRANZA_%'
+            ) as x
+            GROUP by cuenta,ASIENTO,fecha,subtipo,sucursal,ficha
             union
             SELECT
             p.id as poliza,p.fecha,p.tipo,p.subtipo,d.asiento,d.descripcion as concepto
