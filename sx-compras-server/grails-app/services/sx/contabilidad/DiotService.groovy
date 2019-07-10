@@ -44,20 +44,20 @@ class DiotService {
             rows.each{ row ->
                 if(row.pagos1516 >= 50000){
                     def rowFile ="${row.tipoTercero}|${row.tipoOperacion?:''}|${row.rfc?:''}|${row.idFiscal?:''}|${row.nombreExtranjero?:''}|${row.paisResidencia?:''}"+
-                    "|${row.nacionalidad?:''}|${row.pagos1516}|${row.pagos15}|${row.ivaPagado1516}|${row.pagos1011}|${row.pagos10}|${row.pagosFrontera}"+
-                    "|${row.ivaPagado1011}|${row.ivaPagadoFrontera}|${row.pagosImportacion}|${row.ivaPagadoImportacion1516}|${row.pagosImportacion1011}"+
-                    "|${row.ivaPagadoImportacion1011}|${row.pagosImportacionSinIva}|${row.pagosTasa0}|${row.pagosSinIva}|${row.ivaRetenidoContribuyente}"+
-                    "|${row.ivaNotas}\r\n"
+                    "|${row.nacionalidad?:''}|${row.pagos1516?:''}|${row.pagos15?:''}|${row.ivaPagado1516?:''}|${row.pagos1011?:''}|${row.pagos10?:''}|${row.pagosFrontera?:''}"+
+                    "|${row.ivaPagado1011?:''}|${row.ivaPagadoFrontera?:''}|${row.pagosImportacion?:''}|${row.ivaPagadoImportacion1516?:''}|${row.pagosImportacion1011?:''}"+
+                    "|${row.ivaPagadoImportacion1011?:''}|${row.pagosImportacionSinIva?:''}|${row.pagosTasa0?:''}|${row.pagosSinIva?:''}|${row.ivaRetenidoContribuyente?:''}"+
+                    "|${row.ivaNotas?:''}\r\n"
                     append(rowFile)
                 }
             }
         }
         def grow = sql.firstRow(getSelect('LAYOUT'),[mes, ejercicio])
 
-        def growFile ="04|||||||${grow.pagos1516}|${grow.pagos15}|${grow.ivaPagado1516}|${grow.pagos1011}|${grow.pagos10}|${grow.pagosFrontera}"+
-                "|${grow.ivaPagado1011}|${grow.ivaPagadoFrontera}|${grow.pagosImportacion}|${grow.ivaPagadoImportacion1516}|${grow.pagosImportacion1011}"+
-                "|${grow.ivaPagadoImportacion1011}|${grow.pagosImportacionSinIva}|${grow.pagosTasa0}|${grow.pagosSinIva}|${grow.ivaRetenidoContribuyente}"+
-                "|${grow.ivaNotas}\r\n"
+        def growFile ="04|||||||${grow.pagos1516?:''}|${grow.pagos15?:''}|${grow.ivaPagado1516?:''}|${grow.pagos1011?:''}|${grow.pagos10?:''}|${grow.pagosFrontera?:''}"+
+                "|${grow.ivaPagado1011?:''}|${grow.ivaPagadoFrontera?:''}|${grow.pagosImportacion?:''}|${grow.ivaPagadoImportacion1516?:''}|${grow.pagosImportacion1011?:''}"+
+                "|${grow.ivaPagadoImportacion1011?:''}|${grow.pagosImportacionSinIva?:''}|${grow.pagosTasa0?:''}|${grow.pagosSinIva?:''}|${grow.ivaRetenidoContribuyente?:''}"+
+                "|${grow.ivaNotas?:''}\r\n"
         
         temp.append(growFile)
         return temp
