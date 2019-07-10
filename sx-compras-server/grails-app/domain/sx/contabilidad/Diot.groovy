@@ -28,43 +28,43 @@ class Diot{
 
     String nacionalidad
 
-    BigDecimal pagos1516 = 0.00
+    Integer pagos1516 = 0
 
-    BigDecimal pagos15 = 0.00
+    Integer pagos15 = 0
 
-    BigDecimal ivaPagado1516 = 0.00
+    Integer ivaPagado1516 = 0
 
-    BigDecimal pagos1011 = 0.00
+    Integer pagos1011 = 0
 
-    BigDecimal pagos10 = 0.00
+    Integer pagos10 = 0
 
-    BigDecimal pagosFrontera = 0.00
+    Integer pagosFrontera = 0
 
-    BigDecimal ivaPagado1011 = 0.00
+    Integer ivaPagado1011 = 0
 
-    BigDecimal ivaPagadoFrontera = 0.00
+    Integer ivaPagadoFrontera = 0
 
-    BigDecimal pagosImportacion = 0.00
+    Integer pagosImportacion = 0
 
-    BigDecimal ivaPagadoImportacion1516 = 0.00
+    Integer ivaPagadoImportacion1516 = 0
 
-    BigDecimal pagosImportacion1011 = 0.00
+    Integer pagosImportacion1011 = 0
 
-    BigDecimal ivaPagadoImportacion1011 = 0.00
+    Integer ivaPagadoImportacion1011 = 0
 
-    BigDecimal pagosImportacionSinIva = 0.00
+    Integer pagosImportacionSinIva = 0
 
-    BigDecimal pagosTasa0 = 0.00
+    Integer pagosTasa0 = 0
 
-    BigDecimal pagosSinIva = 0.00
+    Integer pagosSinIva = 0
 
-    BigDecimal ivaRetenidoContribuyente = 0.00
+    Integer ivaRetenidoContribuyente = 0
 
-    BigDecimal ivaNotas = 0.00 
+    Integer ivaNotas = 0 
 
-    BigDecimal ivaAcreditable = 0.00
+    Integer ivaAcreditable = 0
 
-    BigDecimal ivaAnticipo = 0.00
+    Integer ivaAnticipo = 0
 
 
 
