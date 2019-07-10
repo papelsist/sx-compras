@@ -36,7 +36,7 @@ class AuxiliaresService {
             ,c.clave,c.descripcion
             FROM poliza_det d  join poliza p on (p.id=d.poliza_id) join cuenta_contable c on (c.id= d.cuenta_id)
             where  
-            p.fecha between '@FECHA_FINAL'  and '@FECHA_FINAL'
+            p.fecha between '@FECHA_INICIAL'  and '@FECHA_FINAL'
             and c.id = @CUENTA
             AND p.subtipo not like 'COBRANZA_%' AND  p.subtipo <> 'COMISIONES_TARJETA'
             union
@@ -93,6 +93,8 @@ class AuxiliaresService {
             order by 2,3,4,6,5
             """
             break
+
+            
             case 'GENERAL':
             return select = """
                     SELECT month(p.fecha) as mes ,year(p.fecha) as ejercicio,'B' orden,(SELECT z.clave  FROM cuenta_contable x join cuenta_contable y on(x.padre_id=y.id) join cuenta_contable z on(y.padre_id=z.id) where x.id=c.padre_id and  z.nivel=c.nivel-3 ) as clave_1,   
