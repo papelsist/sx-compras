@@ -26,7 +26,6 @@ class DiotService {
         def rows = sql.rows(select)
         List<Diot> diots = [] 
         rows.each{ row ->
-            println row
             def diot = new Diot(row)
     	    diot.save failOnError: true, flush:true
             diots.add(diot)
@@ -37,10 +36,10 @@ class DiotService {
     }
 
     def layout(int mes, int ejercicio) {
+        log.info('Layout para: {} {}', ejercicio, mes)
         def sql = new Sql(dataSource)
         def temp = File.createTempFile("temp",".txt",null)
         def rows = Diot.where{mes == mes && ejercicio == ejercicio}
-        println temp
         temp.with{
             rows.each{ row ->
                 if(row.pagos1516 >= 50000){
@@ -61,7 +60,6 @@ class DiotService {
                 "|${grow.ivaNotas}\r\n"
         
         temp.append(growFile)
-
         return temp
 
     }

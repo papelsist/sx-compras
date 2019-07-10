@@ -291,6 +291,8 @@ class UrlMappings {
         "/api/contabilidad/saldos/reclasificar"(controller: 'saldoPorCuentaContable', action: 'reclasificar', method: 'POST')
 
         "/api/contabilidad/diot"(resources: 'diot', excludes:['create', 'edit','patch'])
+        "/api/contabilidad/diot/generar/$ejercicio/$mes"(controller: 'diot', action: 'generar', method: 'POST')
+        "/api/contabilidad/diot/layout/$ejercicio/$mes"(controller: 'diot', action: 'layout', method: 'GET')
 
         "/api/sat/cuentas"(resources: 'cuentaSat', excludes: ['create', 'edit', 'patch'])
 

@@ -4,7 +4,7 @@ package sx.contabilidad
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 
-@EqualsAndHashCode(includes='ejercicio,mes')
+@EqualsAndHashCode(includes='ejercicio,mes, id')
 @ToString(includes='ejercicio,mes, proveedor, rfc',includeNames=true,includePackage=false)
 class Diot{
 
