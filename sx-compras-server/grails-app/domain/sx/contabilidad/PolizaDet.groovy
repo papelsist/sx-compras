@@ -4,7 +4,7 @@ package sx.contabilidad
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 
-@EqualsAndHashCode
+@EqualsAndHashCode(includes = ['id'])
 @ToString(includes = 'cuenta, debe, haber, concepto, asiento, referencia, entidad, origen', includeNames=true,includePackage=false)
 class PolizaDet {
 

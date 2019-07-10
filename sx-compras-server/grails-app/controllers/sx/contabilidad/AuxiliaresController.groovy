@@ -47,7 +47,8 @@ class AuxiliaresController {
             return
         }
         log.info('Auxiliar: {}', command)
-        List res = PolizaDet.findAll(
+
+        List<PolizaDetDTO> res = PolizaDet.findAll(
                 """
             select new sx.contabilidad.PolizaDetDTO(
                 d.id,
@@ -66,12 +67,49 @@ class AuxiliaresController {
                 d.haber
                 )  
                 from PolizaDet d 
-                    where d.cuenta.clave between ? and ? 
-                    and d.poliza.fecha between ? and ?
-            """,[command.cuentaInicial.clave,
-                 command.cuentaFinal.clave,
-                 command.periodo.fechaFinal,
+                    where d.cuenta.id = ? 
+                    and d.poliza.fecha between ? and ? 
+                    and d.poliza.cierre != null
+                    order by d.id 
+            """,[command.cuenta.id,
+                 command.periodo.fechaInicial,
                  command.periodo.fechaFinal])
+
+        // Obtener el inicio de mes del fecha inicial
+        /*
+        Date inicioDeMes = Periodo.inicioDeMes(command.periodo.fechaInicial)
+        Integer ej = Periodo.obtenerYear(inicioDeMes)
+        Integer m = Periodo.obtenerMes(inicioDeMes) + 1
+
+        SaldoPorCuentaContable saldo = SaldoPorCuentaContable.where{
+            cuenta == command.cuentaInicial && ejercicio == ej && mes == m
+        }.find()
+        if(saldo) {
+            // Calcular los cargos y abonos en el periodo anteriro
+            def row = PolizaDet
+                    .findAll("""
+                select sum(d.debe), sum(d.haber)
+                    from PolizaDet d
+                     where d.cuenta = ?
+                     and d.poliza.ejercicio = ?
+                     and d.poliza.mes = ?
+                     """
+                    ,[command.cuentaInicial, ej, m])
+            BigDecimal debe = row.get(0)[0]?:0.0
+            BigDecimal haber = row.get(0)[1]?:0.0
+            saldoInicial = saldo.saldoInicial + debe - haber
+            log.info('Saldo Inicial: {}', saldoInicial)
+        }
+        log.info('Acumulado: {}', saldoInicial)
+        BigDecimal acu = saldoInicial
+        res.each {
+            it.inicial = acu
+            it.acumulado = it.inicial + it.debe - it.haber
+            acu += it.acumulado
+            log.info('Acu: {}', acu)
+        }
+
+        */
         respond res
     }
 
@@ -88,11 +126,10 @@ class AuxiliaresController {
 @ToString
 class AuxiliarCommand implements  Validateable{
     Periodo periodo
-    CuentaContable cuentaInicial
-    CuentaContable cuentaFinal
+    CuentaContable cuenta
 }
 
-@Canonical
+@Canonical(excludes = "inicial, acumulado")
 class PolizaDetDTO {
     Long id
     String tipo
@@ -108,5 +145,7 @@ class PolizaDetDTO {
     String asiento
     BigDecimal debe
     BigDecimal haber
+    BigDecimal inicial
+    BigDecimal acumulado
 
 }

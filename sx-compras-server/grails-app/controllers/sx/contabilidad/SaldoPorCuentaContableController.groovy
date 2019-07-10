@@ -53,6 +53,14 @@ class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaC
         return criteria.list(params)
     }
 
+    @Override
+    protected SaldoPorCuentaContable updateResource(SaldoPorCuentaContable saldo) {
+        saldo = saldoPorCuentaContableService.actualizarSaldo(saldo.cuenta, saldo.ejercicio, saldo.mes)
+
+        return saldo
+
+    }
+
     def actualizarSaldos(Integer ejercicio, Integer mes) {
         log.info('Actualizando saldos {} - {}', ejercicio, mes)
         saldoPorCuentaContableService.actualizarSaldos(ejercicio, mes)
@@ -104,7 +112,10 @@ class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaC
 
         if(cta.detalle) {
             movimientos = PolizaDet.where{
-                poliza.ejercicio == eje && poliza.mes == m && cuenta == cta
+                poliza.ejercicio == eje &&
+                poliza.mes == m &&
+                cuenta == cta &&
+                poliza.cierre != null
             }.list(max: 30000)
         }
         respond movimientos
@@ -212,6 +223,19 @@ class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaC
         
     }
 
+    def reclasificar() {
+        ReclasificarCommand command = new ReclasificarCommand()
+        bindData(command, getObjectToBind())
+        log.info('Reclasificando {} registros a la cuenta: {}', command.partidas.size(), command.destino)
+        command.partidas.each {
+            it.cuenta = command.destino
+            it.concepto = command.destino.descripcion
+            it.save flush: true
+        }
+        Map res = [cuenta: command.destino.clave, registros: command.partidas.size()]
+        respond res
+    }
+
 
     def handleException(Exception e) {
         String message = ExceptionUtils.getRootCauseMessage(e)
@@ -258,4 +282,10 @@ class SaldoDrillResult {
     SaldoPorCuentaContable parent
     List<SaldoPorCuentaContable> children
 
+}
+
+@Canonical
+class ReclasificarCommand implements  Validateable{
+    CuentaContable destino
+    List<PolizaDet> partidas
 }

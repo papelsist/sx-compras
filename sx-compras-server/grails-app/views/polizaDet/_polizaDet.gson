@@ -18,6 +18,7 @@ json g.render(polizaDet, [excludes: ['poliza','nacionales', 'extranjeros', 'tran
 	    id polizaDet.cuenta.id
 	    clave polizaDet.cuenta.clave
 	    descripcion polizaDet.cuenta.descripcion
+		detalle polizaDet.cuenta.detalle
 	}
     // nacionales g.render(polizaDet.nacionales)
     // extranjeros g.render(polizaDet.extranjeros)
@@ -28,5 +29,6 @@ json g.render(polizaDet, [excludes: ['poliza','nacionales', 'extranjeros', 'tran
     fecha polizaDet.poliza.fecha
     subtipo polizaDet.poliza.subtipo
     tipo polizaDet.poliza.tipo
+	detalle  polizaDet.cuenta.detalle
 }
 

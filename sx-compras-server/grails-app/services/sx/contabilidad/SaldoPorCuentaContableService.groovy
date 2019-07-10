@@ -4,9 +4,10 @@ import grails.gorm.transactions.Transactional
 
 import groovy.util.logging.Slf4j
 import org.springframework.transaction.annotation.Propagation
+import sx.core.LogUser
 
 @Slf4j
-class SaldoPorCuentaContableService {
+class SaldoPorCuentaContableService implements LogUser{
 
 
     void actualizarSaldos(Integer ejercicio, Integer mes){
@@ -211,8 +212,11 @@ class SaldoPorCuentaContableService {
 
 
     def actualizarSaldo(CuentaContable cta, Integer ejercicio, Integer mes) {
-        if(cta.padre)
-            actualizarSaldo(cta.padre, ejercicio, mes)
+        if(cta.padre) {
+            log.info('No se requiere el root :{}', cta.clave)
+            return actualizarSaldo(cta.padre, ejercicio, mes)
+        }
+        log.info('Bingo: {}', cta.clave)
 
         List<Map> movimientos = getMovimientosAgrupados(cta, ejercicio, mes)
         // log.info("Movs: {}", movimientos)
@@ -248,6 +252,7 @@ class SaldoPorCuentaContableService {
             saldo2.saldoFinal = saldo2.saldoInicial + saldo2.debe - saldo2.haber
             saldo2.save failOnError: true, flush: true
             log.info("  {} I:{} D:{} H:{} F:{}", sclave, saldo2.saldoInicial, saldo2.debe, saldo2.haber, saldo2.saldoFinal)
+
             c2.subcuentas.each { CuentaContable c3 ->
                 // Nivel 3
                 sclave = c3.clave.substring(0, 13)
@@ -275,9 +280,8 @@ class SaldoPorCuentaContableService {
 
             }
         }
-
+        logEntity(saldo)
         return saldo
-
 
     }
 
