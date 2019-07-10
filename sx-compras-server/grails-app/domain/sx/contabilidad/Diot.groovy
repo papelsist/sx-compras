@@ -62,6 +62,12 @@ class Diot{
 
     BigDecimal ivaNotas = 0.00 
 
+    BigDecimal ivaAcreditable = 0.00
+
+    BigDecimal ivaAnticipo = 0.00
+
+
+
 
     static constraints = {
         ejercicio inList:(2014..2030)
