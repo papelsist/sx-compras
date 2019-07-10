@@ -219,10 +219,10 @@ class ProvisionNominaProc implements  ProcesadorMultipleDePolizas, AsientoBuilde
 		    ,c.clave,c.descripcion,sum(ned.importe_gravado) importe_gravado ,sum(ned.importe_excento) importe_excento
             ,(case when c.clave in('P001','P007','P009','P010','P011','P023','P025','P026','P029','P032','P034','P035','P037','P038') then concat(c.clase,(SELECT concat((case when x.numero>9 then '-00' else '-000' end),x.numero) from ubicacion x where ne.UBICACION_ID=x.ID),'-0000')
             when c.clave in('P002','P003','P022','P024','P030') then concat(c.clase,(SELECT concat((case when x.numero>9 then '-00' else '-000' end),x.numero) from ubicacion x where x.id=p.ubicacion_id),'-0002')
-             when c.clave in('P028') then '255-0004-0003-0000'
+             when c.clave in('P028') then '255-0004-0003-0000' when c.clave in('P003') then '215-0001-0002-0000'
             else c.clase end) cta_contable
             ,(case when ned.importe_excento>0 and c.clave in('P002','P003','P022','P024','P030')  then concat(c.clase,(SELECT concat((case when x.numero>9 then '-00' else '-000' end),x.numero) from ubicacion x where ne.UBICACION_ID=x.ID),'-0001')
-                when ned.importe_excento>0 and c.clave in('P028')  then'255-0004-0002-0000'
+                when ned.importe_excento>0 and c.clave in('P028')  then'255-0004-0002-0000' when c.clave in('P003') then '215-0001-0001-0000'
             else '000-0000-0000-0000'end) cta_contable_exe
             ,(case when c.clave in('P002','P003','P022','P024','P026','P028','P030') then 'A' when substr(c.clave,1,1)='P' then 'P'  else 'D' end) tipo,n.folio
             FROM nomina_por_empleado_det ned 
