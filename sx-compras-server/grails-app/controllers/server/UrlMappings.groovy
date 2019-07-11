@@ -294,6 +294,9 @@ class UrlMappings {
         "/api/contabilidad/diot/generar/$ejercicio/$mes"(controller: 'diot', action: 'generar', method: 'POST')
         "/api/contabilidad/diot/layout/$ejercicio/$mes"(controller: 'diot', action: 'layout', method: 'GET')
 
+        "/api/contabilidad/pagoIsr"(resources: 'pagoIsr', excludes:['create', 'edit','patch'])
+        "/api/contabilidad/pagoIsr/generar/$ejercicio/$mes"(controller: 'pagoIsr', action: 'generar', method: 'POST')
+
         "/api/sat/cuentas"(resources: 'cuentaSat', excludes: ['create', 'edit', 'patch'])
 
         // Auxiliares
