@@ -16,12 +16,12 @@ class DiotService {
     def dataSource
 
     def generarDiot(Periodo periodo) {
-       log.info("Generando diot para {}",periodo)    
-
+       log.info("Generando diot para {}",periodo)   
         def sql = new Sql(dataSource)
 
         def fechaInicial = periodo.fechaInicial.format('yyyy-MM-dd')
         def fechaFinal = periodo.fechaFinal.format('yyyy-MM-dd')
+        Diot.executeUpdate("delete Diot where mes = month(?) and ejercicio = year(?)",[fechaInicial,fechaInicial])
         def select = getSelect('GENERAR').replaceAll('@FECHA_INICIAL', fechaInicial).replaceAll('@FECHA_FINAL', fechaFinal)
         def rows = sql.rows(select)
         List<Diot> diots = [] 
@@ -53,13 +53,14 @@ class DiotService {
             }
         }
         def grow = sql.firstRow(getSelect('LAYOUT'),[mes, ejercicio])
-
-        def growFile ="04|||||||${grow.pagos1516?:''}|${grow.pagos15?:''}|${grow.ivaPagado1516?:''}|${grow.pagos1011?:''}|${grow.pagos10?:''}|${grow.pagosFrontera?:''}"+
-                "|${grow.ivaPagado1011?:''}|${grow.ivaPagadoFrontera?:''}|${grow.pagosImportacion?:''}|${grow.ivaPagadoImportacion1516?:''}|${grow.pagosImportacion1011?:''}"+
-                "|${grow.ivaPagadoImportacion1011?:''}|${grow.pagosImportacionSinIva?:''}|${grow.pagosTasa0?:''}|${grow.pagosSinIva?:''}|${grow.ivaRetenidoContribuyente?:''}"+
-                "|${grow.ivaNotas?:''}\r\n"
-        
-        temp.append(growFile)
+        if (grow) {
+            def growFile ="04|||||||${grow.pagos1516?:''}|${grow.pagos15?:''}|${grow.ivaPagado1516?:''}|${grow.pagos1011?:''}|${grow.pagos10?:''}|${grow.pagosFrontera?:''}"+
+                    "|${grow.ivaPagado1011?:''}|${grow.ivaPagadoFrontera?:''}|${grow.pagosImportacion?:''}|${grow.ivaPagadoImportacion1516?:''}|${grow.pagosImportacion1011?:''}"+
+                    "|${grow.ivaPagadoImportacion1011?:''}|${grow.pagosImportacionSinIva?:''}|${grow.pagosTasa0?:''}|${grow.pagosSinIva?:''}|${grow.ivaRetenidoContribuyente?:''}"+
+                    "|${grow.ivaNotas?:''}\r\n"
+            
+            temp.append(growFile)
+        }
         return temp
 
     }

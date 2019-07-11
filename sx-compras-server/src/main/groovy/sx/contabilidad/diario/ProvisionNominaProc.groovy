@@ -39,9 +39,6 @@ class ProvisionNominaProc implements  ProcesadorMultipleDePolizas, AsientoBuilde
         log.info('Generando asientos de provision de nomina {}', poliza.egreso)
         def pms = poliza.egreso.split(';')
         String select = getSelect().replaceAll('@PAGO', pms[0]).replaceAll('@PERIODICIDAD', pms[1])
-
-        println select
-        
         List rows = loadRegistros(select, [])
 
         rows.each{row ->
@@ -223,10 +220,10 @@ class ProvisionNominaProc implements  ProcesadorMultipleDePolizas, AsientoBuilde
             when c.clave in('P002','P022','P024','P030') then concat(c.clase,(SELECT concat((case when x.numero>9 then '-00' else '-000' end),x.numero) from ubicacion x where x.id=p.ubicacion_id),'-0002')
              when c.clave in('P028') then '255-0004-0003-0000' when c.clave in('P003') then '215-0001-0002-0000'
             else c.clase end) cta_contable
-            ,(case when ned.importe_excento>0 and c.clave in('P002','P003','P022','P024','P030')  then concat(c.clase,(SELECT concat((case when x.numero>9 then '-00' else '-000' end),x.numero) from ubicacion x where ne.UBICACION_ID=x.ID),'-0001')
+            ,(case when ned.importe_excento>0 and c.clave in('P002','P022','P024','P030')  then concat(c.clase,(SELECT concat((case when x.numero>9 then '-00' else '-000' end),x.numero) from ubicacion x where ne.UBICACION_ID=x.ID),'-0001')
                 when ned.importe_excento>0 and c.clave in('P028')  then'255-0004-0002-0000' when c.clave in('P003') then '215-0001-0001-0000'
             else '000-0000-0000-0000'end) cta_contable_exe
-            ,(case when c.clave in('P002','P022','P024','P026','P028','P030') then 'A' when substr(c.clave,1,1)='P' then 'P'  else 'D' end) tipo,n.folio
+            ,(case when c.clave in('P002','P003','P022','P024','P026','P028','P030') then 'A' when substr(c.clave,1,1)='P' then 'P'  else 'D' end) tipo,n.folio
             FROM nomina_por_empleado_det ned 
             join nomina_por_empleado ne on(ne.id=ned.parent_id) 
             join nomina n on(n.id=ne.nomina_id) 
