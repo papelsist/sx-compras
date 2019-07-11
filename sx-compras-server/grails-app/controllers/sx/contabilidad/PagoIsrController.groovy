@@ -4,6 +4,9 @@ import grails.compiler.GrailsCompileStatic
 import grails.gorm.DetachedCriteria
 import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.*
+import grails.validation.Validateable
+
+import groovy.transform.Canonical
 import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
 
@@ -41,8 +44,10 @@ class PagoIsrController extends RestfulController <PagoIsr> implements LogUser{
     def generar() {
         Integer ej = params.ejercicio as Integer
         Integer ms = params.mes as Integer
-        log.info('Generar Pago ISR para {}', params)
-        def rows = pagoIsrService.generar(ej, ms)
+        PagoIsrCommand command = new PagoIsrCommand()
+        bindData(command, getObjectToBind())
+        log.info('Generar Pago ISR para {}: Data: {}', params, command)
+        def rows = [] //pagoIsrService.generar(ej, ms)
         respond rows
     }
     
@@ -52,4 +57,13 @@ class PagoIsrController extends RestfulController <PagoIsr> implements LogUser{
         log.error(message, ExceptionUtils.getRootCause(e))
         respond([message: message], status: 500)
     }
+}
+
+@Canonical()
+class PagoIsrCommand implements  Validateable {
+    BigDecimal utilidadFiscalAf
+    BigDecimal cfUtilidad
+    BigDecimal perdidaFiscal
+    BigDecimal tasaIsr
+    BigDecimal isrAcreDiv
 }
