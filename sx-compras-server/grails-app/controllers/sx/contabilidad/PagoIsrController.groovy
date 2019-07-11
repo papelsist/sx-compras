@@ -47,7 +47,15 @@ class PagoIsrController extends RestfulController <PagoIsr> implements LogUser{
         PagoIsrCommand command = new PagoIsrCommand()
         bindData(command, getObjectToBind())
         log.info('Generar Pago ISR para {}: Data: {}', params, command)
-        def rows = [] //pagoIsrService.generar(ej, ms)
+        def rows = pagoIsrService.generar(
+            ej, 
+            ms, 
+            command.utilidadFiscalAf, 
+            command.cfUtilidad,
+            command.perdidaFiscal,
+            command.tasaIsr,
+            command.isrAcreDiv)
+        log.info(' Res: {}', rows.size())
         respond rows
     }
     
@@ -66,4 +74,5 @@ class PagoIsrCommand implements  Validateable {
     BigDecimal perdidaFiscal
     BigDecimal tasaIsr
     BigDecimal isrAcreDiv
+    // utilidadAf, BigDecimal cfUtilidad, BigDecimal perdidaFiscal, BigDecimal tasaIsr, BigDecimal isrAcreDiv
 }
