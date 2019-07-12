@@ -1,0 +1,19 @@
+mat-card {
+  height: calc(100% - 20px);
+  display: flex;
+  flex-direction: column;
+  // flex-grow: 1;
+  // justify-content: space-between;
+
+}
+.grid-panel {
+  height: 100%;
+  flex-grow: 1;
+  overflow: auto;
+}
+
+
+.footer {
+  height: 50px;
+}
+

@@ -9,7 +9,7 @@ import {
   Output,
   EventEmitter
 } from '@angular/core';
-import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
+import { MatTableDataSource, MatSort } from '@angular/material';
 
 import { ComprobanteFiscal } from '../../model/comprobanteFiscal';
 
@@ -39,15 +39,19 @@ export class CfdisTableComponent implements OnInit, OnChanges {
     'versionCfdi',
     'operaciones'
   ];
+
+  
+  @Input()
+  filter: string;
+  
   @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  
   @Output() xml = new EventEmitter();
   @Output() pdf = new EventEmitter();
   @Output() select = new EventEmitter();
   constructor() {}
 
   ngOnInit() {
-    this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
 
@@ -55,11 +59,15 @@ export class CfdisTableComponent implements OnInit, OnChanges {
     if (changes.comprobantes && changes.comprobantes.currentValue) {
       this.dataSource.data = changes.comprobantes.currentValue;
     }
+    if (changes.filter) {
+      const s = changes.filter.currentValue || '';
+      this.dataSource.filter = s.toLowerCase();
+    }
   }
 
-  toogleSelect(event: ComprobanteFiscal) {
-    event.selected = !event.selected;
-    const data = this.comprobantes.filter(item => item.selected);
-    this.select.emit([...data]);
+  onSelect(event: ComprobanteFiscal) {
+    this.select.emit(event);
   }
+  
+  
 }

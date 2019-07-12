@@ -14,9 +14,12 @@ import { containers } from './containers';
 import { services } from './services';
 import { guards } from './guards';
 
+import { AgGridModule } from 'ag-grid-angular';
+
 @NgModule({
   imports: [
     SharedModule,
+    AgGridModule.withComponents([]),
     CxpRoutingModule,
     ReportesModule,
     StoreModule.forFeature('cxp', reducers),

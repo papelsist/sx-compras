@@ -41,9 +41,11 @@ import { NotaPrintComponent } from './nota-print/nota-print.component';
 import { ProveedorPeriodoFilterDialogComponent } from './proveedor-periodo-filter/proveedor-periodo-filter-dialog.component';
 import { ProveedorPeriodoFilterBtnComponent } from './proveedor-periodo-filter/proveedor-periodo-filter-btn.component';
 import { ProveedorPeriodoFilterLabelComponent } from './proveedor-periodo-filter/proveedor-periodo-filter-label.component';
+import { CfdisTable2Component } from './cfdis-table/cfdis-table2.component';
 
 export const components: any[] = [
   CfdisTableComponent,
+  CfdisTable2Component,
   CfdisTotalesPanelComponent,
   FacturasTableComponent,
   AnalisisTableComponent,
@@ -95,6 +97,7 @@ export const entryComponents = [
 ];
 
 export * from './cfdis-table/cfdis-table.component';
+export * from './cfdis-table/cfdis-table2.component';
 export * from './cfdis-totales-panel/cfdis-totales-panel.component';
 export * from './facturas-table/facturas-table.component';
 export * from './analisis-table/analisis-table.component';
