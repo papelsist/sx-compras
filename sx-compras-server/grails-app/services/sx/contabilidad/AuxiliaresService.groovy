@@ -38,7 +38,7 @@ class AuxiliaresService {
             where  
             p.fecha between '@FECHA_INICIAL'  and '@FECHA_FINAL'
             and c.id = @CUENTA
-            AND p.subtipo not like 'COBRANZA_%' AND  p.subtipo <> 'COMISIONES_TARJETA'
+            AND p.subtipo not like 'COBRANZA_%' 
             union
             SELECT
             poliza,fecha,tipo,subtipo,asiento, concepto
