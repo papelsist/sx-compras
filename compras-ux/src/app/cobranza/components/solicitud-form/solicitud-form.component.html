@@ -1,0 +1,151 @@
+<h2 mat-dialog-title>{{ title }} ({{ cartera.descripcion }})</h2>
+<mat-divider></mat-divider>
+<mat-dialog-content [formGroup]="form">
+  <div layout class="pad-top">
+    <sx-cliente-field
+      flex
+      formControlName="cliente"
+      [required]="true"
+    ></sx-cliente-field>
+  </div>
+
+  <div layout>
+    <mat-form-field class="pad-right" flex>
+      <input
+        matInput
+        [matDatepicker]="myDatepicker"
+        placeholder="Fecha"
+        formControlName="fecha"
+        autocomplete="off"
+      />
+      <mat-datepicker-toggle
+        matSuffix
+        [for]="myDatepicker"
+      ></mat-datepicker-toggle>
+      <mat-datepicker #myDatepicker></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field class="pad-right" flex>
+      <input
+        matInput
+        [matDatepicker]="myDatepicker2"
+        placeholder="Fecha deposito"
+        formControlName="fechaDeposito"
+        autocomplete="off"
+      />
+      <mat-error>Digite la fecha del deposito</mat-error>
+      <mat-datepicker-toggle
+        matSuffix
+        [for]="myDatepicker2"
+      ></mat-datepicker-toggle>
+      <mat-datepicker #myDatepicker2></mat-datepicker>
+    </mat-form-field>
+  </div>
+
+  <div layout>
+    <mat-form-field class="pad-right" flex>
+      <input
+        matInput
+        type="number"
+        placeholder="Transferencia"
+        autocomplete="off"
+        formControlName="transferencia"
+      />
+    </mat-form-field>
+    <mat-form-field class="pad-right" flex>
+      <input
+        matInput
+        type="number"
+        placeholder="Cheque"
+        autocomplete="off"
+        formControlName="cheque"
+      />
+    </mat-form-field>
+  </div>
+
+  <div layout>
+    <mat-form-field class="pad-right" flex>
+      <input
+        matInput
+        type="number"
+        placeholder="Efectivo"
+        autocomplete="off"
+        formControlName="efectivo"
+      />
+    </mat-form-field>
+    <mat-form-field class="pad-right" flex>
+      <input
+        matInput
+        type="number"
+        placeholder="Total"
+        autocomplete="off"
+        [disabled]="true"
+        [value]="total"
+      />
+    </mat-form-field>
+  </div>
+
+  <div layout>
+    <sx-banco-field
+      class="pad-right"
+      formControlName="banco"
+      [required]="true"
+      placeholder="Banco origen"
+      flex
+    ></sx-banco-field>
+    <mat-form-field class="pad-right" flex>
+      <input
+        matInput
+        placeholder="Cuenta origen"
+        autocomplete="off"
+        formControlName="cuentaOrigen"
+        [errorStateMatcher]="matcher"
+      />
+      <mat-error>
+        La cuenta origen es requerida
+      </mat-error>
+    </mat-form-field>
+  </div>
+
+  <div layout>
+    <sx-cuenta-banco-field
+      class="pad-right"
+      formControlName="cuenta"
+      [required]="true"
+      placeholder="Cuenta destino"
+      flex
+    ></sx-cuenta-banco-field>
+    <mat-form-field class="pad-right" flex>
+      <input
+        matInput
+        placeholder="Referencia / # de Cheque "
+        autocomplete="off"
+        formControlName="referencia"
+      />
+      <mat-error>La referencia es mandatoria</mat-error>
+    </mat-form-field>
+  </div>
+  <div *ngIf="solicitud?.id">
+    <sx-upper-case-field
+      flex
+      class="pad-right"
+      placeholder="Comentario"
+      formControlName="comentario"
+      autocomplete="off"
+    >
+    </sx-upper-case-field>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close>
+    {{ readOnly ? 'CERRAR' : 'CANCELAR' }}
+  </button>
+  <button
+    *ngIf="!readOnly"
+    mat-button
+    (click)="onSubmit()"
+    [disabled]="form.invalid || form.pristine"
+  >
+    ACEPTAR
+  </button>
+</mat-dialog-actions>
