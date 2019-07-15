@@ -171,6 +171,9 @@ class CostoPromedioService {
                 costos << cp
             }
             cp.costo = row.costop
+            if(cp.costo == 0 && cp.costoAnterior > 0){
+                cp.costo = cp.costoAnterior
+            }
             cp.save flush: true
             actualizados << cp
         }
