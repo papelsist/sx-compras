@@ -18,10 +18,10 @@ class AuxiliaresService {
             case 'BANCOS':
             return select = """
             SELECT
-            p.id as poliza,p.fecha,p.tipo,p.subtipo,d.asiento,d.descripcion as concepto
+            p.folio as poliza,p.fecha,p.tipo,p.subtipo,d.asiento,d.descripcion 
             ,d.sucursal
             ,(d.debe) as debe,(d.haber) as haber
-            ,c.clave,c.descripcion
+            ,c.clave,c.descripcion as concepto
             FROM poliza_det d  join poliza p on (p.id=d.poliza_id) join cuenta_contable c on (c.id= d.cuenta_id)
             where  
             p.fecha between '@FECHA_INICIAL'  and '@FECHA_FINAL'
@@ -30,10 +30,10 @@ class AuxiliaresService {
             group by c.id,ASIENTO,d.descripcion,p.fecha,p.subtipo,d.sucursal
             union 
             SELECT
-            p.id as poliza,p.fecha,p.tipo,p.subtipo,d.asiento,d.descripcion as concepto
+            p.folio as poliza,p.fecha,p.tipo,p.subtipo,d.asiento,d.descripcion 
             ,d.sucursal
             ,(d.debe) as debe,(d.haber) as haber
-            ,c.clave,c.descripcion
+            ,c.clave,c.descripcion as concepto
             FROM poliza_det d  join poliza p on (p.id=d.poliza_id) join cuenta_contable c on (c.id= d.cuenta_id)
             where  
             p.fecha between '@FECHA_INICIAL'  and '@FECHA_FINAL'
@@ -41,17 +41,17 @@ class AuxiliaresService {
             AND p.subtipo not like 'COBRANZA_%' 
             union
             SELECT
-            poliza,fecha,tipo,subtipo,asiento, concepto
+            poliza,fecha,tipo,subtipo,asiento, descripcion
             ,sucursal
             ,sum(debe) as debe,sum(haber) as haber
-            ,clave,descripcion 
+            ,clave,concepto 
             FROM (
                 SELECT 
                 SUBSTRING_INDEX(d.descripcion," ",2) as ficha,
-                p.id as poliza,p.fecha,p.tipo,p.subtipo,d.asiento,d.descripcion as concepto
+                p.folio as poliza,p.fecha,p.tipo,p.subtipo,d.asiento, SUBSTRING_INDEX(d.descripcion," ",2) as descripcion
                 ,d.sucursal
                 ,(d.debe) as debe,(d.haber) as haber
-                ,c.clave,c.descripcion
+                ,c.clave,c.descripcion as concepto
                 ,c.id as cuenta
                 FROM poliza_det d  join poliza p on (p.id=d.poliza_id) join cuenta_contable c on (c.id= d.cuenta_id)
                 where  
@@ -63,10 +63,10 @@ class AuxiliaresService {
             GROUP by cuenta,ASIENTO,fecha,subtipo,sucursal,ficha
             union
             SELECT
-            p.id as poliza,p.fecha,p.tipo,p.subtipo,d.asiento,d.descripcion as concepto
+            p.folio as poliza,p.fecha,p.tipo,p.subtipo,d.asiento,d.descripcion
             ,d.sucursal
             ,sum(d.debe) as debe,sum(d.haber) as haber
-            ,c.clave,c.descripcion
+            ,c.clave,c.descripcion as concepto
             FROM poliza_det d  join poliza p on (p.id=d.poliza_id) join cuenta_contable c on (c.id= d.cuenta_id)
             where  
             p.fecha between '@FECHA_INICIAL'  and '@FECHA_FINAL'
@@ -76,10 +76,10 @@ class AuxiliaresService {
             GROUP by c.id,ASIENTO,d.descripcion,p.fecha,p.subtipo,d.sucursal
             union
             SELECT 
-            p.id as poliza,p.fecha,p.tipo,p.subtipo,d.asiento,d.descripcion as concepto
+            p.folio as poliza,p.fecha,p.tipo,p.subtipo,d.asiento,d.descripcion
             ,d.sucursal
             ,sum(d.debe) as debe,sum(d.haber) as haber
-            ,c.clave,c.descripcion
+            ,c.clave,c.descripcion as concepto
             FROM poliza_det d  join poliza p on (p.id=d.poliza_id) join cuenta_contable c on (c.id= d.cuenta_id)
             where  
             p.fecha between '@FECHA_INICIAL'  and '@FECHA_FINAL'
@@ -89,10 +89,10 @@ class AuxiliaresService {
             GROUP by c.id,p.fecha,p.subtipo,d.sucursal
             UNION
             SELECT 
-            p.id as poliza,p.fecha,p.tipo,p.subtipo,d.asiento,d.descripcion as concepto
+            p.folio as poliza,p.fecha,p.tipo,p.subtipo,d.asiento,d.descripcion
             ,d.sucursal
             ,d.debe as debe,(d.haber) as haber
-            ,c.clave,c.descripcion
+            ,c.clave,c.descripcion as concepto
             FROM poliza_det d  join poliza p on (p.id=d.poliza_id) join cuenta_contable c on (c.id= d.cuenta_id)
             where  
             p.fecha between '@FECHA_INICIAL'  and '@FECHA_FINAL'
