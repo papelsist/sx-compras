@@ -6,8 +6,9 @@ model {
 }
 
 json g.render(cuentaPorPagar, [excludes: ['comprobanteFiscal', 'dateCreated'], resolveTemplate: false]) {
-    saldo  cuentaPorPagar.saldo
+    saldo  cuentaPorPagar.saldoReal
     comprobanteFiscal g.render(cuentaPorPagar.comprobanteFiscal, [excludes: ['xml', 'pdf', 'acuse']])
     analisis cuentaPorPagar.analisis
+    atraso cuentaPorPagar.getAtrasoReal()
 }
 

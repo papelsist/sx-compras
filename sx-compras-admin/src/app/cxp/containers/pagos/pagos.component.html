@@ -1,6 +1,6 @@
 <mat-card>
   <sx-standard-header
-    title="Cuentas por pagar"
+    title="Pagos"
     [periodo]="periodo$ | async"
     (periodoChange)="onPeriodo($event)"
     (reload)="reload()"
@@ -14,14 +14,13 @@
   >
   </ng-template>
   <div class="grid-panel">
-    <sx-facturas-table2
+    <sx-pagos-table
       #grid
-      [partidas]="facturas$ | async"
+      [partidas]="pagos$ | async"
       (xml)="onXml($event)"
       (pdf)="onPdf($event)"
-      (analisis)="onAnalisis($event)"
-    >
-    </sx-facturas-table2>
+      (select)="onSelect($event)"
+    ></sx-pagos-table>
   </div>
   <sx-standard-footer [totales]="totales">
     <!-- <span class="pad-left">Total: {{ totales.importe | currency }}</span> -->

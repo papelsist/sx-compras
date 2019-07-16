@@ -5,6 +5,7 @@ import { Pago } from '../../model';
 import { Periodo } from 'app/_core/models/periodo';
 
 export enum PagoActionTypes {
+  SetPeriodoDePagos = '[Pagos component] Set periodo de pago',
   LoadPagos = '[Pago] Load Pagos',
   LoadPagosFail = '[Pago] Load Pagos fail',
   LoadPagosSuccess = '[Pago] Load Pagos Success',
@@ -22,7 +23,10 @@ export enum PagoActionTypes {
   LoadSuccess = '[Pago] Load One Pago Success',
   AplicarPago = '[Pago] Aplicar  Pago '
 }
-
+export class SetPeriodoDePagos implements Action {
+  readonly type = PagoActionTypes.SetPeriodoDePagos;
+  constructor(public payload: { periodo: Periodo }) {}
+}
 export class LoadPagos implements Action {
   readonly type = PagoActionTypes.LoadPagos;
 }
@@ -90,6 +94,7 @@ export class AplicarPago implements Action {
 }
 
 export type PagoActions =
+  | SetPeriodoDePagos
   | LoadPagos
   | LoadPagosFail
   | LoadPagosSuccess

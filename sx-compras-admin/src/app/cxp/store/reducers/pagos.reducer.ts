@@ -2,21 +2,33 @@ import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 
 import { Pago } from '../../model';
 import { PagoActions, PagoActionTypes } from '../actions/pagos.actions';
+import { Periodo } from 'app/_core/models/periodo';
+
+export const PagosPeriodoStoeKey = 'sx-compras.cxp.pagos.periodo';
 
 export interface State extends EntityState<Pago> {
   loading: boolean;
   loaded: boolean;
+  periodo: Periodo;
 }
 
 export const adapter: EntityAdapter<Pago> = createEntityAdapter<Pago>();
 
 export const initialState: State = adapter.getInitialState({
   loading: false,
-  loaded: false
+  loaded: false,
+  periodo: Periodo.fromStorage(PagosPeriodoStoeKey)
 });
 
 export function reducer(state = initialState, action: PagoActions): State {
   switch (action.type) {
+    case PagoActionTypes.SetPeriodoDePagos: {
+      return {
+        ...state,
+        periodo: action.payload.periodo
+      };
+    }
+
     case PagoActionTypes.AplicarPago:
     case PagoActionTypes.DeletePago:
     case PagoActionTypes.LoadPagos: {
@@ -95,3 +107,4 @@ export const {
 
 export const getPagosLoading = (state: State) => state.loading;
 export const getPagosLoaded = (state: State) => state.loaded;
+export const getPeriodo = (state: State) => state.periodo;

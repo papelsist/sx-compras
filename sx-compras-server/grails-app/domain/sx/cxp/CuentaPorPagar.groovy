@@ -72,6 +72,8 @@ class CuentaPorPagar {
 
     Date diferenciaFecha;
 
+    Integer atrasoCalculado = 0
+
     static constraints = {
         tipo inList:['COMPRAS', 'GASTOS', 'HONORARIOS', 'COMISIONES']
         folio nullable: true, maxSize: 255
@@ -112,11 +114,13 @@ class CuentaPorPagar {
         compensaciones formula:'(select COALESCE(sum(x.importe),0) from aplicacion_de_pago x where x.cxp_id=id and x.nota_id is not null)'
         //saldoReal formula:'total - (select COALESCE(sum(x.importe),0) from aplicacion_de_pago x where x.cxp_id=id and x.pago_id is not null) - diferencia'
         saldoReal formula:'total - (select COALESCE(sum(x.importe),0) from aplicacion_de_pago x where x.cxp_id=id) - diferencia'
+        atrasoCalculado formula: 'IF( TO_DAYS(CURRENT_DATE()) - TO_DAYS(vencimiento)  < 0, 0, TO_DAYS(CURRENT_DATE()) - TO_DAYS(vencimiento) ) '
         diferenciaFecha type: 'date'
+        tipo index: 'CXP_TIPO_IDX'
     }
 
 
-    static transients = [ 'saldo','analisis']
+    static transients = [ 'saldo','analisis', 'atrasoReal']
 
     BigDecimal toPesos(String property){
         return "${property}" * tipoDeCambio
@@ -128,7 +132,14 @@ class CuentaPorPagar {
     }
 
     String getAnalisis() {
-        return AnalisisDeFactura.where{ factura == this}.find()?.id
+        return AnalisisDeFactura.where{ factura == this}.find()?.folio
+    }
+
+    Integer getAtrasoReal() {
+        if(saldoReal)
+            return atrasoCalculado
+        else
+            return 0
     }
 
 

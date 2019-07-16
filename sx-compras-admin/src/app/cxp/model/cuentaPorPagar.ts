@@ -17,10 +17,12 @@ export interface CuentaPorPagar {
   pagos?: number;
   compensaciones?: number;
   saldo?: number;
+  atraso?: number;
   importePorPagar?: number;
   vencimiento: string;
   selected?: boolean;
   comprobanteFiscal: { id: string };
   analizada?: boolean;
   analisis?: string;
+  updateUser?: string;
 }

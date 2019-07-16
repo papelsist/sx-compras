@@ -17,16 +17,29 @@ export const getPagosEntities = createSelector(
   fromPagos.selectEntities
 );
 
-export const getAllPagos = createSelector(getPagosState, fromPagos.selectAll);
+export const getAllPagos = createSelector(
+  getPagosState,
+  fromPagos.selectAll
+);
 
-export const getAllPagosPendientes = createSelector(getAllPagos, pagos => {
-  return pagos.filter(item => item.disponible !== 0);
-});
+export const getAllPagosPendientes = createSelector(
+  getAllPagos,
+  pagos => {
+    return pagos.filter(item => item.disponible !== 0);
+  }
+);
 
-export const getAllPagosSorted = createSelector(getAllPagos, pagos => {
-  return _.sortBy(pagos, 'modificado');
-});
+export const getAllPagosSorted = createSelector(
+  getAllPagos,
+  pagos => {
+    return _.sortBy(pagos, 'modificado');
+  }
+);
 
+export const getPeriodoDePagos = createSelector(
+  getPagosState,
+  fromPagos.getPeriodo
+);
 export const getPagosLoaded = createSelector(
   getPagosState,
   fromPagos.getPagosLoaded

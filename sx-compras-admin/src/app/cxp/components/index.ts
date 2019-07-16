@@ -85,7 +85,8 @@ export const components: any[] = [
 
   RequisicionesFilterComponent,
   RequisicionesFilterLabelComponent,
-  RequisicionesFilterBtnComponent
+  RequisicionesFilterBtnComponent,
+  FacturasTable2Component
 ];
 
 export const entryComponents = [
@@ -94,8 +95,7 @@ export const entryComponents = [
   ReportComsSinAnalizarComponent,
   AplicacionFormComponent,
   ProveedorPeriodoFilterDialogComponent,
-  RequisicionesFilterComponent,
-  FacturasTable2Component
+  RequisicionesFilterComponent
 ];
 
 export * from './cfdis-table/cfdis-table.component';

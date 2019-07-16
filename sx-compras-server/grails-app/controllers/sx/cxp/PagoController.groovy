@@ -27,7 +27,24 @@ class PagoController extends RestfulController<Pago> {
 
         params.sort = 'fecha'
         params.order = 'desc'
-        params.max = params.registros?: 10
+        params.max = params.registros?: 100
+        log.debug('List: {}', params)
+        def periodo = (Periodo)params.periodo
+        def query = Pago.where{fecha >= periodo.fechaInicial && fecha <= periodo.fechaFinal}
+        // TEMPORAL
+        query = query.where {proveedor.tipo == 'COMPRAS'}
+        if(params.tipo) {
+            // query = query {tipo == params.tipo} PENDIENTE
+        }
+        return query.list(params)
+
+    }
+
+    protected List<Pago> listAllResourcesOLD(Map params) {
+
+        params.sort = 'fecha'
+        params.order = 'desc'
+        params.max = params.registros?: 100
         log.debug('List: {}', params)
         String ser = params.serie ?: 'RequisicionDeCompras'
 

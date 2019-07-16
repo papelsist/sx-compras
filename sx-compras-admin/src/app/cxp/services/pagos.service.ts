@@ -18,9 +18,10 @@ export class PagosService {
     this.apiUrl = configService.buildApiUrl('cxp/pagos');
   }
 
-  list(periodo: Periodo = Periodo.fromNow(10)): Observable<Pago[]> {
+  list(periodo: Periodo): Observable<Pago[]> {
     const data = periodo.toApiJSON();
     const params = new HttpParams()
+      .set('tipo', 'COMPRAS')
       .set('fechaInicial', data.fechaInicial)
       .set('fechaFinal', data.fechaFinal);
     return this.http

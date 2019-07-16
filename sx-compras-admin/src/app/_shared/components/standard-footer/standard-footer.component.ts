@@ -5,7 +5,7 @@ import { Component, OnInit, Input } from '@angular/core';
   template: `
     <div class="footer" layout layout-align="center center">
       <span flex></span>
-      <span>Reqistros: {{ totales.rows }}</span>
+      <span>Registros: {{ totales.rows }}</span>
       <ng-content> </ng-content>
       <span flex></span>
     </div>

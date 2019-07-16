@@ -62,6 +62,12 @@ export class FacturasTable2Component implements OnInit, OnChanges {
 
   @Output() print = new EventEmitter();
   @Output() select = new EventEmitter();
+  @Output()
+  analisis = new EventEmitter();
+  @Output()
+  pdf = new EventEmitter();
+  @Output()
+  xml = new EventEmitter();
 
   @Output()
   totales = new EventEmitter();
@@ -82,6 +88,7 @@ export class FacturasTable2Component implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.partidas && changes.partidas.currentValue) {
+      console.log('Partidas: ', changes.partidas.currentValue);
       if (this.gridApi) {
         this.gridApi.setRowData(changes.partidas.currentValue);
       }
@@ -189,32 +196,48 @@ export class FacturasTable2Component implements OnInit, OnChanges {
         resizable: true
       },
       {
+        headerName: 'Serie',
+        field: 'serie',
+        width: 100
+      },
+      {
         headerName: 'Factura',
-        field: 'facturaInfo',
-        width: 150
+        field: 'folio',
+        width: 110
       },
       {
         headerName: 'Fecha',
         field: 'fecha',
-        width: 110,
+        width: 100,
+        cellRenderer: params => this.transformDate(params.value)
+      },
+      {
+        headerName: 'Vto',
+        field: 'vencimiento',
+        width: 100,
         cellRenderer: params => this.transformDate(params.value)
       },
       {
         headerName: 'Mon',
         field: 'moneda',
-        width: 70,
-        cellRenderer: params => params.value.moneda
+        width: 70
       },
       {
         headerName: 'TC',
         field: 'tipoDeCambio',
-        maxWidth: 100,
+        maxWidth: 60,
         cellRenderer: params => this.transformCurrency(params.value)
       },
       {
         headerName: 'TC Cont',
         field: 'tcContable',
-        maxWidth: 100,
+        maxWidth: 60,
+        cellRenderer: params => this.transformCurrency(params.value)
+      },
+      {
+        headerName: 'Total',
+        field: 'total',
+        maxWidth: 110,
         cellRenderer: params => this.transformCurrency(params.value)
       },
       {
@@ -224,20 +247,37 @@ export class FacturasTable2Component implements OnInit, OnChanges {
         cellRenderer: params => this.transformCurrency(params.value)
       },
       {
+        headerName: 'Pagos',
+        field: 'pagos',
+        maxWidth: 100,
+        cellRenderer: params => this.transformCurrency(params.value)
+      },
+      {
+        headerName: 'Notas',
+        field: 'compensaciones',
+        maxWidth: 100,
+        cellRenderer: params => this.transformCurrency(params.value)
+      },
+      {
+        headerName: 'Atraso',
+        field: 'atraso',
+        maxWidth: 50
+      },
+      {
         headerName: 'Actualizó',
         field: 'updateUser',
         width: 110
       },
       {
         headerName: 'Modificado',
-        field: 'modificado',
+        field: 'lastUpdated',
         maxWidth: 150,
         cellRenderer: params =>
           this.transformDate(params.value, 'dd/MM/yyyy HH:mm')
       },
       {
-        headerName: 'Comentario',
-        field: 'comentario'
+        headerName: 'Tipo',
+        field: 'tipo'
       }
     ];
   }
