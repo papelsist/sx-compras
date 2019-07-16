@@ -41,6 +41,13 @@ class CuentaPorPagarController extends RestfulController<CuentaPorPagar> {
         return query.list(params)
     }
 
+    def cuentaPorPagar() {
+        def tpo = params.tipo
+        def query = CuentaPorPagar.where {tipo == tpo && saldoCalculado > 0.0}
+        List<CuentaPorPagar> data = query.list()
+        respond data view: 'index'
+    }
+
     def pendientesDeAnalisis() {
         String id = params.proveedorId
         List<CuentaPorPagar> res = CuentaPorPagar.where{proveedor.id == id && analizada == false}.list()
