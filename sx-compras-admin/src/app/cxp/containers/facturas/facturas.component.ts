@@ -17,6 +17,7 @@ import { CuentaPorPagar } from '../../model';
   styleUrls: ['./facturas.component.scss']
 })
 export class FacturasComponent implements OnInit {
+  loading$: Observable<boolean>;
   facturas$: Observable<CuentaPorPagar[]>;
   periodo$: Observable<Periodo>;
   totales: any = {};
@@ -27,6 +28,7 @@ export class FacturasComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.loading$ = this.store.pipe(select(fromStore.getFacturasLoading));
     this.periodo$ = this.store.pipe(select(fromStore.getPeriodoDeFacturas));
     this.facturas$ = this.store.pipe(select(fromStore.getAllFacturas));
   }
@@ -56,24 +58,8 @@ export class FacturasComponent implements OnInit {
   }
 
   onAnalisis(event: CuentaPorPagar) {
-    // console.log('Localizad el analiziz: ', event);
     this.store.dispatch(
       new fromRoot.Go({ path: ['cxp/analisis', event.analisis] })
     );
   }
 }
-
-/**
- <mat-card>
-      <sx-search-title title="Facturas de compras">
-      <div *ngIf="periodo$ | async as periodo" class="info">
-        <span class="pad-left">Periodo: </span>
-        <span class="pad-left">{{periodo}}</span>
-        <sx-periodo-picker [periodo]="periodo" (change)="cambiarPeriodo($event)"></sx-periodo-picker>
-      </div>
-      </sx-search-title>
-      <mat-divider></mat-divider>
-      <sx-facturas-table [facturas]="facturas$ | async" (xml)="onXml($event)" (pdf)="onPdf($event)" (analisis)="onAnalisis($event)">
-      </sx-facturas-table>
-    </mat-card>
- */

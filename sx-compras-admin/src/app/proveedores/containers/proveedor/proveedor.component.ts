@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 import { Store, select } from '@ngrx/store';
 import * as fromRoot from 'app/store';
@@ -8,29 +8,28 @@ import * as fromActions from '../../store/actions';
 import { Observable } from 'rxjs';
 
 import { Proveedor } from '../../models/proveedor';
+import { Update } from '@ngrx/entity';
 
 @Component({
-  selector: 'sx-proveedor-info',
-  template: `
-    <div >
-      <sx-proveedor-form [proveedor]="proveedor$ | async" (save)="onSave($event)" (cancel)="onCancel($event)">
-      </sx-proveedor-form>
-    </div>
-  `
+  selector: 'sx-proveedor',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './proveedor.component.html',
+  styleUrls: ['./proveedor.component.scss']
 })
-export class ProveedorInfoComponent implements OnInit {
+export class ProveedorComponent implements OnInit {
   proveedor$: Observable<Proveedor>;
   constructor(private store: Store<fromStore.ProveedoresState>) {}
 
   ngOnInit() {
-    this.proveedor$ = this.store.pipe(select(fromStore.getCurrentProveedor));
+    this.proveedor$ = this.store.pipe(select(fromStore.getSelectedProveedor));
   }
 
-  onSave(event: Proveedor) {
+  onSave(event: Update<Proveedor>) {
     if (event.id) {
-      this.store.dispatch(new fromActions.UpdateProveedor(event));
+      this.store.dispatch(new fromActions.UpdateProveedor({ update: event }));
     }
   }
+
   onCancel(event) {
     this.store.dispatch(new fromRoot.Go({ path: ['/proveedores'] }));
   }

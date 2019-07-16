@@ -11,15 +11,15 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Proveedor } from '../../models/proveedor';
 
 @Component({
-  selector: 'sx-proveedor-form',
+  selector: 'sx-proveedor-generales-form',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './proveedor-form.component.html',
-  styleUrls: ['./proveedor-form.component.scss']
+  templateUrl: './proveedor-generales-form.component.html',
+  styleUrls: ['./proveedor-generales-form.component.scss']
 })
-export class ProveedorFormComponent implements OnInit {
+export class ProveedorGeneralesFormComponent implements OnInit {
   @Input() proveedor: Proveedor;
-  @Output() save = new EventEmitter<Proveedor>();
-  @Output() cancel = new EventEmitter<Proveedor>();
+  @Output() save = new EventEmitter<Partial<Proveedor>>();
+
   form: FormGroup;
   constructor(private fb: FormBuilder) {}
 
@@ -54,31 +54,11 @@ export class ProveedorFormComponent implements OnInit {
       comentario: [],
       telefono1: [null],
       telefono2: [null],
-      telefono3: [null],
-      // Linea de credito
-      plazo: [0, [Validators.required]],
-      limiteDeCredito: [0, [Validators.required, Validators.min(0)]],
-      descuentoF: [0, [Validators.required]],
-      diasDF: [
-        0,
-        [Validators.required, Validators.min(0), Validators.max(100)]
-      ],
-      fechaRevision: [false],
-      imprimirCosto: [false],
-      direccion: this.fb.group({
-        calle: [],
-        numeroExterior: [],
-        numeroInterior: [],
-        codigoPostal: [],
-        colonia: [],
-        estado: [],
-        municipio: [],
-        pais: []
-      })
+      telefono3: [null]
     });
   }
 
-  onSubmit() {
+  submit() {
     if (this.form.valid) {
       this.save.emit(this.preparEntity());
       this.form.markAsPristine();
@@ -86,10 +66,16 @@ export class ProveedorFormComponent implements OnInit {
   }
 
   private preparEntity() {
-    const res = {
-      ...this.proveedor,
+    const changes: Partial<Proveedor> = {
       ...this.form.value
     };
-    return res;
+    if (this.proveedor) {
+      return { id: this.proveedor.id, changes };
+    }
+    return changes;
+  }
+
+  canSave() {
+    return this.form.valid && this.form.pristine;
   }
 }

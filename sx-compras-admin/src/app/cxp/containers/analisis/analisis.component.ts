@@ -33,6 +33,10 @@ export class AnalisisComponent implements OnInit {
     this.store.dispatch(new fromStore.Load());
   }
 
+  onCreate() {
+    this.store.dispatch(new fromRoot.Go({ path: ['cxp/analisis/create'] }));
+  }
+
   onSelect(event: Analisis) {
     this.store.dispatch(new fromRoot.Go({ path: ['cxp/analisis', event.id] }));
   }

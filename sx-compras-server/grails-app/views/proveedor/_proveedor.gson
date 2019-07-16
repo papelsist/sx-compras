@@ -4,4 +4,7 @@ model {
 	Proveedor proveedor
 }
 
-json g.render(proveedor, [resolveTemplate: false])
+json g.render(proveedor, [resolveTemplate: false]) {
+	saldo 0.0
+	saldoVencido 0.0
+}

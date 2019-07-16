@@ -38,6 +38,15 @@ class RequisicionDeComprasController extends RestfulController<RequisicionDeComp
         return query.list(params);
     }
 
+    @CompileDynamic
+    def update() {
+        String id = params.id as String
+        RequisicionDeCompras requisicion = RequisicionDeCompras.get(id)
+        bindData requisicion, getObjectToBind()
+        requisicion = requisicionDeComprasService.update(requisicion)
+        respond requisicion, view: 'show'
+    }
+
     @Override
     protected RequisicionDeCompras saveResource(RequisicionDeCompras resource) {
         return requisicionDeComprasService.save(resource)

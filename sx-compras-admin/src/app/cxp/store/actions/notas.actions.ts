@@ -5,6 +5,7 @@ import { NotaDeCreditoCxP } from '../../model/notaDeCreditoCxP';
 import { Periodo } from 'app/_core/models/periodo';
 
 export enum NotaActionTypes {
+  SetPeriodoDeNotas = '[Notas CXP] Set Periodo de notas',
   LoadNotas = '[Notas CXP] Load Notas ',
   LoadNotasFail = '[Notas CXP] Load Notas  fail',
   LoadNotasSuccess = '[Notas CXP] Load Notas  Success',
@@ -19,7 +20,6 @@ export enum NotaActionTypes {
   DeleteNotaFail = '[Notas CXP] Delete Nota Fail',
   DeleteNotaSuccess = '[Notas CXP] Delete Nota Success',
   ClearNotas = '[Notas CXP] Clear Notas',
-  SetPeriodo = '[Notas CXP] Set Periodo de notas',
   SetSearchTerm = '[Notas CXP] Set Search term de notas',
   Load = '[Notas CXP] Load One Nota',
   LoadFail = '[Notas CXP] Load One Nota fail',
@@ -97,9 +97,9 @@ export class ClearNotas implements Action {
   readonly type = NotaActionTypes.ClearNotas;
 }
 
-export class SetPeriodo implements Action {
-  readonly type = NotaActionTypes.SetPeriodo;
-  constructor(public payload: Periodo) {}
+export class SetPeriodoDeNotas implements Action {
+  readonly type = NotaActionTypes.SetPeriodoDeNotas;
+  constructor(public payload: { periodo: Periodo }) {}
 }
 export class SetSearchTerm implements Action {
   readonly type = NotaActionTypes.SetSearchTerm;
@@ -127,6 +127,6 @@ export type NotaActions =
   | DeleteNotaFail
   | DeleteNotaSuccess
   | ClearNotas
-  | SetPeriodo
+  | SetPeriodoDeNotas
   | SetSearchTerm
   | AplicarNota;

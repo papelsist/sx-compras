@@ -31,10 +31,9 @@ class PagoController extends RestfulController<Pago> {
         log.debug('List: {}', params)
         def periodo = (Periodo)params.periodo
         def query = Pago.where{fecha >= periodo.fechaInicial && fecha <= periodo.fechaFinal}
-        // TEMPORAL
-        query = query.where {proveedor.tipo == 'COMPRAS'}
+        
         if(params.tipo) {
-            // query = query {tipo == params.tipo} PENDIENTE
+            query = query.where {proveedor.tipo == params.tipo}
         }
         return query.list(params)
 

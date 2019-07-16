@@ -1,13 +1,11 @@
 <mat-card>
   <sx-standard-header
-    title="Análisis de facturas"
+    title="Notas de crédito (BONIFICACIONES/DEVOLUCIONES)"
     [periodo]="periodo$ | async"
     (periodoChange)="onPeriodo($event)"
     (reload)="reload()"
     (download)="grid.exportData()"
-    (create)="onCreate()"
   ></sx-standard-header>
-
   <mat-divider></mat-divider>
   <ng-template
     tdLoading
@@ -16,15 +14,14 @@
   >
   </ng-template>
   <div class="grid-panel">
-    <sx-analisis-table
+    <sx-notas-table
       #grid
-      [partidas]="analisis$ | async"
+      [partidas]="notas$ | async"
+      (xml)="onXml($event)"
+      (pdf)="onPdf($event)"
       (select)="onSelect($event)"
       (totales)="onTotales($event)"
-    >
-    </sx-analisis-table>
+    ></sx-notas-table>
   </div>
-  <sx-standard-footer [totales]="totales">
-    <span class="pad-left">Total: {{ totales.importe | currency }}</span>
-  </sx-standard-footer>
+  <sx-standard-footer [totales]="totales"> </sx-standard-footer>
 </mat-card>

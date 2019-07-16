@@ -1,19 +1,31 @@
 <td-layout-nav toolbarTitle="SX Compras" navigationRoute="/" color="primary">
-
   <button mat-icon-button td-menu-button tdLayoutToggle>
     <mat-icon>menu</mat-icon>
   </button>
 
-  <div td-toolbar-content layout="row" layout-align="center center" layout-padding flex>
+  <div
+    td-toolbar-content
+    layout="row"
+    layout-align="center center"
+    layout-padding
+    flex
+  >
     <span flex></span>
-    <a [routerLink]="['/proveedores']" mat-button matTooltip="Catálogo de proveedores">
+    <a
+      [routerLink]="['/proveedores']"
+      mat-button
+      matTooltip="Catálogo de proveedores"
+    >
       <mat-icon>people</mat-icon> Catálogo de proveedores
     </a>
     <span flex></span>
     <sx-logout-button></sx-logout-button>
   </div>
 
-  <td-layout-card-over cardTitle="Alta de proveedor" cardSubtitle="Registro de un nuevo proveedor">
-    <sx-proveedor-form (save)="onSave($event)" (cancel)="onCancel()"></sx-proveedor-form>
+  <td-layout-card-over
+    cardTitle="Alta de proveedor"
+    cardSubtitle="Registro de un nuevo proveedor"
+  >
+    <!-- <sx-proveedor-form (save)="onSave($event)" (cancel)="onCancel()"></sx-proveedor-form> -->
   </td-layout-card-over>
 </td-layout-nav>

@@ -65,7 +65,7 @@ export class RequisicionFormComponent implements OnInit, OnDestroy, OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     this.buildForm();
     if (changes.requisicion && changes.requisicion.currentValue) {
-      console.log('Editando requisicion: ', changes.requisicion.currentValue);
+      // console.log('Editando requisicion: ', changes.requisicion.currentValue);
       this.setRequisicion();
     }
   }

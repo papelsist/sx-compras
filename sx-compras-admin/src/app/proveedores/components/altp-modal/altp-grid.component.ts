@@ -5,12 +5,11 @@ import {
   Input,
   OnChanges,
   SimpleChanges,
-  ViewChild,
   Output,
   EventEmitter,
-  ChangeDetectorRef,
   Inject,
-  LOCALE_ID
+  LOCALE_ID,
+  ChangeDetectorRef
 } from '@angular/core';
 import { formatCurrency, formatNumber, formatDate } from '@angular/common';
 
@@ -24,11 +23,10 @@ import {
   RowDoubleClickedEvent
 } from 'ag-grid-community';
 import { spAgGridText } from 'app/_shared/components/lx-table/table-support';
-
-import { NotaDeCreditoCxP } from '../../model';
+import { CuentaPorPagar } from 'app/cxp/model';
 
 @Component({
-  selector: 'sx-notas-table',
+  selector: 'sx-altp-grid',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div style="height: 100%">
@@ -46,10 +44,17 @@ import { NotaDeCreditoCxP } from '../../model';
       >
       </ag-grid-angular>
     </div>
-  `
+  `,
+  styles: [
+    `
+      .pagada {
+        font-weight: bold;
+      }
+    `
+  ]
 })
-export class NotasTableComponent implements OnInit, OnChanges {
-  @Input() partidas: NotaDeCreditoCxP[] = [];
+export class AltpGridComponent implements OnInit, OnChanges {
+  @Input() partidas: CuentaPorPagar[] = [];
 
   gridOptions: GridOptions;
   gridApi: GridApi;
@@ -57,13 +62,18 @@ export class NotasTableComponent implements OnInit, OnChanges {
 
   @Output() print = new EventEmitter();
   @Output() select = new EventEmitter();
-  @Output() pdf = new EventEmitter();
-  @Output() xml = new EventEmitter();
+  @Output()
+  analisis = new EventEmitter();
+  @Output()
+  pdf = new EventEmitter();
+  @Output()
+  xml = new EventEmitter();
 
   @Output()
   totales = new EventEmitter();
 
   printFriendly = false;
+
   localeText: any;
 
   constructor(
@@ -94,11 +104,6 @@ export class NotasTableComponent implements OnInit, OnChanges {
       sortable: true
     };
     this.gridOptions.onFilterChanged = this.onFilter.bind(this);
-    this.gridOptions.onCellClicked = (event: CellClickedEvent) => {
-      if (event.column.getId() === 'print') {
-        this.print.emit(event.data);
-      }
-    };
     this.gridOptions.onRowDoubleClicked = (event: RowDoubleClickedEvent) => {
       this.select.emit(event.data);
     };
@@ -119,9 +124,7 @@ export class NotasTableComponent implements OnInit, OnChanges {
     }
   }
 
-  onModelUpdate(event) {
-    this.actualizarTotales();
-  }
+  onModelUpdate(event) {}
 
   onGridReady(params: GridReadyEvent) {
     this.gridApi = params.api;
@@ -132,47 +135,8 @@ export class NotasTableComponent implements OnInit, OnChanges {
 
   onFilter(event: FilterChangedEvent) {}
 
-  printGrid() {
-    this.gridApi.setDomLayout('print');
-    this.printFriendly = true;
-    this.cd.detectChanges();
-    setTimeout(() => {
-      print();
-      this.gridApi.setDomLayout(null);
-      this.printFriendly = false;
-      this.cd.detectChanges();
-    }, 8000);
-  }
-
-  exportData() {
-    const params = {
-      fileName: `FACTURAS_${new Date().getTime()}.csv`
-    };
-    this.gridApi.exportDataAsCsv(params);
-  }
-
-  actualizarTotales() {
-    if (this.gridApi) {
-      let rows = 0;
-      let total = 0.0;
-      this.gridApi.forEachNodeAfterFilter((rowNode, index) => {
-        total += rowNode.data.total;
-        rows++;
-      });
-      this.totales.emit({ rows, total });
-    }
-  }
-
   transformCurrency(data) {
     return formatCurrency(data, this.locale, '$');
-  }
-
-  transformDate(data, format: string = 'dd/MM/yyyy') {
-    if (data) {
-      return formatDate(data, format, this.locale);
-    } else {
-      return '';
-    }
   }
 
   private buildColsDef(): ColDef[] {
@@ -185,89 +149,26 @@ export class NotasTableComponent implements OnInit, OnChanges {
         resizable: true
       },
       {
-        headerName: 'Serie',
-        field: 'serie',
-        width: 80
-      },
-      {
-        headerName: 'Folio',
-        field: 'folio',
+        headerName: 'Clave',
+        field: 'clave',
         width: 100
       },
       {
-        headerName: 'Concepto',
-        field: 'concepto',
-        width: 110
-      },
-      {
-        headerName: 'Fecha',
-        field: 'fecha',
-        width: 100,
-        cellRenderer: params => this.transformDate(params.value)
-      },
-      {
-        headerName: 'Mon',
-        field: 'moneda',
-        width: 70
-      },
-      {
-        headerName: 'TC',
-        field: 'tipoDeCambio',
-        width: 90,
-        cellRenderer: params => this.transformCurrency(params.value)
-      },
-      {
-        headerName: 'TC Contable',
-        field: 'tcContable',
-        width: 90,
-        cellRenderer: params => this.transformCurrency(params.value)
-      },
-      {
-        headerName: 'Total',
-        field: 'total',
+        headerName: 'Saldo',
+        field: 'saldo',
         maxWidth: 110,
         cellRenderer: params => this.transformCurrency(params.value)
       },
       {
-        headerName: 'Aplicado',
-        field: 'aplicado',
+        headerName: 'Vencido',
+        field: 'saldoVencido',
         maxWidth: 110,
         cellRenderer: params => this.transformCurrency(params.value)
       },
       {
-        headerName: 'Disponible',
-        field: 'disponible',
-        maxWidth: 110,
-        cellRenderer: params => this.transformCurrency(params.value)
-      },
-      {
-        headerName: 'CFDI',
-        field: 'uuid',
-        maxWidth: 100,
-        cellRenderer: params => params.value.substring(0, 5)
-      },
-      {
-        headerName: 'Modificado',
-        field: 'modificado',
-        maxWidth: 150,
-        cellRenderer: params =>
-          this.transformDate(params.value, 'dd/MM/yyyy HH:mm')
+        headerName: 'Tipo',
+        field: 'tipo'
       }
     ];
   }
-
-  // getPrintUrl(event: NotaDeCreditoCxP) {
-  //   return `cxp/notas/print/${event.id}`;
-  // }
-
-  displayColumns = [
-    'moneda',
-    'tipoDeCambio',
-    'tcContable',
-    'total',
-    'disponible',
-    'tipoDeRelacion',
-    'comentario',
-    'operaciones'
-  ];
 }

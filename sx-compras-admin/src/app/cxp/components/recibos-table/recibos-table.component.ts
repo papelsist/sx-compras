@@ -40,8 +40,6 @@ export class RecibosTableComponent implements OnInit, OnChanges {
   ];
   @ViewChild(MatSort)
   sort: MatSort;
-  @ViewChild(MatPaginator)
-  paginator: MatPaginator;
 
   @Output()
   select = new EventEmitter();
@@ -50,7 +48,6 @@ export class RecibosTableComponent implements OnInit, OnChanges {
   constructor() {}
 
   ngOnInit() {
-    this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
 

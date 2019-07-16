@@ -1,5 +1,6 @@
 import { Action } from '@ngrx/store';
 import { Proveedor } from '../../models/proveedor';
+import { Update } from '@ngrx/entity';
 
 export const LOAD_PROVEEDORES = '[Proveedor] Load proveedores';
 export const LOAD_PROVEEDORES_FAIL = '[Proveedor] Load proveedores Fail';
@@ -12,6 +13,7 @@ export const UPDATE_PROVEEDOR_ACTION = '[Proveedor] Update proveedor';
 export const UPDATE_PROVEEDOR_ACTION_FAIL = '[Proveedor] Update proveedor fail';
 export const UPDATE_PROVEEDOR_ACTION_SUCCESS =
   '[Proveedor] Update proveedor success';
+
 export const CREATE_PROVEEDOR_ACTION = '[Proveedor] Create proveedor';
 export const CREATE_PROVEEDOR_ACTION_FAIL = '[Proveedor] Create proveedor fail';
 export const CREATE_PROVEEDOR_ACTION_SUCCESS =
@@ -58,7 +60,7 @@ export class CreateProveedorSuccess implements Action {
 
 export class UpdateProveedor implements Action {
   readonly type = UPDATE_PROVEEDOR_ACTION;
-  constructor(public payload: Proveedor) {}
+  constructor(public payload: { update: Update<Proveedor> }) {}
 }
 export class UpdateProveedorFail implements Action {
   readonly type = UPDATE_PROVEEDOR_ACTION_FAIL;
