@@ -6,17 +6,22 @@ import {
 } from '../actions/requisicion.actions';
 
 import { Requisicion } from '../../model';
+import { Periodo } from 'app/_core/models/periodo';
+
+export const RequisicionesPeriodoStoeKey = 'sx-compras.requisiciones.periodo';
 
 export interface RequisicionState {
   entities: { [id: string]: Requisicion };
   loaded: boolean;
   loading: boolean;
+  periodo: Periodo;
 }
 
 export const initialState: RequisicionState = {
   entities: {},
   loaded: false,
-  loading: false
+  loading: false,
+  periodo: Periodo.fromStorage(RequisicionesPeriodoStoeKey)
 };
 
 export function reducer(
@@ -24,6 +29,38 @@ export function reducer(
   action: RequisicionActions
 ): RequisicionState {
   switch (action.type) {
+    case RequisicionActionTypes.SetRequisicionPeriodo: {
+      return {
+        ...state,
+        periodo: action.payload.periodo
+      };
+    }
+    case RequisicionActionTypes.LoadRequisiciones: {
+      return {
+        ...state,
+        loading: true,
+        loaded: false
+      };
+    }
+    case RequisicionActionTypes.LoadRequisicionesFail: {
+      return {
+        ...state,
+        loading: false,
+        loaded: false
+      };
+    }
+
+    case RequisicionActionTypes.LoadRequisicionesSuccess: {
+      const requisiciones = action.payload.requisiciones;
+      const entities = _.keyBy(requisiciones, 'id');
+      return {
+        ...state,
+        loading: false,
+        loaded: true,
+        entities
+      };
+    }
+
     case RequisicionActionTypes.LOAD: {
       const requisicion = action.payload;
       const entities = {
@@ -91,6 +128,10 @@ export function reducer(
   }
   return state;
 }
+
+export const getPeriodo = (state: RequisicionState) => state.periodo;
+export const getLoaded = (state: RequisicionState) => state.loaded;
+export const getLoading = (state: RequisicionState) => state.loading;
 
 export const getRequisicionLoaded = (state: RequisicionState) => state.loaded;
 export const getRequisicionLoading = (state: RequisicionState) => state.loading;

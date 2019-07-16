@@ -13,7 +13,6 @@ import {
 } from '@angular/core';
 import { formatCurrency, formatNumber, formatDate } from '@angular/common';
 
-import { Requisicion } from '../../model';
 import {
   GridOptions,
   GridApi,
@@ -24,12 +23,11 @@ import {
   RowDoubleClickedEvent
 } from 'ag-grid-community';
 import { spAgGridText } from 'app/_shared/components/lx-table/table-support';
+import { CuentaPorPagar } from 'app/cxp/model';
 
 @Component({
-  selector: 'sx-requisiciones-table',
+  selector: 'sx-facturas-table2',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  // templateUrl: './requisiciones-table.component.html',
-  //
   template: `
     <div style="height: 100%">
       <ag-grid-angular
@@ -47,7 +45,6 @@ import { spAgGridText } from 'app/_shared/components/lx-table/table-support';
       </ag-grid-angular>
     </div>
   `,
-  // styleUrls: ['./requisiciones-table.component.scss']
   styles: [
     `
       .pagada {
@@ -56,8 +53,8 @@ import { spAgGridText } from 'app/_shared/components/lx-table/table-support';
     `
   ]
 })
-export class RequisicionesTableComponent implements OnInit, OnChanges {
-  @Input() partidas: Requisicion[] = [];
+export class FacturasTable2Component implements OnInit, OnChanges {
+  @Input() partidas: CuentaPorPagar[] = [];
 
   gridOptions: GridOptions;
   gridApi: GridApi;
@@ -117,9 +114,8 @@ export class RequisicionesTableComponent implements OnInit, OnChanges {
   }
 
   getGridClass(params: any) {
-    if (!params.data.pagada) {
+    if (params.data.pagada) {
       return {
-        // 'font-weight': 'bold',
         color: 'rgb(231, 61, 61)'
       };
     } else {
@@ -154,7 +150,7 @@ export class RequisicionesTableComponent implements OnInit, OnChanges {
 
   exportData() {
     const params = {
-      fileName: `RQS_${new Date().getTime()}.csv`
+      fileName: `FACTURAS_${new Date().getTime()}.csv`
     };
     this.gridApi.exportDataAsCsv(params);
   }
@@ -175,9 +171,9 @@ export class RequisicionesTableComponent implements OnInit, OnChanges {
     return formatCurrency(data, this.locale, '$');
   }
 
-  transformDate(data) {
+  transformDate(data, format: string = 'dd/MM/yyyy') {
     if (data) {
-      return formatDate(data, 'dd/MM/yyyy', this.locale);
+      return formatDate(data, format, this.locale);
     } else {
       return '';
     }
@@ -186,17 +182,16 @@ export class RequisicionesTableComponent implements OnInit, OnChanges {
   private buildColsDef(): ColDef[] {
     return [
       {
-        headerName: 'Folio',
-        field: 'folio',
-        pinned: 'left',
-        width: 110
-      },
-      {
         headerName: 'Nombre',
         field: 'nombre',
         width: 300,
         pinned: 'left',
         resizable: true
+      },
+      {
+        headerName: 'Factura',
+        field: 'facturaInfo',
+        width: 150
       },
       {
         headerName: 'Fecha',
@@ -205,60 +200,44 @@ export class RequisicionesTableComponent implements OnInit, OnChanges {
         cellRenderer: params => this.transformDate(params.value)
       },
       {
-        headerName: 'F.Pago',
-        field: 'fechaDePago',
-        width: 110,
-        cellRenderer: params => this.transformDate(params.value)
-      },
-      {
         headerName: 'Mon',
         field: 'moneda',
-        width: 70
-      },
-      {
-        headerName: 'T.C.',
-        field: 'tipoDeCambio',
         width: 70,
+        cellRenderer: params => params.value.moneda
+      },
+      {
+        headerName: 'TC',
+        field: 'tipoDeCambio',
+        maxWidth: 100,
         cellRenderer: params => this.transformCurrency(params.value)
       },
       {
-        headerName: 'Total',
-        field: 'total',
+        headerName: 'TC Cont',
+        field: 'tcContable',
+        maxWidth: 100,
         cellRenderer: params => this.transformCurrency(params.value)
       },
       {
-        headerName: 'Desc Fin',
-        field: 'descuentofImporte',
+        headerName: 'Saldo',
+        field: 'saldo',
+        maxWidth: 110,
         cellRenderer: params => this.transformCurrency(params.value)
       },
       {
-        headerName: 'A Pagar',
-        field: 'apagar',
-        cellRenderer: params => this.transformCurrency(params.value)
+        headerName: 'Actualizó',
+        field: 'updateUser',
+        width: 110
       },
       {
-        headerName: 'Cerrada',
-        field: 'cerrada',
-        width: 110,
-        cellRenderer: params => this.transformDate(params.value)
-      },
-      {
-        headerName: 'Pagada',
-        field: 'pagada',
-        width: 110,
-        cellRenderer: params => this.transformDate(params.value)
+        headerName: 'Modificado',
+        field: 'modificado',
+        maxWidth: 150,
+        cellRenderer: params =>
+          this.transformDate(params.value, 'dd/MM/yyyy HH:mm')
       },
       {
         headerName: 'Comentario',
         field: 'comentario'
-      },
-      {
-        headerName: 'P',
-        field: 'id',
-        colId: 'print',
-        cellRenderer: params => 'P',
-        filter: false,
-        width: 50
       }
     ];
   }

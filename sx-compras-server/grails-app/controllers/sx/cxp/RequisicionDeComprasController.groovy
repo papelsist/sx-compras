@@ -32,24 +32,9 @@ class RequisicionDeComprasController extends RestfulController<RequisicionDeComp
 
         params.sort = 'lastUpdated'
         params.order = 'desc'
-        params.max = params.registros?: 100
-        def query = RequisicionDeCompras.where{}
-
-        if(params.periodo) {
-            def periodo = params.periodo
-            query = query.where{fecha >= periodo.fechaInicial && fecha<= periodo.fechaFinal}
-        }
-        def nombre = params.nombre
-        if(nombre) {
-            String search = nombre + '%'
-            query = query.where { nombre =~ search  }
-        }
-        if(this.params.getBoolean('cerradas')) {
-            query = query.where{cerrada != null}
-        }
-        if(this.params.getBoolean('pendientes')) {
-            query = query.where{egreso == null}
-        }
+        params.max = 1000
+        def periodo = params.periodo
+        def query = RequisicionDeCompras.where{fecha >= periodo.fechaInicial && fecha<= periodo.fechaFinal}
         return query.list(params);
     }
 

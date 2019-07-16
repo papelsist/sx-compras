@@ -1,8 +1,17 @@
 import { Action } from '@ngrx/store';
 
 import { Requisicion } from '../../model';
+import { Periodo } from 'app/_core/models/periodo';
 
 export enum RequisicionActionTypes {
+  // Periodo
+  SetRequisicionPeriodo = '[Requisiciones component] Set requisiciones periodo',
+  // Load requisiciones
+  LoadRequisiciones = '[Requisiciones de compra component] Load requisiciones ',
+  LoadRequisicionesFail = '[Requisiciones de compra API] Load requisiciones fail',
+  LoadRequisicionesSuccess = '[Requisiciones de compra API] Load requisiciones success',
+
+  // Get
   LOAD = '[Requisicion de compra] Load',
   LOAD_FAIL = '[Requisicion de compra] Load Fail',
 
@@ -23,6 +32,24 @@ export enum RequisicionActionTypes {
   CERRAR_REQUISICION = '[Requisicion de compra] Cerrar',
   CERRAR_REQUISICION_FAIL = '[Requisicion de compra] Cerrar Fail',
   CERRAR_REQUISICION_SUCCESS = '[Requisicion de compra] Cerrar Success'
+}
+
+export class SetRequisicionPeriodo implements Action {
+  readonly type = RequisicionActionTypes.SetRequisicionPeriodo;
+  constructor(public payload: { periodo: Periodo }) {}
+}
+
+export class LoadRequisiciones implements Action {
+  readonly type = RequisicionActionTypes.LoadRequisiciones;
+  // constructor(public payload: { periodo: Periodo }) {}
+}
+export class LoadRequisicionesFail implements Action {
+  readonly type = RequisicionActionTypes.LoadRequisicionesFail;
+  constructor(public payload: { response: any }) {}
+}
+export class LoadRequisicionesSuccess implements Action {
+  readonly type = RequisicionActionTypes.LoadRequisicionesSuccess;
+  constructor(public payload: { requisiciones: Requisicion[] }) {}
 }
 
 export class LoadRequisicion implements Action {
@@ -91,6 +118,10 @@ export class CerrarRequisicionSuccess implements Action {
 }
 
 export type RequisicionActions =
+  | SetRequisicionPeriodo
+  | LoadRequisiciones
+  | LoadRequisicionesFail
+  | LoadRequisicionesSuccess
   | LoadRequisicion
   | LoadRequisicionFail
   | SaveRequisicion

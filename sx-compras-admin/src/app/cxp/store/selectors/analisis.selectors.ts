@@ -17,11 +17,12 @@ export const getAnalisisEntities = createSelector(
   fromAnalisis.getAnalisisEntities
 );
 
-export const getAllAnalisis = createSelector(getAnalisisEntities, entities =>
-  Object.keys(entities).map(id => entities[id])
+export const getAllAnalisis = createSelector(
+  getAnalisisEntities,
+  entities => Object.keys(entities).map(id => entities[id])
 );
 
-export const getLoading = createSelector(
+export const getAnalisisLoading = createSelector(
   getAnalisisState,
   fromAnalisis.getAnalisisLoading
 );

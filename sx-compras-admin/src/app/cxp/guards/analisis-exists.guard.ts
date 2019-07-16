@@ -19,6 +19,19 @@ export class AnalisisExistsGuard implements CanActivate {
     private service: AnalisisService
   ) {}
 
+  canActivate(route: ActivatedRouteSnapshot): Observable<boolean> {
+    const id = route.params.analisisId;
+    return this.hasAnalisisInApi(id);
+    /*
+    return this.checkStore().pipe(
+      switchMap(() => {
+        const id = route.params.analisisId;
+        return this.hasAnalisis(id);
+      })
+    );
+    */
+  }
+
   /**
    * `hasAnalisis` composes `hasAnalaisisInStore` and `hasAnalisisInApi`. It first checks
    * if the analisis is in store, and if not it then checks if it is in the
@@ -32,15 +45,6 @@ export class AnalisisExistsGuard implements CanActivate {
         }
 
         return this.hasAnalisisInApi(id);
-      })
-    );
-  }
-
-  canActivate(route: ActivatedRouteSnapshot): Observable<boolean> {
-    return this.checkStore().pipe(
-      switchMap(() => {
-        const id = route.params.analisisId;
-        return this.hasAnalisis(id);
       })
     );
   }
@@ -72,7 +76,7 @@ export class AnalisisExistsGuard implements CanActivate {
       tap(action => this.store.dispatch(action)),
       map(action => !!action.payload),
       catchError(() => {
-        this.store.dispatch(new fromRoot.Go({ path: ['cxp/analisis'] }));
+        console.error('Could not fetch analisis from API');
         return of(false);
       })
     );

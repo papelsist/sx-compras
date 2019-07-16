@@ -20,6 +20,9 @@ import { MonedaFieldComponent } from './moneda-field/moneda-field.component';
 import { TipoCambioFieldComponent } from './tipo-cambio-field/tipo-cambio-field.component';
 import { ProveedorProductoFieldComponent } from './proveedor-productos-field/proveedor-productos-field.component';
 import { ProductoFieldComponent } from './producto-field/producto-field.component';
+import { LxTableComponent } from './lx-table/lx-table.component';
+import { StandardHeaderComponent } from './standard-header/standard-header.component';
+import { StandardFooterComponent } from './standard-footer/standard-footer.component';
 
 export const components = [
   DireccionComponent,
@@ -43,7 +46,10 @@ export const components = [
   MonedaFieldComponent,
   TipoCambioFieldComponent,
   ProveedorProductoFieldComponent,
-  ProductoFieldComponent
+  ProductoFieldComponent,
+  LxTableComponent,
+  StandardHeaderComponent,
+  StandardFooterComponent
 ];
 
 export const entyComponents: any[] = [
@@ -71,3 +77,7 @@ export * from './moneda-field/moneda-field.component';
 export * from './tipo-cambio-field/tipo-cambio-field.component';
 export * from './proveedor-productos-field/proveedor-productos-field.component';
 export * from './producto-field/producto-field.component';
+
+export * from './lx-table/lx-table.component';
+export * from './standard-header/standard-header.component';
+export * from './standard-footer/standard-footer.component';
