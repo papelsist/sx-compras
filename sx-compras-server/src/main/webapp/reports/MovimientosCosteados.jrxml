@@ -31,36 +31,84 @@
 	<parameter name="ARTICULOS" isForPrompting="true" class="java.lang.String">
 		<defaultValueExpression ><![CDATA["PB36"]]></defaultValueExpression>
 	</parameter>
-	<queryString><![CDATA[SELECT A.TIPO,A.GRUPO,SUM(A.KILOS) AS KILOS,SUM(A.SALDO) AS SALDO,SUM(COSTO) AS COSTO
-,SUM(case when A.sw2=6 THEN  A.COSTO ELSE  0 end) as COSTO_AND
-,SUM(case when A.sw2=5 THEN  A.COSTO ELSE  0 end) as COSTO_BOL
-,SUM(case when A.sw2=11 THEN  A.COSTO ELSE  0 end) as COSTO_QRO
-,SUM(case when A.sw2=2 THEN  A.COSTO ELSE  0 end) as COSTO_CA4
-,SUM(case when A.sw2=9 THEN  A.COSTO ELSE  0 end) as COSTO_ERM
-,SUM(case when A.sw2=3 THEN  A.COSTO ELSE  0 end) as COSTO_TAC
-,SUM(case when A.sw2=14 THEN  A.COSTO ELSE  0 end) as COSTO_ALE
+	<queryString><![CDATA[SELECT A.TIPO,A.GRUPO
+,ROUND(SUM(A.KILOS),0) AS KILOS
+,ROUND(SUM(A.SALDO),3) AS SALDO
+,ROUND(SUM(COSTO),2) AS COSTO
+,ROUND(SUM(case when A.sw2=6 THEN  A.COSTO ELSE  0 end),2) AS COSTO_AND
+,ROUND(SUM(case when A.sw2=5 THEN  A.COSTO ELSE  0 end),2) AS COSTO_BOL
+,ROUND(SUM(case when A.sw2=11 THEN  A.COSTO ELSE  0 end),2) AS COSTO_QRO
+,ROUND(SUM(case when A.sw2=2 THEN  A.COSTO ELSE  0 end),2) AS COSTO_CA4
+,ROUND(SUM(case when A.sw2=9 THEN  A.COSTO ELSE  0 end),2) AS COSTO_ERM
+,ROUND(SUM(case when A.sw2=3 THEN  A.COSTO ELSE  0 end),2) AS COSTO_TAC
+,ROUND(SUM(case when A.sw2=14 THEN  A.COSTO ELSE  0 end),2) AS COSTO_ALE
 FROM (
-select 'FLT' AS TIPO,P.CLAVE,P.DESCRIPCION,'02 COMPRAS' AS GRUPO,S.SW2,0 as KILOS,0 as SALDO
-,ROUND(SUM(I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end) * i.gasto),2) as COSTO
-from inventario I  join producto p on(p.id=i.producto_id) JOIN sucursal s on(i.sucursal_id=s.id)
-where I.TIPO='COM' AND I.GASTO>0 and YEAR(I.FECHA)=$P{EJERCICIO} AND MONTH(I.FECHA)=$P{MES} AND I.CLAVE LIKE $P{ARTICULOS} group by 4,1,5,2
-UNION
-select (CASE WHEN i.TIPO IN('COM') AND I.COSTO=0 THEN 'SNA' WHEN i.TIPO IN('TRS','REC') AND I.CANTIDAD>0 THEN concat('E',SUBSTR(i.tipo,1,2)) WHEN i.TIPO IN('TRS','REC') AND I.CANTIDAD<0 THEN concat('S',SUBSTR(i.tipo,1,2)) ELSE TIPO END) AS TIPO
-,P.CLAVE,P.DESCRIPCION,(CASE 	WHEN I.TIPO IN('COM') THEN '02 COMPRAS' WHEN I.TIPO IN('AJU','CIM','CIS','DEC','MER','RMC') THEN '03 GASTO' WHEN I.TIPO IN('VIR','OIM') THEN '04 PRODUCTO'
-            	WHEN I.TIPO IN('REC','TRS') THEN '05 TRANSFORM' WHEN I.TIPO IN('TPE','TPS') THEN '06 TRASLADO' WHEN I.TIPO IN('FAC','RMD') THEN '07 VENTAS' ELSE 'OTROS' END) AS GRUPO,S.SW2
-,ROUND(SUM(I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end)*P.KILOS),3) as KILOS,ROUND(SUM(I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end)),3) as SALDO
-,ROUND(SUM(I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end) * (case when i.tipo='COM' and i.costo>0 then i.costo when i.TIPO IN('TRS','REC') AND I.CANTIDAD>0 then i.costo else I.COSTO_promedio end)),2) as COSTO
-from inventario I  join producto p on(p.id=i.producto_id) JOIN sucursal s on(i.sucursal_id=s.id)
-where p.inventariable is true and YEAR(I.FECHA)=$P{EJERCICIO} AND MONTH(I.FECHA)=$P{MES} AND I.CLAVE LIKE $P{ARTICULOS} group by 4,1,5,2
-UNION
-SELECT 'INI' AS TIPO,P.CLAVE,P.DESCRIPCION,'01 A_INV' AS GRUPO,s.sw2,ROUND(SUM(I.EXISTENCIA_INICIAL/(case when p.unidad ='MIL' then 1000 else 1 end)*P.KILOS),3) as KILOS
-,ROUND(SUM(I.EXISTENCIA_INICIAL/(case when p.unidad ='MIL' then 1000 else 1 end)),3) as SALDO,ROUND(SUM(I.EXISTENCIA_INICIAL/(case when p.unidad ='MIL' then 1000 else 1 end) * I.COSTO ),2) as COSTO
-FROM existencia i join producto p on(p.id=i.producto_id) JOIN sucursal s on(i.sucursal_id=s.id) where p.inventariable is true and i.anio=$P{EJERCICIO} AND i.mes=$P{MES}  AND I.CLAVE LIKE $P{ARTICULOS} group by 4,1,5,2
-UNION
-SELECT 'FIN' AS TIPO,P.CLAVE,P.DESCRIPCION,'08 Z_INV' AS GRUPO,s.sw2,ROUND(SUM(I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end)*P.KILOS),3) as KILOS
-,ROUND(SUM(I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end)),3) as SALDO,ROUND(SUM(I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end) * I.costo_promedio ),2) as COSTO
-FROM existencia i join producto p on(p.id=i.producto_id) JOIN sucursal s on(i.sucursal_id=s.id) where p.inventariable is true and i.anio=$P{EJERCICIO} AND i.mes=$P{MES}  AND I.CLAVE LIKE $P{ARTICULOS} group by 4,1,5,2
-) AS A GROUP BY 1,2 ORDER BY 2,1]]></queryString>
+        SELECT 'REDONDEO' ASIENTO,'INI' AS TIPO,'01 A_INV' AS GRUPO,s.sw2,s.clave SUC,s.nombre SUCURSAL,P.CLAVE,P.DESCRIPCION,ROUND(   (I.EXISTENCIA_INICIAL/(case when p.unidad ='MIL' then 1000 else 1 end)*P.KILOS),3) as KILOS
+	   ,ROUND(   (I.EXISTENCIA_INICIAL/(case when p.unidad ='MIL' then 1000 else 1 end)),3) as SALDO,   (   (I.EXISTENCIA_INICIAL/(case when p.unidad ='MIL' then 1000 else 1 end) * I.COSTO )  ) as COSTO
+	   ,'' PROVEEDOR,CONCAT('115-0001-',(CASE WHEN s.sw2<10 THEN '000' ELSE '00' END),s.clave,'-0000') CTA_CONTABLE
+	   FROM existencia i join producto p on(p.id=i.producto_id) JOIN sucursal s on(i.sucursal_id=s.id) where p.inventariable is true and i.anio=$P{EJERCICIO} AND i.mes=$P{MES} AND I.CLAVE LIKE $P{ARTICULOS}
+	   	union
+	   SELECT 'REDONDEO' ASIENTO,'FIN' AS TIPO,'08 Z_INV' AS GRUPO,s.sw2,s.clave SUC,s.nombre SUCURSAL,P.CLAVE,P.DESCRIPCION
+	   ,ROUND(   (I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end)*P.KILOS),3) as KILOS
+	   ,ROUND(   (I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end)),3) as SALDO,   (   (I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end) * I.COSTO_PROMEDIO )  ) as COSTO
+	   ,'' PROVEEDOR,CONCAT('115-0001-',(CASE WHEN s.sw2<10 THEN '000' ELSE '00' END),s.clave,'-0000') CTA_CONTABLE
+	   FROM existencia i join producto p on(p.id=i.producto_id) JOIN sucursal s on(i.sucursal_id=s.id) where p.inventariable is true and  i.anio=$P{EJERCICIO} AND i.mes=$P{MES} AND I.CLAVE LIKE $P{ARTICULOS}	   
+     	union	   
+        SELECT 'FLETES PROVEEDOR' ASIENTO,'FLT' TIPO,'02 COMPRAS' AS grupo,s.sw2,S.clave SUC,S.NOMBRE SUCURSAL,P.CLAVE,P.DESCRIPCION 
+        ,0 as kilos,0 as saldo,   ( (I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end) * i.gasto) ) as COSTO
+        ,(select x.nombre from recepcion_de_compra_det d join recepcion_de_compra r on(d.recepcion_id=r.id) join proveedor x on(r.proveedor_id=x.id) where d.inventario_id=i.id  ) PROVEEDOR                
+        ,concat('115-0004-',(SELECT o.cuenta_operativa FROM recepcion_de_compra_det d   join recepcion_de_compra r on(d.recepcion_id=r.id) join proveedor x on(r.proveedor_id=x.id) join cuenta_operativa_proveedor o on(o.proveedor_id=x.id) where d.inventario_id=i.id ),'-0000') CTA_CONTABLE
+        from inventario I  join producto p on(p.id=i.producto_id) JOIN sucursal s on(i.sucursal_id=s.id)
+        where p.inventariable is true and YEAR(I.FECHA)=$P{EJERCICIO} AND MONTH(I.FECHA)=$P{MES} AND I.CLAVE LIKE $P{ARTICULOS}
+        AND I.TIPO IN('COM') AND I.GASTO>0
+        	union
+        select a.ASIENTO,a.TIPO,a.GRUPO,a.sw2,a.SUC,a.SUCURSAL,a.CLAVE,a.DESCRIPCION,SUM(a.KILOS) KILOS,SUM(a.SALDO) SALDO,SUM(a.COSTO) COSTO,a.PROVEEDOR,a.CTA_CONTABLE 
+        from (        
+        SELECT (CASE WHEN i.TIPO IN('COM') AND I.COSTO=0 THEN 'COMPRAS_SNA'
+        WHEN i.TIPO IN('COM') AND I.COSTO>0 THEN 'COMPRAS'
+        WHEN i.TIPO IN('DEC') THEN 'DEVOLUCIONES DE COMPRAS'
+        WHEN i.TIPO IN('FAC') THEN 'COSTO DE VENTA'
+        WHEN i.TIPO IN('RMD') THEN 'DEVOLUCION'
+        WHEN i.TIPO IN('AJU','CIM','MER','RMC','OIM','VIR') AND I.CANTIDAD>0 THEN 'MOVTOS DE ALMACEN OPRD'
+        WHEN i.TIPO IN('AJU','CIM','MER','RMC','OIM','VIR') AND I.CANTIDAD<0 THEN 'MOVTOS DE ALMACEN OGST'
+        WHEN i.TIPO IN('TRS','REC') THEN 'TRANSFORMACIONES'
+        WHEN i.TIPO IN('TPS') THEN 'TRASLADO' 
+        WHEN i.TIPO IN('TPE') THEN 'TRASLADO' 
+        WHEN i.TIPO IN('CIS') AND (SELECT d.tipocis FROM movimiento_de_almacen m join movimiento_de_almacen_det d on(d.movimiento_de_almacen_id=m.id) where d.inventario_id=i.id)='PAPELERIA' THEN 'PAPELERIA Y COPIAS'
+        WHEN i.TIPO IN('CIS') AND (SELECT d.tipocis FROM movimiento_de_almacen m join movimiento_de_almacen_det d on(d.movimiento_de_almacen_id=m.id) where d.inventario_id=i.id)='MATERIAL_EMPAQUE' THEN 'MATERIAL DE EMPAQUE'
+        WHEN i.TIPO IN('CIS') AND (SELECT d.tipocis FROM movimiento_de_almacen m join movimiento_de_almacen_det d on(d.movimiento_de_almacen_id=m.id) where d.inventario_id=i.id)='PUBLICIDAD_PROPAGANDA' THEN 'PUBLICIDAD PROPAGANDA'
+        WHEN i.TIPO IN('CIS') AND (SELECT d.tipocis FROM movimiento_de_almacen m join movimiento_de_almacen_det d on(d.movimiento_de_almacen_id=m.id) where d.inventario_id=i.id)='NO_DEDUSIBLE' THEN 'NO DEDUCIBLE'
+        ELSE TIPO END) ASIENTO
+        ,(CASE WHEN i.TIPO IN('COM') AND I.COSTO=0 THEN 'SNA' WHEN i.TIPO IN('TRS','REC') AND I.CANTIDAD>0 THEN 'ETR' WHEN i.TIPO IN('TRS','REC') AND I.CANTIDAD<0 THEN 'STR' ELSE TIPO END) AS TIPO
+        ,(CASE WHEN I.TIPO IN('COM') THEN '02 COMPRAS' WHEN I.TIPO IN('AJU','CIM','CIS','DEC','MER','RMC') THEN '03 GASTO' WHEN I.TIPO IN('VIR','OIM') THEN '04 PRODUCTO'
+         WHEN I.TIPO IN('REC','TRS') THEN '05 TRANSFORM' 
+         WHEN I.TIPO IN('TPS') THEN '06 TRASLADO'
+         WHEN I.TIPO IN('TPE') THEN '06 TRASLADO'
+         WHEN I.TIPO IN('FAC','RMD') THEN '07 VENTAS' ELSE 'OTROS' END) AS GRUPO,s.sw2,S.clave SUC,S.NOMBRE SUCURSAL,P.CLAVE,P.DESCRIPCION
+        ,ROUND(   (I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end)*P.KILOS),3) as KILOS,ROUND(   (I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end)),3) as SALDO
+        ,    (   (I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end) * (case when i.tipo='COM' and i.costo>0 then i.costo when i.TIPO IN('TRS','REC') AND I.CANTIDAD>0 then i.costo else I.COSTO_promedio end)) ) as COSTO
+        ,(CASE WHEN i.TIPO IN('COM') AND I.COSTO>0 THEN (select x.nombre from recepcion_de_compra_det d join recepcion_de_compra r on(d.recepcion_id=r.id) join proveedor x on(r.proveedor_id=x.id) where d.inventario_id=i.id  )
+         WHEN i.TIPO IN('DEC') AND I.costo_promedio>0 THEN (select x.nombre from devolucion_de_compra_det d join devolucion_de_compra r on(d.devolucion_de_compra_id=r.id) join proveedor x on(r.proveedor_id=x.id) where d.inventario_id=i.id  )
+         ELSE '' END) AS PROVEEDOR
+        ,(CASE WHEN i.TIPO IN('COM') AND I.COSTO=0 THEN CONCAT('115-0001-',(CASE WHEN S.CLAVE<10 THEN '000' ELSE '00' END),S.CLAVE,'-0000')
+        WHEN i.TIPO IN('COM') AND I.COSTO>0 THEN CONCAT('115-',(select (case when x.cuenta_operativa in('0061','0038') then concat('0002-',x.cuenta_operativa) else concat('0003-',x.cuenta_operativa) end) from recepcion_de_compra_det d join recepcion_de_compra r on(d.recepcion_id=r.id) join cuenta_operativa_proveedor x on(r.proveedor_id=x.proveedor_id) where d.inventario_id=i.id  ),'-0000')
+        WHEN i.TIPO IN('DEC') THEN CONCAT('115-',(select (case when x.cuenta_operativa in('0061','0038') then concat('0005-',x.cuenta_operativa) else concat('0006-',x.cuenta_operativa) end) from devolucion_de_compra_det d join devolucion_de_compra r on(d.devolucion_de_compra_id=r.id) join cuenta_operativa_proveedor x on(r.proveedor_id=x.proveedor_id) where d.inventario_id=i.id  ),'-0000')
+        WHEN i.TIPO IN('FAC') THEN CONCAT('501-0001-',(CASE WHEN S.CLAVE<10 THEN '000' ELSE '00' END),S.CLAVE,'-0000')
+        WHEN i.TIPO IN('RMD') THEN CONCAT('501-0001-',(CASE WHEN S.CLAVE<10 THEN '000' ELSE '00' END),S.CLAVE,'-0000')
+        WHEN i.TIPO IN('AJU','CIM','MER','RMC','OIM','VIR') AND I.CANTIDAD>0 THEN '704-0005-0000-0000'
+        WHEN i.TIPO IN('AJU','CIM','MER','RMC','OIM','VIR') AND I.CANTIDAD<0 THEN CONCAT('600-0031-',(CASE WHEN S.CLAVE<10 THEN '000' ELSE '00' END),S.CLAVE,'-0000')
+        WHEN i.TIPO IN('TRS','REC') THEN CASE WHEN  (   (I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end) * (case when i.tipo='COM' and i.costo>0 then i.costo when i.TIPO IN('TRS','REC') AND I.CANTIDAD>0 then i.costo else I.COSTO_promedio end))  )>0 THEN '704-0005-0000-0000' ELSE '703-0001-0000-0000' END
+        WHEN i.TIPO IN('TPS') THEN CONCAT('115-0001-',(CASE WHEN S.CLAVE<10 THEN '000' ELSE '00' END),S.CLAVE,'-0000') 
+        WHEN i.TIPO IN('TPE') THEN CONCAT('115-0001-',(CASE WHEN S.CLAVE<10 THEN '000' ELSE '00' END),S.CLAVE,'-0000') 
+        WHEN i.TIPO IN('CIS') AND (SELECT d.tipocis FROM movimiento_de_almacen m join movimiento_de_almacen_det d on(d.movimiento_de_almacen_id=m.id) where d.inventario_id=i.id)='PAPELERIA' THEN CONCAT('600-0032-',(CASE WHEN S.CLAVE<10 THEN '000' ELSE '00' END),S.CLAVE,'-0000')
+        WHEN i.TIPO IN('CIS') AND (SELECT d.tipocis FROM movimiento_de_almacen m join movimiento_de_almacen_det d on(d.movimiento_de_almacen_id=m.id) where d.inventario_id=i.id)='MATERIAL_EMPAQUE' THEN CONCAT('600-0029-',(CASE WHEN S.CLAVE<10 THEN '000' ELSE '00' END),S.CLAVE,'-0000')
+        WHEN i.TIPO IN('CIS') AND (SELECT d.tipocis FROM movimiento_de_almacen m join movimiento_de_almacen_det d on(d.movimiento_de_almacen_id=m.id) where d.inventario_id=i.id)='PUBLICIDAD_PROPAGANDA' THEN CONCAT('600-0033-',(CASE WHEN S.CLAVE<10 THEN '000' ELSE '00' END),S.CLAVE,'-0000')
+        WHEN i.TIPO IN('CIS') AND (SELECT d.tipocis FROM movimiento_de_almacen m join movimiento_de_almacen_det d on(d.movimiento_de_almacen_id=m.id) where d.inventario_id=i.id)='NO_DEDUSIBLE' THEN CONCAT('600-0031-',(CASE WHEN S.CLAVE<10 THEN '000' ELSE '00' END),S.CLAVE,'-0000') ELSE TIPO END) CTA_CONTABLE
+        from inventario I  join producto p on(p.id=i.producto_id) JOIN sucursal s on(i.sucursal_id=s.id)
+        where p.inventariable is true and YEAR(I.FECHA)=$P{EJERCICIO} AND MONTH(I.FECHA)=$P{MES} AND I.CLAVE LIKE $P{ARTICULOS}
+        ) as a       
+        group by 1,2,6,7,12     
+) AS A GROUP BY 1,2 ORDER BY 2,1  ]]></queryString>
 
 	<field name="TIPO" class="java.lang.String"/>
 	<field name="GRUPO" class="java.lang.String"/>

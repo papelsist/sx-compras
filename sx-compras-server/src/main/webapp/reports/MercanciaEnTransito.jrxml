@@ -294,7 +294,7 @@ ORDER BY 1 DESC,p.CLAVE]]></queryString>
 			<band height="66"  isSplitAllowed="true" >
 				<staticText>
 					<reportElement
-						x="509"
+						x="487"
 						y="51"
 						width="128"
 						height="14"
@@ -345,9 +345,9 @@ ORDER BY 1 DESC,p.CLAVE]]></queryString>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="637"
+						x="615"
 						y="51"
-						width="51"
+						width="62"
 						height="14"
 						key="textField"/>
 					<box>					<pen lineWidth="0.25" lineStyle="Solid" lineColor="#CCCCCC"/>
@@ -363,7 +363,7 @@ ORDER BY 1 DESC,p.CLAVE]]></queryString>
 				</textField>
 				<staticText>
 					<reportElement
-						x="688"
+						x="677"
 						y="51"
 						width="14"
 						height="14"
@@ -380,9 +380,9 @@ ORDER BY 1 DESC,p.CLAVE]]></queryString>
 				</staticText>
 				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="702"
+						x="691"
 						y="51"
-						width="51"
+						width="62"
 						height="14"
 						key="textField-16"/>
 					<box>					<pen lineWidth="0.25" lineStyle="Solid" lineColor="#CCCCCC"/>
@@ -391,7 +391,7 @@ ORDER BY 1 DESC,p.CLAVE]]></queryString>
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#CCCCCC"/>
 </box>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
+					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="8" isBold="true" isUnderline="true"/>
 					</textElement>
 				<textFieldExpression   class="java.util.Date"><![CDATA[$P{FECHA_FIN}]]></textFieldExpression>
