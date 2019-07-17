@@ -159,6 +159,27 @@ environments:
                     validationQuery: 'SELECT 1'
                     validationQueryTimeout: 3
                     validationInterval: 15000
+    compras:
+            dataSource:
+                dbCreate: none
+                url: jdbc:mysql://${JDBC_CONNECTION_STRING}?autoReconnect=true
+                username: root
+                password: sys
+                properties:
+                    maxActive: 10
+                    maxIdle: 10
+                    minIdle: 3
+                    initialSize: 3
+                    minEvictableIdleTimeMillis: 1800000
+                    timeBetweenEvictionRunsMillis: 1800000
+                    numTestsPerEvictionRun: 3
+                    testOnBorrow: true
+                    testWhileIdle: true
+                    testOnReturn: true
+                    maxWait: 10000
+                    validationQuery: 'SELECT 1'
+                    validationQueryTimeout: 3
+                    validationInterval: 15000                    
     certificacion:
         dataSource:
             dbCreate: update
@@ -222,6 +243,13 @@ environments:
       logistica:
         inicioOperacionComisiones: 01/03/2019
   production:
+    siipapx:
+      cxp:
+        cfdisDir: /home/cfdProv
+        gastosDir: /home/cfdGastos
+      cfdi:
+        dir: /home/siipapx-cfdis
+  compras:
     siipapx:
       cxp:
         cfdisDir: /home/cfdProv

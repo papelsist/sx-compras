@@ -125,7 +125,8 @@ springBoot {
 
 war {
     String env = System.getProperty('grails.env') ?: 'prod'
-    war.baseName = "${rootProject.name}-${env.substring(0,4)}"
+    // war.baseName = "${rootProject.name}-${env.substring(0,4)}"
+    war.baseName = "siipapx-${env}"
     war.version = ''
 }
 
