@@ -19,18 +19,6 @@ import { ReportComsSinAnalizarComponent } from '../../components';
 export class CxpPageComponent implements OnInit {
   navmenu: Object[] = [
     {
-      route: 'cfdis',
-      title: 'CFDIs',
-      description: 'Comprobantes fiscales',
-      icon: 'account_balance_wallet'
-    },
-    {
-      route: 'facturas',
-      title: 'Facturas',
-      description: 'Facturas (CFDIs)',
-      icon: 'receipt'
-    },
-    {
       route: 'analisis',
       title: 'Análisis',
       description: 'Análisis de facturas',
@@ -41,6 +29,12 @@ export class CxpPageComponent implements OnInit {
       title: 'Requisiciones',
       description: 'Requisiciones',
       icon: 'gradient'
+    },
+    {
+      route: 'facturas',
+      title: 'Facturas',
+      description: 'Facturas (CFDIs)',
+      icon: 'receipt'
     },
     {
       route: 'pagos',
@@ -59,6 +53,12 @@ export class CxpPageComponent implements OnInit {
       title: 'Contrarecibos ',
       description: 'Contrarecibos',
       icon: 'rate_review'
+    },
+    {
+      route: 'cfdis',
+      title: 'CFDIs',
+      description: 'Comprobantes fiscales',
+      icon: 'account_balance_wallet'
     }
   ];
 
