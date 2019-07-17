@@ -28,13 +28,13 @@
 	</parameter>
 	<parameter name="FECHA_INI" isForPrompting="true" class="java.util.Date"/>
 	<parameter name="FECHA_FIN" isForPrompting="true" class="java.util.Date"/>
-	<queryString><![CDATA[SELECT p.CLAVE AS CLAVPROV,p.NOMBRE,A.costo_unitario,C.tipo_de_cambio
+	<queryString><![CDATA[SELECT (case when p.clave in('P095','I001') then 'SI' else 'NO' end) RALACIONADAS,p.CLAVE AS CLAVPROV,p.NOMBRE,A.costo_unitario,C.tipo_de_cambio
 ,SUM(CASE WHEN C.FECHA<$P{FECHA_INI} THEN (A.CANTIDAD/(case when z.unidad='MIL' then 1000 else 1 end)*A.costo_unitario)*C.tipo_de_cambio ELSE 0 END) AS IMP_ANT
 ,SUM(CASE WHEN C.FECHA BETWEEN $P{FECHA_INI} AND $P{FECHA_FIN} THEN (A.CANTIDAD/(case when z.unidad='MIL' then 1000 else 1 end)*A.costo_unitario)*C.tipo_de_cambio ELSE 0 END) AS IMP_PRD
 ,SUM(CASE WHEN C.FECHA>$P{FECHA_FIN}THEN (A.CANTIDAD/(case when z.unidad='MIL' then 1000 else 1 end)*A.costo_unitario)*C.tipo_de_cambio ELSE 0 END) AS IMP_PST
-,SUM(CASE WHEN S.SW2=6 THEN (A.CANTIDAD/(case when z.unidad='MIL' then 1000 else 1 end)*A.costo_unitario)*C.tipo_de_cambio ELSE 0 END) AS "AND"
+,SUM(CASE WHEN S.SW2 IN(6,11) THEN (A.CANTIDAD/(case when z.unidad='MIL' then 1000 else 1 end)*A.costo_unitario)*C.tipo_de_cambio ELSE 0 END) AS "AND"
 ,SUM(CASE WHEN S.SW2=5 THEN (A.CANTIDAD/(case when z.unidad='MIL' then 1000 else 1 end)*A.costo_unitario)*C.tipo_de_cambio ELSE 0 END) AS BOL
-,SUM(CASE WHEN S.SW2=9 THEN (A.CANTIDAD/(case when z.unidad='MIL' then 1000 else 1 end)*A.costo_unitario)*C.tipo_de_cambio ELSE 0 END) AS QRO
+,SUM(CASE WHEN S.SW2 IN(9,14) THEN (A.CANTIDAD/(case when z.unidad='MIL' then 1000 else 1 end)*A.costo_unitario)*C.tipo_de_cambio ELSE 0 END) AS QRO
 ,SUM(CASE WHEN S.SW2=2 THEN (A.CANTIDAD/(case when z.unidad='MIL' then 1000 else 1 end)*A.costo_unitario)*C.tipo_de_cambio ELSE 0 END) AS CA4
 ,SUM(CASE WHEN S.SW2=3 THEN (A.CANTIDAD/(case when z.unidad='MIL' then 1000 else 1 end)*A.costo_unitario)*C.tipo_de_cambio ELSE 0 END) AS TAC
 ,SUM((A.CANTIDAD/(case when z.unidad='MIL' then 1000 else 1 end)*A.costo_unitario)*C.tipo_de_cambio) AS TOTAL
@@ -48,8 +48,9 @@ JOIN proveedor p on(c.proveedor_id=p.id)
 JOIN producto z on(ic.producto_id=z.id)
 WHERE  DATE(IC.FECHA) BETWEEN $P{FECHA_INI} AND $P{FECHA_FIN} AND P.CLAVE LIKE '%'
 GROUP BY p.clave
-ORDER BY p.CLAVE]]></queryString>
+ORDER BY 1 DESC,p.CLAVE]]></queryString>
 
+	<field name="RALACIONADAS" class="java.lang.String"/>
 	<field name="CLAVPROV" class="java.lang.String"/>
 	<field name="NOMBRE" class="java.lang.String"/>
 	<field name="costo_unitario" class="java.math.BigDecimal"/>
@@ -91,6 +92,196 @@ ORDER BY p.CLAVE]]></queryString>
 	<variable name="TOTAL" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
 		<variableExpression><![CDATA[$F{TOTAL}]]></variableExpression>
 	</variable>
+	<variable name="TOTAL_REL" class="java.math.BigDecimal" resetType="Group" resetGroup="RELACIONADAS" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTAL}]]></variableExpression>
+	</variable>
+	<variable name="TACUBA_REL" class="java.math.BigDecimal" resetType="Group" resetGroup="RELACIONADAS" calculation="Sum">
+		<variableExpression><![CDATA[$F{TAC}]]></variableExpression>
+	</variable>
+	<variable name="CALLE4_REL" class="java.math.BigDecimal" resetType="Group" resetGroup="RELACIONADAS" calculation="Sum">
+		<variableExpression><![CDATA[$F{CA4}]]></variableExpression>
+	</variable>
+	<variable name="QUERETARO_REL" class="java.math.BigDecimal" resetType="Group" resetGroup="RELACIONADAS" calculation="Sum">
+		<variableExpression><![CDATA[$F{QRO}]]></variableExpression>
+	</variable>
+	<variable name="BOLIVAR_REL" class="java.math.BigDecimal" resetType="Group" resetGroup="RELACIONADAS" calculation="Sum">
+		<variableExpression><![CDATA[$F{BOL}]]></variableExpression>
+	</variable>
+	<variable name="ANDRADE_REL" class="java.math.BigDecimal" resetType="Group" resetGroup="RELACIONADAS" calculation="Sum">
+		<variableExpression><![CDATA[$F{AND}]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_TRAN_POST_REL" class="java.math.BigDecimal" resetType="Group" resetGroup="RELACIONADAS" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMP_PST}]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_PERIODO_REL" class="java.math.BigDecimal" resetType="Group" resetGroup="RELACIONADAS" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMP_PRD}]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_TRAN_ANT_REL" class="java.math.BigDecimal" resetType="Group" resetGroup="RELACIONADAS" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMP_ANT}]]></variableExpression>
+	</variable>
+
+		<group  name="RELACIONADAS" >
+			<groupExpression><![CDATA[$F{RALACIONADAS}]]></groupExpression>
+			<groupHeader>
+			<band height="20"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="16"
+						y="5"
+						width="216"
+						height="13"
+						key="textField-31"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="10" isBold="true" isUnderline="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{RALACIONADAS}.equals( "SI" ) ? "RELACIONADAS" : "NO RELACIONADAS"]]></textFieldExpression>
+				</textField>
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="17"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="251"
+						y="2"
+						width="62"
+						height="11"
+						key="textField-32"/>
+					<box></box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$V{TOTAL_TRAN_ANT_REL}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="313"
+						y="2"
+						width="61"
+						height="11"
+						key="textField-33"/>
+					<box></box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$V{TOTAL_PERIODO_REL}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="374"
+						y="2"
+						width="63"
+						height="11"
+						key="textField-34"/>
+					<box></box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$V{TOTAL_TRAN_POST_REL}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="703"
+						y="2"
+						width="51"
+						height="11"
+						key="textField-35"/>
+					<box></box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="7" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$V{TOTAL_REL}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="649"
+						y="2"
+						width="54"
+						height="11"
+						key="textField-36"/>
+					<box></box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="7" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$V{TACUBA_REL}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="596"
+						y="2"
+						width="53"
+						height="11"
+						key="textField-37"/>
+					<box></box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="7" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$V{CALLE4_REL}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="543"
+						y="2"
+						width="53"
+						height="11"
+						key="textField-38"/>
+					<box></box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="7" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$V{QUERETARO_REL}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="490"
+						y="2"
+						width="53"
+						height="11"
+						key="textField-39"/>
+					<box></box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="7" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$V{BOLIVAR_REL}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="437"
+						y="2"
+						width="53"
+						height="11"
+						key="textField-40"/>
+					<box></box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="7" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$V{ANDRADE_REL}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="12"
+						y="2"
+						width="237"
+						height="11"
+						key="textField-41"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="8" isBold="true" isUnderline="false"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{RALACIONADAS}.equals( "SI" ) ? "(RELACIONADAS)" : "(NO RELACIONADAS)").concat("  TOTAL :  ")]]></textFieldExpression>
+				</textField>
+			</band>
+			</groupFooter>
+		</group>
 		<background>
 			<band height="0"  isSplitAllowed="true" >
 			</band>
@@ -863,7 +1054,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</line>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="250"
+						x="253"
 						y="3"
 						width="62"
 						height="11"
@@ -876,7 +1067,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="312"
+						x="315"
 						y="3"
 						width="61"
 						height="11"
@@ -889,7 +1080,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="373"
+						x="376"
 						y="3"
 						width="63"
 						height="11"
@@ -902,7 +1093,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</textField>
 				<staticText>
 					<reportElement
-						x="197"
+						x="200"
 						y="3"
 						width="48"
 						height="11"
@@ -919,7 +1110,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</staticText>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="702"
+						x="705"
 						y="3"
 						width="51"
 						height="11"
@@ -932,7 +1123,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="648"
+						x="651"
 						y="3"
 						width="54"
 						height="11"
@@ -945,7 +1136,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="595"
+						x="598"
 						y="3"
 						width="53"
 						height="11"
@@ -958,7 +1149,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="542"
+						x="545"
 						y="3"
 						width="53"
 						height="11"
@@ -971,7 +1162,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="489"
+						x="492"
 						y="3"
 						width="53"
 						height="11"
@@ -984,7 +1175,7 @@ ORDER BY p.CLAVE]]></queryString>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="436"
+						x="439"
 						y="3"
 						width="53"
 						height="11"
