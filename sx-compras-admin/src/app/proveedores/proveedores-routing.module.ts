@@ -54,6 +54,10 @@ const routes: Routes = [
           ProveedorListaExistsGuard
         ],
         component: fromContainers.ProveedorListaEditComponent
+      },
+      {
+        path: 'analytics',
+        component: fromContainers.AnalyticsComponent
       }
     ]
   }

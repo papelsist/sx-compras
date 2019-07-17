@@ -17,6 +17,13 @@ import { Proveedor } from '../../models/proveedor';
 export class ProveedorPageComponent implements OnInit {
   navmenu: Object[] = [
     {
+      route: 'analytics',
+      title: 'Analytics',
+      description: 'Información analítica',
+      icon: 'equalizer'
+
+    },
+    {
       route: 'info',
       title: 'Generales',
       description: 'Información general',

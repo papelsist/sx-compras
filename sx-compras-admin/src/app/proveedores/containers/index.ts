@@ -8,6 +8,7 @@ import { ProveedorListaCreateComponent } from './proveedor-lista/proveedor-lista
 import { ProveedorListaEditComponent } from './proveedor-lista/proveedor-lista-edit.component';
 import { ProveedorCreateComponent } from './proveedor-create/proveedor-create.component';
 import { ProveedorComponent } from './proveedor/proveedor.component';
+import { AnalyticsComponent } from './analytics/analytics.component';
 
 export const containers: any[] = [
   ProveedorCreateComponent,
@@ -19,7 +20,8 @@ export const containers: any[] = [
   ProveedorListaCreateComponent,
   ProveedorListaEditComponent,
   // New views
-  ProveedorComponent
+  ProveedorComponent,
+  AnalyticsComponent
 ];
 
 export * from './proveedor-create/proveedor-create.component';
@@ -34,3 +36,4 @@ export * from './proveedor-lista/proveedor-lista-edit.component';
 
 // New views
 export * from './proveedor/proveedor.component';
+export * from './analytics/analytics.component';
