@@ -70,7 +70,7 @@ export class SetFacturasPeriodo implements Action {
 export class SaldarCuentaPorPagar implements Action {
   readonly type = FacturaActionTypes.SaldarCuentaPorPagar;
 
-  constructor(public payload: CuentaPorPagar) {}
+  constructor(public payload: Partial<CuentaPorPagar>) {}
 }
 
 export class BuscarPendientesPorProveedor implements Action {

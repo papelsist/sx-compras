@@ -27,6 +27,7 @@ import { MAT_DATE_LOCALE } from '@angular/material';
     ReactiveFormsModule,
     MaterialModule,
     CovalentModule,
+    AgGridModule,
     ...components,
     ...entyComponents,
     ...directives,

@@ -5,6 +5,7 @@ import groovy.transform.ToString
 
 
 import sx.core.Proveedor
+import sx.utils.MonedaUtils
 
 @ToString(includeNames=true,includePackage=false, includes = 'nombre, serie, folio, fecha ,total, uuid')
 @EqualsAndHashCode(includeFields = true,includes = 'id, uuid')
@@ -74,6 +75,11 @@ class CuentaPorPagar {
 
     Integer atrasoCalculado = 0
 
+    BigDecimal totalMn
+    BigDecimal saldoMn
+    BigDecimal pagosMn
+    BigDecimal compensacionesMn
+
     static constraints = {
         tipo inList:['COMPRAS', 'GASTOS', 'HONORARIOS', 'COMISIONES']
         folio nullable: true, maxSize: 255
@@ -120,7 +126,7 @@ class CuentaPorPagar {
     }
 
 
-    static transients = [ 'saldo','analisis', 'atrasoReal']
+    static transients = [ 'saldo','analisis', 'atrasoReal', 'totalMn','saldoMn', 'pagosMn', 'compensacionesMn']
 
     BigDecimal toPesos(String property){
         return "${property}" * tipoDeCambio
@@ -141,6 +147,21 @@ class CuentaPorPagar {
         else
             return 0
     }
+
+    BigDecimal getTotalMn() {
+        return MonedaUtils.round(total * this.tipoDeCambio)
+    }
+    BigDecimal getSaldoMn() {
+        return MonedaUtils.round(saldoReal * this.tipoDeCambio)
+    }
+    BigDecimal getPagosMn() {
+        return MonedaUtils.round(pagos * this.tipoDeCambio)
+    }
+    BigDecimal getCompensacionesMn() {
+        return MonedaUtils.round(compensaciones * this.tipoDeCambio)
+    }
+
+
 
 
 }

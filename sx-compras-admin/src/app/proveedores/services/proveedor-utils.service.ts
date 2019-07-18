@@ -5,6 +5,7 @@ import { AltpModalComponent } from '../components';
 import { Store, select } from '@ngrx/store';
 import * as fromRoot from '../../store';
 import * as fromStore from '../store';
+import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class ProveedorUtilsService {
@@ -27,5 +28,14 @@ export class ProveedorUtilsService {
           );
         }
       });
+  }
+
+  seleccionar(multiple = false, widh = '550px'): Observable<any> {
+    return this.dialog
+      .open(AltpModalComponent, {
+        data: { multiple },
+        minWidth: '550px'
+      })
+      .afterClosed();
   }
 }

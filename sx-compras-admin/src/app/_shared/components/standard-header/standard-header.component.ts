@@ -17,11 +17,12 @@ import { Periodo } from 'app/_core/models/periodo';
       </span>
       <ng-content select=".info"></ng-content>
       <span flex></span>
-
-      <sx-periodo-picker
-        [periodo]="periodo"
-        (change)="periodoChange.emit($event)"
-      ></sx-periodo-picker>
+      <ng-container *ngIf="periodo">
+        <sx-periodo-picker
+          [periodo]="periodo"
+          (change)="periodoChange.emit($event)"
+        ></sx-periodo-picker>
+      </ng-container>
       <ng-content select=".options"></ng-content>
       <span>
         <button mat-icon-button [matMenuTriggerFor]="toolbarMenu">

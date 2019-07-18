@@ -28,6 +28,7 @@ export class FacturasEffects {
     private snackBar: MatSnackBar
   ) {}
 
+  /*
   @Effect()
   loadFacturas$ = this.actions$.pipe(
     ofType(FacturaActionTypes.LoadFacturas),
@@ -41,6 +42,17 @@ export class FacturasEffects {
           map(res => new fromActions.LoadFacturasSuccess(res)),
           catchError(error => of(new fromActions.LoadFacturasFail(error)))
         );
+    })
+  );
+  */
+  @Effect()
+  loadFacturas$ = this.actions$.pipe(
+    ofType(FacturaActionTypes.LoadFacturas),
+    switchMap(() => {
+      return this.service.cartera().pipe(
+        map(res => new fromActions.LoadFacturasSuccess(res)),
+        catchError(error => of(new fromActions.LoadFacturasFail(error)))
+      );
     })
   );
 
@@ -61,12 +73,10 @@ export class FacturasEffects {
     ofType<fromActions.UpdateFactura>(FacturaActionTypes.UpdateFactura),
     map(action => action.payload),
     switchMap(factura => {
-      return this.service
-        .update(factura)
-        .pipe(
-          map(res => new fromActions.UpdateFacturaSuccess(res)),
-          catchError(error => of(new fromActions.UpdateFacturaFail(error)))
-        );
+      return this.service.update(factura).pipe(
+        map(res => new fromActions.UpdateFacturaSuccess(res)),
+        catchError(error => of(new fromActions.UpdateFacturaFail(error)))
+      );
     })
   );
 
@@ -91,12 +101,10 @@ export class FacturasEffects {
     ),
     map(action => action.payload),
     switchMap(factura => {
-      return this.service
-        .saldar(factura)
-        .pipe(
-          map(res => new fromActions.UpdateFacturaSuccess(res)),
-          catchError(error => of(new fromActions.UpdateFacturaFail(error)))
-        );
+      return this.service.saldar(factura).pipe(
+        map(res => new fromActions.UpsertFactura({factura: res})),
+        catchError(error => of(new fromActions.UpdateFacturaFail(error)))
+      );
     })
   );
 
@@ -107,14 +115,12 @@ export class FacturasEffects {
     ),
     map(action => action.payload),
     switchMap(filtro => {
-      return this.service
-        .pendientes(filtro.proveedorId)
-        .pipe(
-          map(res => new fromActions.BuscarPendientesPorProveedorSuccess(res)),
-          catchError(error =>
-            of(new fromActions.BuscarPendientesPorProveedorFail(error))
-          )
-        );
+      return this.service.pendientes(filtro.proveedorId).pipe(
+        map(res => new fromActions.BuscarPendientesPorProveedorSuccess(res)),
+        catchError(error =>
+          of(new fromActions.BuscarPendientesPorProveedorFail(error))
+        )
+      );
     })
   );
 }

@@ -62,6 +62,21 @@ export class CxpPageComponent implements OnInit {
     }
   ];
 
+  tableros: Object[] = [
+    {
+      route: 'cartera',
+      title: 'Cuentas x Pagar',
+      description: 'Facturas pendientes de pago',
+      icon: 'storage'
+    },
+    {
+      route: 'ecuenta',
+      title: 'Estado de cuenta',
+      description: '',
+      icon: 'list'
+    }
+  ];
+
   loading$: Observable<boolean>;
 
   constructor(

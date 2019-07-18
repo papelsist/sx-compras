@@ -7,6 +7,13 @@
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "spec": false,
+          "prefix": "sx",
+          "styleext": "scss"
+        }
+      },
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
@@ -114,7 +121,6 @@
   "defaultProject": "sx-compras-admin",
   "schematics": {
     "@schematics/angular:component": {
-      "inlineStyle": true,
       "prefix": "sx",
       "styleext": "scss"
     },

@@ -10,5 +10,11 @@ json g.render(cuentaPorPagar, [excludes: ['comprobanteFiscal', 'dateCreated'], r
     comprobanteFiscal g.render(cuentaPorPagar.comprobanteFiscal, [excludes: ['xml', 'pdf', 'acuse']])
     analisis cuentaPorPagar.analisis
     atraso cuentaPorPagar.getAtrasoReal()
+    vencido cuentaPorPagar.getAtrasoReal() <= 0 ? 0.0 : cuentaPorPagar.saldoReal
+    vencidoMn cuentaPorPagar.getAtrasoReal() <= 0 ? 0.0 : (cuentaPorPagar.saldoReal * cuentaPorPagar.tipoDeCambio)
+    totalMn cuentaPorPagar.totalMn
+    saldoMn cuentaPorPagar.saldoMn
+    pagosMn cuentaPorPagar.pagosMn
+    compensacionesMn cuentaPorPagar.compensacionesMn
 }
 

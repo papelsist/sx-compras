@@ -1,5 +1,8 @@
+import { Proveedor } from 'app/proveedores/models/proveedor';
+
 export interface CuentaPorPagar {
   id: string;
+  proveedor?: Partial<Proveedor>;
   nombre: string;
   tipo: string;
   folio: string;
@@ -17,6 +20,7 @@ export interface CuentaPorPagar {
   pagos?: number;
   compensaciones?: number;
   saldo?: number;
+  vencido?: number;
   atraso?: number;
   importePorPagar?: number;
   vencimiento: string;
@@ -25,4 +29,8 @@ export interface CuentaPorPagar {
   analizada?: boolean;
   analisis?: string;
   updateUser?: string;
+  totalMn?: number;
+  saldoMn?: number;
+  pagosMn?: number;
+  compensacionesMn?: number;
 }

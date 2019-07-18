@@ -11,7 +11,6 @@ import {
   LOCALE_ID,
   ChangeDetectorRef
 } from '@angular/core';
-import { formatCurrency, formatNumber, formatDate } from '@angular/common';
 
 import {
   GridOptions,
@@ -22,29 +21,29 @@ import {
   CellClickedEvent,
   RowDoubleClickedEvent
 } from 'ag-grid-community';
+import { SxTableService } from './sx-table.service';
+import { spAgGridText } from './table-support';
 
 @Component({
   selector: 'sx-lx-table',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: 'NO UI REQUIRED'
 })
-export class LxTableComponent<T> implements OnInit, OnChanges {
-  @Input() partidas: T[] = [];
-
-  gridOptions: GridOptions;
-  gridApi: GridApi;
-  defaultColDef;
-
+export class LxTableComponent implements OnInit, OnChanges {
+  @Input() partidas: any[] = [];
   @Output() select = new EventEmitter();
 
-  printFriendly = false;
+  public exportKey = 'EX';
 
-  localeText: any;
+  public gridOptions: GridOptions;
+  public gridApi: GridApi;
+  public defaultColDef;
 
-  constructor(
-    public cd: ChangeDetectorRef,
-    @Inject(LOCALE_ID) private locale: string
-  ) {
+  public printFriendly = false;
+
+  public localeText: any;
+
+  constructor(public tableService: SxTableService) {
     this.buildGridOptions();
     this.buildLocalText();
   }
@@ -71,6 +70,7 @@ export class LxTableComponent<T> implements OnInit, OnChanges {
     this.gridOptions.onFilterChanged = this.onFilter.bind(this);
     this.gridOptions.onCellClicked = this.onCellClicked.bind(this);
     this.gridOptions.onRowDoubleClicked = this.onRowDoubleClicked.bind(this);
+    this.gridOptions.getRowStyle = this.buildRowStyle.bind(this);
   }
 
   onModelUpdate(event) {}
@@ -78,6 +78,19 @@ export class LxTableComponent<T> implements OnInit, OnChanges {
   onGridReady(params: GridReadyEvent) {
     this.gridApi = params.api;
     this.gridApi.setRowData(this.partidas);
+  }
+
+  buildRowStyle(params: any) {
+    /*
+    if (params.data.pagada) {
+      return {
+        color: 'rgb(231, 61, 61)'
+      };
+    } else {
+      return '';
+    }
+    */
+    return {};
   }
 
   onFirstDataRendered(params) {}
@@ -90,66 +103,27 @@ export class LxTableComponent<T> implements OnInit, OnChanges {
     this.select.emit(event.data);
   }
 
-  printGrid() {
-    this.gridApi.setDomLayout('print');
-    this.printFriendly = true;
-    this.cd.detectChanges();
-    setTimeout(() => {
-      print();
-      this.gridApi.setDomLayout(null);
-      this.printFriendly = false;
-      this.cd.detectChanges();
-    }, 8000);
-  }
-
-  exportData() {
+  exportData(prefix: string = this.exportKey) {
     const params = {
-      fileName: `RQS_${new Date().getTime()}.csv`
+      fileName: `${prefix}_${new Date().getTime()}.csv`
     };
     this.gridApi.exportDataAsCsv(params);
   }
 
   buildLocalText() {
-    this.localeText = {
-      page: 'página',
-      more: 'mas',
-      to: 'a',
-      of: 'de',
-      next: 'siguiente',
-      last: 'ultimo',
-      first: 'primero',
-      previous: 'anterior',
-      loadingOoo: 'cargando...',
-      applyFilter: 'Aplicar...',
-      equals: 'igual',
-      notEqual: 'diferente a',
-      lessThan: 'menor que',
-      greaterThan: 'mayor que',
-      lessThanOrEqual: 'menor o igual',
-      greaterThanOrEqual: 'mayor o igual',
-      inRange: 'rango',
-      contains: 'contiene',
-      notContains: 'no contiene',
-      startsWith: 'inicia con',
-      endsWith: 'termina con',
-      filters: 'filtros'
-    };
+    this.localeText = spAgGridText;
   }
 
   transformCurrency(data) {
-    return formatCurrency(data, this.locale, '$');
+    return this.tableService.formatCurrency(data);
   }
 
   transformNumber(data) {
-    return formatNumber(data, this.locale, '');
+    return this.tableService.formatNumber(data);
   }
 
-  transformDate(data) {
-    if (data) {
-      return formatDate(data, 'dd/MM/yyyy', this.locale);
-    } else {
-      return '';
-    }
+  transformDate(data, format: string = 'dd/MM/yyyy') {
+    return this.tableService.formatDate(data, format);
   }
 
   buildColsDef(): ColDef[] {

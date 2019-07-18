@@ -83,6 +83,15 @@ const routes: Routes = [
             component: fromContainers.ReciboComponent
           }
         ]
+      },
+      {
+        path: 'cartera',
+        loadChildren: './cartera/cartera.module#CarteraModule'
+      },
+      {
+        path: 'ecuenta',
+        loadChildren:
+          './estado-de-cuenta/estado-de-cuenta.module#EstadoDeCuentaModule'
       }
     ]
   }
