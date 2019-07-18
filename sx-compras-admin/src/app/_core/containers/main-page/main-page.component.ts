@@ -1,6 +1,10 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 
 import { of as observableOf, Observable } from 'rxjs';
+import { Store, select } from '@ngrx/store';
+import * as fromAuth from 'app/auth/store';
+import { AuthSession } from '../../../auth/models/authSession';
+
 import { ProveedorUtilsService } from 'app/proveedores/services/proveedor-utils.service';
 
 @Component({
@@ -39,18 +43,8 @@ export class MainPageComponent implements OnInit {
 
   usermenu: Array<{ icon: string; route: string; title: string }> = [
     {
-      icon: 'swap_horiz',
-      route: '.',
-      title: 'Cambio de usuario'
-    },
-    {
-      icon: 'tune',
-      route: '.',
-      title: 'Cuenta'
-    },
-    {
       icon: 'exit_to_app',
-      route: '.',
+      route: '/logout',
       title: 'Salir del sistema'
     }
   ];
@@ -59,14 +53,24 @@ export class MainPageComponent implements OnInit {
 
   sidenavWidth = 300;
 
-  constructor(private proveedorUtils: ProveedorUtilsService) {}
+  session$: Observable<AuthSession>;
+
+  constructor(
+    private store: Store<fromAuth.AuthState>,
+    private proveedorUtils: ProveedorUtilsService
+  ) {}
 
   ngOnInit() {
     this.modulo$ = observableOf('PENDIENTE');
+    this.session$ = this.store.pipe(select(fromAuth.getSession));
   }
 
   @HostListener('document:keydown.control.p', ['$event'])
   onConsultaDeProveedores(event) {
     this.proveedorUtils.consultaRapida();
+  }
+
+  logout() {
+    this.store.dispatch(new fromAuth.Logout());
   }
 }

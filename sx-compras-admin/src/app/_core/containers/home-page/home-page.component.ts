@@ -18,10 +18,10 @@ export class HomePageComponent implements OnInit {
   constructor(private store: Store<fromAuth.AuthState>) {}
 
   ngOnInit() {
-    this.header$ = observableOf('SX-Compras');
+    this.header$ = observableOf('SX-CXP-COMPRAS');
     this.application$ = observableOf({
-      name: 'SX POS-COMPRAS',
-      descripcion: 'SIIPAPX compras de materia prima',
+      name: 'SX COMPRAS CXP',
+      descripcion: 'SIIPAPX cuenta por pagar para compras de materia prima',
       image: '/assets/images/logo_papelsa.jpg'
     });
     this.session$ = this.store.pipe(select(fromAuth.getSession));

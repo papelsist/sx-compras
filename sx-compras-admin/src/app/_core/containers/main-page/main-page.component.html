@@ -1,33 +1,32 @@
-<td-layout #layout mode="over" opened="false" [sidenavWidth]="sidenavWidth" >
+<td-layout #layout mode="over" opened="false" [sidenavWidth]="sidenavWidth">
+  <div td-sidenav-content></div>
 
-  <div td-sidenav-content>
-    SideNac (Pendiente)
-  </div>
-
-  <td-navigation-drawer sidenavTitle="{{modulo$ | async}}" color="accent"
-    navigationRoute= "/"
-    name="Operaciones"
-    email="admin@gmail.com" flex>
-
+  <td-navigation-drawer
+    sidenavTitle="MODULOS"
+    email="{{ (session$ | async)?.username }}"
+    color="accent"
+    navigationRoute="/"
+    flex
+  >
     <div td-navigation-drawer-menu>
       <mat-nav-list>
-        <a *ngFor="let item of usermenu" mat-list-item [routerLink]="[item.route]">
-          <mat-icon>{{item.icon}}</mat-icon>{{item.title}}
+        <a mat-list-item matTooltip="Salir del sistema" (click)="logout()">
+          <mat-icon>exit_to_app</mat-icon> Salir del sistema
         </a>
       </mat-nav-list>
     </div>
 
     <mat-nav-list>
-      <a *ngFor="let item of navigation" mat-list-item
-         [routerLink]="[item.route]"
-         (click)="layout.close()">
-        <mat-icon>{{item.icon}}</mat-icon>{{item.title}}
+      <a
+        *ngFor="let item of navigation"
+        mat-list-item
+        [routerLink]="[item.route]"
+        (click)="layout.close()"
+      >
+        <mat-icon>{{ item.icon }}</mat-icon
+        >{{ item.title }}
       </a>
     </mat-nav-list>
-
   </td-navigation-drawer>
   <router-outlet></router-outlet>
-
-
-
 </td-layout>
