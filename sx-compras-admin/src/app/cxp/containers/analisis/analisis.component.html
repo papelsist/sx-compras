@@ -1,43 +1,30 @@
 <mat-card>
-
-  <div layout layout-align="start center" class="pad-left-sm pad-right-sm">
-    <span class="push-left-sm">
-      <span class="mat-title">Análisis de facturas</span>
-    </span>
-
-    <ng-container *ngIf="periodo$ | async as periodo">
-      <span class="pad-left pad-right">{{periodo}}</span>
-      <sx-periodo-picker [periodo]="periodo" (change)="onPeriodo($event)"></sx-periodo-picker>
-    </ng-container>
-
-    <mat-form-field class="pad-left">
-      <mat-select [value]="tipo$ | async" (selectionChange)="onTipo($event.value)">
-        <mat-option value="Todas">Todas</mat-option>
-        <mat-option value="Pendientes">Pendientes</mat-option>
-        <mat-option value="Cerradas">Cerradas</mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <span flex></span>
-    <td-search-box class="push-right-sm" placeholder="Proveedor/Factura" flex (searchDebounce)="onSearch($event)">
-    </td-search-box>
-
-  </div>
+  <sx-standard-header
+    title="Análisis de facturas"
+    [periodo]="periodo$ | async"
+    (periodoChange)="onPeriodo($event)"
+    (reload)="reload()"
+    (download)="grid.exportData()"
+    (create)="onCreate()"
+  ></sx-standard-header>
 
   <mat-divider></mat-divider>
-  <div class="mat-elevation-z8 analisis-table-panel">
-    <sx-analisis-table #table [analisis]=" analisis$ | async" (select)="onSelect($event)" (edit)="onEdit($event)">
+  <ng-template
+    tdLoading
+    [tdLoadingUntil]="!(loading$ | async)"
+    tdLoadingStrategy="overlay"
+  >
+  </ng-template>
+  <div class="grid-panel">
+    <sx-analisis-table
+      #grid
+      [partidas]="analisis$ | async"
+      (select)="onSelect($event)"
+      (totales)="onTotales($event)"
+    >
     </sx-analisis-table>
   </div>
+  <sx-standard-footer [totales]="totales">
+    <span class="pad-left">Total: {{ totales.importe | currency }}</span>
+  </sx-standard-footer>
 </mat-card>
-<div layout *ngIf="selected">
-  <mat-card class="analisis-partidas-panel" flex="60">
-
-  </mat-card>
-</div>
-
-
-<a mat-fab matTooltip="Nuevo análisis" matTooltipPosition="before" color="accent" class="mat-fab-position-bottom-right z-3"
-  [routerLink]="['create']">
-  <mat-icon>add</mat-icon>
-</a>

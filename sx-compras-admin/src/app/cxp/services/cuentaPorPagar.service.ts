@@ -42,8 +42,8 @@ export class CuentaPorPagarService {
       .pipe(catchError((error: any) => throwError(error)));
   }
 
-  saldar(factura: CuentaPorPagar): Observable<CuentaPorPagar> {
-    const url = `${this.apiUrl}/${factura.id}/saldar`;
+  saldar(factura: Partial<CuentaPorPagar>): Observable<CuentaPorPagar> {
+    const url = `${this.apiUrl}/saldar/${factura.id}`;
     return this.http
       .put<CuentaPorPagar>(url, factura)
       .pipe(catchError((error: any) => throwError(error)));
@@ -70,6 +70,26 @@ export class CuentaPorPagarService {
     });
     return this.http
       .get<CuentaPorPagar[]>(this.apiUrl, { params: params })
+      .pipe(catchError((error: any) => throwError(error)));
+  }
+
+  cartera(): Observable<CuentaPorPagar[]> {
+    const params = new HttpParams().set('tipo', 'COMPRAS');
+    const url = `${this.apiUrl}/cartera`;
+    return this.http
+      .get<CuentaPorPagar[]>(url, { params })
+      .pipe(catchError((error: any) => throwError(error)));
+  }
+
+  estadoDeCuenta(proveedorId: string, periodo: Periodo): Observable<any> {
+    const data = periodo.toApiJSON();
+    const params = new HttpParams()
+      .set('fechaInicial', data.fechaInicial)
+      .set('fechaFinal', data.fechaFinal)
+      .set('proveedorId', proveedorId);
+    const url = `${this.apiUrl}/estadoDeCuenta`;
+    return this.http
+      .get<CuentaPorPagar[]>(url, { params })
       .pipe(catchError((error: any) => throwError(error)));
   }
 }

@@ -4,4 +4,15 @@ model {
 	AnalisisDeFactura analisisDeFactura
 }
 
-json tmpl.analisisDeFactura(analisisDeFactura)
+json g.render(analisisDeFactura, [ excludes: ['proveedor','factura', 'partidas', 'lastUpdated', 'dateCreated'], resolveTemplate: false]){
+	proveedor {
+        id analisisDeFactura.proveedor.id
+        nombre analisisDeFactura.proveedor.nombre
+    }
+    factura g.render(analisisDeFactura.factura)
+    partidas g.render(analisisDeFactura.partidas)
+    facturaInfo "${analisisDeFactura.factura.serie} ${analisisDeFactura.factura.folio}"
+    uuid analisisDeFactura.factura.uuid
+    modificado analisisDeFactura.lastUpdated
+
+}

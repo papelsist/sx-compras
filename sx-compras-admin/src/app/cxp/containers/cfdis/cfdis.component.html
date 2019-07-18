@@ -1,0 +1,49 @@
+<mat-card>
+  <mat-card-title-group layout layout-align="center center">
+    <mat-card-title>Comprobantes fiscales</mat-card-title>
+    <span flex></span>
+    <sx-periodo-picker
+      [periodo]="periodo"
+      (change)="cambiarPeriodo($event)"
+    ></sx-periodo-picker>
+    <button mat-button mat-icon-button (click)="load()">
+      <mat-icon>refresh</mat-icon>
+    </button>
+    <button
+      mat-button
+      mat-icon-button
+      (click)="grid.exportData()"
+      matTooltip="Exportar a CSV"
+    >
+      <mat-icon color="primary">file_download</mat-icon>
+    </button>
+  </mat-card-title-group>
+  <mat-divider></mat-divider>
+
+  <div class="grid-panel">
+    <ng-template
+      tdLoading
+      [tdLoadingUntil]="!(loading$ | async)"
+      tdLoadingStrategy="overlay"
+    >
+    </ng-template>
+    <sx-cfdis-table2
+      #grid
+      [partidas]="cfdis$ | async"
+      (totales)="onTotales($event)"
+      (pdf)="onPdf($event)"
+      (xml)="onXml($event)"
+      (select)="onSelect($event)"
+    ></sx-cfdis-table2>
+  </div>
+  <mat-divider></mat-divider>
+  <div class="footer" layout layout-align="center center">
+    <span flex></span>
+    <span>{{ periodo.toString() }}</span>
+    <span flex></span>
+    <span>Filas: {{ totales.rows }}</span>
+    <span class="pad-left pad-right"
+      >Total: {{ totales.total | currency }}</span
+    >
+  </div>
+</mat-card>

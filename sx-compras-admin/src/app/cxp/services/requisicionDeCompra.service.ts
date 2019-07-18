@@ -8,6 +8,7 @@ import { ConfigService } from 'app/utils/config.service';
 
 import * as _ from 'lodash';
 import { Requisicion } from '../model';
+import { Periodo } from 'app/_core/models/periodo';
 
 @Injectable()
 export class RequisicionDeCompraService {
@@ -17,11 +18,10 @@ export class RequisicionDeCompraService {
     this.apiUrl = configService.buildApiUrl('requisicionesDeCompras');
   }
 
-  list(filtro: any = {}): Observable<Requisicion[]> {
-    let params = new HttpParams();
-    _.forIn(filtro, (value, key) => {
-      params = params.set(key, value);
-    });
+  list(periodo: Periodo): Observable<Requisicion[]> {
+    const params = new HttpParams()
+      .set('fechaInicial', periodo.fechaInicial.toISOString())
+      .set('fechaFinal', periodo.fechaFinal.toISOString());
     return this.http
       .get<Requisicion[]>(this.apiUrl, { params: params })
       .pipe(catchError((error: any) => throwError(error)));

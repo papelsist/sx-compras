@@ -24,6 +24,7 @@ export class NotasService {
   list(periodo: Periodo): Observable<NotaDeCreditoCxP[]> {
     const data = periodo.toApiJSON();
     const params = new HttpParams()
+      .set('tipo', 'COMPRAS')
       .set('fechaInicial', data.fechaInicial)
       .set('fechaFinal', data.fechaFinal);
     return this.http

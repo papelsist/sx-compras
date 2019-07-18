@@ -5,6 +5,7 @@
 /dist-server
 /tmp
 /out-tsc
+/compras
 
 # dependencies
 /node_modules

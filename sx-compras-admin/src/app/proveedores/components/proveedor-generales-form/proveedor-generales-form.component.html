@@ -1,0 +1,49 @@
+<form [formGroup]="form" layout="column">
+  <sx-upper-case-field
+    placeholder="Nombre / Razón social"
+    formControlName="nombre"
+  ></sx-upper-case-field>
+  <div layout>
+    <sx-upper-case-field
+      placeholder="RFC"
+      formControlName="rfc"
+      flex
+    ></sx-upper-case-field>
+    <sx-upper-case-field
+      flex
+      placeholder="Clave"
+      formControlName="clave"
+      class="pad-left"
+    ></sx-upper-case-field>
+
+    <mat-form-field class="pad-left" flex>
+      <mat-select placeholder="Tipo" formControlName="tipo" class="pad-right">
+        <mat-option
+          *ngFor="let tipo of ['COMPRAS', 'GASTOS', 'MIXTO']"
+          [value]="tipo"
+        >
+          {{ tipo }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div layout>
+    <mat-form-field flex>
+      <input matInput placeholder="Teléfono 1" formControlName="telefono1" />
+    </mat-form-field>
+    <mat-form-field class="pad-left" flex>
+      <input matInput placeholder="Teléfono 2" formControlName="telefono2" />
+    </mat-form-field>
+    <mat-form-field class="pad-left" flex>
+      <input matInput placeholder="Teléfono 3" formControlName="telefono3" />
+    </mat-form-field>
+  </div>
+
+  <div layout>
+    <mat-checkbox formControlName="activo" flex class="pad-left"
+      >Activo</mat-checkbox
+    >
+    <mat-checkbox formControlName="nacional" flex>Nacional</mat-checkbox>
+  </div>
+</form>

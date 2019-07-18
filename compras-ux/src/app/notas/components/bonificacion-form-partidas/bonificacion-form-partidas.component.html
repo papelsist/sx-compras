@@ -1,0 +1,130 @@
+<div [formGroup]="parent">
+  <table mat-table [dataSource]="dataSource" formArrayName="partidas">
+    <ng-container matColumnDef="renglon">
+      <th mat-header-cell *matHeaderCellDef>Rngl</th>
+      <td mat-cell *matCellDef="let row; let i = index">
+        {{ i + 1 }}
+      </td>
+      <td mat-footer-cell *matFooterCellDef></td>
+    </ng-container>
+
+    <ng-container matColumnDef="sucursal">
+      <th mat-header-cell *matHeaderCellDef>Sucursal</th>
+      <td mat-cell *matCellDef="let row">
+        {{ row.sucursal }}
+      </td>
+      <td mat-footer-cell *matFooterCellDef>
+        <span>TOTALES: </span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="factura">
+      <th mat-header-cell *matHeaderCellDef>Factura</th>
+      <td mat-cell *matCellDef="let row">
+        {{ row.documento }}
+      </td>
+      <td mat-footer-cell *matFooterCellDef></td>
+    </ng-container>
+
+    <ng-container matColumnDef="uuid">
+      <th mat-header-cell *matHeaderCellDef>UUID</th>
+      <td mat-cell *matCellDef="let row">
+        <mat-icon *ngIf="row.uuid" matTooltip="{{ row.uuid }}" color="accent"
+          >checked</mat-icon
+        >
+      </td>
+      <td mat-footer-cell *matFooterCellDef></td>
+    </ng-container>
+
+    <ng-container matColumnDef="facturaFecha">
+      <th mat-header-cell *matHeaderCellDef>Fecha Fac</th>
+      <td mat-cell *matCellDef="let row">
+        {{ row.fechaDocumento | date: 'dd/MM/yyyy' }}
+      </td>
+      <td mat-footer-cell *matFooterCellDef></td>
+    </ng-container>
+
+    <ng-container matColumnDef="facturaTotal">
+      <th mat-header-cell *matHeaderCellDef>Total Fac</th>
+      <td mat-cell *matCellDef="let row">
+        {{ row.totalDocumento | currency }}
+      </td>
+      <td mat-footer-cell *matFooterCellDef>
+        <span class="total">{{ sumBy('totalDocumento') | currency }}</span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="facturaPagos">
+      <th mat-header-cell *matHeaderCellDef>Pagos Fac</th>
+      <td mat-cell *matCellDef="let row">
+        {{ row.pagosDocumento | currency }}
+      </td>
+      <td mat-footer-cell *matFooterCellDef>
+        <span class="total">{{ sumBy('pagosDocumento') | currency }}</span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="facturaSaldo">
+      <th mat-header-cell *matHeaderCellDef>Saldo Fac</th>
+      <td mat-cell *matCellDef="let row">
+        {{ row.saldoDocumento | currency }}
+      </td>
+      <td mat-footer-cell *matFooterCellDef>
+        <span class="total">{{ sumBy('saldoDocumento') | currency }}</span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="base">
+      <th mat-header-cell *matHeaderCellDef>Importe</th>
+      <td mat-cell *matCellDef="let row">
+        <span class="tc-blue-800">{{ row.base | currency }}</span>
+      </td>
+      <td mat-footer-cell *matFooterCellDef>
+        <span class="total">{{ sumBy('base') | currency }}</span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="impuesto">
+      <th mat-header-cell *matHeaderCellDef>Impuesto</th>
+      <td mat-cell *matCellDef="let row">
+        <span class="tc-blue-800">{{ row.impuesto | currency }}</span>
+      </td>
+      <td mat-footer-cell *matFooterCellDef>
+        <span class="total">{{ sumBy('impuesto') | currency }}</span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="importe">
+      <th mat-header-cell *matHeaderCellDef>Total</th>
+      <td mat-cell *matCellDef="let row">
+        <span class="tc-blue-800">{{ row.importe | currency }}</span>
+      </td>
+      <td mat-footer-cell *matFooterCellDef>
+        <span class="total">{{ sumBy('importe') | currency }}</span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="operaciones">
+      <th mat-header-cell *matHeaderCellDef>...</th>
+      <td mat-cell *matCellDef="let row; let i = index">
+        <ng-container *ngIf="!disabled">
+          <mat-icon [routerLink]="['edit/', row.id]">
+            edit
+          </mat-icon>
+          <mat-icon color="warn" (click)="doDelete($event, i, row)"
+            >delete</mat-icon
+          >
+        </ng-container>
+      </td>
+      <td mat-footer-cell *matFooterCellDef></td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayColumns; sticky: true"></tr>
+    <tr
+      mat-row
+      *matRowDef="let row; columns: displayColumns"
+      class="cursor-pointer pasive"
+    ></tr>
+    <tr mat-footer-row *matFooterRowDef="displayColumns; sticky: true"></tr>
+  </table>
+</div>

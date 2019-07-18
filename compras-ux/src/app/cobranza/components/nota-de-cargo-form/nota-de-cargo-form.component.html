@@ -1,0 +1,95 @@
+<mat-card>
+  <sx-nc-header [nota]="nota"></sx-nc-header>
+  <mat-divider></mat-divider>
+  <mat-card-content>
+    <div layout>
+      <mat-form-field class="pad-right">
+        <input
+          placeholder="Tipo de cálculo"
+          matInput
+          [value]="nota.tipoDeCalculo"
+          [disabled]="true"
+        />
+      </mat-form-field>
+
+      <mat-form-field class="pad-right">
+        <input
+          placeholder="Forma de pago"
+          matInput
+          [value]="nota.formaDePago"
+          [disabled]="true"
+        />
+      </mat-form-field>
+
+      <mat-form-field class="pad-right">
+        <input
+          placeholder="Uso de CFDI"
+          matInput
+          [value]="nota.usoDeCfdi"
+          [disabled]="true"
+        />
+      </mat-form-field>
+
+      <mat-form-field flex>
+        <textarea
+          matInput
+          placeholder="Comentario"
+          [value]="nota.comentario"
+          [disabled]="true"
+          matTextareaAutosize
+          matAutosizeMinRows="1"
+        >
+        </textarea>
+      </mat-form-field>
+    </div>
+
+    <div layout>
+      <mat-form-field class="pad-right" flex="50">
+        <input
+          type="text"
+          placeholder="CFDI"
+          matInput
+          [value]="nota.cfdi?.uuid"
+          [disabled]="true"
+        />
+      </mat-form-field>
+      <span flex></span>
+      <mat-form-field class="pad-right" [style.width.px]="100">
+        <input
+          type="text"
+          placeholder="Cargo"
+          matInput
+          [disabled]="true"
+          [value]="nota.cargo"
+        />
+        <span matSuffix>%</span>
+      </mat-form-field>
+
+      <mat-form-field class="pad-right" [style.width.px]="150">
+        <input
+          placeholder="Total"
+          matInput
+          value="{{ nota.total | currency }}"
+          class="text-right"
+          [disabled]="true"
+        />
+      </mat-form-field>
+    </div>
+  </mat-card-content>
+  <sx-nc-partidas [nota]="nota"></sx-nc-partidas>
+
+  <mat-card-actions>
+    <ng-content></ng-content>
+    <ng-container *ngIf="nota.cfdi">
+      <button mat-button type="button" (click)="print.emit(nota)">
+        <mat-icon>print</mat-icon> Imprimir
+      </button>
+      <button mat-button type="button" (click)="xml.emit(nota)">
+        <mat-icon>dvr</mat-icon> Ver XML
+      </button>
+      <button mat-button type="button" (click)="email.emit(nota)">
+        <mat-icon>email</mat-icon> Email
+      </button>
+    </ng-container>
+  </mat-card-actions>
+</mat-card>

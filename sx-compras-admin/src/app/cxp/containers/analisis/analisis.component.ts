@@ -1,62 +1,48 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-
-import { Observable } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
 
 import { Store, select } from '@ngrx/store';
 import * as fromRoot from 'app/store';
 import * as fromStore from '../../store';
 
+import { Observable } from 'rxjs';
+
 import { Analisis } from '../../model/analisis';
 import { Periodo } from 'app/_core/models/periodo';
-import { AnalisisTableComponent } from '../../components';
-import { pluck } from 'rxjs/operators';
 
 @Component({
   selector: 'sx-analisis',
   templateUrl: './analisis.component.html',
-  styles: [
-    `
-    .analisis-table-panel {
-      min-height: 250px;
-      max-height: 550px;
-      overflow: auto;
-    }
-    .analisis-partidas-panel {
-      min-height: 200px;
-      max-height: 600px;
-      overflow: auto;
-    }
-  `
-  ]
+  styleUrls: ['./analisis.component.scss']
 })
 export class AnalisisComponent implements OnInit {
+  loading$: Observable<boolean>;
   analisis$: Observable<Analisis[]>;
-  selected: any;
   periodo$: Observable<Periodo>;
-  tipo$: Observable<string>;
-  @ViewChild('table') table: AnalisisTableComponent;
+
+  totales: any = {};
 
   constructor(private store: Store<fromStore.CxpState>) {}
 
   ngOnInit() {
-    this.analisis$ = this.store.select(fromStore.getFilteredAnalisis);
+    this.loading$ = this.store.pipe(select(fromStore.getAnalisisLoading));
+    this.analisis$ = this.store.select(fromStore.getAllAnalisis);
     this.periodo$ = this.store.pipe(select(fromStore.getAnalisisPeriodo));
-    this.tipo$ = this.store.pipe(
-      select(fromStore.getAnalisisFilter),
-      pluck('tipo')
-    );
   }
 
-  onSelect(event: Analisis[]) {
-    this.selected = event;
+  reload() {
+    this.store.dispatch(new fromStore.Load());
   }
 
-  onEdit(event: Analisis) {
+  onCreate() {
+    this.store.dispatch(new fromRoot.Go({ path: ['cxp/analisis/create'] }));
+  }
+
+  onSelect(event: Analisis) {
     this.store.dispatch(new fromRoot.Go({ path: ['cxp/analisis', event.id] }));
   }
 
-  onSearch(event: string) {
-    this.table.dataSource.filter = event.toLowerCase();
+  onTotales(event: any) {
+    this.totales = event;
   }
 
   onPeriodo(event: Periodo) {

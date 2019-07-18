@@ -1,0 +1,36 @@
+<mat-card>
+  <sx-standard-header
+    title="Requisiciones de compras"
+    [periodo]="periodo$ | async"
+    (periodoChange)="cambiarPeriodo($event)"
+    (reload)="reload()"
+    (download)="grid.exportData()"
+    (create)="onCreate()"
+  ></sx-standard-header>
+  <mat-divider></mat-divider>
+  <ng-template
+    tdLoading
+    [tdLoadingUntil]="!(loading$ | async)"
+    tdLoadingStrategy="overlay"
+  >
+  </ng-template>
+  <div class="grid-panel">
+    <sx-requisiciones-table
+      #grid
+      [partidas]="requisiciones$ | async"
+      (print)="onPrint($event)"
+      (select)="onSelect($event)"
+      (totales)="onTotales($event)"
+    >
+    </sx-requisiciones-table>
+  </div>
+
+  <div class="footer" layout layout-align="center center">
+    <span flex></span>
+    <span>Reqistros: {{ totales.rows }}</span>
+    <span class="pad-left pad-right"
+      >Total: {{ totales.total | currency }}</span
+    >
+    <span flex></span>
+  </div>
+</mat-card>

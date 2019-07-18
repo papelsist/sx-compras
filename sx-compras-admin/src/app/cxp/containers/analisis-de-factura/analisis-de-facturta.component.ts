@@ -17,13 +17,18 @@ import { ComprobanteFiscal } from '../../model';
 @Component({
   selector: 'sx-analisis-de-factura',
   template: `
-    <ng-template tdLoading [tdLoadingUntil]="!(loading$ | async)"  tdLoadingStrategy="overlay" >
+    <ng-template
+      tdLoading
+      [tdLoadingUntil]="!(loading$ | async)"
+      tdLoadingStrategy="overlay"
+    >
       <sx-analisis-form
         (proveedorSelected)="onProveedorSelected($event)"
         [facturas]="facturas$ | async"
         (cancelar)="onCancelar($event)"
         (save)="onSave($event)"
-        (printFactura)="onPrintFactura($event)">
+        (printFactura)="onPrintFactura($event)"
+      >
       </sx-analisis-form>
     </ng-template>
   `
@@ -39,7 +44,7 @@ export class AnalisisDeFacturaComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.facturas$ = this.store.select(fromStore.getAllFacturasPendientes);
-    this.loading$ = this.store.select(fromStore.getLoading);
+    this.loading$ = this.store.select(fromStore.getAnalisisLoading);
   }
 
   ngOnDestroy() {}

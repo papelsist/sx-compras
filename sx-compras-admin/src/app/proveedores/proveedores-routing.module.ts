@@ -29,7 +29,7 @@ const routes: Routes = [
       { path: '', redirectTo: 'info', pathMatch: 'full' },
       {
         path: 'info',
-        component: fromContainers.ProveedorInfoComponent
+        component: fromContainers.ProveedorComponent
       },
       {
         path: 'productos',
@@ -54,6 +54,10 @@ const routes: Routes = [
           ProveedorListaExistsGuard
         ],
         component: fromContainers.ProveedorListaEditComponent
+      },
+      {
+        path: 'analytics',
+        component: fromContainers.AnalyticsComponent
       }
     ]
   }

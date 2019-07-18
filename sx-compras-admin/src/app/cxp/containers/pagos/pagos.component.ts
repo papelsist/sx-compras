@@ -5,27 +5,22 @@ import * as fromRoot from 'app/store';
 import * as fromStore from '../../store';
 import * as fromActions from '../../store/actions/pagos.actions';
 
-import { Observable, Subject } from 'rxjs';
+import { Observable } from 'rxjs';
 
 import { Pago } from '../../model';
-
+import { Periodo } from 'app/_core/models/periodo';
 import { ComprobanteFiscalService } from '../../services';
 
 @Component({
   selector: 'sx-pagos',
-  template: `
-    <mat-card>
-      <sx-search-title title="Pagos de facturas" (search)="onSearch($event)">
-      <mat-checkbox class="options">Pendientes</mat-checkbox>
-      </sx-search-title>
-      <mat-divider></mat-divider>
-      <sx-pagos-table [pagos]="pagos$ | async" (xml)="onXml($event)" (pdf)="onPdf($event)" [filter]="search$ | async"></sx-pagos-table>
-    </mat-card>
-  `
+  templateUrl: './pagos.component.html',
+  styleUrls: ['./pagos.component.scss']
 })
 export class PagosComponent implements OnInit {
+  loading$: Observable<boolean>;
   pagos$: Observable<Pago[]>;
-  search$ = new Subject<string>();
+  periodo$: Observable<Periodo>;
+  totales: any = {};
 
   constructor(
     private store: Store<fromStore.CxpState>,
@@ -33,13 +28,21 @@ export class PagosComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.loading$ = this.store.pipe(select(fromStore.getPagosLoading));
+    this.periodo$ = this.store.pipe(select(fromStore.getPeriodoDePagos));
     this.pagos$ = this.store.pipe(select(fromStore.getAllPagos));
   }
 
-  onSelect() {}
+  onSelect(event: Pago) {
+    this.store.dispatch(new fromRoot.Go({ path: ['cxp/pagos', event.id] }));
+  }
 
-  onSearch(event: string) {
-    this.search$.next(event);
+  reload() {
+    this.store.dispatch(new fromActions.LoadPagos());
+  }
+
+  onPeriodo(event: Periodo) {
+    this.store.dispatch(new fromActions.SetPeriodoDePagos({ periodo: event }));
   }
 
   onPdf(event: Pago) {
@@ -56,3 +59,18 @@ export class PagosComponent implements OnInit {
     });
   }
 }
+/**
+ * template: `
+    <mat-card>
+      <sx-search-title title="Pagos de facturas" (search)="onSearch($event)">
+        <mat-checkbox class="options">Pendientes</mat-checkbox>
+      </sx-search-title>
+      <mat-divider></mat-divider>
+      <sx-pagos-table
+        [partidas]="pagos$ | async"
+        (xml)="onXml($event)"
+        (pdf)="onPdf($event)"
+      ></sx-pagos-table>
+    </mat-card>
+  `
+ */

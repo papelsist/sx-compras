@@ -4,4 +4,10 @@ model {
 	CuentaPorPagar cuentaPorPagar
 }
 
-json tmpl.cuentaPorPagar(cuentaPorPagar)
+json g.render(cuentaPorPagar, [excludes: ['comprobanteFiscal'], resolveTemplate: false]) {
+    saldo  cuentaPorPagar.saldoReal
+    comprobanteFiscal g.render(cuentaPorPagar.comprobanteFiscal, [excludes: ['xml', 'pdf', 'acuse']])
+    analisis g.render(cuentaPorPagar.analisis)
+    atraso cuentaPorPagar.getAtrasoReal()
+}
+

@@ -1,0 +1,18 @@
+<div layout>
+  <ng-template
+    tdLoading
+    [tdLoadingUntil]="!(loading$ | async)"
+    tdLoadingStrategy="overlay"
+  >
+  </ng-template>
+  <sx-nota-de-cargo-form
+    flex="70"
+    [nota]="nota$ | async"
+    (xml)="mostrarXml($event)"
+    (print)="imprimirCfdi($event)"
+  >
+    <a type="button" mat-button (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon> Regresar
+    </a>
+  </sx-nota-de-cargo-form>
+</div>

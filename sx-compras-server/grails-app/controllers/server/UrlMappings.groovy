@@ -162,6 +162,9 @@ class UrlMappings {
         "/api/cuentaPorPagar"(resources: 'cuentaPorPagar')
         "/api/cuentaPorPagar/pendientesDeAnalisis/$proveedorId"(controller: 'cuentaPorPagar', action: 'pendientesDeAnalisis')
         "/api/cuentaPorPagar/pendientes/$proveedorId"(controller: 'cuentaPorPagar', action: 'pendientes')
+        "/api/cuentaPorPagar/cartera"(controller: 'cuentaPorPagar', action: 'cartera')
+        "/api/cuentaPorPagar/saldar/$id"(controller: 'cuentaPorPagar', action: 'saldar', method: 'PUT')
+        "/api/cuentaPorPagar/estadoDeCuenta"(controller: 'cuentaPorPagar', action: 'estadoDeCuenta')
 
         "/api/analisisDeFactura"(resources: 'analisisDeFactura', excludes:['create', 'edit','patch']) {
             "/partidas"(resources: 'analisisDeFacturaDet', excludes:['create', 'edit','patch'])

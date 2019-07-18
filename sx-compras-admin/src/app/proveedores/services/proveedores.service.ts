@@ -7,6 +7,7 @@ import { catchError } from 'rxjs/operators';
 import { ConfigService } from '../../utils/config.service';
 import { Proveedor } from '../models/proveedor';
 import { ProveedorProducto } from '../models/proveedorProducto';
+import { Update } from '@ngrx/entity';
 
 @Injectable()
 export class ProveedoresService {
@@ -43,10 +44,10 @@ export class ProveedoresService {
       .pipe(catchError((error: any) => throwError(error)));
   }
 
-  update(proveedor: Proveedor): Observable<Proveedor> {
-    const url = `${this.apiUrl}/${proveedor.id}`;
+  update(update: Update<Proveedor>): Observable<Proveedor> {
+    const url = `${this.apiUrl}/${update.id}`;
     return this.http
-      .put<Proveedor>(url, proveedor)
+      .put<Proveedor>(url, update.changes)
       .pipe(catchError((error: any) => throwError(error)));
   }
 
@@ -55,5 +56,12 @@ export class ProveedoresService {
     return this.http
       .delete(url)
       .pipe(catchError((error: any) => throwError(error)));
+  }
+
+  lookupProveedores(value: string): Observable<Proveedor[]> {
+    const params = new HttpParams().set('term', value);
+    return this.http.get<Proveedor[]>(this.apiUrl, {
+      params: params
+    });
   }
 }

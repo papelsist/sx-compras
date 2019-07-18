@@ -1,0 +1,14 @@
+<form [formGroup]="form">
+  <mat-form-field>
+    <mat-label>Tipo de cálculo</mat-label>
+    <mat-select>
+      <mat-option
+        formControlName="tipoDeCalculo"
+        *ngFor="let tipo of ['PORCENTAJE', 'PRORRATEO']"
+        [value]="tipo"
+      >
+        {{ tipo }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</form>

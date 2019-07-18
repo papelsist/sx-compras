@@ -13,18 +13,23 @@ import { TdDialogService } from '@covalent/core';
 @Component({
   selector: 'sx-analisis-edit',
   template: `
-  <ng-template tdLoading [tdLoadingUntil]="!(loading$ | async)"  tdLoadingStrategy="overlay" >
-    <div>
-      <sx-analisis-edit-form
-        [analisis]="analisis$ | async"
-        [comsDisponibles]="coms$ | async"
-        (cancel)="onCancel()"
-        (update)="onUpdate($event)"
-        (delete)="onDelete($event)"
-        (cerrar)="onCerrar($event)">
-      </sx-analisis-edit-form>
-    </div>
-  </ng-template>
+    <ng-template
+      tdLoading
+      [tdLoadingUntil]="!(loading$ | async)"
+      tdLoadingStrategy="overlay"
+    >
+      <div>
+        <sx-analisis-edit-form
+          [analisis]="analisis$ | async"
+          [comsDisponibles]="coms$ | async"
+          (cancel)="onCancel()"
+          (update)="onUpdate($event)"
+          (delete)="onDelete($event)"
+          (cerrar)="onCerrar($event)"
+        >
+        </sx-analisis-edit-form>
+      </div>
+    </ng-template>
   `
 })
 export class AnalisisEditComponent implements OnInit, OnDestroy {
@@ -43,7 +48,7 @@ export class AnalisisEditComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.analisis$ = this.store.select(fromStore.getSelectedAnalisis);
     this.factura$ = this.analisis$.pipe(pluck('factura'));
-    this.loading$ = this.store.select(fromStore.getLoading);
+    this.loading$ = this.store.select(fromStore.getAnalisisLoading);
     this.coms$ = this.store.select(fromStore.getAllComsPendientes);
 
     this.subscription = this.analisis$.subscribe(analisis => {

@@ -1,0 +1,44 @@
+<mat-card>
+  <ng-template
+    tdLoading
+    [tdLoadingUntil]="!(loading$ | async)"
+    tdLoadingStrategy="overlay"
+  >
+    <sx-search-title
+      title="Notas de cargo  ({{ cartera.descripcion }})"
+      (search)="search = $event"
+    >
+      <sx-cartera-filter-btn
+        *ngIf="filter"
+        class="options"
+        [filter]="filter"
+        (change)="onFilterChange($event)"
+      >
+      </sx-cartera-filter-btn>
+
+      <button mat-menu-item class="actions" (click)="reload(cartera, filter)">
+        <mat-icon>refresh</mat-icon> Recargar
+      </button>
+    </sx-search-title>
+    <mat-divider></mat-divider>
+
+    <sx-notas-de-cargo-table
+      [notas]="notas$ | async"
+      (edit)="onSelect($event)"
+    ></sx-notas-de-cargo-table>
+
+    <!-- <sx-cobros-table
+      [cobros]="cobros$ | async"
+      [filter]="search$ | async"
+      (select)="onSelect($event)"
+    >
+    </sx-cobros-table> -->
+
+    <mat-card-footer>
+      <sx-cartera-filter-label
+        [filter]="filter"
+        *ngIf="filter"
+      ></sx-cartera-filter-label>
+    </mat-card-footer>
+  </ng-template>
+</mat-card>

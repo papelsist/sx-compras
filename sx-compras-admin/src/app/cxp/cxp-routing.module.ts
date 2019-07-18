@@ -34,7 +34,11 @@ const routes: Routes = [
       {
         path: 'requisiciones',
         children: [
-          { path: '', component: fromContainers.RequisicionesComponent },
+          {
+            path: '',
+            canActivate: [fromGuards.RequisicionesGuard],
+            component: fromContainers.RequisicionesComponent
+          },
           { path: 'create', component: fromContainers.RequisicionComponent },
           {
             path: ':requisicionId',
@@ -79,6 +83,15 @@ const routes: Routes = [
             component: fromContainers.ReciboComponent
           }
         ]
+      },
+      {
+        path: 'cartera',
+        loadChildren: './cartera/cartera.module#CarteraModule'
+      },
+      {
+        path: 'ecuenta',
+        loadChildren:
+          './estado-de-cuenta/estado-de-cuenta.module#EstadoDeCuentaModule'
       }
     ]
   }

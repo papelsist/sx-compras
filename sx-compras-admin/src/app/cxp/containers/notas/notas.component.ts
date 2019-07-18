@@ -16,25 +16,14 @@ import { ComprobanteFiscalService } from '../../services';
 
 @Component({
   selector: 'sx-notas-cxp',
-  template: `
-    <mat-card>
-      <sx-search-title title="Notas de crédito" (search)="onSearch($event)">
-      <div *ngIf="periodo$ | async as periodo" class="info">
-        <span class="pad-left">Periodo: </span>
-        <span class="pad-left">{{periodo}}</span>
-        <sx-periodo-picker [periodo]="periodo" (change)="cambiarPeriodo($event)"></sx-periodo-picker>
-      </div>
-      </sx-search-title>
-      <mat-divider></mat-divider>
-      <sx-notas-table [notas]="notas$ | async" (xml)="onXml($event)" (pdf)="onPdf($event)" [filter]="search$ | async"
-      (edit)="onEdit($event)"></sx-notas-table>
-    </mat-card>
-  `
+  templateUrl: './notas.component.html',
+  styleUrls: ['./notas.component.scss']
 })
 export class NotasComponent implements OnInit {
+  loading$: Observable<boolean>;
   notas$: Observable<NotaDeCreditoCxP[]>;
   periodo$: Observable<Periodo>;
-  search$ = new Subject<string>();
+  totales: any = {};
 
   constructor(
     private store: Store<fromStore.CxpState>,
@@ -42,26 +31,25 @@ export class NotasComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.loading$ = this.store.pipe(select(fromStore.getNotasLoading));
     this.periodo$ = this.store.pipe(select(fromStore.getPeriodoDeNotas));
     this.notas$ = this.store.pipe(select(fromStore.getAllNotas));
   }
 
-  onSelect() {}
+  onSelect(event: NotaDeCreditoCxP) {
+    this.store.dispatch(new fromRoot.Go({ path: ['cxp/notas', event.id] }));
+  }
 
-  onSearch(event: string) {
-    this.search$.next(event);
+  reload() {
+    this.store.dispatch(new fromActions.LoadNotas());
   }
 
   getSucursales(object): string[] {
     return _.keys(object);
   }
 
-  onEdit(event: NotaDeCreditoCxP) {
-    this.store.dispatch(new fromRoot.Go({ path: ['cxp/notas', event.id] }));
-  }
-
-  cambiarPeriodo(event: Periodo) {
-    this.store.dispatch(new fromActions.SetPeriodo(event));
+  onPeriodo(event: Periodo) {
+    this.store.dispatch(new fromActions.SetPeriodoDeNotas({ periodo: event }));
   }
 
   onPdf(event: NotaDeCreditoCxP) {
@@ -76,5 +64,9 @@ export class NotasComponent implements OnInit {
       const fileURL = window.URL.createObjectURL(blob);
       window.open(fileURL, '_blank');
     });
+  }
+
+  onTotales(event) {
+    this.totales = event;
   }
 }

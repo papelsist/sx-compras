@@ -1,0 +1,94 @@
+<div layout class="pad-left pad-top">
+  <button mat-icon-button>
+    <mat-icon [routerLink]="['/clientes', cobro.cliente.id]">person</mat-icon>
+  </button>
+  <span class="pad-left pad-right mat-title"> {{ cobro.nombre }}</span>
+  <span flex></span>
+  <span class="pad-left pad-right mat-title"
+    >Fecha: {{ cobro.fecha | date: 'dd/MM/yyyy' }}</span
+  >
+</div>
+<mat-divider></mat-divider>
+<div layout class="form-panel">
+  <mat-form-field class="small-field">
+    <input
+      matInput
+      [value]="formaDePago"
+      [disabled]="true"
+      placeholder="Forma de pago"
+    />
+  </mat-form-field>
+  <mat-form-field
+    class="pad-left small-field"
+    *ngIf="cobro.formaDePago !== 'CHEQUE'"
+  >
+    <input
+      matInput
+      [value]="cobro.referencia"
+      [disabled]="true"
+      placeholder="Referencia"
+    />
+  </mat-form-field>
+  <mat-form-field class="pad-left small-field" *ngIf="cobro.cheque">
+    <input
+      matInput
+      [value]="cobro.cheque.numero"
+      [disabled]="true"
+      placeholder="Cheque"
+    />
+  </mat-form-field>
+  <mat-form-field class="pad-left" flex>
+    <input
+      matInput
+      [value]="cobro?.comentario ? cobro?.comentario : ' '"
+      [disabled]="true"
+      placeholder="Comentario"
+    />
+  </mat-form-field>
+
+  <mat-form-field class="pad-left moneda-field">
+    <input
+      matInput
+      [value]="cobro.moneda"
+      [disabled]="true"
+      placeholder="Moneda"
+    />
+  </mat-form-field>
+
+  <mat-form-field class="pad-left importes">
+    <input
+      matInput
+      value="{{ cobro.importe | currency }}"
+      [disabled]="true"
+      placeholder="Importe"
+      class="tc-indigo-800 "
+    />
+  </mat-form-field>
+  <mat-form-field class="pad-left importes">
+    <input
+      matInput
+      value="{{ cobro.aplicado | currency }}"
+      [disabled]="true"
+      placeholder="Aplicado"
+      class="tc-indigo-800 "
+    />
+  </mat-form-field>
+  <mat-form-field class="pad-left importes">
+    <input
+      matInput
+      value="{{ cobro.diferencia | currency }}"
+      [disabled]="true"
+      placeholder="Diferencia"
+      class="tc-indigo-800 "
+    />
+  </mat-form-field>
+  <mat-form-field class="pad-left importes">
+    <input
+      matInput
+      value="{{ cobro.saldo | currency }}"
+      [disabled]="true"
+      placeholder="Disponible"
+      class="tc-indigo-800 "
+    />
+  </mat-form-field>
+</div>

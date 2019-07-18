@@ -1,0 +1,11 @@
+<h4 mat-dialog-title>Catálogo de Proveedores</h4>
+<div layout>
+  <input (keyup)="onSearch(box.value)" placeholder="Buscar" flex #box />
+</div>
+<div class="grid-panel">
+  <sx-altp-grid
+    [partidas]="proveedores$ | async"
+    (select)="select($event)"
+  ></sx-altp-grid>
+</div>
+<mat-dialog-content> </mat-dialog-content>

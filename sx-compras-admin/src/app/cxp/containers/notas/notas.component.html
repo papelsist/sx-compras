@@ -1,0 +1,27 @@
+<mat-card>
+  <sx-standard-header
+    title="Notas de crédito (BONIFICACIONES/DEVOLUCIONES)"
+    [periodo]="periodo$ | async"
+    (periodoChange)="onPeriodo($event)"
+    (reload)="reload()"
+    (download)="grid.exportData()"
+  ></sx-standard-header>
+  <mat-divider></mat-divider>
+  <ng-template
+    tdLoading
+    [tdLoadingUntil]="!(loading$ | async)"
+    tdLoadingStrategy="overlay"
+  >
+  </ng-template>
+  <div class="grid-panel">
+    <sx-notas-table
+      #grid
+      [partidas]="notas$ | async"
+      (xml)="onXml($event)"
+      (pdf)="onPdf($event)"
+      (select)="onSelect($event)"
+      (totales)="onTotales($event)"
+    ></sx-notas-table>
+  </div>
+  <sx-standard-footer [totales]="totales"> </sx-standard-footer>
+</mat-card>

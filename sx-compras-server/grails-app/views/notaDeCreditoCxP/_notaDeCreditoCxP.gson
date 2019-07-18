@@ -6,4 +6,7 @@ model {
 
 json g.render(notaDeCreditoCxP, [excludes: ['conceptos', 'dateCreated', 'lastUpdated'],resolveTemplate: false]) {
 	disponible notaDeCreditoCxP.disponible
+	if(notaDeCreditoCxP.comprobanteFiscal) {
+		uuid notaDeCreditoCxP.comprobanteFiscal.uuid
+	}
 }

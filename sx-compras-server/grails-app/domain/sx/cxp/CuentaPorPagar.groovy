@@ -5,6 +5,7 @@ import groovy.transform.ToString
 
 
 import sx.core.Proveedor
+import sx.utils.MonedaUtils
 
 @ToString(includeNames=true,includePackage=false, includes = 'nombre, serie, folio, fecha ,total, uuid')
 @EqualsAndHashCode(includeFields = true,includes = 'id, uuid')
@@ -72,6 +73,13 @@ class CuentaPorPagar {
 
     Date diferenciaFecha;
 
+    Integer atrasoCalculado = 0
+
+    BigDecimal totalMn
+    BigDecimal saldoMn
+    BigDecimal pagosMn
+    BigDecimal compensacionesMn
+
     static constraints = {
         tipo inList:['COMPRAS', 'GASTOS', 'HONORARIOS', 'COMISIONES']
         folio nullable: true, maxSize: 255
@@ -112,11 +120,13 @@ class CuentaPorPagar {
         compensaciones formula:'(select COALESCE(sum(x.importe),0) from aplicacion_de_pago x where x.cxp_id=id and x.nota_id is not null)'
         //saldoReal formula:'total - (select COALESCE(sum(x.importe),0) from aplicacion_de_pago x where x.cxp_id=id and x.pago_id is not null) - diferencia'
         saldoReal formula:'total - (select COALESCE(sum(x.importe),0) from aplicacion_de_pago x where x.cxp_id=id) - diferencia'
+        atrasoCalculado formula: 'IF( TO_DAYS(CURRENT_DATE()) - TO_DAYS(vencimiento)  < 0, 0, TO_DAYS(CURRENT_DATE()) - TO_DAYS(vencimiento) ) '
         diferenciaFecha type: 'date'
+        tipo index: 'CXP_TIPO_IDX'
     }
 
 
-    static transients = [ 'saldo','analisis']
+    static transients = [ 'saldo','analisis', 'atrasoReal', 'totalMn','saldoMn', 'pagosMn', 'compensacionesMn']
 
     BigDecimal toPesos(String property){
         return "${property}" * tipoDeCambio
@@ -128,8 +138,30 @@ class CuentaPorPagar {
     }
 
     String getAnalisis() {
-        return AnalisisDeFactura.where{ factura == this}.find()?.id
+        return AnalisisDeFactura.where{ factura == this}.find()?.folio
     }
+
+    Integer getAtrasoReal() {
+        if(saldoReal)
+            return atrasoCalculado
+        else
+            return 0
+    }
+
+    BigDecimal getTotalMn() {
+        return MonedaUtils.round(total * this.tipoDeCambio)
+    }
+    BigDecimal getSaldoMn() {
+        return MonedaUtils.round(saldoReal * this.tipoDeCambio)
+    }
+    BigDecimal getPagosMn() {
+        return MonedaUtils.round(pagos * this.tipoDeCambio)
+    }
+    BigDecimal getCompensacionesMn() {
+        return MonedaUtils.round(compensaciones * this.tipoDeCambio)
+    }
+
+
 
 
 }

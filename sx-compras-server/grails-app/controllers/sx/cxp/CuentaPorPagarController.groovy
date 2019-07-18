@@ -1,15 +1,31 @@
 package sx.cxp
 
+import groovy.transform.Canonical
+import groovy.util.logging.Slf4j
+
+
 import grails.compiler.GrailsCompileStatic
+import groovy.transform.CompileDynamic
 import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.RestfulController
+import grails.validation.Validateable
+
+import org.apache.commons.lang3.exception.ExceptionUtils
+
+
 import sx.utils.Periodo
+import sx.core.LogUser
+import sx.core.Proveedor
 
-
+@Slf4j
 @GrailsCompileStatic
 @Secured("IS_AUTHENTICATED_ANONYMOUSLY")
-class CuentaPorPagarController extends RestfulController<CuentaPorPagar> {
+class CuentaPorPagarController extends RestfulController<CuentaPorPagar> implements LogUser{
+    
     static responseFormats = ['json']
+
+    CuentaPorPagarService cuentaPorPagarService
+    
     CuentaPorPagarController() {
         super(CuentaPorPagar)
     }
@@ -41,6 +57,22 @@ class CuentaPorPagarController extends RestfulController<CuentaPorPagar> {
         return query.list(params)
     }
 
+    def cartera() {
+        log.info('Cargando la cartera de CXP: {}', params)
+        def tpo = params.tipo
+        def query = CuentaPorPagar.where {tipo == tpo && saldoReal > 0.0}
+        List<CuentaPorPagar> data = query.list([sort: 'nombre'])
+        respond data, view: 'index'
+    }
+
+    @CompileDynamic
+    def estadoDeCuenta() {
+        def proveedor = Proveedor.get(params.proveedorId)
+        def periodo = params.periodo 
+        EstadoDeCuentaProveedor estado = cuentaPorPagarService.estadoDeCuenta(proveedor, periodo)
+        respond estado
+    }
+
     def pendientesDeAnalisis() {
         String id = params.proveedorId
         List<CuentaPorPagar> res = CuentaPorPagar.where{proveedor.id == id && analizada == false}.list()
@@ -54,4 +86,62 @@ class CuentaPorPagarController extends RestfulController<CuentaPorPagar> {
                 [id])
         respond res
     }
+
+    def saldar(CuentaPorPagar cxp) {
+        if(cxp == null) {
+            notFound()
+            return
+        }
+        if(cxp.saldoReal > 0.0 && cxp.saldoReal <= 10.00) {
+            cxp.diferencia = cxp.saldoReal
+            logEntity(cxp)
+            cxp.save flush: true
+        }
+        respond cxp 
+    }
+
+    def handleException(Exception e) {
+        String message = ExceptionUtils.getRootCauseMessage(e)
+        log.error(message, ExceptionUtils.getRootCause(e))
+        respond([message: message], status: 500)
+    }
 }
+
+@Canonical()
+class EstadoDeCuentaProveedor {
+    Proveedor proveedor
+    Periodo periodo
+    BigDecimal saldoInicial = 0.0
+    BigDecimal cargos
+    BigDecimal abonos
+    BigDecimal saldoFinal = 0.0
+    Set<EstadoDeCuentaRow> movimientos
+
+    BigDecimal sumCargos() {
+        def res = movimientos.sum 0.0, {it.importe > 0.0 ? it.importe : 0.0}
+        return res
+    }
+
+    BigDecimal sumAbonos() {
+        def res = movimientos.sum 0.0, {it.importe < 0.0 ? it.importe : 0.0}
+        return res
+    }
+    
+}
+
+@Canonical()
+class EstadoDeCuentaRow implements  Validateable {
+    
+    String id
+    String nombre
+    String serie
+    String folio
+    String tipo
+    Date fecha
+    String moneda
+    BigDecimal tipoDeCambio = 1.0
+    BigDecimal importe = 0.0
+    String comentario
+}
+
+

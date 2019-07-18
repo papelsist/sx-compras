@@ -42,3 +42,8 @@ export const getPeriodoDeFacturas = createSelector(
   getFacturasState,
   fromFacturas.getFacturasPeriodo
 );
+
+export const selectCartera = createSelector(
+  getAllFacturas,
+  facturas => (id: string) => facturas.filter(item => item.proveedor.id === id)
+);

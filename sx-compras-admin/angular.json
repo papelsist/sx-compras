@@ -7,6 +7,13 @@
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "spec": false,
+          "prefix": "sx",
+          "styleext": "scss"
+        }
+      },
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
@@ -20,7 +27,9 @@
             "styles": [
               "src/styles.scss",
               "src/theme.scss",
-              "node_modules/@covalent/core/common/platform.scss"
+              "node_modules/@covalent/core/common/platform.scss",
+              "node_modules/ag-grid-community/dist/styles/ag-grid.css",
+              "node_modules/ag-grid-community/dist/styles/ag-theme-balham.css"
             ],
             "scripts": []
           },
@@ -112,7 +121,6 @@
   "defaultProject": "sx-compras-admin",
   "schematics": {
     "@schematics/angular:component": {
-      "inlineStyle": true,
       "prefix": "sx",
       "styleext": "scss"
     },

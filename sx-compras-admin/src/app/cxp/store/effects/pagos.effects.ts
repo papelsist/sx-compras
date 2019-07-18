@@ -8,12 +8,15 @@ import * as fromStore from '../../store';
 import { of } from 'rxjs';
 import { map, switchMap, tap, catchError, take } from 'rxjs/operators';
 
-import { PagoActionTypes } from '../actions/pagos.actions';
 import * as fromActions from '../actions/pagos.actions';
+import { PagoActionTypes } from '../actions/pagos.actions';
+import { getPeriodoDePagos } from '../selectors/pagos.selectors';
+
 import { PagosService } from '../../services';
 import { Periodo } from '../../../_core/models/periodo';
 
 import { MatSnackBar } from '@angular/material';
+import { PagosPeriodoStoeKey } from '../reducers/pagos.reducer';
 
 @Injectable()
 export class PagosEffects {
@@ -26,15 +29,27 @@ export class PagosEffects {
 
   @Effect()
   loadPagos$ = this.actions$.pipe(
-    ofType(PagoActionTypes.LoadPagos),
-    switchMap(() =>
-      this.service
-        .list()
-        .pipe(
-          map(res => new fromActions.LoadPagosSuccess(res)),
-          catchError(error => of(new fromActions.LoadPagosFail(error)))
-        )
+    ofType<fromActions.LoadPagos>(PagoActionTypes.LoadPagos),
+    switchMap(() => {
+      return this.store.pipe(
+        select(getPeriodoDePagos),
+        take(1)
+      );
+    }),
+    switchMap(periodo =>
+      this.service.list(periodo).pipe(
+        map(res => new fromActions.LoadPagosSuccess(res)),
+        catchError(error => of(new fromActions.LoadPagosFail(error)))
+      )
     )
+  );
+
+  @Effect()
+  setPeriodo$ = this.actions$.pipe(
+    ofType<fromActions.SetPeriodoDePagos>(PagoActionTypes.SetPeriodoDePagos),
+    map(action => action.payload.periodo),
+    tap(periodo => Periodo.saveOnStorage(PagosPeriodoStoeKey, periodo)),
+    map(() => new fromActions.LoadPagos())
   );
 
   @Effect()
@@ -42,12 +57,10 @@ export class PagosEffects {
     ofType<fromActions.UpdatePago>(PagoActionTypes.UpdatePago),
     map(action => action.payload),
     switchMap(pago => {
-      return this.service
-        .update(pago)
-        .pipe(
-          map(res => new fromActions.UpdatePagoSuccess(res)),
-          catchError(error => of(new fromActions.UpdatePagoFail(error)))
-        );
+      return this.service.update(pago).pipe(
+        map(res => new fromActions.UpdatePagoSuccess(res)),
+        catchError(error => of(new fromActions.UpdatePagoFail(error)))
+      );
     })
   );
 
@@ -56,12 +69,10 @@ export class PagosEffects {
     ofType<fromActions.DeletePago>(PagoActionTypes.DeletePago),
     map(action => action.payload),
     switchMap(pago => {
-      return this.service
-        .delete(pago.id)
-        .pipe(
-          map(res => new fromActions.DeletePagoSuccess(pago)),
-          catchError(error => of(new fromActions.LoadPagosFail(error)))
-        );
+      return this.service.delete(pago.id).pipe(
+        map(res => new fromActions.DeletePagoSuccess(pago)),
+        catchError(error => of(new fromActions.LoadPagosFail(error)))
+      );
     })
   );
 
@@ -88,12 +99,10 @@ export class PagosEffects {
     ofType<fromActions.AplicarPago>(PagoActionTypes.AplicarPago),
     map(action => action.payload),
     switchMap(pago => {
-      return this.service
-        .aplicar(pago)
-        .pipe(
-          map(res => new fromActions.UpdatePagoSuccess(res)),
-          catchError(error => of(new fromActions.UpdatePagoFail(error)))
-        );
+      return this.service.aplicar(pago).pipe(
+        map(res => new fromActions.UpdatePagoSuccess(res)),
+        catchError(error => of(new fromActions.UpdatePagoFail(error)))
+      );
     })
   );
 }

@@ -1,0 +1,29 @@
+<mat-card>
+  <sx-standard-header
+    title="Cuentas por pagar"
+    [periodo]="periodo$ | async"
+    (periodoChange)="onPeriodo($event)"
+    (reload)="reload()"
+    (download)="grid.exportData()"
+  ></sx-standard-header>
+  <mat-divider></mat-divider>
+  <ng-template
+    tdLoading
+    [tdLoadingUntil]="!(loading$ | async)"
+    tdLoadingStrategy="overlay"
+  >
+  </ng-template>
+  <div class="grid-panel">
+    <sx-facturas-table2
+      #grid
+      [partidas]="facturas$ | async"
+      (xml)="onXml($event)"
+      (pdf)="onPdf($event)"
+      (analisis)="onAnalisis($event)"
+    >
+    </sx-facturas-table2>
+  </div>
+  <sx-standard-footer [totales]="totales">
+    <!-- <span class="pad-left">Total: {{ totales.importe | currency }}</span> -->
+  </sx-standard-footer>
+</mat-card>

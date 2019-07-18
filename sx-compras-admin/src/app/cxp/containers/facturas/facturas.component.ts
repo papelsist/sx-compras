@@ -5,8 +5,7 @@ import * as fromRoot from 'app/store';
 import * as fromStore from '../../store';
 import * as fromActions from '../../store/actions/facturas.actions';
 
-import { Observable, Subject, BehaviorSubject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 import { Periodo } from '../../../_core/models/periodo';
 import { ComprobanteFiscalService } from '../../services';
@@ -14,26 +13,14 @@ import { CuentaPorPagar } from '../../model';
 
 @Component({
   selector: 'sx-facturas-cxp',
-  template: `
-    <mat-card>
-      <sx-search-title title="Facturas de compras" (search)="onSearch($event)">
-      <div *ngIf="periodo$ | async as periodo" class="info">
-        <span class="pad-left">Periodo: </span>
-        <span class="pad-left">{{periodo}}</span>
-        <sx-periodo-picker [periodo]="periodo" (change)="cambiarPeriodo($event)"></sx-periodo-picker>
-      </div>
-      </sx-search-title>
-      <mat-divider></mat-divider>
-      <sx-facturas-table [facturas]="facturas$ | async" (xml)="onXml($event)" (pdf)="onPdf($event)" (analisis)="onAnalisis($event)"
-        [filter]="search$ | async">
-      </sx-facturas-table>
-    </mat-card>
-  `
+  templateUrl: './facturas.component.html',
+  styleUrls: ['./facturas.component.scss']
 })
 export class FacturasComponent implements OnInit {
+  loading$: Observable<boolean>;
   facturas$: Observable<CuentaPorPagar[]>;
   periodo$: Observable<Periodo>;
-  search$ = new BehaviorSubject('');
+  totales: any = {};
 
   constructor(
     private store: Store<fromStore.CxpState>,
@@ -41,17 +28,18 @@ export class FacturasComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.loading$ = this.store.pipe(select(fromStore.getFacturasLoading));
     this.periodo$ = this.store.pipe(select(fromStore.getPeriodoDeFacturas));
     this.facturas$ = this.store.pipe(select(fromStore.getAllFacturas));
   }
 
-  onSelect() {}
-
-  onSearch(event: string) {
-    this.search$.next(event);
+  reload() {
+    this.store.dispatch(new fromStore.LoadFacturas());
   }
 
-  cambiarPeriodo(event: Periodo) {
+  onSelect() {}
+
+  onPeriodo(event: Periodo) {
     this.store.dispatch(new fromActions.SetFacturasPeriodo(event));
   }
 
@@ -70,7 +58,6 @@ export class FacturasComponent implements OnInit {
   }
 
   onAnalisis(event: CuentaPorPagar) {
-    // console.log('Localizad el analiziz: ', event);
     this.store.dispatch(
       new fromRoot.Go({ path: ['cxp/analisis', event.analisis] })
     );

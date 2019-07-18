@@ -1,0 +1,51 @@
+<div layout layout-align="start center">
+  <span flex> {{ cliente.nombre }} (Cartera: {{ cartera }}) </span>
+  <mat-form-field>
+    <input
+      matInput
+      placeholder="Filtrar"
+      autocomplete="off"
+      (input)="onSearch(input.value)"
+      #input
+    />
+  </mat-form-field>
+</div>
+<div layout class="pad-bottom">
+  <span layout *ngIf="maximoPermitido > 0">
+    <span>Disponible: {{ maximoPermitido | currency }}</span>
+  </span>
+  <span flex></span>
+  <span>Seleccionados</span>
+  <span
+    class="pad-left "
+    [ngClass]="{
+      'tc-pink-600': getAplicable() < 0,
+      'tc-indigo-600': getAplicable() >= 0
+    }"
+    >{{ getTotalSeleccionado() | currency }}
+  </span>
+  <span class="pad-left">({{ selected.length }} facturas)</span>
+  <!-- <span class="pad-left">Por aplcar: {{ getAplicable() | currency }}</span> -->
+</div>
+<mat-divider></mat-divider>
+<div class="facturas-panel">
+  <ng-template
+    tdLoading
+    [tdLoadingUntil]="!procesando"
+    tdLoadingStrategy="overlay"
+  >
+    <sx-cxc-table
+      [cuentas]="rows"
+      [displayColumns]="columns"
+      (select)="onSelect($event)"
+      [filter]="search"
+    ></sx-cxc-table>
+  </ng-template>
+</div>
+
+<mat-dialog-actions class="footer">
+  <button mat-button mat-dialog-close>CANCELAR</button>
+  <button mat-button (click)="close()" [disabled]="selected.length === 0">
+    SELECCIONAR
+  </button>
+</mat-dialog-actions>

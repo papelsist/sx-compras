@@ -262,7 +262,7 @@ environments:
         cfdisDir: /home/cfdProv
         gastosDir: /home/cfdGastos
         comisionesDir: /home/cfdiComisiones
-        honorariosDir: /home/cfdiHonorarios
+        honorariosDir: /home/CfdiHonorarios
 ---
 quartz:
     autoStartup: false

@@ -15,6 +15,7 @@ import { NotasService } from '../../services';
 import { Periodo } from '../../../_core/models/periodo';
 
 import { MatSnackBar } from '@angular/material';
+import { NotasPeriodoStoeKey } from '../reducers/notas.reducers';
 
 @Injectable()
 export class NotasEffects {
@@ -43,10 +44,10 @@ export class NotasEffects {
 
   @Effect()
   setPeriodo$ = this.actions$.pipe(
-    ofType<fromActions.SetPeriodo>(NotaActionTypes.SetPeriodo),
-    map(action => action.payload),
+    ofType<fromActions.SetPeriodoDeNotas>(NotaActionTypes.SetPeriodoDeNotas),
+    map(action => action.payload.periodo),
     tap(periodo =>
-      Periodo.saveOnStorage('sx-compras.cxp.notas.periodo', periodo)
+      Periodo.saveOnStorage(NotasPeriodoStoeKey, periodo)
     ),
     map(() => new fromActions.LoadNotas())
   );

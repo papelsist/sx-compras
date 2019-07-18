@@ -35,9 +35,9 @@ export class ProveedoresEffects {
   updateProveedor$ = this.actions$.pipe(
     ofType(proveedorActions.UPDATE_PROVEEDOR_ACTION),
 
-    map((action: proveedorActions.UpdateProveedor) => action.payload),
-    switchMap(proveedor => {
-      return this.service.update(proveedor).pipe(
+    map((action: proveedorActions.UpdateProveedor) => action.payload.update),
+    switchMap(update => {
+      return this.service.update(update).pipe(
         map(res => new proveedorActions.UpdateProveedorSuccess(res)),
         catchError(error => of(new proveedorActions.UpdateProveedorFail(error)))
       );

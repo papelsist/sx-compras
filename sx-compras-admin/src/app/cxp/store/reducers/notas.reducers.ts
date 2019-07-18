@@ -4,6 +4,8 @@ import { NotaDeCreditoCxP } from '../../model/notaDeCreditoCxP';
 import { NotaActions, NotaActionTypes } from '../actions/notas.actions';
 import { Periodo } from 'app/_core/models/periodo';
 
+export const NotasPeriodoStoeKey = 'sx-compras.cxp.notas.periodo';
+
 export interface State extends EntityState<NotaDeCreditoCxP> {
   loading: boolean;
   loaded: boolean;
@@ -18,14 +20,14 @@ export const adapter: EntityAdapter<NotaDeCreditoCxP> = createEntityAdapter<
 export const initialState: State = adapter.getInitialState({
   loading: false,
   loaded: false,
-  periodo: Periodo.fromStorage('sx-compras.cxp.notas.periodo'),
+  periodo: Periodo.fromStorage(NotasPeriodoStoeKey),
   searchTerm: undefined
 });
 
 export function reducer(state = initialState, action: NotaActions): State {
   switch (action.type) {
-    case NotaActionTypes.SetPeriodo: {
-      const periodo = action.payload;
+    case NotaActionTypes.SetPeriodoDeNotas: {
+      const periodo = action.payload.periodo;
       return {
         ...state,
         periodo

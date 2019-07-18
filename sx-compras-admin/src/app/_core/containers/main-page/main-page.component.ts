@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 
 import { of as observableOf, Observable } from 'rxjs';
+import { ProveedorUtilsService } from 'app/proveedores/services/proveedor-utils.service';
 
 @Component({
   selector: 'sx-main-page',
@@ -58,9 +59,14 @@ export class MainPageComponent implements OnInit {
 
   sidenavWidth = 300;
 
-  constructor() {}
+  constructor(private proveedorUtils: ProveedorUtilsService) {}
 
   ngOnInit() {
     this.modulo$ = observableOf('PENDIENTE');
+  }
+
+  @HostListener('document:keydown.control.p', ['$event'])
+  onConsultaDeProveedores(event) {
+    this.proveedorUtils.consultaRapida();
   }
 }

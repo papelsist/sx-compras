@@ -1,81 +1,267 @@
 import {
   Component,
   OnInit,
-  Input,
-  Output,
-  EventEmitter,
   ChangeDetectionStrategy,
+  Input,
   OnChanges,
   SimpleChanges,
-  ViewChild
+  Output,
+  EventEmitter,
+  Inject,
+  LOCALE_ID,
+  ChangeDetectorRef
 } from '@angular/core';
+import { formatCurrency, formatNumber, formatDate } from '@angular/common';
 
-import { Analisis } from '../../model/analisis';
-import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
+import {
+  GridOptions,
+  GridApi,
+  ColDef,
+  GridReadyEvent,
+  FilterChangedEvent,
+  CellClickedEvent,
+  RowDoubleClickedEvent
+} from 'ag-grid-community';
+import { spAgGridText } from 'app/_shared/components/lx-table/table-support';
+import { Analisis } from 'app/cxp/model';
 
 @Component({
   selector: 'sx-analisis-table',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './analisis-table.component.html',
-  styleUrls: ['./analisis-table.component.scss']
+  template: `
+    <div style="height: 100%">
+      <ag-grid-angular
+        #agGrid
+        class="ag-theme-balham"
+        style="width: 100%; height: 100%;"
+        [gridOptions]="gridOptions"
+        [defaultColDef]="defaultColDef"
+        [floatingFilter]="false"
+        [localeText]="localeText"
+        (firstDataRendered)="onFirstDataRendered($event)"
+        (gridReady)="onGridReady($event)"
+        (modelUpdated)="onModelUpdate($event)"
+      >
+      </ag-grid-angular>
+    </div>
+  `,
+  // styleUrls: ['./requisiciones-table.component.scss']
+  styles: [
+    `
+      .pagada {
+        font-weight: bold;
+      }
+    `
+  ]
 })
 export class AnalisisTableComponent implements OnInit, OnChanges {
-  @Input() analisis: Analisis[] = [];
-  @Input() searchTerm: string;
-  @Output() edit = new EventEmitter();
+  @Input() partidas: Analisis[] = [];
+
+  gridOptions: GridOptions;
+  gridApi: GridApi;
+  defaultColDef;
+
+  @Output() print = new EventEmitter();
   @Output() select = new EventEmitter();
-  dataSource = new MatTableDataSource<Analisis>([]);
-  displayColumns = [
-    'folio',
-    'proveedor',
-    'fecha',
-    'fechaEntrada',
-    'factura',
-    'importe',
-    'moneda',
-    // 'uuid',
-    'cerrado',
-    'updateUser',
-    'operaciones'
-  ]; // , 'serie', 'folio', 'total'];
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
+  @Output()
+  totales = new EventEmitter();
 
-  constructor() {}
+  printFriendly = false;
 
-  ngOnInit() {
-    // this.setFilter();
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+  localeText: any;
+
+  constructor(
+    private cd: ChangeDetectorRef,
+    @Inject(LOCALE_ID) private locale: string
+  ) {
+    this.buildGridOptions();
+    this.buildGridStyles();
   }
 
-  private setFilter() {
-    this.dataSource.filterPredicate = (data: Analisis, filter: string) => {
-      const props = ['folio', 'nombre'];
-      return (
-        data.factura.folio.toLowerCase().indexOf(filter.toLowerCase()) !== -1
-      );
-    };
-  }
+  ngOnInit() {}
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.analisis && changes.analisis.currentValue) {
-      this.dataSource.data = changes.analisis.currentValue;
-    }
-    if (changes.searchTerm && changes.searchTerm.currentValue) {
-      this.dataSource.filter = changes.searchTerm.currentValue;
+    if (changes.partidas && changes.partidas.currentValue) {
+      if (this.gridApi) {
+        this.gridApi.setRowData(changes.partidas.currentValue);
+      }
     }
   }
 
-  toogleSelect(event: Analisis) {
-    event.selected = !event.selected;
-    const data = this.analisis.filter(item => item.selected);
-    this.select.emit([...data]);
+  buildGridOptions() {
+    this.gridOptions = <GridOptions>{};
+    this.gridOptions.columnDefs = this.buildColsDef();
+    this.defaultColDef = {
+      editable: false,
+      filter: 'agTextColumnFilter',
+      width: 150,
+      sortable: true
+    };
+    this.gridOptions.onFilterChanged = this.onFilter.bind(this);
+    this.gridOptions.onCellClicked = (event: CellClickedEvent) => {
+      if (event.column.getId() === 'print') {
+        this.print.emit(event.data);
+      }
+    };
+    this.gridOptions.onRowDoubleClicked = (event: RowDoubleClickedEvent) => {
+      this.select.emit(event.data);
+    };
+    this.localeText = spAgGridText;
   }
 
-  onEdit($event: Event, row) {
-    $event.preventDefault();
-    this.edit.emit(row);
+  buildGridStyles() {
+    this.gridOptions.getRowStyle = this.getGridClass.bind(this);
+  }
+
+  getGridClass(params: any) {
+    if (params.data.pagada) {
+      return {
+        color: 'rgb(231, 61, 61)'
+      };
+    } else {
+      return '';
+    }
+  }
+
+  onModelUpdate(event) {
+    this.actualizarTotales();
+  }
+
+  onGridReady(params: GridReadyEvent) {
+    this.gridApi = params.api;
+    this.gridApi.setRowData(this.partidas);
+  }
+
+  onFirstDataRendered(params) {}
+
+  onFilter(event: FilterChangedEvent) {}
+
+  printGrid() {
+    this.gridApi.setDomLayout('print');
+    this.printFriendly = true;
+    this.cd.detectChanges();
+    setTimeout(() => {
+      print();
+      this.gridApi.setDomLayout(null);
+      this.printFriendly = false;
+      this.cd.detectChanges();
+    }, 8000);
+  }
+
+  exportData() {
+    const params = {
+      fileName: `ANALISIS_${new Date().getTime()}.csv`
+    };
+    this.gridApi.exportDataAsCsv(params);
+  }
+
+  actualizarTotales() {
+    if (this.gridApi) {
+      let rows = 0;
+      let importe = 0.0;
+      this.gridApi.forEachNodeAfterFilter((rowNode, index) => {
+        importe += rowNode.data.importe;
+        rows++;
+      });
+      this.totales.emit({ rows, importe });
+    }
+  }
+
+  transformCurrency(data) {
+    return formatCurrency(data, this.locale, '$');
+  }
+
+  transformDate(data, format: string = 'dd/MM/yyyy') {
+    if (data) {
+      return formatDate(data, format, this.locale);
+    } else {
+      return '';
+    }
+  }
+
+  private buildColsDef(): ColDef[] {
+    return [
+      {
+        headerName: 'Folio',
+        field: 'folio',
+        pinned: 'left',
+        width: 110
+      },
+      {
+        headerName: 'Nombre',
+        field: 'nombre',
+        width: 300,
+        pinned: 'left',
+        resizable: true
+      },
+      {
+        headerName: 'Fecha',
+        field: 'fecha',
+        width: 110,
+        cellRenderer: params => this.transformDate(params.value)
+      },
+      {
+        headerName: 'F.Entrada',
+        field: 'fechaEntrada',
+        width: 110,
+        cellRenderer: params => this.transformDate(params.value)
+      },
+      {
+        headerName: 'Factura',
+        field: 'facturaInfo',
+        width: 150
+      },
+
+      {
+        headerName: 'Fac Fecha',
+        field: 'facturaFecha',
+        width: 110,
+        cellRenderer: params => this.transformDate(params.value)
+      },
+      {
+        headerName: 'Mon',
+        field: 'factura',
+        colId: 'moneda',
+        width: 70,
+        cellRenderer: params => params.value.moneda
+      },
+      {
+        headerName: 'Importe',
+        field: 'importe',
+        width: 130,
+        cellRenderer: params => this.transformCurrency(params.value)
+      },
+      {
+        headerName: 'Cerrada',
+        field: 'cerrado',
+        width: 150,
+        cellRenderer: params => this.transformDate(params.value)
+      },
+      {
+        headerName: 'Actualizó',
+        field: 'updateUser',
+        width: 110
+      },
+      {
+        headerName: 'Modificado',
+        field: 'modificado',
+        maxWidth: 150,
+        cellRenderer: params =>
+          this.transformDate(params.value, 'dd/MM/yyyy HH:mm')
+      },
+      {
+        headerName: 'Comentario',
+        field: 'comentario'
+      },
+      {
+        headerName: 'P',
+        field: 'id',
+        colId: 'print',
+        cellRenderer: params => 'P',
+        filter: false,
+        width: 50
+      }
+    ];
   }
 }
