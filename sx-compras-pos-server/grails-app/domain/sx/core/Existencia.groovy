@@ -81,6 +81,10 @@ class Existencia {
      */
     BigDecimal disponible = 0
 
+    BigDecimal costo = 0.0
+
+    BigDecimal costoPromedio = 0.0
+
     String sw2
 
     String clave
@@ -115,6 +119,8 @@ class Existencia {
         recorteComentario nullable: true
         recorteFecha nullable: true
         fecha nullable: true
+        costo nullbale: true
+        costoPromedio nullable: true
     }
 
     static mapping={
