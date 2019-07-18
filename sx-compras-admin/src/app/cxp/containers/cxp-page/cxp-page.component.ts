@@ -70,9 +70,15 @@ export class CxpPageComponent implements OnInit {
       icon: 'storage'
     },
     {
-      route: 'ecuenta',
-      title: 'Estado de cuenta',
-      description: '',
+      route: 'ecuenta/facs',
+      title: 'Edo. de cuenta (F)',
+      description: 'Por Factura',
+      icon: 'format_indent_increase'
+    },
+    {
+      route: 'ecuenta/movs',
+      title: 'Edo. de cuenta (M)',
+      description: 'Por Movimientos',
       icon: 'list'
     }
   ];

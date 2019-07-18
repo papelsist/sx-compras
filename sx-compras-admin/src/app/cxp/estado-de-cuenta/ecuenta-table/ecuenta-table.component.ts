@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output, Input } from '@angular/core';
 
 import { LxTableComponent } from 'app/_shared/components';
 import { SxTableService } from 'app/_shared/components/lx-table/sx-table.service';
@@ -13,6 +13,7 @@ import { ColDef, ModelUpdatedEvent, RowSelectedEvent } from 'ag-grid-community';
 })
 export class EcuentaTableComponent extends LxTableComponent implements OnInit {
   @Output() selectionChange = new EventEmitter<any[]>();
+  _saldoInicial = 0.0;
 
   constructor(public tableService: SxTableService) {
     super(tableService);
@@ -20,6 +21,12 @@ export class EcuentaTableComponent extends LxTableComponent implements OnInit {
 
   buildGridOptions() {
     super.buildGridOptions();
+    this.defaultColDef = {
+      editable: false,
+      filter: 'agTextColumnFilter',
+      sortable: false,
+      resizable: true
+    };
     this.gridOptions.rowSelection = 'multiple';
     this.gridOptions.onRowSelected = (event: RowSelectedEvent) => {
       this.selectionChange.emit(this.gridApi.getSelectedRows());
@@ -43,50 +50,39 @@ export class EcuentaTableComponent extends LxTableComponent implements OnInit {
 
   actualizarTotales() {
     let registros = 0;
-    let totalMn = 0.0;
-    let saldoMn = 0.0;
-    let pagosMn = 0.0;
-    let compensacionesMn = 0.0;
-    let vencidoMn = 0.0;
-    let porVencerMn = 0.0;
+    let acumulado = 0;
+
     if (this.gridApi) {
       this.gridApi.forEachNodeAfterFilter((rowNode, index) => {
-        const cxp: Partial<CuentaPorPagar> = rowNode.data;
-        totalMn += cxp.totalMn;
-        saldoMn += cxp.saldoMn;
-        pagosMn += cxp.pagosMn;
-        compensacionesMn += cxp.compensacionesMn;
-        if (cxp.atraso > 0) {
-          vencidoMn += cxp.saldoMn;
-        }
-        if (cxp.atraso <= 0) {
-          porVencerMn += cxp.saldoMn;
-        }
+        const row = rowNode.data;
+        acumulado += row.importe;
         registros++;
       });
     }
+    const saldo = this._saldoInicial + acumulado;
     const res = [
       {
-        nombre: `Registros: ${registros}`,
-        totalMn,
-        saldoMn,
-        pagosMn,
-        compensacionesMn,
-        vencidoMn
+        tipo: `Movimientos: ${registros}`,
+        moneda: `Saldo Final:`,
+        saldo
       }
     ];
     if (this.gridApi) {
       this.gridApi.setPinnedBottomRowData(res);
     }
-    // this.gridApi.setPinnedBottomRowData([this.totales]);
   }
 
-  createFooterData() {
-    return [
-      {
-        nombre: 'Registros: '
-      }
-    ];
+  actualizarIniciales() {
+    if (this.gridApi) {
+      const res = [{ moneda: `Saldo Inicial:`, saldo: this._saldoInicial }];
+      this.gridApi.setPinnedTopRowData(res);
+    }
+  }
+
+  @Input()
+  set saldoInicial(saldo: number) {
+    this._saldoInicial = saldo;
+    this.actualizarIniciales();
   }
 
   buildColsDef(): ColDef[] {
@@ -95,111 +91,62 @@ export class EcuentaTableComponent extends LxTableComponent implements OnInit {
         headerName: 'Serie',
         field: 'serie',
         width: 100,
-        pinned: 'left',
-        resizable: true
+        pinned: 'left'
       },
       {
-        headerName: 'Factura',
+        headerName: 'Folio',
         field: 'folio',
-        width: 110,
-        pinned: 'left',
-        resizable: true
-      },
-      {
-        headerName: 'Fecha',
-        field: 'fecha',
         width: 100,
-        cellRenderer: params => this.transformDate(params.value),
-        pinned: 'left',
-        resizable: true
-      },
-      {
-        headerName: 'Vto',
-        field: 'vencimiento',
-        width: 100,
-        cellRenderer: params => this.transformDate(params.value)
-      },
-      {
-        headerName: 'Mon',
-        field: 'moneda',
-        width: 70
-      },
-      {
-        headerName: 'TC',
-        field: 'tipoDeCambio',
-        maxWidth: 60,
-        cellRenderer: params => this.transformCurrency(params.value)
-      },
-      {
-        headerName: 'Total',
-        field: 'totalMn',
-        maxWidth: 110,
-        cellRenderer: params => this.transformCurrency(params.value)
-      },
-      {
-        headerName: 'Abonos',
-        field: 'abonos',
-        maxWidth: 100,
-        cellRenderer: params => {
-          const pagosMn = params.data.pagosMn || 0.0;
-          const notasMn = params.data.notasMn || 0.0;
-          const res = pagosMn + notasMn;
-          return this.transformCurrency(res);
-        }
-      },
-      {
-        headerName: 'Dif',
-        field: 'diferenciaMn',
-        maxWidth: 100,
-        cellRenderer: params => {
-          const value = params.value;
-          const tc = params.data.tipoDeCambio;
-          const res = value * tc;
-          return this.transformCurrency(res);
-        }
-      },
-      // {
-      //   headerName: 'Notas',
-      //   field: 'compensacionesMn',
-      //   maxWidth: 100,
-      //   cellRenderer: params => this.transformCurrency(params.value)
-      // },
-      // {
-      //   headerName: 'Pagos',
-      //   field: 'pagosMn',
-      //   maxWidth: 100,
-      //   cellRenderer: params => this.transformCurrency(params.value)
-      // },
-      // {
-      //   headerName: 'Notas',
-      //   field: 'compensacionesMn',
-      //   maxWidth: 100,
-      //   cellRenderer: params => this.transformCurrency(params.value)
-      // },
-      {
-        headerName: 'Saldo',
-        field: 'saldoMn',
-        maxWidth: 110,
-        cellRenderer: params => this.transformCurrency(params.value)
-      },
-      {
-        headerName: 'Atraso',
-        field: 'atraso',
-        maxWidth: 50
-      },
-      {
-        headerName: 'Vencido',
-        field: 'vencidoMn',
-        maxWidth: 50,
-        cellRenderer: params => this.transformCurrency(params.value)
+        pinned: 'left'
       },
       {
         headerName: 'Tipo',
         field: 'tipo'
       },
       {
-        headerName: 'Nombre',
-        field: 'nombre'
+        headerName: 'Fecha',
+        field: 'fecha',
+        cellRenderer: params => this.transformDate(params.value)
+      },
+      {
+        headerName: 'Mon',
+        field: 'moneda',
+        width: 150
+      },
+      {
+        headerName: 'TC',
+        field: 'tipoDeCambio',
+        width: 100,
+        cellRenderer: params => this.transformCurrency(params.value)
+      },
+      {
+        headerName: 'Importe',
+        field: 'importe',
+        maxWidth: 110,
+        cellRenderer: params => this.transformCurrency(params.value)
+      },
+      {
+        headerName: 'Saldo',
+        field: 'saldo',
+        maxWidth: 110,
+        cellRenderer: params => this.transformCurrency(params.value)
+        // pinnedRowCellRenderer: params => {
+        //   console.log(params);
+        //   if (params.value) {
+        //     const r = this.transformCurrency(params.value);
+        //     const l =
+        //       params.rowNode.rowPinned === 'top'
+        //         ? 'Saldo Inicial:'
+        //         : 'Saldo Final';
+        //     return `${l} ${r}`;
+        //   } else {
+        //     return '';
+        //   }
+        // }
+      },
+      {
+        headerName: 'Comentario',
+        field: 'comentario'
       }
     ];
   }

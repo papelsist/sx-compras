@@ -34,6 +34,7 @@ export class LxTableComponent implements OnInit, OnChanges {
   @Output() select = new EventEmitter();
 
   public exportKey = 'EX';
+  public debug = false;
 
   public gridOptions: GridOptions;
   public gridApi: GridApi;
@@ -53,9 +54,16 @@ export class LxTableComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     if (changes.partidas && changes.partidas.currentValue) {
       if (this.gridApi) {
-        this.gridApi.setRowData(changes.partidas.currentValue);
+        this.setRowData(changes.partidas.currentValue);
       }
     }
+  }
+
+  setRowData(data: any[]) {
+    if (this.debug) {
+      console.log('Partidas', data);
+    }
+    this.gridApi.setRowData(data);
   }
 
   buildGridOptions() {

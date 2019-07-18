@@ -7,8 +7,8 @@ export class SxTableService {
   constructor(@Inject(LOCALE_ID) private locale: string) {}
 
   formatCurrency(data: number) {
-    if (!data) {
-      return '';
+    if (data === undefined) {
+      data = 0.0;
     }
     return formatCurrency(data, this.locale, '$');
   }

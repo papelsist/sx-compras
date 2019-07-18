@@ -60,7 +60,8 @@ class CuentaPorPagarController extends RestfulController<CuentaPorPagar> impleme
     def cartera() {
         log.info('Cargando la cartera de CXP: {}', params)
         def tpo = params.tipo
-        def query = CuentaPorPagar.where {tipo == tpo && saldoReal > 0.0}
+        def inicial = Date.parse('dd/MM/yyyy','31/12/2017')
+        def query = CuentaPorPagar.where { fecha > inicial && tipo == tpo && saldoReal > 0.0 }
         List<CuentaPorPagar> data = query.list([sort: 'nombre'])
         respond data, view: 'index'
     }
@@ -85,6 +86,14 @@ class CuentaPorPagarController extends RestfulController<CuentaPorPagar> impleme
                 .findAll("from CuentaPorPagar c where c.proveedor.id = ? and c.total - c.pagos > 0",
                 [id])
         respond res
+    }
+
+    @CompileDynamic
+    def facturas() {
+        String proveedorId = params.proveedorId
+        def periodo = params.periodo 
+        List<CuentaPorPagar> res = cuentaPorPagarService.buscarFacturas(proveedorId, periodo)
+        respond res, view: 'index'
     }
 
     def saldar(CuentaPorPagar cxp) {
@@ -129,7 +138,7 @@ class EstadoDeCuentaProveedor {
     
 }
 
-@Canonical()
+@Canonical(excludes = ['saldo'])
 class EstadoDeCuentaRow implements  Validateable {
     
     String id
@@ -141,6 +150,7 @@ class EstadoDeCuentaRow implements  Validateable {
     String moneda
     BigDecimal tipoDeCambio = 1.0
     BigDecimal importe = 0.0
+    BigDecimal saldo = 0.0
     String comentario
 }
 

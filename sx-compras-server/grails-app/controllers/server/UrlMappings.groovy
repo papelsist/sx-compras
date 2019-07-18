@@ -165,6 +165,7 @@ class UrlMappings {
         "/api/cuentaPorPagar/cartera"(controller: 'cuentaPorPagar', action: 'cartera')
         "/api/cuentaPorPagar/saldar/$id"(controller: 'cuentaPorPagar', action: 'saldar', method: 'PUT')
         "/api/cuentaPorPagar/estadoDeCuenta"(controller: 'cuentaPorPagar', action: 'estadoDeCuenta')
+        "/api/cuentaPorPagar/facturas"(controller: 'cuentaPorPagar', action: 'facturas', method: 'GET')
 
         "/api/analisisDeFactura"(resources: 'analisisDeFactura', excludes:['create', 'edit','patch']) {
             "/partidas"(resources: 'analisisDeFacturaDet', excludes:['create', 'edit','patch'])

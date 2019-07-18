@@ -81,6 +81,21 @@ export class CuentaPorPagarService {
       .pipe(catchError((error: any) => throwError(error)));
   }
 
+  facturas(
+    proveedorId: string,
+    periodo: Periodo
+  ): Observable<CuentaPorPagar[]> {
+    const data = periodo.toApiJSON();
+    const params = new HttpParams()
+      .set('fechaInicial', data.fechaInicial)
+      .set('fechaFinal', data.fechaFinal)
+      .set('proveedorId', proveedorId);
+    const url = `${this.apiUrl}/facturas`;
+    return this.http
+      .get<CuentaPorPagar[]>(url, { params })
+      .pipe(catchError((error: any) => throwError(error)));
+  }
+
   estadoDeCuenta(proveedorId: string, periodo: Periodo): Observable<any> {
     const data = periodo.toApiJSON();
     const params = new HttpParams()

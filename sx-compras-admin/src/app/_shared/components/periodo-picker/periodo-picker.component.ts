@@ -31,7 +31,7 @@ export class PeriodoPickerComponent implements OnInit {
       })
       .afterClosed()
       .subscribe(res => {
-        if (res !== null) {
+        if (!!res) {
           this.change.emit(res);
         }
       });

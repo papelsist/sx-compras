@@ -211,7 +211,7 @@ class CuentaDeBancoController extends RestfulController {
                 saldoFinal: saldoFinal,
                 movimientos: movimientos
         )
-        // log.info("inicial:{}, cargos: {} abonos: {}, saldo:{}", saldoInicial, cargos, abonos, saldoFinal)
+        log.info("inicial:{}, cargos: {} abonos: {}, saldo:{}", saldoInicial, cargos, abonos, saldoFinal)
         respond([estadoDeCuenta: estadoDeCuenta])
 
     }

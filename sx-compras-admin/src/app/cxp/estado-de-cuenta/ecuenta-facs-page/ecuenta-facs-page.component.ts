@@ -12,14 +12,13 @@ import { Proveedor } from 'app/proveedores/models/proveedor';
 import { ProveedorUtilsService } from 'app/proveedores/services/proveedor-utils.service';
 
 @Component({
-  selector: 'sx-ecuenta-page',
-  templateUrl: './ecuenta-page.component.html',
-  styleUrls: ['./ecuenta-page.component.scss']
+  selector: 'sx-ecuenta-facs-page',
+  templateUrl: './ecuenta-facs-page.component.html',
+  styleUrls: ['./ecuenta-facs-page.component.scss']
 })
-export class EcuentaPageComponent implements OnInit, OnDestroy {
+export class EcuentaFacsPageComponent implements OnInit, OnDestroy {
   loading$: Observable<boolean>;
-  estado$: Observable<any>;
-  movimientos$: Observable<any[]>;
+  facturas$: Observable<any[]>;
   periodo$: Observable<Periodo>;
   destroy$ = new Subject<boolean>();
 
@@ -37,8 +36,7 @@ export class EcuentaPageComponent implements OnInit, OnDestroy {
     this.loading$ = this.store.pipe(select(fromStore.selectLoading));
     this.periodo$ = this.store.pipe(select(fromStore.selectPeriodo));
     this.proveedor$ = this.store.pipe(select(fromStore.selectProveedor));
-    this.estado$ = this.store.pipe(select(fromStore.selectEstado));
-    this.movimientos$ = this.store.pipe(select(fromStore.selectMovimientos));
+    this.facturas$ = this.store.pipe(select(fromStore.selectFacturas));
 
     const p$ = this.proveedor$.pipe(
       distinctUntilChanged(),
@@ -54,7 +52,7 @@ export class EcuentaPageComponent implements OnInit, OnDestroy {
       )
       .subscribe(([periodo, proveedor]) =>
         this.store.dispatch(
-          new fromActions.LoadEstadoDeCuenta({
+          new fromActions.LoadFacturas({
             periodo,
             proveedorId: proveedor.id
           })
@@ -77,9 +75,10 @@ export class EcuentaPageComponent implements OnInit, OnDestroy {
 
   reload(periodo: Periodo, proveedor: Proveedor) {
     this.store.dispatch(
-      new fromActions.LoadEstadoDeCuenta({ periodo, proveedorId: proveedor.id })
+      new fromActions.LoadFacturas({ periodo, proveedorId: proveedor.id })
     );
   }
+
   onPeriodoChange(periodo: Periodo) {
     this.store.dispatch(new fromActions.SetPeriodo({ periodo }));
   }

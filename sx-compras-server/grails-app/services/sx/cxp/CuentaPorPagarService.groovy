@@ -8,17 +8,24 @@ import groovy.util.logging.Slf4j
 
 import sx.core.Proveedor
 import sx.utils.Periodo
+import sx.utils.MonedaUtils
 
 // @Transactional
 @Slf4j
 class CuentaPorPagarService {
 
-    EstadoDeCuentaProveedor estadoDeCuenta(Proveedor proveedor, Periodo periodo) {
+    List<CuentaPorPagar> buscarFacturas(String proveedorId, Periodo periodo) {
+        return CuentaPorPagar.findAll("from CuentaPorPagar where fecha between ? and ? and proveedor.id = ?",
+            [periodo.fechaInicial, periodo.fechaFinal, proveedorId])
+    }
 
+    EstadoDeCuentaProveedor estadoDeCuenta(Proveedor proveedor, Periodo periodo) {
+        log.info('Calculando estado de cuenta para {} Periodo: {}', proveedor.nombre, periodo)
         Set<EstadoDeCuentaRow> movimientos = []
         movimientos.addAll(findCargos(proveedor,periodo))
         movimientos.addAll(findAbonos(proveedor,periodo))
         movimientos.sort {it.fecha}
+
 
         EstadoDeCuentaProveedor estado = new EstadoDeCuentaProveedor()
         estado.proveedor = proveedor
@@ -28,6 +35,13 @@ class CuentaPorPagarService {
         estado.cargos = estado.sumCargos()
         estado.abonos = estado.sumAbonos()
         estado.saldoFinal = estado.saldoInicial + estado.cargos + estado.abonos 
+
+        def saldo = estado.saldoInicial
+        movimientos.each {
+            saldo += it.importe
+            it.saldo = saldo
+        }
+        
         return estado
     }
 
@@ -71,7 +85,14 @@ class CuentaPorPagarService {
                 """,
                 [proveedor, periodo.fechaInicial, periodo.fechaFinal])
         def data = res.collect {
-            new EstadoDeCuentaRow(
+            def importe = it.importe
+            if(it.pago) {
+                importe = importe * it.pago.tipoDeCambio
+            } else if (it.nota) {
+                importe = importe * it.nota.tipoDeCambio
+            }
+            importe = MonedaUtils.round(importe)
+            def row = new EstadoDeCuentaRow(
                     it.id, 
                     it.cxp.nombre, 
                     it.cxp.serie, 
@@ -80,9 +101,14 @@ class CuentaPorPagarService {
                     it.fecha, 
                     it.cxp.moneda, 
                     it.cxp.tipoDeCambio, 
-                    it.importe * -1, 
+                    importe * -1, 
                     it.formaDePago
                     )  
+            if(it.nota) {
+                row.tipo = "${it.tipo} ${it.nota.serie} ${it.nota.folio}"
+                row.comentario = "${it.nota.comentario} "
+            }
+            return row
         }
         return data
     }

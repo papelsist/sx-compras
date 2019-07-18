@@ -6,7 +6,7 @@
     *ngIf="periodo$ | async as periodo"
   >
     <span>
-      <span class="mat-title title">Estado de Cuenta (MOVIMIENTOS)</span>
+      <span class="mat-title title">Estado de cuenta ( FACTURAS) </span>
     </span>
     <span flex></span>
     <span flex *ngIf="!proveedor" class="pad-left"
@@ -36,7 +36,7 @@
           <mat-icon>sync</mat-icon> Recargar
         </button>
         <button
-          (click)="grid.exportData('ECUENTA_MOVS')"
+          (click)="grid.exportData('ECUENTA_FACS')"
           mat-menu-item
           matTooltip="Descargar registros en formato CSV"
         >
@@ -62,11 +62,9 @@
   >
   </ng-template>
   <div class="grid-panel">
-    <sx-ecuenta-table
+    <sx-ecuenta-facs-table
       #grid
-      [partidas]="movimientos$ | async"
-      [saldoInicial]="(estado$ | async)?.saldoInicial"
-      (selectionChange)="onSelection($event)"
-    ></sx-ecuenta-table>
+      [partidas]="facturas$ | async"
+    ></sx-ecuenta-facs-table>
   </div>
 </mat-card>
