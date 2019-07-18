@@ -6,13 +6,21 @@ import * as fromActions from '../store/ecuenta.actions';
 
 // import * as fromStore from '../../store';
 
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, combineLatest } from 'rxjs';
 
-import { Periodo } from '../../../_core/models/periodo';
+import { Periodo } from 'app/_core/models/periodo';
 import { CuentaPorPagar } from '../../model';
 import { Proveedor } from 'app/proveedores/models/proveedor';
 import { ProveedorUtilsService } from 'app/proveedores/services/proveedor-utils.service';
-import { takeUntil, map, withLatestFrom, switchMap } from 'rxjs/operators';
+import {
+  takeUntil,
+  map,
+  withLatestFrom,
+  switchMap,
+  filter,
+  tap,
+  skip
+} from 'rxjs/operators';
 
 @Component({
   selector: 'sx-ecuenta-page',
@@ -37,13 +45,25 @@ export class EcuentaPageComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    // this.loading$ = this.store.pipe(select(fromStore.getFacturasLoading));
+    this.loading$ = this.store.pipe(select(fromStore.selectLoading));
     this.periodo$ = this.store.pipe(select(fromStore.selectPeriodo));
     this.proveedor$ = this.store.pipe(select(fromStore.selectProveedor));
 
     this.proveedor$
       .pipe(takeUntil(this.destroy$))
       .subscribe(p => (this.proveedor = p));
+
+    const target$ = this.periodo$.pipe(
+      withLatestFrom(this.proveedor$),
+      tap(d => console.log(d)),
+      map(([periodo, proveedor]) => {
+        if (proveedor) {
+          return `Estado para : ${proveedor} Per: ${periodo}`;
+        } else {
+        }
+      })
+    );
+    target$.subscribe(r => console.log(r));
 
     /*
     this.facturas$ = this.proveedor$.pipe(withLatestFrom( proveedor => proveedor.id), switchMap(id => {
@@ -74,7 +94,7 @@ export class EcuentaPageComponent implements OnInit, OnDestroy {
     });
   }
 
-  reload() {
+  reload(periodo: Periodo, proveedor: Proveedor) {
     // this.store.dispatch(new fromActions.LoadFacturas());
   }
 

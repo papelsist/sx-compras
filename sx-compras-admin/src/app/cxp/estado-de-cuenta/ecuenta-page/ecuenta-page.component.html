@@ -1,5 +1,10 @@
 <mat-card>
-  <div layout layout-align="start center" class="pad">
+  <div
+    layout
+    layout-align="start center"
+    class="pad"
+    *ngIf="periodo$ | async as periodo"
+  >
     <span>
       <span class="mat-title title">Estado de cuenta</span>
     </span>
@@ -22,7 +27,11 @@
         <mat-icon>more_vert</mat-icon>
       </button>
       <mat-menu #toolbarMenu="matMenu">
-        <button mat-menu-item (click)="reload()">
+        <button
+          mat-menu-item
+          (click)="reload(proveedor, periodo)"
+          [disabled]="!proveedor"
+        >
           <mat-icon>sync</mat-icon> Recargar
         </button>
         <button
