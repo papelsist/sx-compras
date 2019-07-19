@@ -42,6 +42,10 @@ export class ComprasComponent implements OnInit, OnDestroy {
     this.store.dispatch(new fromActions.LoadCompras());
   }
 
+  onCreate() {
+    this.store.dispatch(new fromRoot.Go({ path: ['ordenes/compras/create'] }));
+  }
+
   onSelect(event: Compra) {
     this.store.dispatch(
       new fromRoot.Go({ path: ['ordenes/compras', event.id] })

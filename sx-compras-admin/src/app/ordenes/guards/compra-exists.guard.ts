@@ -20,12 +20,16 @@ export class CompraExistsGuard implements CanActivate {
   ) {}
 
   canActivate(route: ActivatedRouteSnapshot): Observable<boolean> {
+    const id = route.params.compraId;
+    return this.hasCompraInApi(id);
+    /*
     return this.checkStore().pipe(
       switchMap(() => {
         const id = route.params.compraId;
         return this.hasCompraInApi(id);
       })
     );
+    */
   }
 
   checkStore(): Observable<boolean> {

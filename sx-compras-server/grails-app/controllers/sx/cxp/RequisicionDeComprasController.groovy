@@ -105,7 +105,7 @@ class RequisicionDeComprasController extends RestfulController<RequisicionDeComp
             return
         }
         requisicion = requisicionDeComprasService.cerrar(requisicion)
-        respond requisicion
+        respond requisicion, view: 'show'
     }
 
     def print( ) {

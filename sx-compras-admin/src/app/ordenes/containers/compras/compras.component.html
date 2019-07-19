@@ -4,6 +4,7 @@
     [periodo]="periodo$ | async"
     (periodoChange)="onPeriodo($event)"
     (reload)="reload()"
+    (create)="onCreate()"
     (download)="grid.exportData()"
   ></sx-standard-header>
   <mat-divider></mat-divider>

@@ -90,10 +90,12 @@ export class CompraFormComponent implements OnInit, OnChanges {
         fecha = fecha.toISOString();
       }
       const proveedor = { id: this.proveedor.id };
+      const sucursal = { id: this.sucursal.id };
       const res = {
         ...this.compra,
         ...this.form.value,
         proveedor,
+        sucursal,
         fecha,
         ...this.prepararPartidas()
       };
@@ -106,7 +108,7 @@ export class CompraFormComponent implements OnInit, OnChanges {
     const partidas = [...this.partidas.value];
     partidas.forEach(item => {
       if (!item.sucursal) {
-        item.sucursal = this.sucursal;
+        item.sucursal = this.sucursal.id;
       }
     });
     return partidas;

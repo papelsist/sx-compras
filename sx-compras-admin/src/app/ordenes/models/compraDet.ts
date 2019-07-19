@@ -2,6 +2,7 @@ import { Compra } from './compra';
 import { Producto } from '../../productos/models/producto';
 import { ProveedorProducto } from '../../proveedores/models/proveedorProducto';
 import { aplicarDescuentosEnCascada } from 'app/utils/money-utils';
+import { Sucursal } from 'app/models';
 
 export interface CompraDet {
   id?: string;
@@ -10,7 +11,7 @@ export interface CompraDet {
   clave: string;
   descripcion: string;
   unidad: string;
-  sucursal?: { id: string; nombre: string };
+  sucursal?: Partial<Sucursal>;
   solicitado: number;
   precio: number;
   descuento1: number;

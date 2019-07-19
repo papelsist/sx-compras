@@ -5,7 +5,7 @@ import { Periodo } from '../../_core/models/periodo';
 
 export interface Compra {
   id?: string;
-  sucursal: Sucursal;
+  sucursal: Partial<Sucursal>;
   sucursalNombre?: string;
   proveedor: { id: string; nombre: string };
   nombre?: string;
