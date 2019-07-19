@@ -38,7 +38,7 @@ export class LxTableComponent implements OnInit, OnChanges {
 
   public gridOptions: GridOptions;
   public gridApi: GridApi;
-  public defaultColDef;
+  public defaultColDef: ColDef;
 
   public printFriendly = false;
 
@@ -73,7 +73,8 @@ export class LxTableComponent implements OnInit, OnChanges {
       editable: false,
       filter: 'agTextColumnFilter',
       width: 150,
-      sortable: true
+      sortable: true,
+      resizable: true
     };
     this.gridOptions.onFilterChanged = this.onFilter.bind(this);
     this.gridOptions.onCellClicked = this.onCellClicked.bind(this);

@@ -1,4 +1,10 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Output,
+  EventEmitter,
+  ChangeDetectionStrategy
+} from '@angular/core';
 
 import { LxTableComponent } from 'app/_shared/components';
 import { SxTableService } from 'app/_shared/components/lx-table/sx-table.service';
@@ -8,6 +14,7 @@ import { ColDef, ModelUpdatedEvent, RowSelectedEvent } from 'ag-grid-community';
 
 @Component({
   selector: 'sx-ecuenta-facs-table',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './ecuenta-facs-table.component.html',
   styleUrls: ['./ecuenta-facs-table.component.scss']
 })

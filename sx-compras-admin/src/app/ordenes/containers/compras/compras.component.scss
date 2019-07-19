@@ -1,8 +1,13 @@
-.compras-table-panel {
-  max-height: 300px;
+mat-card {
+  height: calc(100% - 20px);
+  display: flex;
+  flex-direction: column;
+}
+
+.grid-panel {
+  height: 100%;
+  flex-grow: 1;
   overflow: auto;
 }
-.partidas-panel {
-  min-height: 200px;
-  background-color: red;
-}
+
+

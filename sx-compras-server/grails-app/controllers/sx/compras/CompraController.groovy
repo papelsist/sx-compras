@@ -53,8 +53,7 @@ class CompraController extends RestfulController<Compra> {
         def query = Compra.where{}
         def pendientes = this.params.getBoolean('pendientes')
 
-        if(pendientes){ // Regresa todos los pendientes sin importar
-            log.info('Surtiendo solo pendientes')
+        if(pendientes){ 
             params.max = 10000
             query = query.where{ pendiente == true}
             return query.list(params)
@@ -68,6 +67,7 @@ class CompraController extends RestfulController<Compra> {
             String provId = params.proveedor
             query = query.where { proveedor.id == provId}
         }
+        
         return  query.list(params)
     }
 
