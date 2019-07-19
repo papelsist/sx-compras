@@ -1,25 +1,9 @@
 import { Action } from '@ngrx/store';
-
-import { Sucursal } from '../../models';
+import { HttpErrorResponse } from '@angular/common/http';
 
 export enum ApplicationActionTypes {
-  LoadSucursal = '[Application] LoadSucursal',
-  LoadSucursalFail = '[Application] LoadSucursal fail',
-  LoadSucursalSuccess = '[Application] LoadSucursal success',
-  SetGlobalLoading = '[Application] Set global loading'
-}
-
-export class LoadSucursal implements Action {
-  readonly type = ApplicationActionTypes.LoadSucursal;
-  constructor(public payload: { url: string }) {}
-}
-export class LoadSucursalFail implements Action {
-  readonly type = ApplicationActionTypes.LoadSucursalFail;
-  constructor(public payload: any) {}
-}
-export class LoadSucursalSuccess implements Action {
-  readonly type = ApplicationActionTypes.LoadSucursalSuccess;
-  constructor(public payload: { sucursal: Sucursal }) {}
+  SetGlobalLoading = '[Application] Set global loading',
+  GlobalHttpError = '[Application] Set global Http error'
 }
 
 export class SetGlobalLoading implements Action {
@@ -27,8 +11,9 @@ export class SetGlobalLoading implements Action {
   constructor(public payload: { loading: boolean }) {}
 }
 
-export type ApplicationActions =
-  | LoadSucursal
-  | LoadSucursalFail
-  | LoadSucursalSuccess
-  | SetGlobalLoading;
+export class GlobalHttpError implements Action {
+  readonly type = ApplicationActionTypes.GlobalHttpError;
+  constructor(public payload: { response: HttpErrorResponse }) {}
+}
+
+export type ApplicationActions = SetGlobalLoading;

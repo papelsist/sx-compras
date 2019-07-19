@@ -66,7 +66,5 @@ export class MainPageComponent implements OnInit {
 
   ngOnInit() {
     this.session$ = this.store.pipe(select(fromAuth.getSession));
-    this.loading$ = this.store.pipe(select(fromRoot.getGlobalLoading));
-    this.sucursal$ = this.store.pipe(select(fromRoot.getSucursal));
   }
 }

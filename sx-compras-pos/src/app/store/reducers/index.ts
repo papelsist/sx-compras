@@ -3,14 +3,10 @@ import {
   RouterStateSnapshot,
   Params
 } from '@angular/router';
-import {
-  ActionReducerMap,
-  createFeatureSelector,
-  createSelector
-} from '@ngrx/store';
+import { ActionReducerMap, createFeatureSelector } from '@ngrx/store';
 
 import * as fromRouter from '@ngrx/router-store';
-import * as fromApplication from './application.reducre';
+import * as fromApplication from './application.reducer';
 
 export interface RouterStateUrl {
   url: string;
@@ -33,20 +29,6 @@ export const getRouterState = createFeatureSelector<
   fromRouter.RouterReducerState<RouterStateUrl>
 >('routerReducer');
 
-export const getApplicationState = createSelector(
-  (state: State) => state.application
-);
-
-export const getSucursal = createSelector(
-  getApplicationState,
-  fromApplication.getSucursal
-);
-
-export const getGlobalLoading = createSelector(
-  getApplicationState,
-  fromApplication.getGlobalLoading
-);
-
 export class CustomSerializer
   implements fromRouter.RouterStateSerializer<RouterStateUrl> {
   serialize(routerState: RouterStateSnapshot): RouterStateUrl {
@@ -60,6 +42,7 @@ export class CustomSerializer
     const { params } = state;
     let parentParams;
     if (state.parent) {
+      // console.log('Adding parrent params: ', state);
       parentParams = state.parent.params;
     }
 

@@ -39,16 +39,7 @@ export class ConfigService {
   load(): Promise<any> {
     const promise = this.http
       .get(this.configurationUrl)
-      .pipe(
-        tap(config => console.log('Config: ', config)),
-        tap((config: any) =>
-          this.store.dispatch(
-            new fromApplication.LoadSucursalSuccess({
-              sucursal: config.sucursal
-            })
-          )
-        )
-      )
+      .pipe(tap(config => console.log('Config: ', config)))
       .toPromise();
     promise.then(config => {
       this.config = config; // <--- THIS RESOLVES AFTER

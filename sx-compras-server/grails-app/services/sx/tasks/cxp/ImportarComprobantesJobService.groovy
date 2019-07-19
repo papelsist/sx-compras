@@ -19,7 +19,7 @@ class ImportarComprobantesJobService {
     void importarComprobantesDeCompras() {
 
         Environment.executeForCurrentEnvironment {
-            production {
+            compras {
                 log.info('Importando CFDIS de COMPRAS  desde {} , {}', comprobanteFiscalService.cfdiDir, new Date().format("dd/MM/yyyy hh:mm:ss"))
                 try{
                     int rows = comprobanteFiscalService.importacionLocal('COMPRAS', true)
