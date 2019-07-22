@@ -36,7 +36,6 @@ class InventariosProcGeneralesTask implements  AsientoBuilder {
                         row.cta_contable.toString(),
                         descripcion,
                         row,
-                        0.0,
                         row.costo))
                 if(row.referencia2 != '06 TRASLADOS'){
                     poliza.addToPartidas(mapRow(
@@ -52,6 +51,7 @@ class InventariosProcGeneralesTask implements  AsientoBuilder {
                         row.cta_contable.toString(),
                         descripcion,
                         row,
+                        0.00,
                         row.costo))
                 if(row.referencia2 != '06 TRASLADOS'){
                     poliza.addToPartidas(mapRow(
