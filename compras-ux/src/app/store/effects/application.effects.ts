@@ -22,7 +22,6 @@ import {
   RouterCancelAction,
   ROUTER_CANCEL
 } from '@ngrx/router-store';
-
 import { TdLoadingService, TdDialogService } from '@covalent/core';
 
 @Injectable()
@@ -35,7 +34,6 @@ export class ApplicationsEffects {
     private dialogService: TdDialogService
   ) {
     this.router.events.subscribe(event => {
-      // console.log('Event: ', event);
       switch (true) {
         case event instanceof NavigationStart: {
           this.store.dispatch(
@@ -77,23 +75,13 @@ export class ApplicationsEffects {
     ofType<fromApplication.GlobalHttpError>(
       fromApplication.ApplicationActionTypes.GlobalHttpError
     ),
-    tap(action => console.log('Action: ', action)),
     map(action => action.payload.response),
-    tap(response => {
-      this.loadingService.resolve();
-      let message = 'HttpError ';
-      if (response) {
-        message = response.error ? response.error.message : 'Error';
-        const path = response.url;
-        if (path) {
-          message = `${message} Url: ${path}`;
-        }
-        console.error('Error: ', response.message);
-      } else {
-        message = 'HttpError sin mayor informacion';
-      }
+    map(response => {
+      const message = response.error ? response.error.message : 'Error';
+      const message2 = response.message ? response.message : '';
+      console.error('Error: ', response);
       this.dialogService.openAlert({
-        message: `${response.status} ${message}`,
+        message: `${response.status} ${message} ${message2}`,
         title: `Error ${response.status}`,
         closeButton: 'Cerrar'
       });

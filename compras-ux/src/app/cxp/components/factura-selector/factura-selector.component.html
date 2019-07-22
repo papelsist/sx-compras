@@ -1,0 +1,24 @@
+<div layout>
+  <span>
+    <span mat-dialog-title>{{title}}</span>
+    <span *ngIf="selected">
+      Seleccionados: {{selected.length}}
+    </span>
+  </span>
+
+  <span flex></span>
+  <mat-form-field flex>
+    <input matInput (keyup)="table.applyFilter($event.target.value)" placeholder="Filtrar" autocomplete="off">
+  </mat-form-field>
+</div>
+
+<mat-divider></mat-divider>
+
+<div class="facturas-table-panel">
+  <sx-cxp-facturas-table #table [facturas]="facturas" (select)="onSelection($event)"></sx-cxp-facturas-table>
+
+</div>
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close type="button">Cancelar</button>
+  <button mat-button [mat-dialog-close]="selected" [disabled]="!selected" type="button">Seleccionar</button>
+</mat-dialog-actions>

@@ -1,0 +1,87 @@
+<form layout="column" [formGroup]="form">
+  <div formGroupName="direccion">
+    <div layout>
+      <mat-form-field>
+        <input
+          type="text"
+          matInput
+          placeholder="Código Postal"
+          formControlName="codigoPostal"
+          #zipField
+        />
+      </mat-form-field>
+    </div>
+
+    <div layout>
+      <mat-form-field flex>
+        <input
+          type="text"
+          matInput
+          placeholder="Calle"
+          formControlName="calle"
+          sxToUpperCase
+        />
+      </mat-form-field>
+
+      <mat-form-field class="pad-left">
+        <input
+          type="text"
+          matInput
+          placeholder="# Exterior"
+          formControlName="numeroExterior"
+        />
+      </mat-form-field>
+
+      <mat-form-field class="pad-left">
+        <input
+          type="text"
+          matInput
+          placeholder="# Interior"
+          formControlName="numeroInterior"
+        />
+      </mat-form-field>
+    </div>
+
+    <div layout>
+      <mat-form-field flex>
+        <input
+          type="text"
+          matInput
+          placeholder="Colonia"
+          formControlName="colonia"
+        />
+      </mat-form-field>
+
+      <mat-form-field class="pad-left" flex>
+        <input
+          type="text"
+          matInput
+          placeholder="Delegación / Municipio"
+          formControlName="municipio"
+          sxToUpperCase
+        />
+      </mat-form-field>
+    </div>
+
+    <div layout>
+      <mat-form-field flex>
+        <input
+          type="text"
+          matInput
+          placeholder="Estado"
+          formControlName="estado"
+          sxToUpperCase
+        />
+      </mat-form-field>
+      <mat-form-field class="pad-left" flex>
+        <input
+          type="text"
+          matInput
+          placeholder="Pais"
+          formControlName="pais"
+          sxToUpperCase
+        />
+      </mat-form-field>
+    </div>
+  </div>
+</form>

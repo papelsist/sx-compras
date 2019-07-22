@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 
+import { of as observableOf, Observable } from 'rxjs';
 import { Store, select } from '@ngrx/store';
-import * as fromStore from 'app/store';
-import * as fromAuth from '../../../auth/store';
+import * as fromAuth from 'app/auth/store';
+import { AuthSession } from '../../../auth/models/authSession';
 
-import { of, Observable } from 'rxjs';
-import { User } from 'app/auth/models/user';
+import { ProveedorUtilsService } from 'app/proveedores/services/proveedor-utils.service';
 
 @Component({
   selector: 'sx-main-page',
@@ -20,37 +20,49 @@ export class MainPageComponent implements OnInit {
       title: 'Inicio'
     },
     {
-      icon: '',
-      route: '/credito',
-      title: 'Crédito'
+      icon: 'shopping_cart',
+      route: '/ordenes',
+      title: 'Ordenes'
+    },
+    {
+      icon: 'flight_land',
+      route: '/recepciones',
+      title: 'Recepciones'
+    },
+    {
+      route: '/alcances',
+      title: 'Alcances',
+      icon: 'data_usage'
     }
   ];
 
   usermenu: Array<{ icon: string; route: string; title: string }> = [
     {
-      icon: 'tune',
-      route: '.',
-      title: 'Cuenta'
+      icon: 'exit_to_app',
+      route: '/logout',
+      title: 'Salir del sistema'
     }
   ];
 
   modulo$: Observable<string>;
-  expiration$: Observable<any>;
-  apiInfo$: Observable<any>;
-  user: User;
 
   sidenavWidth = 300;
 
-  constructor(private store: Store<fromStore.State>) {}
+  session$: Observable<AuthSession>;
+
+  constructor(
+    private store: Store<fromAuth.AuthState>,
+    private proveedorUtils: ProveedorUtilsService
+  ) {}
 
   ngOnInit() {
-    this.modulo$ = of('SX Gastos');
-    this.store.dispatch(new fromAuth.LoadUserSession());
+    this.modulo$ = observableOf('PENDIENTE');
+    this.session$ = this.store.pipe(select(fromAuth.getSession));
+  }
 
-    this.expiration$ = this.store.pipe(select(fromAuth.getSessionExpiration));
-    this.apiInfo$ = this.store.pipe(select(fromAuth.getApiInfo));
-
-    this.store.pipe(select(fromAuth.getUser)).subscribe(u => (this.user = u));
+  @HostListener('document:keydown.control.p', ['$event'])
+  onConsultaDeProveedores(event) {
+    this.proveedorUtils.consultaRapida();
   }
 
   logout() {

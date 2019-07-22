@@ -1,0 +1,47 @@
+.table-container {
+  min-height: 600px
+}
+
+table {
+  width: 100%;
+  // min-height: 600px
+  // overflow: auto;
+}
+// .mat-table {
+//   overflow: auto;
+//   min-height: 400px;
+//   max-height: 550px;
+// }
+
+.mat-column-tipoDeComprobante{
+  max-width: 20px;
+}
+.mat-cell {
+  font-size: 11px;
+}
+.mat-row {
+  cursor: pointer;
+  height: 30px;
+
+}
+
+
+.mat-column-proveedor{
+  max-width: 60px;
+}
+.mat-column-unidad{
+  max-width: 50px;
+}
+
+.mat-column-clave{
+  max-width: 120px;
+}
+
+.mat-column-precioBruto, .mat-column-precio{
+  max-width: 110px;
+}
+.mat-column-desc1, .mat-column-desc2, .mat-column-desc3, .mat-column-desc4{
+  max-width: 80px;
+}
+
+

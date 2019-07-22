@@ -1,0 +1,17 @@
+<form novalidate [formGroup]="form">
+
+  <h2 mat-dialog-title>Mantenimiento de línea</h2>
+  <mat-dialog-content>
+    <div layout>
+      <sx-upper-case-field flex formControlName="linea" placeholder="Nombre"></sx-upper-case-field>
+      <mat-checkbox formControlName="activa"> Activa</mat-checkbox>
+    </div>
+
+  </mat-dialog-content>
+
+  <mat-dialog-actions>
+    <button mat-button mat-dialog-close>Cancelar</button>
+    <!-- The mat-dialog-close directive optionally accepts a value as a result for the dialog. -->
+    <button mat-button [mat-dialog-close]="form.value" [disabled]="form.invalid || form.pristine">Salvar</button>
+  </mat-dialog-actions>
+</form>

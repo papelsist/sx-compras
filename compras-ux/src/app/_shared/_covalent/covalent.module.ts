@@ -37,8 +37,8 @@ const COVALENT_MODULES: any[] = [
 ];
 
 @NgModule({
-  imports: [COVALENT_MODULES],
-  exports: [COVALENT_MODULES],
+  imports: [...COVALENT_MODULES],
+  exports: [...COVALENT_MODULES],
   declarations: []
 })
 export class CovalentModule {}

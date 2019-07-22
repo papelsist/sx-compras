@@ -10,8 +10,8 @@ $typography: mat-typography-config(
 
 @include mat-core();
 // @include mat-core($typography); // $typography is an **optional** argument for the mat-core
-$primary:  mat-palette($mat-indigo, 800);
-$accent: mat-palette($mat-cyan, 800);
+$primary: mat-palette($mat-brown, 600);
+$accent:  mat-palette($mat-cyan, 800, A100, A400);
 $warn:    mat-palette($mat-red, 600);
 
 $hoover:  mat-palette($mat-gray, 300, A300, A400);
@@ -20,7 +20,6 @@ $active:  mat-palette($mat-gray, 600, A100, A400);
 $theme: mat-light-theme($primary, $accent, $warn);
 
 @include angular-material-theme($theme);
-// @include covalent-theme($theme, $typography); // $typography is an **optional** argument for the
 @include covalent-theme($theme);
 
 $foreground: map-get($theme, foreground);
@@ -56,10 +55,10 @@ mat-nav-list {
 
 .mat-row {
   position: relative; // For matRipple
-  &:hover:not(.active):not(.pasive) {
-    background: mat-color($accent);
+  &:hover:not(.active) {
+    background: mat-color($hoover);
     .mat-cell {
-      color: mat-color($accent, default-contrast)
+      color: mat-color($hoover, default-contrast)
     }
   }
 }

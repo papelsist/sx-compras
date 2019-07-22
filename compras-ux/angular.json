@@ -3,23 +3,22 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "sx-cxc2": {
+    "compras-ux": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
+          "spec": false,
           "prefix": "sx",
-          "style": "scss",
-          "changeDetection": "OnPush",
-          "skipImport": true
+          "styleext": "scss"
         }
       },
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "cxc2",
+            "outputPath": "compras",
             "index": "src/index.html",
             "main": "src/main.ts",
             "tsConfig": "src/tsconfig.app.json",
@@ -28,7 +27,9 @@
             "styles": [
               "src/styles.scss",
               "src/theme.scss",
-              "node_modules/@covalent/core/common/platform.scss"
+              "node_modules/@covalent/core/common/platform.scss",
+              "node_modules/ag-grid-community/dist/styles/ag-grid.css",
+              "node_modules/ag-grid-community/dist/styles/ag-theme-balham.css"
             ],
             "scripts": []
           },
@@ -55,19 +56,19 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "sx-cxc2:build",
-            "port": 4700
+            "browserTarget": "compras-ux:build",
+            "port": 4230
           },
           "configurations": {
             "production": {
-              "browserTarget": "sx-cxc2:build:production"
+              "browserTarget": "compras-ux:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "sx-cxc2:build"
+            "browserTarget": "compras-ux:build"
           }
         },
         "test": {
@@ -95,8 +96,8 @@
         }
       }
     },
-    "sx-cxc2-e2e": {
-      "root": "e2e/",
+    "compras-ux-e2e": {
+      "root": "",
       "sourceRoot": "",
       "projectType": "application",
       "architect": {
@@ -104,7 +105,7 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "./protractor.conf.js",
-            "devServerTarget": "sx-cxc2:serve"
+            "devServerTarget": "compras-ux:serve"
           }
         },
         "lint": {
@@ -117,7 +118,16 @@
       }
     }
   },
-  "defaultProject": "sx-cxc2",
+  "defaultProject": "compras-ux",
+  "schematics": {
+    "@schematics/angular:component": {
+      "prefix": "sx",
+      "styleext": "scss"
+    },
+    "@schematics/angular:directive": {
+      "prefix": "sx"
+    }
+  },
   "cli": {
     "packageManager": "npm"
   }

@@ -21,6 +21,11 @@ export class MainPageComponent implements OnInit {
       title: 'Inicio'
     },
     {
+      icon: 'border_color',
+      route: '/requisiciones',
+      title: 'Requisiciones'
+    },
+    {
       icon: 'shopping_cart',
       route: '/ordenes',
       title: 'Ordenes'

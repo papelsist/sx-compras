@@ -16,4 +16,4 @@ export class GlobalHttpError implements Action {
   constructor(public payload: { response: HttpErrorResponse }) {}
 }
 
-export type ApplicationActions = SetGlobalLoading | GlobalHttpError;
+export type ApplicationActions = SetGlobalLoading;

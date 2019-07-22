@@ -1,0 +1,70 @@
+<mat-card>
+  <div
+    layout
+    layout-align="start center"
+    class="pad"
+    *ngIf="periodo$ | async as periodo"
+  >
+    <span>
+      <span class="mat-title title">Estado de cuenta ( FACTURAS) </span>
+    </span>
+    <span flex></span>
+    <span flex *ngIf="!proveedor" class="pad-left"
+      >Seleccione un proveedor</span
+    >
+    <mat-card-title *ngIf="proveedor$ | async as proveedor">
+      {{ proveedor.nombre }}
+    </mat-card-title>
+    <span flex></span>
+    <sx-periodo-picker
+      [periodo]="periodo"
+      (change)="onPeriodoChange($event)"
+    ></sx-periodo-picker>
+    <button mat-button mat-icon-button color="primary" (click)="seleccionar()">
+      <mat-icon>person</mat-icon>
+    </button>
+    <span>
+      <button mat-icon-button [matMenuTriggerFor]="toolbarMenu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #toolbarMenu="matMenu">
+        <button
+          mat-menu-item
+          (click)="reload(proveedor, periodo)"
+          [disabled]="!proveedor"
+        >
+          <mat-icon>sync</mat-icon> Recargar
+        </button>
+        <button
+          (click)="grid.exportData('ECUENTA_FACS')"
+          mat-menu-item
+          matTooltip="Descargar registros en formato CSV"
+        >
+          <mat-icon color="primary">file_download</mat-icon> Descargar
+        </button>
+
+        <button
+          mat-menu-item
+          (click)="grid.clearSelection()"
+          [disabled]="selected.length === 0"
+          color="primary"
+        >
+          <mat-icon>clear_all</mat-icon> Limpiar selección
+        </button>
+      </mat-menu>
+    </span>
+  </div>
+  <mat-divider></mat-divider>
+  <ng-template
+    tdLoading
+    [tdLoadingUntil]="!(loading$ | async)"
+    tdLoadingStrategy="overlay"
+  >
+  </ng-template>
+  <div class="grid-panel">
+    <sx-ecuenta-facs-table
+      #grid
+      [partidas]="facturas$ | async"
+    ></sx-ecuenta-facs-table>
+  </div>
+</mat-card>

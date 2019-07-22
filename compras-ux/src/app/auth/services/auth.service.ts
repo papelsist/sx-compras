@@ -29,11 +29,4 @@ export class AuthService {
   get session() {
     return readFromStore();
   }
-
-  getSessionInfo(): Observable<any> {
-    const url = this.config.buildApiUrl('session');
-    return this.http
-      .get<any>(url)
-      .pipe(catchError((error: any) => throwError(error)));
-  }
 }

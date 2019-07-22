@@ -1,0 +1,14 @@
+.proveedores-page {
+  border: 0px solid black;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0px;
+  margin: 1px;
+  box-sizing: border-box;
+  > *:not(router-outlet) {
+    flex: 1;
+    display: block;
+  }
+}
+

@@ -1,0 +1,49 @@
+<form [formGroup]="form">
+  <div layout>
+    <span mat-dialog-title>Aplicación</span>
+    <span flex></span>
+    <!-- <span mat-dialog-title>Disponible: </span>
+    <span mat-dialog-title class="pad-left tc-indigo-500">{{disponible | currency}}</span> -->
+  </div>
+  <div layout>
+    <mat-form-field flex>
+      <input matInput placeholder="Factura" value="{{cxp.serie}} {{cxp.folio}}" [disabled]="true">
+    </mat-form-field>
+
+    <mat-form-field flex class="pad-left pad-right">
+      <input matInput placeholder="UUID" [value]="cxp.uuid.substr(-12, 12)" [disabled]="true">
+    </mat-form-field>
+    <mat-form-field flex>
+      <input matInput placeholder="Fecha" value="{{cxp.fecha | date: 'dd/MM/yyyy'}}" [disabled]="true">
+    </mat-form-field>
+  </div>
+  <div layout>
+    <mat-form-field flex>
+      <input matInput placeholder="Total" value="{{cxp.total | currency }}" [disabled]="true">
+    </mat-form-field>
+    <mat-form-field flex class="pad-left pad-right">
+      <input matInput placeholder="Pagos" value="{{cxp.pagos | currency}}" [disabled]="true">
+    </mat-form-field>
+
+  </div>
+  <div layout>
+    <mat-form-field flex>
+      <input matInput placeholder="Saldo" value="{{cxp.saldo | currency}}" [disabled]="true">
+    </mat-form-field>
+    <mat-form-field flex>
+      <input matInput formControlName="importe" placeholder="Importe" required autocomplete="off" type="number">
+      <mat-error *ngIf="form.get('importe').hasError('importeInvalido')">Importe invalido (Max: {{disponible | currency}})</mat-error>
+      <mat-hint align="end">Disponible: {{disponible | currency}}</mat-hint>
+    </mat-form-field>
+    <mat-form-field class="pad-left">
+      <input matInput [matDatepicker]="myDatepicker" formControlName="fecha">
+      <mat-datepicker-toggle matSuffix [for]="myDatepicker"></mat-datepicker-toggle>
+      <mat-datepicker #myDatepicker></mat-datepicker>
+    </mat-form-field>
+  </div>
+
+  <mat-dialog-actions>
+    <button mat-button [mat-dialog-close]="form.value" [disabled]="form.invalid">Aceptar</button>
+    <button mat-button mat-dialog-close type="button">Cancelar</button>
+  </mat-dialog-actions>
+</form>

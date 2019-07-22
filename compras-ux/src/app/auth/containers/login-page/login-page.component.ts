@@ -7,7 +7,17 @@ import { Observable } from 'rxjs';
 
 @Component({
   selector: 'sx-login-page',
-  templateUrl: './login-page.component.html'
+  templateUrl: './login-page.component.html',
+  styles: [`
+    :host {
+      position: relative;
+      display: flex;
+      flex: 1 1 auto;
+      width: 100%;
+      height: 100%;
+      min-width: 0;
+    }
+  `]
 })
 export class LoginPageComponent implements OnInit {
   loading$: Observable<boolean>;
@@ -19,7 +29,7 @@ export class LoginPageComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.loading$ = this.store.pipe(select(fromStore.getAuthLoading));
+    this.loading$ = this.store.select(fromStore.getAuthLoading);
     this.error$ = this.store.pipe(select(fromStore.getAuthError));
 
     this.form = this.fb.group({

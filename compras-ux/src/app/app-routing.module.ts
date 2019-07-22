@@ -5,8 +5,6 @@ import { MainPageComponent } from './_core/containers/main-page/main-page.compon
 import { HomePageComponent } from './_core/containers/home-page/home-page.component';
 import { AuthGuard } from './auth/services/auth.guard';
 
-import { SelectiveLoader } from './utils/selective-loader';
-
 const routes: Routes = [
   {
     path: '',
@@ -15,19 +13,27 @@ const routes: Routes = [
     children: [
       { path: '', component: HomePageComponent },
       {
-        path: 'credito',
-        loadChildren: './credito/credito.module#CreditoModule'
+        path: 'catalogos',
+        loadChildren: './productos/productos.module#ProductosModule'
+      },
+      {
+        path: 'cxp',
+        loadChildren: './cxp/cxp.module#CxpModule'
+      },
+      {
+        path: 'proveedores',
+        loadChildren: './proveedores/proveedores.module#ProveedoresModule'
+      },
+      {
+        path: 'ordenes',
+        loadChildren: './ordenes/ordenes.module#OrdenesModule'
       }
     ]
   }
 ];
 
 @NgModule({
-  imports: [
-    RouterModule.forRoot(routes, {
-      preloadingStrategy: SelectiveLoader
-    })
-  ],
+  imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
 export class AppRoutingModule {}

@@ -4,14 +4,13 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { MaterialModule } from './_material/material.module';
 import { CovalentModule } from './_covalent/covalent.module';
-
+import { AgGridModule } from 'ag-grid-angular';
 // components
 import { components, entyComponents } from './components';
 // Directives
 import { directives } from './directives';
 import { pipes } from './pipes';
 import { MAT_DATE_LOCALE } from '@angular/material';
-import { SelectorCxcModule } from './selector-cxc/selector-cxc.module';
 
 @NgModule({
   imports: [
@@ -20,7 +19,7 @@ import { SelectorCxcModule } from './selector-cxc/selector-cxc.module';
     ReactiveFormsModule,
     MaterialModule,
     CovalentModule,
-    SelectorCxcModule
+    AgGridModule.withComponents([])
   ],
   exports: [
     CommonModule,
@@ -28,11 +27,11 @@ import { SelectorCxcModule } from './selector-cxc/selector-cxc.module';
     ReactiveFormsModule,
     MaterialModule,
     CovalentModule,
+    AgGridModule,
     ...components,
     ...entyComponents,
     ...directives,
-    ...pipes,
-    SelectorCxcModule
+    ...pipes
   ],
   declarations: [...components, ...directives, ...pipes],
   entryComponents: [...entyComponents],

@@ -1,6 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { Observable } from 'rxjs';
 
 import { Periodo } from 'app/_core/models/periodo';
 
@@ -9,7 +8,9 @@ import { PeriodoDialogComponent } from '../periodo-dialog/periodo-dialog.compone
 @Component({
   selector: 'sx-periodo-picker',
   template: `
-    <button mat-icon-button [matTooltip]="toolTip" (click)="seleccionar()"><mat-icon>event</mat-icon></button>
+    <button color="primary" mat-button (click)="seleccionar()">
+      <mat-icon>event</mat-icon> {{ periodo.toString() }}
+    </button>
   `,
   styles: [``]
 })
@@ -30,7 +31,7 @@ export class PeriodoPickerComponent implements OnInit {
       })
       .afterClosed()
       .subscribe(res => {
-        if (res !== null) {
+        if (!!res) {
           this.change.emit(res);
         }
       });
