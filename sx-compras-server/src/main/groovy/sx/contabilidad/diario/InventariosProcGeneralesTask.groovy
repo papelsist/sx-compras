@@ -31,13 +31,23 @@ class InventariosProcGeneralesTask implements  AsientoBuilder {
         rows.each { row ->
             String descripcion = generarDescripcion(row)
             if(row.costo > 0.0) {
-                poliza.addToPartidas(mapRow(
+                if(row.referencia2 == '06 TRASLADOS'){
+                    poliza.addToPartidas(mapRow(
                         poliza,
                         row.cta_contable.toString(),
                         descripcion,
                         row,
                         row.costo))
+                }
                 if(row.referencia2 != '06 TRASLADOS'){
+                    poliza.addToPartidas(mapRow(
+                        poliza,
+                        row.cta_contable.toString(),
+                        descripcion,
+                        row,
+                        0.0,
+                        row.costo))
+                
                     poliza.addToPartidas(mapRow(
                         poliza,
                         "115-0001-${row.suc.toString().padLeft(4,'0')}-0000",
@@ -46,14 +56,23 @@ class InventariosProcGeneralesTask implements  AsientoBuilder {
                         row.costo))
                 } 
             }else {
-                poliza.addToPartidas(mapRow(
+                if(row.referencia2 == '06 TRASLADOS'){
+                    poliza.addToPartidas(mapRow(
                         poliza,
                         row.cta_contable.toString(),
                         descripcion,
                         row,
                         0.00,
                         row.costo))
+                }
                 if(row.referencia2 != '06 TRASLADOS'){
+                    poliza.addToPartidas(mapRow(
+                        poliza,
+                        row.cta_contable.toString(),
+                        descripcion,
+                        row,
+                        row.costo))
+
                     poliza.addToPartidas(mapRow(
                             poliza,
                             "115-0001-${row.suc.toString().padLeft(4,'0')}-0000",
