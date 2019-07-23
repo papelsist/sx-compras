@@ -5,10 +5,12 @@ import { RequisicionDeMaterial } from '../models';
 import {
   RequisicionesDeMaterialActions,
   RequisicionesDeMaterialActionTypes
-} from './store/actions';
+} from './actions';
 import { createFeatureSelector } from '@ngrx/store';
 
 export const REQUISICION_PERIODO_KEY = 'sx.compras.requisiciones.periodo';
+
+export const FEATURE_STORE_NAME = 'requisiciones-de-material';
 
 export interface State extends EntityState<RequisicionDeMaterial> {
   loading: boolean;
@@ -31,6 +33,7 @@ export function reducer(
   action: RequisicionesDeMaterialActions
 ): State {
   switch (action.type) {
+    case RequisicionesDeMaterialActionTypes.CreateRequisicionDeMaterial:
     case RequisicionesDeMaterialActionTypes.LoadRequisiciones: {
       return {
         ...state,
@@ -38,6 +41,7 @@ export function reducer(
       };
     }
 
+    case RequisicionesDeMaterialActionTypes.CreateRequisicionDeMaterialFail:
     case RequisicionesDeMaterialActionTypes.LoadRequisicionesFail: {
       return {
         ...state,
@@ -49,6 +53,13 @@ export function reducer(
         ...state,
         loading: false,
         loaded: true
+      });
+    }
+
+    case RequisicionesDeMaterialActionTypes.CreateRequisicionDeMaterialSuccess: {
+      return adapter.addOne(action.payload.requisicion, {
+        ...state,
+        loading: false
       });
     }
 
@@ -65,9 +76,10 @@ export const {
   selectTotal
 } = adapter.getSelectors();
 
-const getLoading = (state: State) => state.loading;
-const getLoaded = (state: State) => state.loaded;
-const getPeriodo = (state: State) => state.periodo;
+export const getLoading = (state: State) => state.loading;
+export const getLoaded = (state: State) => state.loaded;
+export const getPeriodo = (state: State) => state.periodo;
 
-export const getRequisicionesState = createFeatureSelector<State>('requisiciones-de-material');
-
+export const getRequisicionesState = createFeatureSelector<State>(
+  FEATURE_STORE_NAME
+);

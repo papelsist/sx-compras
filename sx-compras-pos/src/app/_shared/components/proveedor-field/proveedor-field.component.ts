@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, forwardRef } from '@angular/core';
+import { Component, Input, OnInit, forwardRef, OnDestroy } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import {
   ControlValueAccessor,
@@ -22,6 +22,7 @@ import { ConfigService } from 'app/utils/config.service';
 
 export const PROVEEDOR_LOOKUPFIELD_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
+  // tslint:disable-next-line: no-use-before-declare
   useExisting: forwardRef(() => ProveedorFieldComponent),
   multi: true
 };
@@ -32,14 +33,18 @@ export const PROVEEDOR_LOOKUPFIELD_VALUE_ACCESSOR: any = {
   templateUrl: './proveedor-field.component.html',
   styleUrls: ['./proveedor-field.component.scss']
 })
-export class ProveedorFieldComponent implements OnInit, ControlValueAccessor {
+export class ProveedorFieldComponent
+  implements OnInit, ControlValueAccessor, OnDestroy {
   private apiUrl: string;
 
   searchControl = new FormControl();
 
-  @Input() required = false;
-  @Input() tipo = 'COMPRAS';
-  @Input() estado: EstadoType = EstadoType.ACTIVOS;
+  @Input()
+  required = false;
+  @Input()
+  tipo = 'COMPRAS';
+  @Input()
+  estado: EstadoType = EstadoType.ACTIVOS;
 
   proveedores$: Observable<Proveedor[]>;
 
@@ -53,20 +58,30 @@ export class ProveedorFieldComponent implements OnInit, ControlValueAccessor {
 
   ngOnInit() {
     this.proveedores$ = this.searchControl.valueChanges.pipe(
+      debounceTime(300),
+      skip(3),
+      distinctUntilChanged(),
       switchMap(term => this.lookupProveedores(term))
     );
     this.prepareControl();
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
   private prepareControl() {
     this.subscription = this.searchControl.valueChanges
       .pipe(
         skip(1),
-        tap(() => this.onTouch()),
-        debounceTime(500),
-        distinctUntilChanged()
-        // filter(value => _.isObject(value)),
-        // distinctUntilChanged((p: Proveedor, q: Proveedor) => p.id === q.id)
+        distinctUntilChanged((p: Proveedor, q: Proveedor) => {
+          if (p && q) {
+            return p.id === q.id;
+          } else {
+            return false;
+          }
+        }),
+        tap(() => this.onTouch())
       )
       .subscribe(val => {
         if (_.isObject(val)) {

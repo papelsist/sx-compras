@@ -13,8 +13,8 @@ class UrlMappings {
             "/productos/disponibles"(controller: 'proveedorProducto', action: 'disponibles')
         }
 
-        // Requisiciones de material
-        "/api/requisiciones"(resources: 'requisicionDeMaterial',  excludes:['create', 'edit','patch'])
+        // requisicionDeMaterial de material
+        "/api/requisicionDeMaterial"(resources: 'requisicionDeMaterial',  excludes:['create', 'edit','patch'])
 
         // Ordenes de compra
         "/api/compras"(resources: 'compra',  excludes:['create', 'edit','patch']){

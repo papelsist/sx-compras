@@ -37,7 +37,7 @@ class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaC
     protected List<Poliza> listAllResources(Map params) {
         params.sort = params.sort ?:'clave'
         params.order = params.order ?:'asc'
-        params.max = 9000
+        // params.max = 9000
 
         Integer ejercicio = this.params.getInt('ejercicio')?: Periodo.currentYear()
         Integer mes = this.params.getInt('mes')?: Periodo.currentMes()
@@ -116,7 +116,7 @@ class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaC
                 poliza.mes == m &&
                 cuenta == cta &&
                 poliza.cierre != null
-            }.list(max: 30000)
+            }.list()
         }
         respond movimientos
 
@@ -166,7 +166,7 @@ class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaC
     def balanza() {
         params.sort = params.sort ?:'clave'
         params.order = params.order ?:'asc'
-        params.max = 9000
+        // params.max = 9000
 
         Integer ejercicio = this.params.getInt('ejercicio')?: Periodo.currentYear()
         Integer mes = this.params.getInt('mes')?: Periodo.currentMes()

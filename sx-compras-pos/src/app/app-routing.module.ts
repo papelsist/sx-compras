@@ -13,6 +13,10 @@ const routes: Routes = [
     children: [
       { path: '', component: HomePageComponent },
       {
+        path: 'requisiciones',
+        loadChildren: './requisiciones/requisiciones.module#RequisicionesModule'
+      },
+      {
         path: 'ordenes',
         loadChildren: './ordenes/ordenes.module#OrdenesModule'
       },

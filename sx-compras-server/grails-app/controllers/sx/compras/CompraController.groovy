@@ -23,6 +23,15 @@ class CompraController extends RestfulController<Compra> {
         super(Compra)
     }
 
+    @CompileDynamic
+    def update() {
+        String id = params.id as String
+        Compra compra = Compra.get(id)
+        bindData compra, getObjectToBind()
+        compra = compraService.saveCompra(compra)
+        respond compra, view: 'show'
+    }
+
 
     @Override
     protected Compra createResource() {
@@ -71,26 +80,31 @@ class CompraController extends RestfulController<Compra> {
         return  query.list(params)
     }
 
+
     def pendientes() {
         params.sort = 'lastUpdatred'
         params.order = 'desc'
         respond Compra.where{pendiente == true}.list(params)
     }
 
+    @CompileDynamic
     def cerrar(Compra compra) {
         if(compra == null) {
             notFound()
             return
         }
-        respond compraService.cerrarCompra(compra)
+        def res = compraService.cerrarCompra(compra)
+        respond res, view: 'show'
     }
 
+    @CompileDynamic
     def depurar(Compra compra) {
         if(compra == null) {
             notFound()
             return
         }
-        respond compraService.depurarCompra(compra)
+        def res = compraService.depurarCompra(compra)
+        respond res, view: 'show'
     }
 
     // @CompileDynamic
