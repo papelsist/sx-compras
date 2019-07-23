@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { Store, select } from '@ngrx/store';
-import * as fromRoot from 'app/store';
+
 import * as fromAuth from 'app/auth/store';
 
 import { Observable } from 'rxjs';
@@ -44,18 +44,8 @@ export class MainPageComponent implements OnInit {
 
   usermenu: Array<{ icon: string; route: string; title: string }> = [
     {
-      icon: 'swap_horiz',
-      route: '.',
-      title: 'Cambio de usuario'
-    },
-    {
-      icon: 'tune',
-      route: '.',
-      title: 'Cuenta'
-    },
-    {
       icon: 'exit_to_app',
-      route: '.',
+      route: '/logout',
       title: 'Salir del sistema'
     }
   ];
@@ -67,9 +57,13 @@ export class MainPageComponent implements OnInit {
   sidenavWidth = 300;
   session$: Observable<AuthSession>;
 
-  constructor(private store: Store<fromRoot.State>) {}
+  constructor(private store: Store<fromAuth.AuthState>) {}
 
   ngOnInit() {
     this.session$ = this.store.pipe(select(fromAuth.getSession));
+  }
+
+  logout() {
+    this.store.dispatch(new fromAuth.Logout());
   }
 }
