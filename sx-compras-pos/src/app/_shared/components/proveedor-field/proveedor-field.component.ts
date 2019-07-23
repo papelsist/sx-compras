@@ -58,8 +58,8 @@ export class ProveedorFieldComponent
 
   ngOnInit() {
     this.proveedores$ = this.searchControl.valueChanges.pipe(
-      skip(3),
       debounceTime(300),
+      skip(3),
       distinctUntilChanged(),
       switchMap(term => this.lookupProveedores(term))
     );

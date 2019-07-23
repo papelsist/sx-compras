@@ -44,11 +44,13 @@ export class RequisicionesComponent implements OnInit {
     this.dialog
       .open(RequisicionCreateComponent, { data: {}, width: '650px' })
       .afterClosed()
-      .subscribe(res =>
-        this.store.dispatch(
-          new fromStore.CreateRequisicionDeMaterial({ requisicion: res })
-        )
-      );
+      .subscribe(res => {
+        if (res) {
+          this.store.dispatch(
+            new fromStore.CreateRequisicionDeMaterial({ requisicion: res })
+          );
+        }
+      });
   }
   onSelect(event: RequisicionDeMaterial) {
     this.store.dispatch(

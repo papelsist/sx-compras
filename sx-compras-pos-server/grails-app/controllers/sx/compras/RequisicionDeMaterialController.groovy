@@ -10,6 +10,7 @@ import groovy.transform.CompileDynamic
 
 import org.apache.commons.lang3.exception.ExceptionUtils
 
+import sx.core.AppConfig
 import sx.reports.ReportService
 import sx.utils.Periodo
 
@@ -29,10 +30,20 @@ class RequisicionDeMaterialController extends RestfulController<RequisicionDeMat
         super(RequisicionDeMaterial)
     }
 
+     @Override
+    protected RequisicionDeMaterial createResource() {
+        def instance = new RequisicionDeMaterial()
+        bindData instance, getObjectToBind()
+        instance.folio = 0L
+        instance.sucursal = AppConfig.first().sucursal.nombre
+        return instance
+    }
+
     @Override
     protected RequisicionDeMaterial saveResource(RequisicionDeMaterial resource) {
         return requisicionDeMaterialService.save(resource)
     }
+
 
     @Override
     @CompileDynamic
