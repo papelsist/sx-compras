@@ -47,4 +47,16 @@ export class RequisicionDeMaterialService {
       .put<RequisicionDeMaterial>(url, requisicion)
       .pipe(catchError((error: any) => throwError(error)));
   }
+
+  disponibles(proveedor: string): Observable<any[]> {
+    const url = `${this.apiUrl}/disponibles`;
+    const params = new HttpParams().set('proveedor', proveedor);
+    return this.http.get<any[]>(url, { params: params });
+  }
+
+  getUrl(proveedorId: string) {
+    return this.configService.buildApiUrl(
+      `proveedores/${proveedorId}/productos`
+    );
+  }
 }

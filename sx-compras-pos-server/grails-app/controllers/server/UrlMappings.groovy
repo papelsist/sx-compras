@@ -15,6 +15,7 @@ class UrlMappings {
 
         // requisicionDeMaterial de material
         "/api/requisicionDeMaterial"(resources: 'requisicionDeMaterial',  excludes:['create', 'edit','patch'])
+        "/api/requisicionDeMaterial/disponibles"(controller: 'requisicionDeMaterial', action: 'disponibles')
 
         // Ordenes de compra
         "/api/compras"(resources: 'compra',  excludes:['create', 'edit','patch']){

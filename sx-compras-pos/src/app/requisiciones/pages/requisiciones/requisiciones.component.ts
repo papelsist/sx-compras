@@ -9,7 +9,7 @@ import { Observable } from 'rxjs';
 import { Periodo } from 'app/_core/models/periodo';
 import { RequisicionDeMaterial } from 'app/requisiciones/models';
 import { MatDialog } from '@angular/material';
-import { RequisicionCreateComponent } from 'app/requisiciones/components/requisicion-create/requisicion-create.component';
+import { RequisicionCreateComponent } from '../../components/requisicion-create/requisicion-create.component';
 
 @Component({
   selector: 'sx-requisiciones',
@@ -32,13 +32,16 @@ export class RequisicionesComponent implements OnInit {
     this.loading$ = this.store.pipe(
       select(fromStore.selectRequisicionesLoading)
     );
+    this.rows$ = this.store.pipe(select(fromStore.getAllRequisiciones));
   }
 
   onPeriodo(event: Periodo) {
     this.store.dispatch(new fromStore.SetPeriodo({ periodo: event }));
   }
 
-  onReload() {}
+  onReload() {
+    this.store.dispatch(new fromStore.LoadRequisicionesDeMaterial());
+  }
 
   onCreate() {
     this.dialog

@@ -13,11 +13,11 @@ class RequisicionDeMaterial {
 
     String id
 
+    String clave
+
     String proveedor
 
     String rfc
-
-    String clave
 
     String sucursal
 

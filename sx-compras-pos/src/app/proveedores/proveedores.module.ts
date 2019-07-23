@@ -14,9 +14,16 @@ import { components, entryComponents } from './components';
 import { containers } from './containers';
 import { AuthModule } from '../auth/auth.module';
 import { ReportesModule } from '../reportes/reportes.module';
+import { ProductosSelectorModule } from './productos-selector/productos-selector.module';
 
 @NgModule({
-  imports: [SharedModule, ProveedoresRoutingModule, AuthModule, ReportesModule],
+  imports: [
+    SharedModule,
+    ProveedoresRoutingModule,
+    AuthModule,
+    ReportesModule,
+    ProductosSelectorModule
+  ],
   declarations: [...components, ...containers],
   entryComponents: [...entryComponents],
   exports: [...containers, ...components]
@@ -24,6 +31,7 @@ import { ReportesModule } from '../reportes/reportes.module';
 export class ProveedoresModule {
   static forRoot(): ModuleWithProviders {
     return {
+      // tslint:disable-next-line: no-use-before-declare
       ngModule: RootProveedoresModule,
       providers: [...services, ...guards]
     };

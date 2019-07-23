@@ -8,15 +8,21 @@ import { reducer, FEATURE_STORE_NAME } from './store/reducer';
 import { RequisicionDeMaterialEffects } from './store/effects';
 
 import { RequisicionesRoutingModule } from './requisiciones-routing.module';
+//
 import { RequisicionesComponent } from './pages/requisiciones/requisiciones.component';
+import { RequisicionComponent } from './pages/requisicion/requisicion.component';
+// Dumb components
 import { RequisicionesTableComponent } from './components/requisiciones-table/requisiciones-table.component';
 import { RequisicionCreateComponent } from './components/requisicion-create/requisicion-create.component';
+import { RequisicionPartidasComponent } from './components/requisicion-partidas/requisicion-partidas.component';
 
 @NgModule({
   declarations: [
     RequisicionesComponent,
     RequisicionesTableComponent,
-    RequisicionCreateComponent
+    RequisicionCreateComponent,
+    RequisicionComponent,
+    RequisicionPartidasComponent
   ],
   entryComponents: [RequisicionCreateComponent],
   imports: [

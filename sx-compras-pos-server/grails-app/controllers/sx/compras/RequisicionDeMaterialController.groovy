@@ -11,6 +11,7 @@ import groovy.transform.CompileDynamic
 import org.apache.commons.lang3.exception.ExceptionUtils
 
 import sx.core.AppConfig
+import sx.core.ProveedorProducto
 import sx.reports.ReportService
 import sx.utils.Periodo
 
@@ -56,6 +57,14 @@ class RequisicionDeMaterialController extends RestfulController<RequisicionDeMat
         Periodo periodo = params.periodo
         def query = RequisicionDeMaterial.where{fecha >= periodo.fechaInicial && fecha <= periodo.fechaFinal}
         return  query.list(params)
+    }
+
+    @CompileDynamic
+    def disponibles() {
+        def cve = params.proveedor
+        def res = ProveedorProducto.where{proveedor.clave == cve && moneda == 'MXN'}.list()
+        res.sort{it.producto.clave}
+        respond res
     }
 
     def print( ) {

@@ -1,0 +1,8 @@
+<h4 mat-dialog-title>Productos disponibles</h4>
+<div layout>
+  <input (keyup)="onSearch(box.value)" placeholder="Buscar" flex #box />
+</div>
+<div class="grid-panel">
+  <sx-selector-table [partidas]="productos"></sx-selector-table>
+</div>
+<mat-dialog-content> </mat-dialog-content>

@@ -87,6 +87,7 @@ export class LxTableComponent implements OnInit, OnChanges {
   onGridReady(params: GridReadyEvent) {
     this.gridApi = params.api;
     this.gridApi.setRowData(this.partidas);
+    this.gridApi.sizeColumnsToFit();
   }
 
   buildRowStyle(params: any) {

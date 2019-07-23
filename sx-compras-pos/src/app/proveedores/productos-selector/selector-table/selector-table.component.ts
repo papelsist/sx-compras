@@ -13,13 +13,12 @@ import { ColDef, ModelUpdatedEvent, RowSelectedEvent } from 'ag-grid-community';
 import { RequisicionDeMaterial } from 'app/requisiciones/models';
 
 @Component({
-  selector: 'sx-requisiciones-table',
+  selector: 'sx-selector-table',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './requisiciones-table.component.html',
-  styleUrls: ['./requisiciones-table.component.scss']
+  templateUrl: './selector-table.component.html',
+  styleUrls: ['./selector-table.component.scss']
 })
-export class RequisicionesTableComponent extends LxTableComponent
-  implements OnInit {
+export class SelectorTableComponent extends LxTableComponent implements OnInit {
   @Output() selectionChange = new EventEmitter<any[]>();
 
   constructor(public tableService: SxTableService) {

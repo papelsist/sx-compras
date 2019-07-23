@@ -1,6 +1,7 @@
 import { Action } from '@ngrx/store';
 import { Periodo } from 'app/_core/models/periodo';
 import { RequisicionDeMaterial } from '../models';
+import { Update } from '@ngrx/entity';
 
 export enum RequisicionesDeMaterialActionTypes {
   SetPeriodo = '[Requisiciones de Material Component] Set Periodo',
@@ -10,7 +11,12 @@ export enum RequisicionesDeMaterialActionTypes {
   // Create
   CreateRequisicionDeMaterial = '[Requisiciones de Material Component] Create Requisiciones',
   CreateRequisicionDeMaterialFail = '[Requisiciones de Material API] Create Requisiciones fail',
-  CreateRequisicionDeMaterialSuccess = '[Requisiciones de Material API] Create Requisiciones Success'
+  CreateRequisicionDeMaterialSuccess = '[Requisiciones de Material API] Create Requisiciones Success',
+  // Update
+  UpdateRequisicionDeMaterial = '[Requisiciones de Material Component] Update Requisiciones',
+  UpdateRequisicionDeMaterialFail = '[Requisiciones de Material API] Update Requisiciones fail',
+  UpdateRequisicionDeMaterialSuccess = '[Requisiciones de Material API] Update Requisiciones Success',
+  UpsertRequisicion = '[Requisicion exist guard] Requisicion upsert'
 }
 
 export class SetPeriodo implements Action {
@@ -20,7 +26,6 @@ export class SetPeriodo implements Action {
 
 export class LoadRequisicionesDeMaterial implements Action {
   readonly type = RequisicionesDeMaterialActionTypes.LoadRequisiciones;
-  constructor(public payload: { periodo: Periodo }) {}
 }
 export class LoadRequisicionesDeMaterialFail implements Action {
   readonly type = RequisicionesDeMaterialActionTypes.LoadRequisicionesFail;
@@ -48,6 +53,27 @@ export class CreateRequisicionDeMaterialSuccess implements Action {
     RequisicionesDeMaterialActionTypes.CreateRequisicionDeMaterialSuccess;
   constructor(public payload: { requisicion: RequisicionDeMaterial }) {}
 }
+// Update
+export class UpdateRequisicionDeMaterial implements Action {
+  readonly type =
+    RequisicionesDeMaterialActionTypes.UpdateRequisicionDeMaterial;
+  constructor(public payload: { update: Update<RequisicionDeMaterial> }) {}
+}
+export class UpdateRequisicionDeMaterialFail implements Action {
+  readonly type =
+    RequisicionesDeMaterialActionTypes.UpdateRequisicionDeMaterialFail;
+  constructor(public payload: { response: any }) {}
+}
+export class UpdateRequisicionDeMaterialSuccess implements Action {
+  readonly type =
+    RequisicionesDeMaterialActionTypes.UpdateRequisicionDeMaterialSuccess;
+  constructor(public payload: { requisicion: RequisicionDeMaterial }) {}
+}
+
+export class UpsertRrequisicionDeMaterial implements Action {
+  readonly type = RequisicionesDeMaterialActionTypes.UpsertRequisicion;
+  constructor(public payload: { requisicion: RequisicionDeMaterial }) {}
+}
 
 export type RequisicionesDeMaterialActions =
   | SetPeriodo
@@ -56,4 +82,8 @@ export type RequisicionesDeMaterialActions =
   | LoadRequisicionesDeMaterialSuccess
   | CreateRequisicionDeMaterial
   | CreateRequisicionDeMaterialFail
-  | CreateRequisicionDeMaterialSuccess;
+  | CreateRequisicionDeMaterialSuccess
+  | UpdateRequisicionDeMaterial
+  | UpdateRequisicionDeMaterialFail
+  | UpdateRequisicionDeMaterialSuccess
+  | UpsertRrequisicionDeMaterial;
