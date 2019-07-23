@@ -97,6 +97,7 @@ class Poliza {
                 'PROVISION_DE_CARGA_SOCIAL',
                 'VARIACION_CAMBIARIA',
                 'IMPUESTOS_SOBRE_NOMINA',
+                'TRASPASO_IVA',
                 'CIERRE_ANUAL',
                 'CIERRE_MENSUAL']
     }

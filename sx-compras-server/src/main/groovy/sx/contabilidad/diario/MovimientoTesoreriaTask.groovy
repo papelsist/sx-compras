@@ -27,11 +27,11 @@ class MovimientoTesoreriaTask implements  AsientoBuilder{
     def generarAsientos(Poliza poliza, Map params = [:]) {
         procesarIntereses(poliza)
         procesarRetencionesIsr(poliza)
-       procesarDepositosPorIdentificar(poliza)
+        procesarDepositosPorIdentificar(poliza)
     }
 
     void procesarIntereses(Poliza poliza){
-        def movimientosTes = MovimientoDeTesoreria.executeQuery("from MovimientoDeTesoreria where fecha= ? and concepto ='DEPOSITO' and  comentario like '%INTERES%'",[poliza.fecha])
+        def movimientosTes = MovimientoDeTesoreria.executeQuery("from MovimientoDeTesoreria where fecha= ? and concepto ='DEPOSITO' and  concepto  'INTERESES'",[poliza.fecha])
         movimientosTes.each{mov ->mov.movimiento.moneda
             String ctaBanco= "102-${mov.movimiento.moneda.currencyCode == 'MXN' ? '0001': '0002'}-${mov.movimiento.cuenta.subCuentaOperativa}-0000"
              Map row = [
@@ -53,7 +53,7 @@ class MovimientoTesoreriaTask implements  AsientoBuilder{
     }
 
     void procesarRetencionesIsr(Poliza poliza){
-        def movimientosTes = MovimientoDeTesoreria.executeQuery("from MovimientoDeTesoreria where fecha= ? and concepto ='CARGO' and  comentario like '%RET%ISR%'",[poliza.fecha])
+        def movimientosTes = MovimientoDeTesoreria.executeQuery("from MovimientoDeTesoreria where fecha= ? and concepto ='CARGO' and concpeto = 'ISR_RETENIDO'",[poliza.fecha])
         movimientosTes.each{mov ->mov.movimiento.moneda
             String ctaBanco= "102-${mov.movimiento.moneda.currencyCode == 'MXN' ? '0001': '0002'}-${mov.movimiento.cuenta.subCuentaOperativa}-0000"
              Map row = [
@@ -99,6 +99,7 @@ class MovimientoTesoreriaTask implements  AsientoBuilder{
             poliza.addToPartidas(mapRow("208-0003-0000-0000",desc,row,0.00,iva)) 
         }
     }
+
 
     String generarDescripcion(Map row) {
         if(row.tc > 1.0) {
