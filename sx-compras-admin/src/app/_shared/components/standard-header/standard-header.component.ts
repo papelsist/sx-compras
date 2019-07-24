@@ -62,11 +62,11 @@ export class StandardHeaderComponent implements OnInit {
 
   ngOnInit() {}
 
-  @HostListener('document:keydown.control.i', ['$event'])
+  @HostListener('document:keydown.meta.i', ['$event'])
   onHotKeyInsert(event) {
-    // console.log('Key: ', event);
     this.create.emit();
   }
+
   @HostListener('document:keydown.insert', ['$event'])
   onHotKeyInsert2(event) {
     this.create.emit();

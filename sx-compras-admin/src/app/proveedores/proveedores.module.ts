@@ -16,6 +16,7 @@ import { AuthModule } from '../auth/auth.module';
 import { ReportesModule } from '../reportes/reportes.module';
 
 import { AgGridModule } from 'ag-grid-angular';
+import { ProductosSelectorModule } from './productos-selector/productos-selector.module';
 
 @NgModule({
   imports: [
@@ -23,7 +24,8 @@ import { AgGridModule } from 'ag-grid-angular';
     AgGridModule.withComponents([]),
     ProveedoresRoutingModule,
     AuthModule,
-    ReportesModule
+    ReportesModule,
+    ProductosSelectorModule
   ],
   declarations: [...components, ...containers],
   entryComponents: [...entryComponents],

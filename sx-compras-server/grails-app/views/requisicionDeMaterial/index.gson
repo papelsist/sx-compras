@@ -1,0 +1,8 @@
+import sx.compras.RequisicionDeMaterial
+
+model {
+	Iterable<RequisicionDeMaterial> requisicionDeMaterialList
+}
+
+json tmpl.requisicionDeMaterial(requisicionDeMaterialList ?: [])
+

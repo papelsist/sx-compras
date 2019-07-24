@@ -14,7 +14,8 @@ const routes: Routes = [
       { path: '', component: HomePageComponent },
       {
         path: 'requisiciones',
-        loadChildren: './requisiciones/requisiciones.module#RequisicionesModule'
+        loadChildren:
+          './requisiciones-material/requisiciones-material.module#RequisicionesMaterialModule'
       },
       {
         path: 'ordenes',
