@@ -7,7 +7,7 @@ import * as fromStore from '../../store';
 import { Observable } from 'rxjs';
 
 import { Periodo } from 'app/_core/models/periodo';
-import { RequisicionDeMaterial } from 'app/requisiciones/models';
+import { RequisicionDeMaterial } from '../../models';
 import { MatDialog } from '@angular/material';
 import { RequisicionCreateComponent } from '../../components/requisicion-create/requisicion-create.component';
 

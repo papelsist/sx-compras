@@ -30,7 +30,7 @@ export class RequisicionCreateComponent implements OnInit {
   private buildForm() {
     this.form = this.fb.group({
       proveedor: [null, Validators.required],
-      fecha: [new Date(), Validators.required],
+      fecha: [{ value: new Date(), disabled: true }, Validators.required],
       comentario: [null]
     });
   }
@@ -40,7 +40,8 @@ export class RequisicionCreateComponent implements OnInit {
       const { clave, nombre, rfc } = this.form.get('proveedor').value;
 
       const data = {
-        ...this.form.value,
+        ...this.form.getRawValue,
+        fecha: new Date(),
         proveedor: nombre,
         clave,
         rfc

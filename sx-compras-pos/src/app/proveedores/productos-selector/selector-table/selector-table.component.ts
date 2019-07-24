@@ -6,11 +6,10 @@ import {
   ChangeDetectionStrategy
 } from '@angular/core';
 
+import { ColDef, ModelUpdatedEvent, RowSelectedEvent } from 'ag-grid-community';
+
 import { LxTableComponent } from 'app/_shared/components';
 import { SxTableService } from 'app/_shared/components/lx-table/sx-table.service';
-
-import { ColDef, ModelUpdatedEvent, RowSelectedEvent } from 'ag-grid-community';
-import { RequisicionDeMaterial } from 'app/requisiciones/models';
 
 @Component({
   selector: 'sx-selector-table',

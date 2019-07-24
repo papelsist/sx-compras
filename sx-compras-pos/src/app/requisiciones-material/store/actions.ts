@@ -16,7 +16,11 @@ export enum RequisicionesDeMaterialActionTypes {
   UpdateRequisicionDeMaterial = '[Requisiciones de Material Component] Update Requisiciones',
   UpdateRequisicionDeMaterialFail = '[Requisiciones de Material API] Update Requisiciones fail',
   UpdateRequisicionDeMaterialSuccess = '[Requisiciones de Material API] Update Requisiciones Success',
-  UpsertRequisicion = '[Requisicion exist guard] Requisicion upsert'
+  UpsertRequisicion = '[Requisicion exist guard] Requisicion upsert',
+  // DELETE
+  DeleteRequisicionDeMaterial = '[Requisiciones de Material Component] Delete Requisiciones',
+  DeleteRequisicionDeMaterialFail = '[Requisiciones de Material API] Delete Requisiciones fail',
+  DeleteRequisicionDeMaterialSuccess = '[Requisiciones de Material API] Delete Requisiciones Success'
 }
 
 export class SetPeriodo implements Action {
@@ -75,6 +79,26 @@ export class UpsertRrequisicionDeMaterial implements Action {
   constructor(public payload: { requisicion: RequisicionDeMaterial }) {}
 }
 
+// Delete
+export class DeleteRequisicionDeMaterial implements Action {
+  readonly type =
+    RequisicionesDeMaterialActionTypes.DeleteRequisicionDeMaterial;
+  constructor(
+    public payload: { requisicion: Partial<RequisicionDeMaterial> }
+  ) {}
+}
+export class DeleteRequisicionDeMaterialFail implements Action {
+  readonly type =
+    RequisicionesDeMaterialActionTypes.DeleteRequisicionDeMaterialFail;
+  constructor(public payload: { response: any }) {}
+}
+export class DeleteRequisicionDeMaterialSuccess implements Action {
+  readonly type =
+    RequisicionesDeMaterialActionTypes.DeleteRequisicionDeMaterialSuccess;
+  constructor(
+    public payload: { requisicion: Partial<RequisicionDeMaterial> }
+  ) {}
+}
 export type RequisicionesDeMaterialActions =
   | SetPeriodo
   | LoadRequisicionesDeMaterial
@@ -86,4 +110,7 @@ export type RequisicionesDeMaterialActions =
   | UpdateRequisicionDeMaterial
   | UpdateRequisicionDeMaterialFail
   | UpdateRequisicionDeMaterialSuccess
-  | UpsertRrequisicionDeMaterial;
+  | UpsertRrequisicionDeMaterial
+  | DeleteRequisicionDeMaterial
+  | DeleteRequisicionDeMaterialFail
+  | DeleteRequisicionDeMaterialSuccess;

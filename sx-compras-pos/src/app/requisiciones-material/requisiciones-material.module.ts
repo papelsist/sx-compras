@@ -7,7 +7,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { reducer, FEATURE_STORE_NAME } from './store/reducer';
 import { RequisicionDeMaterialEffects } from './store/effects';
 
-import { RequisicionesRoutingModule } from './requisiciones-routing.module';
+import { RequisicionesMaterialRoutingModule } from './requisiciones-material-routing.module';
 //
 import { RequisicionesComponent } from './pages/requisiciones/requisiciones.component';
 import { RequisicionComponent } from './pages/requisicion/requisicion.component';
@@ -29,7 +29,7 @@ import { RequisicionPartidasComponent } from './components/requisicion-partidas/
     SharedModule,
     StoreModule.forFeature(FEATURE_STORE_NAME, reducer),
     EffectsModule.forFeature([RequisicionDeMaterialEffects]),
-    RequisicionesRoutingModule
+    RequisicionesMaterialRoutingModule
   ]
 })
-export class RequisicionesModule {}
+export class RequisicionesMaterialModule {}

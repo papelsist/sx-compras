@@ -25,7 +25,7 @@ export const adapter: EntityAdapter<
 export const initialState: State = adapter.getInitialState({
   loading: false,
   loaded: false,
-  periodo: Periodo.fromStorage(REQUISICION_PERIODO_KEY)
+  periodo: Periodo.fromStorage(REQUISICION_PERIODO_KEY, Periodo.fromNow(90))
 });
 
 export function reducer(
@@ -33,6 +33,7 @@ export function reducer(
   action: RequisicionesDeMaterialActions
 ): State {
   switch (action.type) {
+    case RequisicionesDeMaterialActionTypes.DeleteRequisicionDeMaterial:
     case RequisicionesDeMaterialActionTypes.UpdateRequisicionDeMaterial:
     case RequisicionesDeMaterialActionTypes.CreateRequisicionDeMaterial:
     case RequisicionesDeMaterialActionTypes.LoadRequisiciones: {
@@ -42,6 +43,7 @@ export function reducer(
       };
     }
 
+    case RequisicionesDeMaterialActionTypes.DeleteRequisicionDeMaterialFail:
     case RequisicionesDeMaterialActionTypes.UpdateRequisicionDeMaterialFail:
     case RequisicionesDeMaterialActionTypes.CreateRequisicionDeMaterialFail:
     case RequisicionesDeMaterialActionTypes.LoadRequisicionesFail: {
@@ -71,10 +73,17 @@ export function reducer(
         loading: false
       });
     }
-    
+
     case RequisicionesDeMaterialActionTypes.UpsertRequisicion: {
       return adapter.upsertOne(action.payload.requisicion, {
         ...state
+      });
+    }
+
+    case RequisicionesDeMaterialActionTypes.DeleteRequisicionDeMaterialSuccess: {
+      return adapter.removeOne(action.payload.requisicion.id, {
+        ...state,
+        loading: false
       });
     }
 

@@ -72,9 +72,9 @@ export class RequisicionDeMaterialEffects {
     ofType<fromActions.CreateRequisicionDeMaterialSuccess>(
       RequisicionesDeMaterialActionTypes.CreateRequisicionDeMaterialSuccess
     ),
-    map( action => action.payload.requisicion),
-    map( r => new fromRoot.Go({ path: ['/requisiciones', r.id] }))
-    );
+    map(action => action.payload.requisicion),
+    map(r => new fromRoot.Go({ path: ['/requisiciones', r.id] }))
+  );
 
   @Effect()
   update$ = this.actions$.pipe(
@@ -98,15 +98,47 @@ export class RequisicionDeMaterialEffects {
   );
 
   @Effect()
+  delete$ = this.actions$.pipe(
+    ofType<fromActions.DeleteRequisicionDeMaterial>(
+      RequisicionesDeMaterialActionTypes.DeleteRequisicionDeMaterial
+    ),
+    map(action => action.payload.requisicion),
+    switchMap(requisicion => {
+      return this.service.delete(requisicion.id).pipe(
+        map(
+          () =>
+            new fromActions.DeleteRequisicionDeMaterialSuccess({
+              requisicion
+            })
+        ),
+        catchError(response =>
+          of(new fromActions.DeleteRequisicionDeMaterialFail({ response }))
+        )
+      );
+    })
+  );
+
+  @Effect()
+  deleteSuccess$ = this.actions$.pipe(
+    ofType<fromActions.DeleteRequisicionDeMaterialSuccess>(
+      RequisicionesDeMaterialActionTypes.DeleteRequisicionDeMaterialSuccess
+    ),
+    map(action => action.payload.requisicion),
+    map(r => new fromRoot.Go({ path: ['/requisiciones'] }))
+  );
+
+  @Effect()
   errorHandler$ = this.actions$.pipe(
     ofType<
       | fromActions.LoadRequisicionesDeMaterialFail
       | fromActions.CreateRequisicionDeMaterialFail
       | fromActions.UpdateRequisicionDeMaterialFail
+      | fromActions.DeleteRequisicionDeMaterialFail
     >(
       RequisicionesDeMaterialActionTypes.LoadRequisicionesFail,
       RequisicionesDeMaterialActionTypes.CreateRequisicionDeMaterialFail,
-      RequisicionesDeMaterialActionTypes.UpdateRequisicionDeMaterialFail
+      RequisicionesDeMaterialActionTypes.UpdateRequisicionDeMaterialFail,
+      RequisicionesDeMaterialActionTypes.DeleteRequisicionDeMaterialFail
     ),
     map(action => action.payload.response),
     map(response => new fromRoot.GlobalHttpError({ response }))

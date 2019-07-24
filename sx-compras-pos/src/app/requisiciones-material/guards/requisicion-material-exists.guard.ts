@@ -9,7 +9,7 @@ import { tap, map, filter, take, switchMap, catchError } from 'rxjs/operators';
 import { RequisicionDeMaterialService } from '../services/requisicion-de-material.service';
 
 @Injectable({ providedIn: 'root' })
-export class RequisicionExistsGuard implements CanActivate {
+export class RequisicionMaterialExistsGuard implements CanActivate {
   constructor(
     private store: Store<fromStore.State>,
     private service: RequisicionDeMaterialService

@@ -9,7 +9,7 @@ import { tap, filter, take, switchMap, catchError } from 'rxjs/operators';
 import * as fromStore from '../store';
 
 @Injectable({ providedIn: 'root' })
-export class RequisicionesGuard implements CanActivate {
+export class RequisicionesMaterialGuard implements CanActivate {
   constructor(private store: Store<fromStore.State>) {}
 
   canActivate(): Observable<boolean> {

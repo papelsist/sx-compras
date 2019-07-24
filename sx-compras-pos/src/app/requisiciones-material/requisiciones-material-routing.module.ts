@@ -2,19 +2,19 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { RequisicionesComponent } from './pages/requisiciones/requisiciones.component';
-import { RequisicionesGuard } from './guards/requisiciones.guard';
+import { RequisicionesMaterialGuard } from './guards/requisiciones-material.guard';
 import { RequisicionComponent } from './pages/requisicion/requisicion.component';
-import { RequisicionExistsGuard } from './guards/requisicion-exists.guard';
+import { RequisicionMaterialExistsGuard } from './guards/requisicion-material-exists.guard';
 
 const routes: Routes = [
   {
     path: '',
-    canActivate: [RequisicionesGuard],
+    canActivate: [RequisicionesMaterialGuard],
     component: RequisicionesComponent
   },
   {
     path: ':requisicionId',
-    canActivate: [RequisicionExistsGuard],
+    canActivate: [RequisicionMaterialExistsGuard],
     component: RequisicionComponent
   }
 ];
@@ -23,4 +23,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class RequisicionesRoutingModule {}
+export class RequisicionesMaterialRoutingModule {}

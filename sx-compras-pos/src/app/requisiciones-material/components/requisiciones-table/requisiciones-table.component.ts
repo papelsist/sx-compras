@@ -10,7 +10,7 @@ import { LxTableComponent } from 'app/_shared/components';
 import { SxTableService } from 'app/_shared/components/lx-table/sx-table.service';
 
 import { ColDef, ModelUpdatedEvent, RowSelectedEvent } from 'ag-grid-community';
-import { RequisicionDeMaterial } from 'app/requisiciones/models';
+import { RequisicionDeMaterial } from '../../models';
 
 @Component({
   selector: 'sx-requisiciones-table',

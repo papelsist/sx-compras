@@ -13,7 +13,7 @@ import { LxTableComponent } from 'app/_shared/components';
 import { SxTableService } from 'app/_shared/components/lx-table/sx-table.service';
 
 import { ColDef, ModelUpdatedEvent, RowSelectedEvent } from 'ag-grid-community';
-import { RequisicionDeMaterialDet } from 'app/requisiciones/models';
+import { RequisicionDeMaterialDet } from '../../models';
 
 @Component({
   selector: 'sx-requisicion-partidas',

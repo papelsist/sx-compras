@@ -10,6 +10,7 @@ import {
 import { Store, select } from '@ngrx/store';
 import * as fromRoot from 'app/store';
 import * as fromStore from '../../store';
+import * as fromAuth from 'app/auth/store';
 
 import { Observable, Subject, BehaviorSubject } from 'rxjs';
 import {
@@ -21,14 +22,12 @@ import {
   pluck
 } from 'rxjs/operators';
 
-import {
-  RequisicionDeMaterial,
-  RequisicionDeMaterialDet
-} from 'app/requisiciones/models';
+import { RequisicionDeMaterial, RequisicionDeMaterialDet } from '../../models';
 import { ProductosSelectorService } from 'app/proveedores/productos-selector/productos-selector.service';
-import { RequisicionDeMaterialService } from 'app/requisiciones/services/requisicion-de-material.service';
-import { RequisicionPartidasComponent } from 'app/requisiciones/components/requisicion-partidas/requisicion-partidas.component';
+import { RequisicionDeMaterialService } from '../../services/requisicion-de-material.service';
+import { RequisicionPartidasComponent } from '../../components/requisicion-partidas/requisicion-partidas.component';
 import { Update } from '@ngrx/entity';
+import { TdDialogService } from '@covalent/core';
 
 @Component({
   selector: 'sx-requisicion',
@@ -39,7 +38,7 @@ import { Update } from '@ngrx/entity';
 export class RequisicionComponent implements OnInit, OnDestroy {
   loading$: Observable<boolean>;
   requisicion$: Observable<RequisicionDeMaterial>;
-  partidas$: Observable<Partial<RequisicionDeMaterialDet>[]>;
+
   disponibles: any[] = [];
   selectedPartidas: any[] = [];
 
@@ -51,10 +50,13 @@ export class RequisicionComponent implements OnInit, OnDestroy {
 
   @ViewChild('grid') grid: RequisicionPartidasComponent;
 
+  roles: string[] = [];
+
   constructor(
     private store: Store<fromStore.State>,
     private selector: ProductosSelectorService,
-    private service: RequisicionDeMaterialService
+    private service: RequisicionDeMaterialService,
+    private dialogService: TdDialogService
   ) {}
 
   ngOnInit() {
@@ -76,7 +78,15 @@ export class RequisicionComponent implements OnInit, OnDestroy {
         this.partidas = r.partidas || [];
         this.cargarDisponibles(r);
       });
-    this.partidas$ = this.requisicion$.pipe(pluck('partidas'));
+    this.store
+      .pipe(
+        select(fromAuth.getSession),
+        pluck('roles'),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(r => {
+        this.roles = r;
+      });
   }
 
   ngOnDestroy() {
@@ -136,6 +146,24 @@ export class RequisicionComponent implements OnInit, OnDestroy {
     console.log('Selected: ', event);
   }
 
+  onDelete(event: Partial<RequisicionDeMaterial>) {
+    this.dialogService
+      .openConfirm({
+        title: 'ELIMINAR REQUISICION DE MATERIAL',
+        message: 'FOLIO: ' + event.folio,
+        acceptButton: 'ELIMINAR',
+        cancelButton: 'CANCELAR'
+      })
+      .afterClosed()
+      .subscribe(res => {
+        if (res) {
+          this.store.dispatch(
+            new fromStore.DeleteRequisicionDeMaterial({ requisicion: event })
+          );
+        }
+      });
+  }
+
   @HostListener('document:keydown.meta.i', ['$event'])
   onHotKeyInsert(event) {
     this.agregarPartidas();
@@ -143,5 +171,9 @@ export class RequisicionComponent implements OnInit, OnDestroy {
   @HostListener('document:keydown.insert', ['$event'])
   onHotKeyInsert2(event) {
     this.agregarPartidas();
+  }
+
+  hasAdminRole(): boolean {
+    return this.roles.includes('ROLE_ADMIN');
   }
 }

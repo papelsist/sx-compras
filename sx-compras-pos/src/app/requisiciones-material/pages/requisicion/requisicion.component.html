@@ -64,7 +64,15 @@
       color="warn"
       [disabled]="selectedPartidas.length === 0"
     >
-      <mat-icon>delete</mat-icon> ELIMINAR PARTIDAS
+      <mat-icon>remove_circle_outline</mat-icon> ELIMINAR PARTIDAS
+    </button>
+    <button
+      mat-button
+      (click)="onDelete(requisicion)"
+      color="warn"
+      *ngIf="hasAdminRole()"
+    >
+      <mat-icon>delete</mat-icon> ELIMINAR REQUISICION
     </button>
   </mat-card-actions>
 </mat-card>
