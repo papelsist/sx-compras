@@ -1,0 +1,7 @@
+import sx.compras.RequisicionDeMaterialDet
+
+model {
+	RequisicionDeMaterialDet requisicionDeMaterialDet
+}
+
+json tmpl.requisicionDeMaterialDet(requisicionDeMaterialDet)

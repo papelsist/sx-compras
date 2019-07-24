@@ -29,9 +29,6 @@ class RequisicionDeMaterialService implements LogUser, FolioLog {
         	it.sucursal = requisicion.sucursal
         	logEntity(it)
         }
-        if (requisicion.partidas) {
-            requisicion.cerrada = new Date()
-        }
         logEntity(requisicion)
         requisicion.save failOnError: true, flush: true
         return requisicion

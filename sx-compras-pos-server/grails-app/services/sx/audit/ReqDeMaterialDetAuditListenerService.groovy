@@ -2,7 +2,8 @@ package sx.audit
 
 import grails.events.annotation.Subscriber
 
-import groovy.transform.CompileStatic
+
+import grails.compiler.GrailsCompileStatic
 import groovy.util.logging.Slf4j
 
 import org.grails.datastore.mapping.engine.event.AbstractPersistenceEvent
@@ -10,34 +11,31 @@ import org.grails.datastore.mapping.engine.event.PostDeleteEvent
 import org.grails.datastore.mapping.engine.event.PostUpdateEvent
 import org.grails.datastore.mapping.engine.event.PostInsertEvent
 
-import org.springframework.beans.factory.annotation.Autowired
 
-import sx.compras.RequisicionDeMaterial
+import sx.compras.RequisicionDeMaterialDet
 
 @Slf4j
-// @CompileStatic
-// @Transactional
-class ReqDeMaterialAuditListenerService {
-
-    @Autowired AuditLogDataService auditLogDataService
+@GrailsCompileStatic
+class ReqDeMaterialDetAuditListenerService {
+    
 
     String getId(AbstractPersistenceEvent event) {
-        if ( event.entityObject instanceof RequisicionDeMaterial ) {
-            return ((RequisicionDeMaterial) event.entityObject).id
+        if ( event.entityObject instanceof RequisicionDeMaterialDet ) {
+            return ((RequisicionDeMaterialDet) event.entityObject).id
         }
         null
     }
 
-    RequisicionDeMaterial getRequisicion(AbstractPersistenceEvent event) {
-        if ( event.entityObject instanceof RequisicionDeMaterial ) {
-            return (RequisicionDeMaterial) event.entityObject
+    RequisicionDeMaterialDet getRequisicionDet(AbstractPersistenceEvent event) {
+        if ( event.entityObject instanceof RequisicionDeMaterialDet ) {
+            return (RequisicionDeMaterialDet) event.entityObject
         }
         null
     }
 
     @Subscriber
     void afterInsert(PostInsertEvent event) {
-        RequisicionDeMaterial requisicion = getRequisicion(event)
+        RequisicionDeMaterialDet requisicion = getRequisicionDet(event)
         if ( requisicion ) {
             log.debug('{} {} Id: {}', event.eventType.name(), event.entity.name, requisicion.id)
             logEntity(requisicion, 'INSERT')
@@ -46,30 +44,32 @@ class ReqDeMaterialAuditListenerService {
 
     @Subscriber
     void afterUpdate(PostUpdateEvent event) {
-        RequisicionDeMaterial requisicion = getRequisicion(event)
+        RequisicionDeMaterialDet requisicion = getRequisicionDet(event)
         if ( requisicion ) {
             log.debug('{} {} Id: {}', event.eventType.name(), event.entity.name, requisicion.id)
-            logEntity(requisicion, 'UPDATE')
+            if(requisicion.requisicion.cerrada == null) 
+                logEntity(requisicion, 'UPDATE')
         }
     }
 
     @Subscriber
     void afterDelete(PostDeleteEvent event) {
-        RequisicionDeMaterial requisicion = getRequisicion(event)
+        RequisicionDeMaterialDet requisicion = getRequisicionDet(event)
         if ( requisicion ) {
-            logEntity(requisicion, 'DELETE')
+            if(requisicion.requisicion.cerrada == null) 
+                logEntity(requisicion, 'DELETE')
         }
     }
 
-    def logEntity(RequisicionDeMaterial requisicion, String type) {
-        log.debug('Log tipo: {} Requisicion: {}',type, requisicion)
+    void logEntity(RequisicionDeMaterialDet requisicion, String type) {
+        log.debug('Log tipo: {} RequisicionDet: {}',type, requisicion.id)
         Audit.withNewSession {
             Audit alog = new Audit(
-                name: 'RequisicionDeMaterial',
+                name: 'RequisicionDeMaterialDet',
                 persistedObjectId: requisicion.id,
                 source: requisicion.sucursal,
                 target: 'CENTRAL',
-                tableName: 'requisicion_de_material',
+                tableName: 'requisicion_de_material_det',
                 eventName: type
             )
             alog.save failOnError: true, flush: true

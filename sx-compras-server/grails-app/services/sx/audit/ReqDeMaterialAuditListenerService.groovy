@@ -8,7 +8,6 @@ import groovy.util.logging.Slf4j
 import org.grails.datastore.mapping.engine.event.AbstractPersistenceEvent
 import org.grails.datastore.mapping.engine.event.PostDeleteEvent
 import org.grails.datastore.mapping.engine.event.PostUpdateEvent
-import org.grails.datastore.mapping.engine.event.PostInsertEvent
 
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -36,15 +35,6 @@ class ReqDeMaterialAuditListenerService {
     }
 
     @Subscriber
-    void afterInsert(PostInsertEvent event) {
-        RequisicionDeMaterial requisicion = getRequisicion(event)
-        if ( requisicion ) {
-            log.debug('{} {} Id: {}', event.eventType.name(), event.entity.name, requisicion.id)
-            logEntity(requisicion, 'INSERT')
-        }
-    }
-
-    @Subscriber
     void afterUpdate(PostUpdateEvent event) {
         RequisicionDeMaterial requisicion = getRequisicion(event)
         if ( requisicion ) {
@@ -67,8 +57,8 @@ class ReqDeMaterialAuditListenerService {
             Audit alog = new Audit(
                 name: 'RequisicionDeMaterial',
                 persistedObjectId: requisicion.id,
-                source: requisicion.sucursal,
-                target: 'CENTRAL',
+                source: 'CENTRAL',
+                target: requisicion.sucursal,
                 tableName: 'requisicion_de_material',
                 eventName: type
             )
