@@ -107,7 +107,7 @@ springBoot {
 
 war {
     String env = System.getProperty('grails.env') ?: 'prod'
-    war.baseName = "siipapx-compras-api"
+    war.baseName = "siipapx-compras-pos"
     war.version = ''
 }
 
