@@ -4,6 +4,31 @@
       <span class="mat-title">{{ requisicion.proveedor }}</span>
     </span>
     <span flex></span>
+    <span class="mat-title">
+      <span>Requisición: </span>
+      <span class="pad-left">{{ requisicion.sucursal }}</span>
+      <span class="pad-left">{{ requisicion.folio }}</span>
+      <span class="pad-left"
+        >({{ requisicion.fecha | date: 'dd/MM/yyyy' }})</span
+      >
+    </span>
+  </div>
+  <div layout class="pad-left pad-right subtitle">
+    <span class="push-left-sm">
+      <span class="mat-subtitle comentario-action">{{
+        requisicion.comentario
+      }}</span>
+    </span>
+    <span flex></span>
+    <span>
+      <span>Usuario:</span>
+      <span class="pad-left">{{ requisicion.createUser }}</span>
+      <span class="pad-left">Modificado:</span>
+      <span class="pad-left">{{
+        requisicion.lastUpdated | date: 'dd/MM/yyyy dd:HH'
+      }}</span>
+    </span>
+    <!-- <a mat-button class="comentario-action">{{ requisicion.comentario }}</a> -->
   </div>
   <mat-divider></mat-divider>
   <ng-template

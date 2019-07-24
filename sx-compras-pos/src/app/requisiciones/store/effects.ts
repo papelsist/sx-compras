@@ -68,6 +68,15 @@ export class RequisicionDeMaterialEffects {
   );
 
   @Effect()
+  createSuccess$ = this.actions$.pipe(
+    ofType<fromActions.CreateRequisicionDeMaterialSuccess>(
+      RequisicionesDeMaterialActionTypes.CreateRequisicionDeMaterialSuccess
+    ),
+    map( action => action.payload.requisicion),
+    map( r => new fromRoot.Go({ path: ['/requisiciones', r.id] }))
+    );
+
+  @Effect()
   update$ = this.actions$.pipe(
     ofType<fromActions.UpdateRequisicionDeMaterial>(
       RequisicionesDeMaterialActionTypes.UpdateRequisicionDeMaterial

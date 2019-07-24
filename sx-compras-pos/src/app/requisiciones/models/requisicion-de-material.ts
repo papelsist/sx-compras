@@ -9,6 +9,8 @@ export interface RequisicionDeMaterial {
   sucursal: string;
   fecha: string;
   comentario: string;
+  cerrada?: string;
+  compra?: string;
   partidas: Partial<RequisicionDeMaterialDet[]>;
   dateCreated?: string;
   lastUpdated?: string;
