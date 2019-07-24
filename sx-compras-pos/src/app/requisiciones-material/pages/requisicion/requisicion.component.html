@@ -55,12 +55,8 @@
     <button mat-button (click)="agregarPartidas()">
       <mat-icon>playlist_add</mat-icon> PARTIDAS
     </button>
-    <button
-      mat-button
-      [disabled]="!(dirty$ | async)"
-      (click)="onSave()"
-      *ngIf="!requisicion.cerrada"
-    >
+    <button mat-button [disabled]="!(dirty$ | async)" (click)="onSave()" 
+      *ngIf="requisicion.cerrada">
       <mat-icon>save</mat-icon> SALVAR
     </button>
     <!-- <button
@@ -70,7 +66,7 @@
       [disabled]="selectedPartidas.length === 0"
     >
       <mat-icon>remove_circle_outline</mat-icon> ELIMINAR PARTIDAS
-    </button> -->
+    </button> 
     <button
       mat-button
       (click)="onDelete(requisicion)"
@@ -79,5 +75,6 @@
     >
       <mat-icon>delete</mat-icon> ELIMINAR REQUISICION
     </button>
+    -->
   </mat-card-actions>
 </mat-card>
