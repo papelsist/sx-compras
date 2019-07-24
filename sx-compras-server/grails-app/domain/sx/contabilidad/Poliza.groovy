@@ -63,6 +63,7 @@ class Poliza {
         satComplementos nullable: true
         satComprobantes nullable: true
         subtipo inList: [
+                'INGRESOS_CON',
                 'COBRANZA_CON',
                 'COBRANZA_COD',
                 'COBRANZA_CRE',
@@ -127,6 +128,7 @@ class Poliza {
     }
 
     public static SUBTIPOS =  [
+            'INGRESOS_CON',
             'COBRANZA_CON',
             'COBRANZA_COD',
             'COBRANZA_CRE',

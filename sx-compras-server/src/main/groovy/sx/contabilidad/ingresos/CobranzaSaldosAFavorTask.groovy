@@ -38,6 +38,25 @@ class CobranzaSaldosAFavorTask implements  AsientoBuilder{
 
     }
 
+     def generarAsientosIngresos(Poliza poliza, Map params = [:]) {
+        log.info("Generando asientos contables para cobranza con SALDOS A FAVOR {} {}", poliza.sucursal, poliza.fecha)
+        String tipo = params.tipo
+
+        List<AplicacionDeCobro> aplicaciones = findAplicaciones(poliza.fecha, tipo).findAll {it.importe.abs() > 0.0}
+        if(tipo == 'CON') {
+            generarContado(poliza, aplicaciones)
+        } else if(tipo == 'COD') {
+            generarCod(poliza, aplicaciones)
+        } else if(tipo == 'CRE') {
+            generarCredito(poliza, aplicaciones)
+        } else  if(tipo == 'CHE') {
+            generarChe(poliza, aplicaciones)
+        } else if(tipo == 'JUR') {
+            generarJur(poliza, aplicaciones)
+        }
+
+    }
+
     def generarContado(Poliza poliza, List<AplicacionDeCobro> aplicaciones) {
 
         aplicaciones.each {
