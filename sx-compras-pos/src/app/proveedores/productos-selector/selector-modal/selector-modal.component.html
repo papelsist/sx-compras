@@ -1,8 +1,17 @@
 <h4 mat-dialog-title>Productos disponibles</h4>
 <div layout>
-  <input (keyup)="onSearch(box.value)" placeholder="Buscar" flex #box />
+  <input (keyup)="grid.filter(box.value)" placeholder="Buscar" flex #box />
 </div>
 <div class="grid-panel">
-  <sx-selector-table [partidas]="productos"></sx-selector-table>
+  <sx-selector-table
+    #grid
+    [partidas]="productos"
+    (selectionChange)="onSelection($event)"
+  ></sx-selector-table>
 </div>
 <mat-dialog-content> </mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="doSubmit()" [disabled]="selected.length === 0">
+    SELECCIONAR
+  </button>
+</mat-dialog-actions>

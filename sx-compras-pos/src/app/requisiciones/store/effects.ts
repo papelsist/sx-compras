@@ -68,13 +68,36 @@ export class RequisicionDeMaterialEffects {
   );
 
   @Effect()
+  update$ = this.actions$.pipe(
+    ofType<fromActions.UpdateRequisicionDeMaterial>(
+      RequisicionesDeMaterialActionTypes.UpdateRequisicionDeMaterial
+    ),
+    map(action => action.payload.update),
+    switchMap(upd => {
+      return this.service.update(upd).pipe(
+        map(
+          requisicion =>
+            new fromActions.UpdateRequisicionDeMaterialSuccess({
+              requisicion
+            })
+        ),
+        catchError(response =>
+          of(new fromActions.UpdateRequisicionDeMaterialFail({ response }))
+        )
+      );
+    })
+  );
+
+  @Effect()
   errorHandler$ = this.actions$.pipe(
     ofType<
       | fromActions.LoadRequisicionesDeMaterialFail
       | fromActions.CreateRequisicionDeMaterialFail
+      | fromActions.UpdateRequisicionDeMaterialFail
     >(
       RequisicionesDeMaterialActionTypes.LoadRequisicionesFail,
-      RequisicionesDeMaterialActionTypes.CreateRequisicionDeMaterialFail
+      RequisicionesDeMaterialActionTypes.CreateRequisicionDeMaterialFail,
+      RequisicionesDeMaterialActionTypes.UpdateRequisicionDeMaterialFail
     ),
     map(action => action.payload.response),
     map(response => new fromRoot.GlobalHttpError({ response }))

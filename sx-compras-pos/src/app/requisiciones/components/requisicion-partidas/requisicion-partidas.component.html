@@ -9,7 +9,9 @@
     [localeText]="localeText"
     (firstDataRendered)="onFirstDataRendered($event)"
     (gridReady)="onGridReady($event)"
+    [stopEditingWhenGridLosesFocus]="true"
     (modelUpdated)="onModelUpdate($event)"
+    [frameworkComponents]="frameworkComponents"
   >
   </ag-grid-angular>
 </div>

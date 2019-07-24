@@ -64,6 +64,14 @@ export function reducer(
         loading: false
       });
     }
+
+    case RequisicionesDeMaterialActionTypes.UpdateRequisicionDeMaterialSuccess: {
+      return adapter.upsertOne(action.payload.requisicion, {
+        ...state,
+        loading: false
+      });
+    }
+    
     case RequisicionesDeMaterialActionTypes.UpsertRequisicion: {
       return adapter.upsertOne(action.payload.requisicion, {
         ...state

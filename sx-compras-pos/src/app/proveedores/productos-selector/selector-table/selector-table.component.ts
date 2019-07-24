@@ -23,6 +23,7 @@ export class SelectorTableComponent extends LxTableComponent implements OnInit {
 
   constructor(public tableService: SxTableService) {
     super(tableService);
+    // this.debug = true;
   }
 
   buildGridOptions() {
@@ -30,6 +31,7 @@ export class SelectorTableComponent extends LxTableComponent implements OnInit {
     this.gridOptions.rowSelection = 'multiple';
     this.gridOptions.onRowSelected = (event: RowSelectedEvent) => {
       this.selectionChange.emit(this.gridApi.getSelectedRows());
+      this.actualizarTotales();
     };
   }
 
@@ -49,80 +51,47 @@ export class SelectorTableComponent extends LxTableComponent implements OnInit {
   }
 
   actualizarTotales() {
-    let registros = 0;
-
     if (this.gridApi) {
-      this.gridApi.forEachNodeAfterFilter((rowNode, index) => {
-        const requisicion: Partial<RequisicionDeMaterial> = rowNode.data;
-        registros++;
-      });
-    }
-    const res = [
-      {
-        nombre: `Registros: ${registros}`
-      }
-    ];
-    if (this.gridApi) {
+      const res = [
+        {
+          clave: `Selec:`,
+          descripcion: `Seleccionados: ${this.gridApi.getSelectedRows().length}`
+        }
+      ];
       this.gridApi.setPinnedBottomRowData(res);
     }
+  }
+
+  filter(term: string) {
+    this.gridApi.setQuickFilter(term);
   }
 
   buildColsDef(): ColDef[] {
     return [
       {
-        headerName: 'Sucursal',
-        field: 'sucursal',
+        headerName: 'Producto',
+        field: 'clave',
         width: 115,
         pinned: 'left'
       },
       {
-        headerName: 'Folio',
-        field: 'folio',
-        width: 110
-      },
-      {
-        headerName: 'Proveedor',
-        field: 'proveedor',
-        width: 300,
+        headerName: 'Descripción',
+        field: 'descripcion',
+        width: 350,
         pinned: 'left'
       },
       {
-        headerName: 'Clave',
-        field: 'clave',
-        width: 110
+        headerName: 'U',
+        field: 'unidad',
+        width: 50
       },
       {
-        headerName: 'Fecha',
-        field: 'fecha',
-        width: 100,
-        cellRenderer: params => this.transformDate(params.value)
-      },
-
-      {
-        headerName: 'Comentario',
-        field: 'comentario'
+        headerName: 'Línea',
+        field: 'linea'
       },
       {
-        headerName: 'Usuario',
-        field: 'updateUser',
-        width: 120
-      },
-      {
-        headerName: 'Actualizada por',
-        field: 'updateUser',
-        width: 120
-      },
-      {
-        headerName: 'Creada',
-        field: 'dateCreated',
-        cellRenderer: params =>
-          this.transformDate(params.value, 'dd/MM/yyyy HH:mm')
-      },
-      {
-        headerName: 'Actualizada',
-        field: 'lastUpdated',
-        cellRenderer: params =>
-          this.transformDate(params.value, 'dd/MM/yyyy HH:mm')
+        headerName: 'Marca',
+        field: 'marca'
       }
     ];
   }

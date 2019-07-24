@@ -14,9 +14,21 @@ import sx.core.FolioLog
 class RequisicionDeMaterialService implements LogUser, FolioLog {
 
     RequisicionDeMaterial save(RequisicionDeMaterial requisicion) {
-    	log.debug("Salvando requisicion de material {}", requisicion)
+    	// log.debug("Salvando requisicion de material {}", requisicion)
         if(!requisicion.id )
             requisicion.folio = nextFolio('REQUISICION_MATERIAL', 'REQUISICION')
+        logEntity(requisicion)
+        requisicion.save failOnError: true, flush: true
+        return requisicion
+
+    }
+
+    RequisicionDeMaterial update(RequisicionDeMaterial requisicion) {
+    	// log.debug("Actualizando requisicion de material {}", requisicion)
+        requisicion.partidas.each {
+        	it.sucursal = requisicion.sucursal
+        	logEntity(it)
+        }
         logEntity(requisicion)
         requisicion.save failOnError: true, flush: true
         return requisicion

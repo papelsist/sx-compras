@@ -22,9 +22,10 @@ import {
 })
 export class SelectorModalComponent implements OnInit {
   productos: any[];
+  selected: any[] = [];
 
   constructor(
-    public dialogRef: MatDialogRef<AltpModalComponent>,
+    public dialogRef: MatDialogRef<SelectorModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.productos = data.productos;
@@ -32,13 +33,17 @@ export class SelectorModalComponent implements OnInit {
 
   ngOnInit() {}
 
-  onSearch(event) {}
-
   close() {
     this.dialogRef.close();
   }
 
-  select(event: any[]) {
-    this.dialogRef.close(event);
+  onSelection(event: any[]) {
+    this.selected = event;
+  }
+
+  doSubmit() {
+    if (this.selected.length > 0) {
+      this.dialogRef.close(this.selected);
+    }
   }
 }

@@ -5,7 +5,7 @@ import groovy.transform.EqualsAndHashCode
 
 
 @ToString(includes = 'producto,solicitado,importeNeto', includeNames = true, includePackage = false)
-@EqualsAndHashCode(includes = 'id')
+@EqualsAndHashCode(includes = 'id, producto,  descripcion, solicitado')
 class RequisicionDeMaterialDet {
 
     String id

@@ -9,6 +9,7 @@ import * as _ from 'lodash';
 import { Periodo } from 'app/_core/models/periodo';
 import { ConfigService } from 'app/utils/config.service';
 import { RequisicionDeMaterial } from 'app/requisiciones/models';
+import { Update } from '@ngrx/entity';
 
 @Injectable({ providedIn: 'root' })
 export class RequisicionDeMaterialService {
@@ -40,11 +41,11 @@ export class RequisicionDeMaterialService {
   }
 
   update(
-    requisicion: RequisicionDeMaterial
+    update: Update<RequisicionDeMaterial>
   ): Observable<RequisicionDeMaterial> {
-    const url = `${this.apiUrl}/${requisicion.id}`;
+    const url = `${this.apiUrl}/${update.id}`;
     return this.http
-      .put<RequisicionDeMaterial>(url, requisicion)
+      .put<RequisicionDeMaterial>(url, update.changes)
       .pipe(catchError((error: any) => throwError(error)));
   }
 

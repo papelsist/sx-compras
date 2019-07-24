@@ -1,4 +1,4 @@
-<mat-card flex *ngIf="requisicion$ | async as requisicion">
+<mat-card layout="column" flex>
   <div layout layout-align="start center" class="pad">
     <span class="push-left-sm">
       <span class="mat-title">{{ requisicion.proveedor }}</span>
@@ -16,30 +16,24 @@
     <sx-requisicion-partidas
       #grid
       [partidas]="partidas"
-      (select)="onSelect($event)"
-      (edit)="dirty$.next(true)"
-      [(selectedRows)]="selectedPartidas"
+      (edit)="onEdit($event)"
     >
     </sx-requisicion-partidas>
   </div>
   <mat-divider></mat-divider>
   <mat-card-actions>
-    <button mat-button (click)="back()">
+    <button mat-button (click)="cancel.emit()">
       <mat-icon>arrow_back</mat-icon> REQUISICIONES
     </button>
     <button mat-button (click)="agregarPartidas()">
       <mat-icon>playlist_add</mat-icon> PARTIDAS
     </button>
-    <button mat-button [disabled]="!(dirty$ | async)" (click)="onSave()">
+    <button mat-button [disabled]="!form.dirty" (click)="onSave()">
       <mat-icon>save</mat-icon> SALVAR
     </button>
-    <button
-      mat-button
-      (click)="grid.deleteSelection()"
-      color="warn"
-      [disabled]="selectedPartidas.length === 0"
-    >
+    <button mat-button (click)="grid.deleteSelection()">
       <mat-icon>delete</mat-icon> ELIMINAR PARTIDAS
     </button>
   </mat-card-actions>
 </mat-card>
+<form [formGroup]="form"></form>

@@ -15,6 +15,7 @@ import { RequisicionComponent } from './pages/requisicion/requisicion.component'
 import { RequisicionesTableComponent } from './components/requisiciones-table/requisiciones-table.component';
 import { RequisicionCreateComponent } from './components/requisicion-create/requisicion-create.component';
 import { RequisicionPartidasComponent } from './components/requisicion-partidas/requisicion-partidas.component';
+import { RequisicionFormComponent } from './components/requisicion-form/requisicion-form.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { RequisicionPartidasComponent } from './components/requisicion-partidas/
     RequisicionesTableComponent,
     RequisicionCreateComponent,
     RequisicionComponent,
-    RequisicionPartidasComponent
+    RequisicionPartidasComponent,
+    RequisicionFormComponent
   ],
   entryComponents: [RequisicionCreateComponent],
   imports: [

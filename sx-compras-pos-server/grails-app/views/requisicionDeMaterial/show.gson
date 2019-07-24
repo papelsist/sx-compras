@@ -4,4 +4,6 @@ model {
 	RequisicionDeMaterial requisicionDeMaterial
 }
 
-json tmpl.requisicionDeMaterial(requisicionDeMaterial)
+json g.render(requisicionDeMaterial, [excludes:['partidas','version']]) {
+    partidas g.render(requisicionDeMaterial.partidas)
+}

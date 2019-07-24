@@ -9,7 +9,7 @@ export interface RequisicionDeMaterial {
   sucursal: string;
   fecha: string;
   comentario: string;
-  partidas: Partial<RequisicionDeMaterialDet>;
+  partidas: Partial<RequisicionDeMaterialDet[]>;
   dateCreated?: string;
   lastUpdated?: string;
   createUser?: string;
