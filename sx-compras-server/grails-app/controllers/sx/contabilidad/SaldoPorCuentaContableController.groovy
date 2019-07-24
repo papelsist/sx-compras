@@ -110,6 +110,7 @@ class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaC
         Integer eje = Periodo.obtenerYear(periodo.fechaInicial)
         Integer m = Periodo.obtenerMes(periodo.fechaInicial) + 1
 
+        /*
         if(cta.detalle) {
             movimientos = PolizaDet.where{
                 poliza.ejercicio == eje &&
@@ -117,6 +118,25 @@ class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaC
                 cuenta == cta &&
                 poliza.cierre != null
             }.list()
+        }
+        */
+        if(cta.padre) {
+            def parts = cta.clave.split('-')
+            def nivel = cta.nivel
+            def ccv = ''
+            def limit = nivel - 1
+            0.upto(limit, {
+                ccv += parts[it]
+                ccv += "-"
+                if(it == limit)
+                ccv += "%"
+               println "Number ${parts[it]}"
+            })
+            log.info('Buscando movimientos para {}', ccv)
+            // movimientos = PolizaDet.findAll("from PolizaDet d where d.poliza.ejercicio = ? and d.poliza.mes = ? and d.cuenta.clave like ?" , [2018, 1, ccv])
+            movimientos = PolizaDet.findAll("""
+                from PolizaDet d where d.poliza.ejercicio = ? and d.poliza.mes = ? and d.cuenta.clave like ? and d.poliza.cierre != null
+                """, [eje, m, ccv])
         }
         respond movimientos
 
