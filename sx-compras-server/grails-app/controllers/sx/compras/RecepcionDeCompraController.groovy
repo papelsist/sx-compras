@@ -27,7 +27,7 @@ class RecepcionDeCompraController extends RestfulController<RecepcionDeCompra> {
     protected List<RecepcionDeCompra> listAllResources(Map params) {
         params.sort = 'lastUpdated'
         params.order = 'desc'
-        // params.max = 10
+        params.max = 10000
         log.debug('List {}', params)
         Periodo periodo =(Periodo)params.periodo
         // query = query.where{fecha >= periodo.fechaInicial && fecha <= periodo.fechaFinal}
