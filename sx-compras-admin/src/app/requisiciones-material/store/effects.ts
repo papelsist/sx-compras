@@ -148,14 +148,14 @@ export class RequisicionDeMaterialEffects {
     })
   );
 
-  @Effect({ dispatch: false })
+  @Effect()
   generarCompraSuccess$ = this.actions$.pipe(
     ofType<fromActions.GenerarCompraDeMaterialSuccess>(
       RequisicionesDeMaterialActionTypes.GenerarCompraDeMaterialSuccess
     ),
     map(action => action.payload.requisicion),
-    tap(req => console.log('Compra genrada de req: ', req))
-    // map(r => new fromRoot.Go({ path: ['ordenes/requisiciones'] }))
+    tap(req => console.log('Compra genrada de req: ', req)),
+    map(r => new fromRoot.Go({ path: ['ordenes/compras', r.compra] }))
   );
 
   @Effect()

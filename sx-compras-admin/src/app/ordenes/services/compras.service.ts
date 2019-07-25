@@ -63,6 +63,13 @@ export class ComprasService {
     return this.http.put<Compra>(url, {});
   }
 
+  actualizarPrecios(compraId: string): Observable<Compra> {
+    const url = this.configService.buildApiUrl(
+      'compras/actualizarPrecios/' + compraId
+    );
+    return this.http.put<Compra>(url, {});
+  }
+
   delete(id: string) {
     const url = `${this.apiUrl}/${id}`;
     return this.http

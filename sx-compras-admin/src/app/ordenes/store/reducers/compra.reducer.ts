@@ -38,6 +38,7 @@ export function reducer(state = initialState, action: CompraActions): State {
       };
     }
 
+    case CompraActionTypes.ActualizarPrecios:
     case CompraActionTypes.DepurarCompra:
     case CompraActionTypes.CerrarCompra:
     case CompraActionTypes.DeleteCompra:
@@ -49,6 +50,7 @@ export function reducer(state = initialState, action: CompraActions): State {
       };
     }
 
+    case CompraActionTypes.ActualizarPreciosFail:
     case CompraActionTypes.DeleteCompraFail:
     case CompraActionTypes.UpdateCompraFail:
     case CompraActionTypes.AddCompraFail:
@@ -87,6 +89,7 @@ export function reducer(state = initialState, action: CompraActions): State {
       );
     }
 
+    case CompraActionTypes.ActualizarPreciosSuccess:
     case CompraActionTypes.UpsertCompra: {
       return adapter.upsertOne(action.payload.compra, {
         ...state,

@@ -25,7 +25,7 @@
       <span class="pad-left">{{ requisicion.createUser }}</span>
       <span class="pad-left">Modificado:</span>
       <span class="pad-left">{{
-        requisicion.lastUpdated | date: 'dd/MM/yyyy dd:HH'
+        requisicion.lastUpdated | date: 'dd/MM/yyyy HH:mm'
       }}</span>
     </span>
     <!-- <a mat-button class="comentario-action">{{ requisicion.comentario }}</a> -->
@@ -52,11 +52,15 @@
     <button mat-button (click)="back()">
       <mat-icon>arrow_back</mat-icon> REQUISICIONES
     </button>
-    <button mat-button (click)="agregarPartidas()">
+    <button mat-button (click)="agregarPartidas()" *ngIf="!requisicion.cerrada">
       <mat-icon>playlist_add</mat-icon> PARTIDAS
     </button>
-    <button mat-button [disabled]="!(dirty$ | async)" (click)="onSave()" 
-      *ngIf="requisicion.cerrada">
+    <button
+      mat-button
+      [disabled]="!(dirty$ | async)"
+      (click)="onSave()"
+      *ngIf="!requisicion.cerrada"
+    >
       <mat-icon>save</mat-icon> SALVAR
     </button>
     <!-- <button

@@ -49,16 +49,14 @@ class RequisicionDeMaterialService implements LogUser, FolioLog {
         }
         Sucursal suc = Sucursal.where{nombre == req.sucursal}.find()
         Proveedor prov = Proveedor.where{clave == req.clave}.find()
-        log.info('Sucursal: {} Prov:{}', suc, prov)
         Compra compra = new Compra()
         compra.fecha = new Date()
-        compra.folio = 0L
+        compra.folio = -1L
         compra.sucursal = suc
         compra.proveedor = prov
         req.partidas.each { item ->
             CompraDet det = new CompraDet()
             Producto p = Producto.where{clave == item.producto}.find()
-            log.info('Prod : {}', p)
             det.sucursal = suc
             det.producto = p
             det.clave = p.clave
@@ -68,8 +66,9 @@ class RequisicionDeMaterialService implements LogUser, FolioLog {
             det.comentario =  item.comentario
             compra.addToPartidas(det)
         }
-        compra = compraService.save(compra)
-        log.info('Compra generada ${}', compra.id)
+        compra.comentario = "GENERADA POR REQUISICION ${req.folio}"
+        compra = compraService.saveCompra(compra)
+        log.info('Compra generada {}', compra.id)
         req.compra = compra.id
         logEntity(req)
         req.save failOnError: true, flush: true

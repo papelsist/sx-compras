@@ -107,6 +107,16 @@ class CompraController extends RestfulController<Compra> {
         respond res, view: 'show'
     }
 
+    @CompileDynamic
+    def actualizarPrecios(Compra compra) {
+        if(compra == null) {
+            notFound()
+            return
+        }
+        def res = compraService.actualizarPreciosVigentes(compra)
+        respond res, view: 'show'
+    }
+
     // @CompileDynamic
     def print( ) {
         Map repParams = [ID: params.id]

@@ -32,7 +32,7 @@ export class RequisicionesComponent implements OnInit {
     this.loading$ = this.store.pipe(
       select(fromStore.selectRequisicionesLoading)
     );
-    this.rows$ = this.store.pipe(select(fromStore.getAllRequisiciones));
+    this.rows$ = this.store.pipe(select(fromStore.selectPendientes));
   }
 
   onPeriodo(event: Periodo) {

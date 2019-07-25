@@ -19,6 +19,11 @@ export const getAllRequisiciones = createSelector(
   fromFeature.selectAll
 );
 
+export const selectPendientes = createSelector(
+  getAllRequisiciones,
+  requisiciones => requisiciones.filter(item => !item.compra)
+);
+
 export const selectRequisicionesLoaded = createSelector(
   fromFeature.getRequisicionesState,
   fromFeature.getLoaded

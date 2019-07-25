@@ -68,7 +68,13 @@
       <mat-icon>save</mat-icon> SALVAR
     </button>
 
-    <button mat-button (click)="onGenerarCompra(requisicion)" color="primary">
+    <button
+      mat-button
+      (click)="onGenerarCompra(requisicion)"
+      color="primary"
+      *ngIf="partidas.length > 0"
+      [disabled]="requisicion.compra"
+    >
       <mat-icon>settings</mat-icon> GENERAR COMPRA
     </button>
     <button

@@ -60,7 +60,6 @@ export class CompraEffects {
     })
   );
 
-  
   @Effect()
   addCompraSuccess$ = this.actions$.pipe(
     ofType(
@@ -70,7 +69,6 @@ export class CompraEffects {
     map((action: any) => action.payload),
     map(compra => new fromRoot.Go({ path: ['ordenes/compras', compra.id] }))
   );
-  
 
   @Effect()
   updateCompra$ = this.actions$.pipe(
@@ -138,5 +136,28 @@ export class CompraEffects {
         catchError(error => of(new fromActions.UpdateCompraFail(error)))
       );
     })
+  );
+
+  @Effect()
+  actualizarPrecios$ = this.actions$.pipe(
+    ofType<fromActions.ActualizarPrecios>(CompraActionTypes.ActualizarPrecios),
+    map(action => action.payload.compraId),
+    switchMap(compraId => {
+      return this.service.actualizarPrecios(compraId).pipe(
+        map(res => new fromActions.ActualizarPreciosSuccess({ compra: res })),
+        catchError(error =>
+          of(new fromActions.ActualizarPreciosFail({ response: error }))
+        )
+      );
+    })
+  );
+
+  @Effect()
+  errorHandler$ = this.actions$.pipe(
+    ofType<fromActions.ActualizarPreciosFail>(
+      CompraActionTypes.ActualizarPreciosFail
+    ),
+    map(action => action.payload.response),
+    map(response => new fromRoot.GlobalHttpError({ response }))
   );
 }

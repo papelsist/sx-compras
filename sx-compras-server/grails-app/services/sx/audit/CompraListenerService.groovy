@@ -56,7 +56,8 @@ class CompraListenerService {
 
     def logEntity(Compra compra, String type) {
         // log.debug('Cambio {} Compra cerrada: {}',type, compra.cerrada ? 'SI' : 'NO')
-        if(compra.cerrada != null) {
+        // if(compra.cerrada != null) {
+        if(true) {
             Boolean central = compra.sucursal.clave.trim() == '1' ? true : false
             if(central) {
 
@@ -70,7 +71,7 @@ class CompraListenerService {
                     buildLog(compra, it, compra.sw2)
                 }
             } else {
-                buildLog(compra, compra.sucursal.nombre, compra.sw2)
+                buildLog(compra, compra.sucursal.nombre, type)
             }
 
         }
@@ -89,7 +90,7 @@ class CompraListenerService {
         )
         alog.save flush: true
         // auditLogDataService.save(alog)
-
+        Thread.sleep(1000)
         compra.partidas.each {
             Audit logDet = new Audit(
                     name: 'CompraDet',
@@ -102,5 +103,6 @@ class CompraListenerService {
             logDet.save flush: true
             // auditLogDataService.save(logDet)
         }
+        
     }
 }
