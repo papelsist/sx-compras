@@ -28,9 +28,6 @@ export class RecepcionesService {
       } else {
         params = params.set(key, value);
       }
-      if (filter.proveedor) {
-        params = params.set('proveedorId', filter.proveedor.id);
-      }
     });
     return this.http
       .get<RecepcionDeCompra[]>(this.apiUrl, { params: params })
@@ -49,6 +46,15 @@ export class RecepcionesService {
     return this.http
       .get<Compra[]>(url)
       .pipe(catchError((error: any) => throwError(error)));
+  }
+
+  partidas(coms: string[]): Observable<any[]> {
+    const url = `${this.apiUrl}/partidas`;
+    const params = new HttpParams().set(
+      'ids',
+      coms.reduce((prev, item) => prev + ',' + item)
+    );
+    return this.http.get<any[]>(url, { params });
   }
 
   print(com: RecepcionDeCompra) {

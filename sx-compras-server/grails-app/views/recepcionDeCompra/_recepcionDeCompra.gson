@@ -4,13 +4,10 @@ model {
 	RecepcionDeCompra recepcionDeCompra
 }
 
-json g.render(recepcionDeCompra, [excludes: ['partidas', 'lastUpdated', 'dateCreated'], resolveTemplate: false]){
+json g.render(recepcionDeCompra, [excludes: ['partidas'], resolveTemplate: false]){
     nombre recepcionDeCompra.proveedor.nombre
     sucursalNombre recepcionDeCompra.sucursal.nombre
-    creado recepcionDeCompra.dateCreated
-    modificado recepcionDeCompra.lastUpdated
     compraFolio recepcionDeCompra.compra.folio
     compraFecha recepcionDeCompra.compra.fecha
-    partidas g.render(recepcionDeCompra.partidas)
-
+    
 }

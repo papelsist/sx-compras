@@ -21,6 +21,7 @@ export interface RecepcionDeCompra {
   createUser?: string;
   updateUser?: string;
   fechaInventario?: string;
+  total: number;
   cancelado?: string;
   compraFolio?: number;
   compraFecha?: string;

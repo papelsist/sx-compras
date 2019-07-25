@@ -225,6 +225,7 @@ class UrlMappings {
         "/api/coms/pendientesDeAnalisis/$id"(controller: 'recepcionDeCompra', action: 'pendientesDeAnalisis')
         "/api/coms/print/$id"(controller: 'recepcionDeCompra', action: 'print', method: 'GET')
         "/api/coms/recepcionesPorDia"(controller: 'recepcionDeCompra', action: 'recepcionesPorDia', method: 'GET')
+        "/api/coms/partidas"(controller: 'recepcionDeCompra', action: 'partidas', method: 'GET')
 
         "/api/costos"(resources: 'costoPromedio', excludes:['create', 'edit','patch', 'update', 'save'])
         "/api/costos/$ejercicio/$mes"(controller: 'costoPromedio', action: 'costos', method: 'GET')

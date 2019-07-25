@@ -4,4 +4,10 @@ model {
 	RecepcionDeCompra recepcionDeCompra
 }
 
-json tmpl.recepcionDeCompra(recepcionDeCompra)
+json g.render(recepcionDeCompra, [excludes: ['partidas'], resolveTemplate: false]){
+    nombre recepcionDeCompra.proveedor.nombre
+    sucursalNombre recepcionDeCompra.sucursal.nombre
+    partidas g.render(recepcionDeCompra.partidas)
+    compra g.render(recepcionDeCompra.compra)
+}
+
