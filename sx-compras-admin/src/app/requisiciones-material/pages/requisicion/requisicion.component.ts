@@ -164,6 +164,26 @@ export class RequisicionComponent implements OnInit, OnDestroy {
       });
   }
 
+  onGenerarCompra(event: Partial<RequisicionDeMaterial>) {
+    if (!event.compra) {
+      this.dialogService
+        .openConfirm({
+          title: 'GENERAR ORDEN DE COMPRA',
+          message: 'REQUISICION: ' + event.folio,
+          acceptButton: 'ACEPTAR',
+          cancelButton: 'CANCELAR'
+        })
+        .afterClosed()
+        .subscribe(res => {
+          if (res) {
+            this.store.dispatch(
+              new fromStore.GenerarCompraDeMaterial({ requisicion: event })
+            );
+          }
+        });
+    }
+  }
+
   @HostListener('document:keydown.meta.i', ['$event'])
   onHotKeyInsert(event) {
     this.agregarPartidas();

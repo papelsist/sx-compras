@@ -77,6 +77,17 @@ class RequisicionDeMaterialController extends RestfulController<RequisicionDeMat
         respond res
     }
 
+    @CompileDynamic
+    def generarCompra() {
+        def r = RequisicionDeMaterial.get(params.id)
+        if(r == null) {
+            notFound()
+            return
+        }
+        r = requisicionDeMaterialService.generarCompra(r)
+        respond r, view: 'show'
+    }
+
     def print( ) {
         Map repParams = [ID: params.id]
         def pdf =  reportService.run('RequisicionDeMaterial.jrxml', repParams)

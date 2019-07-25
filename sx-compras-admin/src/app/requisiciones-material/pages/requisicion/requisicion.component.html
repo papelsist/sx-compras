@@ -55,24 +55,29 @@
     <button mat-button (click)="agregarPartidas()">
       <mat-icon>playlist_add</mat-icon> PARTIDAS
     </button>
-    <button mat-button [disabled]="!(dirty$ | async)" (click)="onSave()">
-      <mat-icon>save</mat-icon> SALVAR
-    </button>
     <button
       mat-button
       (click)="grid.deleteSelection()"
       color="warn"
       [disabled]="selectedPartidas.length === 0"
+      matTooltip="QUITAR PARTIDAS SELECCIONADAS"
     >
-      <mat-icon>remove_circle_outline</mat-icon> ELIMINAR PARTIDAS
+      <mat-icon>remove_circle_outline</mat-icon> QUITAR
+    </button>
+    <button mat-button [disabled]="!(dirty$ | async)" (click)="onSave()">
+      <mat-icon>save</mat-icon> SALVAR
+    </button>
+
+    <button mat-button (click)="onGenerarCompra(requisicion)" color="primary">
+      <mat-icon>settings</mat-icon> GENERAR COMPRA
     </button>
     <button
       mat-button
       (click)="onDelete(requisicion)"
       color="warn"
-      *ngIf="hasAdminRole()"
+      matTooltip="ELIMINAR REQUISICION"
     >
-      <mat-icon>delete</mat-icon> ELIMINAR REQUISICION
+      <mat-icon>delete</mat-icon> ELIMINAR
     </button>
   </mat-card-actions>
 </mat-card>

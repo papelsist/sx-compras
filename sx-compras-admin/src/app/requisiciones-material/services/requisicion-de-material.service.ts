@@ -56,6 +56,13 @@ export class RequisicionDeMaterialService {
       .pipe(catchError((error: any) => throwError(error)));
   }
 
+  generarCompra(requisicionId: string): Observable<RequisicionDeMaterial> {
+    const url = `${this.apiUrl}/generarCompra/${requisicionId}`;
+    return this.http
+      .put<RequisicionDeMaterial>(url, {})
+      .pipe(catchError((error: any) => throwError(error)));
+  }
+
   disponibles(proveedor: string): Observable<any[]> {
     const url = `${this.apiUrl}/disponibles`;
     const params = new HttpParams().set('proveedor', proveedor);

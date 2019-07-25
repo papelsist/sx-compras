@@ -7,7 +7,7 @@ import * as fromStore from './reducer';
 import { selectPeriodo } from './selectors';
 
 import { of } from 'rxjs';
-import { map, switchMap, catchError, take } from 'rxjs/operators';
+import { map, switchMap, catchError, take, tap } from 'rxjs/operators';
 
 import { RequisicionesDeMaterialActionTypes } from './actions';
 import * as fromActions from './actions';
@@ -128,17 +128,50 @@ export class RequisicionDeMaterialEffects {
   );
 
   @Effect()
+  generarCompra$ = this.actions$.pipe(
+    ofType<fromActions.GenerarCompraDeMaterial>(
+      RequisicionesDeMaterialActionTypes.GenerarCompraDeMaterial
+    ),
+    map(action => action.payload.requisicion),
+    switchMap(requisicion => {
+      return this.service.generarCompra(requisicion.id).pipe(
+        map(
+          res =>
+            new fromActions.GenerarCompraDeMaterialSuccess({
+              requisicion: res
+            })
+        ),
+        catchError(response =>
+          of(new fromActions.GenerarCompraDeMaterialFail({ response }))
+        )
+      );
+    })
+  );
+
+  @Effect({ dispatch: false })
+  generarCompraSuccess$ = this.actions$.pipe(
+    ofType<fromActions.GenerarCompraDeMaterialSuccess>(
+      RequisicionesDeMaterialActionTypes.GenerarCompraDeMaterialSuccess
+    ),
+    map(action => action.payload.requisicion),
+    tap(req => console.log('Compra genrada de req: ', req))
+    // map(r => new fromRoot.Go({ path: ['ordenes/requisiciones'] }))
+  );
+
+  @Effect()
   errorHandler$ = this.actions$.pipe(
     ofType<
       | fromActions.LoadRequisicionesDeMaterialFail
       | fromActions.CreateRequisicionDeMaterialFail
       | fromActions.UpdateRequisicionDeMaterialFail
       | fromActions.DeleteRequisicionDeMaterialFail
+      | fromActions.GenerarCompraDeMaterialFail
     >(
       RequisicionesDeMaterialActionTypes.LoadRequisicionesFail,
       RequisicionesDeMaterialActionTypes.CreateRequisicionDeMaterialFail,
       RequisicionesDeMaterialActionTypes.UpdateRequisicionDeMaterialFail,
-      RequisicionesDeMaterialActionTypes.DeleteRequisicionDeMaterialFail
+      RequisicionesDeMaterialActionTypes.DeleteRequisicionDeMaterialFail,
+      RequisicionesDeMaterialActionTypes.GenerarCompraDeMaterialFail
     ),
     map(action => action.payload.response),
     map(response => new fromRoot.GlobalHttpError({ response }))

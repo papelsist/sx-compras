@@ -33,6 +33,7 @@ export function reducer(
   action: RequisicionesDeMaterialActions
 ): State {
   switch (action.type) {
+    case RequisicionesDeMaterialActionTypes.GenerarCompraDeMaterial:
     case RequisicionesDeMaterialActionTypes.DeleteRequisicionDeMaterial:
     case RequisicionesDeMaterialActionTypes.UpdateRequisicionDeMaterial:
     case RequisicionesDeMaterialActionTypes.CreateRequisicionDeMaterial:
@@ -43,6 +44,7 @@ export function reducer(
       };
     }
 
+    case RequisicionesDeMaterialActionTypes.GenerarCompraDeMaterialFail:
     case RequisicionesDeMaterialActionTypes.DeleteRequisicionDeMaterialFail:
     case RequisicionesDeMaterialActionTypes.UpdateRequisicionDeMaterialFail:
     case RequisicionesDeMaterialActionTypes.CreateRequisicionDeMaterialFail:
@@ -67,6 +69,7 @@ export function reducer(
       });
     }
 
+    case RequisicionesDeMaterialActionTypes.GenerarCompraDeMaterialSuccess:
     case RequisicionesDeMaterialActionTypes.UpdateRequisicionDeMaterialSuccess: {
       return adapter.upsertOne(action.payload.requisicion, {
         ...state,
