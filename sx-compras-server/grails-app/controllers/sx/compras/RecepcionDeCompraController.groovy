@@ -52,7 +52,7 @@ class RecepcionDeCompraController extends RestfulController<RecepcionDeCompra> {
                         " order by d.recepcion.fecha asc",
                 [proveedor])
         recepciones*.actualizarPendiente()
-        respond recepciones, view: 'pendientesDeAnalisis'
+        respond recepciones
     }
 
     def handleException(Exception e) {

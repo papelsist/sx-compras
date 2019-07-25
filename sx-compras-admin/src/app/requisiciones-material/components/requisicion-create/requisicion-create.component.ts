@@ -30,6 +30,7 @@ export class RequisicionCreateComponent implements OnInit {
   private buildForm() {
     this.form = this.fb.group({
       proveedor: [null, Validators.required],
+      moneda: ['MXN', Validators.required],
       fecha: [{ value: new Date(), disabled: true }, Validators.required],
       comentario: [null]
     });
@@ -40,7 +41,7 @@ export class RequisicionCreateComponent implements OnInit {
       const { clave, nombre, rfc } = this.form.get('proveedor').value;
 
       const data = {
-        ...this.form.getRawValue,
+        ...this.form.value,
         fecha: new Date(),
         proveedor: nombre,
         clave,

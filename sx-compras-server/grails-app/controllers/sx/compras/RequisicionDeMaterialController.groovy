@@ -72,7 +72,8 @@ class RequisicionDeMaterialController extends RestfulController<RequisicionDeMat
     @CompileDynamic
     def disponibles() {
         def cve = params.proveedor
-        def res = ProveedorProducto.where{proveedor.clave == cve && moneda == 'MXN'}.list()
+        def mon = params.moneda
+        def res = ProveedorProducto.where{proveedor.clave == cve && moneda == mon}.list()
         res.sort{it.producto.clave}
         respond res
     }

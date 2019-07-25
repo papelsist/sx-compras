@@ -7,6 +7,7 @@ export interface RequisicionDeMaterial {
   rfc?: string;
   clave: string;
   sucursal: string;
+  moneda: string;
   fecha: string;
   comentario: string;
   cerrada?: string;

@@ -98,7 +98,11 @@ export class RequisicionesTableComponent extends LxTableComponent
         width: 100,
         cellRenderer: params => this.transformDate(params.value)
       },
-
+      {
+        headerName: 'Moneda',
+        field: 'moneda',
+        width: 90
+      },
       {
         headerName: 'Comentario',
         field: 'comentario'

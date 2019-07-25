@@ -4,8 +4,10 @@
     <div layout>
       <sx-proveedor-field formControlName="proveedor" flex></sx-proveedor-field>
     </div>
-    <div>
-      <mat-form-field class="pad-right">
+    <div layout>
+      <sx-moneda-field [parent]="form"></sx-moneda-field>
+      <span flex></span>
+      <mat-form-field class="pad-left">
         <input
           matInput
           [matDatepicker]="myDatepicker"
@@ -18,7 +20,12 @@
         ></mat-datepicker-toggle>
         <mat-datepicker #myDatepicker></mat-datepicker>
       </mat-form-field>
-      <sx-upper-case-field formControlName="comentario"></sx-upper-case-field>
+    </div>
+    <div layout>
+      <sx-upper-case-field
+        formControlName="comentario"
+        flex
+      ></sx-upper-case-field>
     </div>
   </mat-dialog-content>
   <mat-dialog-actions>

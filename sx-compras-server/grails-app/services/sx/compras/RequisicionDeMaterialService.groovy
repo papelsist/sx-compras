@@ -50,6 +50,7 @@ class RequisicionDeMaterialService implements LogUser, FolioLog {
         Sucursal suc = Sucursal.where{nombre == req.sucursal}.find()
         Proveedor prov = Proveedor.where{clave == req.clave}.find()
         Compra compra = new Compra()
+        compra.moneda = req.moneda
         compra.fecha = new Date()
         compra.folio = -1L
         compra.sucursal = suc

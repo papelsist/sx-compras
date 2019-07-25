@@ -21,6 +21,8 @@ class RequisicionDeMaterial {
 
     String sucursal
 
+    String moneda
+
     Long folio
 
     Date fecha
@@ -47,6 +49,7 @@ class RequisicionDeMaterial {
         compra nullable: true
         createUser nullable: true
         updateUser nullable: true
+        moneda maxSize: 3
     }
 
     static hasMany = [partidas:RequisicionDeMaterialDet]
