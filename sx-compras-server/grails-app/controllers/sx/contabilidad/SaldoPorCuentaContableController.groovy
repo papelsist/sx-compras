@@ -35,6 +35,9 @@ class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaC
 
     @Override
     protected List<Poliza> listAllResources(Map params) {
+
+        println params
+
         params.sort = params.sort ?:'clave'
         params.order = params.order ?:'asc'
         params.max = 90000
@@ -48,7 +51,7 @@ class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaC
         def criteria = new DetachedCriteria(SaldoPorCuentaContable).build {
             eq('ejercicio', ejercicio)
             eq('mes', mes)
-            eq('nivel', nivel)
+           // eq('nivel', nivel ? nivel : '%')
         }
         return criteria.list(params)
     }
