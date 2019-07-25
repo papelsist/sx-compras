@@ -10,6 +10,8 @@ import { Observable } from 'rxjs';
 import { RecepcionDeCompra } from '../../models/recepcionDeCompra';
 import { Periodo } from 'app/_core/models/periodo';
 import { RecepcionesService } from 'app/recepciones/services';
+import { MatDialog } from '@angular/material';
+import { ShowComsComponent } from 'app/recepciones/components';
 
 @Component({
   selector: 'sx-recepciones',
@@ -24,7 +26,8 @@ export class RecepcionesComponent implements OnInit {
 
   constructor(
     private store: Store<fromStore.State>,
-    private service: RecepcionesService
+    private service: RecepcionesService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit() {
@@ -50,8 +53,17 @@ export class RecepcionesComponent implements OnInit {
     this.service
       .partidas(ids)
       .subscribe(
-        res => console.log('Res: ', res),
+        res => this.showComs(res),
         error => console.error('Error: ', error)
       );
+  }
+
+  showComs(data: any[]) {
+    this.dialog
+      .open(ShowComsComponent, {
+        data: { partidas: data }
+      })
+      .afterClosed()
+      .subscribe(res => {});
   }
 }
