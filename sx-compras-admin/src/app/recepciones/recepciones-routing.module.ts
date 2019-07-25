@@ -1,11 +1,20 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-import { RecepcionesComponent } from './containers';
-import { RecepcionesGuard } from './guards';
+import { RecepcionesComponent, RecepcionComponent } from './containers';
+import { RecepcionesGuard, RecepcionExistsGuard } from './guards';
 
 const routes: Routes = [
-  { path: '', canActivate: [RecepcionesGuard], component: RecepcionesComponent }
+  {
+    path: '',
+    canActivate: [RecepcionesGuard],
+    component: RecepcionesComponent
+  },
+  {
+    path: ':comId',
+    canActivate: [RecepcionExistsGuard],
+    component: RecepcionComponent
+  }
 ];
 
 @NgModule({

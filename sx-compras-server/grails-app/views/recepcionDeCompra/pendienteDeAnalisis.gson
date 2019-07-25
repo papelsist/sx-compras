@@ -1,0 +1,9 @@
+import sx.compras.RecepcionDeCompra
+
+model {
+	List<RecepcionDeCompra> recepciones
+}
+println 'ANALISIS'
+
+json tmpl.initCom("recepcionDeCompra", recepciones)
+

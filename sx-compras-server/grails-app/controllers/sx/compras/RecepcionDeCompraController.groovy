@@ -22,7 +22,7 @@ class RecepcionDeCompraController extends RestfulController<RecepcionDeCompra> {
     RecepcionDeCompraController() {
         super(RecepcionDeCompra)
     }
-
+    
     @Override
     protected List<RecepcionDeCompra> listAllResources(Map params) {
         params.sort = 'lastUpdated'
@@ -30,7 +30,6 @@ class RecepcionDeCompraController extends RestfulController<RecepcionDeCompra> {
         params.max = 10000
         log.debug('List {}', params)
         Periodo periodo =(Periodo)params.periodo
-        // query = query.where{fecha >= periodo.fechaInicial && fecha <= periodo.fechaFinal}
         def query = RecepcionDeCompra.where{
             fecha >= periodo.fechaInicial && fecha <= periodo.fechaFinal
         }
@@ -45,15 +44,15 @@ class RecepcionDeCompraController extends RestfulController<RecepcionDeCompra> {
      */
     @CompileDynamic
     def pendientesDeAnalisis(Proveedor proveedor) {
-        List list = RecepcionDeCompraDet.findAll(
+        List recepciones = RecepcionDeCompraDet.findAll(
                 "select distinct(d.recepcion) from RecepcionDeCompraDet d " +
                         " where d.recepcion.proveedor =? " +
                         " and d.cantidad - d.analizado > 0 " +
                         " and d.recepcion.cancelado is null" +
                         " order by d.recepcion.fecha asc",
                 [proveedor])
-        list*.actualizarPendiente()
-        respond list
+        recepciones*.actualizarPendiente()
+        respond recepciones, view: 'pendientesDeAnalisis'
     }
 
     def handleException(Exception e) {

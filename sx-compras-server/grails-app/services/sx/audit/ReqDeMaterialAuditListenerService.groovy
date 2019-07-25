@@ -39,7 +39,7 @@ class ReqDeMaterialAuditListenerService {
         RequisicionDeMaterial requisicion = getRequisicion(event)
         if ( requisicion ) {
             log.debug('{} {} Id: {}', event.eventType.name(), event.entity.name, requisicion.id)
-            logEntity(requisicion, 'UPDATE')
+            // logEntity(requisicion, 'UPDATE')
         }
     }
 

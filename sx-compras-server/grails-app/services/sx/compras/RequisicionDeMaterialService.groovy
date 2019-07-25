@@ -67,7 +67,9 @@ class RequisicionDeMaterialService implements LogUser, FolioLog {
             compra.addToPartidas(det)
         }
         compra.comentario = "GENERADA POR REQUISICION ${req.folio}"
+        compraService.actualizarPreciosVigentes(compra)
         compra = compraService.saveCompra(compra)
+        // compra = compraService.actualizarPreciosVigentes(compra)
         log.info('Compra generada {}', compra.id)
         req.compra = compra.id
         logEntity(req)

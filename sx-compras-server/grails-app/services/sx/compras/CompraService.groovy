@@ -143,8 +143,8 @@ abstract class CompraService {
 
         }
         actualizarTotales(compra)
-        logEntity(compra)
-        return save(compra)
+        // logEntity(compra)
+        // return save(compra)
 
     }
 

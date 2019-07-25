@@ -6,6 +6,7 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
 import org.grails.datastore.mapping.engine.event.AbstractPersistenceEvent
+import org.grails.datastore.mapping.engine.event.PostInsertEvent
 import org.grails.datastore.mapping.engine.event.PostDeleteEvent
 import org.grails.datastore.mapping.engine.event.PostUpdateEvent
 
@@ -35,13 +36,20 @@ class CompraListenerService {
     }
 
     @Subscriber
-    void afterUpdate(PostUpdateEvent event) {
-        // log.info('{} {} ', event.eventType.name(), event.entity.name)
+    void afterInsert(PostInsertEvent event) {
+        Compra compra = getCompra(event)
+        if ( compra ) {
+            logEntity(compra, 'INSERT')
+        }
+    }
 
-        String id = getId(event)
+    @Subscriber
+    void afterUpdate(PostUpdateEvent event) {
+         String id = getId(event)
         if ( id ) {
             log.debug('{} {} Id: {}', event.eventType.name(), event.entity.name, id)
             Compra compra = getCompra(event)
+            Thread.sleep(1000)
             logEntity(compra, 'UPDATE')
         }
     }
@@ -55,8 +63,6 @@ class CompraListenerService {
     }
 
     def logEntity(Compra compra, String type) {
-        // log.debug('Cambio {} Compra cerrada: {}',type, compra.cerrada ? 'SI' : 'NO')
-        // if(compra.cerrada != null) {
         if(true) {
             Boolean central = compra.sucursal.clave.trim() == '1' ? true : false
             if(central) {
@@ -68,7 +74,7 @@ class CompraListenerService {
                  'CF5FEBRERO',
                  'VERTIZ 176',
                  'BOLIVAR'].each {
-                    buildLog(compra, it, compra.sw2)
+                    buildLog(compra, it, type)
                 }
             } else {
                 buildLog(compra, compra.sucursal.nombre, type)
@@ -80,6 +86,7 @@ class CompraListenerService {
 
     def buildLog(Compra compra, String destino, String type) {
         // log.info('Destino: {}', destino)
+
         Audit alog = new Audit(
                 name: 'Compra',
                 persistedObjectId: compra.id,
