@@ -96,7 +96,7 @@ export class RequisicionComponent implements OnInit, OnDestroy {
 
   cargarDisponibles(r: RequisicionDeMaterial) {
     this.service
-      .disponibles(r.clave)
+      .disponibles(r.clave, r.moneda)
       .pipe(takeUntil(this.destroy$))
       .subscribe(data => {
         this.disponibles = data;

@@ -4,6 +4,7 @@ export interface RequisicionDeMaterial {
   id: string;
   folio: number;
   proveedor: string;
+  moneda: string;
   rfc?: string;
   clave: string;
   sucursal: string;

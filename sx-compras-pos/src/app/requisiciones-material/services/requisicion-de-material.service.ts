@@ -56,9 +56,11 @@ export class RequisicionDeMaterialService {
       .pipe(catchError((error: any) => throwError(error)));
   }
 
-  disponibles(proveedor: string): Observable<any[]> {
+  disponibles(proveedor: string, moneda: string  ): Observable<any[]> {
     const url = `${this.apiUrl}/disponibles`;
-    const params = new HttpParams().set('proveedor', proveedor);
+    const params = new HttpParams()
+    .set('proveedor', proveedor)
+    .set('moneda', moneda);
     return this.http.get<any[]>(url, { params: params });
   }
 

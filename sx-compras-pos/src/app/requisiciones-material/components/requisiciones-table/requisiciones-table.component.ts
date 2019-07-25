@@ -100,6 +100,11 @@ export class RequisicionesTableComponent extends LxTableComponent
       },
 
       {
+        headerName: 'Moneda',
+        field: 'moneda',
+        width: 90
+      },
+      {
         headerName: 'Comentario',
         field: 'comentario'
       },
