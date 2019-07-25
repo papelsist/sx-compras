@@ -61,7 +61,8 @@ export class RecepcionesComponent implements OnInit {
   showComs(data: any[]) {
     this.dialog
       .open(ShowComsComponent, {
-        data: { partidas: data }
+        data: { partidas: data },
+        width: '950px'
       })
       .afterClosed()
       .subscribe(res => {});

@@ -12,8 +12,8 @@ import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <h4 mat-dialog-title>Entradas unitarias por compra (COM)</h4>
-    <div layout class="pad-sm">
-      <input (keyup)="onSearch(box.value)" placeholder="Buscar" flex #box />
+    <div layout layout-align="center center" class="search">
+      <input (keyup)="onSearch(box.value)" placeholder="Filtrar" flex #box />
       <button mat-icon-button (click)="exportData()">
         <mat-icon color="primary">file_download</mat-icon>
       </button>
@@ -36,11 +36,13 @@ import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
   styles: [
     `
       .search {
+        margin-top: -15px;
         margin-bottom: 5px;
+        height: 20px;
       }
       .grid-panel {
-        height: 400px;
-        width: 750px;
+        height: 450px;
+        width: 100%;
         overflow: auto;
       }
     `
@@ -87,20 +89,27 @@ export class ShowComsComponent implements OnInit {
         valueGetter: params => {
           return params.data.producto.descripcion;
         },
-        width: 200,
+        width: 250,
         pinned: 'left'
       },
       {
         headerName: 'Suc',
-        field: 'sucursal'
+        field: 'sucursal',
+        width: 110
       },
       {
         headerName: 'COM',
-        field: 'com'
+        field: 'com',
+        width: 110
       },
       {
         headerName: 'Cantidad',
-        field: 'cantidad'
+        field: 'cantidad',
+        width: 120
+      },
+      {
+        headerName: 'Proveedor',
+        field: 'proveedor'
       }
     ];
   }

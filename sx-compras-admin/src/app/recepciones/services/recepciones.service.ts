@@ -10,6 +10,7 @@ import { ConfigService } from '../../utils/config.service';
 
 import { RecepcionDeCompra, ComsFilter } from '../models';
 import { Compra } from '../../ordenes/models/compra';
+import { Periodo } from 'app/_core/models/periodo';
 
 @Injectable()
 export class RecepcionesService {
@@ -19,16 +20,11 @@ export class RecepcionesService {
     this.apiUrl = configService.buildApiUrl('coms');
   }
 
-  list(filter?: ComsFilter): Observable<RecepcionDeCompra[]> {
-    let params = new HttpParams();
-    _.forIn(filter, (value: any, key) => {
-      if (value instanceof Date) {
-        const fecha: Date = value;
-        params = params.set(key, fecha.toISOString());
-      } else {
-        params = params.set(key, value);
-      }
-    });
+  list(periodo: Periodo): Observable<RecepcionDeCompra[]> {
+    const data = periodo.toApiJSON();
+    const params = new HttpParams()
+      .set('fechaInicial', data.fechaInicial)
+      .set('fechaFinal', data.fechaFinal);
     return this.http
       .get<RecepcionDeCompra[]>(this.apiUrl, { params: params })
       .pipe(catchError((error: any) => throwError(error)));

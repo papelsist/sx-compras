@@ -123,12 +123,10 @@ class Compra {
     */
 
     def getStatus() {
-        if(!pendiente)
-            return 'A'
-        else if(pendiente && cerrada )
-            return 'T'
-        else
+        if(pendiente)
             return 'P'
+        else
+            return 'A'
     }
 
 }
