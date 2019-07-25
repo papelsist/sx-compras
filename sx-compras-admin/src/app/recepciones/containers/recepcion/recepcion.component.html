@@ -1,3 +1,7 @@
+<div class="recepcion-page">
+  <sx-com-form [com]="recepcion$ | async"> </sx-com-form>
+</div>
+<!--
 <mat-card flex *ngIf="recepcion$ | async as recepcion">
   <div layout layout-align="start center" class="pad">
     <span class="push-left-sm">
@@ -35,14 +39,14 @@
   >
   </ng-template>
   <div class="grid-panel">
-    <!-- <sx-recepcion-partidas
+    <sx-recepcion-partidas
       #grid
       [partidas]="partidas"
       (select)="onSelect($event)"
       (edit)="dirty$.next(true)"
       [(selectedRows)]="selectedPartidas"
     >
-    </sx-recepcion-partidas> -->
+    </sx-recepcion-partidas>
   </div>
   <mat-divider></mat-divider>
   <mat-card-actions>
@@ -51,3 +55,4 @@
     </button>
   </mat-card-actions>
 </mat-card>
+-->

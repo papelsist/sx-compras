@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
 import { Store, select } from '@ngrx/store';
+import * as fromRoot from 'app/store';
 import * as fromStore from '../../store';
 import * as fromRecepciones from '../../store/recepciones.selectors';
 import * as fromActions from '../../store/recepciones.actions';
@@ -38,7 +39,11 @@ export class RecepcionesComponent implements OnInit {
     this.coms$ = this.store.pipe(select(fromRecepciones.getAllRecepciones));
   }
 
-  onSelect(event: RecepcionDeCompra[]) {}
+  onSelect(event: RecepcionDeCompra) {
+    this.store.dispatch(
+      new fromRoot.Go({ path: ['ordenes/recepciones', event.id] })
+    );
+  }
 
   onPeriodo(event: Periodo) {
     this.store.dispatch(new fromActions.SetPeriodo({ periodo: event }));

@@ -22,7 +22,10 @@ export class RecepcionComponent implements OnInit {
   constructor(private store: Store<fromStore.State>) {}
 
   ngOnInit() {
-    this.loading$ = this.store.pipe(select(fromStore));
+    this.loading$ = this.store.pipe(
+      select(fromRecepciones.getRecepcionesLoading)
+    );
+
     this.recepcion$ = this.store.pipe(
       select(fromRecepciones.getSelectedRecepcionDeCompra)
     );
