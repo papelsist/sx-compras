@@ -133,6 +133,8 @@ class CobranzaDepositosTask implements  AsientoBuilder {
         log.info("Generando asientos contables para cobranza con DEPOSITOS/TRANSFERENCIAS {} {}", poliza.sucursal, poliza.fecha)
         String sql = getSelect()
                 .replaceAll("@FECHA", toSqlDate(poliza.fecha))
+
+       // println sql
         List rows = getAllRows(sql, [])
             generarAsientos(poliza, rows)
     }
@@ -151,25 +153,29 @@ class CobranzaDepositosTask implements  AsientoBuilder {
                 cobros.add(row.origen)
 
                 // 205 es una cobranza  por identificar
-                if(det.cuenta.clave.startsWith('205')) {
-                    det.debe = row.subtotal.abs()
+              
+                if(det.cuenta.clave.startsWith('205-0002')) {
+                    
+                    
+                    det.debe = row.cobro_aplic.abs()
 
-                    BigDecimal impuesto = row.impuesto
+                    BigDecimal impuesto = row.impuesto_apl
+                    /*
                     if(row.SAF > 0 ){
                         BigDecimal total = row.total - row.SAF
                         BigDecimal importe = MonedaUtils.calcularImporteDelTotal(total)
                         impuesto = MonedaUtils.round(total - importe)
                     }
-
+*/
                     // Cargo a iva
                     PolizaDet ivaPend = buildRegistro(
-                            row.cta_iva_pend.toString(),
+                            row.cta_iva_pag.toString(),
                             descripcion, row)
                     ivaPend.debe = impuesto.abs()
                     poliza.addToPartidas(ivaPend)
                 }
 
-                    if(row.SAF > 0.0) {
+                    if(row.SAF > 0.0 && !row.asiento.toString().contains('xIDENT')) {
 
                         BigDecimal safTotal = row.SAF
                         BigDecimal safImporte = MonedaUtils.calcularImporteDelTotal(safTotal)
@@ -211,8 +217,8 @@ class CobranzaDepositosTask implements  AsientoBuilder {
                         row)
                 clienteDet.haber = row.cobro_aplic
                 poliza.addToPartidas(clienteDet)
-/*
 
+            /*
                 // IVAS
                 if(!row.asiento.toString().contains('xIDENT')) {
                     PolizaDet ivaPend = buildRegistro(
@@ -227,7 +233,7 @@ class CobranzaDepositosTask implements  AsientoBuilder {
                     ivaPag.haber = row.impuesto_apl.abs()
                     poliza.addToPartidas(ivaPag)
                 }
-                */
+            */
         }
 
 
