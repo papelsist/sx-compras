@@ -18,6 +18,11 @@ import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
       <button mat-icon-button (click)="exportData()">
         <mat-icon color="primary">file_download</mat-icon>
       </button>
+      <button
+        mat-icon-button
+        (click)="depurar()"
+        [disabled]="selected.length === 0"
+      ></button>
     </div>
     <div class="grid-panel">
       <ag-grid-angular
@@ -29,6 +34,7 @@ import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
         [rowData]="partidas"
         [defaultColDef]="defaultColDef"
         (gridReady)="onGridReady($event)"
+        (selectionChange)="selected = $event"
       >
       </ag-grid-angular>
     </div>
@@ -51,6 +57,7 @@ import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
 })
 export class ShowCompraDetsComponent implements OnInit {
   partidas: any[];
+  selected = [];
   gridApi: GridApi;
   constructor(
     public dialogRef: MatDialogRef<ShowCompraDetsComponent>,
@@ -140,5 +147,10 @@ export class ShowCompraDetsComponent implements OnInit {
       fileName: `${prefix}_${new Date().getTime()}.csv`
     };
     this.gridApi.exportDataAsCsv(params);
+  }
+
+  depurar() {
+    const ids = this.selected.map(item => item.id);
+    console.log('Depurar: ', ids);
   }
 }
