@@ -52,6 +52,16 @@ class CompraController extends RestfulController<Compra> {
     @Override
     @CompileDynamic
     protected List<Compra> listAllResources(Map params) {
+        Periodo periodo = params.periodo
+        log.info('List {}', periodo)
+        def query = Compra.where{}
+        query = query.where{fecha >= periodo.fechaInicial && fecha <= periodo.fechaFinal}
+        return  query.list([sort: 'lastUpdated', order: 'desc'])
+    }
+
+    
+    @CompileDynamic
+    protected List<Compra> listAllResourcesOld(Map params) {
 
         params.max = params.registros?: 20
         params.sort = 'lastUpdated'

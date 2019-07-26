@@ -4,7 +4,7 @@ import { Compra, ComprasFilter } from '../../models/compra';
 import { Periodo } from 'app/_core/models/periodo';
 
 export enum CompraActionTypes {
-  SetPeriodo = '[Compras component]Set periodo',
+  SetPeriodo = '[Compras component]Set periodo de compras',
   SetComprasFilter = '[Compra] Set Compras filter',
   SetComprasSearchTerm = '[Compra] Set Search Term',
   LoadCompras = '[Compra] Load Compras',
@@ -35,7 +35,7 @@ export enum CompraActionTypes {
 
 export class SetPeriodo implements Action {
   readonly type = CompraActionTypes.SetPeriodo;
-  constructor(payload: { periodo: Periodo }) {}
+  constructor(public payload: { periodo: Periodo }) {}
 }
 
 export class LoadCompras implements Action {

@@ -37,6 +37,7 @@ export class ComprasComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    this.periodo$ = this.store.pipe(select(fromStore.getComprasPeriodo));
     this.loading$ = this.store.pipe(select(fromStore.getComprasLoading));
     this.compras$ = this.store.pipe(select(fromStore.getAllCompras));
   }
