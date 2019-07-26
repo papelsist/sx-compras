@@ -13,6 +13,9 @@ import * as fromActions from '../../store/actions/compra.actions';
 import { Observable } from 'rxjs';
 import { Compra } from '../../models/compra';
 import { Periodo } from 'app/_core/models/periodo';
+import { MatDialog } from '@angular/material';
+import { ComprasService } from 'app/ordenes/services';
+import { ShowCompraDetsComponent } from 'app/ordenes/components/show-compradets/show-compradets.component';
 
 @Component({
   selector: 'sx-compras',
@@ -25,7 +28,13 @@ export class ComprasComponent implements OnInit, OnDestroy {
   periodo$: Observable<Periodo>;
   loading$: Observable<boolean>;
 
-  constructor(private store: Store<fromStore.State>) {}
+  selected: Partial<Compra>[] = [];
+
+  constructor(
+    private store: Store<fromStore.State>,
+    private dialog: MatDialog,
+    private service: ComprasService
+  ) {}
 
   ngOnInit() {
     this.loading$ = this.store.pipe(select(fromStore.getComprasLoading));
@@ -50,5 +59,25 @@ export class ComprasComponent implements OnInit, OnDestroy {
     this.store.dispatch(
       new fromRoot.Go({ path: ['ordenes/compras', event.id] })
     );
+  }
+  mostrarPartidas(coms: Partial<Compra>[]) {
+    const ids = coms.map(item => item.id);
+    console.log('Mostrar partidas de :', ids);
+    this.service
+      .partidas(ids)
+      .subscribe(
+        res => this.showPartidas(res),
+        error => console.error('Error: ', error)
+      );
+  }
+
+  showPartidas(data: any[]) {
+    this.dialog
+      .open(ShowCompraDetsComponent, {
+        data: { partidas: data },
+        width: '950px'
+      })
+      .afterClosed()
+      .subscribe(res => {});
   }
 }

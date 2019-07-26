@@ -39,7 +39,6 @@ export class ComFormComponent implements OnInit, OnChanges {
     }
     if (changes.com && changes.com.currentValue) {
       const com = changes.com.currentValue;
-      console.log('COM:', com);
       this.clarPartidas();
       this.form.patchValue(com);
       com.partidas.forEach(item => this.partidas.push(new FormControl(item)));
@@ -83,7 +82,7 @@ export class ComFormComponent implements OnInit, OnChanges {
   get partidas() {
     return this.form.get('partidas') as FormArray;
   }
-  getPrintUrl(event: RecepcionDeCompra) {
+  getPrintUrl(event: Partial<RecepcionDeCompra>) {
     return `coms/print/${event.id}`;
   }
 }

@@ -12,6 +12,7 @@ import { CompradetTableComponent } from './compradet-table/compradet-table.compo
 import { ComprasFilterDialogComponent } from './compras-filter/compras-filter-dialog.component';
 import { ComprasFilterLabelComponent } from './compras-filter/compras-filter-label.component';
 import { ComprasFilterComponent } from './compras-filter/compras-filter.component';
+import { ShowCompraDetsComponent } from './show-compradets/show-compradets.component';
 
 
 export const components: any[] = [
@@ -28,9 +29,10 @@ export const components: any[] = [
   CompradetTableComponent,
   ComprasFilterDialogComponent,
   ComprasFilterLabelComponent,
-  ComprasFilterComponent
+  ComprasFilterComponent,
+  ShowCompraDetsComponent
 ];
-export const entryComponents: any[] = [CompraPartidaFormComponent, ComprasFilterDialogComponent];
+export const entryComponents: any[] = [CompraPartidaFormComponent, ComprasFilterDialogComponent, ShowCompraDetsComponent];
 
 export * from './compras-table/compras-table.component';
 export * from './compra-form/compra-form.component';
@@ -47,4 +49,6 @@ export * from './compradet-table/compradet-table.component';
 export * from './compras-filter/compras-filter-dialog.component';
 export * from './compras-filter/compras-filter-label.component';
 export * from './compras-filter/compras-filter.component';
+
+export * from './show-compradets/show-compradets.component';
 

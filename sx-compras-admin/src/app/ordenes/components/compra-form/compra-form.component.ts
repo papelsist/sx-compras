@@ -90,7 +90,7 @@ export class CompraFormComponent implements OnInit, OnChanges {
         fecha = fecha.toISOString();
       }
       const proveedor = { id: this.proveedor.id };
-      const sucursal = { id: this.sucursal.id };
+      const sucursal = { id: this.form.get('sucursal').value.id };
       const res = {
         ...this.compra,
         ...this.form.value,

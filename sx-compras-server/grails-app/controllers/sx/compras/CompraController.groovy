@@ -126,6 +126,26 @@ class CompraController extends RestfulController<Compra> {
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'ListaDePrecios.pdf')
     }
 
+    @CompileDynamic
+    def partidas() {
+        log.info('Localizando partidas: {}', params)
+        String xids = params.ids as String
+        String[] ids = xids.split(',')
+        String dd = ""
+        def limit = ids.length - 1
+        0.upto(limit, { item ->
+            String rq = "'${ids[item]}'"
+            dd += rq
+            if(item < limit) {
+                dd += ","
+            }
+        })
+        String hql = "from CompraDet d where d.compra.id in(${dd})"
+        def res = CompraDet.findAll(hql)
+        respond res
+
+    }
+
     def handleException(Exception e) {
         String message = ExceptionUtils.getRootCauseMessage(e)
         log.error(message, ExceptionUtils.getRootCause(e))

@@ -153,6 +153,7 @@ class UrlMappings {
         "/api/compras/depurar/$id"(controller: 'compra', action: 'depurar', method: 'PUT')
         "/api/compras/print/$id"(controller: 'compra', action: 'print', method: 'GET')
         "/api/compras/actualizarPrecios/$id"(controller: 'compra', action: 'actualizarPrecios', method: 'PUT')
+        "/api/compras/partidas"(controller: 'compra', action: 'partidas', method: 'GET')
 
         // requisicionDeMaterial de material
         "/api/requisicionDeMaterial"(resources: 'requisicionDeMaterial',  excludes:['create', 'edit','patch'])
