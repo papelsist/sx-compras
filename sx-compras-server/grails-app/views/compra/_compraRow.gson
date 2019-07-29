@@ -13,5 +13,5 @@ json g.render(compra, [excludes:['dateCreated','lastUpdated','version', 'proveed
         id compra.proveedor.id
         nombre compra.proveedor.nombre
     }
-    pendientes compra.partidas.sum{it.pendiente}
+    pendientes compra.partidas.sum(0.0, {CompraDet item -> item.pendiente})
 }
