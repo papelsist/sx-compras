@@ -17,5 +17,4 @@ json g.render(compra){
     modificada compra.dateCreated
     creada compra.dateCreated
     status compra.status
-    pendientes compra.partidas.sum 0.0, {it.pendiente}
 }
