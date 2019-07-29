@@ -1,11 +1,17 @@
 package sx.compras
 
+import groovy.transform.ToString
+
 import grails.compiler.GrailsCompileStatic
 import grails.plugin.springsecurity.annotation.Secured
-import grails.rest.*
+import grails.rest.RestfulController
+import grails.web.databinding.WebDataBinding
 
 import groovy.transform.CompileDynamic
 import org.apache.commons.lang3.exception.ExceptionUtils
+
+import static org.springframework.http.HttpStatus.OK
+
 import sx.core.Sucursal
 import sx.reports.ReportService
 import sx.utils.Periodo
@@ -138,7 +144,7 @@ class CompraController extends RestfulController<Compra> {
 
     @CompileDynamic
     def partidas() {
-        log.info('Localizando partidas: {}', params)
+        // log.info('Localizando partidas: {}', params)
         String xids = params.ids as String
         String[] ids = xids.split(',')
         String dd = ""
@@ -156,9 +162,50 @@ class CompraController extends RestfulController<Compra> {
 
     }
 
-    def handleException(Exception e) {
+    @CompileDynamic
+    def depuracionBatch() {
+        DepuracionBatch command = new DepuracionBatch()
+        bindData command, getObjectToBind()
+        log.info('Depuracion batch: {}', command)
+        List<CompraDet> validList = command.partidas.findAll {it.pendiente != 0.0}
+        Map<Compra, List<CompraDet>> grupos = validList.groupBy{it.compra}
+        grupos.each {
+            Compra compra = it.key
+            List<CompraDet> rows = it.value
+            rows.each { item -> 
+                def depurar = item.pendiente
+                if(depurar != 0) {
+                    log.info('Depurando: {} Solicitado:{} Recibido: {} Depurando: {}', item.clave, item.solicitado, item.recibido, depurar)
+                    item.depurado = depurar
+                    item.depuracion = new Date()
+                    // item.save flush: true
+                }
+            }
+            def pendiente = compra.partidas.find{it.getPorRecibir()> 0.0 }
+            compra.pendiente = pendiente != null
+            compra.ultimaDepuracion = compra.partidas.sort{it.depuracion}.get(0).depuracion
+            compraService.logEntity(compra)
+            compra = compra.save flush: true
+            log.info('Procesando Compra:{} Partidas:{}', it.key.folio, it.value.size())
+        }
+        respond status: OK
+    }
+    
+    def handleException(Exception e) {  
         String message = ExceptionUtils.getRootCauseMessage(e)
         log.error(message, ExceptionUtils.getRootCause(e))
         respond([message: message], status: 500)
     }
+    
 }
+
+
+// @ToString
+class DepuracionBatch implements WebDataBinding {
+    List<CompraDet> partidas
+
+    String toString() {
+        return "Partidas: ${partidas?.size()}"
+    }
+}
+

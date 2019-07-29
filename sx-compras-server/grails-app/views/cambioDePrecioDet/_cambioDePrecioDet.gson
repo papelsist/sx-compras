@@ -1,0 +1,7 @@
+import sx.compras.CambioDePrecioDet
+
+model {
+	CambioDePrecioDet cambioDePrecioDet
+}
+
+json g.render(cambioDePrecioDet, [resolveTemplate: false])

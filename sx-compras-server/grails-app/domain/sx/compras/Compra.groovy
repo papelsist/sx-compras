@@ -4,6 +4,7 @@ import grails.compiler.GrailsCompileStatic
 
 import groovy.transform.ToString
 import groovy.transform.EqualsAndHashCode
+import groovy.transform.CompileDynamic
 
 import sx.core.Sucursal
 import sx.core.Proveedor
@@ -68,6 +69,8 @@ class Compra {
 
     List<CompraDet> partidas  = []
 
+    BigDecimal pendientes = 0.0
+
     String sw2
 
     Date dateCreated
@@ -99,7 +102,7 @@ class Compra {
 
     static hasMany =[partidas:CompraDet]
 
-    static transients = ['status']
+    static transients = ['status', 'pendientes']
 
     static mapping = {
         id generator:'uuid'
@@ -128,6 +131,14 @@ class Compra {
         else
             return 'A'
     }
+
+    /*
+    @CompileDynamic
+    def getPendientes() {
+        return partidas.sum 0.0, {it.pendiente}
+        // return partidas.sum 0.0, { CompraDet item -> item.pendiente}
+    }
+    */
 
 }
 

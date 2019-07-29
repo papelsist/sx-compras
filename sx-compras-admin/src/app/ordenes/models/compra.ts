@@ -31,6 +31,7 @@ export interface Compra {
   cerrada?: string;
   email?: string;
   ultimaDepuracion?: string;
+  pendientes?: number;
 }
 export interface ComprasFilter {
   fechaInicial: Date;

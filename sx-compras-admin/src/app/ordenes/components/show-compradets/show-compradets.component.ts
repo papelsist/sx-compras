@@ -7,6 +7,10 @@ import {
 
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
+import { ComprasService } from 'app/ordenes/services';
+
+import { finalize } from 'rxjs/operators';
+import { TdDialogService } from '@covalent/core';
 
 @Component({
   selector: 'sx-show-compradets',
@@ -22,19 +26,30 @@ import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
         mat-icon-button
         (click)="depurar()"
         [disabled]="selected.length === 0"
-      ></button>
+      >
+        <mat-icon>layers_clear</mat-icon>
+      </button>
     </div>
     <div class="grid-panel">
+      <ng-template
+        tdLoading
+        [tdLoadingUntil]="!loading"
+        tdLoadingStrategy="overlay"
+      >
+      </ng-template>
       <ag-grid-angular
         #agGrid
         class="ag-theme-balham"
         style="width: 100%; height: 100%;"
         [columnDefs]="columns"
         [floatingFilter]="false"
+        rowSelection="multiple"
+        [rowMultiSelectWithClick]="true"
         [rowData]="partidas"
         [defaultColDef]="defaultColDef"
         (gridReady)="onGridReady($event)"
-        (selectionChange)="selected = $event"
+        (selectionChanged)="onSelection($event)"
+        [isRowSelectable]="isRowSelectable"
       >
       </ag-grid-angular>
     </div>
@@ -59,11 +74,18 @@ export class ShowCompraDetsComponent implements OnInit {
   partidas: any[];
   selected = [];
   gridApi: GridApi;
+  loading = false;
+  isRowSelectable;
   constructor(
     public dialogRef: MatDialogRef<ShowCompraDetsComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private service: ComprasService,
+    private dialogService: TdDialogService
   ) {
     this.partidas = data.partidas || [];
+    this.isRowSelectable = function(node) {
+      return node.data ? node.data.pendiente !== 0.0 : false;
+    };
   }
 
   ngOnInit() {}
@@ -81,6 +103,11 @@ export class ShowCompraDetsComponent implements OnInit {
   onGridReady(params: GridReadyEvent) {
     this.gridApi = params.api;
   }
+
+  onSelection(event: any) {
+    this.selected = this.gridApi.getSelectedRows();
+  }
+
 
   get columns(): ColDef[] {
     return [
@@ -150,7 +177,24 @@ export class ShowCompraDetsComponent implements OnInit {
   }
 
   depurar() {
-    const ids = this.selected.map(item => item.id);
-    console.log('Depurar: ', ids);
+    const partidas = this.selected.map(item => item.id);
+    this.dialogService.openConfirm({
+      title: 'DEPURACION BATCH',
+      message: `DEPURAR ${partidas.length} PARTIDAS`,
+      acceptButton: 'DEPURAR',
+      cancelButton: 'CANCELAR'
+    }).afterClosed().subscribe( res => {
+      if (res) {
+        this.loading = true;
+        this.service.depuraracionBatch(partidas)
+          .pipe(
+            finalize(() => this.loading = false)
+            )
+          .subscribe(
+            data => this.close(),
+            error => console.error('Depuracion error: ', error)
+          );
+      }
+    });
   }
 }

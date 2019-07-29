@@ -52,6 +52,8 @@ class CompraDet {
 
     BigDecimal porRecibir
 
+    BigDecimal pendiente = 0.0
+
     String comentario
 
     String sw2
@@ -72,6 +74,7 @@ class CompraDet {
     static mapping = {
         id generator: 'uuid'
         recibido formula:'(select COALESCE(sum(x.cantidad),0) from recepcion_de_compra_det x where x.compra_det_id=id)'
+        pendiente formula:'solicitado - depurado - (select COALESCE(sum(x.cantidad),0) from recepcion_de_compra_det x where x.compra_det_id=id)'
     }
 
     static belongsTo = [compra:Compra]

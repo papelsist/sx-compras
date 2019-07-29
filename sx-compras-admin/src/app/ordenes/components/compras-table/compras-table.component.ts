@@ -130,6 +130,11 @@ export class ComprasTableComponent extends LxTableComponent implements OnInit {
         width: 120
       },
       {
+        headerName: 'Pendiente',
+        field: 'pendientes',
+        width: 120
+      },
+      {
         headerName: 'Actualizada',
         field: 'modificada',
         cellRenderer: params =>

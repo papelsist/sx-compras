@@ -30,7 +30,12 @@ export enum CompraActionTypes {
   // Actualizar precios
   ActualizarPrecios = '[Compra component] Actualizar precios de Compra',
   ActualizarPreciosFail = '[Compra] Actualizar precios de Compra Fail',
-  ActualizarPreciosSuccess = '[Compra] Actualizar precios de Compra Success'
+  ActualizarPreciosSuccess = '[Compra] Actualizar precios de Compra Success',
+
+  // Depuracion Batch
+  DepuracionBatch = '[ShowCompraDets Component] Depuracion batch',
+  DepuracionBatchFail = '[Compra] Depuracion batch Fail',
+  DepuracionBatchSuccess = '[Compra] Depuracion batch Success'
 }
 
 export class SetPeriodo implements Action {
@@ -147,6 +152,20 @@ export class ActualizarPreciosSuccess implements Action {
   constructor(public payload: { compra: Compra }) {}
 }
 
+// Depuracion Batch
+export class DepuracionBatch implements Action {
+  readonly type = CompraActionTypes.DepuracionBatch;
+  constructor(public payload: { partdidas: string[] }) {}
+}
+export class DepuracionBatchFail implements Action {
+  readonly type = CompraActionTypes.DepuracionBatchFail;
+  constructor(public payload: { response: any }) {}
+}
+export class DepuracionBatchSuccess implements Action {
+  readonly type = CompraActionTypes.DepuracionBatchSuccess;
+  constructor(public payload: { partidas: any[] }) {}
+}
+
 export type CompraActions =
   | SetPeriodo
   | LoadCompras
@@ -171,4 +190,8 @@ export type CompraActions =
   //
   | ActualizarPrecios
   | ActualizarPreciosFail
-  | ActualizarPreciosSuccess;
+  | ActualizarPreciosSuccess
+  //
+  | DepuracionBatch
+  | DepuracionBatchFail
+  | DepuracionBatchSuccess;

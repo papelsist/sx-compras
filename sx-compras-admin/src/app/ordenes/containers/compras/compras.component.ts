@@ -63,7 +63,6 @@ export class ComprasComponent implements OnInit, OnDestroy {
   }
   mostrarPartidas(coms: Partial<Compra>[]) {
     const ids = coms.map(item => item.id);
-    console.log('Mostrar partidas de :', ids);
     this.service
       .partidas(ids)
       .subscribe(

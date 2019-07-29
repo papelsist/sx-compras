@@ -8,4 +8,5 @@ json g.render(compraDet, [resolveTemplate: false]) {
     porRecibir compraDet.getPorRecibir()
     folio compraDet.compra.folio
     sucursalNombre compraDet.sucursal.nombre
+    proveedorNombre compraDet.compra.nombre
 }

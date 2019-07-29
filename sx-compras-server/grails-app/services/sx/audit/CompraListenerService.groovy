@@ -97,9 +97,10 @@ class CompraListenerService {
         )
         alog.save flush: true
         // auditLogDataService.save(alog)
-        Thread.sleep(1000)
-        compra.partidas.each {
-            Audit logDet = new Audit(
+        if(type == 'INSERT') {
+            Thread.sleep(1000)
+            compra.partidas.each {
+                Audit logDet = new Audit(
                     name: 'CompraDet',
                     persistedObjectId: it.id,
                     source: 'CENTRAL',
@@ -108,8 +109,9 @@ class CompraListenerService {
                     eventName: type
             )
             logDet.save flush: true
-            // auditLogDataService.save(logDet)
         }
+        }
+        
         
     }
 }

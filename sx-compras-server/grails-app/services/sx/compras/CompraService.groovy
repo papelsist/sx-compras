@@ -37,10 +37,6 @@ abstract class CompraService {
         }
         actualizar(compra)
         logEntity(compra)
-        // Fix para la replica
-        if(compra.cerrada && compra.sw2 == 'INSERT') {
-            compra.sw2 = 'UPDATE'
-        }
         compra.save failOnError: true, flush: true
         return compra
 
@@ -178,6 +174,11 @@ abstract class CompraService {
         compra.impuestos = MonedaUtils.calcularImpuesto(compra.importeNeto)
         compra.total = compra.importeNeto + compra.impuestos
         return compra
+    }
+
+    @CompileDynamic
+    CompraDet depuracionBatch(CompraDet partidas) {
+        return partidas
     }
 
     void logEntity(Compra compra) {
