@@ -32,6 +32,7 @@ export interface Compra {
   email?: string;
   ultimaDepuracion?: string;
   pendientes?: number;
+  updateTime?: number;
 }
 export interface ComprasFilter {
   fechaInicial: Date;

@@ -50,10 +50,6 @@ export class CompraFormComponent implements OnInit, OnChanges {
 
       comp.partidas.forEach(item => this.partidas.push(new FormControl(item)));
       if (comp.id) {
-        this.form.get('proveedor').disable();
-        this.form.get('sucursal').disable();
-        this.form.get('especial').disable();
-        this.form.get('moneda').disable();
         if (this.compra.status === 'A') {
           this.form.disable();
         }
@@ -70,8 +66,8 @@ export class CompraFormComponent implements OnInit, OnChanges {
   buildForm() {
     this.form = this.fb.group({
       fecha: [new Date(), [Validators.required]],
-      proveedor: [null, [Validators.required]],
-      sucursal: [null],
+      // proveedor: [null, [Validators.required]],
+      // sucursal: [null],
       moneda: [
         'MXN',
         [Validators.required, Validators.minLength(3), Validators.maxLength(5)]
@@ -90,12 +86,10 @@ export class CompraFormComponent implements OnInit, OnChanges {
         fecha = fecha.toISOString();
       }
       const proveedor = { id: this.proveedor.id };
-      const sucursal = { id: this.form.get('sucursal').value.id };
       const res = {
         ...this.compra,
         ...this.form.value,
         proveedor,
-        sucursal,
         fecha,
         ...this.prepararPartidas()
       };
@@ -151,13 +145,13 @@ export class CompraFormComponent implements OnInit, OnChanges {
   }
 
   get proveedor() {
-    return this.form.get('proveedor').value;
+    return this.compra.proveedor;
   }
   get moneda() {
     return this.form.get('moneda').value;
   }
   get sucursal() {
-    return this.compra ? this.compra.sucursal : null;
+    return this.compra.sucursal;
   }
   get status() {
     if (this.compra) {

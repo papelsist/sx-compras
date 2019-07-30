@@ -16,6 +16,7 @@ class UrlMappings {
         // requisicionDeMaterial de material
         "/api/requisicionDeMaterial"(resources: 'requisicionDeMaterial',  excludes:['create', 'edit','patch'])
         "/api/requisicionDeMaterial/disponibles"(controller: 'requisicionDeMaterial', action: 'disponibles')
+        "/api/requisicionDeMaterial/print/$id"(controller: 'requisicionDeMaterial', action: 'print', method: 'GET')
 
         // Ordenes de compra
         "/api/compras"(resources: 'compra',  excludes:['create', 'save', 'edit', 'update', 'patch'])
@@ -23,6 +24,7 @@ class UrlMappings {
         // "/api/compras/depurar/$id"(controller: 'compra', action: 'depurar', method: 'PUT')
         "/api/compras/print/$id"(controller: 'compra', action: 'print', method: 'GET')
         // "/api/compras/pendientes/${proveedorId}"(controller: 'compra', action: 'pendientes', method: 'GET')
+        "/api/compras/partidas"(controller: 'compra', action: 'partidas', method: 'GET')
 
 
 

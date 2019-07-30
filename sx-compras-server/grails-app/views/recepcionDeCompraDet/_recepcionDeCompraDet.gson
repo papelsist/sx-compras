@@ -20,6 +20,7 @@ json g.render(recepcionDeCompraDet, [resolveTemplate: false, excludes: ['product
     unidad recepcionDeCompraDet.producto.unidad
     if(recepcionDeCompraDet.compraDet) {
         solicitado recepcionDeCompraDet.compraDet.solicitado
+        compraFolio recepcionDeCompraDet.compraDet.compra.folio
     }
     
 }

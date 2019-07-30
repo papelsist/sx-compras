@@ -78,4 +78,12 @@ export class ComprasService {
       responseType: 'blob'
     });
   }
+  partidas(coms: string[]): Observable<any[]> {
+    const url = `${this.apiUrl}/partidas`;
+    const params = new HttpParams().set(
+      'ids',
+      coms.reduce((prev, item) => prev + ',' + item)
+    );
+    return this.http.get<any[]>(url, { params });
+  }
 }

@@ -15,7 +15,7 @@ import { Compra } from '../../models/compra';
 import { Periodo } from 'app/_core/models/periodo';
 import { MatDialog } from '@angular/material';
 import { ComprasService } from 'app/ordenes/services';
-// import { ShowCompraDetsComponent } from 'app/ordenes/components/show-compradets/show-compradets.component';
+import { ShowCompraDetsComponent } from 'app/ordenes/components/show-compradets/show-compradets.component';
 
 @Component({
   selector: 'sx-compras',
@@ -38,7 +38,6 @@ export class ComprasComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.periodo$ = this.store.pipe(select(fromStore.getComprasPeriodo));
-    this.periodo$.subscribe(p => console.log('Per: ', p));
     this.loading$ = this.store.pipe(select(fromStore.getComprasLoading));
     this.compras$ = this.store.pipe(select(fromStore.getAllCompras));
   }
@@ -56,12 +55,9 @@ export class ComprasComponent implements OnInit, OnDestroy {
   onCreate() {}
 
   onSelect(event: Compra) {
-    this.store.dispatch(
-      new fromRoot.Go({ path: ['ordenes/compras', event.id] })
-    );
+    this.store.dispatch(new fromRoot.Go({ path: ['ordenes', event.id] }));
   }
   mostrarPartidas(coms: Partial<Compra>[]) {
-    /*
     const ids = coms.map(item => item.id);
     this.service
       .partidas(ids)
@@ -69,11 +65,9 @@ export class ComprasComponent implements OnInit, OnDestroy {
         res => this.showPartidas(res),
         error => console.error('Error: ', error)
       );
-      */
   }
 
   showPartidas(data: any[]) {
-    /*
     this.dialog
       .open(ShowCompraDetsComponent, {
         data: { partidas: data },
@@ -81,6 +75,5 @@ export class ComprasComponent implements OnInit, OnDestroy {
       })
       .afterClosed()
       .subscribe(res => {});
-      */
   }
 }

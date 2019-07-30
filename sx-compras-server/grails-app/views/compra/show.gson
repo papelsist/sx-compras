@@ -4,11 +4,12 @@ model {
 	Compra compra
 }
 
-json g.render(compra, [deep:false, excludes:['partidas','dateCreated','lastUpdated', 'version']]) {
+json g.render(compra, [deep:false, excludes:['partidas', 'version']]) {
     sucursalNombre compra.sucursal.nombre
     partidas g.render(compra.partidas)
-    modificada compra.dateCreated
+    modificada compra.lastUpdated
     creada compra.dateCreated
     status compra.status
     proveedorNombre compra.nombre
+    updateTime compra.lastUpdated.time
 }

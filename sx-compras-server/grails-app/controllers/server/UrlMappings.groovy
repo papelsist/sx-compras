@@ -161,6 +161,7 @@ class UrlMappings {
         "/api/requisicionDeMaterial"(resources: 'requisicionDeMaterial',  excludes:['create', 'edit','patch'])
         "/api/requisicionDeMaterial/disponibles"(controller: 'requisicionDeMaterial', action: 'disponibles')
         "/api/requisicionDeMaterial/generarCompra/$id"(controller: 'requisicionDeMaterial', action: 'generarCompra', method: 'PUT')
+        "/api/requisicionDeMaterial/print/$id"(controller: 'requisicionDeMaterial', action: 'print', method: 'GET')
 
 
         "/api/comprobanteFiscal"(resources: 'comprobanteFiscal')

@@ -46,7 +46,8 @@ class RequisicionDeMaterialController extends RestfulController<RequisicionDeMat
         def instance = new RequisicionDeMaterial()
         bindData instance, getObjectToBind()
         instance.folio = 0L
-        instance.sucursal = AppConfig.first().sucursal.nombre
+        if(instance.sucursal == null)
+            instance.sucursal = AppConfig.first().sucursal.nombre
         return instance
     }
 

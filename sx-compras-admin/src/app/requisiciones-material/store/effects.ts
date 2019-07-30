@@ -154,7 +154,7 @@ export class RequisicionDeMaterialEffects {
       RequisicionesDeMaterialActionTypes.GenerarCompraDeMaterialSuccess
     ),
     map(action => action.payload.requisicion),
-    tap(req => console.log('Compra genrada de req: ', req)),
+    // tap(req => console.log('Compra genrada de req: ', req)),
     map(r => new fromRoot.Go({ path: ['ordenes/compras', r.compra] }))
   );
 

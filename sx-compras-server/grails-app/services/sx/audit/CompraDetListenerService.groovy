@@ -12,6 +12,7 @@ import org.grails.datastore.mapping.engine.event.AbstractPersistenceEvent
 import org.grails.datastore.mapping.engine.event.PostInsertEvent
 import org.grails.datastore.mapping.engine.event.PostDeleteEvent
 import org.grails.datastore.mapping.engine.event.PostUpdateEvent
+import org.grails.datastore.mapping.engine.event.PreDeleteEvent
 
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -43,6 +44,7 @@ class CompraDetListenerService {
         CompraDet compraDet = getEntity(event)
         if ( compraDet ) {
             log.debug('{} {} Id: {}', event.eventType.name(), event.entity.name, compraDet.id)
+            Thread.sleep(1000)
             logEntity(compraDet, 'INSERT')
         }
     }
@@ -52,18 +54,18 @@ class CompraDetListenerService {
         CompraDet compraDet = getEntity(event)
         if ( compraDet ) {
             log.debug('{} {} Id: {}', event.eventType.name(), event.entity.name, compraDet.id)
-            // Thread.sleep(1000)
+            Thread.sleep(1000)
             logEntity(compraDet, 'UPDATE')
         }
     }
 
     @Subscriber
-    void afterDelete(PostDeleteEvent event) {
+    void beforeDelete(PreDeleteEvent event) {
         CompraDet compraDet = getEntity(event)
         if ( compraDet ) {
-            log.debug('{} {} Id: {}', event.eventType.name(), event.entity.name, compraDet.id)
-            // Thread.sleep(1000)
-            // logEntity(compraDet, 'DELETE')
+            log.debug('{} {} Id: {}', event.eventType.name(), event.entity.name, compraDet.sucursal)
+            Thread.sleep(1000)
+            logEntity(compraDet, 'DELETE')
         }
     }
 

@@ -14,7 +14,10 @@ export interface State extends EntityState<Compra> {
   periodo: Periodo;
 }
 
-export const adapter: EntityAdapter<Compra> = createEntityAdapter<Compra>();
+
+export const adapter: EntityAdapter<Compra> = createEntityAdapter<Compra>({
+  sortComparer: (item1, item2) => item2.updateTime - item1.updateTime
+});
 
 export const initialState: State = adapter.getInitialState({
   loading: false,

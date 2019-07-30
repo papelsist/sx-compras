@@ -10,6 +10,12 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 export class CompraCreateModalComponent implements OnInit {
   form: FormGroup;
 
+  oficinas = {
+    id: '402880fc5e4ec411015e4ec64161012c',
+    clave: '1',
+    nombre: 'OFICINAS'
+  };
+
   constructor(
     public dialogRef: MatDialogRef<CompraCreateModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -22,6 +28,7 @@ export class CompraCreateModalComponent implements OnInit {
 
   private buildForm() {
     this.form = this.fb.group({
+      sucursal: [null],
       fecha: [new Date(), Validators.required],
       proveedor: [null, Validators.required],
       moneda: ['MXN', Validators.required],
@@ -33,11 +40,12 @@ export class CompraCreateModalComponent implements OnInit {
   submit() {
     if (this.form.valid) {
       const { id } = this.form.get('proveedor').value;
-
+      const sucursal = this.form.get('sucursal').value || this.oficinas;
       const data = {
         ...this.form.value,
         fecha: new Date(),
-        proveedor: id
+        proveedor: id,
+        sucursal: sucursal.id
       };
       this.dialogRef.close(data);
     }

@@ -17,7 +17,7 @@ import { Periodo } from 'app/_core/models/periodo';
       </span>
       <ng-content select=".info"></ng-content>
       <span flex></span>
-      <ng-container *ngIf="periodo">
+      <ng-container >
         <sx-periodo-picker
           [periodo]="periodo"
           (change)="periodoChange.emit($event)"

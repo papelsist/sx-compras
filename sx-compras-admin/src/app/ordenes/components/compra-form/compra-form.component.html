@@ -20,7 +20,7 @@
       </ng-container>
 
       <sx-compra-add-partida
-        [parent]="form"
+        [proveedor]="proveedor"
         [productos]="productos"
         (addPartida)="onInsertPartida($event)"
         *ngIf="!compra.cerrada"
@@ -28,9 +28,7 @@
     </div>
 
     <div layout class="pad-left pad-right">
-      <sx-sucursal-field [parent]="form" class="pad-right"></sx-sucursal-field>
-
-      <mat-form-field class="pad-left">
+      <mat-form-field>
         <input
           matInput
           [matDatepicker]="myDatepicker"
@@ -43,15 +41,16 @@
         ></mat-datepicker-toggle>
         <mat-datepicker #myDatepicker></mat-datepicker>
       </mat-form-field>
-      <sx-moneda-field
-        [parent]="form"
-        class="pad-left moneda-field"
-      ></sx-moneda-field>
+
+      <sx-moneda-field class="pad-left" [parent]="form"></sx-moneda-field>
+
       <sx-tipo-cambio-field
         [parent]="form"
         class="pad-left"
       ></sx-tipo-cambio-field>
+
       <sx-upper-case-field
+        class="pad-left"
         formControlName="comentario"
         placeholder="Comentario"
         flex

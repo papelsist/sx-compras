@@ -56,6 +56,12 @@ class CompraController extends RestfulController<Compra> {
     }
 
     @Override
+    protected void deleteResource(Compra resource) {
+        resource.sw2 = resource.sucursal.nombre
+        compraService.delete(resource.id)
+    }
+
+    @Override
     @CompileDynamic
     protected List<Compra> listAllResources(Map params) {
         Periodo periodo = params.periodo

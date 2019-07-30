@@ -1,17 +1,18 @@
 <mat-card flex *ngIf="requisicion$ | async as requisicion">
   <div layout layout-align="start center" class="pad">
     <span class="push-left-sm">
+      <span class="mat-title pad-right">Requisición: </span>
+      <span class="mat-title pad-right">{{ requisicion.folio }}</span>
       <span class="mat-title">{{ requisicion.proveedor }}</span>
     </span>
     <span flex></span>
-    <span class="mat-title">
-      <span>Requisición: </span>
+    <span class="">
       <span class="pad-left">{{ requisicion.sucursal }}</span>
-      <span class="pad-left">{{ requisicion.moneda }}</span>
-      <span class="pad-left">{{ requisicion.folio }}</span>
       <span class="pad-left"
         >({{ requisicion.fecha | date: 'dd/MM/yyyy' }})</span
       >
+      <span class="pad-left">Moneda:</span>
+      <span class="pad-left pad-right">{{ requisicion.moneda }}</span>
     </span>
   </div>
   <div layout class="pad-left pad-right subtitle">

@@ -34,16 +34,9 @@ export class CompraPartidasTableComponent implements OnInit, OnChanges {
     'descripcion',
     'unidad',
     'solicitado',
-    // 'precio',
-    // 'descuento1',
-    // 'descuento2',
-    // 'descuento3',
-    // 'descuento4',
-    // 'importeNeto',
     'recibido',
     'depurado',
-    'porRecibir',
-    'operaciones'
+    'porRecibir'
   ];
 
   dataSource = new MatTableDataSource<CompraDet>([]);

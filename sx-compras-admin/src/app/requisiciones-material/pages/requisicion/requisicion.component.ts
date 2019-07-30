@@ -73,7 +73,7 @@ export class RequisicionComponent implements OnInit, OnDestroy {
         takeUntil(this.destroy$)
       )
       .subscribe(r => {
-        console.log('Req: ', r);
+        // console.log('Req: ', r);
         this.requisicion = r;
         this.partidas = r.partidas || [];
         this.cargarDisponibles(r);
@@ -137,13 +137,13 @@ export class RequisicionComponent implements OnInit, OnDestroy {
       id: this.requisicion.id,
       changes
     };
-    console.log('Save data: ', update);
+    // console.log('Save data: ', update);
     this.dirty$.next(false);
     this.store.dispatch(new fromStore.UpdateRequisicionDeMaterial({ update }));
   }
 
   onSelect(event: any) {
-    console.log('Selected: ', event);
+    // console.log('Selected: ', event);
   }
 
   onDelete(event: Partial<RequisicionDeMaterial>) {

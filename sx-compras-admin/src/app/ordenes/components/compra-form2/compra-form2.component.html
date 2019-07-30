@@ -19,7 +19,7 @@
       </ng-container>
 
       <sx-compra-add-partida
-        [parent]="form"
+        [proveedor]="proveedor"
         [productos]="productos"
         (addPartida)="onInsertPartida($event)"
         *ngIf="!compra.cerrada"

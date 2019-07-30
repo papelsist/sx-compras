@@ -4,10 +4,11 @@ model {
     Compra compra
 }
 
-json g.render(compra, [excludes:['dateCreated','lastUpdated','version', 'proveedor', 'partidas']]){
+json g.render(compra, [excludes:['version', 'proveedor', 'partidas']]){
     sucursalNombre compra.sucursal.nombre
-    modificada compra.dateCreated
+    modificada compra.lastUpdated
     creada compra.dateCreated
+    updateTime compra.lastUpdated.time
     status compra.status
     proveedor {
         id compra.proveedor.id
@@ -17,16 +18,4 @@ json g.render(compra, [excludes:['dateCreated','lastUpdated','version', 'proveed
         pendientes compra.getPendientes()
         
     }
-    
-    /*
-    if(compra && compra.partidas){
-        println 'Evaluando: ' + compra.partidas
-        pendientes compra.partidas.sum{ CompraDet det -> 
-            return det?.getPorRecibir()?: 0.0
-        }
-        
-    }
-    */
-        
-        
 }

@@ -9,8 +9,8 @@ import { PeriodoDialogComponent } from '../periodo-dialog/periodo-dialog.compone
 @Component({
   selector: 'sx-periodo-picker',
   template: `
-    <button mat-icon-button [matTooltip]="toolTip" (click)="seleccionar()">
-      <mat-icon>event</mat-icon>
+    <button color="primary" mat-button (click)="seleccionar()">
+      <mat-icon>event</mat-icon> {{ periodo.toString() }}
     </button>
   `,
   styles: [``]
