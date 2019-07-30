@@ -9,7 +9,9 @@ import { PeriodoDialogComponent } from '../periodo-dialog/periodo-dialog.compone
 @Component({
   selector: 'sx-periodo-picker',
   template: `
-    <button mat-icon-button [matTooltip]="toolTip" (click)="seleccionar()"><mat-icon>event</mat-icon></button>
+    <button mat-icon-button [matTooltip]="toolTip" (click)="seleccionar()">
+      <mat-icon>event</mat-icon>
+    </button>
   `,
   styles: [``]
 })
@@ -30,7 +32,7 @@ export class PeriodoPickerComponent implements OnInit {
       })
       .afterClosed()
       .subscribe(res => {
-        if (res !== null) {
+        if (!!res) {
           this.change.emit(res);
         }
       });

@@ -1,100 +1,86 @@
-import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  ChangeDetectionStrategy
+} from '@angular/core';
 
 import { Store, select } from '@ngrx/store';
 import * as fromRoot from 'app/store';
 import * as fromStore from '../../store';
 import * as fromActions from '../../store/actions/compra.actions';
-import * as fromCompras from '../../store/selectors/compra.selectors';
 
-import { Observable, Subject, BehaviorSubject } from 'rxjs';
-import { map } from 'rxjs/operators';
-
-import { Compra, ComprasFilter } from '../../models/compra';
-
-import * as _ from 'lodash';
-import { CompraDet } from '../../models/compraDet';
+import { Observable } from 'rxjs';
+import { Compra } from '../../models/compra';
+import { Periodo } from 'app/_core/models/periodo';
+import { MatDialog } from '@angular/material';
+import { ComprasService } from 'app/ordenes/services';
+// import { ShowCompraDetsComponent } from 'app/ordenes/components/show-compradets/show-compradets.component';
 
 @Component({
   selector: 'sx-compras',
-  templateUrl: './compras.component.html'
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './compras.component.html',
+  styleUrls: ['./compras.component.scss']
 })
 export class ComprasComponent implements OnInit, OnDestroy {
-  comprasPorSucursal$: Observable<any>;
-  sucursales$: Observable<string[]>;
-  partidas$: Observable<CompraDet[]>;
-  comprasFilter$: Observable<ComprasFilter>;
-  selected$: Observable<Compra[]>;
+  compras$: Observable<Compra[]>;
+  periodo$: Observable<Periodo>;
+  loading$: Observable<boolean>;
 
-  search$ = new BehaviorSubject('');
-  tabIndex = 2;
-  private _storageKey = 'sx-compras.ordenes';
-  constructor(private store: Store<fromStore.State>) {}
+  selected: Partial<Compra>[] = [];
+
+  constructor(
+    private store: Store<fromStore.State>,
+    private dialog: MatDialog,
+    private service: ComprasService
+  ) {}
 
   ngOnInit() {
-    this.comprasFilter$ = this.store.pipe(select(fromStore.getComprasFilter));
-
-    this.comprasPorSucursal$ = this.store.pipe(
-      select(fromStore.getComprasPorSucursal)
-    );
-    this.sucursales$ = this.comprasPorSucursal$.pipe(map(res => _.keys(res)));
-
-    // Tab Idx
-    const _tabIdx = localStorage.getItem(this._storageKey + '.tabIndex');
-    this.tabIndex = parseFloat(_tabIdx);
-
-    this.partidas$ = this.store.pipe(select(fromStore.getSelectedPartidas));
-    const lastSearch = localStorage.getItem(this._storageKey + '.filter');
-
-    if (lastSearch) {
-      this.onSearch(lastSearch);
-    }
-
-    this.selected$ = this.store.pipe(select(fromStore.getSelectedCompras));
+    this.periodo$ = this.store.pipe(select(fromStore.getComprasPeriodo));
+    this.periodo$.subscribe(p => console.log('Per: ', p));
+    this.loading$ = this.store.pipe(select(fromStore.getComprasLoading));
+    this.compras$ = this.store.pipe(select(fromStore.getAllCompras));
   }
 
-  ngOnDestroy() {
-    localStorage.setItem(
-      this._storageKey + '.tabIndex',
-      this.tabIndex.toString()
-    );
-  }
+  ngOnDestroy() {}
 
-  onSelect(event: Compra[]) {
-    const selected = event.map(item => item.id);
-    this.store.dispatch(new fromActions.SetSelectedCompras({ selected }));
-
-    event.map(item => {
-      if (!item.partidas) {
-        this.store.dispatch(new fromActions.GetCompra({ id: item.id }));
-      }
-    });
-  }
-
-  clearSelection() {
-    this.store.dispatch(new fromActions.SetSelectedCompras({ selected: [] }));
-  }
-
-  onSearch(event: string) {
-    this.search$.next(event);
-    localStorage.setItem(this._storageKey + '.filter', event);
-    this.clearSelection();
-  }
-
-  getSucursales(object): string[] {
-    return _.keys(object);
-  }
-
-  onEdit(event: Compra) {
-    this.clearSelection();
-    this.store.dispatch(new fromRoot.Go({ path: ['ordenes', event.id] }));
-  }
-
-  onFilter(event: ComprasFilter) {
-    this.clearSelection();
-    this.store.dispatch(new fromActions.SetComprasFilter({ filter: event }));
+  onPeriodo(event: Periodo) {
+    this.store.dispatch(new fromActions.SetPeriodo({ periodo: event }));
   }
 
   reload() {
     this.store.dispatch(new fromActions.LoadCompras());
+  }
+
+  onCreate() {}
+
+  onSelect(event: Compra) {
+    this.store.dispatch(
+      new fromRoot.Go({ path: ['ordenes/compras', event.id] })
+    );
+  }
+  mostrarPartidas(coms: Partial<Compra>[]) {
+    /*
+    const ids = coms.map(item => item.id);
+    this.service
+      .partidas(ids)
+      .subscribe(
+        res => this.showPartidas(res),
+        error => console.error('Error: ', error)
+      );
+      */
+  }
+
+  showPartidas(data: any[]) {
+    /*
+    this.dialog
+      .open(ShowCompraDetsComponent, {
+        data: { partidas: data },
+        width: '950px'
+      })
+      .afterClosed()
+      .subscribe(res => {});
+      */
   }
 }

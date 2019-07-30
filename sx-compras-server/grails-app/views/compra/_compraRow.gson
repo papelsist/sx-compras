@@ -14,7 +14,7 @@ json g.render(compra, [excludes:['dateCreated','lastUpdated','version', 'proveed
         nombre compra.proveedor.nombre
     }
     if(compra.partidas) {
-        // pendientes compra.getPendientes()
+        pendientes compra.getPendientes()
         
     }
     

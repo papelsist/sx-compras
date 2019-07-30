@@ -20,22 +20,11 @@ export class ComprasService {
     this.apiUrl = configService.buildApiUrl('compras');
   }
 
-  list(filter: ComprasFilter): Observable<Compra[]> {
-    let params = new HttpParams();
-    if (!filter.pendientes) {
-      params = params
-        .set('registros', filter.registros.toString())
-        .set('fechaInicial', filter.fechaInicial.toISOString())
-        .set('fechaFinal', filter.fechaFinal.toISOString());
-    } else {
-      params = params.set('pendientes', filter.pendientes.toString());
-    }
-    if (filter.proveedor) {
-      params = params.set('proveedor', filter.proveedor.id);
-    }
-    if (filter.folio) {
-      params = params.set('folio', filter.folio.toString());
-    }
+  list(periodo: Periodo): Observable<Compra[]> {
+    const data = periodo.toApiJSON();
+    const params = new HttpParams()
+      .set('fechaInicial', data.fechaInicial)
+      .set('fechaFinal', data.fechaFinal);
     return this.http.get<Compra[]>(this.apiUrl, { params: params });
   }
 

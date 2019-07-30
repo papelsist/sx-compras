@@ -31,7 +31,7 @@ export enum CompraActionTypes {
 
 export class SetPeriodo implements Action {
   readonly type = CompraActionTypes.SetPeriodo;
-  constructor(payload: { periodo: Periodo }) {}
+  constructor(public payload: { periodo: Periodo }) {}
 }
 
 export class LoadCompras implements Action {

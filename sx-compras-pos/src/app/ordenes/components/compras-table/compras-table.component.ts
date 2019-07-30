@@ -1,21 +1,17 @@
 import {
   Component,
   OnInit,
-  ChangeDetectionStrategy,
-  Input,
-  OnChanges,
-  SimpleChanges,
-  ViewChild,
   Output,
   EventEmitter,
-  OnDestroy
+  ChangeDetectionStrategy
 } from '@angular/core';
-import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 
-import { Subscription } from 'rxjs';
+import { LxTableComponent } from 'app/_shared/components';
+import { SxTableService } from 'app/_shared/components/lx-table/sx-table.service';
 
-import { Compra } from '../../models/compra';
-import { SelectionModel } from '@angular/cdk/collections';
+import { ColDef, ModelUpdatedEvent, RowSelectedEvent } from 'ag-grid-community';
+
+import { Compra } from 'app/ordenes/models/compra';
 
 @Component({
   selector: 'sx-compras-table',
@@ -23,103 +19,148 @@ import { SelectionModel } from '@angular/cdk/collections';
   templateUrl: './compras-table.component.html',
   styleUrls: ['./compras-table.component.scss']
 })
-export class ComprasTableComponent implements OnInit, OnChanges, OnDestroy {
-  @Input()
-  compras: Compra[] = [];
-  @Input()
-  multipleSelection = true;
-  @Input()
-  filter;
-  dataSource = new MatTableDataSource<Compra>([]);
+export class ComprasTableComponent extends LxTableComponent implements OnInit {
+  @Output() selectionChange = new EventEmitter<any[]>();
 
-  @Input()
-  selected = [];
-
-  displayColumns = [
-    // 'sucursalNombre',
-    // 'select',
-    'folio',
-    'fecha',
-    'proveedor',
-    'comentario',
-    'moneda',
-    'tipoDeCambio',
-    'total',
-    'modificada',
-    'lastUpdatedBy',
-    'pendiente',
-    'cerrada',
-    'ultimaDepuracion',
-    'operaciones'
-  ];
-
-  @ViewChild(MatSort)
-  sort: MatSort;
-  @ViewChild(MatPaginator)
-  paginator: MatPaginator;
-  @Output()
-  select = new EventEmitter();
-  @Output()
-  edit = new EventEmitter();
-  subscription: Subscription;
-  constructor() {}
-
-  ngOnInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+  constructor(public tableService: SxTableService) {
+    super(tableService);
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes.compras && changes.compras.currentValue) {
-      this.dataSource.data = changes.compras.currentValue;
-    }
-    if (changes.filter) {
-      const s = changes.filter.currentValue || '';
-      this.dataSource.filter = s.toLowerCase();
-    }
+  buildGridOptions() {
+    super.buildGridOptions();
+    this.gridOptions.rowSelection = 'multiple';
+    this.gridOptions.onRowSelected = (event: RowSelectedEvent) => {
+      this.selectionChange.emit(this.gridApi.getSelectedRows());
+    };
   }
 
-  ngOnDestroy() {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
+  buildRowStyle(params: any) {
+    if (params.node.rowPinned) {
+      return { 'font-weight': 'bold' };
     }
+    return {};
   }
 
-  toogleSelect(event: Compra) {
-    /*
-    if (this.multipleSelection) {
-      event.selected = !event.selected;
-      const data = this.compras.filter(item => item.selected);
-      this.select.emit([...data]);
-    } else {
-      event.selected = !event.selected;
-      this.compras.forEach(item => {
-        if (item.id !== event.id) {
-          item.selected = false;
-        }
+  onModelUpdate(event: ModelUpdatedEvent) {
+    this.actualizarTotales();
+  }
+
+  clearSelection() {
+    this.gridApi.deselectAll();
+  }
+
+  actualizarTotales() {
+    let registros = 0;
+
+    if (this.gridApi) {
+      this.gridApi.forEachNodeAfterFilter((rowNode, index) => {
+        const compra: Partial<Compra> = rowNode.data;
+        registros++;
       });
-      this.select.emit([event]);
     }
-    */
-    if (this.isSelected(event.id)) {
-      const res = this.selected.filter(item => item.id !== event.id);
-      this.select.emit(res);
-    } else {
-      const res = [...this.selected, event];
-      this.select.emit(res);
+    const res = [
+      {
+        nombre: `Compras: ${registros}`
+      }
+    ];
+    if (this.gridApi) {
+      this.gridApi.setPinnedBottomRowData(res);
     }
   }
 
-  onEdit($event: Event, row) {
-    $event.stopPropagation();
-    this.edit.emit(row);
-  }
+  /**
+   * displayColumns = [
 
-  getPrintUrl(event: Compra) {
-    return `compras/print/${event.id}`;
-  }
 
-  isSelected(id: string) {
-    return this.selected.find(item => item.id === id);
+    'pendiente',
+  ];
+   */
+
+  buildColsDef(): ColDef[] {
+    return [
+      {
+        headerName: 'Sucursal',
+        field: 'sucursalNombre',
+        width: 115,
+        pinned: 'left'
+      },
+      {
+        headerName: 'Proveedor',
+        field: 'nombre',
+        width: 300,
+        pinned: 'left'
+      },
+      {
+        headerName: 'Compra',
+        field: 'folio',
+        width: 110
+      },
+      {
+        headerName: 'Fecha',
+        field: 'fecha',
+        width: 100,
+        cellRenderer: params => this.transformDate(params.value)
+      },
+      {
+        headerName: 'Entrega',
+        field: 'entrega',
+        width: 100,
+        cellRenderer: params => this.transformDate(params.value)
+      },
+      {
+        headerName: 'Mon',
+        field: 'moneda',
+        width: 70
+      },
+      {
+        headerName: 'TC',
+        field: 'tipoDeCambio',
+        maxWidth: 60,
+        cellRenderer: params => this.transformCurrency(params.value)
+      },
+      {
+        headerName: 'Total',
+        field: 'totalMn',
+        width: 110,
+        cellRenderer: params => this.transformCurrency(params.value)
+      },
+      {
+        headerName: 'Usuario',
+        field: 'lastUpdatedBy',
+        width: 120
+      },
+      {
+        headerName: 'Pendiente',
+        field: 'pendientes',
+        width: 120
+      },
+      {
+        headerName: 'Actualizada',
+        field: 'modificada',
+        cellRenderer: params =>
+          this.transformDate(params.value, 'dd/MM/yyyy HH:mm')
+      },
+      {
+        headerName: 'Depurada',
+        field: 'ultimaDepuracion',
+        width: 120,
+        cellRenderer: params => this.transformDate(params.value, 'dd/MM/yyyy')
+      },
+      {
+        headerName: 'Cerrada',
+        field: 'cerrada',
+        width: 120,
+        cellRenderer: params => this.transformDate(params.value, 'dd/MM/yyyy')
+      },
+      {
+        headerName: 'Estatus',
+        field: 'status',
+        width: 120
+      },
+      {
+        headerName: 'Comentario',
+        field: 'comentario'
+      }
+    ];
   }
 }
