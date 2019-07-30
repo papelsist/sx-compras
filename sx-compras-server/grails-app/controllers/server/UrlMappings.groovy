@@ -155,6 +155,9 @@ class UrlMappings {
         "/api/compras/actualizarPrecios/$id"(controller: 'compra', action: 'actualizarPrecios', method: 'PUT')
         "/api/compras/partidas"(controller: 'compra', action: 'partidas', method: 'GET')
         "/api/compras/depuracionBatch2"(controller: 'compra', action: 'depuracionBatch', method: 'POST')
+
+        "/api/listaDePreciosVenta"(resources: 'listaDePreciosVenta', excludes: ['create', 'edit','patch'])
+        "/api/listaDePreciosVenta/print/$id"(controller: 'listaDePreciosVenta', action: 'print')
         
 
         // requisicionDeMaterial de material
