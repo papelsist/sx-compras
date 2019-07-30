@@ -1,3 +1,41 @@
-<p>
-  compra-create-modal works!
-</p>
+<form [formGroup]="form" novalidate (ngSumbit)="submit()">
+  <h4 mat-dialog-title>Requisición de material</h4>
+  <mat-dialog-content>
+    <div layout>
+      <sx-proveedor-field formControlName="proveedor" flex></sx-proveedor-field>
+    </div>
+    <div layout>
+      <mat-form-field flex>
+        <input
+          matInput
+          [matDatepicker]="myDatepicker"
+          formControlName="fecha"
+          placeholder="Fecha"
+        />
+        <mat-datepicker-toggle
+          matSuffix
+          [for]="myDatepicker"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #myDatepicker></mat-datepicker>
+      </mat-form-field>
+      <sx-moneda-field [parent]="form" class="pad-left"></sx-moneda-field>
+      <mat-form-field class="pad-left" flex>
+        <input matInput placeholder="T.C" formControlName="tipoDeCambio" />
+      </mat-form-field>
+    </div>
+    <div layout>
+      <sx-upper-case-field
+        formControlName="comentario"
+        flex
+      ></sx-upper-case-field>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button type="button" (click)="dialogRef.close()">
+      Cancelar
+    </button>
+    <button mat-button (click)="submit()" [disabled]="form.invalid">
+      <mat-icon>save</mat-icon> Salvar
+    </button>
+  </mat-dialog-actions>
+</form>

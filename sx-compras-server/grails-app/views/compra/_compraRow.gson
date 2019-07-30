@@ -13,5 +13,20 @@ json g.render(compra, [excludes:['dateCreated','lastUpdated','version', 'proveed
         id compra.proveedor.id
         nombre compra.proveedor.nombre
     }
-    pendientes compra.partidas.sum(0.0, {CompraDet item -> item.pendiente})
+    if(compra.partidas) {
+        // pendientes compra.getPendientes()
+        
+    }
+    
+    /*
+    if(compra && compra.partidas){
+        println 'Evaluando: ' + compra.partidas
+        pendientes compra.partidas.sum{ CompraDet det -> 
+            return det?.getPorRecibir()?: 0.0
+        }
+        
+    }
+    */
+        
+        
 }

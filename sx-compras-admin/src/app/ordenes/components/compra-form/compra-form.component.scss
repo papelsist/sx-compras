@@ -1,8 +1,53 @@
-.partidas-panel {
-  overflow: auto;
-  // min-height: 450px;
-  max-height: 750px;
-}
-.partidas-footer {
+/*
+mat-card {
+  border: 1px solid #008000;
+  min-height: 95%;
+  display: flex;
+  flex-direction: column;
 
+  .partidas-panel {
+    flex: 1 1 24%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: auto;
+    border: 5px dotted purple;
+  }
+}
+mat-card-actions {
+  border: 3px solid yellow;
+}
+*/
+
+.mat-card {
+  // height: 95%;
+  height: calc(100% - 10px);
+  display:flex;
+  flex-direction: column;
+  border: 1px solid #008000;
+}
+.mat-card-header {
+  display: flex;
+  flex-direction: row;
+  flex-shrink: 0;
+}
+// .mat-card-content{
+//   flex-grow: 1;
+//   overflow: auto;
+//   border: 5px dotted purple;
+// }
+.partidas-panel {
+  flex-grow: 1;
+  height: 500px;
+  overflow: auto;
+  // border: 5px dotted purple;
+}
+.main-header {
+  padding: 5px 10px;
+  font-size: 18px;
+  font-weight: bold;
+
+}
+.moneda-field {
+  width: 120px;
 }

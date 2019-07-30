@@ -65,38 +65,6 @@ class CompraController extends RestfulController<Compra> {
         return  query.list([sort: 'lastUpdated', order: 'desc'])
     }
 
-    
-    @CompileDynamic
-    protected List<Compra> listAllResourcesOld(Map params) {
-
-        params.max = params.registros?: 20
-        params.sort = 'lastUpdated'
-        params.order = 'desc'
-
-        log.info('List {}', params)
-
-        def query = Compra.where{}
-        def pendientes = this.params.getBoolean('pendientes')
-
-        if(pendientes){ 
-            params.max = 10000
-            query = query.where{ pendiente == true}
-            return query.list(params)
-        }
-
-        if(params.periodo) {
-            Periodo periodo = params.periodo
-            query = query.where{fecha >= periodo.fechaInicial && fecha <= periodo.fechaFinal}
-        }
-        if(params.proveedor) {
-            String provId = params.proveedor
-            query = query.where { proveedor.id == provId}
-        }
-        
-        return  query.list(params)
-    }
-
-
     def pendientes() {
         params.sort = 'lastUpdatred'
         params.order = 'desc'

@@ -16,6 +16,7 @@ import { Periodo } from 'app/_core/models/periodo';
 import { MatDialog } from '@angular/material';
 import { ComprasService } from 'app/ordenes/services';
 import { ShowCompraDetsComponent } from 'app/ordenes/components/show-compradets/show-compradets.component';
+import { CompraCreateModalComponent } from 'app/ordenes/components';
 
 @Component({
   selector: 'sx-compras',
@@ -53,7 +54,18 @@ export class ComprasComponent implements OnInit, OnDestroy {
   }
 
   onCreate() {
-    this.store.dispatch(new fromRoot.Go({ path: ['ordenes/compras/create'] }));
+    // this.store.dispatch(new fromRoot.Go({ path: ['ordenes/compras/create'] }));
+    this.dialog
+      .open(CompraCreateModalComponent, {
+        data: {},
+        width: '700px'
+      })
+      .afterClosed()
+      .subscribe(res => {
+        if (res) {
+          this.store.dispatch(new fromActions.AddCompra(res));
+        }
+      });
   }
 
   onSelect(event: Compra) {

@@ -42,7 +42,8 @@ class CompraDetListenerService {
     void afterInsert(PostInsertEvent event) {
         CompraDet compraDet = getEntity(event)
         if ( compraDet ) {
-            // logEntity(compraDet, 'INSERT')
+            log.debug('{} {} Id: {}', event.eventType.name(), event.entity.name, compraDet.id)
+            logEntity(compraDet, 'INSERT')
         }
     }
 

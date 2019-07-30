@@ -1,8 +1,7 @@
 <mat-card>
   <form [formGroup]="form">
-    <div layout class="main-header" layout-align="center center">
+    <div layout layout-align="start center" class="form-header">
       <span>Compra: {{ compra.folio }} ({{ compra.sucursalNombre }})</span>
-      <span class="pad-left pad-right">{{ compra.nombre }}</span>
       <span class="pad-left pad-right">Estado: {{ compra.status }}</span>
       <span class="pad-left">({{ compra.fecha | date: 'dd/MM/yyyy' }})</span>
       <ng-container *ngIf="compra.ultimaDepuracion">
@@ -26,38 +25,55 @@
         *ngIf="!compra.cerrada"
       ></sx-compra-add-partida>
     </div>
+    <mat-divider></mat-divider>
+    <mat-card-content>
+      <div layout>
+        <sx-proveedor-field
+          formControlName="proveedor"
+          flex
+          *ngIf="!compra?.id; else proveedorLabel"
+        ></sx-proveedor-field>
+        <ng-template #proveedorLabel>
+          <mat-form-field flex>
+            <input matInput [value]="compra.nombre" [disabled]="true" />
+          </mat-form-field>
+        </ng-template>
 
-    <div layout class="pad-left pad-right">
-      <sx-sucursal-field [parent]="form" class="pad-right"></sx-sucursal-field>
+        <mat-form-field class="pad-left">
+          <input
+            matInput
+            [matDatepicker]="myDatepicker"
+            formControlName="fecha"
+            placeholder="Fecha"
+          />
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="myDatepicker"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #myDatepicker></mat-datepicker>
+        </mat-form-field>
+        <sx-moneda-field [parent]="form" class="pad-left"></sx-moneda-field>
+        <sx-tipo-cambio-field
+          [parent]="form"
+          class="pad-left"
+        ></sx-tipo-cambio-field>
+      </div>
 
-      <mat-form-field class="pad-left">
-        <input
-          matInput
-          [matDatepicker]="myDatepicker"
-          formControlName="fecha"
-          placeholder="Fecha"
-        />
-        <mat-datepicker-toggle
-          matSuffix
-          [for]="myDatepicker"
-        ></mat-datepicker-toggle>
-        <mat-datepicker #myDatepicker></mat-datepicker>
-      </mat-form-field>
-      <sx-moneda-field
-        [parent]="form"
-        class="pad-left moneda-field"
-      ></sx-moneda-field>
-      <sx-tipo-cambio-field
-        [parent]="form"
-        class="pad-left"
-      ></sx-tipo-cambio-field>
-      <sx-upper-case-field
-        formControlName="comentario"
-        placeholder="Comentario"
-        flex
-      ></sx-upper-case-field>
-    </div>
-
+      <div layout>
+        <sx-sucursal-field
+          [parent]="form"
+          class="pad-right"
+        ></sx-sucursal-field>
+        <sx-upper-case-field
+          formControlName="comentario"
+          placeholder="Comentario"
+          flex
+        ></sx-upper-case-field>
+        <mat-checkbox formControlName="especial" flex="10"
+          >Especial</mat-checkbox
+        >
+      </div>
+    </mat-card-content>
     <mat-divider></mat-divider>
 
     <div class="partidas-panel">

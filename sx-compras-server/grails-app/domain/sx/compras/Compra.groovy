@@ -13,7 +13,7 @@ import sx.core.Proveedor
 
 @ToString(excludes = 'dateCreated,lastUpdated, partidas',includeNames=true,includePackage=false)
 @EqualsAndHashCode(includes='id,sucursal,folio')
-@GrailsCompileStatic
+// @GrailsCompileStatic
 class Compra {
 
 
@@ -139,6 +139,11 @@ class Compra {
         // return partidas.sum 0.0, { CompraDet item -> item.pendiente}
     }
     */
+
+    def getPendientes() {
+        // return partidas.sum 0.0, {it.solicitado}
+        return this.partidas.sum{ CompraDet det -> det.getPendiente()}
+    }
 
 }
 
