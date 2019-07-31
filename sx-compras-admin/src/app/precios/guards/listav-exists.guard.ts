@@ -9,28 +9,26 @@ import * as fromActions from '../store/actions';
 import { Observable, of } from 'rxjs';
 import { tap, map, catchError } from 'rxjs/operators';
 
-import { CambioDePrecio } from '../models';
-import { CambiosDePrecioService } from '../services/cambios-de-precio.service';
+import { ListaDePreciosVentaService } from '../services/lista-de-precios-venta.service';
 
 @Injectable({ providedIn: 'root' })
-export class CambioExistsGuard implements CanActivate {
+export class ListavExistsGuard implements CanActivate {
   constructor(
     private store: Store<fromStore.State>,
-    private service: CambiosDePrecioService
+    private service: ListaDePreciosVentaService
   ) {}
 
   canActivate(route: ActivatedRouteSnapshot): Observable<boolean> {
-    const id = route.params.cambioId;
+    const id = route.params.listaId;
     return this.hasCompraInApi(id);
   }
 
   hasCompraInApi(id: string): Observable<boolean> {
     return this.service.get(id).pipe(
-      map(cambio => new fromActions.UpsertCambioDePrecio({ cambio })),
+      map(lista => new fromActions.UpsertLista({ lista })),
       tap(action => this.store.dispatch(action)),
-      map(action => !!action.payload.cambio),
+      map(action => !!action.payload.lista),
       catchError(() => {
-        this.store.dispatch(new fromRoot.Go({ path: ['cambios-de-precio'] }));
         return of(false);
       })
     );

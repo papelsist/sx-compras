@@ -33,7 +33,7 @@ export class CatalogosPageComponent implements OnInit {
       icon: 'swap_horiz'
     },
     {
-      route: 'precios',
+      route: 'listas',
       title: 'Precios',
       description: 'Cambios de precio',
       icon: 'transform'

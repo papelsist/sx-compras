@@ -8,7 +8,7 @@ import { tap, filter, take, switchMap, catchError } from 'rxjs/operators';
 import * as fromStore from '../store';
 
 @Injectable({ providedIn: 'root' })
-export class CambiosGuard implements CanActivate {
+export class ListasvGuard implements CanActivate {
   constructor(private store: Store<fromStore.State>) {}
 
   canActivate(): Observable<boolean> {
@@ -19,10 +19,10 @@ export class CambiosGuard implements CanActivate {
   }
 
   checkStore(): Observable<boolean> {
-    return this.store.select(fromStore.selectCambiosLoaded).pipe(
+    return this.store.select(fromStore.selectListasLoaded).pipe(
       tap(loaded => {
         if (!loaded) {
-          this.store.dispatch(new fromStore.LoadCambiosDePrecio());
+          this.store.dispatch(new fromStore.LoadListaDePrecios());
         }
       }),
       filter(loaded => loaded), // Waiting for loaded

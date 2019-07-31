@@ -1,7 +1,7 @@
-import { CambiosGuard } from './cambios.guard';
-import { CambioExistsGuard } from './cambio-exists.guard';
+import { ListasvGuard } from './listasv.guard';
+import { ListavExistsGuard } from './listav-exists.guard';
 
-export const guards: any[] = [CambiosGuard, CambioExistsGuard];
+export const guards: any[] = [ListasvGuard, ListavExistsGuard];
 
-export * from './cambios.guard';
-export * from './cambio-exists.guard';
+export * from './listasv.guard';
+export * from './listav-exists.guard';

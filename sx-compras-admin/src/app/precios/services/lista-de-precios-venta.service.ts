@@ -48,14 +48,14 @@ export class ListaDePreciosVentaService {
       .pipe(catchError((error: any) => throwError(error)));
   }
 
-  delete(requisicionId: string) {
+  delete(requisicionId: number) {
     const url = `${this.apiUrl}/${requisicionId}`;
     return this.http
       .delete(url)
       .pipe(catchError((error: any) => throwError(error)));
   }
 
-  aplicar(requisicionId: string): Observable<ListaDePreciosVenta> {
+  aplicar(requisicionId: number): Observable<ListaDePreciosVenta> {
     const url = `${this.apiUrl}/aplicar/${requisicionId}`;
     return this.http
       .put<ListaDePreciosVenta>(url, {})

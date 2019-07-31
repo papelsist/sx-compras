@@ -2,90 +2,90 @@ import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 import { createFeatureSelector } from '@ngrx/store';
 
 import { Periodo } from 'app/_core/models/periodo';
-import { CambioDePrecio } from '../models';
+import { ListaDePreciosVenta } from '../models';
 
-import { CambioDePreciosActionTypes, CambioDePreciosActions } from './actions';
+import { ListaActionTypes, ListaDePreciosActions } from './actions';
 
-export const CAMBIOS_DE_PRECIO_PERIODO_KEY = 'sx.compras.requisiciones.periodo';
+export const LISTA_DE_PRECIOSV_PERIODO_KEY = 'sx.compras.requisiciones.periodo';
 
-export const FEATURE_STORE_NAME = 'cambios-de-precio';
+export const FEATURE_STORE_NAME = 'lista-de-precios-venta';
 
-export interface State extends EntityState<CambioDePrecio> {
+export interface State extends EntityState<ListaDePreciosVenta> {
   loading: boolean;
   loaded: boolean;
   periodo: Periodo;
 }
 
-export const adapter: EntityAdapter<CambioDePrecio> = createEntityAdapter<
-  CambioDePrecio
+export const adapter: EntityAdapter<ListaDePreciosVenta> = createEntityAdapter<
+  ListaDePreciosVenta
 >();
 
 export const initialState: State = adapter.getInitialState({
   loading: false,
   loaded: false,
   periodo: Periodo.fromStorage(
-    CAMBIOS_DE_PRECIO_PERIODO_KEY,
-    Periodo.fromNow(90)
+    LISTA_DE_PRECIOSV_PERIODO_KEY,
+    Periodo.fromNow(180)
   )
 });
 
 export function reducer(
   state = initialState,
-  action: CambioDePreciosActions
+  action: ListaDePreciosActions
 ): State {
   switch (action.type) {
-    case CambioDePreciosActionTypes.AplicarCambioDePrecios:
-    case CambioDePreciosActionTypes.DeleteCambioDePrecio:
-    case CambioDePreciosActionTypes.UpdateCambioDePrecio:
-    case CambioDePreciosActionTypes.CreateCambioDePrecio:
-    case CambioDePreciosActionTypes.LoadCambiosDePrecio: {
+    case ListaActionTypes.AplicarListaDePrecios:
+    case ListaActionTypes.DeleteLista:
+    case ListaActionTypes.UpdateLista:
+    case ListaActionTypes.CreateLista:
+    case ListaActionTypes.LoadListaDePrecios: {
       return {
         ...state,
         loading: true
       };
     }
 
-    case CambioDePreciosActionTypes.AplicarCambioDePreciosFail:
-    case CambioDePreciosActionTypes.DeleteCambioDePrecioFail:
-    case CambioDePreciosActionTypes.UpdateCambioDePrecioFail:
-    case CambioDePreciosActionTypes.CreateCambioDePrecioFail:
-    case CambioDePreciosActionTypes.LoadCambiosDePrecioFail: {
+    case ListaActionTypes.AplicarListaDePreciosFail:
+    case ListaActionTypes.DeleteListaFail:
+    case ListaActionTypes.UpdateListaFail:
+    case ListaActionTypes.CreateListaFail:
+    case ListaActionTypes.LoadListaDePreciosFail: {
       return {
         ...state,
         loading: false
       };
     }
-    case CambioDePreciosActionTypes.LoadCambiosDePrecioSuccess: {
-      return adapter.addAll(action.payload.cambios, {
+    case ListaActionTypes.LoadListaDePreciosSuccess: {
+      return adapter.addAll(action.payload.listas, {
         ...state,
         loading: false,
         loaded: true
       });
     }
 
-    case CambioDePreciosActionTypes.CreateCambioDePrecioSuccess: {
-      return adapter.addOne(action.payload.cambio, {
+    case ListaActionTypes.CreateListaSuccess: {
+      return adapter.addOne(action.payload.lista, {
         ...state,
         loading: false
       });
     }
 
-    case CambioDePreciosActionTypes.AplicarCambioDePreciosSuccess:
-    case CambioDePreciosActionTypes.UpdateCambioDePrecioSuccess: {
-      return adapter.upsertOne(action.payload.cambio, {
+    case ListaActionTypes.AplicarListaDePreciosSuccess:
+    case ListaActionTypes.UpdateListaSuccess: {
+      return adapter.upsertOne(action.payload.lista, {
         ...state,
         loading: false
       });
     }
 
-    case CambioDePreciosActionTypes.UpsertCambioDePrecio: {
-      return adapter.upsertOne(action.payload.cambio, {
+    case ListaActionTypes.UpsertLista: {
+      return adapter.upsertOne(action.payload.lista, {
         ...state
       });
     }
 
-    case CambioDePreciosActionTypes.DeleteCambioDePrecioSuccess: {
-      return adapter.removeOne(action.payload.cambio.id, {
+    case ListaActionTypes.DeleteListaSuccess: {
+      return adapter.removeOne(action.payload.lista.id, {
         ...state,
         loading: false
       });
@@ -108,6 +108,6 @@ export const getLoading = (state: State) => state.loading;
 export const getLoaded = (state: State) => state.loaded;
 export const getPeriodo = (state: State) => state.periodo;
 
-export const getCambiosDePrecioState = createFeatureSelector<State>(
+export const getListaDePreciosState = createFeatureSelector<State>(
   FEATURE_STORE_NAME
 );

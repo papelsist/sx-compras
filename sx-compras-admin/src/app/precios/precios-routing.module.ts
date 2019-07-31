@@ -1,18 +1,25 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { CambiosComponent } from './pages/cambios/cambios.component';
-import { CambiosGuard, CambioExistsGuard } from './guards';
+import { ListasvGuard } from './guards/listasv.guard';
+import { ListasComponent } from './pages/listas/listas.component';
+import { ListavExistsGuard } from './guards/listav-exists.guard';
+import { ListaComponent } from './pages/lista/lista.component';
+import { ListaCreateComponent } from './pages/lista-create/lista-create.component';
 
 const routes: Routes = [
   {
     path: '',
-    canActivate: [CambiosGuard],
-    component: CambiosComponent
+    canActivate: [ListasvGuard],
+    component: ListasComponent
   },
   {
-    path: '/:cambioId',
-    canActivate: [CambiosGuard, CambioExistsGuard],
-    component: CambiosComponent
+    path: 'create',
+    component: ListaCreateComponent
+  },
+  {
+    path: 'edit/:listaId',
+    canActivate: [ListasvGuard, ListavExistsGuard],
+    component: ListaComponent
   }
 ];
 

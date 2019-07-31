@@ -1,6 +1,6 @@
 <mat-card flex>
   <sx-standard-header
-    title="Cambios de precios"
+    title="Listas de precios"
     [periodo]="periodo$ | async"
     (periodoChange)="onPeriodo($event)"
     (reload)="onReload()"
@@ -15,12 +15,10 @@
   >
   </ng-template>
   <div class="grid-panel">
-    <!--
-      <sx-requisiciones-table
-        #grid
-        [partidas]="rows$ | async"
-        (select)="onSelect($event)"
-      ></sx-requisiciones-table>
-      -->
+    <sx-listas-grid
+      #grid
+      [partidas]="rows$ | async"
+      (select)="onSelect($event)"
+    ></sx-listas-grid>
   </div>
 </mat-card>

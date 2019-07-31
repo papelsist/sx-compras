@@ -5,18 +5,21 @@ import { SharedModule } from 'app/_shared/shared.module';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { reducer, FEATURE_STORE_NAME } from './store/reducer';
-import { CambiosDePrecioEffects } from './store/effects';
+import { ListaDePreciosEffects } from './store/effects';
 
 import { PreciosRoutingModule } from './precios-routing.module';
-import { CambiosComponent } from './pages/cambios/cambios.component';
-import { CambioComponent } from './pages/cambio/cambio.component';
+import { ListasComponent } from './pages/listas/listas.component';
+import { ListaComponent } from './pages/lista/lista.component';
+import { ListasGridComponent } from './components/listas-grid/listas-grid.component';
+import { ListaCreateComponent } from './pages/lista-create/lista-create.component';
+import { ListaFormComponent } from './components/lista-form/lista-form.component';
 
 @NgModule({
-  declarations: [CambiosComponent, CambioComponent],
+  declarations: [ListasComponent, ListaComponent, ListasGridComponent, ListaCreateComponent, ListaFormComponent],
   imports: [
     SharedModule,
     StoreModule.forFeature(FEATURE_STORE_NAME, reducer),
-    EffectsModule.forFeature([CambiosDePrecioEffects]),
+    EffectsModule.forFeature([ListaDePreciosEffects]),
     PreciosRoutingModule
   ]
 })

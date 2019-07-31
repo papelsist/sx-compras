@@ -11,7 +11,8 @@
         "@schematics/angular:component": {
           "spec": false,
           "prefix": "sx",
-          "styleext": "scss"
+          "styleext": "scss",
+          "changeDetection": "OnPush"
         }
       },
       "architect": {
@@ -122,7 +123,8 @@
   "schematics": {
     "@schematics/angular:component": {
       "prefix": "sx",
-      "styleext": "scss"
+      "styleext": "scss",
+      "changeDetection": "OnPush"
     },
     "@schematics/angular:directive": {
       "prefix": "sx"

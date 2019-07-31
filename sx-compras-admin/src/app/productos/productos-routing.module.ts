@@ -60,7 +60,7 @@ const routes: Routes = [
         component: ClasesComponent
       },
       {
-        path: 'precios',
+        path: 'listas',
         loadChildren: 'app/precios/precios.module#PreciosModule'
       }
     ]

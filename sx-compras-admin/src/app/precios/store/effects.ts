@@ -9,22 +9,22 @@ import { selectPeriodo } from './selectors';
 import { of } from 'rxjs';
 import { map, switchMap, catchError, take } from 'rxjs/operators';
 
-import { CambioDePreciosActionTypes } from './actions';
+import { ListaActionTypes } from './actions';
 import * as fromActions from './actions';
 
-import { CambiosDePrecioService } from '../services/cambios-de-precio.service';
+import { ListaDePreciosVentaService } from '../services/lista-de-precios-venta.service';
 
 @Injectable()
-export class CambiosDePrecioEffects {
+export class ListaDePreciosEffects {
   constructor(
     private actions$: Actions,
-    private service: CambiosDePrecioService,
+    private service: ListaDePreciosVentaService,
     private store: Store<fromStore.State>
   ) {}
 
   @Effect()
   load$ = this.actions$.pipe(
-    ofType(CambioDePreciosActionTypes.LoadCambiosDePrecio),
+    ofType(ListaActionTypes.LoadListaDePrecios),
     switchMap(() => {
       return this.store.pipe(
         select(selectPeriodo),
@@ -34,13 +34,13 @@ export class CambiosDePrecioEffects {
     switchMap(periodo => {
       return this.service.list(periodo).pipe(
         map(
-          cambios =>
-            new fromActions.LoadCambiosDePrecioSuccess({
-              cambios
+          listas =>
+            new fromActions.LoadListaDePreciosSuccess({
+              listas
             })
         ),
         catchError(response =>
-          of(new fromActions.LoadCambiosDePrecioFail({ response }))
+          of(new fromActions.LoadListaDePreciosFail({ response }))
         )
       );
     })
@@ -48,20 +48,18 @@ export class CambiosDePrecioEffects {
 
   @Effect()
   create$ = this.actions$.pipe(
-    ofType<fromActions.CreateCambioDePrecio>(
-      CambioDePreciosActionTypes.CreateCambioDePrecio
-    ),
-    map(action => action.payload.cambio),
+    ofType<fromActions.CreateLista>(ListaActionTypes.CreateLista),
+    map(action => action.payload.lista),
     switchMap(req => {
       return this.service.save(req).pipe(
         map(
-          cambio =>
-            new fromActions.CreateCambioDePrecioSuccess({
-              cambio
+          lista =>
+            new fromActions.CreateListaSuccess({
+              lista
             })
         ),
         catchError(response =>
-          of(new fromActions.CreateCambioDePrecioFail({ response }))
+          of(new fromActions.CreateListaFail({ response }))
         )
       );
     })
@@ -69,29 +67,25 @@ export class CambiosDePrecioEffects {
 
   @Effect()
   createSuccess$ = this.actions$.pipe(
-    ofType<fromActions.CreateCambioDePrecioSuccess>(
-      CambioDePreciosActionTypes.CreateCambioDePrecioSuccess
-    ),
-    map(action => action.payload.cambio),
-    map(r => new fromRoot.Go({ path: ['/cambios-de-precio', r.id] }))
+    ofType<fromActions.CreateListaSuccess>(ListaActionTypes.CreateListaSuccess),
+    map(action => action.payload.lista),
+    map(r => new fromRoot.Go({ path: ['/catalogos/lista', r.id] }))
   );
 
   @Effect()
   update$ = this.actions$.pipe(
-    ofType<fromActions.UpdateCambioDePrecio>(
-      CambioDePreciosActionTypes.UpdateCambioDePrecio
-    ),
+    ofType<fromActions.UpdateLista>(ListaActionTypes.UpdateLista),
     map(action => action.payload.update),
     switchMap(upd => {
       return this.service.update(upd).pipe(
         map(
-          cambio =>
-            new fromActions.UpdateCambioDePrecioSuccess({
-              cambio
+          lista =>
+            new fromActions.UpdateListaSuccess({
+              lista
             })
         ),
         catchError(response =>
-          of(new fromActions.UpdateCambioDePrecioFail({ response }))
+          of(new fromActions.UpdateListaFail({ response }))
         )
       );
     })
@@ -99,20 +93,18 @@ export class CambiosDePrecioEffects {
 
   @Effect()
   delete$ = this.actions$.pipe(
-    ofType<fromActions.DeleteCambioDePrecio>(
-      CambioDePreciosActionTypes.DeleteCambioDePrecio
-    ),
-    map(action => action.payload.cambio),
-    switchMap(cambio => {
-      return this.service.delete(cambio.id).pipe(
+    ofType<fromActions.DeleteLista>(ListaActionTypes.DeleteLista),
+    map(action => action.payload.lista),
+    switchMap(lista => {
+      return this.service.delete(lista.id).pipe(
         map(
           () =>
-            new fromActions.DeleteCambioDePrecioSuccess({
-              cambio
+            new fromActions.DeleteListaSuccess({
+              lista
             })
         ),
         catchError(response =>
-          of(new fromActions.DeleteCambioDePrecioFail({ response }))
+          of(new fromActions.DeleteListaFail({ response }))
         )
       );
     })
@@ -120,57 +112,46 @@ export class CambiosDePrecioEffects {
 
   @Effect()
   deleteSuccess$ = this.actions$.pipe(
-    ofType<fromActions.DeleteCambioDePrecioSuccess>(
-      CambioDePreciosActionTypes.DeleteCambioDePrecioSuccess
-    ),
-    map(action => action.payload.cambio),
-    map(r => new fromRoot.Go({ path: ['cambios-de-precio'] }))
+    ofType<fromActions.DeleteListaSuccess>(ListaActionTypes.DeleteListaSuccess),
+    map(action => action.payload.lista),
+    map(r => new fromRoot.Go({ path: ['catalogos/listas'] }))
   );
 
   @Effect()
   aplicar$ = this.actions$.pipe(
-    ofType<fromActions.AplicarCambioDePrecios>(
-      CambioDePreciosActionTypes.AplicarCambioDePrecios
+    ofType<fromActions.AplicarListaDePrecios>(
+      ListaActionTypes.AplicarListaDePrecios
     ),
-    map(action => action.payload.cambio),
-    switchMap(cambio => {
-      return this.service.aplicar(cambio.id).pipe(
+    map(action => action.payload.lista),
+    switchMap(lista => {
+      return this.service.aplicar(lista.id).pipe(
         map(
           res =>
-            new fromActions.AplicarCambioDePreciosSuccess({
-              cambio: res
+            new fromActions.AplicarListaDePreciosSuccess({
+              lista: res
             })
         ),
         catchError(response =>
-          of(new fromActions.AplicarCambioDePreciosFail({ response }))
+          of(new fromActions.AplicarListaDePreciosFail({ response }))
         )
       );
     })
   );
 
   @Effect()
-  aplicarSuccess$ = this.actions$.pipe(
-    ofType<fromActions.AplicarCambioDePreciosSuccess>(
-      CambioDePreciosActionTypes.AplicarCambioDePreciosSuccess
-    ),
-    map(action => action.payload.cambio),
-    map(c => new fromRoot.Go({ path: ['ordenes/compras', c.id] }))
-  );
-
-  @Effect()
   errorHandler$ = this.actions$.pipe(
     ofType<
-      | fromActions.LoadCambiosDePrecioFail
-      | fromActions.CreateCambioDePrecioFail
-      | fromActions.UpdateCambioDePrecioFail
-      | fromActions.DeleteCambioDePrecioFail
-      | fromActions.AplicarCambioDePreciosFail
+      | fromActions.LoadListaDePreciosFail
+      | fromActions.CreateListaFail
+      | fromActions.UpdateListaFail
+      | fromActions.DeleteListaFail
+      | fromActions.AplicarListaDePreciosFail
     >(
-      CambioDePreciosActionTypes.LoadCambiosDePrecioFail,
-      CambioDePreciosActionTypes.CreateCambioDePrecioFail,
-      CambioDePreciosActionTypes.UpdateCambioDePrecioFail,
-      CambioDePreciosActionTypes.DeleteCambioDePrecioFail,
-      CambioDePreciosActionTypes.AplicarCambioDePreciosFail
+      ListaActionTypes.LoadListaDePreciosFail,
+      ListaActionTypes.CreateListaFail,
+      ListaActionTypes.UpdateListaFail,
+      ListaActionTypes.DeleteListaFail,
+      ListaActionTypes.AplicarListaDePreciosFail
     ),
     map(action => action.payload.response),
     map(response => new fromRoot.GlobalHttpError({ response }))

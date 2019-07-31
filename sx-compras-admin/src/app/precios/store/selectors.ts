@@ -2,37 +2,37 @@ import { createSelector } from '@ngrx/store';
 
 import * as fromRoot from 'app/store';
 import * as fromFeature from './reducer';
-import { CambioDePrecio } from '../models';
+import { ListaDePreciosVenta } from '../models';
 
 export const selectPeriodo = createSelector(
-  fromFeature.getCambiosDePrecioState,
+  fromFeature.getListaDePreciosState,
   fromFeature.getPeriodo
 );
 
-export const getCambiosDePrecioEntities = createSelector(
-  fromFeature.getCambiosDePrecioState,
+export const getListasEntities = createSelector(
+  fromFeature.getListaDePreciosState,
   fromFeature.selectEntities
 );
 
-export const getAllCambios = createSelector(
-  fromFeature.getCambiosDePrecioState,
+export const getAllListas = createSelector(
+  fromFeature.getListaDePreciosState,
   fromFeature.selectAll
 );
 
-export const selectCambiosLoaded = createSelector(
-  fromFeature.getCambiosDePrecioState,
+export const selectListasLoaded = createSelector(
+  fromFeature.getListaDePreciosState,
   fromFeature.getLoaded
 );
 
-export const selectCambiosLoading = createSelector(
-  fromFeature.getCambiosDePrecioState,
+export const selectListasLoading = createSelector(
+  fromFeature.getListaDePreciosState,
   fromFeature.getLoading
 );
 
 export const getCurrentCambio = createSelector(
-  getCambiosDePrecioEntities,
+  getListasEntities,
   fromRoot.getRouterState,
-  (entities, router): CambioDePrecio => {
-    return router.state && entities[router.state.params.cambioId];
+  (entities, router): ListaDePreciosVenta => {
+    return router.state && entities[router.state.params.listaId];
   }
 );
