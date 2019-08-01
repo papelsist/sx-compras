@@ -46,6 +46,7 @@
       (select)="onSelect($event)"
       (edit)="dirty$.next(true)"
       [(selectedRows)]="selectedPartidas"
+      (deletePartidas)="dirty$.next(true)"
     >
     </sx-requisicion-partidas>
   </div>

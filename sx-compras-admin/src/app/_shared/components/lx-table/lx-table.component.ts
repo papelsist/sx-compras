@@ -135,6 +135,10 @@ export class LxTableComponent implements OnInit, OnChanges {
     return this.tableService.formatDate(data, format);
   }
 
+  transformPercent(data, format = null) {
+    return this.tableService.formatPercent(data, format);
+  }
+
   buildColsDef(): ColDef[] {
     return [];
   }

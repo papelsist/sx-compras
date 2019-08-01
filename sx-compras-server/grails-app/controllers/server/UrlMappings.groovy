@@ -160,6 +160,7 @@ class UrlMappings {
         "/api/compras/depuracionBatch2"(controller: 'compra', action: 'depuracionBatch', method: 'POST')
 
         "/api/listaDePreciosVenta"(resources: 'listaDePreciosVenta', excludes: ['create', 'edit','patch'])
+        "/api/listaDePreciosVenta/disponibles"(controller: 'listaDePreciosVenta', action: 'disponibles')
         "/api/listaDePreciosVenta/print/$id"(controller: 'listaDePreciosVenta', action: 'print')
         
 

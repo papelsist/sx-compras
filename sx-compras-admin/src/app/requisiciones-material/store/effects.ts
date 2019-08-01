@@ -13,6 +13,7 @@ import { RequisicionesDeMaterialActionTypes } from './actions';
 import * as fromActions from './actions';
 
 import { RequisicionDeMaterialService } from '../services/requisicion-de-material.service';
+import { Periodo } from 'app/_core/models/periodo';
 
 @Injectable()
 export class RequisicionDeMaterialEffects {
@@ -44,6 +45,18 @@ export class RequisicionDeMaterialEffects {
         )
       );
     })
+  );
+
+  @Effect()
+  periodo$ = this.actions$.pipe(
+    ofType<fromActions.SetPeriodo>(
+      RequisicionesDeMaterialActionTypes.SetPeriodo
+    ),
+    map(action => action.payload.periodo),
+    tap(periodo =>
+      Periodo.saveOnStorage(fromStore.REQUISICION_MATERIAL_PERIODO_KEY, periodo)
+    ),
+    map(() => new fromActions.LoadRequisicionesDeMaterial())
   );
 
   @Effect()

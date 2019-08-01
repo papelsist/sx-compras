@@ -62,6 +62,13 @@ export class ListaDePreciosVentaService {
       .pipe(catchError((error: any) => throwError(error)));
   }
 
+  disponibles(): Observable<any[]> {
+    const url = `${this.apiUrl}/disponibles`;
+    return this.http
+      .get<any[]>(url, {})
+      .pipe(catchError((error: any) => throwError(error)));
+  }
+
   getUrl(proveedorId: string) {
     return this.configService.buildApiUrl(
       `proveedores/${proveedorId}/productos`

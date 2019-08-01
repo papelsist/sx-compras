@@ -8,7 +8,8 @@ import {
 } from './actions';
 import { createFeatureSelector } from '@ngrx/store';
 
-export const REQUISICION_PERIODO_KEY = 'sx.compras.requisiciones.periodo';
+export const REQUISICION_MATERIAL_PERIODO_KEY =
+  'sx.compras.requisiciones-material.periodo';
 
 export const FEATURE_STORE_NAME = 'requisiciones-de-material';
 
@@ -25,7 +26,10 @@ export const adapter: EntityAdapter<
 export const initialState: State = adapter.getInitialState({
   loading: false,
   loaded: false,
-  periodo: Periodo.fromStorage(REQUISICION_PERIODO_KEY, Periodo.fromNow(90))
+  periodo: Periodo.fromStorage(
+    REQUISICION_MATERIAL_PERIODO_KEY,
+    Periodo.fromNow(90)
+  )
 });
 
 export function reducer(
@@ -33,6 +37,13 @@ export function reducer(
   action: RequisicionesDeMaterialActions
 ): State {
   switch (action.type) {
+    case RequisicionesDeMaterialActionTypes.SetPeriodo: {
+      const periodo = action.payload.periodo;
+      return {
+        ...state,
+        periodo
+      };
+    }
     case RequisicionesDeMaterialActionTypes.GenerarCompraDeMaterial:
     case RequisicionesDeMaterialActionTypes.DeleteRequisicionDeMaterial:
     case RequisicionesDeMaterialActionTypes.UpdateRequisicionDeMaterial:

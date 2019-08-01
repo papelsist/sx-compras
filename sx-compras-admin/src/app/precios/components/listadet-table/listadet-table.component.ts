@@ -46,8 +46,6 @@ export class ListadetTableComponent extends LxTableComponent
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log('Partidas: ', changes.partidas.currentValue);
-    console.log('gridApi: ', this.gridApi);
     if (changes.partidas && changes.partidas.currentValue) {
       if (this.gridApi) {
         this.setRowData(changes.partidas.currentValue);
@@ -103,56 +101,57 @@ export class ListadetTableComponent extends LxTableComponent
   buildColsDef(): ColDef[] {
     return [
       {
-        headerName: 'Sucursal',
-        field: 'sucursalNombre',
-        width: 115,
-        pinned: 'left'
+        headerName: 'Producto',
+        field: 'clave',
+        width: 110,
+        pinned: 'left',
+        resizable: true
       },
       {
-        headerName: 'COM',
-        field: 'documento',
-        width: 100,
-        pinned: 'left'
-      },
-      {
-        headerName: 'Proveedor',
-        field: 'nombre',
+        headerName: 'Descripción',
+        field: 'descripcion',
         width: 300,
         pinned: 'left'
       },
       {
-        headerName: 'Fecha',
-        field: 'fecha',
-        width: 100,
-        valueFormatter: params => this.transformDate(params.value)
+        headerName: 'Linea',
+        field: 'linea',
+        width: 130
       },
       {
-        headerName: 'Compra',
-        field: 'compraFolio'
+        headerName: 'Costo',
+        field: 'costo',
       },
       {
-        headerName: 'Remisión',
-        field: 'remision'
+        headerName: 'Costo U',
+        field: 'costoUltimo',
       },
       {
-        headerName: 'F.Remisión',
-        field: 'fechaRemision',
-        valueFormatter: params => this.transformDate(params.value)
+        headerName: 'Precio (CON)',
+        field: 'precioContado',
       },
       {
-        headerName: 'Comentario',
-        field: 'comentario'
+        headerName: 'P. A. (CON)',
+        field: 'precioAnteriorContado',
       },
       {
-        headerName: 'Actualizó',
-        field: 'updateUser',
-        width: 120
+        headerName: 'Precio (CRE)',
+        field: 'precioCredito',
       },
       {
-        headerName: 'Modificado',
-        field: 'dateCreated',
-        valueFormatter: params =>
-          this.transformDate(params.value, 'dd/MM/yyyy HH:mm')
+        headerName: 'P. A. (CRE)',
+        field: 'precioAnteriorCredito',
+      },
+      ///
+      {
+        headerName: 'Clase',
+        field: 'clase',
+        width: 100
+      },
+      {
+        headerName: 'Marca',
+        field: 'marca',
+        width: 100
       }
     ];
   }

@@ -3,13 +3,10 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import * as fromRoot from 'app/store';
 import * as fromStore from '../../store';
-import * as fromProductos from 'app/productos/store/selectors';
 
 import { Observable } from 'rxjs';
 
 import { ListaDePreciosVenta } from '../../models';
-import { ProductoUtilsService } from 'app/productos/services/productos-utils.service';
-import { Producto } from 'app/productos/models/producto';
 
 @Component({
   selector: 'sx-lista-create',
@@ -19,15 +16,13 @@ import { Producto } from 'app/productos/models/producto';
 })
 export class ListaCreateComponent implements OnInit {
   loading$: Observable<boolean>;
-  productos$: Observable<{ [id: string]: Producto }>;
+  disponibles$: Observable<{ [id: string]: any }>;
 
   constructor(private store: Store<fromStore.State>) {}
 
   ngOnInit() {
     this.loading$ = this.store.pipe(select(fromStore.selectListasLoading));
-    this.productos$ = this.store.pipe(
-      select(fromProductos.getProductosEntities)
-    );
+    this.disponibles$ = this.store.pipe(select(fromStore.selectDisponibles));
   }
 
   onBack() {

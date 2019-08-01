@@ -50,7 +50,7 @@ class ProductoController extends RestfulController<Producto> {
         // TEMPO FOR DEVONLY
         if(Environment.current == Environment.DEVELOPMENT) {
             query = query.where {deLinea == true && activo == true}
-            param.max = 50
+            params.max = 50
         }
         ///END TEMPO
 

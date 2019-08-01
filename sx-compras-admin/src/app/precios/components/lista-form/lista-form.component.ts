@@ -11,12 +11,13 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 import { Observable } from 'rxjs';
 
+import * as _ from 'lodash';
+
 import {
   ListaDePreciosVenta,
   ListaDePreciosVentaDet,
   createPartida
 } from 'app/precios/models';
-import { Producto } from 'app/productos/models/producto';
 
 import { ProductoUtilsService } from 'app/productos/services/productos-utils.service';
 import { ListadetTableComponent } from '../listadet-table/listadet-table.component';
@@ -30,7 +31,9 @@ import { ListadetTableComponent } from '../listadet-table/listadet-table.compone
 export class ListaFormComponent implements OnInit {
   form: FormGroup;
   @Input() lista: Partial<ListaDePreciosVenta>;
-  @Input() productos: { [id: string]: Producto } = {};
+  _disponibles: any[];
+  dictionaty: { [id: string]: any } = {};
+
   @Output() save = new EventEmitter<Partial<ListaDePreciosVenta>>();
   partidas: Partial<ListaDePreciosVentaDet>[] = [];
   @ViewChild('partidasTable') grid: ListadetTableComponent;
@@ -66,17 +69,7 @@ export class ListaFormComponent implements OnInit {
   }
 
   agregarProductos() {
-    /*
-    if (!this.productos) {
-      this.service.loadProductos().subscribe(res => {
-        this.productos = res;
-        this.selectProductos(this.productos);
-      });
-    } else {
-      this.selectProductos(this.productos);
-    }
-    */
-    this.selectProductos(this.getDisponibles());
+    this.selectProductos(this._disponibles);
   }
 
   private selectProductos(productos: any[]) {
@@ -85,7 +78,6 @@ export class ListaFormComponent implements OnInit {
       .afterClosed()
       .subscribe((selection: any[]) => {
         if (selection) {
-          console.log('Agrgando partidas: ', selection);
           const newData = [];
           selection.forEach(item => {
             const det = createPartida(item);
@@ -93,13 +85,15 @@ export class ListaFormComponent implements OnInit {
           });
           const items = [...newData, ...this.partidas];
           this.partidas = items;
-          console.log('Partidas: ', this.partidas);
-          this.grid.partidas = items;
+          // this.grid.partidas = items;
+          this.grid.gridApi.setRowData(items);
         }
       });
   }
 
-  private getDisponibles() {
-    return Object.keys(this.productos).map(id => this.productos[id]);
+  @Input()
+  set disponibles(rows: any[]) {
+    this._disponibles = rows;
+    this.dictionaty = _.keyBy(rows, 'clave');
   }
 }

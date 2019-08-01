@@ -6,6 +6,8 @@ import { ListaDePreciosVenta } from '../models';
 
 import { ListaActionTypes, ListaDePreciosActions } from './actions';
 
+import * as _ from 'lodash';
+
 export const LISTA_DE_PRECIOSV_PERIODO_KEY = 'sx.compras.requisiciones.periodo';
 
 export const FEATURE_STORE_NAME = 'lista-de-precios-venta';
@@ -14,6 +16,8 @@ export interface State extends EntityState<ListaDePreciosVenta> {
   loading: boolean;
   loaded: boolean;
   periodo: Periodo;
+  disponibles: any[];
+  disponiblesLoaded: boolean;
 }
 
 export const adapter: EntityAdapter<ListaDePreciosVenta> = createEntityAdapter<
@@ -26,7 +30,9 @@ export const initialState: State = adapter.getInitialState({
   periodo: Periodo.fromStorage(
     LISTA_DE_PRECIOSV_PERIODO_KEY,
     Periodo.fromNow(180)
-  )
+  ),
+  disponibles: undefined,
+  disponiblesLoaded: false
 });
 
 export function reducer(
@@ -90,6 +96,24 @@ export function reducer(
         loading: false
       });
     }
+    case ListaActionTypes.LoadDisponibles: {
+      return {
+        ...state,
+        loading: true
+      };
+    }
+    case ListaActionTypes.LoadDisponiblesFail: {
+      return {
+        ...state,
+        loading: false
+      };
+    }
+    case ListaActionTypes.LoadDisponiblesSuccess: {
+      return {
+        ...state,
+        disponibles: action.payload.rows
+      };
+    }
 
     default: {
       return state;
@@ -107,6 +131,8 @@ export const {
 export const getLoading = (state: State) => state.loading;
 export const getLoaded = (state: State) => state.loaded;
 export const getPeriodo = (state: State) => state.periodo;
+export const getDisponibles = (state: State) => state.disponibles;
+export const getDisponiblesLoaded = (state: State) => state.disponiblesLoaded;
 
 export const getListaDePreciosState = createFeatureSelector<State>(
   FEATURE_STORE_NAME

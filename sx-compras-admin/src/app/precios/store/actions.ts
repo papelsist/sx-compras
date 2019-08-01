@@ -25,7 +25,12 @@ export enum ListaActionTypes {
   // Generar Compra
   AplicarListaDePrecios = '[Lista de precios component] Aplicatar lista',
   AplicarListaDePreciosFail = '[Listas de precio API] Aplicatar lista fail',
-  AplicarListaDePreciosSuccess = '[Listas de precio API] Aplicatar lista Success'
+  AplicarListaDePreciosSuccess = '[Listas de precio API] Aplicatar lista Success',
+
+  //
+  LoadDisponibles = '[ Disponibles guard] Load disponibles para lista',
+  LoadDisponiblesFail = '[ Disponibles guard] Load disponibles para lista fail',
+  LoadDisponiblesSuccess = '[ Disponibles guard] Load disponibles para lista succcess'
 }
 
 export class SetPeriodo implements Action {
@@ -103,6 +108,19 @@ export class AplicarListaDePreciosSuccess implements Action {
   readonly type = ListaActionTypes.AplicarListaDePreciosSuccess;
   constructor(public payload: { lista: ListaDePreciosVenta }) {}
 }
+
+export class LoadDisponibles implements Action {
+  readonly type = ListaActionTypes.LoadDisponibles;
+}
+export class LoadDisponiblesFail implements Action {
+  readonly type = ListaActionTypes.LoadDisponiblesFail;
+  constructor(public payload: { response: any }) {}
+}
+export class LoadDisponiblesSuccess implements Action {
+  readonly type = ListaActionTypes.LoadDisponiblesSuccess;
+  constructor(public payload: { rows: any[] }) {}
+}
+
 export type ListaDePreciosActions =
   | SetPeriodo
   | LoadListaDePrecios
@@ -120,4 +138,7 @@ export type ListaDePreciosActions =
   | DeleteListaSuccess
   | AplicarListaDePrecios
   | AplicarListaDePreciosFail
-  | AplicarListaDePreciosSuccess;
+  | AplicarListaDePreciosSuccess
+  | LoadDisponibles
+  | LoadDisponiblesFail
+  | LoadDisponiblesSuccess;

@@ -1,9 +1,11 @@
 <mat-card>
   <mat-card-title-group>
-    <mat-card-title>{{title}}</mat-card-title>
+    <mat-card-title>{{ title }}</mat-card-title>
     <mat-card-subtitle *ngIf="listaDePrecios?.aplicada">
       Aplicada:
-      <span class="tc-indigo-600">{{listaDePrecios?.aplicada | date: 'dd/MM/yyyy'}}</span>
+      <span class="tc-indigo-600">{{
+        listaDePrecios?.aplicada | date: 'dd/MM/yyyy'
+      }}</span>
     </mat-card-subtitle>
   </mat-card-title-group>
   <mat-divider></mat-divider>
@@ -13,14 +15,39 @@
         <sx-ejercicio-field [parent]="form"></sx-ejercicio-field>
         <sx-mes-field [parent]="form" class="pad-left"></sx-mes-field>
         <sx-moneda-field [parent]="form" class="pad-left"></sx-moneda-field>
-        <sx-upper-case-field formControlName="descripcion" flex="40" placeholder="Comentario" class="pad-left"></sx-upper-case-field>
+        <sx-upper-case-field
+          formControlName="descripcion"
+          flex="40"
+          placeholder="Comentario"
+          class="pad-left"
+        ></sx-upper-case-field>
         <mat-form-field class="pad-left">
-          <input placeholder="Filtrar" matInput (input)="onFilter(search.value)" #search autocomplete="off">
+          <input
+            placeholder="Filtrar"
+            matInput
+            (input)="onFilter(search.value)"
+            #search
+            autocomplete="off"
+          />
         </mat-form-field>
       </div>
-      <sx-proveedor-lista-partidas [parent]="form" [partidas]="partidas.value" (update)="onUpdateRow($event)" (delete)="onDeleteRow($event)"
-        [filter]="filter$ | async">
+
+      <sx-proveedor-lista-partidas
+        [parent]="form"
+        [partidas]="partidas.value"
+        (update)="onUpdateRow($event)"
+        (delete)="onDeleteRow($event)"
+        [filter]="filter$ | async"
+      >
       </sx-proveedor-lista-partidas>
+
+      <!-- <div class="grid-panel">
+        <sx-proveedor-lista-partidas2
+          [parent]="form"
+          [partidas]="partidas.value"
+        >
+        </sx-proveedor-lista-partidas2>
+      </div> -->
     </form>
   </mat-card-content>
 
@@ -28,27 +55,51 @@
     <button mat-button (click)="cancel.emit()">
       <mat-icon>cancel</mat-icon> Cancelar
     </button>
-    <button mat-button (click)="onSubmit()" [disabled]="form.invalid || form.pristine">
+    <button
+      mat-button
+      (click)="onSubmit()"
+      [disabled]="form.invalid || form.pristine"
+    >
       <mat-icon>save</mat-icon>Salvar
     </button>
-    <button mat-button color="primary" type="button" (click)="aplicar.emit(listaDePrecios)">
+    <button
+      mat-button
+      color="primary"
+      type="button"
+      (click)="aplicar.emit(listaDePrecios)"
+    >
       <mat-icon>check_circle</mat-icon> Aplicar
     </button>
 
-    <button mat-button color="primary" type="button" (click)="actualizar.emit(listaDePrecios)">
+    <button
+      mat-button
+      color="primary"
+      type="button"
+      (click)="actualizar.emit(listaDePrecios)"
+    >
       <mat-icon>autorenew</mat-icon> Actualizar
     </button>
 
-    <button mat-button type="button" (click)="actualizarCompras.emit(listaDePrecios)" [disabled]="!listaDePrecios?.aplicada">
+    <button
+      mat-button
+      type="button"
+      (click)="actualizarCompras.emit(listaDePrecios)"
+      [disabled]="!listaDePrecios?.aplicada"
+    >
       <mat-icon>transform</mat-icon> Actualizar Compras
     </button>
 
-    <button mat-button color="warn" type="button" (click)="delete.emit(listaDePrecios)" *ngIf="listaDePrecios?.id">
+    <button
+      mat-button
+      color="warn"
+      type="button"
+      (click)="delete.emit(listaDePrecios)"
+      *ngIf="listaDePrecios?.id"
+    >
       <mat-icon>delete</mat-icon> Eliminar
     </button>
     <button mat-button (click)="print.emit(listaDePrecios)">
       <mat-icon>print</mat-icon> Imprimir
     </button>
   </mat-card-actions>
-
 </mat-card>

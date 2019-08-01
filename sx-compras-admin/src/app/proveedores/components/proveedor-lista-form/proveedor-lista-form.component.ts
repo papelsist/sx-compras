@@ -26,7 +26,14 @@ import { Subject } from 'rxjs';
 @Component({
   selector: 'sx-proveedor-lista-form',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './proveedor-lista-form.component.html'
+  templateUrl: './proveedor-lista-form.component.html',
+  styles: [
+    `
+      .grid-panel {
+        height: 600px;
+      }
+    `
+  ]
 })
 export class ProveedorListaFormComponent implements OnInit, OnChanges {
   form: FormGroup;

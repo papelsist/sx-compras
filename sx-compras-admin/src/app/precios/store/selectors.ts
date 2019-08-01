@@ -36,3 +36,12 @@ export const getCurrentCambio = createSelector(
     return router.state && entities[router.state.params.listaId];
   }
 );
+
+export const selectDisponibles = createSelector(
+  fromFeature.getListaDePreciosState,
+  fromFeature.getDisponibles
+);
+export const selectDisponiblesLoaded = createSelector(
+  fromFeature.getListaDePreciosState,
+  fromFeature.getDisponiblesLoaded
+);

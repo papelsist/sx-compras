@@ -27,6 +27,7 @@ export class RequisicionPartidasComponent extends LxTableComponent
     Partial<RequisicionDeMaterialDet>[]
   >();
   @Output() edit = new EventEmitter<any>();
+  @Output() deletePartidas = new EventEmitter();
 
   frameworkComponents;
 
@@ -115,6 +116,7 @@ export class RequisicionPartidasComponent extends LxTableComponent
   deleteSelection() {
     const selectedData = this.gridApi.getSelectedRows();
     const res = this.gridApi.updateRowData({ remove: selectedData });
+    this.deletePartidas.emit();
   }
 
   buildColsDef(): ColDef[] {

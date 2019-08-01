@@ -139,6 +139,24 @@ export class ListaDePreciosEffects {
   );
 
   @Effect()
+  disponibles$ = this.actions$.pipe(
+    ofType(ListaActionTypes.LoadDisponibles),
+    switchMap(() => {
+      return this.service.disponibles().pipe(
+        map(
+          rows =>
+            new fromActions.LoadDisponiblesSuccess({
+              rows
+            })
+        ),
+        catchError(response =>
+          of(new fromActions.LoadDisponiblesFail({ response }))
+        )
+      );
+    })
+  );
+
+  @Effect()
   errorHandler$ = this.actions$.pipe(
     ofType<
       | fromActions.LoadListaDePreciosFail
@@ -146,12 +164,14 @@ export class ListaDePreciosEffects {
       | fromActions.UpdateListaFail
       | fromActions.DeleteListaFail
       | fromActions.AplicarListaDePreciosFail
+      | fromActions.LoadDisponiblesFail
     >(
       ListaActionTypes.LoadListaDePreciosFail,
       ListaActionTypes.CreateListaFail,
       ListaActionTypes.UpdateListaFail,
       ListaActionTypes.DeleteListaFail,
-      ListaActionTypes.AplicarListaDePreciosFail
+      ListaActionTypes.AplicarListaDePreciosFail,
+      ListaActionTypes.LoadDisponiblesFail
     ),
     map(action => action.payload.response),
     map(response => new fromRoot.GlobalHttpError({ response }))
