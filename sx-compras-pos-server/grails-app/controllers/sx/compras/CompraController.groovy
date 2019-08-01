@@ -65,6 +65,16 @@ class CompraController extends RestfulController<Compra> {
 
     }
 
+    @CompileDynamic
+    def pendientes() {
+        log.info('Pendientes: {}', params)
+        def proveedorId = params.proveedorId
+        params.sort = 'lastUpdated'
+        params.order = 'desc'
+        params.max = 1000
+        respond Compra.where{proveedor.id == proveedorId && pendiente == true}.list(params)
+    }
+
     def handleException(Exception e) {
         String message = ExceptionUtils.getRootCauseMessage(e)
         log.error(message, ExceptionUtils.getRootCause(e))

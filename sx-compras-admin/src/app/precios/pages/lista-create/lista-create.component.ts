@@ -7,6 +7,7 @@ import * as fromStore from '../../store';
 import { Observable } from 'rxjs';
 
 import { ListaDePreciosVenta } from '../../models';
+import { ProductoUtilsService } from 'app/productos/services/productos-utils.service';
 
 @Component({
   selector: 'sx-lista-create',

@@ -1,0 +1,21 @@
+<h4 mat-dialog-title>Catálogo de productos</h4>
+<div layout>
+  <input
+    (keyup)="grid.gridApi.setQuickFilter(box.value)"
+    placeholder="Buscar"
+    flex
+    #box
+  />
+</div>
+<div class="grid-panel">
+  <sx-alti-grid
+    #grid
+    [partidas]="productos"
+    (select)="select($event)"
+    [rowSelection]="rowSelection"
+  ></sx-alti-grid>
+</div>
+<mat-dialog-content> </mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button [disabled]="selected.length === 0">SELECCIONAR</button>
+</mat-dialog-actions>

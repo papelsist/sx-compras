@@ -10,6 +10,7 @@ class UrlMappings {
         "/api/marcas"(resources: 'marca')
         "/api/clases"(resources: 'clase')
         "/api/productos"(resources: 'producto')
+        "/api/productos/rows"(controller: 'producto', action: 'rows', method: 'GET')
         "/api/proveedores"(resources: 'proveedor'){
             "/productos"(resources: 'proveedorProducto', excludes:['create', 'save', 'edit','patch'])
             "/productos/disponibles"(controller: 'proveedorProducto', action: 'disponibles')
@@ -132,6 +133,7 @@ class UrlMappings {
         // "/api/cxc/notasDeCargo/print/$id"(controller: 'notaDeCargo', action: 'print', method: 'GET')
         // "/api/cxc/notasDeCargo/reporteDeNotasDeCargo"(controller: 'notaDeCargo', action: 'reporteDeNotasDeCargo', method: 'GET')
 
+
         // CXC Notas de credito
         "/api/cxc/notas"(resources: "notaDeCredito", excludes: ['create', 'edit','patch'])
         "/api/cxc/notas/generarCfdi/$id"(controller: 'notaDeCredito', action: 'generarCfdi', method: 'POST')
@@ -154,6 +156,7 @@ class UrlMappings {
         "/api/compras/print/$id"(controller: 'compra', action: 'print', method: 'GET')
         "/api/compras/actualizarPrecios/$id"(controller: 'compra', action: 'actualizarPrecios', method: 'PUT')
         "/api/compras/partidas"(controller: 'compra', action: 'partidas', method: 'GET')
+        // "/api/compras/pendientes/${proveedorId}"(controller: 'compra', action: 'pendientes', method: 'GET')
         "/api/compras/depuracionBatch2"(controller: 'compra', action: 'depuracionBatch', method: 'POST')
 
         "/api/listaDePreciosVenta"(resources: 'listaDePreciosVenta', excludes: ['create', 'edit','patch'])

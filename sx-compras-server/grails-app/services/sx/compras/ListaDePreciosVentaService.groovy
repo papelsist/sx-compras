@@ -33,5 +33,9 @@ class ListaDePreciosVentaService implements LogUser {
         return lista
 
     }
+
+    ListaDePreciosVenta aplicar(ListaDePreciosVenta lista) {
+    	
+    }
     
 }

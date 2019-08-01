@@ -11,10 +11,10 @@ import { Producto } from '../../models/producto';
 
 @Injectable()
 export class ProductosService {
-  private apiUrl: string;
+  private _apiUrl: string;
 
-  constructor(private http: HttpClient, private configService: ConfigService) {
-    this.apiUrl = configService.buildApiUrl('productos');
+  constructor(private http: HttpClient, private config: ConfigService) {
+    // this.apiUrl = configService.buildApiUrl('productos');
   }
 
   list(filtro = {}): Observable<Producto[]> {
@@ -59,5 +59,22 @@ export class ProductosService {
       headers: headers,
       responseType: 'blob'
     });
+  }
+
+  lookup(activos = true, linea = 'todas'): Observable<Producto[]> {
+    const url = `${this.apiUrl}/rows/`;
+    const params = new HttpParams()
+      .set('activos', activos ? 'true' : 'false')
+      .set('linea', linea);
+    return this.http.get<Producto[]>(url, {
+      params: params
+    });
+  }
+
+  get apiUrl() {
+    if (!this._apiUrl) {
+      this._apiUrl = this.config.buildApiUrl('productos');
+    }
+    return this._apiUrl;
   }
 }

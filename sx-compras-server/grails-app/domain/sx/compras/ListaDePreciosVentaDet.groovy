@@ -7,7 +7,7 @@ import sx.core.Producto
 import sx.core.Proveedor
 
 @ToString(includeNames=true,includePackage=false, excludes = ['lastUpdated', 'dateCreated','id','version'])
-@EqualsAndHashCode(includeFields = true, excludes = "producto")
+@EqualsAndHashCode(includeFields = true, excludes = "clave")
 class ListaDePreciosVentaDet {
 
     String id
@@ -19,6 +19,10 @@ class ListaDePreciosVentaDet {
     String clave
 
     String descripcion
+
+    String linea
+    String marca
+    String clase
 
     BigDecimal precioContado = 0.0
 
@@ -45,11 +49,13 @@ class ListaDePreciosVentaDet {
 
     static constraints = {
         proveedor nullable:true
+        marca nullable: true
+        clase nullable: true
     }
 
     static mapping ={
         id generator:'uuid'
-        table: 'LISTA_DE_PRECIOS_VENTA_DET2'
+        table 'LISTA_DE_PRECIOS_VENTA_DET2'
     }
 
     static belongsTo =[lista:ListaDePreciosVenta]

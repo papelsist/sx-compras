@@ -43,13 +43,10 @@ class ListaDePreciosVenta {
     static hasMany =[partidas:ListaDePreciosVentaDet]
 
     static mapping ={
-        id generator:'uuid',
-        fecha: 'date'
-        table: 'LISTA_DE_PRECIOS_VENTA2'
+        table 'LISTA_DE_PRECIOS_VENTA2'
+        id generator:'uuid'
         partidas cascade: "all-delete-orphan"
-        inicio  index: 'LPV_DET_IDX1'
-        aplicada  index: 'LPV_DET_IDX1'
-
+        fecha type:'date', index: 'LPV2_IDX1'
     }
 
 

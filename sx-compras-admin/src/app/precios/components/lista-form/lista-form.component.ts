@@ -4,10 +4,17 @@ import {
   ChangeDetectionStrategy,
   Input,
   Output,
-  EventEmitter
+  EventEmitter,
+  ViewChild
 } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { ListaDePreciosVenta } from 'app/precios/models';
+import {
+  ListaDePreciosVenta,
+  ListaDePreciosVentaDet,
+  createPartida
+} from 'app/precios/models';
+import { ProductoUtilsService } from 'app/productos/services/productos-utils.service';
+import { ListadetTableComponent } from '../listadet-table/listadet-table.component';
 
 @Component({
   selector: 'sx-lista-form',
@@ -19,8 +26,12 @@ export class ListaFormComponent implements OnInit {
   form: FormGroup;
   @Input() lista: Partial<ListaDePreciosVenta>;
   @Output() save = new EventEmitter<Partial<ListaDePreciosVenta>>();
+  partidas: Partial<ListaDePreciosVentaDet>[] = [];
+  @ViewChild('partidasTable') grid: ListadetTableComponent;
 
-  constructor(private fb: FormBuilder) {
+  productos: any[];
+
+  constructor(private fb: FormBuilder, private service: ProductoUtilsService) {
     this.buildForm();
   }
 
@@ -48,5 +59,36 @@ export class ListaFormComponent implements OnInit {
 
   isValid() {
     return this.form.valid;
+  }
+
+  agregarProductos() {
+    if (!this.productos) {
+      this.service.loadProductos().subscribe(res => {
+        this.productos = res;
+        this.selectProductos(this.productos);
+      });
+    } else {
+      this.selectProductos(this.productos);
+    }
+  }
+
+  private selectProductos(productos: any[]) {
+    this.service
+      .showSelector(productos)
+      .afterClosed()
+      .subscribe((selection: any[]) => {
+        if (selection) {
+          console.log('Agrgando partidas: ', selection);
+          const newData = [];
+          selection.forEach(item => {
+            const det = createPartida(item);
+            newData.push(det);
+          });
+          const items = [...newData, ...this.partidas];
+          this.partidas = items;
+          console.log('Partidas: ', this.partidas);
+          this.grid.partidas = items;
+        }
+      });
   }
 }
