@@ -10,7 +10,11 @@
       tdLoadingStrategy="overlay"
     >
     </ng-template>
-    <sx-lista-form #form (save)="onSave($event)"></sx-lista-form>
+    <sx-lista-form
+      #form
+      (save)="onSave($event)"
+      [productos]="productos$ | async"
+    ></sx-lista-form>
   </mat-card-content>
   <mat-divider></mat-divider>
   <mat-card-actions>

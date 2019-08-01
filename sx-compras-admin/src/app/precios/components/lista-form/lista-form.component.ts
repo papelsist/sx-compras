@@ -8,11 +8,16 @@ import {
   ViewChild
 } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+
+import { Observable } from 'rxjs';
+
 import {
   ListaDePreciosVenta,
   ListaDePreciosVentaDet,
   createPartida
 } from 'app/precios/models';
+import { Producto } from 'app/productos/models/producto';
+
 import { ProductoUtilsService } from 'app/productos/services/productos-utils.service';
 import { ListadetTableComponent } from '../listadet-table/listadet-table.component';
 
@@ -25,11 +30,10 @@ import { ListadetTableComponent } from '../listadet-table/listadet-table.compone
 export class ListaFormComponent implements OnInit {
   form: FormGroup;
   @Input() lista: Partial<ListaDePreciosVenta>;
+  @Input() productos: { [id: string]: Producto } = {};
   @Output() save = new EventEmitter<Partial<ListaDePreciosVenta>>();
   partidas: Partial<ListaDePreciosVentaDet>[] = [];
   @ViewChild('partidasTable') grid: ListadetTableComponent;
-
-  productos: any[];
 
   constructor(private fb: FormBuilder, private service: ProductoUtilsService) {
     this.buildForm();
@@ -62,6 +66,7 @@ export class ListaFormComponent implements OnInit {
   }
 
   agregarProductos() {
+    /*
     if (!this.productos) {
       this.service.loadProductos().subscribe(res => {
         this.productos = res;
@@ -70,6 +75,8 @@ export class ListaFormComponent implements OnInit {
     } else {
       this.selectProductos(this.productos);
     }
+    */
+    this.selectProductos(this.getDisponibles());
   }
 
   private selectProductos(productos: any[]) {
@@ -90,5 +97,9 @@ export class ListaFormComponent implements OnInit {
           this.grid.partidas = items;
         }
       });
+  }
+
+  private getDisponibles() {
+    return Object.keys(this.productos).map(id => this.productos[id]);
   }
 }

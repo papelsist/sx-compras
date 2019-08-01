@@ -3,6 +3,8 @@ package sx.core
 import grails.compiler.GrailsCompileStatic
 import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.RestfulController
+import grails.util.Environment
+
 import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
 
@@ -44,8 +46,16 @@ class ProductoController extends RestfulController<Producto> {
             Boolean deLinea = this.params.getBoolean('deLinea')
             query = query.where {deLinea == deLinea}
         }
-        List<Producto> res =  query.list(params)
 
+        // TEMPO FOR DEVONLY
+        if(Environment.current == Environment.DEVELOPMENT) {
+            query = query.where {deLinea == true && activo == true}
+            param.max = 50
+        }
+        ///END TEMPO
+
+        List<Producto> res =  query.list(params)
+        log.info('All Productos: {}', res.size())
         respond res
     }
 
