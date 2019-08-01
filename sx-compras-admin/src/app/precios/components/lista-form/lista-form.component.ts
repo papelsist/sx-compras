@@ -31,8 +31,8 @@ import { ListadetTableComponent } from '../listadet-table/listadet-table.compone
 export class ListaFormComponent implements OnInit {
   form: FormGroup;
   @Input() lista: Partial<ListaDePreciosVenta>;
-  _disponibles: any[];
-  dictionaty: { [id: string]: any } = {};
+
+  @Input() disponiblesDiccionary: { [id: string]: any } = {};
 
   @Output() save = new EventEmitter<Partial<ListaDePreciosVenta>>();
   partidas: Partial<ListaDePreciosVentaDet>[] = [];
@@ -80,20 +80,17 @@ export class ListaFormComponent implements OnInit {
         if (selection) {
           const newData = [];
           selection.forEach(item => {
-            const det = createPartida(item);
-            newData.push(det);
+            newData.push(item);
           });
           const items = [...newData, ...this.partidas];
           this.partidas = items;
-          // this.grid.partidas = items;
+
           this.grid.gridApi.setRowData(items);
         }
       });
   }
 
-  @Input()
-  set disponibles(rows: any[]) {
-    this._disponibles = rows;
-    this.dictionaty = _.keyBy(rows, 'clave');
+  get disponibles() {
+    return _.values(this.disponiblesDiccionary);
   }
 }
