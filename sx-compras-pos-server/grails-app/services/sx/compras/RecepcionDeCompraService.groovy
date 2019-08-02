@@ -59,8 +59,8 @@ class RecepcionDeCompraService implements LogUser {
             inventario.tipo = 'COM'
             inventario.renglon = renglon
             inventario = inventario.save flush: true
-            // det.inventario = inventario
-            det.inventariox = inventario.id
+            det.inventario = inventario
+            // det.inventariox = inventario.id
             renglon++
         }
         com.fechaInventario = new Date()
