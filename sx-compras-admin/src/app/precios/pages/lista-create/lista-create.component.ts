@@ -16,7 +16,7 @@ import { ListaDePreciosVenta } from '../../models';
 })
 export class ListaCreateComponent implements OnInit {
   loading$: Observable<boolean>;
-  disponibles$: Observable<{ [id: string]: any }>;
+  disponibles$: Observable<any[]>;
 
   constructor(private store: Store<fromStore.State>) {}
 

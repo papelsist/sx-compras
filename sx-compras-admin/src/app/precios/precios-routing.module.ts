@@ -7,16 +7,17 @@ import { ListaComponent } from './pages/lista/lista.component';
 import { ListaCreateComponent } from './pages/lista-create/lista-create.component';
 
 import { ProductosGuard } from 'app/productos/guards';
+import { DisponiblesGuard } from './guards/disponibles.guard';
 
 const routes: Routes = [
   {
     path: '',
-    canActivate: [ListasvGuard, ProductosGuard],
+    canActivate: [ListasvGuard],
     component: ListasComponent
   },
   {
     path: 'create',
-    canActivate: [ListasvGuard, ProductosGuard],
+    canActivate: [ListasvGuard, DisponiblesGuard],
     component: ListaCreateComponent
   },
   {
