@@ -32,7 +32,7 @@ export class ListaFormComponent implements OnInit {
   form: FormGroup;
   @Input() lista: Partial<ListaDePreciosVenta>;
 
-  @Input() disponiblesDiccionary: { [id: string]: any } = {};
+  _disponibles: { [id: string]: any } = {};
 
   @Output() save = new EventEmitter<Partial<ListaDePreciosVenta>>();
   partidas: Partial<ListaDePreciosVentaDet>[] = [];
@@ -69,7 +69,7 @@ export class ListaFormComponent implements OnInit {
   }
 
   agregarProductos() {
-    this.selectProductos(this._disponibles);
+    this.selectProductos(this.disponibles);
   }
 
   private selectProductos(productos: any[]) {
@@ -81,16 +81,21 @@ export class ListaFormComponent implements OnInit {
           const newData = [];
           selection.forEach(item => {
             newData.push(item);
+            delete this._disponibles[item.clave];
           });
           const items = [...newData, ...this.partidas];
           this.partidas = items;
-
           this.grid.gridApi.setRowData(items);
         }
       });
   }
 
-  get disponibles() {
-    return _.values(this.disponiblesDiccionary);
+  @Input()
+  set disponibles(rows: any[]) {
+    this._disponibles = _.keyBy(rows, 'clave');
+  }
+
+  get disponibles(): any[] {
+    return _.valuesIn(this._disponibles);
   }
 }
