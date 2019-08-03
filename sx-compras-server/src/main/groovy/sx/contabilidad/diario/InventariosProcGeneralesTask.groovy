@@ -27,6 +27,8 @@ class InventariosProcGeneralesTask implements  AsientoBuilder {
         String sql = getSelect()
                 .replaceAll("@FECHA", toSqlDate(poliza.fecha))
 
+        println sql
+
         List rows = getAllRows(sql, [])
         rows.each { row ->
             String descripcion = generarDescripcion(row)

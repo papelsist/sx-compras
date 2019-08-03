@@ -36,7 +36,10 @@ class CobranzaTarjetaTask implements  AsientoBuilder {
         String sql = getSelect()
                 .replaceAll("@FECHA", toSqlDate(poliza.fecha))
 
+
         List rows = getAllRows(sql, []).findAll {it.sucursal == poliza.sucursal}
+
+       // List rows = getAllRows(sql, [])
 
         // Almacenar los cobros (Para el cargo a bancos)
         Set cobros = new HashSet()
@@ -190,6 +193,7 @@ class CobranzaTarjetaTask implements  AsientoBuilder {
 
         }
     }
+    
 
 
     @Override
@@ -220,6 +224,7 @@ class CobranzaTarjetaTask implements  AsientoBuilder {
         x.beneficiario, 
         x.forma_de_pago,
         x.metodoDePago, 
+        x.referencia2,
         x.origen,
         x.documento,  
         x.referenciaBancaria,
@@ -261,7 +266,8 @@ class CobranzaTarjetaTask implements  AsientoBuilder {
         FROM corte_de_tarjeta f join corte_de_tarjeta_aplicacion j on(j.corte_id=f.id) join movimiento_de_cuenta m on(j.ingreso_id=m.id) join cuenta_de_banco z on(m.cuenta_id=z.id)
         join sucursal s on(f.sucursal_id=s.id) left join cobro_tarjeta   x on(x.corte=f.id) join cobro b on(x.cobro_id=b.id)  join cliente t on(b.cliente_id=t.id)        
         join aplicacion_de_cobro a on(a.cobro_id=b.id) join cuenta_por_cobrar c on(a.cuenta_por_cobrar_id=c.id) left join cfdi i on(c.cfdi_id=i.id)        
-        where f.corte='@FECHA' and a.fecha=(b.primera_aplicacion) and j.tipo like '%INGRESO%' and c.tipo in('CON','COD')
+        where f.corte='@FECHA' and a.fecha=(b.primera_aplicacion) 
+        and c.tipo in('CON','COD')
         UNION
         SELECT 
         concat('COB_TARJ_',(case when x.debito_credito is true then 'DEB' when x.visa_master is false then 'AME' else 'CRE' end),'_CON') as asiento,f.id origen_gpo,x.debito_credito,(case when x.debito_credito is true then 'DEBITO' else 'CREDITO' end)  documentoTipo,f.corte fecha,f.folio documento_gpo,b.moneda,b.tipo_de_cambio tc ,f.total total_gpo
@@ -276,10 +282,10 @@ class CobranzaTarjetaTask implements  AsientoBuilder {
         FROM corte_de_tarjeta f join corte_de_tarjeta_aplicacion j on(j.corte_id=f.id) join movimiento_de_cuenta m on(j.ingreso_id=m.id) join cuenta_de_banco z on(m.cuenta_id=z.id)
         join sucursal s on(f.sucursal_id=s.id) left join cobro_tarjeta   x on(x.corte=f.id) join cobro b on(x.cobro_id=b.id)  join cliente t on(b.cliente_id=t.id)        
         join aplicacion_de_cobro a on(a.cobro_id=b.id) join cuenta_por_cobrar c on(a.cuenta_por_cobrar_id=c.id) left join cfdi i on(c.cfdi_id=i.id)        
-        where f.corte='@FECHA' and a.fecha=(b.primera_aplicacion) and j.tipo like '%INGRESO%' and c.tipo not in('CON','COD')
+        where f.corte='@FECHA' and a.fecha=(b.primera_aplicacion) 
+        and c.tipo not in('CON','COD')
         group by b.id        
         ) as x   
-        group by x.origen,x.uuid,x.cxc_id
         order by x.sucursal,asiento,x.origen_gpo,x.tipo,x.factura desc
         """
         return res

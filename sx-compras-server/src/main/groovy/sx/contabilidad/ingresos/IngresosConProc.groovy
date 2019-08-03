@@ -11,6 +11,8 @@ import sx.contabilidad.*
 @Component
 class IngresosConProc implements  ProcesadorDePoliza{
 
+   
+
     @Autowired
     @Qualifier('ingresosFichasTask')
     IngresosFichasTask ingresosFichasTask
@@ -23,6 +25,18 @@ class IngresosConProc implements  ProcesadorDePoliza{
     @Qualifier('cobranzaDepositosTask')
     CobranzaDepositosTask cobranzaDepositosTask
 
+    @Autowired
+    @Qualifier('ingresosTarjetaTask')
+    IngresosTarjetaTask ingresosTarjetaTask
+
+    @Autowired
+    @Qualifier('notasDeCreditoTask')
+    NotasDeCreditoTask  notasDeCreditoTask
+
+    @Autowired
+    @Qualifier('ventasTask')
+    VentasTask  ventasTask
+
     @Override
     String definirConcepto(Poliza poliza) {
         return "Ingresos Contado ${poliza.fecha.format('dd/MM/yyyy')}"
@@ -33,8 +47,11 @@ class IngresosConProc implements  ProcesadorDePoliza{
         println poliza
         poliza.partidas.clear()
         ingresosFichasTask.generarAsientos(poliza)
-        cobranzaSaldosAFavorTask.generarAsientosIngresos(poliza, [tipo: 'CON'])
-        cobranzaDepositosTask.generarAsientosIngresos(poliza)
+        // cobranzaSaldosAFavorTask.generarAsientosIngresos(poliza, [tipo: 'CON'])
+        // cobranzaDepositosTask.generarAsientosIngresos(poliza)
+        // ingresosTarjetaTask.generarAsientos(poliza)
+        // ventasTask.generarAsientos(poliza)
+        // notasDeCreditoTask.generarAsientos(poliza)
         poliza = poliza.save flush: true, failOnError:true
         return poliza
     }

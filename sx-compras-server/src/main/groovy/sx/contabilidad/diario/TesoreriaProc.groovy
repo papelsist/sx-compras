@@ -54,6 +54,7 @@ class TesoreriaProc implements  ProcesadorDePoliza{
         poliza = poliza.save flush: true
         poliza.refresh()
         return poliza
+        
     }
 
 }

@@ -20,7 +20,7 @@ abstract trait AsientoBuilder implements  SqlAccess{
     PolizaDet buildRegistro(String cuentaClave, String descripcion, Map row, def debe = 0.0, def haber = 0.0) {
 
         CuentaContable cuenta = buscarCuenta(cuentaClave, row)
-
+            def cto = concatenar(cuenta)
         PolizaDet det = new PolizaDet(
                 cuenta: cuenta,
                 concepto: cuenta.descripcion,
@@ -105,6 +105,83 @@ abstract trait AsientoBuilder implements  SqlAccess{
     String toSqlDate(Date date){
         return date.format('yyyy-MM-dd')
     }
+
+
+    def concatenar(CuentaContable cta) {
+        String cto = cta.descripcion 
+      def sucursales = ['OFICINAS','ANDRADE','BOLIVAR','CALLE 4','CF5FEBRERO','SOLIS','VERTIZ 176','TACUBA','VENTAS','SOLIS']
+        def nivel = cta.nivel
+        def p1 = cta.padre
+        
+        if(p1){
+            // Nivel 3
+          
+             if(nivel == 3){
+                   
+              	for(int i=0 ; i < sucursales.size(); i++){
+                
+                     
+                    if (cta.descripcion.contains(sucursales[i])) {
+                        cto = "${cta.padre.descripcion}  ${cta.descripcion}"
+                        break
+                    } 
+                        cto = "${cta.padre.descripcion}"
+             	}
+            } 
+            //nivel 4
+            if(nivel == 4){  
+                //for 1
+                for(int i=0 ; i< sucursales.size(); i++){
+                    // if 1
+                    if (cta.descripcion.contains(sucursales[i])) {
+                        def ctaN3= cta.padre
+                        for(int x=0 ; x< sucursales.size(); x++){
+                        	if (cta.descripcion.contains(sucursales[x])) {
+                                cto = ctaN3.padre.descripcion
+                                break
+                            }else{
+                                cto = "${ctaN3.padre.descripcion}  ${ctaN3.descripcion}"
+                                break
+                            }
+                        }
+                       break 
+                    }// termina if 1 
+                    def ctaN3= cta.padre
+                    //for 2
+                    for(int x=0 ; x< sucursales.size(); x++){
+                        if (ctaN3.descripcion.contains(sucursales[x])) {
+                            cto = "${ctaN3.padre.descripcion} ${cta.descripcion}"
+                            break
+                        }else{
+                            cto = "${ctaN3.padre.descripcion}  ${ctaN3.descripcion} ${cta.descripcion}"             
+                        }
+                    } // termina for 2
+                }// terminia for 1
+            }//Termina nivel 4
+        }
+	    
+        /*
+        String cto = cta.descripcion
+        def p1 = cta.padre
+        if(p1) {
+            cto = p1.descripcion + " " + cto
+            def p2 = p1.padre
+            if(p2) {
+                cto = p2.descripcion + " " + cto
+                def p3 = p2.padre
+                if(p3) {
+                    cto = p3.descripcion + " " + cto
+                }
+            }
+        }
+        */
+
+        println "CTo:  "+cto
+
+        return cto
+    }
+
+
 
     /**
      * Genera una descripcion uniforme para todo el asiento
