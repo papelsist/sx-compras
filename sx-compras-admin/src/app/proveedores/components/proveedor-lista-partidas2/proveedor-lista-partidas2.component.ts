@@ -15,7 +15,7 @@ import { ListaDePreciosProveedorDet } from '../../models/listaDePreciosProveedor
 import { aplicarDescuentosEnCascada } from 'app/utils/money-utils';
 import { LxTableComponent } from 'app/_shared/components';
 import { SxTableService } from 'app/_shared/components/lx-table/sx-table.service';
-import { ColDef } from 'ag-grid-community';
+import { ColDef, RowSelectedEvent } from 'ag-grid-community';
 
 @Component({
   selector: 'sx-proveedor-lista-partidas2',
@@ -44,6 +44,8 @@ export class ProveedorListaPartidas2Component extends LxTableComponent
   @Input() readOnly = false;
   @Output() update = new EventEmitter();
   @Output() delete = new EventEmitter();
+  @Output() deleteRow = new EventEmitter();
+  @Output() selectionChange = new EventEmitter<any[]>();
 
   constructor(public tableService: SxTableService) {
     super(tableService);
@@ -61,6 +63,10 @@ export class ProveedorListaPartidas2Component extends LxTableComponent
 
   buildGridOptions() {
     super.buildGridOptions();
+    this.gridOptions.rowSelection = 'multiple';
+    this.gridOptions.onRowSelected = (event: RowSelectedEvent) => {
+      this.selectionChange.emit(this.gridApi.getSelectedRows());
+    };
     this.gridOptions.onCellValueChanged = params => {
       const row: ListaDePreciosProveedorDet = params.data;
       if (params.column.getColId() === 'precio') {
@@ -68,15 +74,6 @@ export class ProveedorListaPartidas2Component extends LxTableComponent
       }
       this.actualizar(row);
     };
-    /*
-    this.gridOptions.onCellEditingStopped = params => {
-      const row: ListaDePreciosProveedorDet = params.data;
-      if (params.column.getColId() === 'precio') {
-        row.precioBruto = parseFloat(params.value);
-      }
-      this.actualizar(row);
-    };
-    */
   }
 
   asignarPrecio(precio, row: ListaDePreciosProveedorDet) {
@@ -85,7 +82,6 @@ export class ProveedorListaPartidas2Component extends LxTableComponent
   }
 
   actualizar(row: ListaDePreciosProveedorDet) {
-    console.log('Actualizando: ', row);
     const { unidad, precioBruto, desc1, desc2, desc3, desc4 } = row;
     const importeNeto = aplicarDescuentosEnCascada(precioBruto, [
       desc1,
@@ -104,6 +100,23 @@ export class ProveedorListaPartidas2Component extends LxTableComponent
     }
     const dif = row.precioBruto - row.precioAnterior;
     return dif / row.precioBruto;
+  }
+
+  deleteSelection() {
+    const selectedData = this.gridApi.getSelectedRows();
+    const res = this.gridApi.updateRowData({ remove: selectedData });
+    this.deleteRow.emit();
+  }
+
+  getAllRows() {
+    const data = [];
+    if (this.gridApi) {
+      this.gridApi.forEachNodeAfterFilter((rowNode, index) => {
+        const det: Partial<ListaDePreciosProveedorDet> = rowNode.data;
+        data.push(det);
+      });
+    }
+    return data;
   }
 
   buildColsDef(): ColDef[] {
@@ -171,6 +184,7 @@ export class ProveedorListaPartidas2Component extends LxTableComponent
       {
         headerName: 'P Neto',
         field: 'precioNeto',
+        valueFormatter: params => this.transformCurrency(params.value),
         width: 110
       }
     ];

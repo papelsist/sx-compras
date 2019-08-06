@@ -111,6 +111,8 @@ export function reducer(
     case ListaActionTypes.LoadDisponiblesSuccess: {
       return {
         ...state,
+        disponiblesLoaded: true,
+        loading: false,
         disponibles: action.payload.rows
       };
     }

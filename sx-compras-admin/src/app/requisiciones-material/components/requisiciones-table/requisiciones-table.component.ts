@@ -21,6 +21,7 @@ import { RequisicionDeMaterial } from '../../models';
 export class RequisicionesTableComponent extends LxTableComponent
   implements OnInit {
   @Output() selectionChange = new EventEmitter<any[]>();
+  @Output() print = new EventEmitter();
 
   constructor(public tableService: SxTableService) {
     super(tableService);
@@ -128,6 +129,13 @@ export class RequisicionesTableComponent extends LxTableComponent
         field: 'lastUpdated',
         cellRenderer: params =>
           this.transformDate(params.value, 'dd/MM/yyyy HH:mm')
+      },
+      {
+        headerName: 'P',
+        colId: 'print',
+        cellRenderer: 'printRenderer',
+        onCellClicked: params => this.print.emit(params.data),
+        width: 90
       }
     ];
   }

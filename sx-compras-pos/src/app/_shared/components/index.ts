@@ -25,6 +25,7 @@ import { LxTableComponent } from './lx-table/lx-table.component';
 import { StandardHeaderComponent } from './standard-header/standard-header.component';
 import { StandardFooterComponent } from './standard-footer/standard-footer.component';
 import { NumericEditorComponent } from './lx-table/numeric-editor.component';
+import { PrintCellRendererComponent } from './lx-table/print-cell-renderer.component';
 
 export const components = [
   DireccionComponent,
@@ -53,12 +54,14 @@ export const components = [
   LxTableComponent,
   StandardHeaderComponent,
   StandardFooterComponent,
-  NumericEditorComponent
+  NumericEditorComponent,
+  PrintCellRendererComponent
 ];
 
 export const entyComponents: any[] = [
   FechaDialogComponent,
-  PeriodoDialogComponent
+  PeriodoDialogComponent,
+  PrintCellRendererComponent
 ];
 
 export * from './direccion/direccion.component';
@@ -87,3 +90,4 @@ export * from './lx-table/lx-table.component';
 export * from './standard-header/standard-header.component';
 export * from './standard-footer/standard-footer.component';
 export * from './lx-table/numeric-editor.component';
+export * from './lx-table/print-cell-renderer.component';

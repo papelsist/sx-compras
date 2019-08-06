@@ -29,6 +29,7 @@
       [partidas]="compras$ | async"
       (select)="onSelect($event)"
       (selectionChange)="selected = $event"
+      (print)="onPrint($event)"
     ></sx-compras-table>
   </div>
 </mat-card>

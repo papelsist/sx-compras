@@ -58,7 +58,8 @@ export class ListaFormComponent implements OnInit {
   submit() {
     if (this.form.valid) {
       const res = {
-        ...this.form.value
+        ...this.form.value,
+        partidas: this.partidas
       };
       this.save.emit(res);
     }
@@ -66,6 +67,10 @@ export class ListaFormComponent implements OnInit {
 
   isValid() {
     return this.form.valid;
+  }
+
+  canSave() {
+    return this.form.valid && this.form.dirty;
   }
 
   agregarProductos() {
@@ -86,13 +91,15 @@ export class ListaFormComponent implements OnInit {
           const items = [...newData, ...this.partidas];
           this.partidas = items;
           this.grid.gridApi.setRowData(items);
+          this.form.markAsDirty();
         }
       });
   }
 
   @Input()
   set disponibles(rows: any[]) {
-    this._disponibles = _.keyBy(rows, 'clave');
+    const cloneRows = [...rows];
+    this._disponibles = _.keyBy(cloneRows, 'clave');
   }
 
   get disponibles(): any[] {

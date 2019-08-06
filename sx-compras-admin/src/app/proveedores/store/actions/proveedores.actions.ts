@@ -47,7 +47,7 @@ export class SetCurrentProveedor implements Action {
 
 export class CreateProveedor implements Action {
   readonly type = CREATE_PROVEEDOR_ACTION;
-  constructor(public payload: Proveedor) {}
+  constructor(public payload: Partial<Proveedor>) {}
 }
 export class CreateProveedorFail implements Action {
   readonly type = CREATE_PROVEEDOR_ACTION_FAIL;

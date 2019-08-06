@@ -32,6 +32,7 @@
         </mat-form-field>
       </div>
 
+      <!--
       <sx-proveedor-lista-partidas
         [parent]="form"
         [partidas]="partidas.value"
@@ -40,14 +41,19 @@
         [filter]="filter$ | async"
       >
       </sx-proveedor-lista-partidas>
+      -->
 
-      <!-- <div class="grid-panel">
+      <div class="grid-panel">
         <sx-proveedor-lista-partidas2
+          #grid
           [parent]="form"
           [partidas]="partidas.value"
+          (update)="onUpdateRow($event)"
+          (deleteRow)="onDeleteRow()"
+          (selectionChange)="onSelection($event)"
         >
         </sx-proveedor-lista-partidas2>
-      </div> -->
+      </div>
     </form>
   </mat-card-content>
 
@@ -100,6 +106,23 @@
     </button>
     <button mat-button (click)="print.emit(listaDePrecios)">
       <mat-icon>print</mat-icon> Imprimir
+    </button>
+    <button
+      mat-button
+      (click)="grid.deleteSelection()"
+      color="warn"
+      [disabled]="selected.length === 0"
+      matTooltip="Eliminar las partidas seleccionadas"
+    >
+      <mat-icon>remove_circle_outline</mat-icon> QUITAR
+    </button>
+    <button
+      mat-button
+      mat-icon-button
+      (click)="grid.exportData('PROV_LP')"
+      matTooltip="Descargar registros en formato CSV"
+    >
+      <mat-icon color="primary">file_download</mat-icon>
     </button>
   </mat-card-actions>
 </mat-card>

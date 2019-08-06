@@ -28,6 +28,7 @@ import { RequisicionDeMaterialService } from '../../services/requisicion-de-mate
 import { RequisicionPartidasComponent } from '../../components/requisicion-partidas/requisicion-partidas.component';
 import { Update } from '@ngrx/entity';
 import { TdDialogService } from '@covalent/core';
+import { ReportService } from 'app/reportes/services/report.service';
 
 @Component({
   selector: 'sx-requisicion',
@@ -56,7 +57,8 @@ export class RequisicionComponent implements OnInit, OnDestroy {
     private store: Store<fromStore.State>,
     private selector: ProductosSelectorService,
     private service: RequisicionDeMaterialService,
-    private dialogService: TdDialogService
+    private dialogService: TdDialogService,
+    private reportService: ReportService
   ) {}
 
   ngOnInit() {
@@ -195,5 +197,10 @@ export class RequisicionComponent implements OnInit, OnDestroy {
 
   hasAdminRole(): boolean {
     return this.roles.includes('ROLE_ADMIN');
+  }
+
+  onPrint(row: Partial<RequisicionDeMaterial>) {
+    const url = `requisicionDeMaterial/print/${row.id}`;
+    this.reportService.runReport(url, {});
   }
 }

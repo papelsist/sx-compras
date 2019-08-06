@@ -132,7 +132,8 @@ class InventariosProcGeneralesTask implements  AsientoBuilder {
         x.asiento,
         x.proveedor,
         x.grupo referencia2,        
-        x.cta_contable        
+        (case when ASIENTO='TRANSFORMACIONES' AND sum(X.COSTO)>0 then  REPLACE(x.cta_contable,'703-0001','704-0005')
+            when ASIENTO='TRANSFORMACIONES' AND sum(X.COSTO)<0 then  REPLACE(x.cta_contable,'704-0005','703-0001') else x.cta_contable end) cta_contable  
         FROM (        	   
         SELECT 'FLETES PROVEEDOR' ASIENTO,'FLT' TIPO,'02 COMPRAS' AS grupo,s.sw2,S.clave SUC,S.NOMBRE SUCURSAL,P.CLAVE,P.DESCRIPCION 
         ,0 as kilos,0 as saldo,   ( (I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end) * i.gasto) ) as COSTO
@@ -159,7 +160,7 @@ class InventariosProcGeneralesTask implements  AsientoBuilder {
         WHEN i.TIPO IN('CIS') AND (SELECT d.tipocis FROM movimiento_de_almacen m join movimiento_de_almacen_det d on(d.movimiento_de_almacen_id=m.id) where d.inventario_id=i.id)='PUBLICIDAD_PROPAGANDA' THEN 'PUBLICIDAD PROPAGANDA CIS OGST'
         WHEN i.TIPO IN('CIS') AND (SELECT d.tipocis FROM movimiento_de_almacen m join movimiento_de_almacen_det d on(d.movimiento_de_almacen_id=m.id) where d.inventario_id=i.id)='NO_DEDUSIBLE' THEN 'NO DEDUCIBLE CIS OGST'
         ELSE TIPO END) ASIENTO
-        ,(CASE WHEN i.TIPO IN('COM') AND I.COSTO=0 THEN 'SNA' WHEN i.TIPO IN('TRS','REC') AND I.CANTIDAD>0 THEN concat('E',SUBSTR(i.tipo,1,2)) WHEN i.TIPO IN('TRS','REC') AND I.CANTIDAD<0 THEN concat('S',SUBSTR(i.tipo,1,2)) ELSE TIPO END) AS TIPO
+        ,(CASE WHEN i.TIPO IN('COM') AND I.COSTO=0 THEN 'SNA' WHEN i.TIPO IN('TRS','REC') THEN 'TRS' ELSE TIPO END) AS TIPO
         ,(CASE WHEN I.TIPO IN('COM') THEN '02 COMPRAS' WHEN I.TIPO IN('AJU','CIM','CIS','DEC','MER','RMC') AND I.CANTIDAD<0  THEN '03 GASTO' WHEN I.TIPO IN('AJU','CIM','VIR','OIM') AND I.CANTIDAD>0  THEN '04 PRODUCTO'
          WHEN I.TIPO IN('REC','TRS') THEN '05 TRANSFORMACIONES' 
          WHEN I.TIPO IN('TPS') THEN '06 TRASLADOS'
@@ -189,7 +190,7 @@ class InventariosProcGeneralesTask implements  AsientoBuilder {
         ) as a       
         group by 1,2,6,7,12             
         ) as x
-        group by 6,4,2,5 ,7
+        group by 6,4,2,5
         """
         return res
     }

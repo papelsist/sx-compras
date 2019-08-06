@@ -6,7 +6,10 @@ import {
   ChangeDetectionStrategy
 } from '@angular/core';
 
-import { LxTableComponent } from 'app/_shared/components';
+import {
+  LxTableComponent,
+  PrintCellRendererComponent
+} from 'app/_shared/components';
 import { SxTableService } from 'app/_shared/components/lx-table/sx-table.service';
 
 import { ColDef, ModelUpdatedEvent, RowSelectedEvent } from 'ag-grid-community';
@@ -21,9 +24,14 @@ import { RequisicionDeMaterial } from '../../models';
 export class RequisicionesTableComponent extends LxTableComponent
   implements OnInit {
   @Output() selectionChange = new EventEmitter<any[]>();
+  @Output() print = new EventEmitter();
+  frameworkComponents;
 
   constructor(public tableService: SxTableService) {
     super(tableService);
+    this.frameworkComponents = {
+      printRenderer: PrintCellRendererComponent
+    };
   }
 
   buildGridOptions() {
@@ -84,7 +92,7 @@ export class RequisicionesTableComponent extends LxTableComponent
       {
         headerName: 'Proveedor',
         field: 'proveedor',
-        width: 300,
+        width: 350,
         pinned: 'left'
       },
       {
@@ -129,6 +137,13 @@ export class RequisicionesTableComponent extends LxTableComponent
         field: 'lastUpdated',
         cellRenderer: params =>
           this.transformDate(params.value, 'dd/MM/yyyy HH:mm')
+      },
+      {
+        headerName: 'P',
+        colId: 'print',
+        cellRenderer: 'printRenderer',
+        onCellClicked: params => this.print.emit(params.data),
+        width: 90
       }
     ];
   }

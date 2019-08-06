@@ -10,6 +10,7 @@ import { Periodo } from 'app/_core/models/periodo';
 import { RequisicionDeMaterial } from '../../models';
 import { MatDialog } from '@angular/material';
 import { RequisicionCreateComponent } from '../../components/requisicion-create/requisicion-create.component';
+import { ReportService } from 'app/reportes/services/report.service';
 
 @Component({
   selector: 'sx-requisiciones',
@@ -24,7 +25,8 @@ export class RequisicionesComponent implements OnInit {
 
   constructor(
     private store: Store<fromStore.State>,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private reportService: ReportService
   ) {}
 
   ngOnInit() {
@@ -59,5 +61,10 @@ export class RequisicionesComponent implements OnInit {
     this.store.dispatch(
       new fromRoot.Go({ path: ['ordenes/requisiciones', event.id] })
     );
+  }
+
+  onPrint(row: Partial<RequisicionDeMaterial>) {
+    const url = `requisicionDeMaterial/print/${row.id}`;
+    this.reportService.runReport(url, {});
   }
 }

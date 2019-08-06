@@ -6,7 +6,8 @@ export interface RecepcionDeCompraDet {
   clave?: string;
   descripcion?: string;
   unidad?: string;
-  inventario: { id: string };
+  inventario?: { id: string };
+  inventariox?: string;
   compraDet: Partial<CompraDet>;
   producto: Partial<Producto>;
   cantidad: number;

@@ -17,8 +17,6 @@ class ListaDePreciosVenta {
 
     BigDecimal tipoDeCambio = 1.0
 
-    String linea = 'TODAS'
-
     Date inicio
 
     Date aplicada
@@ -33,9 +31,8 @@ class ListaDePreciosVenta {
 
     static constraints = {
         aplicada nullable:true
-        sw2 nullable:true
-        tipoDeCambioDolar(scale:6)
-        autorizacion nullable:true
+        inicio nullable: true
+        tipoDeCambio scale:6
         createUser nullable: true
         updateUser nullable: true
     }

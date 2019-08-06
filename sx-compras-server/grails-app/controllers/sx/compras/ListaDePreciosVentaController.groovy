@@ -99,5 +99,6 @@ class ListaProdDto {
     BigDecimal precioCredito
     BigDecimal precioContado
     BigDecimal costo
+    String producto
     Proveedor proveedor
 }

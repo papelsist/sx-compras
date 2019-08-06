@@ -12,6 +12,7 @@ import { ProveedorGeneralesFormComponent } from './proveedor-generales-form/prov
 import { ProveedorDireccionFormComponent } from './proveedor-direccion-form/proveedor-direccion-form.component';
 import { ProveedorCreditoFormComponent } from './proveedor-credito-form/proveedor-credito-form.component';
 import { ProveedorListaPartidas2Component } from './proveedor-lista-partidas2/proveedor-lista-partidas2.component';
+import { ProveedorCreateModalComponent } from './proveedor-create/proveedor-create-modal.component';
 
 export const components: any[] = [
   ProveedoresTableComponent,
@@ -26,13 +27,15 @@ export const components: any[] = [
   ProveedorGeneralesFormComponent,
   ProveedorDireccionFormComponent,
   ProveedorCreditoFormComponent,
-  ProveedorListaPartidas2Component
+  ProveedorListaPartidas2Component,
+  ProveedorCreateModalComponent
 ];
 
 export const entryComponents: any[] = [
   ProductosDisponiblesComponent,
   ProveedorProductoFormComponent,
-  AltpModalComponent
+  AltpModalComponent,
+  ProveedorCreateModalComponent
 ];
 
 export * from './proveedores-table/proveedores-table.component';
@@ -52,3 +55,4 @@ export * from './proveedor-direccion-form/proveedor-direccion-form.component';
 export * from './proveedor-credito-form/proveedor-credito-form.component';
 
 export * from './proveedor-lista-partidas2/proveedor-lista-partidas2.component';
+export * from './proveedor-create/proveedor-create-modal.component';

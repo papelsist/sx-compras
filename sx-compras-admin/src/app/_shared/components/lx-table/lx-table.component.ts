@@ -23,6 +23,7 @@ import {
 } from 'ag-grid-community';
 import { SxTableService } from './sx-table.service';
 import { spAgGridText } from './table-support';
+import { PrintCellRendererComponent } from './print-cell-renderer.component';
 
 @Component({
   selector: 'sx-lx-table',
@@ -44,9 +45,14 @@ export class LxTableComponent implements OnInit, OnChanges {
 
   public localeText: any;
 
+  public frameworkComponents;
+
   constructor(public tableService: SxTableService) {
     this.buildGridOptions();
     this.buildLocalText();
+    this.frameworkComponents = {
+      printRenderer: PrintCellRendererComponent
+    };
   }
 
   ngOnInit() {}

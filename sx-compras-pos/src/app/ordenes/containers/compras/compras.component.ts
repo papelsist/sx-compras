@@ -16,6 +16,8 @@ import { Periodo } from 'app/_core/models/periodo';
 import { MatDialog } from '@angular/material';
 import { ComprasService } from 'app/ordenes/services';
 import { ShowCompraDetsComponent } from 'app/ordenes/components/show-compradets/show-compradets.component';
+import { ReportService } from 'app/reportes/services/report.service';
+import { TdDialogService } from '@covalent/core';
 
 @Component({
   selector: 'sx-compras',
@@ -33,7 +35,9 @@ export class ComprasComponent implements OnInit, OnDestroy {
   constructor(
     private store: Store<fromStore.State>,
     private dialog: MatDialog,
-    private service: ComprasService
+    private service: ComprasService,
+    private reportServive: ReportService,
+    private dialogService: TdDialogService
   ) {}
 
   ngOnInit() {
@@ -75,5 +79,25 @@ export class ComprasComponent implements OnInit, OnDestroy {
       })
       .afterClosed()
       .subscribe(res => {});
+  }
+
+  onPrint(compra: Partial<Compra>) {
+    this.dialogService
+      .openConfirm({
+        title: `Compra ${compra.folio}`,
+        message: `Claves del proveedor`,
+        acceptButton: 'Si',
+        cancelButton: 'No'
+      })
+      .afterClosed()
+      .subscribe(res => {
+        this.imprimir(compra, res);
+      });
+  }
+
+  private imprimir(compra: Partial<Compra>, clavesProveedor: boolean) {
+    const params = { clavesProveedor };
+    const url = `compras/print/${compra.id}`;
+    this.reportServive.runReport(url, params);
   }
 }

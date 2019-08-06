@@ -6,7 +6,8 @@ import {
   EventEmitter,
   ChangeDetectionStrategy,
   OnChanges,
-  SimpleChanges
+  SimpleChanges,
+  ViewChild
 } from '@angular/core';
 import {
   FormGroup,
@@ -22,6 +23,7 @@ import { ProveedorProducto } from '../../models/proveedorProducto';
 import { ListaDePreciosProveedorDet } from '../../models/listaDePreciosProveedorDet';
 
 import { Subject } from 'rxjs';
+import { ProveedorListaPartidas2Component } from '../proveedor-lista-partidas2/proveedor-lista-partidas2.component';
 
 @Component({
   selector: 'sx-proveedor-lista-form',
@@ -47,6 +49,10 @@ export class ProveedorListaFormComponent implements OnInit, OnChanges {
   @Output() print = new EventEmitter<ListaDePreciosProveedor>();
   @Output() actualizarCompras = new EventEmitter<ListaDePreciosProveedor>();
   filter$ = new Subject();
+
+  @ViewChild('grid') grid: ProveedorListaPartidas2Component;
+
+  selected: any[] = [];
 
   constructor(private fb: FormBuilder) {}
 
@@ -95,17 +101,6 @@ export class ProveedorListaFormComponent implements OnInit, OnChanges {
       ? `Lista de precios ${this.listaDePrecios.id}`
       : 'Alta de Lista de precios';
   }
-  /*
-  get subtitle() {
-    if (this.listaDePrecios.id) {
-      return `Ejercicio ${this.listaDePrecios.ejercicio} Mes: ${
-        this.listaDePrecios.mes
-      }`;
-    } else {
-      return 'Actualize los precios de los productos ';
-    }
-  }
-  */
 
   get id() {
     return this.listaDePrecios.id;
@@ -114,9 +109,15 @@ export class ProveedorListaFormComponent implements OnInit, OnChanges {
   onUpdateRow(event: ListaDePreciosProveedorDet) {
     this.form.markAsDirty();
   }
-
+  /*
   onDeleteRow(index: number) {
     this.partidas.removeAt(index);
+    this.form.markAsDirty();
+  }
+  */
+
+  onDeleteRow() {
+    // this.partidas.removeAt(index);
     this.form.markAsDirty();
   }
 
@@ -134,9 +135,15 @@ export class ProveedorListaFormComponent implements OnInit, OnChanges {
   }
 
   preparePartidas() {
-    const partidas = [...this.partidas.value];
-    partidas.forEach(item => (item.producto = item.producto.id));
+    // const partidas = [...this.partidas.value];
+    const partidas = this.grid.getAllRows();
+
+    // partidas.forEach(item => (item.producto = item.producto.id));
     return partidas;
+  }
+
+  onSelection(event: any) {
+    this.selected = event;
   }
 
   onFilter(event: string) {

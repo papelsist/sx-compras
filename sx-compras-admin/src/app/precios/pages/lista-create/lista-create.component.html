@@ -21,7 +21,7 @@
     <button mat-button (click)="onBack()">
       <mat-icon>arrow_back</mat-icon> LISTAS
     </button>
-    <button mat-button (click)="form.submit()" [disabled]="!form.isValid()">
+    <button mat-button (click)="form.submit()" [disabled]="!form.canSave()">
       <mat-icon>save</mat-icon> SALVAR
     </button>
     <button mat-button (click)="form.agregarProductos()">

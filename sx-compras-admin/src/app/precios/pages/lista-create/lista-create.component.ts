@@ -30,6 +30,7 @@ export class ListaCreateComponent implements OnInit {
   }
 
   onSave(lista: ListaDePreciosVenta) {
+    // console.log('Lista: ', lista);
     this.store.dispatch(new fromStore.CreateLista({ lista }));
   }
 }

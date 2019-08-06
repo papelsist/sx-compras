@@ -19,6 +19,7 @@
       #grid
       [partidas]="rows$ | async"
       (select)="onSelect($event)"
+      (print)="onPrint($event)"
     ></sx-requisiciones-table>
   </div>
 </mat-card>

@@ -10,6 +10,8 @@ import { distinctUntilChanged, debounceTime } from 'rxjs/operators';
 import { Proveedor } from '../../models/proveedor';
 import { ProveedoresSearch } from '../../models/proveedorSearch';
 import { FormGroup, FormBuilder } from '@angular/forms';
+import { MatDialog } from '@angular/material';
+import { ProveedorCreateModalComponent } from 'app/proveedores/components';
 
 @Component({
   selector: 'sx-proveedores',
@@ -22,7 +24,8 @@ export class ProveedoresComponent implements OnInit {
 
   constructor(
     private store: Store<fromStore.ProveedoresState>,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit() {
@@ -49,5 +52,17 @@ export class ProveedoresComponent implements OnInit {
 
   onSelect(event: Proveedor) {
     this.store.dispatch(new fromRoot.Go({ path: ['proveedores', event.id] }));
+  }
+  onCreate() {
+    this.dialog
+      .open(ProveedorCreateModalComponent, {
+        width: '550px'
+      })
+      .afterClosed()
+      .subscribe(res => {
+        if (res) {
+          this.store.dispatch(new fromStore.CreateProveedor(res));
+        }
+      });
   }
 }

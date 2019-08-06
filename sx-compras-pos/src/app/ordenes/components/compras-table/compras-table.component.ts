@@ -6,7 +6,10 @@ import {
   ChangeDetectionStrategy
 } from '@angular/core';
 
-import { LxTableComponent } from 'app/_shared/components';
+import {
+  LxTableComponent,
+  PrintCellRendererComponent
+} from 'app/_shared/components';
 import { SxTableService } from 'app/_shared/components/lx-table/sx-table.service';
 
 import { ColDef, ModelUpdatedEvent, RowSelectedEvent } from 'ag-grid-community';
@@ -21,9 +24,15 @@ import { Compra } from 'app/ordenes/models/compra';
 })
 export class ComprasTableComponent extends LxTableComponent implements OnInit {
   @Output() selectionChange = new EventEmitter<any[]>();
+  @Output() print = new EventEmitter();
+
+  frameworkComponents;
 
   constructor(public tableService: SxTableService) {
     super(tableService);
+    this.frameworkComponents = {
+      printRenderer: PrintCellRendererComponent
+    };
   }
 
   buildGridOptions() {
@@ -112,27 +121,27 @@ export class ComprasTableComponent extends LxTableComponent implements OnInit {
         field: 'moneda',
         width: 70
       },
-      {
-        headerName: 'TC',
-        field: 'tipoDeCambio',
-        maxWidth: 60,
-        cellRenderer: params => this.transformCurrency(params.value)
-      },
-      {
-        headerName: 'Total',
-        field: 'totalMn',
-        width: 110,
-        cellRenderer: params => this.transformCurrency(params.value)
-      },
+      // {
+      //   headerName: 'TC',
+      //   field: 'tipoDeCambio',
+      //   maxWidth: 60,
+      //   cellRenderer: params => this.transformCurrency(params.value)
+      // },
+      // {
+      //   headerName: 'Total',
+      //   field: 'totalMn',
+      //   width: 110,
+      //   cellRenderer: params => this.transformCurrency(params.value)
+      // },
       {
         headerName: 'Usuario',
         field: 'lastUpdatedBy',
-        width: 120
+        width: 110
       },
       {
         headerName: 'Pendiente',
         field: 'pendientes',
-        width: 120
+        width: 100
       },
       {
         headerName: 'Actualizada',
@@ -149,17 +158,25 @@ export class ComprasTableComponent extends LxTableComponent implements OnInit {
       {
         headerName: 'Cerrada',
         field: 'cerrada',
-        width: 120,
+        width: 110,
         cellRenderer: params => this.transformDate(params.value, 'dd/MM/yyyy')
       },
       {
-        headerName: 'Estatus',
+        headerName: 'E',
         field: 'status',
-        width: 120
+        width: 40
+      },
+      {
+        headerName: 'P',
+        colId: 'print',
+        cellRenderer: 'printRenderer',
+        onCellClicked: params => this.print.emit(params.data),
+        width: 90
       },
       {
         headerName: 'Comentario',
-        field: 'comentario'
+        field: 'comentario',
+        width: 200
       }
     ];
   }

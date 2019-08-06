@@ -61,6 +61,7 @@ class ListaDePreciosVentaService implements LogUser {
             cast(0.0 as big_decimal) as precioCredito,
             cast(0.0 as big_decimal) as precioContado,
             case when (select x.costo from CostoPromedio x where x.producto.id = p.id and x.ejercicio = ? and x.mes = ?) is null then cast(0.0 as big_decimal) end as costo,
+            p.id as producto,
             p.proveedorFavorito as proveedor)
             from Producto p 
             where p.activo = true 
