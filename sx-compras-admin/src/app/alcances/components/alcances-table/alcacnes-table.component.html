@@ -1,0 +1,121 @@
+<table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+
+  <ng-container matColumnDef="select">
+    <th mat-header-cell *matHeaderCellDef>
+      <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()"
+        [indeterminate]="selection.hasValue() && !isAllSelected()">
+      </mat-checkbox>
+    </th>
+    <td mat-cell *matCellDef="let row">
+      <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null" [checked]="selection.isSelected(row)">
+
+      </mat-checkbox>
+    </td>
+    <td mat-footer-cell *matFooterCellDef> </td>
+  </ng-container>
+
+  <ng-container matColumnDef="clave">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Producto</th>
+    <td mat-cell *matCellDef="let row">
+      <div class="pad-left">{{row.clave}}</div>
+    </td>
+    <td mat-footer-cell *matFooterCellDef> </td>
+  </ng-container>
+
+  <ng-container matColumnDef="deLinea">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>L</th>
+    <td mat-cell *matCellDef="let row">
+      <mat-icon [inline]="true" *ngIf="row.deLinea">checked</mat-icon>
+    </td>
+    <td mat-footer-cell *matFooterCellDef> </td>
+  </ng-container>
+
+  <ng-container matColumnDef="descripcion">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Descripcion</th>
+    <td mat-cell *matCellDef="let row">
+      <div class="table-truncate_body">{{row.descripcion}} ({{row.unidad}}) ({{row.kilos}})</div>
+    </td>
+    <td mat-footer-cell *matFooterCellDef> Totales (TON)</td>
+  </ng-container>
+  <ng-container matColumnDef="existencia">
+    <th mat-header-cell *matHeaderCellDef>Exis</th>
+    <td mat-cell *matCellDef="let row">{{row.existencia | number:'1.3-3'}}</td>
+    <td mat-footer-cell *matFooterCellDef> {{getTotal('existenciaEnToneladas') | number:'1.1-3' }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="promVtaEnTonelada">
+    <th mat-header-cell *matHeaderCellDef>P</th>
+    <td mat-cell *matCellDef="let row">{{row.venta | number:'1.3-3'}} TON: {{row.promVtaEnTonelada | number:'1.3-3'}}</td>
+    <td mat-footer-cell *matFooterCellDef> {{getTotal('promVtaEnTonelada') | number:'1.3-3' }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="promVta">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Prom Vta</th>
+    <td mat-cell *matCellDef="let req">{{req.promVta | number:'1.3-3' }} </td>
+    <td mat-footer-cell *matFooterCellDef>{{getTotal('promVtaEnTonelada') | number:'1.3-3' }} </td>
+  </ng-container>
+  <ng-container matColumnDef="alcance">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Alcance</th>
+    <td mat-cell *matCellDef="let req">
+      <span class="alcance-data">{{req.alcance | number:'1.1-1' }}</span>
+
+    </td>
+    <td mat-footer-cell *matFooterCellDef> </td>
+  </ng-container>
+  <ng-container matColumnDef="comprasPendientes">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Pdte</th>
+    <td mat-cell *matCellDef="let req">{{req.comprasPendientes | number:'1.3-3'}}</td>
+    <td mat-footer-cell *matFooterCellDef></td>
+  </ng-container>
+  <ng-container matColumnDef="alcanceMesPedido">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Alc+Pte</th>
+    <td mat-cell *matCellDef="let req">
+      <span class="alcance-data">{{req.alcanceMasPedido | number:'1.1-1' }}</span>
+    </td>
+    <td mat-footer-cell *matFooterCellDef></td>
+  </ng-container>
+
+  <ng-container matColumnDef="porPedir">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>X pedir</th>
+    <td mat-cell *matCellDef="let req">{{req.porPedir | number: '1.0-0'}}</td>
+    <td mat-footer-cell *matFooterCellDef> {{getTotal('porPedirToneladas') | number: '1.0-0' }} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="nombre">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Proveedor</th>
+    <td mat-cell *matCellDef="let req">
+      <div class="table-truncate_body">
+        {{req.nombre}}
+      </div>
+    </td>
+    <td mat-footer-cell *matFooterCellDef></td>
+  </ng-container>
+
+  <ng-container matColumnDef="linea">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Línea</th>
+    <td mat-cell *matCellDef="let req">
+      <div class="table-truncate_body">{{req.linea}}</div>
+    </td>
+    <td mat-footer-cell *matFooterCellDef></td>
+  </ng-container>
+
+  <ng-container matColumnDef="marca">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Marca</th>
+    <td mat-cell *matCellDef="let req">
+      <div class="table-truncate_body">{{req.marca}}</div>
+    </td>
+    <td mat-footer-cell *matFooterCellDef></td>
+  </ng-container>
+
+  <ng-container matColumnDef="clase">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Clase</th>
+    <td mat-cell *matCellDef="let req">
+      <div class="table-truncate_body">{{req.clase}}</div>
+    </td>
+    <td mat-footer-cell *matFooterCellDef></td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayColumns"></tr>
+  <tr mat-row *matRowDef="let req; columns: displayColumns" class="cursor-pointer"></tr>
+  <tr mat-footer-row *matFooterRowDef="displayColumns"></tr>
+</table>

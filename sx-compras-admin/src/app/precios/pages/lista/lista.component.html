@@ -1,3 +1,66 @@
-<p>
-  cambio works!
-</p>
+<mat-card>
+  <mat-card-title>LISTA DE PRECIOS {{ (lista$ | async)?.id }}</mat-card-title>
+  <mat-divider></mat-divider>
+  <mat-card-content>
+    <ng-template
+      tdLoading
+      [tdLoadingUntil]="!(loading$ | async)"
+      tdLoadingStrategy="overlay"
+    >
+    </ng-template>
+    <sx-lista-form
+      #form
+      [lista]="lista$ | async"
+      (update)="onUpdate($event)"
+      [disponibles]="disponibles$ | async"
+    ></sx-lista-form>
+  </mat-card-content>
+
+  <mat-card-actions>
+    <button mat-button (click)="onBack()">
+      <mat-icon>arrow_back</mat-icon> LISTAS
+    </button>
+    <button mat-button (click)="form.submit()" [disabled]="!form.canSave()">
+      <mat-icon>save</mat-icon> ACTUALIZAR
+    </button>
+    <button mat-button (click)="form.agregarProductos()">
+      <mat-icon>playlist_add</mat-icon> PRODUCTOS
+    </button>
+    <button
+      mat-button
+      (click)="form.calcular()"
+      [disabled]="form.selected.length === 0"
+    >
+      <mat-icon>keyboard</mat-icon> CALCULAR
+    </button>
+    <button
+      mat-button
+      (click)="form.deleteSelection()"
+      color="warn"
+      [disabled]="form.selected.length === 0"
+      matTooltip="Eliminar las partidas seleccionadas"
+    >
+      <mat-icon>remove_circle_outline</mat-icon> QUITAR
+    </button>
+    <button
+      mat-button
+      (click)="form.grid.exportData('LPV')"
+      matTooltip="Descargar registros en formato CSV"
+    >
+      <mat-icon color="primary">file_download</mat-icon> DESCARGAR
+    </button>
+    <ng-container *ngIf="lista$ | async as lista">
+      <button
+        mat-button
+        (click)="doAplicar(lista)"
+        color="accent"
+        [disabled]="lista.aplicada"
+      >
+        <mat-icon>settings</mat-icon> APLICAR
+      </button>
+      <button mat-button (click)="onDelete(lista)" color="warn">
+        <mat-icon>delete</mat-icon> ELIMINAR
+      </button>
+    </ng-container>
+  </mat-card-actions>
+</mat-card>

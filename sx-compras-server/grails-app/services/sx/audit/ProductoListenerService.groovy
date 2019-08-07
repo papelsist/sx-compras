@@ -2,7 +2,8 @@ package sx.audit
 
 import grails.events.annotation.Subscriber
 import grails.gorm.transactions.Transactional
-import groovy.transform.CompileStatic
+import grails.compiler.GrailsCompileStatic
+
 import groovy.util.logging.Slf4j
 
 import org.grails.datastore.mapping.engine.event.AbstractPersistenceEvent
@@ -17,11 +18,18 @@ import sx.core.Producto
 
 
 @Slf4j
-@CompileStatic
-// @Transactional
+@GrailsCompileStatic
+@Transactional
 class ProductoListenerService {
 
-    @Autowired AuditLogDataService auditLogDataService
+    List<String> sucursales = [
+        'SOLIS',
+         'TACUBA',
+         'ANDRADE',
+         'CALLE 4',
+         'CF5FEBRERO',
+         'VERTIZ 176',
+         'BOLIVAR']
 
     @Autowired ExistenciaService existenciaService
 
@@ -55,16 +63,12 @@ class ProductoListenerService {
 
     @Subscriber
     void afterUpdate(PostUpdateEvent event) {
-        // log.debug('{} {} ', event.eventType.name(), event.entity.name)
-        String id = getId(event)
-        if ( id ) {
-            log.debug('{} {} Id: {}', event.eventType.name(), event.entity.name, id)
-            Producto producto = getProducto(event)
+        Producto producto = getProducto(event)
+        if ( producto ) {
+            log.debug('{} {} Producto: {}', event.eventType.name(), event.entity.name, producto.clave)
             logEntity(producto, 'UPDATE')
         }
     }
-
-
 
     @Subscriber
     void afterDelete(PostDeleteEvent event) {
@@ -75,20 +79,22 @@ class ProductoListenerService {
     }
 
     def logEntity(Producto producto, String type) {
-
-        ['SOLIS',
-         'TACUBA',
-         'ANDRADE',
-         'CALLE 4',
-         'CF5FEBRERO',
-         'VERTIZ 176',
-         'BOLIVAR'].each {
+        this.sucursales.each {
             buildLog(producto, it, type)
         }
 
     }
 
     def buildLog(Producto producto, String destino, String type) {
+        Audit logDet = new Audit(
+                name: 'Producto',
+                persistedObjectId: producto.id,
+                source: 'CENTRAL',
+                target: destino,
+                tableName: 'producto',
+                eventName: type)
+        logDet.save flush: true
+        /*
         AuditLog log = new AuditLog(
                 name: 'Producto',
                 persistedObjectId: producto.id,
@@ -97,7 +103,8 @@ class ProductoListenerService {
                 tableName: 'producto',
                 eventName: type
         )
-        auditLogDataService.save(log)
+        */
+        // auditLogDataService.save(log)
 
     }
 }

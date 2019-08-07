@@ -30,7 +30,12 @@ const routes: Routes = [
       {
         path: 'recepciones',
         loadChildren: 'app/recepciones/recepciones.module#RecepcionesModule'
-      }
+      },
+      {
+        path: 'alcances',
+        loadChildren:
+          'app/alcances/alcances.module#AlcancesModule'
+      },
     ]
   }
 ];

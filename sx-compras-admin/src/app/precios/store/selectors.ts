@@ -29,7 +29,7 @@ export const selectListasLoading = createSelector(
   fromFeature.getLoading
 );
 
-export const getCurrentCambio = createSelector(
+export const getCurrentLista = createSelector(
   getListasEntities,
   fromRoot.getRouterState,
   (entities, router): ListaDePreciosVenta => {

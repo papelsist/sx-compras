@@ -1,0 +1,57 @@
+table {
+  width: 100%;
+  overflow: auto;
+}
+.mat-column-select{
+  width: 40px;
+}
+.mat-column-clave {
+  width: 110px;
+}
+
+.mat-column-descripcion{
+  min-width: 300px;
+  max-width: 300px;
+}
+
+.mat-column-nombre {
+  width: 200px;
+}
+
+.mat-column-linea {
+  width: 90px;
+}
+
+.mat-column-marca {
+  width: 90px;
+}
+
+.mat-column-clase {
+  width: 90px;
+}
+
+.table-truncate_body {
+  // position: absolute;
+  max-width: 95%;
+  // white-space: nowrap;
+  overflow: hidden;         
+  text-overflow: ellipsis;
+}
+
+.mat-cell {
+  font-size: 11px;
+}
+.mat-row {
+  height: 30px;
+}
+.mat-footer-row {
+  height: 30px;
+  font-size: 11px;
+  font-weight: bold;
+  font-style: italic;
+}
+
+.alcance-data {
+  font-style: italic;
+  font-weight: bold;
+}

@@ -7,7 +7,7 @@ import groovy.transform.ToString
 @EqualsAndHashCode(includeFields = true,includes = ['id', 'fecha', 'linea','descripcion'])
 class ListaDePreciosVenta {
 
-    String id
+    // String id
 
     Date fecha
 
@@ -41,10 +41,11 @@ class ListaDePreciosVenta {
 
     static mapping ={
         table 'LISTA_DE_PRECIOS_VENTA2'
-        id generator:'uuid'
-        partidas cascade: "all-delete-orphan"
+        // id generator:'uuid'
+        partidas cascade: "all-delete-orphan", sort: 'clave', order: 'asc'
         fecha type:'date', index: 'LPV2_IDX1'
     }
+
 
 
 }

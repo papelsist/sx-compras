@@ -69,7 +69,7 @@ export class ListaDePreciosEffects {
   createSuccess$ = this.actions$.pipe(
     ofType<fromActions.CreateListaSuccess>(ListaActionTypes.CreateListaSuccess),
     map(action => action.payload.lista),
-    map(r => new fromRoot.Go({ path: ['/catalogos/lista', r.id] }))
+    map(r => new fromRoot.Go({ path: ['/catalogos/listas', r.id] }))
   );
 
   @Effect()

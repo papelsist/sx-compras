@@ -133,8 +133,8 @@ export class LxTableComponent implements OnInit, OnChanges {
     return this.tableService.formatCurrency(data);
   }
 
-  transformNumber(data) {
-    return this.tableService.formatNumber(data);
+  transformNumber(data, info = null) {
+    return this.tableService.formatNumber(data, info);
   }
 
   transformDate(data, format: string = 'dd/MM/yyyy') {

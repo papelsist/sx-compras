@@ -1,0 +1,70 @@
+<mat-card>
+  <div
+    layout
+    layout-align="start center"
+    class="pad"
+    *tdLoading="
+      'procesando';
+      mode: 'indeterminate';
+      type: 'circle';
+      strategy: 'overlay';
+      color: 'accent'
+    "
+  >
+    <span>
+      <span class="mat-title">Reporte general de alcances</span>
+    </span>
+    <span flex></span>
+    <span class="pad-right">
+      Periodo: {{ ultimaEjecucion?.fechaInicial | date: 'dd/MM/yyyy' }} -
+      {{ ultimaEjecucion?.fechaFinal | date: 'dd/MM/yyyy' }}
+    </span>
+    <span class="pad-right cursor-pointer" (click)="actualizarMeses()"
+      >Meses: {{ ultimaEjecucion?.meses }}</span
+    >
+    <span flex></span>
+    <span>
+      <button mat-icon-button [matMenuTriggerFor]="toolbarMenu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #toolbarMenu="matMenu">
+        <button (click)="load()" mat-menu-item>
+          <mat-icon>refresh</mat-icon> Recargar
+        </button>
+        <button (click)="ejecutar()" mat-menu-item>
+          <mat-icon>directions_run</mat-icon> Ejecutar
+        </button>
+        <button (click)="generarOrden()" mat-menu-item>
+          <mat-icon>add_shopping_cart</mat-icon> Generar O.Compra
+        </button>
+        <button (click)="generarReporte()" mat-menu-item>
+          <mat-icon>format_list_numbered</mat-icon> Reporte
+        </button>
+        <button
+          mat-menu-item
+          (click)="grid.exportData('ALCANCE')"
+          matTooltip="Descargar registros en formato CSV"
+        >
+          <mat-icon color="primary">file_download</mat-icon> Descargar
+        </button>
+      </mat-menu>
+    </span>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <sx-alcances-table
+    [partidas]="filteredData"
+    #grid
+    (selectionChange)="onSelect($event)"
+  ></sx-alcances-table>
+</mat-card>
+<!--
+  *tdLoading="
+    'procesando';
+    mode: 'indeterminate';
+    type: 'circle';
+    strategy: 'overlay';
+    color: 'accent'
+  "
+-->

@@ -26,7 +26,7 @@ export class OrdenesPageComponent implements OnInit {
       icon: 'flight_land'
     },
     {
-      route: 'alcance',
+      route: 'alcances',
       title: 'Alcances',
       descripcion: 'Alcancees de inventario',
       icon: 'data_usage'

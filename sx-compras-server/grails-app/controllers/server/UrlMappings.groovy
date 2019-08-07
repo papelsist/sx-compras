@@ -161,6 +161,7 @@ class UrlMappings {
 
         "/api/listaDePreciosVenta"(resources: 'listaDePreciosVenta', excludes: ['create', 'edit','patch'])
         "/api/listaDePreciosVenta/disponibles"(controller: 'listaDePreciosVenta', action: 'disponibles')
+        "/api/listaDePreciosVenta/aplicar/$id"(controller: 'listaDePreciosVenta', action: 'aplicar')
         "/api/listaDePreciosVenta/print/$id"(controller: 'listaDePreciosVenta', action: 'print')
         
 
@@ -169,6 +170,13 @@ class UrlMappings {
         "/api/requisicionDeMaterial/disponibles"(controller: 'requisicionDeMaterial', action: 'disponibles')
         "/api/requisicionDeMaterial/generarCompra/$id"(controller: 'requisicionDeMaterial', action: 'generarCompra', method: 'PUT')
         "/api/requisicionDeMaterial/print/$id"(controller: 'requisicionDeMaterial', action: 'print', method: 'GET')
+
+        /// Alcances
+        "/api/alcances/list"(controller: 'alcances', action: 'list')
+        "/api/alcances/generar"(controller: 'alcances', action: 'generar', method: 'POST')
+        "/api/alcances/generarOrden"(controller: 'alcances', action: 'generarOrden', method: 'POST')
+        "/api/alcances/actualizarMeses"(controller: 'alcances', action: 'actualizarMeses', method: 'PUT')
+        "/api/alcances/print"(controller: 'alcances', action: 'print', method: 'GET')
 
 
         "/api/comprobanteFiscal"(resources: 'comprobanteFiscal')

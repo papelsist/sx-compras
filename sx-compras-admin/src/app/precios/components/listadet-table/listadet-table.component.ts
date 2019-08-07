@@ -15,6 +15,8 @@ import { SxTableService } from 'app/_shared/components/lx-table/sx-table.service
 import { ColDef, ModelUpdatedEvent, RowSelectedEvent } from 'ag-grid-community';
 import { ListaDePreciosVentaDet } from 'app/precios/models';
 
+import * as _ from 'lodash';
+
 @Component({
   selector: 'sx-listadet-table',
   template: `
@@ -30,6 +32,8 @@ import { ListaDePreciosVentaDet } from 'app/precios/models';
         (firstDataRendered)="onFirstDataRendered($event)"
         (gridReady)="onGridReady($event)"
         (modelUpdated)="onModelUpdate($event)"
+        rowSelection="multiple"
+        [rowMultiSelectWithClick]="true"
       >
       </ag-grid-angular>
     </div>
@@ -58,6 +62,14 @@ export class ListadetTableComponent extends LxTableComponent
     this.gridOptions.rowSelection = 'multiple';
     this.gridOptions.onRowSelected = (event: RowSelectedEvent) => {
       this.selectionChange.emit(this.gridApi.getSelectedRows());
+    };
+    this.defaultColDef = {
+      editable: false,
+      filter: 'agTextColumnFilter',
+      width: 150,
+      sortable: true,
+      resizable: true,
+      pinnedRowCellRenderer: r => ''
     };
   }
 
@@ -90,7 +102,7 @@ export class ListadetTableComponent extends LxTableComponent
     }
     const res = [
       {
-        nombre: `Registros: ${registros}`
+        clave: `Registros: ${registros}`
       }
     ];
     if (this.gridApi) {
@@ -105,7 +117,8 @@ export class ListadetTableComponent extends LxTableComponent
         field: 'clave',
         width: 110,
         pinned: 'left',
-        resizable: true
+        resizable: true,
+        pinnedRowCellRenderer: r => r.value
       },
       {
         headerName: 'Descripción',
@@ -119,29 +132,66 @@ export class ListadetTableComponent extends LxTableComponent
         width: 130
       },
       {
-        headerName: 'Costo',
-        field: 'costo',
-      },
-      {
-        headerName: 'Costo U',
-        field: 'costoUltimo',
+        headerName: 'P. A. (CON)',
+        field: 'precioAnteriorContado',
+        valueFormatter: params => this.transformCurrency(params.value)
       },
       {
         headerName: 'Precio (CON)',
         field: 'precioContado',
+        valueFormatter: params => this.transformCurrency(params.value)
       },
       {
-        headerName: 'P. A. (CON)',
-        field: 'precioAnteriorContado',
-      },
-      {
-        headerName: 'Precio (CRE)',
-        field: 'precioCredito',
+        headerName: 'CON %',
+        colId: 'contadoPer',
+        valueFormatter: params => this.transformPercent(params.value),
+        valueGetter: params => {
+          const pa = params.data.precioAnteriorContado;
+          const pn = params.data.precioContado;
+          if (pn === 0) {
+            return 0;
+          }
+          const dif = pn - pa;
+          const incremento = dif / pa;
+          return incremento;
+        }
       },
       {
         headerName: 'P. A. (CRE)',
         field: 'precioAnteriorCredito',
+        valueFormatter: params => this.transformCurrency(params.value)
       },
+      {
+        headerName: 'Precio (CRE)',
+        field: 'precioCredito',
+        valueFormatter: params => this.transformCurrency(params.value)
+      },
+      {
+        headerName: 'CRE %',
+        colId: 'contadoPer',
+        valueFormatter: params => this.transformPercent(params.value),
+        valueGetter: params => {
+          const pa = params.data.precioAnteriorCredito;
+          const pn = params.data.precioCredito;
+          if (pn === 0) {
+            return 0;
+          }
+          const dif = pn - pa;
+          const incremento = dif / pa;
+          return incremento;
+        }
+      },
+      {
+        headerName: 'Costo',
+        field: 'costo',
+        valueFormatter: params => this.transformCurrency(params.value)
+      },
+      {
+        headerName: 'Costo U',
+        field: 'costoUltimo',
+        valueFormatter: params => this.transformCurrency(params.value)
+      },
+
       ///
       {
         headerName: 'Clase',

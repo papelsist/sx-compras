@@ -47,13 +47,9 @@ export class ProductosTableComponent implements OnInit, OnChanges {
   @ViewChild(MatSort)
   sort: MatSort;
 
-  @ViewChild(MatPaginator)
-  paginator: MatPaginator;
-
   constructor() {}
 
   ngOnInit() {
-    this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
 

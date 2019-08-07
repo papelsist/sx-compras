@@ -1,65 +1,71 @@
 <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
   <ng-container matColumnDef="clave">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Clave</th>
-    <td mat-cell *matCellDef="let prod">{{prod.clave}}</td>
+    <td mat-cell *matCellDef="let prod">{{ prod.clave }}</td>
   </ng-container>
 
   <ng-container matColumnDef="descripcion">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Descripcion</th>
-    <td mat-cell *matCellDef="let prod">{{prod.descripcion}}</td>
+    <td mat-cell *matCellDef="let prod">{{ prod.descripcion }}</td>
   </ng-container>
 
   <ng-container matColumnDef="unidad">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Unidad</th>
-    <td mat-cell *matCellDef="let prod">{{prod.unidad}}</td>
+    <td mat-cell *matCellDef="let prod">{{ prod.unidad }}</td>
   </ng-container>
 
   <ng-container matColumnDef="kilos">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Kilos</th>
-    <td mat-cell *matCellDef="let prod">{{prod.kilos}}</td>
+    <td mat-cell *matCellDef="let prod">{{ prod.kilos }}</td>
   </ng-container>
 
   <ng-container matColumnDef="precioCredito">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>P. Crédito</th>
-    <td mat-cell *matCellDef="let prod">{{prod.precioCredito | currency}}</td>
+    <td mat-cell *matCellDef="let prod">{{ prod.precioCredito | currency }}</td>
   </ng-container>
   <ng-container matColumnDef="precioContado">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>P. Contado</th>
-    <td mat-cell *matCellDef="let prod">{{prod.precioContado | currency}}</td>
+    <td mat-cell *matCellDef="let prod">{{ prod.precioContado | currency }}</td>
   </ng-container>
 
   <ng-container matColumnDef="linea">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Línea</th>
-    <td mat-cell *matCellDef="let prod">{{prod.linea}}</td>
+    <td mat-cell *matCellDef="let prod">{{ prod.linea }}</td>
   </ng-container>
 
   <ng-container matColumnDef="proveedor">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Prov</th>
-    <td mat-cell *matCellDef="let prod">{{prod.proveedor}}</td>
+    <td mat-cell *matCellDef="let prod">{{ prod.proveedor }}</td>
   </ng-container>
 
   <ng-container matColumnDef="marca">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Marca</th>
-    <td mat-cell *matCellDef="let prod">{{prod.marca}}</td>
+    <td mat-cell *matCellDef="let prod">{{ prod.marca }}</td>
   </ng-container>
 
   <ng-container matColumnDef="clase">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Clase</th>
-    <td mat-cell *matCellDef="let prod">{{prod.clase}}</td>
+    <td mat-cell *matCellDef="let prod">{{ prod.clase }}</td>
   </ng-container>
 
   <ng-container matColumnDef="modificado">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>U. Modificación</th>
-    <td mat-cell *matCellDef="let prod">{{prod.modificada | date: 'dd/MM/yyyy: HH:mm'}}</td>
+    <td mat-cell *matCellDef="let prod">
+      {{ prod.modificada | date: 'dd/MM/yyyy: HH:mm' }}
+    </td>
   </ng-container>
 
   <ng-container matColumnDef="activo">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>E</th>
-    <td mat-cell *matCellDef="let prod">{{prod.activo ? 'A': 'S'}}</td>
+    <td mat-cell *matCellDef="let prod">{{ prod.activo ? 'A' : 'S' }}</td>
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="displayColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayColumns " class="cursor-pointer" (click)="select.emit(row)"
-    [ngClass]="{'suspendido': !row.activo}"></tr>
+  <tr
+    mat-row
+    *matRowDef="let row; columns: displayColumns"
+    class="cursor-pointer"
+    (click)="select.emit(row)"
+    [ngClass]="{ suspendido: !row.activo }"
+  ></tr>
 </table>
-<mat-paginator [pageSizeOptions]="[20, 50, 100, 200] " showFirstLastButtons></mat-paginator>

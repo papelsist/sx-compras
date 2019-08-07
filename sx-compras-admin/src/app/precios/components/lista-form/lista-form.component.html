@@ -26,7 +26,6 @@
       ></mat-datepicker-toggle>
       <mat-datepicker #myDatepicker2></mat-datepicker>
     </mat-form-field>
-    <sx-moneda-field [parent]="form" class="pad-left"> </sx-moneda-field>
     <sx-tipo-cambio-field
       [parent]="form"
       class="pad-left"
@@ -35,14 +34,49 @@
       class="pad-left"
       placeholder="Descripción"
       formControlName="descripcion"
-      flex
+      flex="35"
     ></sx-upper-case-field>
+    <div flex layout layout-align="center center" *ngIf="lista">
+      <mat-form-field>
+        <input
+          matInput
+          readonly="true"
+          placeholder="Creado"
+          value="{{ lista?.dateCreated | date: 'dd/MM/yyyy:HH:mm' }}"
+        />
+      </mat-form-field>
+      <mat-form-field>
+        <input
+          matInput
+          readonly="true"
+          placeholder="Modificado"
+          value="{{ lista?.lastUpdated | date: 'dd/MM/yyyy:HH:mm' }}"
+        />
+      </mat-form-field>
+      <mat-form-field>
+        <input
+          matInput
+          readonly="true"
+          placeholder="Creado por"
+          value="{{ lista?.createUser }}"
+        />
+      </mat-form-field>
+      <mat-form-field>
+        <input
+          matInput
+          readonly="true"
+          placeholder="Actualizó"
+          value="{{ lista?.updateUser }}"
+        />
+      </mat-form-field>
+    </div>
   </div>
 </form>
 <div layout class="partidas-panel">
   <sx-listadet-table
     [partidas]="partidas"
     flex
+    (selectionChange)="onSelection($event)"
     #partidasTable
   ></sx-listadet-table>
 </div>

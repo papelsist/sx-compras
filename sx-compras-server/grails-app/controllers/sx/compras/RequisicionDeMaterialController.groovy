@@ -63,10 +63,10 @@ class RequisicionDeMaterialController extends RestfulController<RequisicionDeMat
         
         params.sort = 'lastUpdated'
         params.order = 'desc'
+        params.max = 5000
         log.info('List {}', params)
-        
         Periodo periodo = params.periodo
-        def query = RequisicionDeMaterial.where{fecha >= periodo.fechaInicial && fecha <= periodo.fechaFinal}
+        def query = RequisicionDeMaterial.where{}
         return  query.list(params)
     }
 

@@ -59,7 +59,7 @@ export class ListasGridComponent extends LxTableComponent implements OnInit {
     }
     const res = [
       {
-        nombre: `Registros: ${registros}`
+        Id: `Registros: ${registros}`
       }
     ];
     if (this.gridApi) {
@@ -78,27 +78,23 @@ export class ListasGridComponent extends LxTableComponent implements OnInit {
       {
         headerName: 'Fecha',
         field: 'fecha',
-        width: 100,
+        width: 120,
         valueFormatter: params => this.transformDate(params.value)
       },
-      {
-        headerName: 'Moneda',
-        field: 'moneda',
-        width: 90
-      },
+
       {
         headerName: 'T.C',
         field: 'tipoDeCambio',
         width: 90
       },
       {
-        headerName: 'Linea',
-        field: 'linea',
-        width: 150
-      },
-      {
         headerName: 'Descripción',
         field: 'descripcion'
+      },
+      {
+        headerName: 'Inicio',
+        field: 'inicio',
+        valueFormatter: params => this.transformDate(params.value, 'dd/MM/yyyy')
       },
       {
         headerName: 'Aplicada',

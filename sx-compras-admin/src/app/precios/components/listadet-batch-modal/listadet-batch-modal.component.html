@@ -1,0 +1,58 @@
+<form [formGroup]="form" novalidate (ngSumbit)="submit()">
+  <h4 mat-dialog-title>FORMULA</h4>
+  <mat-dialog-content>
+    <div layout="column">
+      <mat-form-field>
+        <mat-select placeholder="TIPO" formControlName="tipo">
+          <mat-option
+            *ngFor="let b of ['CONTADO', 'CREDITO', 'TODOS']"
+            [value]="b"
+            >{{ b }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-select placeholder="BASE" formControlName="base">
+          <mat-option
+            *ngFor="
+              let b of ['PRECIO ANTERIOR', 'COSTO REPOSICION', 'COSTO ULTIMO']
+            "
+            [value]="b"
+            >{{ b }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-select placeholder="OPERADOR" formControlName="operador">
+          <mat-option *ngFor="let b of ['*', '/']" [value]="b"
+            >{{ b }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <input
+          matInput
+          placeholder="FACTOR"
+          formControlName="factor"
+          type="numeric"
+          autocomplete="off"
+        />
+      </mat-form-field>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button type="button" (click)="dialogRef.close()">
+      CANCELAR
+    </button>
+    <button
+      mat-button
+      (click)="submit()"
+      [disabled]="form.invalid"
+      color="primary"
+    >
+      <mat-icon>check</mat-icon> APLICAR
+    </button>
+  </mat-dialog-actions>
+</form>

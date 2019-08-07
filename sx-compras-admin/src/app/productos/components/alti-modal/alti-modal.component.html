@@ -17,5 +17,7 @@
 </div>
 <mat-dialog-content> </mat-dialog-content>
 <mat-dialog-actions>
-  <button mat-button [disabled]="selected.length === 0">SELECCIONAR</button>
+  <button mat-button [disabled]="selected.length === 0" (click)="submit()">
+    SELECCIONAR
+  </button>
 </mat-dialog-actions>

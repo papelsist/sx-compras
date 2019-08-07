@@ -10,7 +10,7 @@ import sx.core.Proveedor
 @EqualsAndHashCode(includeFields = true, excludes = "clave")
 class ListaDePreciosVentaDet {
 
-    String id
+    // String id
 
     ListaDePreciosVenta lista
     
@@ -54,7 +54,7 @@ class ListaDePreciosVentaDet {
     }
 
     static mapping ={
-        id generator:'uuid'
+        // id generator:'uuid'
         table 'LISTA_DE_PRECIOS_VENTA_DET2'
     }
 

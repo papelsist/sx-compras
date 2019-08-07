@@ -18,7 +18,7 @@ import sx.utils.Periodo
 class ListaDePreciosVentaService implements LogUser {
 
     ListaDePreciosVenta save(ListaDePreciosVenta lista) {
-    	log.debug("Salvando lista de precios venta {}", lista)
+    	log.debug("Salvando lista de precios venta {}", lista.id)
         logEntity(lista)
         lista.save failOnError: true, flush: true
         return lista
@@ -26,7 +26,7 @@ class ListaDePreciosVentaService implements LogUser {
     }
 
     ListaDePreciosVenta update(ListaDePreciosVenta lista) {
-    	log.debug("Actualizando lista de precios venta {}", lista)
+    	log.debug("Actualizando lista de precios venta {}", lista.id)
         lista.partidas.each {
         	logEntity(it)
         }
@@ -37,7 +37,23 @@ class ListaDePreciosVentaService implements LogUser {
     }
 
     ListaDePreciosVenta aplicar(ListaDePreciosVenta lista) {
-    	
+    	lista.partidas.each { item ->
+            Producto producto = item.producto
+            boolean doSave = false
+            if (item.precioContado > 0.0 ) {
+                producto.precioContado = item.precioContado
+                doSave = true
+            }
+            if (item.precioCredito > 0.0 ) {
+                producto.precioCredito = item.precioCredito
+                doSave = true
+            }
+            if (doSave) {
+                producto.save flush: true
+            } 
+        }
+        lista.aplicada = new Date()
+        return  update(lista)
     }
 
     List disponibles() {

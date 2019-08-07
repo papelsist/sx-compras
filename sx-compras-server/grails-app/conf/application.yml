@@ -161,7 +161,7 @@ environments:
                     validationInterval: 15000
     compras:
             dataSource:
-                dbCreate: none
+                dbCreate: update
                 url: jdbc:mysql://${JDBC_CONNECTION_STRING}?autoReconnect=true
                 username: root
                 password: sys

@@ -5,7 +5,10 @@ import {
   Input,
   Output,
   EventEmitter,
-  ViewChild
+  ViewChild,
+  OnChanges,
+  SimpleChanges,
+  AfterViewInit
 } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
@@ -15,12 +18,14 @@ import * as _ from 'lodash';
 
 import {
   ListaDePreciosVenta,
-  ListaDePreciosVentaDet,
-  createPartida
+  ListaDePreciosVentaDet
 } from 'app/precios/models';
 
 import { ProductoUtilsService } from 'app/productos/services/productos-utils.service';
 import { ListadetTableComponent } from '../listadet-table/listadet-table.component';
+import { Update } from '@ngrx/entity';
+import { MatDialog } from '@angular/material';
+import { ListadetBatchModalComponent } from '../listadet-batch-modal/listadet-batch-modal.component';
 
 @Component({
   selector: 'sx-lista-form',
@@ -28,29 +33,48 @@ import { ListadetTableComponent } from '../listadet-table/listadet-table.compone
   styleUrls: ['./lista-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ListaFormComponent implements OnInit {
+export class ListaFormComponent implements OnInit, OnChanges {
   form: FormGroup;
   @Input() lista: Partial<ListaDePreciosVenta>;
 
   _disponibles: { [id: string]: any } = {};
 
   @Output() save = new EventEmitter<Partial<ListaDePreciosVenta>>();
+
+  @Output() update = new EventEmitter<Update<ListaDePreciosVenta>>();
+
   partidas: Partial<ListaDePreciosVentaDet>[] = [];
   @ViewChild('partidasTable') grid: ListadetTableComponent;
 
-  constructor(private fb: FormBuilder, private service: ProductoUtilsService) {
+  selected: Partial<ListaDePreciosVentaDet>[] = [];
+
+  constructor(
+    private fb: FormBuilder,
+    private service: ProductoUtilsService,
+    private dialog: MatDialog
+  ) {
     this.buildForm();
   }
+  
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.lista && changes.lista.currentValue) {
+    }
+  }
+  
 
-  ngOnInit() {}
+  ngOnInit() {
+    if (this.lista && this.lista.partidas) {
+      this.insertarRegistros(this.lista.partidas);
+      this.form.patchValue(this.lista);
+    }
+  }
 
   private buildForm() {
     this.form = this.fb.group({
       fecha: [new Date(), Validators.required],
       inicio: [null, [Validators.required]],
       descripcion: [null, Validators.required],
-      linea: ['TODAS', Validators.required],
-      moneda: ['MXN', Validators.required],
+      moneda: ['MXN'],
       tipoDeCambio: [1.0, Validators.required]
     });
   }
@@ -61,7 +85,11 @@ export class ListaFormComponent implements OnInit {
         ...this.form.value,
         partidas: this.partidas
       };
-      this.save.emit(res);
+      if (this.lista) {
+        this.update.emit({ id: this.lista.id, changes: res });
+      } else {
+        this.save.emit(res);
+      }
     }
   }
 
@@ -94,6 +122,84 @@ export class ListaFormComponent implements OnInit {
           this.form.markAsDirty();
         }
       });
+  }
+
+  onSelection(event: any[]) {
+    this.selected = event;
+  }
+
+  calcular() {
+    this.dialog
+      .open(ListadetBatchModalComponent, {
+        data: {}
+      })
+      .afterClosed()
+      .subscribe(res => {
+        if (res) {
+          this.modificarPrecios(res);
+        }
+      });
+  }
+
+  private modificarPrecios(command: any) {
+    const selection = this.grid.gridApi.getSelectedNodes();
+    if (command.tipo === 'CONTADO') {
+    }
+    selection.forEach(item => {
+      const det: Partial<ListaDePreciosVentaDet> = item.data;
+      const factor: number = command.factor;
+      if (command.tipo === 'CONTADO') {
+        const base = det.precioAnteriorContado;
+        const precio = command.operador === '/' ? base / factor : base * factor;
+        const incremento = precio - base > 0 ? factor : factor * -1;
+        det.precioContado = _.round(precio, 2);
+        det.incremento = _.round(incremento, 2);
+        item.setData(det);
+      } else if (command.tipo === 'CREDITO') {
+        const base = det.precioAnteriorCredito;
+        const precio = command.operador === '/' ? base / factor : base * factor;
+        const incremento = precio - base > 0 ? factor : factor * -1;
+        det.precioCredito = _.round(precio, 2);
+        det.incremento = _.round(incremento, 2);
+        item.setData(det);
+      } else {
+        const baseCre = det.precioAnteriorCredito;
+        const baseCon = det.precioAnteriorContado;
+        const precioCre =
+          command.operador === '/' ? baseCre / factor : baseCre * factor;
+        const precioCon =
+          command.operador === '/' ? baseCon / factor : baseCon * factor;
+        const incremento = precioCon - baseCon > 0 ? factor : factor * -1;
+        det.precioCredito = _.round(precioCre, 2);
+        det.precioContado = _.round(precioCon, 2);
+        det.incremento = _.round(incremento, 2);
+        item.setData(det);
+      }
+    });
+    this.form.markAsDirty();
+  }
+
+  private insertarRegistros(data: any[]) {
+    const newData = [];
+    data.forEach(item => {
+      newData.push(item);
+      delete this._disponibles[item.clave];
+    });
+    const items = [...newData, ...this.partidas];
+    this.partidas = items;
+    // this.grid.gridApi.setRowData(items);
+  }
+
+  deleteSelection() {
+    console.log('Delete....');
+    const selectedData = this.grid.gridApi.getSelectedRows();
+    const res = this.grid.gridApi.updateRowData({ remove: selectedData });
+    const data = [];
+    // this.grid.gridApi.forEachNode((rowNode, index) => {
+    //   data.push(rowNode.data);
+    // });
+    // this.partidas = [...data];
+    this.form.markAsDirty();
   }
 
   @Input()

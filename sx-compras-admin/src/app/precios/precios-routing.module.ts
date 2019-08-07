@@ -21,8 +21,8 @@ const routes: Routes = [
     component: ListaCreateComponent
   },
   {
-    path: 'edit/:listaId',
-    canActivate: [ListasvGuard, ListavExistsGuard, ProductosGuard],
+    path: ':listaId',
+    canActivate: [ListasvGuard, ListavExistsGuard, DisponiblesGuard],
     component: ListaComponent
   }
 ];

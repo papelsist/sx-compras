@@ -1,7 +1,11 @@
 .date-field {
-  width: 90px;
+  width: 120px;
 }
 .partidas-panel {
   width: 100%;
-  height: 500px;
+  height: 90%;
+}
+
+mat-form-field {
+  padding: 0 5px;
 }

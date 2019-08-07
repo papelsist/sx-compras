@@ -1,0 +1,7 @@
+import sx.compras.Alcance
+
+model {
+	Alcance alcance
+}
+
+json tmpl.alcance(alcance)

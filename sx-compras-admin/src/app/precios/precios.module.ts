@@ -13,8 +13,8 @@ import { ListaComponent } from './pages/lista/lista.component';
 import { ListasGridComponent } from './components/listas-grid/listas-grid.component';
 import { ListaCreateComponent } from './pages/lista-create/lista-create.component';
 import { ListaFormComponent } from './components/lista-form/lista-form.component';
-import { ListadetBulkEditComponent } from './listadet-bulk-edit/listadet-bulk-edit.component';
 import { ListadetTableComponent } from './components/listadet-table/listadet-table.component';
+import { ListadetBatchModalComponent } from './components/listadet-batch-modal/listadet-batch-modal.component';
 
 @NgModule({
   declarations: [
@@ -23,9 +23,10 @@ import { ListadetTableComponent } from './components/listadet-table/listadet-tab
     ListasGridComponent,
     ListaCreateComponent,
     ListaFormComponent,
-    ListadetBulkEditComponent,
-    ListadetTableComponent
+    ListadetTableComponent,
+    ListadetBatchModalComponent
   ],
+  entryComponents: [ListadetBatchModalComponent],
   imports: [
     SharedModule,
     StoreModule.forFeature(FEATURE_STORE_NAME, reducer),

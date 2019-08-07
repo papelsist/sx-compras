@@ -1,0 +1,32 @@
+/*
+mat-card {
+  height: calc(100% - 30px);
+  display: flex;
+  flex-direction: column;
+}
+.grid-panel {
+  height: 600px;
+  flex-grow: 1;
+  overflow: auto;
+}
+
+.mat-form-field {
+  max-width: 120px;
+}
+
+*/
+mat-card {
+  height: calc(100% - 20px);
+  display: flex;
+  flex-direction: column;
+  // border: 1px solid peru;
+}
+
+sx-alcances-table {
+  height: 100%;
+  flex-grow: 1;
+  overflow: auto;
+}
+
+
+
