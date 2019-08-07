@@ -24,7 +24,7 @@ class ComprobanteFiscalController extends RestfulController<ComprobanteFiscal> {
         params.order = 'desc'
         def tipo = params.tipo ?: 'COMPRAS'
         if(tipo == 'COMPRAS') {
-            params.max = 1000
+            params.max = 3000
         }
         log.debug('List {}', params)
         def query = ComprobanteFiscal.where{ tipo == tipo}

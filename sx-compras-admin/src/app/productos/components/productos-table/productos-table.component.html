@@ -1,4 +1,4 @@
-<table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+<table mat-table [dataSource]="dataSource" matSort>
   <ng-container matColumnDef="clave">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Clave</th>
     <td mat-cell *matCellDef="let prod">{{ prod.clave }}</td>
@@ -30,7 +30,7 @@
 
   <ng-container matColumnDef="linea">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Línea</th>
-    <td mat-cell *matCellDef="let prod">{{ prod.linea }}</td>
+    <td mat-cell *matCellDef="let prod">{{ prod?.linea?.linea }}</td>
   </ng-container>
 
   <ng-container matColumnDef="proveedor">
@@ -40,12 +40,12 @@
 
   <ng-container matColumnDef="marca">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Marca</th>
-    <td mat-cell *matCellDef="let prod">{{ prod.marca }}</td>
+    <td mat-cell *matCellDef="let prod">{{ prod?.marca?.marca }}</td>
   </ng-container>
 
   <ng-container matColumnDef="clase">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Clase</th>
-    <td mat-cell *matCellDef="let prod">{{ prod.clase }}</td>
+    <td mat-cell *matCellDef="let prod">{{ prod?.clase?.clase }}</td>
   </ng-container>
 
   <ng-container matColumnDef="modificado">

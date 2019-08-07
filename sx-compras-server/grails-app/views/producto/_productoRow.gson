@@ -7,6 +7,6 @@ model {
 json g.render(producto, [resolveTemplate: false]) {
     linea producto.linea?.linea
     clase producto.clase?.clase
-    // marca producto.marca?.marca
-    marca 'MI MARCA'
+    marca producto.marca?.marca
+    // marca 'MI MARCA'
 }

@@ -43,7 +43,7 @@ class ProveedorProductoListenerService {
     void afterInsert(PostInsertEvent event) {
         String id = getId(event)
         if ( id ) {
-            log.info 'After ProveedorProducto  {} save...', id
+            // log.info 'After ProveedorProducto  {} save...', id
             log(event, 'INSERT', id)
         }
     }
@@ -52,7 +52,7 @@ class ProveedorProductoListenerService {
     void afterUpdate(PostUpdateEvent event) {
         String id = getId(event)
         if ( id ) {
-            log.debug('UDATE {} {}', event.entity.name, event.eventType.name())
+            // log.debug('UDATE {} {}', event.entity.name, event.eventType.name())
             log(event, 'UPDATE', id)
         }
     }
@@ -61,12 +61,13 @@ class ProveedorProductoListenerService {
     void afterDelete(PostDeleteEvent event) {
         String id = getId(event)
         if ( id ) {
-            log.debug('DELETE {} {}', event.entity.name, event.eventType.name())
+            // log.debug('DELETE {} {}', event.entity.name, event.eventType.name())
             log(event, 'DELETE', id)
         }
     }
 
     def log(AbstractPersistenceEvent event, String type, String id) {
+        /*
         this.targets.each { target ->
             AuditLog log = new AuditLog(
                     name: event.entityObject.getClass().getSimpleName(),
@@ -79,6 +80,22 @@ class ProveedorProductoListenerService {
             )
             auditLogDataService.save(log)
         }
+        */
+        this.targets.each { target ->
+            Audit.withNewSession {
+                Audit alog = new Audit(
+                    name: 'ProveedorProducto',
+                    persistedObjectId: id,
+                    source: 'CENTRAL',
+                    target: target,
+                    tableName: 'proveedor_producto',
+                    eventName: type
+                )
+                alog.save failOnError: true, flush: true
+            } 
+
+        }
+        
 
     }
 

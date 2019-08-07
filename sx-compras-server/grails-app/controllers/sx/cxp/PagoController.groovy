@@ -35,7 +35,7 @@ class PagoController extends RestfulController<Pago> {
         if(params.tipo) {
             query = query.where {proveedor.tipo == params.tipo}
         }
-        return query.list(params)
+        return query.list([sort: 'fecha', order: 'desc'])
 
     }
 
