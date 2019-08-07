@@ -1,0 +1,7 @@
+import sx.audit.Audit
+
+model {
+	Audit audit
+}
+
+json tmpl.audit(audit)

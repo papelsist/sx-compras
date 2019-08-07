@@ -11,7 +11,7 @@ import org.grails.datastore.mapping.engine.event.PostDeleteEvent
 import org.grails.datastore.mapping.engine.event.PostInsertEvent
 import org.grails.datastore.mapping.engine.event.PostUpdateEvent
 
-import org.springframework.beans.factory.annotation.Autowired
+
 import sx.core.ExistenciaService
 import sx.core.Producto
 
@@ -22,6 +22,8 @@ import sx.core.Producto
 @Transactional
 class ProductoListenerService {
 
+    ExistenciaService existenciaService
+
     List<String> sucursales = [
         'SOLIS',
          'TACUBA',
@@ -30,9 +32,6 @@ class ProductoListenerService {
          'CF5FEBRERO',
          'VERTIZ 176',
          'BOLIVAR']
-
-    @Autowired ExistenciaService existenciaService
-
 
     String getId(AbstractPersistenceEvent event) {
         if ( event.entityObject instanceof Producto ) {
@@ -54,6 +53,7 @@ class ProductoListenerService {
         if(producto) {
             log.debug('Alta de producto nuevo generando existencias')
             logEntity(producto, 'INSERT')
+            Thread.sleep(1000)
             Producto.withNewSession {
                 existenciaService.generarExistencias(producto)
             }
@@ -94,17 +94,6 @@ class ProductoListenerService {
                 tableName: 'producto',
                 eventName: type)
         logDet.save flush: true
-        /*
-        AuditLog log = new AuditLog(
-                name: 'Producto',
-                persistedObjectId: producto.id,
-                source: 'CENTRAL',
-                target: destino,
-                tableName: 'producto',
-                eventName: type
-        )
-        */
-        // auditLogDataService.save(log)
 
     }
 }

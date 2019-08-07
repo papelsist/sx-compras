@@ -57,6 +57,7 @@ class ReqDeMaterialAuditListenerService {
     void afterDelete(PostDeleteEvent event) {
         RequisicionDeMaterial requisicion = getRequisicion(event)
         if ( requisicion ) {
+            Thread.sleep(1000)
             logEntity(requisicion, 'DELETE')
         }
     }

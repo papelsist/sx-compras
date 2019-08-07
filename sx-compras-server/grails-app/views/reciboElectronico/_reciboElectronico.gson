@@ -1,0 +1,7 @@
+import sx.cxp.ReciboElectronico
+
+model {
+	ReciboElectronico reciboElectronico
+}
+
+json g.render(reciboElectronico, [resolveTemplate: false])

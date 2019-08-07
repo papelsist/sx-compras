@@ -183,6 +183,9 @@ class UrlMappings {
         "/api/comprobanteFiscal/xml/$id"(controller: 'comprobanteFiscal', action: 'xml')
         "/api/comprobanteFiscal/pdf/$id"(controller: 'comprobanteFiscal', action: 'pdf')
 
+        "/api/reciboElectronico"(resources: 'reciboElectronico', excludes:['save', 'create', 'edit','patch'])
+        
+
 
         "/api/cuentaPorPagar"(resources: 'cuentaPorPagar')
         "/api/cuentaPorPagar/pendientesDeAnalisis/$proveedorId"(controller: 'cuentaPorPagar', action: 'pendientesDeAnalisis')

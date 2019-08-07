@@ -1,0 +1,7 @@
+import sx.core.Existencia
+
+model {
+	Existencia existencia
+}
+
+json g.render(existencia, [resolveTemplate: false])

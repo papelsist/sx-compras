@@ -4,7 +4,9 @@ import grails.gorm.transactions.Transactional
 
 import groovy.util.logging.Slf4j
 import org.springframework.transaction.annotation.Propagation
+
 import sx.core.LogUser
+import sx.utils.Periodo
 
 @Slf4j
 class SaldoPorCuentaContableService implements LogUser{
@@ -322,6 +324,39 @@ class SaldoPorCuentaContableService implements LogUser{
         }
         saldo.saldoInicial = saldoInicial
         return saldo
+    }
+
+
+    def auxiliarContable(CuentaContable origen, CuentaContable destino, Periodo periodo) {
+        log.info('Generando auxiliar De la cuenta: {}  a la {} Periodo: {}', origen.clave, destino.clave, periodo)
+
+        List movimientos = []
+        Integer eje = Periodo.obtenerYear(periodo.fechaInicial)
+        Integer m = Periodo.obtenerMes(periodo.fechaInicial) + 1
+
+        
+        if(cta.padre) {
+            def parts = cta.clave.split('-')
+            def nivel = cta.nivel
+            def ccv = ''
+            def limit = nivel - 1
+            0.upto(limit, {
+                ccv += parts[it]
+                ccv += "-"
+                if(it == limit)
+                ccv += "%"
+            })
+            log.info('Buscando movimientos para {}', ccv)
+            // movimientos = PolizaDet.findAll("from PolizaDet d where d.poliza.ejercicio = ? and d.poliza.mes = ? and d.cuenta.clave like ?" , [2018, 1, ccv])
+            movimientos = PolizaDet.findAll("""
+                from PolizaDet d 
+                where d.poliza.ejercicio = ? 
+                  and d.poliza.mes = ? 
+                  and d.cuenta.clave like ? 
+                  and d.poliza.cierre != null
+                """, [eje, m, ccv])
+        }
+        respond movimientos
     }
 
 

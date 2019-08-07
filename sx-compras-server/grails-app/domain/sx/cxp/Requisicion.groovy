@@ -49,6 +49,8 @@ class Requisicion {
 
     MovimientoDeCuenta comision
 
+    ReciboElectronico recibo
+
     Date aplicada
 
     String createUser
@@ -68,6 +70,7 @@ class Requisicion {
         aplicada nullable: true
         egreso nullable: true
         comision nullable: true
+        recibo nullable: true
     }
 
     static mapping = {

@@ -70,6 +70,12 @@ class AlcancesController extends RestfulController<Compra>{
         respond compra
     }
 
+    def generarRequisicion(GenerarOrdenCommand command) {
+        log.debug('Generando requisicion  de material {}', command)
+        RequisicionDeMaterial req = alcancesService.generarOrden(command.proveedor, command.partidas)
+        respond req
+    }
+
     def actualizarMeses(){
         int meses = params.int('meses', 2)
         log.debug('Actualizando meses: {} ', meses)

@@ -260,6 +260,13 @@ class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaC
         respond res
     }
 
+    // Nuevo AUXILIAR CONTABLE
+    def auxiliarContable() {
+        def periodo = params.periodo
+        def ctaInicial = CuentaContable.where{clave == params.cuentaInicial}.find()
+        def ctaFinal = CuentaContable.where{clave == params.cuentaFinal}.find()
+        respond saldoPorCuentaContableService.auxiliarContable(ctaInicial, ctaFinal, periodo)
+    }
 
     def handleException(Exception e) {
         String message = ExceptionUtils.getRootCauseMessage(e)

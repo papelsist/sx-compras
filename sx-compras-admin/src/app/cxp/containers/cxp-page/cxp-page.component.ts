@@ -49,6 +49,12 @@ export class CxpPageComponent implements OnInit {
       icon: 'description'
     },
     {
+      route: 'recibos',
+      title: 'Recibos ',
+      description: 'Recibos electrónicos de pago',
+      icon: 'confirmation_number'
+    },
+    {
       route: 'contrarecibos',
       title: 'Contrarecibos ',
       description: 'Contrarecibos',

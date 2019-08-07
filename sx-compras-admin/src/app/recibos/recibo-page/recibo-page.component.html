@@ -1,0 +1,63 @@
+<div layout flex>
+  <mat-card flex="60">
+    <mat-card-header *ngIf="recibo$ | async as recibo">
+      <mat-card-title flex>
+        {{ recibo.emisor }}
+      </mat-card-title>
+      <mat-card-subtitle>
+        Id: {{ recibo.id }}
+        <span class="pad-left">UUID:</span>
+        <span class="pad-left">{{ recibo.uuid }}</span>
+        <span class="pad-left">Monto: </span>
+        <span class="pad-left">{{ recibo.monto | currency }}</span>
+        <span class="pad-left"
+          >FechaPago:{{ recibo.fechaPago | date: 'dd/MM/yyyy' }}</span
+        >
+      </mat-card-subtitle>
+    </mat-card-header>
+    <mat-divider></mat-divider>
+    <mat-card-content>
+      <sx-recibosdet-table [partidas]="partidas$ | async">
+      </sx-recibosdet-table>
+    </mat-card-content>
+    <mat-card-actions>
+      <ng-template
+        tdLoading
+        [tdLoadingUntil]="!(loading$ | async)"
+        tdLoadingStrategy="overlay"
+      >
+        <ng-container *ngIf="recibo$ | async as recibo">
+          <button mat-button (click)="onBack()">
+            <mat-icon>arrow_back</mat-icon> RECIBOS
+          </button>
+          <button
+            mat-button
+            (click)="onRevision(recibo)"
+            [disabled]="recibo.revision"
+          >
+            <mat-icon>save</mat-icon> REVISION
+          </button>
+          <span class="pad-left" *ngIf="recibo.revision">
+            Rev : {{ recibo.revision | date: 'dd/MM/yyyy' }}
+          </span>
+        </ng-container>
+      </ng-template>
+    </mat-card-actions>
+  </mat-card>
+
+  <mat-card flex="40" *ngIf="requisicion$ | async as requisicion">
+    <mat-card-title>Requisición {{ requisicion.folio }}</mat-card-title>
+    <mat-card-subtitle>
+      <span>Fecha: </span>
+      <span>{{ requisicion.egreso.fecha | date: 'dd/MM/yyyy' }}</span>
+      <span class="pad-left">Importe</span>
+      <span class="pad-left">{{
+        requisicion.egreso.importe * -1 | currency
+      }}</span>
+    </mat-card-subtitle>
+    <mat-divider></mat-divider>
+    <mat-card-content>
+      <sx-reqdet-table [partidas]="requisicion.partidas"></sx-reqdet-table>
+    </mat-card-content>
+  </mat-card>
+</div>

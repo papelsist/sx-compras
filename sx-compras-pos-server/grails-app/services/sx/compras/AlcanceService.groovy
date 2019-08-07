@@ -16,6 +16,7 @@ class AlcancesService implements DataBinder{
     def dataSource
 
     CompraService compraService
+    RequisicionDeMaterialService requisicionDeMaterialService
 
     private static SQL = """
       SELECT 
@@ -155,6 +156,37 @@ class AlcancesService implements DataBinder{
         partida.importeBruto = importeBruto
         partida.importeNeto = importeNeto
     }
+
+    @Transactional
+    def generarRequisicion(String proveedorId, List<Alcance> alcances) {
+        RequisicionDeMaterial req = new RequisicionDeMaterial()
+        Proveedor p = Proveedor.get(proveedorId)
+        req.fecha = new Date()
+        req.proveedor = p.nombre
+        req.clave = p.clave
+        req.rfc = p.rfc
+        req.sucursal = AppConfig.first().sucursal.nombre
+        req.comentario = " REQUISICION DE MATERIAL GENERADO POR ALCANCE: ${alcances.get(0).fecha.format('dd/MM/yyyy')}"
+        alcances.each {
+            if(it.porPedir > 0) {
+                Producto producto = Producto.findByClave(it.clave)
+                BigDecimal factor = producto.unidad == 'MIL' ? 1000 : 1
+                
+                RequisicionDeMaterialDet det = new RequisicionDeMaterialDet()
+                det.producto = producto.clave
+                det.descripcion = producto.descripcion
+                det.unidad = producto.unidad
+                det.sucursal = req.sucursal
+                det.solicitado = Math.round(it.porPedir) * factor
+                req.addToPartidas(det)
+                it.comentario = "REQUISICION"
+                it.save flush: true
+            }
+        }
+        req = requisicionDeMaterialService.update(req)
+        return req
+    }
+
 
     def actualizarMeses(int meses) {
         def res = Alcance.executeUpdate("update Alcance set meses = ? ", [meses])

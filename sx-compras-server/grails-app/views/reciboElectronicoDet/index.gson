@@ -1,0 +1,8 @@
+import sx.cxp.ReciboElectronicoDet
+
+model {
+	Iterable<ReciboElectronicoDet> reciboElectronicoDetList
+}
+
+json tmpl.reciboElectronicoDet(reciboElectronicoDetList ?: [])
+
