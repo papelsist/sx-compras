@@ -47,6 +47,14 @@ export class AlcancesService {
       .pipe(catchError((error: any) => throwError(error)));
   }
 
+  generarRequisicion(proveedor: string, partidas: any[]): Observable<any> {
+    const command = { proveedor, partidas };
+    const url = `${this.apiUrl}/generarRequisicion`;
+    return this.http
+      .post<Observable<any>>(url, command)
+      .pipe(catchError((error: any) => throwError(error)));
+  }
+
   reporte(data) {
     let params = new HttpParams();
     _.forIn(data, (value, key) => {

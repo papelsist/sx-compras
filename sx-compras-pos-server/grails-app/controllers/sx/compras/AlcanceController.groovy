@@ -23,7 +23,8 @@ class AlcancesController extends RestfulController<Compra>{
     }
 
     def list() {
-        def query = Alcance.where{fecha == new Date()&& comentario == null}
+         def query = Alcance.where{fecha == new Date()&& comentario == null}
+        /*
         if(params.getBoolean('deLinea')) {
             query = query.where { deLinea == true }
         }
@@ -55,6 +56,7 @@ class AlcancesController extends RestfulController<Compra>{
             float menor = params.getFloat('alcanceMayor')
             query = query.where{alcance > menor.toBigDecimal()}
         }
+        */
         respond query.list()
     }
 
@@ -72,7 +74,7 @@ class AlcancesController extends RestfulController<Compra>{
 
     def generarRequisicion(GenerarOrdenCommand command) {
         log.debug('Generando requisicion  de material {}', command)
-        RequisicionDeMaterial req = alcancesService.generarOrden(command.proveedor, command.partidas)
+        RequisicionDeMaterial req = alcancesService.generarRequisicion(command.proveedor, command.partidas)
         respond req
     }
 

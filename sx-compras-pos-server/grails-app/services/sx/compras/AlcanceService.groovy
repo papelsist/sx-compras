@@ -183,7 +183,7 @@ class AlcancesService implements DataBinder{
                 it.save flush: true
             }
         }
-        req = requisicionDeMaterialService.update(req)
+        req = requisicionDeMaterialService.saveFromAlcance(req)
         return req
     }
 

@@ -1,14 +1,27 @@
-<mat-card *tdLoading="'procesando'; mode:'indeterminate'; type:'circle'; strategy:'overlay'; color:'accent'">
-  <div layout layout-align="start center" class="pad-left-sm pad-right-sm">
-    <span class="push-left-sm">
+<mat-card>
+  <div
+    layout
+    layout-align="start center"
+    class="pad"
+    *tdLoading="
+      'procesando';
+      mode: 'indeterminate';
+      type: 'circle';
+      strategy: 'overlay';
+      color: 'accent'
+    "
+  >
+    <span>
       <span class="mat-title">Reporte general de alcances</span>
     </span>
     <span flex></span>
     <span class="pad-right">
-      Periodo: {{ultimaEjecucion?.fechaInicial | date: 'dd/MM/yyyy'}} - {{ultimaEjecucion?.fechaFinal | date:
-      'dd/MM/yyyy'}}
+      Periodo: {{ ultimaEjecucion?.fechaInicial | date: 'dd/MM/yyyy' }} -
+      {{ ultimaEjecucion?.fechaFinal | date: 'dd/MM/yyyy' }}
     </span>
-    <span class="pad-right cursor-pointer" (click)="actualizarMeses()">Meses: {{ultimaEjecucion?.meses}}</span>
+    <span class="pad-right cursor-pointer" (click)="actualizarMeses()"
+      >Meses: {{ ultimaEjecucion?.meses }}</span
+    >
     <span flex></span>
     <span>
       <button mat-icon-button [matMenuTriggerFor]="toolbarMenu">
@@ -21,43 +34,37 @@
         <button (click)="ejecutar()" mat-menu-item>
           <mat-icon>directions_run</mat-icon> Ejecutar
         </button>
-        <button (click)="generarOrden()" mat-menu-item>
-          <mat-icon>add_shopping_cart</mat-icon> Generar O.Compra
+        <button (click)="generarRequisicion()" mat-menu-item>
+          <mat-icon>add_shopping_cart</mat-icon> Generar Requisicion
         </button>
         <button (click)="generarReporte()" mat-menu-item>
           <mat-icon>format_list_numbered</mat-icon> Reporte
         </button>
+        <button
+          mat-menu-item
+          (click)="grid.exportData('ALCANCE')"
+          matTooltip="Descargar registros en formato CSV"
+        >
+          <mat-icon color="primary">file_download</mat-icon> Descargar
+        </button>
       </mat-menu>
     </span>
   </div>
-  <div layout>
-    <form [formGroup]="searchForm" class="pad-left" layout flex autocomplete="off">
-      <mat-form-field class="filtro-field">
-        <input matInput placeholder="Proveedor" formControlName="proveedor">
-      </mat-form-field>
-      <mat-form-field class="pad-left">
-        <input matInput placeholder="Producto" formControlName="producto">
-      </mat-form-field>
-      <mat-form-field class="pad-left">
-        <input matInput placeholder="Linea" formControlName="linea">
-      </mat-form-field>
-      <mat-form-field class="pad-left">
-        <input matInput placeholder="Marca" formControlName="marca">
-      </mat-form-field>
-      <mat-form-field class="pad-left">
-        <input matInput placeholder="Clase" formControlName="clase">
-      </mat-form-field>
-      <mat-form-field class="pad-left-sm">
-        <input matInput placeholder="A. Menor" formControlName="alcanceMenor">
-      </mat-form-field>
-      <mat-form-field class="pad-left-sm">
-        <input matInput placeholder="A. Mayor" formControlName="alcanceMayor">
-      </mat-form-field>
-      <mat-checkbox formControlName="deLinea">De Línea</mat-checkbox>
 
-    </form>
-    <span flex></span>
-  </div>
   <mat-divider></mat-divider>
-  <sx-alcances-table [rows]="filteredData" (select)="onSelect($event)"></sx-alcances-table>
+
+  <sx-alcances-table
+    [partidas]="filteredData"
+    #grid
+    (selectionChange)="onSelect($event)"
+  ></sx-alcances-table>
 </mat-card>
+<!--
+  *tdLoading="
+    'procesando';
+    mode: 'indeterminate';
+    type: 'circle';
+    strategy: 'overlay';
+    color: 'accent'
+  "
+-->

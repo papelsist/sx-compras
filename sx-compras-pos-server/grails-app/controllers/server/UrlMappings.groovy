@@ -37,7 +37,8 @@ class UrlMappings {
         /// Alcances
         "/api/alcances/list"(controller: 'alcances', action: 'list')
         "/api/alcances/generar"(controller: 'alcances', action: 'generar', method: 'POST')
-        "/api/alcances/generarOrden"(controller: 'alcances', action: 'generarOrden', method: 'POST')
+        // "/api/alcances/generarOrden"(controller: 'alcances', action: 'generarOrden', method: 'POST')
+        "/api/alcances/generarRequisicion"(controller: 'alcances', action: 'generarRequisicion', method: 'POST')
         "/api/alcances/actualizarMeses"(controller: 'alcances', action: 'actualizarMeses', method: 'PUT')
         "/api/alcances/print"(controller: 'alcances', action: 'print', method: 'GET')
 
