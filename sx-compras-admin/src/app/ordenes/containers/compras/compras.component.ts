@@ -91,7 +91,7 @@ export class ComprasComponent implements OnInit, OnDestroy {
     this.dialog
       .open(ShowCompraDetsComponent, {
         data: { partidas: data },
-        width: '950px'
+        width: '1250px'
       })
       .afterClosed()
       .subscribe(res => {});

@@ -143,16 +143,22 @@ class CompraController extends RestfulController<Compra> {
         log.info('Depuracion batch: {}', command)
         List<CompraDet> validList = command.partidas.findAll {it.pendiente != 0.0}
         Map<Compra, List<CompraDet>> grupos = validList.groupBy{it.compra}
+        List res = []
         grupos.each {
             Compra compra = it.key
             List<CompraDet> rows = it.value
             rows.each { item -> 
                 def depurar = item.pendiente
                 if(depurar != 0) {
-                    log.info('Depurando: {} Solicitado:{} Recibido: {} Depurando: {}', item.clave, item.solicitado, item.recibido, depurar)
+
+                    if(item.pendiente < 0 && item.depurado != 0.0) {
+                        depurar = item.depurado + item.pendiente
+                    }
+
+                    log.info('Depurando: {} Solicitado:{} Recibido: {} Depurado: {} Depurando: {}', item.clave, item.depurado, item.solicitado, item.recibido, depurar)
                     item.depurado = depurar
                     item.depuracion = new Date()
-                    // item.save flush: true
+                    res << item
                 }
             }
             def pendiente = compra.partidas.find{it.getPorRecibir()> 0.0 }
@@ -162,7 +168,7 @@ class CompraController extends RestfulController<Compra> {
             compra = compra.save flush: true
             log.info('Procesando Compra:{} Partidas:{}', it.key.folio, it.value.size())
         }
-        respond status: OK
+        respond res
     }
     
     def handleException(Exception e) {  

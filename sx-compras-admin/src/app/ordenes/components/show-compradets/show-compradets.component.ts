@@ -6,11 +6,20 @@ import {
 } from '@angular/core';
 
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
+import {
+  ColDef,
+  GridApi,
+  GridReadyEvent,
+  CellClickedEvent,
+  GridOptions
+} from 'ag-grid-community';
 import { ComprasService } from 'app/ordenes/services';
 
 import { finalize } from 'rxjs/operators';
 import { TdDialogService } from '@covalent/core';
+
+import { SxTableService } from 'app/_shared/components/lx-table/sx-table.service';
+import { spAgGridText } from 'app/_shared/components/lx-table/table-support';
 
 @Component({
   selector: 'sx-show-compradets',
@@ -41,15 +50,15 @@ import { TdDialogService } from '@covalent/core';
         #agGrid
         class="ag-theme-balham"
         style="width: 100%; height: 100%;"
-        [columnDefs]="columns"
-        [floatingFilter]="false"
+        [gridOptions]="gridOptions"
+        [defaultColDef]="defaultColDef"
+        [floatingFilter]="true"
+        (gridReady)="onGridReady($event)"
         rowSelection="multiple"
         [rowMultiSelectWithClick]="true"
-        [rowData]="partidas"
-        [defaultColDef]="defaultColDef"
-        (gridReady)="onGridReady($event)"
-        (selectionChanged)="onSelection($event)"
         [isRowSelectable]="isRowSelectable"
+        [localeText]="localeText"
+        (selectionChanged)="onSelection($event)"
       >
       </ag-grid-angular>
     </div>
@@ -76,16 +85,36 @@ export class ShowCompraDetsComponent implements OnInit {
   gridApi: GridApi;
   loading = false;
   isRowSelectable;
+
+  gridOptions: GridOptions;
+  defaultColDef: ColDef;
+  localeText: any;
+
   constructor(
     public dialogRef: MatDialogRef<ShowCompraDetsComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private service: ComprasService,
-    private dialogService: TdDialogService
+    private dialogService: TdDialogService,
+    public tableService: SxTableService
   ) {
-    this.partidas = data.partidas || [];
+    this.partidas = [...data.partidas] || [];
     this.isRowSelectable = function(node) {
       return node.data ? node.data.pendiente !== 0.0 : false;
     };
+    this.buildGridOptions();
+  }
+
+  buildGridOptions() {
+    this.gridOptions = <GridOptions>{};
+    this.gridOptions.columnDefs = this.buildColsDef();
+    this.gridOptions.onCellClicked = this.onCellClicked.bind(this);
+    this.defaultColDef = {
+      editable: false,
+      filter: 'agTextColumnFilter',
+      sortable: true,
+      resizable: true
+    };
+    this.localeText = spAgGridText;
   }
 
   ngOnInit() {}
@@ -97,25 +126,69 @@ export class ShowCompraDetsComponent implements OnInit {
   }
 
   close() {
-    this.dialogRef.close();
+    // this.dialogRef.close();
   }
 
   onGridReady(params: GridReadyEvent) {
     this.gridApi = params.api;
+    this.gridApi.setRowData(this.partidas);
   }
+
+  onCellClicked(event: CellClickedEvent) {}
 
   onSelection(event: any) {
     this.selected = this.gridApi.getSelectedRows();
   }
+  exportData(prefix: string = 'COMPRAS_UNITARIAS') {
+    const params = {
+      fileName: `${prefix}_${new Date().getTime()}.csv`
+    };
+    this.gridApi.exportDataAsCsv(params);
+  }
 
+  depurar() {
+    const partidas = this.selected.map(item => item.id);
+    this.dialogService
+      .openConfirm({
+        title: 'DEPURACION BATCH',
+        message: `DEPURAR ${partidas.length} PARTIDAS`,
+        acceptButton: 'DEPURAR',
+        cancelButton: 'CANCELAR'
+      })
+      .afterClosed()
+      .subscribe(res => {
+        if (res) {
+          this.loading = true;
+          this.service
+            .depuraracionBatch(partidas)
+            .pipe(finalize(() => (this.loading = false)))
+            .subscribe(
+              (data: any[]) => {
+                data.forEach(item => {
+                  const found = this.gridApi
+                    .getSelectedNodes()
+                    .find(node => node.data.id === item.id);
+                  if (found) {
+                    found.setData(item);
+                  }
+                });
+              },
+              error => console.error('Depuracion error: ', error)
+            );
+        }
+      });
+  }
 
-  get columns(): ColDef[] {
+  buildColsDef(): ColDef[] {
     return [
       {
         headerName: 'Clave',
         field: 'clave',
         width: 120,
-        pinned: 'left'
+        pinned: 'left',
+        checkboxSelection: true,
+        headerCheckboxSelection: true,
+        headerCheckboxSelectionFilteredOnly: false
       },
       {
         headerName: 'Descripción',
@@ -151,6 +224,7 @@ export class ShowCompraDetsComponent implements OnInit {
       {
         headerName: 'Pendiente',
         field: 'porRecibir',
+        filter: 'agNumberColumnFilter',
         width: 100
       },
       {
@@ -158,43 +232,5 @@ export class ShowCompraDetsComponent implements OnInit {
         field: 'proveedorNombre'
       }
     ];
-  }
-
-  get defaultColDef(): ColDef {
-    return {
-      editable: false,
-      filter: 'agTextColumnFilter',
-      sortable: true,
-      resizable: true
-    };
-  }
-
-  exportData(prefix: string = 'COMPRAS_UNITARIAS') {
-    const params = {
-      fileName: `${prefix}_${new Date().getTime()}.csv`
-    };
-    this.gridApi.exportDataAsCsv(params);
-  }
-
-  depurar() {
-    const partidas = this.selected.map(item => item.id);
-    this.dialogService.openConfirm({
-      title: 'DEPURACION BATCH',
-      message: `DEPURAR ${partidas.length} PARTIDAS`,
-      acceptButton: 'DEPURAR',
-      cancelButton: 'CANCELAR'
-    }).afterClosed().subscribe( res => {
-      if (res) {
-        this.loading = true;
-        this.service.depuraracionBatch(partidas)
-          .pipe(
-            finalize(() => this.loading = false)
-            )
-          .subscribe(
-            data => this.close(),
-            error => console.error('Depuracion error: ', error)
-          );
-      }
-    });
   }
 }
