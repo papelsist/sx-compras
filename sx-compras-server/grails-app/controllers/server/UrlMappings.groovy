@@ -398,7 +398,9 @@ class UrlMappings {
         "/api/embarques/facturistaEstadoDeCuenta/estadoDeCuenta"(controller: 'facturistaEstadoDeCuenta', action: 'estadoDeCuenta')
         "/api/embarques/facturistaEstadoDeCuenta/generarNotaDeCargo/$id"(controller: 'facturistaEstadoDeCuenta', action: 'generarNotaDeCargo', method: 'PUT')
 
-
+        // Existencias
+        "/api/existencias"(resources: 'existencia', excludes:['create', 'save', 'edit','patch'])
+        "/api/existencias/crossTab"(controller: 'existencia', action: 'crossTab')
         // SolicitudDeDepositos
 
         // Activo Fijo

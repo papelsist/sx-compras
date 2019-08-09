@@ -28,7 +28,7 @@ import { ColDef, RowSelectedEvent } from 'ag-grid-community';
         style="width: 100%; height: 100%;"
         [gridOptions]="gridOptions"
         [defaultColDef]="defaultColDef"
-        [floatingFilter]="false"
+        [floatingFilter]="true"
         [localeText]="localeText"
         (firstDataRendered)="onFirstDataRendered($event)"
         (gridReady)="onGridReady($event)"

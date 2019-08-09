@@ -30,6 +30,13 @@ export class ExistenciaService {
       .pipe(catchError((error: any) => throwError(error)));
   }
 
+  crossTab() {
+    const url = `${this.apiUrl}/crossTab`;
+    return this.http
+      .get<Existencia[]>(url)
+      .pipe(catchError((error: any) => throwError(error)));
+  }
+
   get(id: string): Observable<Existencia> {
     const url = `${this.apiUrl}/${id}`;
     return this.http.get<Existencia>(url);

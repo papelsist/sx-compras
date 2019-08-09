@@ -25,7 +25,7 @@ export class ExistenciasEffects {
   load$ = this.actions$.pipe(
     ofType(ExistenciaActionTypes.LoadExistencias),
     switchMap(() => {
-      return this.service.list().pipe(
+      return this.service.crossTab().pipe(
         map(
           existencias =>
             new fromActions.LoadExistenciasSuccess({

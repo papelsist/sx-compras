@@ -20,7 +20,7 @@ export interface State extends EntityState<Existencia> {
 
 export const adapter: EntityAdapter<Existencia> = createEntityAdapter<
   Existencia
->();
+>({ selectId: item => item.clave });
 
 export const initialState: State = adapter.getInitialState({
   loading: false,

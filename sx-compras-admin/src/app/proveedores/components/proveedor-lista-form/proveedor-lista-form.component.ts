@@ -32,7 +32,18 @@ import { ProveedorListaPartidas2Component } from '../proveedor-lista-partidas2/p
   styles: [
     `
       .grid-panel {
-        height: 600px;
+        height: 500px;
+      }
+      mat-card {
+        height: calc(100% - 20px);
+        display: flex;
+        flex-direction: column;
+      }
+      mat-card-content {
+        height: 100%;
+        flex-grow: 1;
+        overflow: auto;
+        // border: 1px solid orange;
       }
     `
   ]

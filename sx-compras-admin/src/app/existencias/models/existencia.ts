@@ -1,6 +1,5 @@
-
 export interface Existencia {
-  id: string;
+  id?: string;
   clave: string;
   descripcion: string;
 }

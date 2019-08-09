@@ -10,6 +10,7 @@ import groovy.util.logging.Slf4j
 
 import org.apache.commons.lang3.exception.ExceptionUtils
 
+import sx.logistica.InventarioService
 import sx.reports.ReportService
 import sx.utils.Periodo
 
@@ -23,6 +24,8 @@ class ExistenciaController extends RestfulController<Existencia> {
     ReportService reportService
 
     ExistenciaService existenciaService
+
+    InventarioService inventarioService
     
     ExistenciaController() {
         super(Existencia)
@@ -33,12 +36,17 @@ class ExistenciaController extends RestfulController<Existencia> {
     protected List<Existencia> listAllResources(Map params) {
         params.sort = 'clave'
         params.order = 'asc'
+        params.max = 100
         log.info('List {}', params)
         
         def ej = params.ejercicio?: Periodo.currentYear()
         def mes = params.mes?: Periodo.currentMes()
         def query = Existencia.where{ anio ==  ej && mes == mes}
         return  query.list(params)
+    }
+
+    def crossTab() {
+        respond inventarioService.existenciasCrossTab()
     }
 
     def handleException(Exception e) {

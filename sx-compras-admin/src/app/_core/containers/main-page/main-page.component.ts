@@ -38,6 +38,11 @@ export class MainPageComponent implements OnInit {
       icon: 'my_library_books',
       route: '/cxp',
       title: 'Cuentas por pagar (CXP)'
+    },
+    {
+      title: 'Inventarios',
+      route: '/inventarios',
+      icon: 'store'
     }
   ];
 

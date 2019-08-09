@@ -1,5 +1,11 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
+import { SharedModule } from 'app/_shared/shared.module';
+
+import { StoreModule } from '@ngrx/store';
+import { EffectsModule } from '@ngrx/effects';
+import { reducer, FEATURE_STORE_NAME } from './store/reducer';
+import { ExistenciasEffects } from './store/effects';
 
 import { ExistenciasRoutingModule } from './existencias-routing.module';
 import { ExistenciasComponent } from './pages/existencias/existencias.component';
@@ -8,8 +14,10 @@ import { ExistenciasTableComponent } from './components/existencias-table/existe
 @NgModule({
   declarations: [ExistenciasComponent, ExistenciasTableComponent],
   imports: [
-    CommonModule,
+    SharedModule,
+    StoreModule.forFeature(FEATURE_STORE_NAME, reducer),
+    EffectsModule.forFeature([ExistenciasEffects]),
     ExistenciasRoutingModule
   ]
 })
-export class ExistenciasModule { }
+export class ExistenciasModule {}

@@ -4,6 +4,8 @@ import * as fromRoot from 'app/store';
 import * as fromFeature from './reducer';
 import { Existencia } from '../models';
 
+import * as _ from 'lodash';
+
 export const selectPeriodo = createSelector(
   fromFeature.getExistenciasState,
   fromFeature.getPeriodo
@@ -35,4 +37,11 @@ export const getCurrentExistencia = createSelector(
   (entities, router): Existencia => {
     return router.state && entities[router.state.params.exisId];
   }
+);
+
+// Special selector
+export const getExistenciasPor = createSelector(
+  getAllExistencias,
+  exis => _.groupBy(exis, 'clave'),
+  (e, b) => _.keyBy(b)
 );

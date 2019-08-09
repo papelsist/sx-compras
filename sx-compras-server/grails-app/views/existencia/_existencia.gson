@@ -4,4 +4,7 @@ model {
 	Existencia existencia
 }
 
-json g.render(existencia, [resolveTemplate: false])
+json g.render(existencia, [resolveTemplate: false]) {
+	descripcion existencia.producto.descripcion
+	unidad existencia.producto.unidad
+}

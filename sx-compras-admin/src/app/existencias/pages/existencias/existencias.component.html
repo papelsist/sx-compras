@@ -1,3 +1,23 @@
-<p>
-  existencias works!
-</p>
+<mat-card flex>
+  <sx-standard-header
+    title="Existencias de productos"
+    (periodoChange)="onPeriodo($event)"
+    (reload)="onReload()"
+    (download)="grid.exportData('EXIS')"
+  ></sx-standard-header>
+  <mat-divider></mat-divider>
+  <ng-template
+    tdLoading
+    [tdLoadingUntil]="!(loading$ | async)"
+    tdLoadingStrategy="overlay"
+  >
+  </ng-template>
+  <div class="grid-panel">
+    <sx-existencias-table
+      #grid
+      [partidas]="rows$ | async"
+      (select)="onSelect($event)"
+    >
+    </sx-existencias-table>
+  </div>
+</mat-card>
