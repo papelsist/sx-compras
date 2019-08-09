@@ -1,10 +1,26 @@
-<mat-card>
-  <mat-card-header>
-    <mat-card-title>AUDIT LOG (BITACORA DE REPLICA)</mat-card-title>
-    <mat-card-subtitle>{{ periodo }}</mat-card-subtitle>
-    <sx-periodo-picker [periodo]="periodo"></sx-periodo-picker>
-  </mat-card-header>
-
+<mat-card
+  *tdLoading="
+    'procesando';
+    mode: 'indeterminate';
+    type: 'circle';
+    strategy: 'overlay';
+    color: 'accent'
+  "
+>
+  <div class="header" layout layout-align="center center">
+    <span class="mat-title">BITACORA DE REPLICACION (AUDIT LOG)</span>
+    <span flex></span>
+    <sx-periodo-picker
+      [periodo]="periodo"
+      (change)="onPeriodoChange($event)"
+    ></sx-periodo-picker>
+    <mat-checkbox (change)="grid.replicados(box.checked)" #box>
+      Pendientes
+    </mat-checkbox>
+    <button mat-icon-button (click)="reload()" color="primary">
+      <mat-icon>refresh</mat-icon>
+    </button>
+  </div>
   <mat-divider></mat-divider>
-  <mat-card-content> </mat-card-content>
+  <sx-audit-table #grid [partidas]="rows$ | async"></sx-audit-table>
 </mat-card>

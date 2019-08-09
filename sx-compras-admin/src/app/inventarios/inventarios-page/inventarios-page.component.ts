@@ -14,6 +14,12 @@ export class InventariosPageComponent implements OnInit {
       title: 'Existencias',
       description: 'Existencias de productos',
       icon: 'format_list_numbered'
+    },
+    {
+      route: 'audit',
+      title: 'Replica',
+      description: 'Bitácora de replicación',
+      icon: 'settings_input_antenna'
     }
   ];
 

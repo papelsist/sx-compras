@@ -19,7 +19,8 @@ import {
   GridReadyEvent,
   FilterChangedEvent,
   CellClickedEvent,
-  RowDoubleClickedEvent
+  RowDoubleClickedEvent,
+  ColumnApi
 } from 'ag-grid-community';
 import { SxTableService } from './sx-table.service';
 import { spAgGridText } from './table-support';
@@ -39,6 +40,7 @@ export class LxTableComponent implements OnInit, OnChanges {
 
   public gridOptions: GridOptions;
   public gridApi: GridApi;
+  public columnApi: ColumnApi;
   public defaultColDef: ColDef;
 
   public printFriendly = false;
@@ -86,12 +88,15 @@ export class LxTableComponent implements OnInit, OnChanges {
     this.gridOptions.onCellClicked = this.onCellClicked.bind(this);
     this.gridOptions.onRowDoubleClicked = this.onRowDoubleClicked.bind(this);
     this.gridOptions.getRowStyle = this.buildRowStyle.bind(this);
+    this.gridOptions.onFirstDataRendered = this.onFirstDataRendered.bind(this);
+    this.gridOptions.onGridReady = this.onGridReady.bind(this);
   }
 
   onModelUpdate(event) {}
 
   onGridReady(params: GridReadyEvent) {
     this.gridApi = params.api;
+    this.columnApi = params.columnApi;
     this.gridApi.setRowData(this.partidas);
   }
 

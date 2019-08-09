@@ -19,7 +19,7 @@ import {
 @Component({
   selector: 'sx-audit-table',
   template: `
-    <div style="height: 100%">
+    <div style="height: 500px">
       <ag-grid-angular
         #agGrid
         class="ag-theme-balham"
@@ -28,14 +28,12 @@ import {
         [defaultColDef]="defaultColDef"
         [floatingFilter]="false"
         [localeText]="localeText"
-        (firstDataRendered)="onFirstDataRendered($event)"
         (gridReady)="onGridReady($event)"
         (modelUpdated)="onModelUpdate($event)"
       >
       </ag-grid-angular>
     </div>
   `,
-  styleUrls: ['./audit-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AuditTableComponent extends LxTableComponent implements OnInit {
@@ -55,15 +53,20 @@ export class AuditTableComponent extends LxTableComponent implements OnInit {
       editable: false,
       filter: 'agTextColumnFilter',
       sortable: true,
-      resizable: true,
-      pinnedRowValueFormatter: params => ''
+      resizable: true
     };
     this.gridOptions.onCellClicked = (event: CellClickedEvent) => {};
   }
 
   buildRowStyle(params: any) {
-    if (params.node.rowPinned) {
-      return { 'font-weight': 'bold' };
+    if (params.data.dateReplicated) {
+      return {
+        color: 'rgb(20, 71, 20)'
+      };
+    } else {
+      return {
+        color: 'rgb(231, 61, 61)'
+      };
     }
     return {};
   }
@@ -98,11 +101,35 @@ export class AuditTableComponent extends LxTableComponent implements OnInit {
     }
   }
 
+  replicados(value: boolean) {
+    const filterInstance = this.gridApi.getFilterInstance('dateReplicated');
+    if (value) {
+      filterInstance.setModel({
+        type: 'endsWith',
+        filter: 'Z'
+      });
+    } else {
+      filterInstance.setModel(null);
+    }
+    this.gridApi.onFilterChanged();
+  }
+
   buildColsDef(): ColDef[] {
     return [
       {
         headerName: 'Id',
-        field: 'id'
+        field: 'id',
+        width: 120
+      },
+      {
+        headerName: 'Creado',
+        field: 'dateCreated',
+        valueFormatter: params =>
+          this.transformDate(params.value, 'MMM-dd :HH:mm')
+      },
+      {
+        headerName: 'Tipo',
+        field: 'eventName'
       },
       {
         headerName: 'Tabla',
@@ -117,24 +144,19 @@ export class AuditTableComponent extends LxTableComponent implements OnInit {
         field: 'target'
       },
       {
-        headerName: 'Entidad ID',
-        field: 'persistedObjectId'
-      },
-      {
-        headerName: 'Tipo',
-        field: 'eventName'
+        headerName: 'Replicado',
+        field: 'dateReplicated',
+        valueFormatter: params =>
+          this.transformDate(params.value, 'MMM-dd: HH:mm')
+        // filter: 'agDateColumnFilter'
       },
       {
         headerName: 'Mensage',
         field: 'message'
       },
       {
-        headerName: 'Creado',
-        field: 'dateCreated'
-      },
-      {
-        headerName: 'Replicado',
-        field: 'dateReplicated'
+        headerName: 'Entidad ID',
+        field: 'persistedObjectId'
       }
     ];
   }

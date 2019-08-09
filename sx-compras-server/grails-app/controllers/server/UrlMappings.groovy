@@ -406,6 +406,9 @@ class UrlMappings {
         // Activo Fijo
         "/api/activo/activoFijo"(resources: 'activoFijo', excludes:['create', 'edit','patch'])
 
+        // Audit
+        "/api/audit"(resources: 'audit', excludes:['create', 'edit','patch'])
+
         "/"(controller: 'application', action:'index')
         "/api/session"(controller: 'application', action: 'session')
         "500"(view: '/error')

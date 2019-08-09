@@ -10,6 +10,10 @@ const routes: Routes = [
       {
         path: 'existencias',
         loadChildren: 'app/existencias/existencias.module#ExistenciasModule'
+      },
+      {
+        path: 'audit',
+        loadChildren: 'app/audit/audit.module#AuditModule'
       }
     ]
   }
