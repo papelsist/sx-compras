@@ -55,12 +55,12 @@ export class ListaFormComponent implements OnInit, OnChanges {
   ) {
     this.buildForm();
   }
-  
+
   ngOnChanges(changes: SimpleChanges) {
     if (changes.lista && changes.lista.currentValue) {
     }
   }
-  
+
 
   ngOnInit() {
     if (this.lista && this.lista.partidas) {

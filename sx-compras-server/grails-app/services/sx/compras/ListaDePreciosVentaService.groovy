@@ -76,7 +76,7 @@ class ListaDePreciosVentaService implements LogUser {
             p.precioContado as precioAnteriorContado,
             cast(0.0 as big_decimal) as precioCredito,
             cast(0.0 as big_decimal) as precioContado,
-            case when (select x.costo from CostoPromedio x where x.producto.id = p.id and x.ejercicio = ? and x.mes = ?) is null then cast(0.0 as big_decimal) end as costo,
+            cast(0.0 as big_decimal) as costo,
             p.id as producto,
             pp as proveedor)
             from Producto p 
@@ -85,7 +85,12 @@ class ListaDePreciosVentaService implements LogUser {
               and p.deLinea = true
             """,
             [year, mes])
-
+        rows.each { item ->
+            def found = ProveedorProducto.{producto.id == item.producto}.find([sort='lastUpdated',order: 'desc'])
+            if(found) {
+                item.costo = found.precio
+            }
+        }
         return rows
     }
 

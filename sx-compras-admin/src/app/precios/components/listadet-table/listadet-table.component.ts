@@ -12,7 +12,7 @@ import {
 import { LxTableComponent } from 'app/_shared/components';
 import { SxTableService } from 'app/_shared/components/lx-table/sx-table.service';
 
-import { ColDef, ModelUpdatedEvent, RowSelectedEvent } from 'ag-grid-community';
+import { ColDef, ModelUpdatedEvent, RowSelectedEvent, ColGroupDef } from 'ag-grid-community';
 import { ListaDePreciosVentaDet } from 'app/precios/models';
 
 import * as _ from 'lodash';
@@ -110,98 +110,126 @@ export class ListadetTableComponent extends LxTableComponent
     }
   }
 
-  buildColsDef(): ColDef[] {
-    return [
+  buildColsDef(): ColGroupDef[]  {
+    return  [
       {
         headerName: 'Producto',
-        field: 'clave',
-        width: 110,
-        pinned: 'left',
-        resizable: true,
-        pinnedRowCellRenderer: r => r.value
+        children: [
+          {
+            headerName: 'Clave',
+            field: 'clave',
+            width: 110,
+            resizable: true
+          },
+          {
+            headerName: 'Descripción',
+            field: 'descripcion',
+            width: 270,
+            pinned: 'left'
+          },
+          {
+            headerName: 'Linea',
+            field: 'linea',
+            width: 130
+          },
+          {
+            headerName: 'Costo',
+            field: 'costo',
+            valueFormatter: params => this.transformCurrency(params.value)
+          },
+        ]
       },
       {
-        headerName: 'Descripción',
-        field: 'descripcion',
-        width: 300,
-        pinned: 'left'
+        headerName: 'CONTADO',
+        children: [
+          {
+            headerName: 'P. A. (CON)',
+            field: 'precioAnteriorContado',
+            valueFormatter: params => this.transformCurrency(params.value)
+          },
+          {
+            headerName: 'Precio (CON)',
+            field: 'precioContado',
+            valueFormatter: params => this.transformCurrency(params.value)
+          },
+          {
+            headerName: 'CON %',
+            colId: 'contadoPer',
+            valueFormatter: params => this.transformPercent(params.value),
+            valueGetter: params => {
+              const pa = params.data.precioAnteriorContado;
+              const pn = params.data.precioContado;
+              if (pn === 0) {
+                return 0;
+              }
+              const dif = pn - pa;
+              const incremento = dif / pa;
+              return incremento;
+            }
+          },
+          {
+            headerName: 'Fact (CON)',
+            field: 'factorContado',
+            width: 90
+          },
+        ]
       },
       {
-        headerName: 'Linea',
-        field: 'linea',
-        width: 130
+        headerName: 'CREDITO',
+        children: [
+          {
+            headerName: 'P. A. (CRE)',
+            field: 'precioAnteriorCredito',
+            valueFormatter: params => this.transformCurrency(params.value)
+          },
+          {
+            headerName: 'Precio (CRE)',
+            field: 'precioCredito',
+            valueFormatter: params => this.transformCurrency(params.value)
+          },
+          {
+            headerName: 'CRE %',
+            colId: 'contadoPer',
+            valueFormatter: params => this.transformPercent(params.value),
+            valueGetter: params => {
+              const pa = params.data.precioAnteriorCredito;
+              const pn = params.data.precioCredito;
+              if (pn === 0) {
+                return 0;
+              }
+              const dif = pn - pa;
+              const incremento = dif / pa;
+              return incremento;
+            }
+          },
+          {
+            headerName: 'Fact (CRE)',
+            field: 'factorCredito',
+            width: 90
+          },
+        ]
       },
       {
-        headerName: 'P. A. (CON)',
-        field: 'precioAnteriorContado',
-        valueFormatter: params => this.transformCurrency(params.value)
-      },
-      {
-        headerName: 'Precio (CON)',
-        field: 'precioContado',
-        valueFormatter: params => this.transformCurrency(params.value)
-      },
-      {
-        headerName: 'CON %',
-        colId: 'contadoPer',
-        valueFormatter: params => this.transformPercent(params.value),
-        valueGetter: params => {
-          const pa = params.data.precioAnteriorContado;
-          const pn = params.data.precioContado;
-          if (pn === 0) {
-            return 0;
-          }
-          const dif = pn - pa;
-          const incremento = dif / pa;
-          return incremento;
-        }
-      },
-      {
-        headerName: 'P. A. (CRE)',
-        field: 'precioAnteriorCredito',
-        valueFormatter: params => this.transformCurrency(params.value)
-      },
-      {
-        headerName: 'Precio (CRE)',
-        field: 'precioCredito',
-        valueFormatter: params => this.transformCurrency(params.value)
-      },
-      {
-        headerName: 'CRE %',
-        colId: 'contadoPer',
-        valueFormatter: params => this.transformPercent(params.value),
-        valueGetter: params => {
-          const pa = params.data.precioAnteriorCredito;
-          const pn = params.data.precioCredito;
-          if (pn === 0) {
-            return 0;
-          }
-          const dif = pn - pa;
-          const incremento = dif / pa;
-          return incremento;
-        }
-      },
-      {
-        headerName: 'Costo',
-        field: 'costo',
-        valueFormatter: params => this.transformCurrency(params.value)
-      },
-      {
-        headerName: 'Costo U',
-        field: 'costoUltimo',
-        valueFormatter: params => this.transformCurrency(params.value)
-      },
+        headerName: '',
+        children: [
+          {
+            headerName: 'Costo U',
+            field: 'costoUltimo',
+            valueFormatter: params => this.transformCurrency(params.value)
+          },
 
-      ///
-      {
-        headerName: 'Clase',
-        field: 'clase',
-        width: 100
-      },
-      {
-        headerName: 'Marca',
-        field: 'marca',
-        width: 100
+          ///
+          {
+            headerName: 'Clase',
+            field: 'clase',
+            width: 100
+          },
+          {
+            headerName: 'Marca',
+            field: 'marca',
+            width: 100
+          }
+        ]
       }
     ];
   }
