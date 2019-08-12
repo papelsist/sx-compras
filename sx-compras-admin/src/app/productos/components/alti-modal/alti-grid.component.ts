@@ -143,23 +143,38 @@ export class AltiGridComponent implements OnInit, OnChanges {
       {
         headerName: 'Descripción',
         field: 'descripcion',
-        width: 300,
+        width: 260,
         pinned: 'left'
+      },
+      {
+        headerName: 'Costo',
+        field: 'costo',
+        width: 115
       },
       {
         headerName: 'Linea',
         field: 'linea',
-        width: 130
+        width: 120
       },
       {
         headerName: 'Clase',
         field: 'clase',
-        width: 130
+        width: 120
       },
       {
         headerName: 'Marca',
         field: 'marca',
-        width: 130
+        width: 120
+      },
+      {
+        headerName: 'Prov',
+        field: 'proveedor',
+        width: 120,
+        valueGetter: params => {
+          if (params.data.proveedor) {
+            return params.data.proveedor.clave;
+          }
+        }
       }
     ];
   }

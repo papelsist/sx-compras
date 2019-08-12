@@ -57,15 +57,18 @@ export class ListaComponent implements OnInit {
   }
 
   onDelete(lista: Partial<ListaDePreciosVenta>) {
-    this.dialogService.openConfirm({
-      title: 'ELIMINAR LISTA',
-      message: `FOLIO: ${lista.id}`,
-      acceptButton: 'ELIMINAR',
-      cancelButton: 'CANCELAR'
-    }).afterClosed().subscribe( res => {
-      if (res) {
-        this.store.dispatch(new fromStore.DeleteLista({lista}));
-      }
-    });
+    this.dialogService
+      .openConfirm({
+        title: 'ELIMINAR LISTA',
+        message: `FOLIO: ${lista.id}`,
+        acceptButton: 'ELIMINAR',
+        cancelButton: 'CANCELAR'
+      })
+      .afterClosed()
+      .subscribe(res => {
+        if (res) {
+          this.store.dispatch(new fromStore.DeleteLista({ lista }));
+        }
+      });
   }
 }

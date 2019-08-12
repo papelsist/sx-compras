@@ -12,7 +12,12 @@ import {
 import { LxTableComponent } from 'app/_shared/components';
 import { SxTableService } from 'app/_shared/components/lx-table/sx-table.service';
 
-import { ColDef, ModelUpdatedEvent, RowSelectedEvent, ColGroupDef } from 'ag-grid-community';
+import {
+  ColDef,
+  ModelUpdatedEvent,
+  RowSelectedEvent,
+  ColGroupDef
+} from 'ag-grid-community';
 import { ListaDePreciosVentaDet } from 'app/precios/models';
 
 import * as _ from 'lodash';
@@ -66,7 +71,7 @@ export class ListadetTableComponent extends LxTableComponent
     this.defaultColDef = {
       editable: false,
       filter: 'agTextColumnFilter',
-      width: 150,
+      width: 110,
       sortable: true,
       resizable: true,
       pinnedRowCellRenderer: r => ''
@@ -110,16 +115,16 @@ export class ListadetTableComponent extends LxTableComponent
     }
   }
 
-  buildColsDef(): ColGroupDef[]  {
-    return  [
+  buildColsDef(): ColGroupDef[] {
+    return [
       {
-        headerName: 'Producto',
+        headerName: 'PRODUCTO',
         children: [
           {
             headerName: 'Clave',
             field: 'clave',
             width: 110,
-            resizable: true
+            pinned: 'left'
           },
           {
             headerName: 'Descripción',
@@ -130,30 +135,32 @@ export class ListadetTableComponent extends LxTableComponent
           {
             headerName: 'Linea',
             field: 'linea',
-            width: 130
+            width: 130,
+            pinned: 'left'
           },
           {
             headerName: 'Costo',
             field: 'costo',
-            valueFormatter: params => this.transformCurrency(params.value)
-          },
+            valueFormatter: params => this.transformCurrency(params.value),
+            pinned: 'left'
+          }
         ]
       },
       {
         headerName: 'CONTADO',
         children: [
           {
-            headerName: 'P. A. (CON)',
+            headerName: 'P. Anterior',
             field: 'precioAnteriorContado',
             valueFormatter: params => this.transformCurrency(params.value)
           },
           {
-            headerName: 'Precio (CON)',
+            headerName: 'Precio',
             field: 'precioContado',
             valueFormatter: params => this.transformCurrency(params.value)
           },
           {
-            headerName: 'CON %',
+            headerName: 'Var (%)',
             colId: 'contadoPer',
             valueFormatter: params => this.transformPercent(params.value),
             valueGetter: params => {
@@ -168,27 +175,27 @@ export class ListadetTableComponent extends LxTableComponent
             }
           },
           {
-            headerName: 'Fact (CON)',
+            headerName: 'Factor',
             field: 'factorContado',
             width: 90
-          },
+          }
         ]
       },
       {
         headerName: 'CREDITO',
         children: [
           {
-            headerName: 'P. A. (CRE)',
+            headerName: 'P. Anterior',
             field: 'precioAnteriorCredito',
             valueFormatter: params => this.transformCurrency(params.value)
           },
           {
-            headerName: 'Precio (CRE)',
+            headerName: 'Precio',
             field: 'precioCredito',
             valueFormatter: params => this.transformCurrency(params.value)
           },
           {
-            headerName: 'CRE %',
+            headerName: 'Var (%)',
             colId: 'contadoPer',
             valueFormatter: params => this.transformPercent(params.value),
             valueGetter: params => {
@@ -203,14 +210,14 @@ export class ListadetTableComponent extends LxTableComponent
             }
           },
           {
-            headerName: 'Fact (CRE)',
+            headerName: 'Fact',
             field: 'factorCredito',
             width: 90
-          },
+          }
         ]
       },
       {
-        headerName: '',
+        headerName: 'OTROS',
         children: [
           {
             headerName: 'Costo U',

@@ -73,6 +73,7 @@ export class ComprasService {
   }
 
   getProductosDisponibles(compra: Compra): Observable<ProveedorProducto[]> {
+    console.log('Buscando disponibles', compra);
     const params = new HttpParams().set('moneda', compra.moneda);
     const url = `${this.configService.buildApiUrl('proveedores')}/${
       compra.proveedor.id

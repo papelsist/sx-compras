@@ -24,6 +24,7 @@ import {
 } from 'ag-grid-community';
 import { spAgGridText } from 'app/_shared/components/lx-table/table-support';
 import { Analisis } from 'app/cxp/model';
+import { PrintCellRendererComponent } from 'app/_shared/components';
 
 @Component({
   selector: 'sx-analisis-table',
@@ -41,6 +42,7 @@ import { Analisis } from 'app/cxp/model';
         (firstDataRendered)="onFirstDataRendered($event)"
         (gridReady)="onGridReady($event)"
         (modelUpdated)="onModelUpdate($event)"
+        [frameworkComponents]="frameworkComponents"
       >
       </ag-grid-angular>
     </div>
@@ -71,12 +73,17 @@ export class AnalisisTableComponent implements OnInit, OnChanges {
 
   localeText: any;
 
+  public frameworkComponents;
+
   constructor(
     private cd: ChangeDetectorRef,
     @Inject(LOCALE_ID) private locale: string
   ) {
     this.buildGridOptions();
     this.buildGridStyles();
+    this.frameworkComponents = {
+      printRenderer: PrintCellRendererComponent
+    };
   }
 
   ngOnInit() {}
@@ -101,7 +108,7 @@ export class AnalisisTableComponent implements OnInit, OnChanges {
     this.gridOptions.onFilterChanged = this.onFilter.bind(this);
     this.gridOptions.onCellClicked = (event: CellClickedEvent) => {
       if (event.column.getId() === 'print') {
-        this.print.emit(event.data);
+        // this.print.emit(event.data);
       }
     };
     this.gridOptions.onRowDoubleClicked = (event: RowDoubleClickedEvent) => {
@@ -254,6 +261,7 @@ export class AnalisisTableComponent implements OnInit, OnChanges {
         headerName: 'Comentario',
         field: 'comentario'
       },
+      /*
       {
         headerName: 'P',
         field: 'id',
@@ -261,6 +269,14 @@ export class AnalisisTableComponent implements OnInit, OnChanges {
         cellRenderer: params => 'P',
         filter: false,
         width: 50
+      },
+      */
+      {
+        headerName: 'P',
+        colId: 'print',
+        cellRenderer: 'printRenderer',
+        onCellClicked: params => this.print.emit(params.data),
+        width: 90
       }
     ];
   }

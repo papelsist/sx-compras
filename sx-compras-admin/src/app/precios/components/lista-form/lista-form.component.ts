@@ -61,7 +61,6 @@ export class ListaFormComponent implements OnInit, OnChanges {
     }
   }
 
-
   ngOnInit() {
     if (this.lista && this.lista.partidas) {
       this.insertarRegistros(this.lista.partidas);
@@ -154,6 +153,7 @@ export class ListaFormComponent implements OnInit, OnChanges {
         const incremento = precio - base > 0 ? factor : factor * -1;
         det.precioContado = _.round(precio, 2);
         det.incremento = _.round(incremento, 2);
+        det.factorContado = _.round( (det.costo / det.precioContado), 2);
         item.setData(det);
       } else if (command.tipo === 'CREDITO') {
         const base = det.precioAnteriorCredito;
@@ -161,6 +161,7 @@ export class ListaFormComponent implements OnInit, OnChanges {
         const incremento = precio - base > 0 ? factor : factor * -1;
         det.precioCredito = _.round(precio, 2);
         det.incremento = _.round(incremento, 2);
+        det.factorCredito = _.round( (det.costo / det.precioCredito), 2);
         item.setData(det);
       } else {
         const baseCre = det.precioAnteriorCredito;
@@ -173,6 +174,8 @@ export class ListaFormComponent implements OnInit, OnChanges {
         det.precioCredito = _.round(precioCre, 2);
         det.precioContado = _.round(precioCon, 2);
         det.incremento = _.round(incremento, 2);
+        det.factorCredito = _.round(det.costo / det.precioCredito, 2);
+        det.factorContado = _.round(det.costo / det.precioContado, 2);
         item.setData(det);
       }
     });

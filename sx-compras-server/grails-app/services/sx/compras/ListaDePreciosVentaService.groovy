@@ -7,9 +7,11 @@ import grails.compiler.GrailsCompileStatic
 import groovy.transform.CompileDynamic
 
 import sx.core.LogUser
-import sx.core.Proveedor
 import sx.core.Producto
+import sx.core.Proveedor
+import sx.core.ProveedorProducto
 import sx.utils.Periodo
+
 
 
 @Transactional
@@ -56,6 +58,7 @@ class ListaDePreciosVentaService implements LogUser {
         return  update(lista)
     }
 
+    @CompileDynamic
     List disponibles() {
         Integer year = Periodo.currentYear()
         Integer mes = Periodo.currentMes()
@@ -84,12 +87,33 @@ class ListaDePreciosVentaService implements LogUser {
             where p.activo = true 
               and p.deLinea = true
             """,
-            [year, mes])
+            [])
         rows.each { item ->
-            def found = ProveedorProducto.{producto.id == item.producto}.find([sort='lastUpdated',order: 'desc'])
-            if(found) {
-                item.costo = found.precio
+            
+            if(item.proveedor) {
+                def found = ProveedorProducto.where{proveedor.id == item.proveedor.id && producto.id == item.producto && moneda == 'MXN'}.list([sort:'lastUpdated', order: 'desc'])
+                if (found) {
+                    def pp = found.get(0)
+                    if(pp.precio > 0.0) {
+                        item.costo = pp.precio
+                        // log.info('Precio found: {}', item.costo)
+                    }
+                }
+                
+            } else {
+                def found = ProveedorProducto.where{producto.id == item.producto && moneda == 'MXN'}.find([sort:'lastUpdated', order: 'desc'])
+                if(found) {
+                    if(found.precio) {
+                        // log.info('Found Ultimo costo: {}', found.precio)
+                        item.costo = found.precio
+                    }
+                    
+                }
+                
             }
+            
+            
+            
         }
         return rows
     }

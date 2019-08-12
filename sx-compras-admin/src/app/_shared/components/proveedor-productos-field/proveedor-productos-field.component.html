@@ -1,10 +1,21 @@
 <ng-container [formGroup]="parent">
   <mat-form-field [style.width.%]="100">
-    <input type="text" matInput [formControlName]="propertyName" [matAutocomplete]="auto">
+    <input
+      type="text"
+      matInput
+      [formControlName]="propertyName"
+      [matAutocomplete]="auto"
+    />
   </mat-form-field>
 </ng-container>
 <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
-  <mat-option *ngFor="let producto of filteredProducts$ | async" [value]="producto">
-    {{producto.clave}} {{ producto.descripcion }} ({{producto.precioBruto | currency }})
+  <mat-option
+    *ngFor="let producto of filteredProducts$ | async"
+    [value]="producto"
+  >
+    {{ producto.clave }} {{ producto.descripcion }} ({{
+      producto.precioBruto | currency
+    }}
+    {{ producto.moneda }})
   </mat-option>
 </mat-autocomplete>

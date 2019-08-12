@@ -14,7 +14,7 @@ import { ICellRendererParams } from 'ag-grid-community';
     <mat-icon
       smallIcon="true"
       class="cursor-pointer"
-      [inline]="true"
+      [inline]="false"
       (click)="onPrint()"
       >print</mat-icon
     >

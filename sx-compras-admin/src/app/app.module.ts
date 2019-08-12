@@ -38,7 +38,7 @@ export function onAppInit(configService: ConfigService): () => Promise<any> {
   return () => configService.load();
 }
 
-registerLocaleData(localeMx, 'es-MX');
+// registerLocaleData(localeMx, 'es-MX');
 
 @NgModule({
   imports: [
@@ -70,7 +70,7 @@ registerLocaleData(localeMx, 'es-MX');
       deps: [ConfigService]
     },
     { provide: RouterStateSerializer, useClass: CustomSerializer },
-    { provide: LOCALE_ID, useValue: 'es-MX' }
+    // { provide: LOCALE_ID, useValue: 'es-MX' }
   ],
   declarations: [AppComponent],
   bootstrap: [AppComponent]
