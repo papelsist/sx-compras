@@ -81,11 +81,11 @@ export class ComprobanteFiscalService {
   }
 
   importar(periodo: Periodo): Observable<ComprobanteFiscal[]> {
-    const url = `${this.apiUrl}/importar`;
+    const url = `${this.apiUrl}/importarFacturasDeImportacion`;
     const data = periodo.toApiJSON();
     const params = new HttpParams()
       .set('fechaInicial', data.fechaInicial)
       .set('fechaFinal', data.fechaFinal);
-    return this.http.post<ComprobanteFiscal[]>(url, { params: params });
+    return this.http.post<ComprobanteFiscal[]>(url, {}, { params: params });
   }
 }

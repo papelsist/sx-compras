@@ -86,11 +86,18 @@ export class CfdisComponent implements OnInit, OnDestroy {
             .subscribe(
               data => {
                 console.log('Facturas: ', data);
-                this.load();
+                this.importacionExitosa(data);
               },
               err => console.log(err)
             );
         }
       });
+  }
+
+  importacionExitosa(data: any) {
+    this.dialogService.openAlert({
+      message: 'IMPORTACIÓN EXITOSA',
+      title: 'CFDIS DE IMAPAP Y PAPER',
+    });
   }
 }

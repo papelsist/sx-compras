@@ -109,9 +109,10 @@ class ComprobanteFiscalController extends RestfulController<ComprobanteFiscal> {
     }
 
     def importarFacturasDeImportacion() {
+        log.info('Importando facturas {}', params)
         def periodo = params.periodo
-        def res = importadorDeFacturasDeImportacion.importar(periodo)
-        respond res
+        importadorDeFacturasDeImportacion.importar(periodo)
+        respond status:200
     }
 
 
