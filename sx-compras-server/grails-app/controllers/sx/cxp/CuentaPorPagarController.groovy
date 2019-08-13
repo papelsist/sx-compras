@@ -17,6 +17,8 @@ import sx.utils.Periodo
 import sx.core.LogUser
 import sx.core.Proveedor
 
+
+
 @Slf4j
 @GrailsCompileStatic
 @Secured("IS_AUTHENTICATED_ANONYMOUSLY")
@@ -25,6 +27,8 @@ class CuentaPorPagarController extends RestfulController<CuentaPorPagar> impleme
     static responseFormats = ['json']
 
     CuentaPorPagarService cuentaPorPagarService
+
+    
     
     CuentaPorPagarController() {
         super(CuentaPorPagar)

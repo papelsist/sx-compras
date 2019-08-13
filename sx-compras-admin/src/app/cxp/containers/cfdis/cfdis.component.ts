@@ -6,6 +6,7 @@ import { shareReplay, finalize } from 'rxjs/operators';
 import { ComprobanteFiscalService } from '../../services';
 import { ComprobanteFiscal } from '../../model/comprobanteFiscal';
 import { Periodo } from 'app/_core/models/periodo';
+import { TdDialogService } from '@covalent/core';
 
 @Component({
   selector: 'sx-cxp-cfdis',
@@ -19,7 +20,10 @@ export class CfdisComponent implements OnInit, OnDestroy {
   loading$ = new BehaviorSubject<boolean>(false);
   storeKey = 'sx-compras.cfdis.periodo';
   totales: any = {};
-  constructor(private service: ComprobanteFiscalService) {}
+  constructor(
+    private service: ComprobanteFiscalService,
+    private dialogService: TdDialogService
+  ) {}
 
   ngOnInit() {
     this.periodo = Periodo.fromStorage(this.storeKey);
@@ -61,5 +65,32 @@ export class CfdisComponent implements OnInit, OnDestroy {
 
   onTotales(event: any) {
     this.totales = event;
+  }
+
+  importar() {
+    this.dialogService
+      .openConfirm({
+        title: 'IMPORTAR CFDIS DE PAPER E IMPAP',
+        message: `PERIODO: ${this.periodo}`,
+        acceptButton: 'IMPORTAR',
+        cancelButton: 'CANCELAR',
+        width: '500px'
+      })
+      .afterClosed()
+      .subscribe(res => {
+        if (res) {
+          this.loading$.next(true);
+          this.service
+            .importar(this.periodo)
+            .pipe(finalize(() => this.loading$.next(false)))
+            .subscribe(
+              data => {
+                console.log('Facturas: ', data);
+                this.load();
+              },
+              err => console.log(err)
+            );
+        }
+      });
   }
 }

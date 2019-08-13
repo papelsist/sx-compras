@@ -1,5 +1,6 @@
 <mat-card>
-  <mat-card-title-group layout layout-align="center center">
+  <!--
+  <mat-card-title-group layout layout-align="center center" class="pad">
     <mat-card-title>Comprobantes fiscales</mat-card-title>
     <span flex></span>
     <sx-periodo-picker
@@ -18,6 +19,18 @@
       <mat-icon color="primary">file_download</mat-icon>
     </button>
   </mat-card-title-group>
+  -->
+  <sx-standard-header
+    title="Comprobantes fiscales"
+    [periodo]="periodo"
+    (periodoChange)="cambiarPeriodo($event)"
+    (reload)="load()"
+    (download)="grid.exportData()"
+  >
+    <button mat-menu-item class="actions" (click)="importar()">
+      <mat-icon>import_export</mat-icon> Importar
+    </button>
+  </sx-standard-header>
   <mat-divider></mat-divider>
 
   <div class="grid-panel">
