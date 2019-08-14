@@ -34,7 +34,7 @@ class NotasDeCreditoTask implements  AsientoBuilder {
                 PolizaDet detNota = mapRow(row.cta_nota.toString(), descripcion, row, row.subtotal.abs())
                 poliza.addToPartidas(detNota)
 
-                   println "************************"+detNota.concepto
+                println "************************"+detNota.concepto
                 
                 PolizaDet detIva = mapRow("209-0001-0000-0000", descripcion, row, row.impuesto.abs())
                 poliza.addToPartidas(detIva)
@@ -90,6 +90,7 @@ class NotasDeCreditoTask implements  AsientoBuilder {
         CuentaContable cuenta = buscarCuenta(cuentaClave)
 
         def cto = concatenar(cuenta)
+        println cto
 
         PolizaDet det = new PolizaDet(
                 cuenta: cuenta,
@@ -122,8 +123,8 @@ class NotasDeCreditoTask implements  AsientoBuilder {
         String res = """
             SELECT concat('NOTA_',substr(f.forma_de_pago,1,3),'_',f.tipo) as asiento,c.nombre referencia2,n.id as origen,f.cliente_id as cliente,n.folio,n.total ,f.tipo as documentoTipo,
             y.fecha fecha_documento,y.documento,s.nombre sucursal,f.fecha,round(a.importe/1.16,2) subtotal ,a.importe-round(a.importe/1.16,2) impuesto,a.importe total_det,f.moneda,f.tipo_de_cambio  tc,y.tipo_de_cambio tc_iva_fac,
-            (case when f.diferencia_fecha='2019-07-01' then f.diferencia else 0 end) diferencia,
-            f.importe-(case when f.diferencia_fecha='2019-07-01' then f.diferencia else 0 end)-ifnull((SELECT sum(a.importe) FROM aplicacion_de_cobro a where a.cobro_id=f.id and a.fecha='2019-07-01'),0) SAF,
+            (case when f.diferencia_fecha='@FECHA' then f.diferencia else 0 end) diferencia,
+            f.importe-(case when f.diferencia_fecha='@FECHA' then f.diferencia else 0 end)-ifnull((SELECT sum(a.importe) FROM aplicacion_de_cobro a where a.cobro_id=f.id and a.fecha='@FECHA'),0) SAF,
             (case when s.clave>9 then concat('403-0001-00',s.clave,'-0000') else concat('403-0001-000',s.clave,'-0000') end) cta_nota,
             (case when s.clave>9 then concat('105-0001-00',s.clave,'-0000') else concat('105-0001-000',s.clave,'-0000') end) cta_cliente,
             a.aplicaciones_idx,(select max(aplicaciones_idx) from aplicacion_de_cobro y  where y.cobro_id=f.id) as max, c.rfc, x.uuid
@@ -134,8 +135,8 @@ class NotasDeCreditoTask implements  AsientoBuilder {
             union							
             SELECT concat('NOTA_',substr(f.forma_de_pago,1,3),'_',f.tipo) as asiento,c.nombre referencia2,n.id as origen ,f.cliente_id as cliente,n.folio,n.total,f.tipo as documentoTipo,
             y.fecha as fecha_documento,y.documento,s.nombre as sucursal ,f.fecha,round(a.importe/1.16,2) subtotal ,a.importe-round(a.importe/1.16,2) impuesto,a.importe total_det,f.moneda,f.tipo_de_cambio  tc,y.tipo_de_cambio tc_iva_fac,
-            (case when f.diferencia_fecha='2019-07-01' then f.diferencia else 0 end) diferencia,
-            f.importe-(case when f.diferencia_fecha='2019-07-01' then f.diferencia else 0 end)-ifnull((SELECT sum(a.importe) FROM aplicacion_de_cobro a where a.cobro_id=f.id and a.fecha='2019-07-01'),0) SAF,
+            (case when f.diferencia_fecha='@FECHA' then f.diferencia else 0 end) diferencia,
+            f.importe-(case when f.diferencia_fecha='@FECHA' then f.diferencia else 0 end)-ifnull((SELECT sum(a.importe) FROM aplicacion_de_cobro a where a.cobro_id=f.id and a.fecha='@FECHA'),0) SAF,
             (case when s.clave>9 then concat('402-0001-00',s.clave,'-0000') else concat('402-0001-000',s.clave,'-0000') end) cta_nota,
             (case when s.clave>9 then concat('105-0001-00',s.clave,'-0000') else concat('105-0001-000',s.clave,'-0000') end) cta_cliente,
             a.aplicaciones_idx,(select max(aplicaciones_idx) from aplicacion_de_cobro y  where y.cobro_id=f.id) as max, c.rfc, x.uuid

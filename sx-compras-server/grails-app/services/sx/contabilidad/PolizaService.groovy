@@ -33,7 +33,7 @@ abstract class PolizaService implements  LogUser{
 
         poliza.partidas.each {
             //it.concepto = it.cuenta.descripcion// concatenar(it.cuenta)
-            it.concepto = concatenar(it.cuenta)
+            it.concepto =  concatenar(it.cuenta)
         }
         List<PolizaDet> borrar = poliza.partidas.findAll {it.debe == 0.0 && it.haber == 0.0}
         borrar.each { poliza.removeFromPartidas(it)}
@@ -95,18 +95,23 @@ abstract class PolizaService implements  LogUser{
       def sucursales = ['OFICINAS','ANDRADE','BOLIVAR','CALLE 4','CF5FEBRERO','SOLIS','VERTIZ 176','TACUBA','VENTAS','SOLIS']
         def nivel = cta.nivel
         def p1 = cta.padre
+        
         if(p1){
             // Nivel 3
              if(nivel == 3){
-              	for(int i=0 ; i< sucursales.size(); i++){
-
+                 
+              	for(int i=0 ; i < sucursales.size(); i++){
+                
+                     cto = "${cta.padre.descripcion}  ${cta.descripcion}"
+                    /*
                     if (cta.descripcion.contains(sucursales[i])) {
-                        cto = cta.padre.descripcion
+                        cto = "${cta.padre.descripcion} "
                         break
-                    } 
-                    cto = "${cta.padre.descripcion}  ${cta.descripcion}"
+                    }
+                    */    
              	}
             } 
+
             //nivel 4
             if(nivel == 4){  
                 //for 1
@@ -119,7 +124,7 @@ abstract class PolizaService implements  LogUser{
                                 cto = ctaN3.padre.descripcion
                                 break
                             }else{
-                                 cto = "${ctaN3.padre.descripcion}  ${ctaN3.descripcion}"
+                                cto = "${ctaN3.padre.descripcion}  ${ctaN3.descripcion}"
                                 break
                             }
                         }
@@ -154,6 +159,7 @@ abstract class PolizaService implements  LogUser{
             }
         }
         */
+
         return cto
     }
 

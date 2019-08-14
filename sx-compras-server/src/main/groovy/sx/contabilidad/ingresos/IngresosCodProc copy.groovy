@@ -9,9 +9,9 @@ import sx.contabilidad.*
 
 @Slf4j
 @Component
-class IngresosConProc implements  ProcesadorDePoliza{
+class IngresosCodProc implements  ProcesadorDePoliza{
 
-    @Autowired
+   @Autowired
     @Qualifier('ingresosTask')
     IngresosTask ingresosTask
 
@@ -19,25 +19,19 @@ class IngresosConProc implements  ProcesadorDePoliza{
     @Qualifier('ventasTask')
     VentasTask  ventasTask 
 
+
     @Override
     String definirConcepto(Poliza poliza) {
-        return "Ingresos Contado ${poliza.fecha.format('dd/MM/yyyy')}"
+        return "Ingresos COD ${poliza.fecha.format('dd/MM/yyyy')}"
     }
 
     @Override
     Poliza recalcular(Poliza poliza) {
         println poliza
         poliza.partidas.clear()
-        ventasTask.generarAsientos(poliza)
-        ingresosTask.generarAsientos(poliza, [tipo: 'CON'])
+        ingresosTask.generarAsientos(poliza, [tipo: 'COD'])
         poliza = poliza.save flush: true, failOnError:true
         return poliza
     }
-
-  
-
-   
-
-
 
 }

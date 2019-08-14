@@ -19,11 +19,23 @@ class IngresosFichasTask implements  AsientoBuilder {
     @Override
     def generarAsientos(Poliza poliza, Map params = [:]) {
         log.info("Generando asientos contables para cobranza con EFECTIVO {} {}", poliza.fecha)
+
+        String tipo = params.tipo
+
         String sql = getFichasSql()
                 .replaceAll("@FECHA", toSqlDate(poliza.fecha))
+                .replaceAll("@TIPO", tipo )
+
+
+        String otro= "'CON','COD'"
+        if(tipo != 'CON'){
+            otro= "'CRE','CHE','JUR'"
+        }
     
         String sqlClientes = getClienteSql()
                 .replaceAll("@FECHA", toSqlDate(poliza.fecha))
+                .replaceAll("@TIPO", tipo )
+                .replaceAll("@OTRO", otro )
 
         List rows = getAllRows(sql, [])
 
@@ -65,7 +77,7 @@ class IngresosFichasTask implements  AsientoBuilder {
             
              String descripcion  =  ''
             if(row.forma_de_pago == 'EFECTIVO'){
-                descripcion  = "F: ${row.factura} ${row.fecha_fac} ${row.sucursal}"
+                descripcion  = "F: ${row.factura} ${row.documentoTipo} ${row.fecha_fac} ${row.sucursal}"
             }else{
                 descripcion  = "Ficha: ${row.documento_gpo} CH: ${row.documento} F: ${row.factura} ${row.fecha_fac} ${row.sucursal}"
             }
@@ -158,7 +170,7 @@ class IngresosFichasTask implements  AsientoBuilder {
                 origen: row.origen,
                 entidad: row.entidad,
                 documento: row.documento_gpo,
-                documentoTipo: 'CON',
+                documentoTipo: row.documentoTipo,
                 documentoFecha: row.fecha,
                 sucursal: row.sucursal,
                 debe: debe.abs(),
@@ -180,7 +192,7 @@ class IngresosFichasTask implements  AsientoBuilder {
         ,(case when f.diferencia <0 then concat('FALTANTE_',diferencia_tipo) when f.diferencia>0 then concat('SOBRANTE_',diferencia_tipo) else '' end)  as diferenciaTipo,ifnull(f.diferencia,0) diferenciaFicha
         ,(case when diferencia=0 or diferencia is null then '000-0000-0000-0000' else concat('107-0002-',(case when f.diferencia_usuario>99 then '0' when f.diferencia_usuario>9 then '00' else '000' end),f.diferencia_usuario,'-0000') end) cta_cajera
         FROM ficha f join movimiento_de_cuenta m on(f.ingreso_id=m.id) join cuenta_de_banco z on(m.cuenta_id=z.id) join sucursal s on(f.sucursal_id=s.id)
-        where f.fecha='@FECHA' and f.origen in('CON') 
+        where f.fecha='@FECHA' and f.origen in('@TIPO') 
         """
         return res
     }
@@ -190,25 +202,33 @@ class IngresosFichasTask implements  AsientoBuilder {
         String res = """
         SELECT 'Venta' entidad,concat('COB_FICHA_CHE_',f.origen) as asiento,f.id origen_gpo,f.origen documentoTipo,f.total total_gpo,f.tipo_de_ficha referencia2,f.fecha,f.folio documento_gpo
         ,b.moneda,b.tipo_de_cambio tc ,s.nombre sucursal, s.clave suc,z.numero ctaDestino,z.descripcion bancoDestino,'PAPEL SA DE CV' beneficiario
-        ,b.forma_de_pago,'02' metodoDePago,b.id origen,x.numero documento,x.numero referenciaBancaria,b.importe total,(case when b.diferencia_fecha='2019-05-15' then b.diferencia else 0 end) diferencia
-        ,b.importe-(case when b.diferencia_fecha='2019-05-15' then b.diferencia else 0 end)-ifnull((SELECT sum(a.importe) FROM aplicacion_de_cobro a where a.cobro_id=b.id and a.fecha='2019-05-15'),0) SAF
+        ,b.forma_de_pago,'02' metodoDePago,b.id origen,x.numero documento,x.numero referenciaBancaria,b.importe total,(case when b.diferencia_fecha='@FECHA' then b.diferencia else 0 end) diferencia
+        ,b.importe-(case when b.diferencia_fecha='@FECHA' then b.diferencia else 0 end)-ifnull((SELECT sum(a.importe) FROM aplicacion_de_cobro a where a.cobro_id=b.id and a.fecha='@FECHA'),0) SAF
         ,null ctaOrigen,x.banco_origen_id,(SELECT y.nombre FROM banco y where x.banco_origen_id=y.id) bancoOrigen,t.rfc,t.nombre cliente,c.id cxc_id,c.documento factura,c.tipo,c.fecha fecha_fac,i.uuid,a.importe cobro_aplic,c.total montoTotal
-        ,concat('105-0001-',(case when s.clave>9 then '00' else '000' end),s.clave,'-0000') cta_contable       
+        ,(case	when b.tipo='CON' then concat('105-0001-',(case when s.clave>9 then '00' else '000' end),s.clave,'-0000')
+	        	when b.tipo='COD' then concat('105-0002-',(case when s.clave>9 then '00' else '000' end),s.clave,'-0000')
+			when b.tipo='CRE' then concat('105-',(SELECT concat(case when x.cuenta_operativa='0266' then concat('0004-',x.cuenta_operativa) else concat('0003-',x.cuenta_operativa) end) FROM cuenta_operativa_cliente x where x.cliente_id=t.id ),'-0000')
+			when b.tipo='CHE' then concat('106-0001-',(SELECT x.cuenta_operativa FROM cuenta_operativa_cliente x where x.cliente_id=t.id ),'-0000')
+ 			when b.tipo='JUR' then concat('106-0002-',(SELECT x.cuenta_operativa FROM cuenta_operativa_cliente x where x.cliente_id=t.id ),'-0000') else '000-0000-0000' end) cta_contable       
         FROM ficha f join movimiento_de_cuenta m on(f.ingreso_id=m.id) join cuenta_de_banco z on(m.cuenta_id=z.id)
         join sucursal s on(f.sucursal_id=s.id) join cobro_cheque x on(x.ficha_id=f.id) join cobro b on(x.cobro_id=b.id)  join cliente t on(b.cliente_id=t.id)
         join aplicacion_de_cobro a on(a.cobro_id=b.id) join cuenta_por_cobrar c on(a.cuenta_por_cobrar_id=c.id) join cfdi i on(c.cfdi_id=i.id)
-        where f.fecha='2019-05-15' and date(b.primera_aplicacion)=a.fecha and f.origen in('CON') 
+        where f.fecha='@FECHA' and date(b.primera_aplicacion)=a.fecha and f.origen in('@TIPO') 
 	   UNION
         SELECT 
         'Venta' entidad,'COB_FICHA_EFE_CON' as asiento,null origen_gpo,null documentoTipo,b.importe total_gpo,'EFECTIVO' referencia2,null fecha,null documento_gpo,b.moneda,b.tipo_de_cambio tc ,s.nombre sucursal, s.clave suc        
         ,null ctaDestino,null bancoDestino,'PAPEL SA DE CV' beneficiario,b.forma_de_pago,'01' metodoDePago,b.id origen,null documento,null referenciaBancaria,b.importe total
-        ,(case when b.diferencia_fecha='2019-05-15' then b.diferencia else 0 end) diferencia
-        ,b.importe-(case when b.diferencia_fecha='2019-05-15' then b.diferencia else 0 end)-ifnull((SELECT sum(a.importe) FROM aplicacion_de_cobro a where a.cobro_id=b.id and a.fecha='2019-05-15'),0) SAF
+        ,(case when b.diferencia_fecha='@FECHA' then b.diferencia else 0 end) diferencia
+        ,b.importe-(case when b.diferencia_fecha='@FECHA' then b.diferencia else 0 end)-ifnull((SELECT sum(a.importe) FROM aplicacion_de_cobro a where a.cobro_id=b.id and a.fecha='@FECHA'),0) SAF
         ,null ctaOrigen,null banco_origen_id,null bancoOrigen,t.rfc,t.nombre cliente,c.id cxc_id,c.documento factura,c.tipo,c.fecha fecha_fac,i.uuid,a.importe cobro_aplic,c.total montoTotal
-        ,concat('105-',(case when b.tipo='CON' then '0001-' else '0002-' end),(case when s.clave>9 then '00' else '000' end),s.clave,'-0000') cta_contable_fac        
+        ,(case	when b.tipo='CON' then concat('105-0001-',(case when s.clave>9 then '00' else '000' end),s.clave,'-0000')
+	        	when b.tipo='COD' then concat('105-0002-',(case when s.clave>9 then '00' else '000' end),s.clave,'-0000')
+			when b.tipo='CRE' then concat('105-',(SELECT concat(case when x.cuenta_operativa='0266' then concat('0004-',x.cuenta_operativa) else concat('0003-',x.cuenta_operativa) end) FROM cuenta_operativa_cliente x where x.cliente_id=t.id ),'-0000')
+			when b.tipo='CHE' then concat('106-0001-',(SELECT x.cuenta_operativa FROM cuenta_operativa_cliente x where x.cliente_id=t.id ),'-0000')
+ 			when b.tipo='JUR' then concat('106-0002-',(SELECT x.cuenta_operativa FROM cuenta_operativa_cliente x where x.cliente_id=t.id ),'-0000') else '000-0000-0000' end) cta_contable        
         FROM cobro b join sucursal s on(b.sucursal_id=s.id)  join cliente t on(b.cliente_id=t.id)
         join aplicacion_de_cobro a on(a.cobro_id=b.id) join cuenta_por_cobrar c on(a.cuenta_por_cobrar_id=c.id) join cfdi i on(c.cfdi_id=i.id)
-        where date(b.primera_aplicacion)='2019-05-15' and date(b.primera_aplicacion)=a.fecha and b.tipo in('CON','COD') and b.forma_de_pago='EFECTIVO' 
+        where date(b.primera_aplicacion)='@FECHA' and date(b.primera_aplicacion)=a.fecha and b.tipo in(@OTRO) and b.forma_de_pago='EFECTIVO' 
         """
         return res
     }

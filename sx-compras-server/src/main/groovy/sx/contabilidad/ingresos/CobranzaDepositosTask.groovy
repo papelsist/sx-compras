@@ -157,7 +157,7 @@ class CobranzaDepositosTask implements  AsientoBuilder {
                 if(det.cuenta.clave.startsWith('205-0002')) {
                     
                     
-                    det.debe = row.cobro_aplic.abs()
+                    det.debe = row.cobro_aplic.abs()- row.impuesto_apl.abs()
 
                     BigDecimal impuesto = row.impuesto_apl
                     /*
@@ -188,6 +188,13 @@ class CobranzaDepositosTask implements  AsientoBuilder {
                                 row,
                                 0.0,
                                 safImporte))
+
+                        poliza.addToPartidas(buildRegistro(
+                                '205-0001-0001-0000',
+                                descripcion,
+                                row,
+                                0.0,
+                                safIva))
                                 /*
                         if(!row.asiento.toString().contains('xIDENT')) {
                             poliza.addToPartidas(buildRegistro(

@@ -122,10 +122,10 @@ abstract trait AsientoBuilder implements  SqlAccess{
                 
                      
                     if (cta.descripcion.contains(sucursales[i])) {
-                        cto = "${cta.padre.descripcion}  ${cta.descripcion}"
+                        cto = "${cta.padre.descripcion}  ${cta.descripcion} 3"
                         break
                     } 
-                        cto = "${cta.padre.descripcion}"
+                        cto = "${cta.padre.descripcion} 3"
              	}
             } 
             //nivel 4
@@ -140,7 +140,7 @@ abstract trait AsientoBuilder implements  SqlAccess{
                                 cto = ctaN3.padre.descripcion
                                 break
                             }else{
-                                cto = "${ctaN3.padre.descripcion}  ${ctaN3.descripcion}"
+                                cto = "${ctaN3.padre.descripcion}  ${ctaN3.descripcion} 4"
                                 break
                             }
                         }
@@ -150,10 +150,10 @@ abstract trait AsientoBuilder implements  SqlAccess{
                     //for 2
                     for(int x=0 ; x< sucursales.size(); x++){
                         if (ctaN3.descripcion.contains(sucursales[x])) {
-                            cto = "${ctaN3.padre.descripcion} ${cta.descripcion}"
+                            cto = "${ctaN3.padre.descripcion} ${cta.descripcion} 4"
                             break
                         }else{
-                            cto = "${ctaN3.padre.descripcion}  ${ctaN3.descripcion} ${cta.descripcion}"             
+                            cto = "${ctaN3.padre.descripcion}  ${ctaN3.descripcion} ${cta.descripcion} 4"             
                         }
                     } // termina for 2
                 }// terminia for 1
@@ -175,8 +175,6 @@ abstract trait AsientoBuilder implements  SqlAccess{
             }
         }
         */
-
-        println "CTo:  "+cto
 
         return cto
     }
