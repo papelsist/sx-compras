@@ -1,0 +1,8 @@
+import sx.audit.Audit
+
+model {
+	Iterable<Audit> auditList
+}
+
+json tmpl.audit(auditList ?: [])
+

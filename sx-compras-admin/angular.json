@@ -11,7 +11,8 @@
         "@schematics/angular:component": {
           "spec": false,
           "prefix": "sx",
-          "styleext": "scss"
+          "styleext": "scss",
+          "changeDetection": "OnPush"
         }
       },
       "architect": {
@@ -57,7 +58,7 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
             "browserTarget": "sx-compras-admin:build",
-            "port": 4230
+            "port": 4250
           },
           "configurations": {
             "production": {
@@ -122,7 +123,8 @@
   "schematics": {
     "@schematics/angular:component": {
       "prefix": "sx",
-      "styleext": "scss"
+      "styleext": "scss",
+      "changeDetection": "OnPush"
     },
     "@schematics/angular:directive": {
       "prefix": "sx"

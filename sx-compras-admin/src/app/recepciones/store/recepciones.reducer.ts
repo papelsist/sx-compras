@@ -5,13 +5,15 @@ import {
   RecepcionActionTypes
 } from './recepciones.actions';
 import { RecepcionDeCompra, ComsFilter, buildComsFilter } from '../models';
+import { Periodo } from 'app/_core/models/periodo';
+
+export const RecepcionesDeCompraPeriodoStoeKey =
+  'sx-compras.requisiciones.periodo';
 
 export interface State extends EntityState<RecepcionDeCompra> {
   loading: boolean;
   loaded: boolean;
-  searchTerm: string;
-  filter: ComsFilter;
-  selected: string[];
+  periodo: Periodo;
 }
 
 export const adapter: EntityAdapter<RecepcionDeCompra> = createEntityAdapter<
@@ -21,9 +23,7 @@ export const adapter: EntityAdapter<RecepcionDeCompra> = createEntityAdapter<
 export const initialState: State = adapter.getInitialState({
   loading: false,
   loaded: false,
-  searchTerm: '',
-  filter: buildComsFilter(),
-  selected: []
+  periodo: Periodo.fromStorage(RecepcionesDeCompraPeriodoStoeKey)
 });
 
 export function reducer(
@@ -31,26 +31,21 @@ export function reducer(
   action: RecepcionesActions
 ): State {
   switch (action.type) {
-    case RecepcionActionTypes.SetRecepcionesFilter: {
-      const filter = action.payload.filter;
+    case RecepcionActionTypes.SetPeriodo: {
+      const periodo = action.payload.periodo;
       return {
         ...state,
-        filter
+        periodo
       };
     }
-    case RecepcionActionTypes.SetRecepcionesSearchTerm: {
-      const searchTerm = action.payload.term;
-      return {
-        ...state,
-        searchTerm
-      };
-    }
+
     case RecepcionActionTypes.LoadRecepciones: {
       return {
         ...state,
         loading: true
       };
     }
+
     case RecepcionActionTypes.LoadRecepcionesFail: {
       return {
         ...state,
@@ -79,5 +74,4 @@ export const {
 
 export const getRecepcionesLoading = (state: State) => state.loading;
 export const getRecepcionesLoaded = (state: State) => state.loaded;
-export const getRecepcionesFilter = (state: State) => state.filter;
-export const getRecepcionesSearchTerm = (state: State) => state.searchTerm;
+export const getRecepcionesPeriodo = (state: State) => state.periodo;

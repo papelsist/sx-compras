@@ -39,12 +39,7 @@ export const getSelectedRecepcionDeCompra = createSelector(
   }
 );
 
-export const getRecepcionesFilter = createSelector(
+export const selectPeriodo = createSelector(
   getComsState,
-  fromComs.getRecepcionesFilter
-);
-
-export const getRecepcionesSearchTerm = createSelector(
-  getComsState,
-  fromComs.getRecepcionesSearchTerm
+  fromComs.getRecepcionesPeriodo
 );

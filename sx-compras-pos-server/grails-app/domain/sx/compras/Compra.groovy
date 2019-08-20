@@ -12,7 +12,7 @@ import sx.core.Proveedor
 
 @ToString(excludes = 'dateCreated,lastUpdated, partidas',includeNames=true,includePackage=false)
 @EqualsAndHashCode(includes='id,sucursal,folio')
-@GrailsCompileStatic
+// @GrailsCompileStatic
 class Compra {
 
 
@@ -99,7 +99,7 @@ class Compra {
 
     static hasMany =[partidas:CompraDet]
 
-    static transients = ['status']
+    static transients = ['status', 'pendientes']
 
     static mapping = {
         id generator:'uuid'
@@ -123,12 +123,15 @@ class Compra {
     */
 
     def getStatus() {
-        if(!pendiente)
-            return 'A'
-        else if(pendiente && cerrada )
-            return 'T'
-        else
+        if(pendiente)
             return 'P'
+        else
+            return 'A'
+    }
+
+    def getPendientes() {
+        // return partidas.sum 0.0, {it.solicitado}
+        return this.partidas.sum{ CompraDet det -> det.getPendiente()}
     }
 
 }

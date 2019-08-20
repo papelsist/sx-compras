@@ -1,0 +1,7 @@
+import sx.compras.RequisicionDeMaterial
+
+model {
+	RequisicionDeMaterial requisicionDeMaterial
+}
+
+json g.render(requisicionDeMaterial, [resolveTemplate: false])

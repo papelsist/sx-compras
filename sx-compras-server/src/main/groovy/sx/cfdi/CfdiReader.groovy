@@ -140,4 +140,22 @@ class CfdiReader {
             cfdi.addToConceptos(concepto)
         }
     }
+
+    /**
+     VALIDACION DE PAGOS
+    def cfdi = ComprobanteFiscal.get('8a8a81656b75902b016bafb140c60542')
+    println "${cfdi.tipo} Tipo: ${cfdi.tipoDeComprobante}"
+    def xml = cfdi.getXmlNode()
+    def pagosNode = xml.breadthFirst().find { it.name() == 'Pagos'}
+
+    def conceptos = xml.Complemento.Pagos
+    conceptos.childNodes().each{
+        Map map = it.attributes()
+        // def n = it.DoctoRelacionado
+        println "${it.name()} ${map}"
+        def nn = it.childNodes().each { l ->
+            println "D: ${l.attributes()}"
+        }
+}
+    **/
 }

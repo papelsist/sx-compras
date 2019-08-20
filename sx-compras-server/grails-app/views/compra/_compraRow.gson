@@ -4,13 +4,18 @@ model {
     Compra compra
 }
 
-json g.render(compra, [excludes:['dateCreated','lastUpdated','version', 'proveedor', 'partidas']]){
+json g.render(compra, [excludes:['version', 'proveedor', 'partidas']]){
     sucursalNombre compra.sucursal.nombre
-    modificada compra.dateCreated
+    modificada compra.lastUpdated
     creada compra.dateCreated
+    updateTime compra.lastUpdated.time
     status compra.status
     proveedor {
         id compra.proveedor.id
         nombre compra.proveedor.nombre
+    }
+    if(compra.partidas) {
+        pendientes compra.getPendientes()
+        
     }
 }

@@ -1,0 +1,12 @@
+import sx.cxp.ReciboElectronico
+import sx.cxp.RequisicionDeCompras
+model {
+	ReciboElectronico reciboElectronico
+}
+
+json g.render(reciboElectronico, [excludes: ["partidas","requisicion"]]) {
+	partidas g.render(reciboElectronico.partidas)
+	if(reciboElectronico.requisicion) {
+		requisicion g.render(RequisicionDeCompras.get(reciboElectronico.requisicion.toString()), [deep: true])
+	}
+}

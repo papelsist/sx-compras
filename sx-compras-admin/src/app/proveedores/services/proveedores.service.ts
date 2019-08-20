@@ -38,7 +38,7 @@ export class ProveedoresService {
     return this._apiUrl;
   }
 
-  save(proveedor: Proveedor): Observable<Proveedor> {
+  save(proveedor: Partial<Proveedor>): Observable<Proveedor> {
     return this.http
       .post<Proveedor>(this.apiUrl, proveedor)
       .pipe(catchError((error: any) => throwError(error)));

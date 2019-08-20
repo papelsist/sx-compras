@@ -27,6 +27,10 @@ const routes: Routes = [
       {
         path: 'ordenes',
         loadChildren: './ordenes/ordenes.module#OrdenesModule'
+      },
+      {
+        path: 'inventarios',
+        loadChildren: './inventarios/inventarios.module#InventariosModule'
       }
     ]
   }

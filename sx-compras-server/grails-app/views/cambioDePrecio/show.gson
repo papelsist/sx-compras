@@ -1,0 +1,7 @@
+import sx.compras.CambioDePrecio
+
+model {
+	CambioDePrecio cambioDePrecio
+}
+
+json tmpl.cambioDePrecio(cambioDePrecio)

@@ -1,0 +1,8 @@
+import sx.compras.Alcance
+
+model {
+	Iterable<Alcance> alcanceList
+}
+
+json tmpl.alcance(alcanceList ?: [])
+

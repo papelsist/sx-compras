@@ -16,11 +16,12 @@ export interface RecepcionDeCompra {
   fecha?: string;
   comentario?: string;
   partidas: Partial<RecepcionDeCompraDet>[];
-  creado?: string;
-  modificado?: string;
+  dateCreated?: string;
+  lastUpdated?: string;
   createUser?: string;
   updateUser?: string;
   fechaInventario?: string;
+  total: number;
   cancelado?: string;
   compraFolio?: number;
   compraFecha?: string;

@@ -21,6 +21,8 @@ class RequisicionDeMaterial {
 
     String sucursal
 
+    String moneda = 'MXN'
+
     Long folio
 
     Date fecha
@@ -28,6 +30,9 @@ class RequisicionDeMaterial {
     String comentario
 
     Set<RequisicionDeMaterialDet> partidas
+
+    Date cerrada
+    String compra 
 
     Date dateCreated
     Date lastUpdated
@@ -40,8 +45,11 @@ class RequisicionDeMaterial {
         clave maxSize: 15
         rfc maxSize: 14
         folio unique:['sucursal']
+        cerrada nullable: true
+        compra nullable: true
         createUser nullable: true
         updateUser nullable: true
+        moneda maxSize: 3
     }
 
     static hasMany = [partidas:RequisicionDeMaterialDet]
@@ -50,6 +58,7 @@ class RequisicionDeMaterial {
         id generator:'uuid'
         partidas cascade: "all-delete-orphan"
         fecha type:'date', index: 'REQ_MATERIAL_IDX1'
+        cerrada type: 'date'
     }
     
 

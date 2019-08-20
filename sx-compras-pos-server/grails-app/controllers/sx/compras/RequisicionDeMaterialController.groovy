@@ -31,7 +31,17 @@ class RequisicionDeMaterialController extends RestfulController<RequisicionDeMat
         super(RequisicionDeMaterial)
     }
 
-     @Override
+    @CompileDynamic
+    def update() {
+        String id = params.id as String
+        RequisicionDeMaterial requisicion = RequisicionDeMaterial.get(id)
+        bindData requisicion, getObjectToBind()
+        requisicion = requisicionDeMaterialService.update(requisicion)
+        respond requisicion, view: 'show'
+    }
+
+
+    @Override
     protected RequisicionDeMaterial createResource() {
         def instance = new RequisicionDeMaterial()
         bindData instance, getObjectToBind()
@@ -62,7 +72,8 @@ class RequisicionDeMaterialController extends RestfulController<RequisicionDeMat
     @CompileDynamic
     def disponibles() {
         def cve = params.proveedor
-        def res = ProveedorProducto.where{proveedor.clave == cve && moneda == 'MXN'}.list()
+        def mon = params.moneda
+        def res = ProveedorProducto.where{proveedor.clave == cve && moneda == mon}.list()
         res.sort{it.producto.clave}
         respond res
     }

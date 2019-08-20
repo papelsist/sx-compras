@@ -46,10 +46,18 @@ class InventariosProc implements  ProcesadorDePoliza, AsientoBuilder{
             next.debe = 0.0
             next.haber = 0.0
             poliza.addToPartidas(next)
-            if(cuadre < 0)
+            def cuentaStr=''
+            if(cuadre < 0){
+                cuentaStr ='703-0001-0000-0000'
                 next.debe = cuadre.abs()
-            else
+               
+            }else{
+                cuentaStr = '704-0005-0000-0000'
                 next.haber = cuadre.abs()
+            }
+            CuentaContable cuenta = buscarCuenta(cuentaStr)
+            next.cuenta = cuenta
+
         }
         poliza = poliza.save flush: true
         poliza.refresh()

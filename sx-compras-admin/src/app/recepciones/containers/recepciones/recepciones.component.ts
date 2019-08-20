@@ -1,49 +1,75 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
 import { Store, select } from '@ngrx/store';
+import * as fromRoot from 'app/store';
 import * as fromStore from '../../store';
 import * as fromRecepciones from '../../store/recepciones.selectors';
 import * as fromActions from '../../store/recepciones.actions';
 
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable } from 'rxjs';
 
-import { RecepcionDeCompra, ComsFilter } from '../../models/recepcionDeCompra';
+import { RecepcionDeCompra } from '../../models/recepcionDeCompra';
+import { Periodo } from 'app/_core/models/periodo';
+import { RecepcionesService } from 'app/recepciones/services';
+import { MatDialog } from '@angular/material';
+import { ShowComsComponent } from 'app/recepciones/components';
 
 @Component({
   selector: 'sx-recepciones',
-  templateUrl: './recepciones.component.html'
+  templateUrl: './recepciones.component.html',
+  styleUrls: ['./recepciones.component.scss']
 })
 export class RecepcionesComponent implements OnInit {
-  coms$: Observable<RecepcionDeCompra[]>;
+  loading$: Observable<boolean>;
+  periodo$: Observable<Periodo>;
+  coms$: Observable<Partial<RecepcionDeCompra>[]>;
+  selected: Partial<RecepcionDeCompra>[] = [];
 
-  search$ = new BehaviorSubject<string>('');
-  comsFilter$: Observable<ComsFilter>;
-
-  private _storageKey = 'sx-compras.coms';
-
-  constructor(private store: Store<fromStore.State>) {}
+  constructor(
+    private store: Store<fromStore.State>,
+    private service: RecepcionesService,
+    private dialog: MatDialog
+  ) {}
 
   ngOnInit() {
-    this.coms$ = this.store.pipe(select(fromRecepciones.getAllRecepciones));
-    this.comsFilter$ = this.store.pipe(
-      select(fromRecepciones.getRecepcionesFilter)
+    this.loading$ = this.store.pipe(
+      select(fromRecepciones.getRecepcionesLoading)
     );
-
-    const lastSearch = localStorage.getItem(this._storageKey + '.filter');
-
-    if (lastSearch) {
-      this.search$.next(lastSearch);
-    }
+    this.periodo$ = this.store.pipe(select(fromRecepciones.selectPeriodo));
+    this.coms$ = this.store.pipe(select(fromRecepciones.getAllRecepciones));
   }
 
-  onSelect(event: RecepcionDeCompra[]) {}
-
-  onSearch(event: string) {
-    this.search$.next(event);
-    localStorage.setItem(this._storageKey + '.filter', event);
+  onSelect(event: RecepcionDeCompra) {
+    this.store.dispatch(
+      new fromRoot.Go({ path: ['ordenes/recepciones', event.id] })
+    );
   }
 
-  onFilter(filter: ComsFilter) {
-    this.store.dispatch(new fromActions.SetRecepcionesFilter({ filter }));
+  onPeriodo(event: Periodo) {
+    this.store.dispatch(new fromActions.SetPeriodo({ periodo: event }));
+  }
+
+  onReload() {
+    this.store.dispatch(new fromActions.LoadRecepciones());
+  }
+  mostrarPartidas(coms: Partial<RecepcionDeCompra>[]) {
+    const ids = coms.map(item => item.id);
+    console.log('Mostrar partidas de :', ids);
+    this.service
+      .partidas(ids)
+      .subscribe(
+        res => this.showComs(res),
+        error => console.error('Error: ', error)
+      );
+  }
+
+  showComs(data: any[]) {
+    this.dialog
+      .open(ShowComsComponent, {
+        data: { partidas: data },
+        width: '950px'
+      })
+      .afterClosed()
+      .subscribe(res => {});
   }
 }

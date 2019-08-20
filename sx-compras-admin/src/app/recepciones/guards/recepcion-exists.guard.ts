@@ -19,12 +19,16 @@ export class RecepcionExistsGuard implements CanActivate {
   ) {}
 
   canActivate(route: ActivatedRouteSnapshot): Observable<boolean> {
+    const id = route.params.comId;
+    return this.hasComInApi(id);
+    /*
     return this.checkStore().pipe(
       switchMap(() => {
         const id = route.params.comId;
         return this.hasComInApi(id);
       })
     );
+    */
   }
 
   checkStore(): Observable<boolean> {

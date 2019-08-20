@@ -15,6 +15,8 @@ class RecepcionDeCompraDet {
 
     Inventario inventario
 
+    String inventariox
+
     CompraDet compraDet
 
     Producto producto
@@ -41,6 +43,7 @@ class RecepcionDeCompraDet {
         comentario nullable: true
         inventario nullable: true
         compraDet nullable: true
+        inventariox nullable: true
     }
 
     static mapping = {

@@ -107,7 +107,8 @@ class VariacionCambiariaProc implements ProcesadorMultipleDePolizas {
                 poliza.addToPartidas(mapRow(poliza,row.cta_proveedor.toString(),descripcion+" TC: "+row.tc_ant,row,0.0,row.variacion))
                 // 701
                 poliza.addToPartidas(mapRow(poliza,row.cta_variacion.toString(),descripcion+" TC:701 "+row.tc_var,row,row.variacion))
-            }else{
+            }
+            if(row.variacion > 0){
                 poliza.addToPartidas(mapRow(poliza,row.cta_proveedor.toString(),descripcion+" TC: "+row.tc_ant,row,row.variacion))
                 // 702
                 poliza.addToPartidas(mapRow(poliza,row.cta_variacion.toString(),descripcion+" TC:702 "+row.tc_var,row,0.0,row.variacion))

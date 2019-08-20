@@ -7,12 +7,17 @@ import grails.converters.*
 import org.springframework.web.multipart.MultipartFile
 import sx.utils.Periodo
 
+import sx.integracion.ImportadorDeFacturasDeImportacion
+
 // @GrailsCompileStatic
 @Secured("IS_AUTHENTICATED_ANONYMOUSLY")
 class ComprobanteFiscalController extends RestfulController<ComprobanteFiscal> {
-    static responseFormats = ['json', 'xml']
+    static responseFormats = ['json']
 
     ComprobanteFiscalService comprobanteFiscalService
+
+    ImportadorDeFacturasDeImportacion importadorDeFacturasDeImportacion
+
     ComprobanteFiscalController() {
         super(ComprobanteFiscal)
     }
@@ -24,7 +29,7 @@ class ComprobanteFiscalController extends RestfulController<ComprobanteFiscal> {
         params.order = 'desc'
         def tipo = params.tipo ?: 'COMPRAS'
         if(tipo == 'COMPRAS') {
-            params.max = 1000
+            params.max = 3000
         }
         log.debug('List {}', params)
         def query = ComprobanteFiscal.where{ tipo == tipo}
@@ -101,6 +106,13 @@ class ComprobanteFiscalController extends RestfulController<ComprobanteFiscal> {
         response.setHeader("Content-disposition", "attachment; filename=\"$cf.cfdiFileName\"")
         ByteArrayInputStream is=new ByteArrayInputStream(cf.xml)
         response.outputStream << is
+    }
+
+    def importarFacturasDeImportacion() {
+        log.info('Importando facturas {}', params)
+        def periodo = params.periodo
+        importadorDeFacturasDeImportacion.importar(periodo)
+        respond status:200
     }
 
 

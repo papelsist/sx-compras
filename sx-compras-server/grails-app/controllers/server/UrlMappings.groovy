@@ -10,6 +10,7 @@ class UrlMappings {
         "/api/marcas"(resources: 'marca')
         "/api/clases"(resources: 'clase')
         "/api/productos"(resources: 'producto')
+        "/api/productos/rows"(controller: 'producto', action: 'rows', method: 'GET')
         "/api/proveedores"(resources: 'proveedor'){
             "/productos"(resources: 'proveedorProducto', excludes:['create', 'save', 'edit','patch'])
             "/productos/disponibles"(controller: 'proveedorProducto', action: 'disponibles')
@@ -132,6 +133,7 @@ class UrlMappings {
         // "/api/cxc/notasDeCargo/print/$id"(controller: 'notaDeCargo', action: 'print', method: 'GET')
         // "/api/cxc/notasDeCargo/reporteDeNotasDeCargo"(controller: 'notaDeCargo', action: 'reporteDeNotasDeCargo', method: 'GET')
 
+
         // CXC Notas de credito
         "/api/cxc/notas"(resources: "notaDeCredito", excludes: ['create', 'edit','patch'])
         "/api/cxc/notas/generarCfdi/$id"(controller: 'notaDeCredito', action: 'generarCfdi', method: 'POST')
@@ -152,11 +154,39 @@ class UrlMappings {
         "/api/compras/cerrar/$id"(controller: 'compra', action: 'cerrar', method: 'PUT')
         "/api/compras/depurar/$id"(controller: 'compra', action: 'depurar', method: 'PUT')
         "/api/compras/print/$id"(controller: 'compra', action: 'print', method: 'GET')
+        "/api/compras/actualizarPrecios/$id"(controller: 'compra', action: 'actualizarPrecios', method: 'PUT')
+        "/api/compras/partidas"(controller: 'compra', action: 'partidas', method: 'GET')
+        // "/api/compras/pendientes/${proveedorId}"(controller: 'compra', action: 'pendientes', method: 'GET')
+        "/api/compras/depuracionBatch2"(controller: 'compra', action: 'depuracionBatch', method: 'POST')
+
+        "/api/listaDePreciosVenta"(resources: 'listaDePreciosVenta', excludes: ['create', 'edit','patch'])
+        "/api/listaDePreciosVenta/disponibles"(controller: 'listaDePreciosVenta', action: 'disponibles')
+        "/api/listaDePreciosVenta/aplicar/$id"(controller: 'listaDePreciosVenta', action: 'aplicar')
+        "/api/listaDePreciosVenta/print/$id"(controller: 'listaDePreciosVenta', action: 'print')
+        
+
+        // requisicionDeMaterial de material
+        "/api/requisicionDeMaterial"(resources: 'requisicionDeMaterial',  excludes:['create', 'edit','patch'])
+        "/api/requisicionDeMaterial/disponibles"(controller: 'requisicionDeMaterial', action: 'disponibles')
+        "/api/requisicionDeMaterial/generarCompra/$id"(controller: 'requisicionDeMaterial', action: 'generarCompra', method: 'PUT')
+        "/api/requisicionDeMaterial/print/$id"(controller: 'requisicionDeMaterial', action: 'print', method: 'GET')
+
+        /// Alcances
+        "/api/alcances/list"(controller: 'alcances', action: 'list')
+        "/api/alcances/generar"(controller: 'alcances', action: 'generar', method: 'POST')
+        "/api/alcances/generarOrden"(controller: 'alcances', action: 'generarOrden', method: 'POST')
+        "/api/alcances/actualizarMeses"(controller: 'alcances', action: 'actualizarMeses', method: 'PUT')
+        "/api/alcances/print"(controller: 'alcances', action: 'print', method: 'GET')
 
 
         "/api/comprobanteFiscal"(resources: 'comprobanteFiscal')
         "/api/comprobanteFiscal/xml/$id"(controller: 'comprobanteFiscal', action: 'xml')
         "/api/comprobanteFiscal/pdf/$id"(controller: 'comprobanteFiscal', action: 'pdf')
+        "/api/comprobanteFiscal/importarFacturasDeImportacion"(controller: 'comprobanteFiscal', action: 'importarFacturasDeImportacion')
+        
+
+        "/api/reciboElectronico"(resources: 'reciboElectronico', excludes:['save', 'create', 'edit','patch'])
+        
 
 
         "/api/cuentaPorPagar"(resources: 'cuentaPorPagar')
@@ -219,6 +249,7 @@ class UrlMappings {
         "/api/coms/pendientesDeAnalisis/$id"(controller: 'recepcionDeCompra', action: 'pendientesDeAnalisis')
         "/api/coms/print/$id"(controller: 'recepcionDeCompra', action: 'print', method: 'GET')
         "/api/coms/recepcionesPorDia"(controller: 'recepcionDeCompra', action: 'recepcionesPorDia', method: 'GET')
+        "/api/coms/partidas"(controller: 'recepcionDeCompra', action: 'partidas', method: 'GET')
 
         "/api/costos"(resources: 'costoPromedio', excludes:['create', 'edit','patch', 'update', 'save'])
         "/api/costos/$ejercicio/$mes"(controller: 'costoPromedio', action: 'costos', method: 'GET')
@@ -291,8 +322,9 @@ class UrlMappings {
         "/api/contabilidad/saldos/drillPeriodo"(controller: 'saldoPorCuentaContable', action: 'drillPeriodo')
         "/api/contabilidad/saldos/drillSubtipo"(controller: 'saldoPorCuentaContable', action: 'drillSubtipo', method: 'POST')
         "/api/contabilidad/saldos/drill/$id"(controller: 'saldoPorCuentaContable', action: 'drill', method: 'GET')
-        "/api/contabilidad/saldos/balanza"(controller: 'saldoPorCuentaContable', action: 'banalza', method: 'GET')
         "/api/contabilidad/saldos/reclasificar"(controller: 'saldoPorCuentaContable', action: 'reclasificar', method: 'POST')
+
+        "/api/contabilidad/saldos/loadBalanza"(controller: 'saldoPorCuentaContable', action: 'loadBalanza')
 
         "/api/contabilidad/diot"(resources: 'diot', excludes:['create', 'edit','patch'])
         "/api/contabilidad/diot/generar/$ejercicio/$mes"(controller: 'diot', action: 'generar', method: 'POST')
@@ -368,11 +400,16 @@ class UrlMappings {
         "/api/embarques/facturistaEstadoDeCuenta/estadoDeCuenta"(controller: 'facturistaEstadoDeCuenta', action: 'estadoDeCuenta')
         "/api/embarques/facturistaEstadoDeCuenta/generarNotaDeCargo/$id"(controller: 'facturistaEstadoDeCuenta', action: 'generarNotaDeCargo', method: 'PUT')
 
-
+        // Existencias
+        "/api/existencias"(resources: 'existencia', excludes:['create', 'save', 'edit','patch'])
+        "/api/existencias/crossTab"(controller: 'existencia', action: 'crossTab')
         // SolicitudDeDepositos
 
         // Activo Fijo
         "/api/activo/activoFijo"(resources: 'activoFijo', excludes:['create', 'edit','patch'])
+
+        // Audit
+        "/api/audit"(resources: 'audit', excludes:['create', 'edit','patch'])
 
         "/"(controller: 'application', action:'index')
         "/api/session"(controller: 'application', action: 'session')

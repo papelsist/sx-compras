@@ -1,5 +1,8 @@
-
-import {throwError as observableThrowError,  Observable ,  fromEvent } from 'rxjs';
+import {
+  throwError as observableThrowError,
+  Observable,
+  fromEvent
+} from 'rxjs';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
@@ -11,10 +14,10 @@ import { Marca } from '../../models/marca';
 
 @Injectable()
 export class MarcasService {
-  private apiUrl: string;
+  private _apiUrl: string;
 
-  constructor(private http: HttpClient, private configService: ConfigService) {
-    this.apiUrl = configService.buildApiUrl('marcas');
+  constructor(private http: HttpClient, private config: ConfigService) {
+    // this.apiUrl = configService.buildApiUrl('marcas');
   }
 
   list(filtro = {}): Observable<Marca[]> {
@@ -49,5 +52,12 @@ export class MarcasService {
   delete(id: string) {
     const url = `${this.apiUrl}/${id}`;
     return this.http.delete(url);
+  }
+
+  get apiUrl() {
+    if (!this._apiUrl) {
+      this._apiUrl = this.config.buildApiUrl('marcas');
+    }
+    return this._apiUrl;
   }
 }

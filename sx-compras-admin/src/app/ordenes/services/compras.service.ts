@@ -9,6 +9,7 @@ import { ConfigService } from '../../utils/config.service';
 import { Compra, ComprasFilter } from '../models/compra';
 
 import { ProveedorProducto } from '../../proveedores/models/proveedorProducto';
+import { Periodo } from 'app/_core/models/periodo';
 
 @Injectable()
 export class ComprasService {
@@ -18,22 +19,11 @@ export class ComprasService {
     this.apiUrl = configService.buildApiUrl('compras');
   }
 
-  list(filter: ComprasFilter): Observable<Compra[]> {
-    let params = new HttpParams();
-    if (!filter.pendientes) {
-      params = params
-        .set('registros', filter.registros.toString())
-        .set('fechaInicial', filter.fechaInicial.toISOString())
-        .set('fechaFinal', filter.fechaFinal.toISOString());
-    } else {
-      params = params.set('pendientes', filter.pendientes.toString());
-    }
-    if (filter.proveedor) {
-      params = params.set('proveedor', filter.proveedor.id);
-    }
-    if (filter.folio) {
-      params = params.set('folio', filter.folio.toString());
-    }
+  list(periodo: Periodo): Observable<Compra[]> {
+    const data = periodo.toApiJSON();
+    const params = new HttpParams()
+      .set('fechaInicial', data.fechaInicial)
+      .set('fechaFinal', data.fechaFinal);
     return this.http.get<Compra[]>(this.apiUrl, { params: params });
   }
 
@@ -63,6 +53,18 @@ export class ComprasService {
     return this.http.put<Compra>(url, {});
   }
 
+  depuraracionBatch(partidas: string[]): Observable<any> {
+    const url = this.configService.buildApiUrl('compras/depuracionBatch2');
+    return this.http.post<Compra>(url, {partidas});
+  }
+
+  actualizarPrecios(compraId: string): Observable<Compra> {
+    const url = this.configService.buildApiUrl(
+      'compras/actualizarPrecios/' + compraId
+    );
+    return this.http.put<Compra>(url, {});
+  }
+
   delete(id: string) {
     const url = `${this.apiUrl}/${id}`;
     return this.http
@@ -71,6 +73,7 @@ export class ComprasService {
   }
 
   getProductosDisponibles(compra: Compra): Observable<ProveedorProducto[]> {
+    console.log('Buscando disponibles', compra);
     const params = new HttpParams().set('moneda', compra.moneda);
     const url = `${this.configService.buildApiUrl('proveedores')}/${
       compra.proveedor.id
@@ -86,5 +89,14 @@ export class ComprasService {
       headers: headers,
       responseType: 'blob'
     });
+  }
+
+  partidas(coms: string[]): Observable<any[]> {
+    const url = `${this.apiUrl}/partidas`;
+    const params = new HttpParams().set(
+      'ids',
+      coms.reduce((prev, item) => prev + ',' + item)
+    );
+    return this.http.get<any[]>(url, { params });
   }
 }

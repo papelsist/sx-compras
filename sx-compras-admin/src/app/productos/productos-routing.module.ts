@@ -58,6 +58,10 @@ const routes: Routes = [
         path: 'clases',
         canActivate: [ClasesGuard],
         component: ClasesComponent
+      },
+      {
+        path: 'listas',
+        loadChildren: 'app/precios/precios.module#PreciosModule'
       }
     ]
   }

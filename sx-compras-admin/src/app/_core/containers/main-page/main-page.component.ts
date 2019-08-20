@@ -38,6 +38,11 @@ export class MainPageComponent implements OnInit {
       icon: 'my_library_books',
       route: '/cxp',
       title: 'Cuentas por pagar (CXP)'
+    },
+    {
+      title: 'Inventarios',
+      route: '/inventarios',
+      icon: 'store'
     }
   ];
 
@@ -65,9 +70,17 @@ export class MainPageComponent implements OnInit {
     this.session$ = this.store.pipe(select(fromAuth.getSession));
   }
 
-  @HostListener('document:keydown.control.p', ['$event'])
+  @HostListener('document:keydown.control.shift.t', ['$event'])
   onConsultaDeProveedores(event) {
     this.proveedorUtils.consultaRapida();
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  consultaDeInventario(event: KeyboardEvent) {
+    if (event.altKey || event.metaKey) {
+      // console.log('Alt + key:', event.key);
+      // console.log('Alt + keyCode:', event.keyCode);
+    }
   }
 
   logout() {

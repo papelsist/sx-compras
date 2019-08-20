@@ -6,8 +6,11 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
 import org.grails.datastore.mapping.engine.event.AbstractPersistenceEvent
-import org.grails.datastore.mapping.engine.event.PostDeleteEvent
+import org.grails.datastore.mapping.engine.event.PostInsertEvent
 import org.grails.datastore.mapping.engine.event.PostUpdateEvent
+import org.grails.datastore.mapping.engine.event.PostDeleteEvent
+import org.grails.datastore.mapping.engine.event.PreDeleteEvent
+
 
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -19,6 +22,15 @@ import sx.compras.Compra
 class CompraListenerService {
 
     @Autowired AuditLogDataService auditLogDataService
+
+     List<String> sucursales = [
+        'SOLIS',
+         'TACUBA',
+         'ANDRADE',
+         'CALLE 4',
+         'CF5FEBRERO',
+         'VERTIZ 176',
+         'BOLIVAR']
 
     String getId(AbstractPersistenceEvent event) {
         if ( event.entityObject instanceof Compra ) {
@@ -35,50 +47,66 @@ class CompraListenerService {
     }
 
     @Subscriber
-    void afterUpdate(PostUpdateEvent event) {
-        // log.info('{} {} ', event.eventType.name(), event.entity.name)
+    void afterInsert(PostInsertEvent event) {
+        Compra compra = getCompra(event)
+        if ( compra ) {
+            logEntity(compra, 'INSERT')
+        }
+    }
 
-        String id = getId(event)
+    @Subscriber
+    void afterUpdate(PostUpdateEvent event) {
+         String id = getId(event)
         if ( id ) {
             log.debug('{} {} Id: {}', event.eventType.name(), event.entity.name, id)
             Compra compra = getCompra(event)
+            Thread.sleep(1000)
             logEntity(compra, 'UPDATE')
         }
     }
 
     @Subscriber
-    void afterDelete(PostDeleteEvent event) {
+    void beforeDelete(PreDeleteEvent event) {
         Compra compra = getCompra(event)
         if ( compra ) {
-            logEntity(compra, 'DELETE')
+            Compra.withNewSession {
+                String type = 'DELETE'
+                String target = compra.sw2
+                log.info('Evento: {} Compra: {} Sucursal: {}', type, compra.id, compra.sw2)
+                Boolean central = target == 'OFICINAS' ? true : false
+                if(central) {
+                    this.sucursales.each {
+                        buildLog(compra, target, type)
+                    }
+                } else {
+                    buildLog(compra, target, type)
+                }
+            }
         }
     }
 
     def logEntity(Compra compra, String type) {
-        // log.debug('Cambio {} Compra cerrada: {}',type, compra.cerrada ? 'SI' : 'NO')
-        if(compra.cerrada != null) {
-            Boolean central = compra.sucursal.clave.trim() == '1' ? true : false
-            if(central) {
+        Boolean central = compra.sucursal.clave.trim() == '1' ? true : false
+        if(central) {
 
-                ['SOLIS',
-                 'TACUBA',
-                 'ANDRADE',
-                 'CALLE 4',
-                 'CF5FEBRERO',
-                 'VERTIZ 176',
-                 'BOLIVAR'].each {
-                    buildLog(compra, it, compra.sw2)
-                }
-            } else {
-                buildLog(compra, compra.sucursal.nombre, compra.sw2)
+            ['SOLIS',
+             'TACUBA',
+             'ANDRADE',
+             'CALLE 4',
+             'CF5FEBRERO',
+             'VERTIZ 176',
+             'BOLIVAR'].each {
+                // Thread.sleep(1000)
+                buildLog(compra, it, type)
             }
-
+        } else {
+            buildLog(compra, compra.sucursal.nombre, type)
         }
-
     }
 
     def buildLog(Compra compra, String destino, String type) {
-        // log.info('Destino: {}', destino)
+        log.info('Generando AUDITLOG {} para {}', type, destino)
+
         Audit alog = new Audit(
                 name: 'Compra',
                 persistedObjectId: compra.id,
@@ -89,18 +117,22 @@ class CompraListenerService {
         )
         alog.save flush: true
         // auditLogDataService.save(alog)
-
-        compra.partidas.each {
-            Audit logDet = new Audit(
+        if(type == 'INSERT') {
+            /*
+            Thread.sleep(1000)
+            compra.partidas.each {
+                Audit logDet = new Audit(
                     name: 'CompraDet',
                     persistedObjectId: it.id,
                     source: 'CENTRAL',
                     target: destino,
                     tableName: 'compra_det',
-                    eventName: type
-            )
-            logDet.save flush: true
-            // auditLogDataService.save(logDet)
+                    eventName: type)
+                logDet.save flush: true
+            }
+            */
         }
+        
+        
     }
 }

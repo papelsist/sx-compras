@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, ModuleWithProviders } from '@angular/core';
 
 import { ProductosRoutingModule } from './productos-routing.module';
 import { SharedModule } from '../_shared/shared.module';
@@ -19,14 +19,24 @@ import { services } from './services';
 import { guards } from './guards';
 
 @NgModule({
+  imports: [SharedModule, ProductosRoutingModule],
+  declarations: [...components, ...containers],
+  entryComponents: [...entryComponents]
+})
+export class ProductosModule {
+  static forRoot(): ModuleWithProviders {
+    return {
+      // tslint:disable-next-line: no-use-before-declare
+      ngModule: RootProductosModule,
+      providers: [...services, ...guards]
+    };
+  }
+}
+@NgModule({
   imports: [
-    SharedModule,
-    ProductosRoutingModule,
+    ProductosModule,
     StoreModule.forFeature('catalogos', reducers),
     EffectsModule.forFeature(effects)
-  ],
-  declarations: [...components, ...containers],
-  entryComponents: [...entryComponents],
-  providers: [...services, ...guards]
+  ]
 })
-export class ProductosModule {}
+export class RootProductosModule {}

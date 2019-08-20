@@ -11,7 +11,6 @@ import {
   TdDialogService
 } from '@covalent/core';
 import { Title } from '@angular/platform-browser';
-import { FormGroup, FormControl } from '@angular/forms';
 
 import { Store } from '@ngrx/store';
 import * as fromRoot from 'app/store';
@@ -42,19 +41,6 @@ export class AlcancesComponent implements OnInit, AfterViewInit {
   filteredData: any[] = [];
   selectedRows: any[] = [];
   loading = false;
-
-  filtros = [
-    { nombre: 'proveedor', descripcion: 'Proveedor' },
-    { nombre: 'producto', descripcion: 'Producto' },
-    { nombre: 'linea', descripcion: 'Línea' },
-    { nombre: 'marca', descripcion: 'Marca' },
-    { nombre: 'clase', descripcion: 'Clase' },
-    { nombre: 'alcanceMenor', descripcion: 'Alc menor igual a' },
-    { nombre: 'alcanceMayor', descripcion: 'Alc mayor a' }
-  ];
-
-  searchForm: FormGroup;
-
   ultimaEjecucion;
 
   constructor(
@@ -66,21 +52,7 @@ export class AlcancesComponent implements OnInit, AfterViewInit {
     private dialogService: TdDialogService,
     private dialog: MatDialog,
     private store: Store<fromRoot.State>
-  ) {
-    this.searchForm = new FormGroup({
-      producto: new FormControl(''),
-      proveedor: new FormControl(''),
-      linea: new FormControl(''),
-      marca: new FormControl(''),
-      clase: new FormControl(''),
-      alcanceMenor: new FormControl(''),
-      alcanceMayor: new FormControl(''),
-      deLinea: new FormControl(true)
-    });
-    this.searchForm.valueChanges.subscribe(filtro => {
-      this.load();
-    });
-  }
+  ) {}
 
   ngOnInit() {
     this.load();
@@ -92,19 +64,14 @@ export class AlcancesComponent implements OnInit, AfterViewInit {
     this.titleService.setTitle('SX Alcances');
   }
 
-  onSearch(event: string) {
-    console.log('Filtrando: ', event);
-  }
-
   onSelect(event: any[]) {
-    // console.log('Selecionadas: ', event.length);
     this.selectedRows = event;
   }
 
   load() {
     this.loadingService.register('procesando');
     this.service
-      .list(this.searchForm.value)
+      .list()
       .pipe(finalize(() => this.loadingService.resolve('procesando')))
       .subscribe(data => {
         this.rows = data;
@@ -121,7 +88,7 @@ export class AlcancesComponent implements OnInit, AfterViewInit {
   }
 
   ejecutar() {
-    const dialogRef = this.dialog
+    this.dialog
       .open(AlcanceRunDialogComponent, {
         data: { periodo: Periodo.fromNow(60) }
       })
@@ -145,7 +112,7 @@ export class AlcancesComponent implements OnInit, AfterViewInit {
       });
   }
 
-  generarOrden() {
+  generarRequisicion() {
     const found = _.find(this.selectedRows, item => item.proveedor);
     if (found) {
       const partidas = _.filter(
@@ -154,7 +121,7 @@ export class AlcancesComponent implements OnInit, AfterViewInit {
       );
       this.dialogService
         .openConfirm({
-          title: 'Generar orden de compra',
+          title: 'Generar requisicion de material',
           message: `${found.nombre}      Productos: ${partidas.length}`,
           acceptButton: 'Aceptar',
           cancelButton: 'Cancelar'
@@ -163,12 +130,14 @@ export class AlcancesComponent implements OnInit, AfterViewInit {
         .afterClosed()
         .subscribe(res => {
           if (res) {
+            this.loadingService.register('procesando');
+
             this.service
-              .generarOrden(found.proveedor, partidas)
+              .generarRequisicion(found.proveedor, partidas)
+              .pipe(finalize(() => this.loadingService.resolve('procesando')))
               .subscribe(oc => {
-                // this.load();
                 this.store.dispatch(
-                  new fromRoot.Go({ path: ['ordenes', oc.id] })
+                  new fromRoot.Go({ path: ['requisiciones', oc.id] })
                 );
               });
           }

@@ -57,7 +57,7 @@ export class ProductoFormComponent implements OnInit {
         {
           validators: [
             Validators.required,
-            Validators.minLength(6),
+            Validators.minLength(4),
             Validators.maxLength(15)
           ],
           updateOn: 'blur'

@@ -9,6 +9,7 @@ import { ComprobanteFiscal } from '../model/comprobanteFiscal';
 
 import * as _ from 'lodash';
 import { CuentaPorPagar } from '../model/cuentaPorPagar';
+import { Periodo } from 'app/_core/models/periodo';
 
 @Injectable()
 export class ComprobanteFiscalService {
@@ -77,5 +78,14 @@ export class ComprobanteFiscalService {
         },
         error => console.log('Error ', error)
       );
+  }
+
+  importar(periodo: Periodo): Observable<ComprobanteFiscal[]> {
+    const url = `${this.apiUrl}/importarFacturasDeImportacion`;
+    const data = periodo.toApiJSON();
+    const params = new HttpParams()
+      .set('fechaInicial', data.fechaInicial)
+      .set('fechaFinal', data.fechaFinal);
+    return this.http.post<ComprobanteFiscal[]>(url, {}, { params: params });
   }
 }

@@ -1,7 +1,9 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { APP_INITIALIZER, NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule, LOCALE_ID } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
+import { registerLocaleData } from '@angular/common';
+import localeMx from '@angular/common/locales/es-MX';
 
 import {
   StoreRouterConnectingModule,
@@ -26,6 +28,7 @@ import { ConfigService } from './utils/config.service';
 import { environment } from 'environments/environment.prod';
 import { ProveedoresModule } from './proveedores/proveedores.module';
 import { AuthModule } from './auth/auth.module';
+import { ProductosModule } from './productos/productos.module';
 
 export const metaReducers: MetaReducer<any>[] = !environment.production
   ? [storeFreeze]
@@ -34,6 +37,8 @@ export const metaReducers: MetaReducer<any>[] = !environment.production
 export function onAppInit(configService: ConfigService): () => Promise<any> {
   return () => configService.load();
 }
+
+// registerLocaleData(localeMx, 'es-MX');
 
 @NgModule({
   imports: [
@@ -53,7 +58,8 @@ export function onAppInit(configService: ConfigService): () => Promise<any> {
     SharedModule,
     AuthModule.forRoot(),
     CoreModule,
-    ProveedoresModule.forRoot()
+    ProveedoresModule.forRoot(),
+    ProductosModule.forRoot()
   ],
   providers: [
     ConfigService,
@@ -63,7 +69,8 @@ export function onAppInit(configService: ConfigService): () => Promise<any> {
       multi: true,
       deps: [ConfigService]
     },
-    { provide: RouterStateSerializer, useClass: CustomSerializer }
+    { provide: RouterStateSerializer, useClass: CustomSerializer },
+    // { provide: LOCALE_ID, useValue: 'es-MX' }
   ],
   declarations: [AppComponent],
   bootstrap: [AppComponent]

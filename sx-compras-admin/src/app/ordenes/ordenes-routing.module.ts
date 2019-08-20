@@ -10,6 +10,11 @@ const routes: Routes = [
     component: containers.OrdenesPageComponent,
     children: [
       {
+        path: 'requisiciones',
+        loadChildren:
+          'app/requisiciones-material/requisiciones-material.module#RequisicionesMaterialModule'
+      },
+      {
         path: 'compras',
         canActivate: [fromGuards.ComprasGuard],
         children: [
@@ -25,7 +30,12 @@ const routes: Routes = [
       {
         path: 'recepciones',
         loadChildren: 'app/recepciones/recepciones.module#RecepcionesModule'
-      }
+      },
+      {
+        path: 'alcances',
+        loadChildren:
+          'app/alcances/alcances.module#AlcancesModule'
+      },
     ]
   }
 ];

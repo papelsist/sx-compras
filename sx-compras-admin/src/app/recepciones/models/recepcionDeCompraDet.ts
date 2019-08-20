@@ -16,6 +16,7 @@ export interface RecepcionDeCompraDet {
   analizado: number;
   kilos: number;
   comentario?: string;
+  compraFolio?: string;
 }
 
 export function buildRecepcionDet(

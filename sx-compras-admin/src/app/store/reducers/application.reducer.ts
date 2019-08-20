@@ -23,7 +23,12 @@ export function reducer(
         globalLoading
       };
     }
-
+    case ApplicationActionTypes.GlobalHttpError: {
+      return {
+        ...state,
+        globalLoading: false
+      };
+    }
     default: {
       return state;
     }

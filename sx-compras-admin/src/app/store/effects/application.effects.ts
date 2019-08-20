@@ -33,27 +33,31 @@ export class ApplicationsEffects {
     private loadingService: TdLoadingService,
     private dialogService: TdDialogService
   ) {
-    this.router.events.subscribe(event => {
-      switch (true) {
-        case event instanceof NavigationStart: {
-          this.store.dispatch(
-            new fromApplication.SetGlobalLoading({ loading: true })
-          );
-          break;
+    this.router.events
+      .pipe
+      // tap(event => console.log('Nav ev:', event))
+      ()
+      .subscribe(event => {
+        switch (true) {
+          case event instanceof NavigationStart: {
+            this.store.dispatch(
+              new fromApplication.SetGlobalLoading({ loading: true })
+            );
+            break;
+          }
+          case event instanceof NavigationEnd:
+          case event instanceof NavigationError:
+          case event instanceof NavigationCancel: {
+            this.store.dispatch(
+              new fromApplication.SetGlobalLoading({ loading: false })
+            );
+            break;
+          }
+          default: {
+            break;
+          }
         }
-        case event instanceof NavigationEnd:
-        case event instanceof NavigationError:
-        case event instanceof NavigationCancel: {
-          this.store.dispatch(
-            new fromApplication.SetGlobalLoading({ loading: false })
-          );
-          break;
-        }
-        default: {
-          break;
-        }
-      }
-    });
+      });
   }
 
   @Effect({ dispatch: false })

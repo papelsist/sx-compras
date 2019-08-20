@@ -1,5 +1,7 @@
 package sx.core
 
+import groovy.transform.CompileDynamic
+
 import grails.compiler.GrailsCompileStatic
 import grails.gorm.transactions.Transactional
 import grails.plugin.springsecurity.annotation.Secured
@@ -12,7 +14,9 @@ import java.sql.SQLException
 @Secured("ROLE_COMPRAS")
 @GrailsCompileStatic
 class ProveedorProductoController extends RestfulController<ProveedorProducto> {
+    
     static responseFormats = ['json']
+
     ProveedorProductoService proveedorProductoService
 
     ProveedorProductoController() {
@@ -47,21 +51,24 @@ class ProveedorProductoController extends RestfulController<ProveedorProducto> {
     }
 
 
-
+    @CompileDynamic
     @Override
     protected List<ProveedorProducto> listAllResources(Map params) {
-        // log.info('Buscando los productos: {} ', params)
+        // 
         params.sort = 'lastUpdated'
         params.order = 'desc'
         params.max = 3000
         String proveedorId = params.proveedorId
-        // String moneda = params.moneda;
-        // return proveedorProductoService.findProductos(proveedorId, moneda)
-        return ProveedorProducto.where{ proveedor.id == proveedorId}.list(params)
+        String mda = params.moneda;
+        
+        // List<ProveedorProducto> res =  proveedorProductoService.findProductos(proveedorId, moneda)
+        List res = ProveedorProducto.where{ proveedor.id == proveedorId && moneda == mda}.list(params)
+        log.info('Prroductos del proveedor: {} moneda: {} Productos: {}', proveedorId, mda, res.size())
+        return res
     }
 
     def disponibles() {
-
+        log.info('Disponibles: {}', params)
         def rows = Producto.findAll("from Producto p " +
                 " where p.activo = true " +
                 " and p.id not in(" +

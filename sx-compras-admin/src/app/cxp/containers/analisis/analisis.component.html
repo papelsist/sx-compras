@@ -21,6 +21,7 @@
       [partidas]="analisis$ | async"
       (select)="onSelect($event)"
       (totales)="onTotales($event)"
+      (print)="onPrint($event)"
     >
     </sx-analisis-table>
   </div>

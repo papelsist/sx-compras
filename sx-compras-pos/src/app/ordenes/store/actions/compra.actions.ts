@@ -1,8 +1,10 @@
 import { Action } from '@ngrx/store';
 
 import { Compra, ComprasFilter } from '../../models/compra';
+import { Periodo } from 'app/_core/models/periodo';
 
 export enum CompraActionTypes {
+  SetPeriodo = '[Compras component]Set periodo',
   LoadCompras = '[Compra] Load Compras',
   LoadComprasFail = '[Compra] Load Compras fail',
   LoadComprasSuccess = '[Compra] Load Compras Success',
@@ -25,6 +27,11 @@ export enum CompraActionTypes {
   DepurarCompra = '[Compra] Depurar  Compra ',
   SetSelectedCompras = '[Compra] Set Selected  Compras ',
   SetComprasFilter = '[Compra] Set Compra filter'
+}
+
+export class SetPeriodo implements Action {
+  readonly type = CompraActionTypes.SetPeriodo;
+  constructor(public payload: { periodo: Periodo }) {}
 }
 
 export class LoadCompras implements Action {
@@ -138,6 +145,7 @@ export class SetComprasFilter implements Action {
 }
 
 export type CompraActions =
+  | SetPeriodo
   | LoadCompras
   | LoadComprasFail
   | LoadComprasSuccess

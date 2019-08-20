@@ -7,6 +7,7 @@ export interface RecepcionDeCompra {
   documento: number;
   remision: string;
   fechaRemision: string;
+  total: number;
   selected?: boolean;
   partidas: RecepcionDeCompraDet[];
   pendienteDeAnalisis?: number;

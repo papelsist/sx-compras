@@ -21,6 +21,7 @@ import { Compra } from 'app/ordenes/models/compra';
 })
 export class ComprasTableComponent extends LxTableComponent implements OnInit {
   @Output() selectionChange = new EventEmitter<any[]>();
+  @Output() print = new EventEmitter();
 
   constructor(public tableService: SxTableService) {
     super(tableService);
@@ -130,6 +131,11 @@ export class ComprasTableComponent extends LxTableComponent implements OnInit {
         width: 120
       },
       {
+        headerName: 'Pendiente',
+        field: 'pendientes',
+        width: 120
+      },
+      {
         headerName: 'Actualizada',
         field: 'modificada',
         cellRenderer: params =>
@@ -151,6 +157,13 @@ export class ComprasTableComponent extends LxTableComponent implements OnInit {
         headerName: 'Estatus',
         field: 'status',
         width: 120
+      },
+      {
+        headerName: 'P',
+        colId: 'print',
+        cellRenderer: 'printRenderer',
+        onCellClicked: params => this.print.emit(params.data),
+        width: 90
       },
       {
         headerName: 'Comentario',

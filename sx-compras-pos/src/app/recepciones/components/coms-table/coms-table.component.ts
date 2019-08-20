@@ -46,14 +46,13 @@ export class ComsTableComponent implements OnInit, OnChanges, OnDestroy {
   ];
 
   @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+
   @Output() select = new EventEmitter();
   @Output() edit = new EventEmitter();
   subscription: Subscription;
   constructor() {}
 
   ngOnInit() {
-    this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
 
     this.subscription = this.sort.sortChange.subscribe(e =>

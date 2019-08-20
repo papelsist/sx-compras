@@ -40,6 +40,12 @@ export class Periodo {
     return new Periodo(f1.toDate(), f2.toDate());
   }
 
+  static monthsAgo(months: number): Periodo {
+    const f1 = moment().subtract(months, 'months');
+    const f2 = moment();
+    return new Periodo(f1.toDate(), f2.toDate());
+  }
+
   static fromStorage(key: string, notFound: Periodo = Periodo.monthToDay()) {
     return this.fromJson(localStorage.getItem(key)) || notFound;
   }

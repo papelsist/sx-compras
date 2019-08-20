@@ -7,7 +7,9 @@ import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
+
 import sx.core.Folio
+import sx.core.ProveedorProducto
 
 import sx.security.User
 import sx.utils.MonedaUtils
@@ -35,10 +37,6 @@ abstract class CompraService {
         }
         actualizar(compra)
         logEntity(compra)
-        // Fix para la replica
-        if(compra.cerrada && compra.sw2 == 'INSERT') {
-            compra.sw2 = 'UPDATE'
-        }
         compra.save failOnError: true, flush: true
         return compra
 
@@ -122,6 +120,30 @@ abstract class CompraService {
         return res
     }
 
+    Compra actualizarPreciosVigentes(Compra compra) {
+        def  provs = ProveedorProducto.where{proveedor == compra.proveedor && moneda == compra.moneda}.list()
+        Map<String, ProveedorProducto> map = provs.collectEntries {
+            [it.producto.clave, it]
+        }
+        compra.partidas.each { item ->
+            ProveedorProducto det = map.get(item.producto.clave)
+            if(det) {
+                item.precio = det.precioBruto
+                item.descuento1 = det.desc1
+                item.descuento2 = det.desc2
+                item.descuento3 = det.desc3
+                item.descuento4 = det.desc4
+                item.costo = det.precio
+                actualizarPartida(item)
+            }
+
+        }
+        actualizarTotales(compra)
+        // logEntity(compra)
+        // return save(compra)
+
+    }
+
     Compra actualizarPrecios(Compra compra, ListaDePreciosProveedor lista) {
         log.debug("Actualizando compra ${compra.folio} con lista ${lista.id}")
         Map<String, ListaDePreciosProveedorDet> map = lista.partidas.collectEntries {
@@ -152,6 +174,11 @@ abstract class CompraService {
         compra.impuestos = MonedaUtils.calcularImpuesto(compra.importeNeto)
         compra.total = compra.importeNeto + compra.impuestos
         return compra
+    }
+
+    @CompileDynamic
+    CompraDet depuracionBatch(CompraDet partidas) {
+        return partidas
     }
 
     void logEntity(Compra compra) {

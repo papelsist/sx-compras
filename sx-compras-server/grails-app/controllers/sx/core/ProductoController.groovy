@@ -3,6 +3,8 @@ package sx.core
 import grails.compiler.GrailsCompileStatic
 import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.RestfulController
+import grails.util.Environment
+
 import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
 
@@ -26,7 +28,8 @@ class ProductoController extends RestfulController<Producto> {
         def query = Producto.where {}
         params.sort = params.sort ?:'lastUpdated'
         params.order = params.order ?:'desc'
-        params.max = 1000
+        params.max = 5000
+        log.info('List: ', params)
 
         if(params.term){
             def search = '%' + params.term + '%'
@@ -43,9 +46,49 @@ class ProductoController extends RestfulController<Producto> {
             Boolean deLinea = this.params.getBoolean('deLinea')
             query = query.where {deLinea == deLinea}
         }
-        List<Producto> res =  query.list(params)
 
+        // TEMPO FOR DEVONLY
+        if(Environment.current == Environment.DEVELOPMENT) {
+            query = query.where {deLinea == true && activo == true}
+            params.max = 50
+        }
+        ///END TEMPO
+
+        List<Producto> res =  query.list(params)
+        log.info('All Productos: {}', res.size())
         respond res
+    }
+
+    @CompileDynamic
+    def lookup() {
+        log.info('Lookup: ', params)
+        def query = Producto.where {}
+        params.max = 5000
+        def search = '%' + params.term + '%'
+        query = query.where { clave =~ search || descripcion =~ search}
+        if(params.activos) {
+            Boolean activos = this.params.getBoolean('activos')
+            query = query.where {activo == activos}
+        }
+        List<Producto> res =  query.list(params)
+        respond res
+    }
+
+    @CompileDynamic
+    def rows() {
+        log.info('Rows: {}', params)
+        /*
+        def query = Producto.where {}
+        params.max = 5000
+
+        if(params.activos) {
+            Boolean activos = this.params.getBoolean('activos')
+            query = query.where {activo == activos}
+        }
+        List<Producto> res =  query.list(params)
+        */
+        List<Producto> res = Producto.findAll("from Producto p order by p.linea.linea")
+        respond res, view: 'rows'
     }
 
     /*

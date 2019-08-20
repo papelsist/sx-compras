@@ -8,6 +8,12 @@ import { TdMediaService } from '@covalent/core';
 export class OrdenesPageComponent implements OnInit {
   navmenu: Object[] = [
     {
+      route: 'requisiciones',
+      title: 'Requisiciones',
+      description: 'Req de Material',
+      icon: 'border_color'
+    },
+    {
       route: 'compras',
       title: 'Compras',
       description: 'Ordenes de compra',
@@ -20,7 +26,7 @@ export class OrdenesPageComponent implements OnInit {
       icon: 'flight_land'
     },
     {
-      route: 'alcance',
+      route: 'alcances',
       title: 'Alcances',
       descripcion: 'Alcancees de inventario',
       icon: 'data_usage'

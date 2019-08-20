@@ -19,13 +19,14 @@ import { CompraDet, buildCompraDet } from '../../models/compraDet';
   selector: 'sx-compra-add-partida',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <button mat-icon-button type="button"  (click)="buildPartida()" [disabled]="parent.disabled || productos.length === 0">
+    <button mat-icon-button type="button"  (click)="buildPartida()" [disabled]="productos.length === 0">
       <mat-icon>add</mat-icon>
     </button>
   `
 })
 export class CompraAddPartidaComponent implements OnInit {
-  @Input() parent: FormGroup;
+  // @Input() parent: FormGroup;
+  @Input() proveedor;
   @Input() productos: ProveedorProducto[];
   @Output() addPartida = new EventEmitter<Partial<CompraDet>>();
 
@@ -52,10 +53,6 @@ export class CompraAddPartidaComponent implements OnInit {
           this.addPartida.emit(partida);
         }
       });
-  }
-
-  get proveedor() {
-    return this.parent.get('proveedor').value;
   }
 
   @HostListener('window:keyup', ['$event'])

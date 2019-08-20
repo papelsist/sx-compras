@@ -10,6 +10,7 @@ import { ConfigService } from '../../utils/config.service';
 
 import { RecepcionDeCompra, ComsFilter } from '../models';
 import { Compra } from '../../ordenes/models/compra';
+import { Periodo } from 'app/_core/models/periodo';
 
 @Injectable()
 export class RecepcionesService {
@@ -19,19 +20,11 @@ export class RecepcionesService {
     this.apiUrl = configService.buildApiUrl('coms');
   }
 
-  list(filter?: ComsFilter): Observable<RecepcionDeCompra[]> {
-    let params = new HttpParams();
-    _.forIn(filter, (value: any, key) => {
-      if (value instanceof Date) {
-        const fecha: Date = value;
-        params = params.set(key, fecha.toISOString());
-      } else {
-        params = params.set(key, value);
-      }
-      if (filter.proveedor) {
-        params = params.set('proveedorId', filter.proveedor.id);
-      }
-    });
+  list(periodo: Periodo): Observable<RecepcionDeCompra[]> {
+    const data = periodo.toApiJSON();
+    const params = new HttpParams()
+      .set('fechaInicial', data.fechaInicial)
+      .set('fechaFinal', data.fechaFinal);
     return this.http
       .get<RecepcionDeCompra[]>(this.apiUrl, { params: params })
       .pipe(catchError((error: any) => throwError(error)));
@@ -49,6 +42,15 @@ export class RecepcionesService {
     return this.http
       .get<Compra[]>(url)
       .pipe(catchError((error: any) => throwError(error)));
+  }
+
+  partidas(coms: string[]): Observable<any[]> {
+    const url = `${this.apiUrl}/partidas`;
+    const params = new HttpParams().set(
+      'ids',
+      coms.reduce((prev, item) => prev + ',' + item)
+    );
+    return this.http.get<any[]>(url, { params });
   }
 
   print(com: RecepcionDeCompra) {

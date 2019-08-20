@@ -197,7 +197,7 @@ class ProvisionNominaProc implements  ProcesadorMultipleDePolizas, AsientoBuilde
 		    ,n.pago,n.periodicidad
             ,NE.TOTAL AS montoTotal,'210-0001-0000-0000' cta_nomina_por_pagar
 		    ,c.clave,c.descripcion,sum(ned.importe_gravado) importe_gravado ,sum(ned.importe_excento) importe_excento
-            ,(case when c.clave in('D004','D005','D006','D014','P039') THEN concat(c.clase,'-',p.numero_de_trabajador,'-0000')
+            ,(case when c.clave in('D004','D006','D014','P039') THEN concat(c.clase,'-',p.numero_de_trabajador,'-0000')
             when c.clave='D007' then concat(c.clase,(SELECT concat((case when x.id>9 then '-00' else '-000' end),cast(x.id as char(4))) from pension_alimenticia x where x.empleado_id=e.id),'-0000')
             else c.clase end) cta_contable,'000-0000-0000-0000' cta_contable_exe,(case when substr(c.clave,1,1)='P' then 'P'  else 'D' end) tipo,n.folio
             FROM nomina_por_empleado_det ned 

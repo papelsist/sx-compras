@@ -14,6 +14,8 @@ import { LineaFormComponent } from './linea-form/linea-form.component';
 import { ClaseFormComponent } from './clase-form/clase-form.component';
 import { ProductoSatComponent } from './producto-sat/producto-sat.component';
 import { UnidadSatComponent } from './unidad-sat/unidad-sat.component';
+import { AltiGridComponent } from './alti-modal/alti-grid.component';
+import { AltiModalComponent } from './alti-modal/alti-modal.component';
 
 export const components = [
   ProductosTableComponent,
@@ -31,13 +33,16 @@ export const components = [
   PresentacionFieldComponent,
   MododeventaFieldComponent,
   ProductoSatComponent,
-  UnidadSatComponent
+  UnidadSatComponent,
+  AltiGridComponent,
+  AltiModalComponent
 ];
 
 export const entryComponents: any[] = [
   LineaFormComponent,
   MarcaFormComponent,
-  ClaseFormComponent
+  ClaseFormComponent,
+  AltiModalComponent
 ];
 
 export * from './productos-table/productos-table.component';
@@ -56,3 +61,6 @@ export * from './producto-form/presentacion-field.component';
 export * from './producto-form/mododeventa-field.component';
 export * from './producto-sat/producto-sat.component';
 export * from './unidad-sat/unidad-sat.component';
+
+export * from './alti-modal/alti-grid.component';
+export * from './alti-modal/alti-modal.component';

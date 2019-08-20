@@ -31,6 +31,12 @@ export class CatalogosPageComponent implements OnInit {
       title: 'Clases',
       description: 'Clases de productos',
       icon: 'swap_horiz'
+    },
+    {
+      route: 'listas',
+      title: 'Precios',
+      description: 'Cambios de precio',
+      icon: 'transform'
     }
   ];
 

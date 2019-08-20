@@ -1,0 +1,31 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>Nueva lista de precios</mat-card-title>
+  </mat-card-header>
+  <mat-divider></mat-divider>
+  <mat-card-content>
+    <ng-template
+      tdLoading
+      [tdLoadingUntil]="!(loading$ | async)"
+      tdLoadingStrategy="overlay"
+    >
+    </ng-template>
+    <sx-lista-form
+      #form
+      (save)="onSave($event)"
+      [disponibles]="disponibles$ | async"
+    ></sx-lista-form>
+  </mat-card-content>
+  <mat-divider></mat-divider>
+  <mat-card-actions>
+    <button mat-button (click)="onBack()">
+      <mat-icon>arrow_back</mat-icon> LISTAS
+    </button>
+    <button mat-button (click)="form.submit()" [disabled]="!form.canSave()">
+      <mat-icon>save</mat-icon> SALVAR
+    </button>
+    <button mat-button (click)="form.agregarProductos()">
+      <mat-icon>playlist_add</mat-icon> PRODUCTOS
+    </button>
+  </mat-card-actions>
+</mat-card>

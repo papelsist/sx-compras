@@ -22,21 +22,16 @@ class RecepcionDeCompraController extends RestfulController<RecepcionDeCompra> {
     RecepcionDeCompraController() {
         super(RecepcionDeCompra)
     }
-
+    
     @Override
     protected List<RecepcionDeCompra> listAllResources(Map params) {
         params.sort = 'lastUpdated'
         params.order = 'desc'
-        params.max = params.registros?: 200
+        params.max = 10000
         log.debug('List {}', params)
-        def query = RecepcionDeCompra.where {}
-        if(params.proveedorId) {
-            String proveedorId = params.proveedorId
-            query = query.where{proveedor.id == proveedorId}
-        }
-        if(params.periodo) {
-            Periodo periodo =(Periodo)params.periodo
-            query = query.where{fecha > periodo.fechaInicial && fecha <= periodo.fechaFinal}
+        Periodo periodo =(Periodo)params.periodo
+        def query = RecepcionDeCompra.where{
+            fecha >= periodo.fechaInicial && fecha <= periodo.fechaFinal
         }
         return query.list(params)
     }
@@ -49,15 +44,15 @@ class RecepcionDeCompraController extends RestfulController<RecepcionDeCompra> {
      */
     @CompileDynamic
     def pendientesDeAnalisis(Proveedor proveedor) {
-        List list = RecepcionDeCompraDet.findAll(
+        List recepciones = RecepcionDeCompraDet.findAll(
                 "select distinct(d.recepcion) from RecepcionDeCompraDet d " +
                         " where d.recepcion.proveedor =? " +
                         " and d.cantidad - d.analizado > 0 " +
                         " and d.recepcion.cancelado is null" +
                         " order by d.recepcion.fecha asc",
                 [proveedor])
-        list*.actualizarPendiente()
-        respond list
+        recepciones*.actualizarPendiente()
+        respond recepciones
     }
 
     def handleException(Exception e) {
@@ -80,6 +75,26 @@ class RecepcionDeCompraController extends RestfulController<RecepcionDeCompra> {
         def pdf = this.reportService.run('RecepDeMercancia', params)
         def fileName = "RecepDeMercancia.pdf"
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: fileName)
+    }
+
+    @CompileDynamic
+    def partidas() {
+        log.info('Localizando partidas: {}', params)
+        String xids = params.ids as String
+        String[] ids = xids.split(',')
+        String dd = ""
+        def limit = ids.length - 1
+        0.upto(limit, { item ->
+            String rq = "'${ids[item]}'"
+            dd += rq
+            if(item < limit) {
+                dd += ","
+            }
+        })
+        String hql = "from RecepcionDeCompraDet d where d.recepcion.id in(${dd})"
+        def res = RecepcionDeCompraDet.findAll(hql)
+        respond res
+
     }
 }
 

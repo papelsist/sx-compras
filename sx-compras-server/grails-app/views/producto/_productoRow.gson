@@ -1,0 +1,12 @@
+import sx.core.Producto
+
+model {
+    Producto producto
+}
+
+json g.render(producto, [resolveTemplate: false]) {
+    linea producto.linea?.linea
+    clase producto.clase?.clase
+    marca producto.marca?.marca
+    // marca 'MI MARCA'
+}

@@ -41,7 +41,14 @@ class CostoService {
 
                     BigDecimal costo = (fleteUnitario + costoBruto) * analisis.factura.tipoDeCambio
 
-                    Inventario inventario = it.com.inventario
+
+                    Inventario inventario = null
+                    if(it.com.inventario) {
+                        inventario = it.com.inventario
+                    } else {
+                        inventario = Inventario.get(it.com.inventariox)
+                    }
+                    
                     inventario.costo = costo
                     // inventario.gasto = fleteUnitario
                     log.debug("Costo de : {} = {} ", it.clave, costo)

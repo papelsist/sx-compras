@@ -88,7 +88,6 @@ export class FacturasTable2Component implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.partidas && changes.partidas.currentValue) {
-      console.log('Partidas: ', changes.partidas.currentValue);
       if (this.gridApi) {
         this.gridApi.setRowData(changes.partidas.currentValue);
       }

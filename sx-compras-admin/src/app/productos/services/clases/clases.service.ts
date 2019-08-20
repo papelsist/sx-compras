@@ -1,5 +1,4 @@
-
-import {throwError as observableThrowError,  Observable } from 'rxjs';
+import { throwError as observableThrowError, Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { map, switchMap, catchError } from 'rxjs/operators';
@@ -11,10 +10,10 @@ import { Clase } from '../../models/clase';
 
 @Injectable()
 export class ClasesService {
-  private apiUrl: string;
+  private _apiUrl: string;
 
-  constructor(private http: HttpClient, private configService: ConfigService) {
-    this.apiUrl = configService.buildApiUrl('clases');
+  constructor(private http: HttpClient, private config: ConfigService) {
+    // this.apiUrl = configService.buildApiUrl('clases');
   }
 
   list(): Observable<Clase[]> {
@@ -41,5 +40,12 @@ export class ClasesService {
     return this.http
       .delete(url)
       .pipe(catchError(error => observableThrowError(error)));
+  }
+
+  get apiUrl() {
+    if (!this._apiUrl) {
+      this._apiUrl = this.config.buildApiUrl('clases');
+    }
+    return this._apiUrl;
   }
 }

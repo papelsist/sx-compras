@@ -41,7 +41,8 @@ JOIN analisis_de_factura_det A ON (A.ANALISIS_ID=B.ID)
 JOIN recepcion_de_compra_det R ON (A.com_id=R.ID)
 JOIN recepcion_de_compra RC ON(R.RECEPCION_ID=RC.ID)
 JOIN compra X ON(RC.COMPRA_ID=X.ID)
-JOIN inventario I ON(I.ID=R.INVENTARIO_ID) JOIN producto P ON(I.PRODUCTO_ID=P.ID)
+JOIN inventario I ON(I.ID = R.INVENTARIOX) 
+JOIN producto P ON(I.PRODUCTO_ID=P.ID)
 JOIN sucursal S ON(S.ID=I.SUCURSAL_ID)
 WHERE B.ID=$P{ID}]]></queryString>
 

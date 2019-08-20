@@ -1,0 +1,20 @@
+import sx.compras.ListaDePreciosVenta
+
+model {
+	ListaDePreciosVenta listaDePreciosVenta
+}
+
+json g.render(listaDePreciosVenta, [ excludes: ['partidas', 'version']]) {
+	partidas g.render(listaDePreciosVenta.partidas)
+}
+/*
+json g.render(compra, [deep:false, excludes:['partidas', 'version']]) {
+    sucursalNombre compra.sucursal.nombre
+    partidas g.render(compra.partidas)
+    modificada compra.lastUpdated
+    creada compra.dateCreated
+    status compra.status
+    proveedorNombre compra.nombre
+    updateTime compra.lastUpdated.time
+}
+*/

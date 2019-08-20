@@ -19,10 +19,12 @@ import {
   GridReadyEvent,
   FilterChangedEvent,
   CellClickedEvent,
-  RowDoubleClickedEvent
+  RowDoubleClickedEvent,
+  ColumnApi
 } from 'ag-grid-community';
 import { SxTableService } from './sx-table.service';
 import { spAgGridText } from './table-support';
+import { PrintCellRendererComponent } from './print-cell-renderer.component';
 
 @Component({
   selector: 'sx-lx-table',
@@ -38,15 +40,21 @@ export class LxTableComponent implements OnInit, OnChanges {
 
   public gridOptions: GridOptions;
   public gridApi: GridApi;
+  public columnApi: ColumnApi;
   public defaultColDef: ColDef;
 
   public printFriendly = false;
 
   public localeText: any;
 
+  public frameworkComponents;
+
   constructor(public tableService: SxTableService) {
     this.buildGridOptions();
     this.buildLocalText();
+    this.frameworkComponents = {
+      printRenderer: PrintCellRendererComponent
+    };
   }
 
   ngOnInit() {}
@@ -80,12 +88,15 @@ export class LxTableComponent implements OnInit, OnChanges {
     this.gridOptions.onCellClicked = this.onCellClicked.bind(this);
     this.gridOptions.onRowDoubleClicked = this.onRowDoubleClicked.bind(this);
     this.gridOptions.getRowStyle = this.buildRowStyle.bind(this);
+    this.gridOptions.onFirstDataRendered = this.onFirstDataRendered.bind(this);
+    this.gridOptions.onGridReady = this.onGridReady.bind(this);
   }
 
   onModelUpdate(event) {}
 
   onGridReady(params: GridReadyEvent) {
     this.gridApi = params.api;
+    this.columnApi = params.columnApi;
     this.gridApi.setRowData(this.partidas);
   }
 
@@ -127,12 +138,16 @@ export class LxTableComponent implements OnInit, OnChanges {
     return this.tableService.formatCurrency(data);
   }
 
-  transformNumber(data) {
-    return this.tableService.formatNumber(data);
+  transformNumber(data, info = null) {
+    return this.tableService.formatNumber(data, info);
   }
 
   transformDate(data, format: string = 'dd/MM/yyyy') {
     return this.tableService.formatDate(data, format);
+  }
+
+  transformPercent(data, format = null) {
+    return this.tableService.formatPercent(data, format);
   }
 
   buildColsDef(): ColDef[] {

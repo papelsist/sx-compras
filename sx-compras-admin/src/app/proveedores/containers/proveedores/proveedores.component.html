@@ -1,15 +1,31 @@
 <mat-card>
-  <div layout layout-align="start center" class="pad-left-sm pad-right-sm" [formGroup]="searchForm">
+  <div
+    layout
+    layout-align="start center"
+    class="pad-left-sm pad-right-sm"
+    [formGroup]="searchForm"
+  >
     <span class="push-left-sm">
       <span class="mat-title">Catálogo de proveedores</span>
     </span>
     <span flex></span>
-    <mat-checkbox formControlName="activos" class="pad-right">Activos</mat-checkbox>
+    <mat-checkbox formControlName="activos" class="pad-right"
+      >Activos</mat-checkbox
+    >
     <mat-checkbox formControlName="suspendidos">Suspendidos</mat-checkbox>
-    <td-search-box class="push-right-sm" placeholder="Proveedor" flex formControlName="term">
+    <td-search-box
+      class="push-right-sm"
+      placeholder="Proveedor"
+      flex
+      formControlName="term"
+    >
     </td-search-box>
     <span>
-      <button mat-icon-button [matMenuTriggerFor]="toolbarMenu" [routerLink]="['create']">
+      <button
+        mat-icon-button
+        [matMenuTriggerFor]="toolbarMenu"
+        (click)="onCreate()"
+      >
         <mat-icon>more_vert</mat-icon>
       </button>
       <mat-menu #toolbarMenu="matMenu">
@@ -19,9 +35,19 @@
   </div>
   <mat-divider></mat-divider>
   <div class="proveedores-container">
-    <sx-proveedores-table [proveedores]="proveedores$ | async" (select)="onSelect($event)"></sx-proveedores-table>
+    <sx-proveedores-table
+      [proveedores]="proveedores$ | async"
+      (select)="onSelect($event)"
+    ></sx-proveedores-table>
   </div>
 </mat-card>
-<a mat-fab matTooltip="Nuevo proveedor" matTooltipPosition="before" color="accent" class="mat-fab-position-bottom-left" [routerLink]="['create']">
+<a
+  mat-fab
+  matTooltip="Nuevo proveedor"
+  matTooltipPosition="before"
+  color="accent"
+  class="mat-fab-position-bottom-left"
+  (click)="onCreate()"
+>
   <mat-icon>add</mat-icon>
 </a>

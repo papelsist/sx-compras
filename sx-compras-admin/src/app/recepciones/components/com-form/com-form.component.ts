@@ -82,4 +82,7 @@ export class ComFormComponent implements OnInit, OnChanges {
   get partidas() {
     return this.form.get('partidas') as FormArray;
   }
+  getPrintUrl(event: Partial<RecepcionDeCompra>) {
+    return `coms/print/${event.id}`;
+  }
 }

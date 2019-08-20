@@ -1,14 +1,17 @@
 import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 
-import { Compra, ComprasFilter, buildFilter } from '../../models/compra';
-import { CompraActions, CompraActionTypes } from '../actions/compra.actions';
+import { Compra } from '../../models/compra';
+import { CompraActionTypes } from '../actions/compra.actions';
+import * as fromActions from '../actions/compra.actions';
+
 import { Periodo } from 'app/_core/models/periodo';
+
+export const ComprasPeriodoStoeKey = 'sx-compras.compras.periodo';
 
 export interface State extends EntityState<Compra> {
   loading: boolean;
   loaded: boolean;
-  filter: ComprasFilter;
-  selected: string[];
+  periodo: Periodo;
 }
 
 export const adapter: EntityAdapter<Compra> = createEntityAdapter<Compra>();
@@ -16,18 +19,25 @@ export const adapter: EntityAdapter<Compra> = createEntityAdapter<Compra>();
 export const initialState: State = adapter.getInitialState({
   loading: false,
   loaded: false,
-  filter: buildFilter(45),
-  periodo: Periodo.fromNow(100),
-  searchTerm: undefined,
-  selected: []
+  periodo: Periodo.fromStorage(ComprasPeriodoStoeKey)
 });
 
-export function reducer(state = initialState, action: CompraActions): State {
+export function reducer(
+  state = initialState,
+  action: fromActions.CompraActions
+): State {
   switch (action.type) {
+    case CompraActionTypes.SetPeriodo: {
+      const periodo = action.payload.periodo;
+      return {
+        ...state,
+        periodo
+      };
+    }
+
     case CompraActionTypes.DepurarCompra:
     case CompraActionTypes.CerrarCompra:
     case CompraActionTypes.DeleteCompra:
-    case CompraActionTypes.UpdateCompra:
     case CompraActionTypes.AddCompra:
     case CompraActionTypes.LoadCompras: {
       return {
@@ -98,21 +108,6 @@ export function reducer(state = initialState, action: CompraActions): State {
       return adapter.removeAll(state);
     }
 
-    case CompraActionTypes.SetSelectedCompras: {
-      const selected = action.payload.selected;
-      return {
-        ...state,
-        selected
-      };
-    }
-
-    case CompraActionTypes.SetComprasFilter: {
-      return {
-        ...state,
-        filter: action.payload.filter
-      };
-    }
-
     default: {
       return state;
     }
@@ -128,5 +123,4 @@ export const {
 
 export const getComprasLoading = (state: State) => state.loading;
 export const getComprasLoaded = (state: State) => state.loaded;
-export const getSelected = (state: State) => state.selected;
-export const getFilter = (state: State) => state.filter;
+export const getPeriodo = (state: State) => state.periodo;

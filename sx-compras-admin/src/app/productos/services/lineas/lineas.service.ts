@@ -10,10 +10,10 @@ import { Linea } from '../../models/linea';
 
 @Injectable()
 export class LineasService {
-  private apiUrl: string;
+  private _apiUrl: string;
 
-  constructor(private http: HttpClient, private configService: ConfigService) {
-    this.apiUrl = configService.buildApiUrl('lineas');
+  constructor(private http: HttpClient, private config: ConfigService) {
+    // this.apiUrl = configService.buildApiUrl('lineas');
   }
 
   list(filtro: any = {}): Observable<Linea[]> {
@@ -47,5 +47,12 @@ export class LineasService {
     return this.http
       .delete(url)
       .pipe(catchError(error => observableThrowError(error)));
+  }
+
+  get apiUrl() {
+    if (!this._apiUrl) {
+      this._apiUrl = this.config.buildApiUrl('lineas');
+    }
+    return this._apiUrl;
   }
 }

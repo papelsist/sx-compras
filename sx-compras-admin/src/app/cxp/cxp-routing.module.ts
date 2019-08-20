@@ -92,6 +92,10 @@ const routes: Routes = [
         path: 'ecuenta',
         loadChildren:
           './estado-de-cuenta/estado-de-cuenta.module#EstadoDeCuentaModule'
+      },
+      {
+        path: 'recibos',
+        loadChildren: 'app/recibos/recibos.module#RecibosModule'
       }
     ]
   }

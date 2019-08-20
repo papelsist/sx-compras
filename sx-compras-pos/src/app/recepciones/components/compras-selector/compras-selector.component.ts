@@ -19,12 +19,12 @@ import { Proveedor } from '../../../proveedores/models/proveedor';
   templateUrl: './compras-selector.component.html',
   styles: [
     `
-    .compras-table-panel {
-      min-height: 450px;
-      max-height: 450px;
-      overflow: auto;
-    }
-  `
+      .compras-table-panel {
+        min-height: 450px;
+        max-height: 450px;
+        overflow: auto;
+      }
+    `
   ]
 })
 export class ComprasSelectorComponent implements OnInit {

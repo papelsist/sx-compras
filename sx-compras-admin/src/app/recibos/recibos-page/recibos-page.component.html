@@ -1,0 +1,25 @@
+<mat-card flex>
+  <sx-standard-header
+    title="Recibos electrónicos de pago"
+    [periodo]="periodo$ | async"
+    (periodoChange)="onPeriodo($event)"
+    (reload)="onReload()"
+    (download)="grid.exportData()"
+  ></sx-standard-header>
+  <mat-divider></mat-divider>
+  <ng-template
+    tdLoading
+    [tdLoadingUntil]="!(loading$ | async)"
+    tdLoadingStrategy="overlay"
+  >
+  </ng-template>
+  <div class="grid-panel">
+    <sx-recibos-table
+      #grid
+      [partidas]="rows$ | async"
+      (select)="onSelect($event)"
+      (xml)="onXml($event)"
+    >
+    </sx-recibos-table>
+  </div>
+</mat-card>

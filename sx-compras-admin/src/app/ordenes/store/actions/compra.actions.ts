@@ -4,7 +4,7 @@ import { Compra, ComprasFilter } from '../../models/compra';
 import { Periodo } from 'app/_core/models/periodo';
 
 export enum CompraActionTypes {
-  SetPeriodo = '[Compras component]Set periodo',
+  SetPeriodo = '[Compras component]Set periodo de compras',
   SetComprasFilter = '[Compra] Set Compras filter',
   SetComprasSearchTerm = '[Compra] Set Search Term',
   LoadCompras = '[Compra] Load Compras',
@@ -26,12 +26,21 @@ export enum CompraActionTypes {
   LoadFail = '[Compra] Load One Compra fail',
   LoadSuccess = '[Compra] Load One Compra Success',
   CerrarCompra = '[Compra] Cerrar  Compra ',
-  DepurarCompra = '[Compra] Depurar  Compra '
+  DepurarCompra = '[Compra] Depurar  Compra ',
+  // Actualizar precios
+  ActualizarPrecios = '[Compra component] Actualizar precios de Compra',
+  ActualizarPreciosFail = '[Compra] Actualizar precios de Compra Fail',
+  ActualizarPreciosSuccess = '[Compra] Actualizar precios de Compra Success',
+
+  // Depuracion Batch
+  DepuracionBatch = '[ShowCompraDets Component] Depuracion batch',
+  DepuracionBatchFail = '[Compra] Depuracion batch Fail',
+  DepuracionBatchSuccess = '[Compra] Depuracion batch Success'
 }
 
 export class SetPeriodo implements Action {
   readonly type = CompraActionTypes.SetPeriodo;
-  constructor(payload: { periodo: Periodo }) {}
+  constructor(public payload: { periodo: Periodo }) {}
 }
 
 export class LoadCompras implements Action {
@@ -129,6 +138,34 @@ export class DepurarCompra implements Action {
   constructor(public payload: Compra) {}
 }
 
+// Actualizar precios
+export class ActualizarPrecios implements Action {
+  readonly type = CompraActionTypes.ActualizarPrecios;
+  constructor(public payload: { compraId: string }) {}
+}
+export class ActualizarPreciosFail implements Action {
+  readonly type = CompraActionTypes.ActualizarPreciosFail;
+  constructor(public payload: { response: any }) {}
+}
+export class ActualizarPreciosSuccess implements Action {
+  readonly type = CompraActionTypes.ActualizarPreciosSuccess;
+  constructor(public payload: { compra: Compra }) {}
+}
+
+// Depuracion Batch
+export class DepuracionBatch implements Action {
+  readonly type = CompraActionTypes.DepuracionBatch;
+  constructor(public payload: { partdidas: string[] }) {}
+}
+export class DepuracionBatchFail implements Action {
+  readonly type = CompraActionTypes.DepuracionBatchFail;
+  constructor(public payload: { response: any }) {}
+}
+export class DepuracionBatchSuccess implements Action {
+  readonly type = CompraActionTypes.DepuracionBatchSuccess;
+  constructor(public payload: { partidas: any[] }) {}
+}
+
 export type CompraActions =
   | SetPeriodo
   | LoadCompras
@@ -149,4 +186,12 @@ export type CompraActions =
   | SetComprasFilter
   | SetComprasSearchTerm
   | CerrarCompra
-  | DepurarCompra;
+  | DepurarCompra
+  //
+  | ActualizarPrecios
+  | ActualizarPreciosFail
+  | ActualizarPreciosSuccess
+  //
+  | DepuracionBatch
+  | DepuracionBatchFail
+  | DepuracionBatchSuccess;

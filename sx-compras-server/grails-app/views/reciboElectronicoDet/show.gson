@@ -1,0 +1,7 @@
+import sx.cxp.ReciboElectronicoDet
+
+model {
+	ReciboElectronicoDet reciboElectronicoDet
+}
+
+json tmpl.reciboElectronicoDet(reciboElectronicoDet)

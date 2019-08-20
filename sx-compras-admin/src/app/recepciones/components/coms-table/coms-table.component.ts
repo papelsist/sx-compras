@@ -1,113 +1,151 @@
 import {
   Component,
   OnInit,
-  ChangeDetectionStrategy,
-  Input,
-  OnChanges,
-  SimpleChanges,
-  ViewChild,
   Output,
+  Input,
   EventEmitter,
-  OnDestroy
+  ChangeDetectionStrategy
 } from '@angular/core';
-import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 
-import { Subscription } from 'rxjs';
+import { LxTableComponent } from 'app/_shared/components';
+import { SxTableService } from 'app/_shared/components/lx-table/sx-table.service';
+
+import { ColDef, ModelUpdatedEvent, RowSelectedEvent } from 'ag-grid-community';
 
 import { RecepcionDeCompra } from '../../models/recepcionDeCompra';
 
 @Component({
   selector: 'sx-coms-table',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './coms-table.component.html',
-  styleUrls: ['./coms-table.component.scss']
+  template: `
+    <div style="height: 100%">
+      <ag-grid-angular
+        #agGrid
+        class="ag-theme-balham"
+        style="width: 100%; height: 100%;"
+        [gridOptions]="gridOptions"
+        [defaultColDef]="defaultColDef"
+        [floatingFilter]="false"
+        [localeText]="localeText"
+        (firstDataRendered)="onFirstDataRendered($event)"
+        (gridReady)="onGridReady($event)"
+        (modelUpdated)="onModelUpdate($event)"
+      >
+      </ag-grid-angular>
+    </div>
+  `
 })
-export class ComsTableComponent implements OnInit, OnChanges, OnDestroy {
-  @Input()
-  coms: RecepcionDeCompra[] = [];
-  @Input()
-  multipleSelection = true;
-  @Input()
-  filter;
-  dataSource = new MatTableDataSource<RecepcionDeCompra>([]);
+export class ComsTableComponent extends LxTableComponent implements OnInit {
+  @Output() selectionChange = new EventEmitter<any[]>();
+  @Input() selection: any[] = [];
 
-  displayColumns = [
-    'sucursalNombre',
-    'documento',
-    'compraFolio',
-    'fecha',
-    'nombre',
-    'remision',
-    'fechaRemision',
-    'fechaInventario',
-    'comentario',
-    'total',
-    // 'createUser',
-    'modificado',
-    'lastUpdatedBy',
-    'operaciones'
-  ];
+  constructor(public tableService: SxTableService) {
+    super(tableService);
+  }
 
-  @ViewChild(MatSort)
-  sort: MatSort;
-  @ViewChild(MatPaginator)
-  paginator: MatPaginator;
-  @Output()
-  select = new EventEmitter();
-  @Output()
-  edit = new EventEmitter();
-  subscription: Subscription;
-  constructor() {}
+  buildGridOptions() {
+    super.buildGridOptions();
+    this.gridOptions.rowSelection = 'multiple';
+    this.gridOptions.onRowSelected = (event: RowSelectedEvent) => {
+      this.selectionChange.emit(this.gridApi.getSelectedRows());
+    };
+  }
 
-  ngOnInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+  buildRowStyle(params: any) {
+    if (params.node.rowPinned) {
+      return { 'font-weight': 'bold' };
+    }
+    return {};
+  }
 
-    this.subscription = this.sort.sortChange.subscribe(e =>
-      localStorage.setItem('sx-compras.coms-table.sort', JSON.stringify(e))
-    );
-
-    const sdata: string = localStorage.getItem('sx-compras.coms-table.sort');
-    if (sdata) {
-      const data: {
-        active: string;
-        direction: 'asc' | 'desc' | '';
-      } = JSON.parse(sdata);
-      this.sort.active = data.active;
-      this.sort.direction = data.direction;
-    } else {
-      this.sort.active = 'documento';
-      this.sort.direction = 'desc';
+  onModelUpdate(event: ModelUpdatedEvent) {
+    if (this.gridApi) {
+      this.actualizarTotales();
+      // this.gridApi.sizeColumnsToFit();
     }
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes.coms && changes.coms.currentValue) {
-      this.dataSource.data = changes.coms.currentValue;
-    }
-    if (changes.filter) {
-      this.dataSource.filter = changes.filter.currentValue;
-    }
+  clearSelection() {
+    this.gridApi.deselectAll();
   }
 
-  ngOnDestroy() {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
+  actualizarTotales() {
+    let registros = 0;
+
+    if (this.gridApi) {
+      this.gridApi.forEachNodeAfterFilter((rowNode, index) => {
+        const row: Partial<RecepcionDeCompra> = rowNode.data;
+        registros++;
+      });
     }
-  }
-
-  applyFilter(filterValue: string) {
-    filterValue = filterValue.trim();
-    filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
-    this.dataSource.filter = filterValue;
-  }
-
-  onEdit($event: Event, row) {
-    $event.preventDefault();
-    this.edit.emit(row);
+    const res = [
+      {
+        nombre: `Registros: ${registros}`
+      }
+    ];
+    if (this.gridApi) {
+      this.gridApi.setPinnedBottomRowData(res);
+    }
   }
 
   getPrintUrl(event: RecepcionDeCompra) {
     return `coms/print/${event.id}`;
+  }
+
+  buildColsDef(): ColDef[] {
+    return [
+      {
+        headerName: 'Sucursal',
+        field: 'sucursalNombre',
+        width: 115,
+        pinned: 'left'
+      },
+      {
+        headerName: 'COM',
+        field: 'documento',
+        width: 100,
+        pinned: 'left'
+      },
+      {
+        headerName: 'Proveedor',
+        field: 'nombre',
+        width: 300,
+        pinned: 'left'
+      },
+      {
+        headerName: 'Fecha',
+        field: 'fecha',
+        width: 100,
+        valueFormatter: params => this.transformDate(params.value)
+      },
+      {
+        headerName: 'Compra',
+        field: 'compraFolio'
+      },
+      {
+        headerName: 'Remisión',
+        field: 'remision'
+      },
+      {
+        headerName: 'F.Remisión',
+        field: 'fechaRemision',
+        valueFormatter: params => this.transformDate(params.value)
+      },
+      {
+        headerName: 'Comentario',
+        field: 'comentario'
+      },
+      {
+        headerName: 'Actualizó',
+        field: 'updateUser',
+        width: 120
+      },
+      {
+        headerName: 'Modificado',
+        field: 'dateCreated',
+        valueFormatter: params =>
+          this.transformDate(params.value, 'dd/MM/yyyy HH:mm')
+      }
+    ];
   }
 }

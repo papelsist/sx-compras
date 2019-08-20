@@ -1,0 +1,29 @@
+.grid-panel {
+height: 400px;
+width: 750px;
+// flex-grow: 1;
+overflow: auto;
+}
+input {
+margin: -15px 0 10px 0;
+border-top: 0px;
+border-left: 0px;
+border-right: 0px;
+border-bottom: 2px solid #1976D2;
+width: 100%;
+font-size: 18px;
+line-height: 20px;
+height: 40px;
+text-align: center;
+padding: 10px;
+background: transparent;
+    // color: #BBDEFB;
+}
+input:focus {
+outline: 0;
+// color: #BBDEFB;
+}
+input::placeholder {
+color: #1976D2;
+}
+  

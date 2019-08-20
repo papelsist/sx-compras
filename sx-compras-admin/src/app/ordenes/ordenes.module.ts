@@ -18,7 +18,6 @@ import { containers } from './containers';
 import { services } from './services';
 import { AuthModule } from '../auth/auth.module';
 import { ReportesModule } from '../reportes/reportes.module';
-import { CompraCreateModalComponent } from './components/compra-create-modal/compra-create-modal.component';
 
 @NgModule({
   imports: [
@@ -29,7 +28,7 @@ import { CompraCreateModalComponent } from './components/compra-create-modal/com
     StoreModule.forFeature('ordenes', reducers),
     EffectsModule.forFeature(effects)
   ],
-  declarations: [...components, ...containers, CompraCreateModalComponent],
+  declarations: [...components, ...containers],
   entryComponents: [...entryComponents],
   providers: [...services, ...guards]
 })

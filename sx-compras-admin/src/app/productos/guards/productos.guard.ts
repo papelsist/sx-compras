@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { CanActivate } from '@angular/router';
 
 import { Store } from '@ngrx/store';
-import { Observable ,  of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { tap, filter, take, switchMap, catchError } from 'rxjs/operators';
 
 import * as fromStore from '../store';
@@ -22,6 +22,7 @@ export class ProductosGuard implements CanActivate {
     return this.store.select(fromStore.getProductosLoaded).pipe(
       tap(loaded => {
         if (!loaded) {
+          console.log('Cargando productos...');
           this.store.dispatch(new fromStore.LoadProductos());
         }
       }),

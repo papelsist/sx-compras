@@ -21,6 +21,7 @@ import * as fromActions from './recepciones.actions';
 import { RecepcionesService } from '../services';
 
 import { TdDialogService } from '@covalent/core';
+import { Periodo } from 'app/_core/models/periodo';
 
 @Injectable()
 export class RecepcionesEffects {
@@ -36,7 +37,7 @@ export class RecepcionesEffects {
     ofType(fromActions.RecepcionActionTypes.LoadRecepciones),
     switchMap(() => {
       return this.store.pipe(
-        select(fromRecepciones.getRecepcionesFilter),
+        select(fromRecepciones.selectPeriodo),
         take(1)
       );
     }),
@@ -54,8 +55,19 @@ export class RecepcionesEffects {
 
   @Effect()
   changeFilter$ = this.actions$.pipe(
-    ofType<fromActions.SetRecepcionesFilter>(
-      fromActions.RecepcionActionTypes.SetRecepcionesFilter
+    ofType<fromActions.SetPeriodo>(fromActions.RecepcionActionTypes.SetPeriodo),
+    map(() => new fromActions.LoadRecepciones())
+  );
+
+  @Effect()
+  periodo$ = this.actions$.pipe(
+    ofType<fromActions.SetPeriodo>(fromActions.RecepcionActionTypes.SetPeriodo),
+    map(action => action.payload.periodo),
+    tap(periodo =>
+      Periodo.saveOnStorage(
+        fromStore.RecepcionesDeCompraPeriodoStoeKey,
+        periodo
+      )
     ),
     map(() => new fromActions.LoadRecepciones())
   );

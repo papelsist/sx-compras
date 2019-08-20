@@ -78,8 +78,9 @@ environments:
     development:
         dataSource:
             dbCreate: update
-            #url: jdbc:mysql://10.10.1.229/siipapx_tacuba?autoReconnect=false
-            url: jdbc:mysql://localhost/siipapx_tacuba?autoReconnect=false
+            url: jdbc:mysql://10.10.1.229/siipapx_tacuba?autoReconnect=false
+            #url: jdbc:mysql://10.10.7.1/siipapx?autoReconnect=false
+            #url: jdbc:mysql://localhost/siipapx_tacuba?autoReconnect=false
             #url: jdbc:mysql://${JDBC_CONNECTION_STRING}?autoReconnect=true
             username: root
             password: sys

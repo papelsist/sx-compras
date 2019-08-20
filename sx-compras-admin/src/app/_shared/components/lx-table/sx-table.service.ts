@@ -1,6 +1,11 @@
 import { Injectable, LOCALE_ID, Inject } from '@angular/core';
 
-import { formatCurrency, formatNumber, formatDate } from '@angular/common';
+import {
+  formatCurrency,
+  formatNumber,
+  formatDate,
+  formatPercent
+} from '@angular/common';
 
 @Injectable({ providedIn: 'root' })
 export class SxTableService {
@@ -22,5 +27,9 @@ export class SxTableService {
 
   formatNumber(data: number, digitsInfo: string = null) {
     return formatNumber(data, this.locale, digitsInfo);
+  }
+
+  formatPercent(data: number, digitsInfo: string = null) {
+    return formatPercent(data, this.locale);
   }
 }

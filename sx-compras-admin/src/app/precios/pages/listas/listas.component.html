@@ -1,0 +1,24 @@
+<mat-card flex>
+  <sx-standard-header
+    title="Listas de precios"
+    [periodo]="periodo$ | async"
+    (periodoChange)="onPeriodo($event)"
+    (reload)="onReload()"
+    (create)="onCreate()"
+    (download)="grid.exportData()"
+  ></sx-standard-header>
+  <mat-divider></mat-divider>
+  <ng-template
+    tdLoading
+    [tdLoadingUntil]="!(loading$ | async)"
+    tdLoadingStrategy="overlay"
+  >
+  </ng-template>
+  <div class="grid-panel">
+    <sx-listas-grid
+      #grid
+      [partidas]="rows$ | async"
+      (select)="onSelect($event)"
+    ></sx-listas-grid>
+  </div>
+</mat-card>

@@ -35,9 +35,12 @@ class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaC
 
     @Override
     protected List<Poliza> listAllResources(Map params) {
+
+        println params
+
         params.sort = params.sort ?:'clave'
         params.order = params.order ?:'asc'
-        // params.max = 9000
+        params.max = 90000
 
         Integer ejercicio = this.params.getInt('ejercicio')?: Periodo.currentYear()
         Integer mes = this.params.getInt('mes')?: Periodo.currentMes()
@@ -48,7 +51,7 @@ class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaC
         def criteria = new DetachedCriteria(SaldoPorCuentaContable).build {
             eq('ejercicio', ejercicio)
             eq('mes', mes)
-            eq('nivel', nivel)
+            eq('nivel', nivel ? nivel : '%')
         }
         return criteria.list(params)
     }
@@ -110,6 +113,7 @@ class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaC
         Integer eje = Periodo.obtenerYear(periodo.fechaInicial)
         Integer m = Periodo.obtenerMes(periodo.fechaInicial) + 1
 
+        /*
         if(cta.detalle) {
             movimientos = PolizaDet.where{
                 poliza.ejercicio == eje &&
@@ -117,6 +121,25 @@ class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaC
                 cuenta == cta &&
                 poliza.cierre != null
             }.list()
+        }
+        */
+        if(cta.padre) {
+            def parts = cta.clave.split('-')
+            def nivel = cta.nivel
+            def ccv = ''
+            def limit = nivel - 1
+            0.upto(limit, {
+                ccv += parts[it]
+                ccv += "-"
+                if(it == limit)
+                ccv += "%"
+               println "Number ${parts[it]}"
+            })
+            log.info('Buscando movimientos para {}', ccv)
+            // movimientos = PolizaDet.findAll("from PolizaDet d where d.poliza.ejercicio = ? and d.poliza.mes = ? and d.cuenta.clave like ?" , [2018, 1, ccv])
+            movimientos = PolizaDet.findAll("""
+                from PolizaDet d where d.poliza.ejercicio = ? and d.poliza.mes = ? and d.cuenta.clave like ? and d.poliza.cierre != null
+                """, [eje, m, ccv])
         }
         respond movimientos
 
@@ -163,7 +186,8 @@ class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaC
         respond result, view: 'list'
     }
 
-    def balanza() {
+    def loadBalanza() {
+        log.info('Balanza {}', params)
         params.sort = params.sort ?:'clave'
         params.order = params.order ?:'asc'
         // params.max = 9000
@@ -171,13 +195,13 @@ class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaC
         Integer ejercicio = this.params.getInt('ejercicio')?: Periodo.currentYear()
         Integer mes = this.params.getInt('mes')?: Periodo.currentMes()
 
-        log.info('List {} {}', ejercicio, mes)
+        
 
         def criteria = new DetachedCriteria(SaldoPorCuentaContable).build {
             eq('ejercicio', ejercicio)
             eq('mes', mes)
         }
-        List<SaldoPorCuentaContable> saldos =  criteria.list(params)
+        List<SaldoPorCuentaContable> saldos =  criteria.list([sort: 'clave', order: 'asc'])
         respond saldos
     }
 
@@ -236,6 +260,13 @@ class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaC
         respond res
     }
 
+    // Nuevo AUXILIAR CONTABLE
+    def auxiliarContable() {
+        def periodo = params.periodo
+        def ctaInicial = CuentaContable.where{clave == params.cuentaInicial}.find()
+        def ctaFinal = CuentaContable.where{clave == params.cuentaFinal}.find()
+        respond saldoPorCuentaContableService.auxiliarContable(ctaInicial, ctaFinal, periodo)
+    }
 
     def handleException(Exception e) {
         String message = ExceptionUtils.getRootCauseMessage(e)

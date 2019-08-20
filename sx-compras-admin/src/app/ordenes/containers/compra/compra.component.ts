@@ -5,43 +5,25 @@ import * as fromStore from '../../store';
 import * as fromActions from '../../store/actions/compra.actions';
 
 import { Observable } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
 
 import { Compra } from '../../models/compra';
-
-import { TdDialogService } from '@covalent/core';
-
 import { ProveedorProducto } from '../../../proveedores/models/proveedorProducto';
 import { CompraUiService } from './compra-ui.service';
 
 @Component({
   selector: 'sx-compra',
-  template: `
-    <div>
-      <sx-compra-form [compra]="compra$ | async" [productos]="productos$ | async"
-        (save)="onSave($event)"
-        (delete)="onDelete($event)">
-        <ng-container *ngIf="compra$ | async as compra">
-          <sx-eliminar-compra [compra]="compra" (delete)="onDelete($event)"></sx-eliminar-compra>
-          <sx-email-compra [compra]="compra"></sx-email-compra>
-          <sx-cerrar-compra [compra]="compra" (cerrar)="onCerrar($event)"></sx-cerrar-compra>
-          <sx-depurar-compra [compra]="compra" (deuprar)="onDepurar($event)"></sx-depurar-compra>
-          <sx-compra-print [compra]="compra"></sx-compra-print>
-        </ng-container>
-      </sx-compra-form>
-    </div>
-  `,
+  templateUrl: './compra.component.html',
+  styleUrls: ['./compra.component.scss'],
   providers: [CompraUiService]
 })
 export class CompraComponent implements OnInit, OnDestroy {
   compra$: Observable<Compra>;
   productos$: Observable<ProveedorProducto[]>;
-  constructor(
-    private store: Store<fromStore.State>,
-    private dialogService: TdDialogService
-  ) {}
+  loading$: Observable<boolean>;
+  constructor(private store: Store<fromStore.State>) {}
 
   ngOnInit() {
+    this.loading$ = this.store.pipe(select(fromStore.getComprasLoading));
     this.compra$ = this.store.pipe(select(fromStore.getSelectedCompra));
     this.productos$ = this.store.pipe(
       select(fromStore.getAllProductosDisponibles)
@@ -70,6 +52,12 @@ export class CompraComponent implements OnInit, OnDestroy {
 
   onDepurar(event: Compra) {
     this.store.dispatch(new fromActions.DepurarCompra(event));
+  }
+
+  actualizarPrecios(compra: Partial<Compra>) {
+    this.store.dispatch(
+      new fromActions.ActualizarPrecios({ compraId: compra.id })
+    );
   }
 
   getPrintUrl(event: Compra) {

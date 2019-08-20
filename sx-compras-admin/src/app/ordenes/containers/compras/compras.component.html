@@ -6,7 +6,16 @@
     (reload)="reload()"
     (create)="onCreate()"
     (download)="grid.exportData()"
-  ></sx-standard-header>
+  >
+    <button
+      class="actions"
+      mat-menu-item
+      (click)="mostrarPartidas(selected)"
+      [disabled]="selected.length === 0"
+    >
+      <mat-icon>pageview</mat-icon> Partidas
+    </button>
+  </sx-standard-header>
   <mat-divider></mat-divider>
   <ng-template
     tdLoading
@@ -19,6 +28,8 @@
       #grid
       [partidas]="compras$ | async"
       (select)="onSelect($event)"
+      (selectionChange)="selected = $event"
+      (print)="onPrint($event)"
     ></sx-compras-table>
   </div>
 </mat-card>

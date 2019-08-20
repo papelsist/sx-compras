@@ -1,0 +1,25 @@
+
+mat-card {
+  height: calc(100% - 30px);
+  display: flex;
+  flex-direction: column;
+  .subtitle {
+    margin-top: -20px;
+    margin-bottom: 5px;
+    cursor: pointer;
+  }
+  /*
+  .comentario-action:hover {
+    background-color: gray;
+    margin: 0;
+    padding: 0;
+  }
+  */
+}
+.grid-panel {
+  height: 100%;
+  flex-grow: 1;
+  overflow: auto;
+}
+
+  

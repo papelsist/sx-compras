@@ -16,15 +16,15 @@ class UrlMappings {
         // requisicionDeMaterial de material
         "/api/requisicionDeMaterial"(resources: 'requisicionDeMaterial',  excludes:['create', 'edit','patch'])
         "/api/requisicionDeMaterial/disponibles"(controller: 'requisicionDeMaterial', action: 'disponibles')
+        "/api/requisicionDeMaterial/print/$id"(controller: 'requisicionDeMaterial', action: 'print', method: 'GET')
 
         // Ordenes de compra
-        "/api/compras"(resources: 'compra',  excludes:['create', 'edit','patch']){
-            "/partidas"(resources: 'compraDet', excludes:['create', 'edit','patch'])
-        }
-        "/api/compras/cerrar/$id"(controller: 'compra', action: 'cerrar', method: 'PUT')
-        "/api/compras/depurar/$id"(controller: 'compra', action: 'depurar', method: 'PUT')
+        "/api/compras"(resources: 'compra',  excludes:['create', 'save', 'edit', 'update', 'patch'])
+        // "/api/compras/cerrar/$id"(controller: 'compra', action: 'cerrar', method: 'PUT')
+        // "/api/compras/depurar/$id"(controller: 'compra', action: 'depurar', method: 'PUT')
         "/api/compras/print/$id"(controller: 'compra', action: 'print', method: 'GET')
         "/api/compras/pendientes/${proveedorId}"(controller: 'compra', action: 'pendientes', method: 'GET')
+        "/api/compras/partidas"(controller: 'compra', action: 'partidas', method: 'GET')
 
 
 
@@ -37,7 +37,8 @@ class UrlMappings {
         /// Alcances
         "/api/alcances/list"(controller: 'alcances', action: 'list')
         "/api/alcances/generar"(controller: 'alcances', action: 'generar', method: 'POST')
-        "/api/alcances/generarOrden"(controller: 'alcances', action: 'generarOrden', method: 'POST')
+        // "/api/alcances/generarOrden"(controller: 'alcances', action: 'generarOrden', method: 'POST')
+        "/api/alcances/generarRequisicion"(controller: 'alcances', action: 'generarRequisicion', method: 'POST')
         "/api/alcances/actualizarMeses"(controller: 'alcances', action: 'actualizarMeses', method: 'PUT')
         "/api/alcances/print"(controller: 'alcances', action: 'print', method: 'GET')
 
