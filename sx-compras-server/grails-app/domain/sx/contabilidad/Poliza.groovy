@@ -65,6 +65,9 @@ class Poliza {
         subtipo inList: [
                 'INGRESOS_CON',
                 'INGRESOS_COD',
+                'INGRESOS_CRE',
+                'INGRESOS_CHE',
+                'INGRESOS_JUR',
                 'COBRANZA_CON',
                 'COBRANZA_COD',
                 'COBRANZA_CRE',

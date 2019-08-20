@@ -26,7 +26,10 @@ class VentasTask implements  AsientoBuilder {
         String sqlVentas = getSqlVentas().replaceAll("@FECHA", toSqlDate(poliza.fecha))
         List rowsVta = getAllRows(sqlVentas, [])
         rowsVta.each{row ->
-            def descripcion = "VENTA ${row.documentoTipo} ${row.fecha}  ${row.sucursal} "
+
+            def docto = row.documento ?: ''
+            def tcCre = row.moneda == 'USD' ? "tc:${row.tc}" : ''
+            def descripcion = "VENTA ${docto} ${row.fecha}  ${row.sucursal}  ${tcCre}"
             
             PolizaDet detVta = mapRow(row.cta_venta.toString(), descripcion, row,0.00, row.subtotal.abs())
             poliza.addToPartidas(detVta)
@@ -105,11 +108,11 @@ class VentasTask implements  AsientoBuilder {
 
     String getSqlVentas() {
         String res = """
-        SELECT a.asiento,a.documentoTipo,a.moneda,a.referencia2
-        ,a.sucursal,a.suc,a.cta_venta,a.cta_iva,a.cta_cliente,sum(a.subtotal) subtotal,sum(a.impuesto) impuesto,sum(a.total) total,
-        a.fecha,case when a.documentoTipo='CRE' then a.origen else null end origen,case when a.documentoTipo='CRE' then a.documento else null end documento,documentoTipo
-        FROM (
-            SELECT concat('VENTAS_',f.tipo) as asiento,f.id as origen,f.tipo as documentoTipo,f.fecha,f.documento
+        SELECT a.asiento,a.documentoTipo,a.moneda,a.referencia2,a.sucursal,a.suc,a.cta_venta,a.cta_iva,a.cta_cliente
+        ,sum(round(a.subtotal*a.tc,2)) subtotal,sum(case when a.tc>1 then round(a.total*a.tc,2) - round(a.subtotal*a.tc,2) else a.impuesto end) impuesto,sum(round(a.total*a.tc,2)) total,
+        a.fecha,case when a.documentoTipo='CRE' then a.origen else null end origen,case when a.documentoTipo='CRE' then a.documento else null end documento,documentoTipo,a.tc
+        FROM (        
+            SELECT concat('VENTAS_',f.tipo,(case when f.moneda='USD' then '_USD' else '' end)) as asiento,f.id as origen,f.tipo as documentoTipo,f.fecha,f.documento
             ,f.moneda,f.tipo_de_cambio as tc,f.subtotal,f.impuesto,f.total,c.nombre referencia2,s.nombre sucursal, s.clave as suc, f.cliente_id as cliente
             ,concat('401-0003-',(case when s.clave>9 then concat('00',s.clave) else concat('000',s.clave) end),'-0000') as cta_venta,'209-0001-0000-0000' cta_iva
             ,concat('105-',(SELECT concat(case when x.cuenta_operativa='0266' then concat('0004-',x.cuenta_operativa) else concat('0003-',x.cuenta_operativa) end) FROM cuenta_operativa_cliente x where x.cliente_id=c.id ),'-0000') as cta_cliente
@@ -128,7 +131,7 @@ class VentasTask implements  AsientoBuilder {
             FROM cuenta_por_cobrar f join cliente c on(f.cliente_id=c.id)  
             join sucursal s on(f.sucursal_id=s.id) join cfdi x on(f.cfdi_id=x.id)
             where f.fecha='@FECHA' and tipo in('CON','COD','ACF','OTR') and f.tipo_documento='VENTA'and f.cancelada is null and f.sw2 is null 
-            ) as A group by a.asiento,a.documentoTipo,a.referencia2,a.fecha,a.moneda,a.tc,a.sucursal,a.suc,a.cta_venta,a.cta_iva
+            ) as A group by a.asiento,a.documentoTipo,a.documento,a.referencia2,a.fecha,a.moneda,a.tc,a.sucursal,a.suc,a.cta_venta,a.cta_iva
         """
         return res
     }

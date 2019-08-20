@@ -18,19 +18,30 @@ class IngresosTask implements  AsientoBuilder {
 
     @Override
     def generarAsientos(Poliza poliza, Map params = [:]) {
-
         log.info("Generando asientos contables para Ingresos {} {}", poliza.fecha)
+
+        asientoBancos(poliza, params)
+        asientoNotas(poliza, params)
+        asientoClientes(poliza, params)
+        asientoSaf(poliza, params)
+ 
+    }
+
+    def asientoBancos(Poliza poliza, Map params = [:]){
 
         String tipo = params.tipo
         
         def tipoStr = "(m.tipo='CON' OR m.forma_de_pago like '%TARJETA%')" 
 
-        if(tipo != 'CON')
-          tipoStr = "(m.tipo='${tipo}' OR m.forma_de_pago not like '%TARJETA%')"
+        if(tipo != 'CON'){
+          tipoStr = " m.tipo ='${tipo}' and m.forma_de_pago not like '%TARJETA%'"
+        }
 
         String sql = getIngresosSql()
                 .replaceAll("@FECHA", toSqlDate(poliza.fecha))
                 .replaceAll("@TIPO", tipoStr)
+
+       // print sql
 
         List rows = getAllRows(sql, [])
 
@@ -68,7 +79,14 @@ class IngresosTask implements  AsientoBuilder {
 
                 def subTotal = MonedaUtils.calcularImporteDelTotal(row.total)   
                 def totalBco = row.referencia.contains('AMEX') ? row.banco_amex : row.asiento.toString().contains('xIDENT') ?  subTotal : row.total
+
                 PolizaDet det = mapRow(row.cta_contable, descripcion, row, totalBco)
+
+                if(row.moneda == 'USD'){
+                    det.asiento = "${det.asiento}_USD"
+                    det.descripcion = "${det.descripcion} tc:${row.tc}"
+                }
+
                 poliza.addToPartidas(det)
             }
             
@@ -109,9 +127,13 @@ class IngresosTask implements  AsientoBuilder {
 
         }
 
+    }
+
+    def asientoNotas(Poliza poliza, Map params = [:]) {
+        String tipo = params.tipo
         String sqlNotas = getNotasSql()
                         .replaceAll('@FECHA',toSqlDate(poliza.fecha))
-                        .replaceAll('@TIPO','CON')
+                        .replaceAll('@TIPO',tipo)
 
         List rowsNotas = getAllRows(sqlNotas, [])
 
@@ -119,17 +141,54 @@ class IngresosTask implements  AsientoBuilder {
             String descripcion = "NOTA: ${row.folio} ${row.documentoTipo} "
             poliza.addToPartidas(mapRow(row.cta_nota, descripcion, row, row.total))
         }
+    }
+
+    def asientoClientes(Poliza poliza, Map params = [:]){
+        String tipo = params.tipo
+
+        def tipoStr = "  (b.tipo='${tipo}' OR (b.tipo in('COD','ACF','OTR') and (b.forma_de_pago like '%EFECTIVO%' or b.forma_de_pago like '%TARJETA%')) or (b.tipo in('CRE','CHE','JUR') AND b.forma_de_pago like '%TARJETA%'))" 
+
+        if(tipo == 'COD'){
+            tipoStr = "  ( ( b.tipo in('${tipo}','ACF','OTR') and (b.forma_de_pago not like '%EFECTIVO%' and b.forma_de_pago not like '%TARJETA%') ) )" 
+        }
+
+         if(tipo == 'CRE' || tipo == 'CHE' || tipo == 'JUR' ){
+            tipoStr = "  b.tipo ='${tipo}' "      
+        }
+
 
         String sqlClientes = getClientesSql()
                 .replaceAll("@FECHA", toSqlDate(poliza.fecha))
-                .replaceAll("@TIPO", "  (f.tipo='CON' OR (f.tipo in('COD','ACF','OTR') and (b.forma_de_pago like '%EFECTIVO%' or b.forma_de_pago like '%TARJETA%')) or (f.tipo in('CRE','CHE','JUR') AND b.forma_de_pago like '%TARJETA%'))" )
-                .replace("@OTRO","CON")
+                .replaceAll("@TIPO", tipoStr)
+                .replace("@OTRO",tipo)
+
+          // println sqlClientes
+    
         List rowsClientes = getAllRows(sqlClientes, [])
 
         rowsClientes.each{row ->
-            String descripcion = "COBRANZA: ${row.documentoTipo}"
 
-            PolizaDet clienteDet = mapRow(row.cta_cliente, descripcion, row, 0.00, row.total)
+            def tcCre = row.moneda == 'USD' ? "tc:${row.tc}" : ''
+            String descripcion = "Doc: ${row.documento} ${row.fecha_fac} ${row.sucursal} ${tcCre} "
+            
+
+            if(tipo == 'CON' || tipo == 'COD'){
+                descripcion = "COBRANZA: ${row.documentoTipo}"
+            }
+
+            def ctaCte = row.cta_cliente
+
+            if(tipo == 'CON' &&  row.cta_tar == '205-0007-0001-0000'){
+                ctaCte = row.cta_tar
+            }
+
+            // Asiento de Cobranza Tarjetas
+            if((tipo == 'CRE' || tipo == 'CHE' || tipo == 'JUR') &&  row.cta_tar == '205-0007-0001-0000'){
+               PolizaDet tarjetaDet = mapRow(row.cta_tar, descripcion, row, row.total)
+               poliza.addToPartidas(tarjetaDet)
+            }
+
+            PolizaDet clienteDet = mapRow(ctaCte, descripcion, row, 0.00, row.total)
 
             poliza.addToPartidas(clienteDet)
               if(row.asiento.endsWith('APL')){
@@ -158,21 +217,40 @@ class IngresosTask implements  AsientoBuilder {
             } 
 
           
-        }
+        } 
+
+    }
+
+    def asientoSaf(Poliza poliza, Map params = [:]){
+
+        String tipo = params.tipo
 
         String sqlSaf = getSafSql()
                 .replaceAll("@FECHA", toSqlDate(poliza.fecha))
-                .replaceAll("@TIPO", 'CON')
+                .replaceAll("@TIPO", tipo)
             
         List rowsSaf = getAllRows(sqlSaf, [])
 
         rowsSaf.each{row ->
             String descripcion = "${row.asiento}"
 
-            PolizaDet det = mapRow(row.cta_contable, descripcion, row, 0.00, row.total)
-            poliza.addToPartidas(det)
+             if(row.asiento.endsWith('_OGST')){
+                PolizaDet det = mapRow(row.cta_contable, descripcion, row, row.total)
+                poliza.addToPartidas(det)
+            }else{
+                PolizaDet det = mapRow(row.cta_contable, descripcion, row, 0.00, row.total)
+                poliza.addToPartidas(det)
+            }
+
+
+
+            if(row.asiento.endsWith('_SAF_OPRD')){
+               
+                def ctaOprd =  '205-0001-0004-0000'
+                PolizaDet detSafOprd = mapRow(ctaOprd, descripcion, row, row.total)
+                poliza.addToPartidas(detSafOprd)
+            }
         }
- 
     }
 
     @Override
@@ -215,13 +293,13 @@ class IngresosTask implements  AsientoBuilder {
         		when m.forma_de_pago like 'DEP%CHE%' then concat('COB_DEP_CHE_',m.tipo,(case when m.por_identificar is true then '_xIDENT' else '' end))
         		when m.forma_de_pago IN('CHEQUE','EFECTIVO') then concat('COB_FICHA_',m.tipo) when m.forma_de_pago like 'TARJ%' then 'COB_TARJ_CON' else '' end) asiento, 'MovimientoDeCuenta' entidad
         	,case when m.referencia>0 then m.referencia else(case when t.id is null then SUBSTRING(m.referencia,LENGTH(SUBSTRING_INDEX(m.referencia,':',1))+3) else CONVERT (t.folio,CHAR) end) end documento,m.referencia
-        ,m.id origen,(case when m.forma_de_pago like 'TARJ%' then 'CON' else m.tipo end) documentoTipo,m.fecha,m.referencia,m.moneda,m.tipo_de_cambio tc ,round(m.importe,2) total,m.forma_de_pago,m.comentario referencia2
+        ,m.id origen,(case when m.forma_de_pago like 'TARJ%' then 'CON' else m.tipo end) documentoTipo,m.fecha,m.referencia,m.moneda,m.tipo_de_cambio tc ,round(m.importe * m.tipo_de_cambio,2) total,m.forma_de_pago
         ,(case when m.sucursal is null then SUBSTRING(m.comentario,LENGTH(SUBSTRING_INDEX(m.comentario,(case when m.comentario like '%BANCO%' then 'BANCO' else 'EFECTIVO' end),1))+5) else m.sucursal end) sucursal, s.clave suc
-        ,concat((case when m.por_identificar is true then '205-0002-' else '102-0001-' end),z.sub_cuenta_operativa,'-0000') cta_contable,z.numero ctaDestino,z.descripcion cliente
+        ,concat((case when m.por_identificar is true then '205-0002-' else (case when m.moneda='USD' then '102-0002-' else '102-0001-' end) end),z.sub_cuenta_operativa,'-0000') cta_contable,z.numero ctaDestino,z.descripcion cliente
         ,(case when f.diferencia <0 then concat('FALTANTE_',diferencia_tipo) when f.diferencia>0 then concat('SOBRANTE_',diferencia_tipo) else '' end)  as diferenciaTipo,ifnull(f.diferencia,0) diferenciaFicha
         ,(case when f.diferencia=0 or f.diferencia is null then '000-0000-0000-0000' else concat('107-0002-',(case when f.diferencia_usuario>99 then '0' when f.diferencia_usuario>9 then '00' else '000' end),f.diferencia_usuario,'-0000') end) cta_cajera
 	    ,(case when m.forma_de_pago='TRANSFERENCIA' then ifnull((SELECT x.nombre FROM cobro_transferencia d join cobro c on(d.cobro_id=c.id) join cliente x on(c.cliente_id=x.id)  where d.ingreso_id=m.id ),'PAPEL SA DE CV') 
-	   	else ifnull((SELECT x.nombre FROM cobro_deposito d join cobro c on(d.cobro_id=c.id) join cliente x on(c.cliente_id=x.id)  where d.ingreso_id=m.id ),'PAPEL SA DE CV') end) nombre
+	   	else ifnull((SELECT x.nombre FROM cobro_deposito d join cobro c on(d.cobro_id=c.id) join cliente x on(c.cliente_id=x.id)  where d.ingreso_id=m.id ),'PAPEL SA DE CV') end) referencia2
         ,(case when m.referencia like '%COMISION' then concat('600-0004-',(case when s.clave>9 then '00' else '000' end),s.clave,'-0000') else '000-0000-0000-0000' end) cta_comision
 	    ,(case when m.referencia like '%COMISION_IVA' then '118-0002-0000-0000' else '000-0000-0000-0000' end) cta_comision_iva
 	    ,(case when m.referencia like '%AMEX%' then '107-0001-0001-0000' else '000-0000-0000-0000' end) cta_amex
@@ -237,7 +315,9 @@ class IngresosTask implements  AsientoBuilder {
         String sql = """
              SELECT concat('NOTA_',substr(f.forma_de_pago,1,3),'_',f.tipo) as asiento,c.nombre referencia2,n.id as origen ,f.cliente_id as cliente,n.folio,n.total,f.tipo as documentoTipo,f.fecha
             ,s.nombre as sucursal ,n.importe subtotal ,n.importe-n.total impuesto,n.total,f.moneda,f.tipo_de_cambio  tc, c.rfc, x.uuid
-            ,concat((case when f.forma_de_pago='DEVOLUCION' then '402-0001-' else '403-0001-' end),(case when s.clave>9 then '00' else '000' end),s.clave,'-0000') cta_nota           
+            ,concat((case when f.forma_de_pago='DEVOLUCION' then '402-' else '403-' end)
+          		,(case when f.tipo='CON' then '0001-' when f.tipo in('COD','OTR','ACF') then '0002-' when c.clave='P010389'  then '0004-' when f.tipo='CRE' then '0003-' else 'nd' end )
+		        ,(case when s.clave>9 then '00' else '000' end),s.clave,'-0000') cta_nota          
             ,null entidad,null documento
             FROM cobro f join cliente c on(f.cliente_id=c.id)  join sucursal s on(f.sucursal_id=s.id) join nota_de_credito n on(f.id=n.cobro_id) join cfdi x on(n.cfdi_id=x.id)
             where  n.sw2 is null and (x.cancelado is false or x.cancelado is null) and date(f.primera_aplicacion)='@FECHA' and f.tipo='@TIPO'
@@ -247,45 +327,96 @@ class IngresosTask implements  AsientoBuilder {
 
     String getClientesSql(){
         String sql ="""
-            SELECT a.asiento,a.documentoTipo,a.moneda,a.referencia2,a.sucursal,a.suc ,a.cta_iva_pag,a.cta_iva_pend
-            ,case when a.documentoTipo in('CRE','CHE') THEN '205-0007-0001-0000' else a.cta_cliente end cta_cliente
-            ,sum(a.subtotal) subtotal,sum(a.impuesto) impuesto,sum(a.total) total,fecha ,null fecha_fac 
-            ,'Cobranza' origen,'Cobranza' entidad, null documento, 0 cobro_aplic, '@OTRO' tipo
+            SELECT (case when a.moneda='USD' then concat(a.asiento,'_USD') else a.asiento end) asiento,a.documentoTipo,a.referencia2,a.sucursal,a.suc ,a.cta_iva_pag,a.cta_iva_pend
+            ,case when a.documentoTipo in('CRE','CHE','JUR') and a.asiento like '%_TAR_%' THEN '205-0007-0001-0000' else '000-0000-0000-0000' end cta_tar
+            ,a.cta_cliente,a.moneda,a.tc,sum(a.subtotal) subtotal,sum(a.impuesto) impuesto,sum(a.total) total,a.fecha,a.forma_de_pago,a.referencia,a.origen,'CuentaPorCobrar' entidad,a.documento,a.fecha_fac,a.total cobro_aplic, '@OTRO' tipo
         	  FROM (        	      	  
             SELECT 
-            a.id aplic_id,concat((case when b.forma_de_pago in('BONIFICACION','DEVOLUCION') then 'NOTA_' else 'COB_' end),'VENTAS_',f.tipo
+	        (case when f.tipo in('CON','COD') then null else f.id end) origen,a.id aplic_id,concat((case when b.forma_de_pago in('BONIFICACION','DEVOLUCION') then 'NOTA' else 'COB' end)
             ,(case when b.forma_de_pago not like 'TARJ%' then '' else (SELECT case when t.visa_master is false then '_TAR_AMEX' when t.debito_credito is false then '_TAR_CRED' else '_TAR_DEBT' end FROM cobro_tarjeta t where t.cobro_id=b.id) end)
-            ,(case 	when b.forma_de_pago like 'DEP%' then 
-            		(SELECT case when m.por_identificar is true then '_xIDENT' else '' end FROM cobro_deposito d join movimiento_de_cuenta m on(d.ingreso_id=m.id) where d.cobro_id=b.id)   
+            ,(case when b.forma_de_pago ='PAGO_DIF' then '_OGST' when b.forma_de_pago ='EFECTIVO' then '_FICHA_EFE' when b.forma_de_pago ='CHEQUE' then '_FICHA_CHE' when b.forma_de_pago like 'DEP%' then 
+            		(SELECT case when m.por_identificar is true then '_DEP_xIDENT' else '_DEP' end FROM cobro_deposito d  join movimiento_de_cuenta m on(d.ingreso_id=m.id) where d.cobro_id=b.id)   
             		when b.forma_de_pago like 'TRANSF%' then 
-            		(SELECT case when m.por_identificar is true then '_xIDENT' else '' end FROM cobro_transferencia d join movimiento_de_cuenta m on(d.ingreso_id=m.id) where d.cobro_id=b.id)   
+            		(SELECT case when m.por_identificar is true then '_TRANSF_xIDENT' else '_TRANSF' end FROM cobro_transferencia d  join movimiento_de_cuenta m on(d.ingreso_id=m.id) where d.cobro_id=b.id)   
             		else '' end)  ) as asiento
-            ,f.id as origen,f.tipo as documentoTipo,a.fecha,f.documento,b.forma_de_pago
-            ,f.moneda,f.tipo_de_cambio tc,round(a.importe/1.16,2) subtotal,a.importe - round(a.importe/1.16,2) impuesto,a.importe total,concat('VENTA ',f.tipo,' ',s.nombre) referencia2,s.nombre sucursal, s.clave as suc
-            ,concat(s.nombre,"_",f.tipo_documento,"_",f.tipo) cliente_id            
-            ,'208-0001-0000-0000' cta_iva_pag,'209-0001-0000-0000' cta_iva_pend 
-            ,concat('105-',(case when f.tipo='CON' then '0001-' when f.tipo in('CRE','CHE','COD','OTR','ACF') then '0002-' else 'nd' end ),(case when s.clave>9 then concat('00',s.clave) else concat('000',s.clave) end),'-0000') as cta_cliente    
+            ,f.tipo as documentoTipo,a.fecha,(case when f.tipo in('CON','COD') then null else f.documento end) documento,(case when f.tipo in('CON','COD') then null else f.fecha end) fecha_fac,b.forma_de_pago,b.referencia
+            ,f.moneda,f.tipo_de_cambio tc,round((a.importe*b.tipo_de_cambio)/1.16,2) subtotal,round(a.importe*b.tipo_de_cambio,2) - round((a.importe*b.tipo_de_cambio)/1.16,2) impuesto,round(a.importe*b.tipo_de_cambio,2) total
+            ,(case when f.tipo in('CON','COD') then concat('VENTA ',f.tipo,' ',s.nombre) else (select c.nombre from cliente c where f.cliente_id=c.id) end) referencia2,s.nombre sucursal, s.clave as suc
+			 ,concat(s.nombre,"_",f.tipo_documento,"_",f.tipo) cliente_id,'208-0001-0000-0000' cta_iva_pag,'209-0001-0000-0000' cta_iva_pend 
+            ,concat(
+                (case when b.tipo in('CHE','JUR') then '106-' else '105-' end),
+                (case 
+                    when b.tipo = 'CRE' then 
+                        (SELECT case when x.cuenta_operativa='0266' then concat('0004-',x.cuenta_operativa) else concat('0003-',x.cuenta_operativa) end FROM cuenta_operativa_cliente x where x.cliente_id=f.cliente_id )
+                    when b.tipo = 'CHE' then 
+                        (SELECT concat('0001-',x.cuenta_operativa)FROM cuenta_operativa_cliente x where x.cliente_id=f.cliente_id)
+                    when b.tipo = 'JUR' then 
+                        (SELECT concat('0002-',x.cuenta_operativa)FROM cuenta_operativa_cliente x where x.cliente_id=f.cliente_id)
+                    else 
+                    concat(
+                            (case when b.tipo='CON' then '0001-' when b.tipo in('COD','OTR','ACF') then '0002-' else 'nd' end )
+                            ,(case when s.clave>9 then concat('00',s.clave) else concat('000',s.clave) end)
+                        )
+                    end)
+            	,'-0000') as cta_cliente    
             FROM aplicacion_de_cobro a join cobro b on(a.cobro_id=b.id) join cuenta_por_cobrar f on(a.cuenta_por_cobrar_id=f.id) 
             join sucursal s on(f.sucursal_id=s.id) 
             where a.fecha='@FECHA' and a.fecha=date(b.primera_aplicacion) and f.cancelada is null and @TIPO
             union
             SELECT 
-            a.id aplic_id,concat((case when b.forma_de_pago in('BONIFICACION','DEVOLUCION') then 'NOTA_' else 'COB_' end),'VENTAS_',f.tipo
+            (case when f.tipo in('CON','COD') then null else f.id end) origen,a.id aplic_id,concat((case when b.forma_de_pago in('BONIFICACION','DEVOLUCION') then 'NOTA' else 'COB' end)
             ,(case when b.forma_de_pago not like 'TARJ%' then '' else (SELECT case when t.visa_master is false then '_TAR_AMEX' when t.debito_credito is false then '_TAR_CRED' else '_TAR_DEBT' end FROM cobro_tarjeta t where t.cobro_id=b.id) end)
-            ,(case 	when b.forma_de_pago like 'DEP%' then 
-            		(SELECT case when m.por_identificar is true then '_xIDENT' else '' end FROM cobro_deposito d join movimiento_de_cuenta m on(d.ingreso_id=m.id) where d.cobro_id=b.id)   
+            ,(case when b.forma_de_pago ='PAGO_DIF' then '_OGST' when b.forma_de_pago ='EFECTIVO' then '_FICHA_EFE' when b.forma_de_pago ='CHEQUE' then '_FICHA_CHE' when b.forma_de_pago like 'DEP%' then 
+            		(SELECT case when m.por_identificar is true then '_DEP_xIDENT' else '_DEP' end FROM cobro_deposito d join movimiento_de_cuenta m on(d.ingreso_id=m.id) where d.cobro_id=b.id)   
             		when b.forma_de_pago like 'TRANSF%' then 
-            		(SELECT case when m.por_identificar is true then '_xIDENT' else '' end FROM cobro_transferencia d join movimiento_de_cuenta m on(d.ingreso_id=m.id) where d.cobro_id=b.id)   
+            		(SELECT case when m.por_identificar is true then '_TRANSF_xIDENT' else '_TRANSF' end FROM cobro_transferencia d join movimiento_de_cuenta m on(d.ingreso_id=m.id) where d.cobro_id=b.id)   
             		else '' end),'_SAF_APL') as asiento
-            ,f.id as origen,f.tipo as documentoTipo,a.fecha,f.documento,b.forma_de_pago
-            ,f.moneda,f.tipo_de_cambio tc,round(a.importe/1.16,2) subtotal,a.importe - round(a.importe/1.16,2) impuesto,a.importe total,concat('VENTA ',f.tipo,' ',s.nombre) referencia2,s.nombre sucursal, s.clave as suc
-            ,concat(s.nombre,"_",f.tipo_documento,"_",f.tipo) cliente_id            
-            ,'208-0001-0000-0000' cta_iva_pag,'209-0001-0000-0000' cta_iva_pend 
-            ,concat('105-',(case when f.tipo='CON' then '0001-' when f.tipo in('CRE','CHE','COD','OTR','ACF') then '0002-' else 'nd' end ),(case when s.clave>9 then concat('00',s.clave) else concat('000',s.clave) end),'-0000') as cta_cliente
+            ,f.tipo as documentoTipo,a.fecha,(case when f.tipo in('CON','COD') then null else f.documento end) documento,(case when f.tipo in('CON','COD') then null else f.fecha end) fecha_fac,b.forma_de_pago,b.referencia
+            ,f.moneda,f.tipo_de_cambio tc,round((a.importe*b.tipo_de_cambio)/1.16,2) subtotal,round(a.importe*b.tipo_de_cambio,2) - round((a.importe*b.tipo_de_cambio)/1.16,2) impuesto,round(a.importe*b.tipo_de_cambio,2) total
+            ,(case when f.tipo in('CON','COD') then concat('VENTA ',f.tipo,' ',s.nombre) else (select c.nombre from cliente c where f.cliente_id=c.id) end) referencia2,s.nombre sucursal, s.clave as suc
+			,concat(s.nombre,"_",f.tipo_documento,"_",f.tipo) cliente_id,'208-0001-0000-0000' cta_iva_pag,'209-0001-0000-0000' cta_iva_pend
+            ,concat(
+                (case when b.tipo in('CHE','JUR') then '106-' else '105-' end)
+                ,(case 
+                when b.tipo = 'CRE' then 
+                    (SELECT 
+                            case 
+                            when x.cuenta_operativa='0266' 
+                            then 
+                                concat
+                                    ('0004-',x.cuenta_operativa)
+                            else 
+                                concat
+                                ('0003-',x.cuenta_operativa)
+                            end
+                    FROM cuenta_operativa_cliente x where x.cliente_id=f.cliente_id )
+                when b.tipo = 'CHE' then 
+                    (SELECT 
+                                concat
+                                ('0001-',x.cuenta_operativa)
+						
+                    FROM cuenta_operativa_cliente x where x.cliente_id=f.cliente_id 
+                    )
+                when b.tipo = 'JUR' then 
+                    (SELECT 
+                                concat
+                                ('0002-',x.cuenta_operativa)
+						
+                    FROM cuenta_operativa_cliente x where x.cliente_id=f.cliente_id 
+                    )
+            	else 
+                    concat(
+                        (case when b.tipo='CON' then '0001-' when b.tipo in('COD','OTR','ACF') then '0002-' else 'nd' end )
+                        ,(case when s.clave>9 then concat('00',s.clave) else concat('000',s.clave) end)
+                    )
+                end)
+            	,'-0000'
+            ) as cta_cliente
             FROM aplicacion_de_cobro a join cobro b on(a.cobro_id=b.id) join cuenta_por_cobrar f on(a.cuenta_por_cobrar_id=f.id) 
             join sucursal s on(f.sucursal_id=s.id) 
             where a.fecha='@FECHA' and a.fecha>date(b.primera_aplicacion) and f.cancelada is null and  @TIPO
-            ) as A group by a.asiento,a.documentoTipo,a.referencia2,a.moneda,a.tc,a.sucursal,a.suc
+            ) as a
+            group by a.asiento,a.documentoTipo,a.documento,a.referencia2,a.moneda,a.tc,a.sucursal,a.suc
         """ 
         return sql
 
@@ -301,9 +432,13 @@ class IngresosTask implements  AsientoBuilder {
             (x.importe-(case when x.diferencia_fecha='@FECHA' then x.diferencia else 0 end) - ifnull((SELECT sum(a.importe) FROM aplicacion_de_cobro a where a.cobro_id=x.id and a.fecha='@FECHA'),0) )>0 	group by x.id 
             union
             select concat((case when x.forma_de_pago in('BONIFICACION','DEVOLUCION') then 'NOTA_' else 'COB_' end),'VENTAS_',x.tipo,'_OPRD') as asiento,x.id,x.tipo,x.forma_de_pago,x.referencia,x.diferencia_fecha fecha,s.nombre sucursal,x.diferencia total,'704-0005-0000-0000' cta_contable
-            from cobro x  join sucursal s on(x.sucursal_id=s.id) where x.tipo='@TIPO' and x.diferencia_fecha='@FECHA'
+            from cobro x  join sucursal s on(x.sucursal_id=s.id) where x.tipo='@TIPO' and x.diferencia_fecha='@FECHA' and date(x.primera_aplicacion)='@FECHA'
             union
-            select concat((case when x.forma_de_pago in('BONIFICACION','DEVOLUCION') then 'NOTA_' else 'COB_' end),'VENTAS_',x.tipo,'_OGST') as asiento,x.id,x.tipo,x.forma_de_pago,x.referencia,date(x.primera_aplicacion) fecha,s.nombre sucursal,x.importe total,'703-0001-0000-0000' cta_contable
+            select concat((case when x.forma_de_pago in('BONIFICACION','DEVOLUCION') then 'NOTA_' else 'COB_' end),'VENTAS_',x.tipo,'_SAF_OPRD') as asiento,x.id,x.tipo,x.forma_de_pago,x.referencia,x.diferencia_fecha fecha,s.nombre sucursal,x.diferencia total,'704-0005-0000-0000' cta_contable
+            from cobro x  join sucursal s on(x.sucursal_id=s.id) where x.tipo='@TIPO' and x.diferencia_fecha='@FECHA' and date(x.primera_aplicacion)<>'@FECHA'
+            union
+            select concat((case when x.forma_de_pago in('BONIFICACION','DEVOLUCION') then 'NOTA_' else 'COB_' end),'VENTAS_',x.tipo,'_OGST') as asiento,x.id,x.tipo,x.forma_de_pago,x.referencia,date(x.primera_aplicacion) fecha,s.nombre sucursal,x.importe total
+            ,'703-0001-0000-0000' cta_contable
             from cobro x  join sucursal s on(x.sucursal_id=s.id) where x.tipo='@TIPO' and date(x.primera_aplicacion)='@FECHA' and x.forma_de_pago='PAGO_DIF' 
             ) as z group by z.asiento,z.sucursal
         """
