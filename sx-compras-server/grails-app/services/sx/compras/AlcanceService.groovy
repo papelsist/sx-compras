@@ -136,7 +136,7 @@ class AlcancesService implements DataBinder, LogUser{
     String getAlcanceSql() {
     	String SQL = """
 	      	SELECT 
-	        z.id as proveedor
+	         z.id as proveedor
 	        ,z.nombre
 	        ,CASE WHEN @SUCURSAL='%' THEN "TODAS" ELSE (SELECT S.NOMBRE FROM sucursal S WHERE S.activa IS TRUE AND S.ID LIKE @SUCURSAL ) END AS sucursal
 	        ,p.unidad
@@ -156,21 +156,62 @@ class AlcancesService implements DataBinder, LogUser{
 	        ,SUM(EXI)*P.KILOS/1000 AS existenciaEnToneladas
 	        ,(CASE WHEN SUM(VTA)=0 AND P.UNIDAD='MIL' THEN 0.100 WHEN SUM(VTA)=0 AND P.UNIDAD<>'MIL' THEN 1 ELSE  (SUM(VTA)/(ROUND((ROUND(TO_DAYS('@FECHA_FIN')-TO_DAYS('@FECHA_INI'),0)),0)/30.4166)) END)*P.KILOS/1000 AS promVtaEnTonelada
 	        FROM (
-	        SELECT X.PRODUCTO_ID,X.CLAVE,SUM(X.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end)) AS EXI,0 AS VTA,0 AS PEND FROM EXISTENCIA X JOIN producto p ON(X.producto_id=p.ID) WHERE X.anio=YEAR('@FECHA_FIN') AND  X.MES=MONTH('@FECHA_FIN') AND   x.sucursal_id LIKE @SUCURSAL GROUP BY X.CLAVE,X.PRODUCTO_ID,X.SUCURSAL_ID
+	        SELECT  
+                X.PRODUCTO_ID,
+                X.CLAVE,
+                SUM(X.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end)) AS EXI,
+                0 AS VTA,
+                0 AS PEND 
+            FROM EXISTENCIA X 
+            JOIN producto p ON(X.producto_id=p.ID) 
+            WHERE X.anio=YEAR('@FECHA_FIN') 
+              AND  X.MES=MONTH('@FECHA_FIN') 
+              AND  X.sucursal_id LIKE @SUCURSAL 
+            GROUP BY X.CLAVE, X.PRODUCTO_ID, X.SUCURSAL_ID
 	        UNION
-	        SELECT X.PRODUCTO_ID,P.CLAVE,0,SUM((X.CANTIDAD*-1)/(case when p.unidad ='MIL' then 1000 else 1 end)) AS VTA,0 AS PEND FROM INVENTARIO X JOIN producto p ON(X.producto_id=p.ID) WHERE DATE(X.FECHA) BETWEEN '@FECHA_INI' AND '@FECHA_FIN' AND X.TIPO IN('FAC','DEV') AND   X.sucursal_id LIKE @SUCURSAL GROUP BY P.CLAVE,X.PRODUCTO_ID,X.SUCURSAL_ID
+	        SELECT 
+                X.PRODUCTO_ID,
+                P.CLAVE,
+                0,
+                SUM((X.CANTIDAD * -1)/(case when p.unidad ='MIL' then 1000 else 1 end)) AS VTA,
+                0 AS PEND 
+                FROM INVENTARIO X 
+                JOIN producto p ON(X.producto_id=p.ID) 
+                    WHERE DATE(X.FECHA) BETWEEN '@FECHA_INI' 
+                    AND '@FECHA_FIN' 
+                    AND X.TIPO IN('FAC','DEV') 
+                    AND X.sucursal_id LIKE @SUCURSAL 
+                    GROUP BY P.CLAVE,X.PRODUCTO_ID,X.SUCURSAL_ID
 	        UNION
-	        SELECT X.PRODUCTO_ID,P.CLAVE,0,0,SUM(((X.SOLICITADO-X.DEPURADO)/(case when P.unidad ='MIL' then 1000 else 1 end))-IFNULL((SELECT SUM(I.CANTIDAD/(case when Y.unidad ='MIL' then 1000 else 1 end)) FROM recepcion_de_compra_det I JOIN producto Y ON(I.producto_id=Y.ID) WHERE I.compra_det_id=X.ID AND I.inventario_id IS NOT NULL),0)) AS PENDTE
-	        from compra_det X join compra cc on (x.compra_id = cc.id) JOIN producto P ON(X.producto_id=P.ID) WHERE cc.fecha>'2018-01-01' and X.SUCURSAL_ID LIKE @SUCURSAL GROUP BY X.PRODUCTO_ID,X.SUCURSAL_ID
+	        SELECT 
+                X.PRODUCTO_ID,
+                P.CLAVE,
+                0,
+                0,
+                SUM(
+                    ((X.SOLICITADO-X.DEPURADO)/(case when P.unidad ='MIL' then 1000 else 1 end)) - 
+                    IFNULL((SELECT SUM(I.CANTIDAD/(case when Y.unidad ='MIL' then 1000 else 1 end)) 
+                            FROM recepcion_de_compra_det I 
+                            JOIN producto Y ON(I.producto_id=Y.ID) 
+                            WHERE I.compra_det_id=X.ID 
+                            AND I.inventariox IS NOT NULL),0)
+                    ) AS PENDTE
+    	           from compra_det X 
+                    JOIN compra cc  ON(x.compra_id = cc.id) 
+                    JOIN producto P ON(X.producto_id = P.ID) 
+                    WHERE cc.fecha > '2018-01-01' 
+                      and X.SUCURSAL_ID LIKE @SUCURSAL 
+                      GROUP BY X.PRODUCTO_ID, X.SUCURSAL_ID
 	        ) AS A
 	        JOIN producto P ON(A.PRODUCTO_ID=P.ID)
-	        join LINEA L on(L.ID=p.LINEA_ID)
+	        JOIN LINEA L on(L.ID=p.LINEA_ID)
 	        JOIN CLASE C ON(C.ID=P.CLASE_ID)
-	        JOIN marca M ON(M.ID=P.MARCA_ID)
-	        LEFT JOIN proveedor z on(p.proveedor_favorito_id=z.id)
-	        WHERE P.ACTIVO IS TRUE AND P.INVENTARIABLE IS TRUE 
-	        GROUP BY P.CLAVE
-	        ORDER BY LINEA,CLASE
+	        JOIN MARCA M ON(M.ID=P.MARCA_ID)
+	        LEFT JOIN proveedor z on(p.proveedor_favorito_id = z.id)
+	        WHERE P.ACTIVO IS TRUE 
+              AND P.INVENTARIABLE IS TRUE 
+	          GROUP BY P.CLAVE
+	          ORDER BY LINEA, CLASE
     	"""
 
     }

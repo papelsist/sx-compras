@@ -186,6 +186,9 @@ class UrlMappings {
         
 
         "/api/reciboElectronico"(resources: 'reciboElectronico', excludes:['save', 'create', 'edit','patch'])
+        "/api/reciboElectronico/asignarRequisicion/$id"(controller: 'reciboElectronico', action: 'asignarRequisicion', method: 'PUT')
+        "/api/reciboElectronico/quitarRequisicion/$id"(controller: 'reciboElectronico', action: 'quitarRequisicion', method: 'PUT')
+        "/api/reciboElectronico/requisicionesPendientes/$id"(controller: 'reciboElectronico', action: 'requisicionesPendientes')
         
 
 
@@ -403,6 +406,7 @@ class UrlMappings {
         // Existencias
         "/api/existencias"(resources: 'existencia', excludes:['create', 'save', 'edit','patch'])
         "/api/existencias/crossTab"(controller: 'existencia', action: 'crossTab')
+        "/api/existencias/alcanceSimpleCrossTab"(controller: 'existencia', action: 'alcanceSimpleCrossTab')
         // SolicitudDeDepositos
 
         // Activo Fijo

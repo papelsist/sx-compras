@@ -11,7 +11,7 @@ import sx.core.Producto
 import sx.core.Proveedor
 import sx.core.ProveedorProducto
 import sx.utils.Periodo
-
+import sx.utils.MonedaUtils
 
 
 @Transactional
@@ -31,6 +31,10 @@ class ListaDePreciosVentaService implements LogUser {
     	log.debug("Actualizando lista de precios venta {}", lista.id)
         lista.partidas.each {
         	logEntity(it)
+            if(it.costo) {
+                it.factorContado = MonedaUtils.round(it.precioContado / it.costo, 2)
+                it.factorCredito = MonedaUtils.round(it.precioCredito / it.costo, 2)
+            }
         }
         logEntity(lista)
         lista.save failOnError: true, flush: true

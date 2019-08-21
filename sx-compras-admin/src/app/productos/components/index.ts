@@ -16,6 +16,7 @@ import { ProductoSatComponent } from './producto-sat/producto-sat.component';
 import { UnidadSatComponent } from './unidad-sat/unidad-sat.component';
 import { AltiGridComponent } from './alti-modal/alti-grid.component';
 import { AltiModalComponent } from './alti-modal/alti-modal.component';
+import { ProductosTable2Component } from './productos-table2/productos-table2.component';
 
 export const components = [
   ProductosTableComponent,
@@ -35,7 +36,8 @@ export const components = [
   ProductoSatComponent,
   UnidadSatComponent,
   AltiGridComponent,
-  AltiModalComponent
+  AltiModalComponent,
+  ProductosTable2Component
 ];
 
 export const entryComponents: any[] = [
@@ -64,3 +66,4 @@ export * from './unidad-sat/unidad-sat.component';
 
 export * from './alti-modal/alti-grid.component';
 export * from './alti-modal/alti-modal.component';
+export * from './productos-table2/productos-table2.component';

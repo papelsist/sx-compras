@@ -20,7 +20,7 @@ export const getProveedorProductosEntities = createSelector(
 export const getAllProveedorProductos = createSelector(
   getProveedorProductosEntities,
   entities => {
-    return Object.keys(entities).map(id => entities[id]);
+    return _.sortBy(Object.keys(entities).map(id => entities[id]), 'clave');
   }
 );
 

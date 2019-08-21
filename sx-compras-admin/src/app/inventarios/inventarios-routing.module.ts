@@ -12,6 +12,11 @@ const routes: Routes = [
         loadChildren: 'app/existencias/existencias.module#ExistenciasModule'
       },
       {
+        path: 'alcance-simple',
+        loadChildren:
+          'app/alcance-simple/alcance-simple.module#AlcanceSimpleModule'
+      },
+      {
         path: 'audit',
         loadChildren: 'app/audit/audit.module#AuditModule'
       }

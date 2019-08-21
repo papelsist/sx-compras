@@ -1,0 +1,7 @@
+import sx.cxp.GastoDet
+
+model {
+	GastoDet gastoDet
+}
+
+json g.render(gastoDet, [resolveTemplate: false])

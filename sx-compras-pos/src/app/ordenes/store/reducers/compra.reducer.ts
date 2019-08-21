@@ -19,7 +19,7 @@ export const adapter: EntityAdapter<Compra> = createEntityAdapter<Compra>();
 export const initialState: State = adapter.getInitialState({
   loading: false,
   loaded: false,
-  periodo: Periodo.fromStorage(ComprasPeriodoStoeKey)
+  periodo: Periodo.fromNow(45)
 });
 
 export function reducer(

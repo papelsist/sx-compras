@@ -12,6 +12,9 @@ import { TdDialogService } from '@covalent/core';
 
 import { pluck, filter } from 'rxjs/operators';
 import { Requisicion } from 'app/cxp/model';
+import { MatDialog } from '@angular/material';
+import { SelectorRequisicionesComponent } from '../selector-requisiciones/selector-requisiciones.component';
+import { ReciboService } from '../services/recibo.service';
 
 @Component({
   selector: 'sx-recibo-page',
@@ -27,13 +30,16 @@ export class ReciboPageComponent implements OnInit {
 
   constructor(
     private store: Store<fromStore.State>,
-    private dialogService: TdDialogService
+    private dialogService: TdDialogService,
+    private dialog: MatDialog,
+    private service: ReciboService
   ) {}
 
   ngOnInit() {
     this.loading$ = this.store.pipe(select(fromStore.selectRecibosLoading));
 
     this.recibo$ = this.store.pipe(select(fromStore.getCurrentRecibo));
+
     this.partidas$ = this.recibo$.pipe(
       filter(r => !!r),
       pluck('partidas')
@@ -42,9 +48,6 @@ export class ReciboPageComponent implements OnInit {
       filter(r => !!r),
       pluck('requisicion')
     );
-    this.recibo$.subscribe(data => {
-      console.log('Show recibo: ', data);
-    });
   }
 
   onBack() {
@@ -73,5 +76,52 @@ export class ReciboPageComponent implements OnInit {
           this.store.dispatch(new fromStore.UpdateRecibo({ update }));
         }
       });
+  }
+
+  asignarRequisicion(recibo: Partial<Recibo>) {
+    this.service.requisicionesPendientes(recibo).subscribe(
+      res => {
+        this.dialog
+          .open(SelectorRequisicionesComponent, {
+            data: { proveedor: recibo.emisor, requisiciones: res },
+            width: '650px'
+          })
+          .afterClosed()
+          .subscribe(data => {
+            if (data) {
+              this.store.dispatch(
+                new fromStore.AsignarRequisicionRecibo({
+                  reciboId: recibo.id,
+                  requisicionId: data.id
+                })
+              );
+            }
+          });
+      },
+      error => console.error('Error: ', error)
+    );
+  }
+
+  onQuitarRequisicion(
+    requisicion: Partial<Requisicion>,
+    recibo: Partial<Recibo>
+  ) {
+    if (!recibo.revision) {
+      this.dialogService
+        .openConfirm({
+          title: 'QUITAR REQUISICIÓN',
+          message: 'FOLIO: ' + requisicion.folio,
+          acceptButton: 'QUITAR',
+          cancelButton: 'CANCELAR'
+        })
+        .afterClosed()
+        .subscribe(res => {
+          if (res) {
+            this.store.dispatch(
+              new fromStore.QuitarRequisicionRecibo({ reciboId: recibo.id })
+            );
+          }
+        });
+    }
   }
 }

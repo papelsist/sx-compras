@@ -23,13 +23,22 @@ export const adapter: EntityAdapter<Recibo> = createEntityAdapter<Recibo>();
 export const initialState: State = adapter.getInitialState({
   loading: false,
   loaded: false,
-  periodo: Periodo.fromStorage(RECIBOS_PERIODO_KEY, Periodo.fromNow(180)),
+  periodo: Periodo.fromStorage(RECIBOS_PERIODO_KEY, Periodo.fromNow(30)),
   disponibles: undefined,
   disponiblesLoaded: false
 });
 
 export function reducer(state = initialState, action: RecibosActions): State {
   switch (action.type) {
+    case ReciboActionTypes.SetPeriodo: {
+      return {
+        ...state,
+        periodo: action.payload.periodo
+      };
+    }
+
+    case ReciboActionTypes.QuitarRequisicionRecibo:
+    case ReciboActionTypes.AsignarRequisicionRecibo:
     case ReciboActionTypes.LoadRecibos:
     case ReciboActionTypes.DeleteRecibo:
     case ReciboActionTypes.UpdateRecibo: {
@@ -39,6 +48,7 @@ export function reducer(state = initialState, action: RecibosActions): State {
       };
     }
 
+    case ReciboActionTypes.QuitarRequisicionReciboFail:
     case ReciboActionTypes.DeleteReciboFail:
     case ReciboActionTypes.UpdateReciboFail:
     case ReciboActionTypes.LoadRecibosFail: {
@@ -65,6 +75,15 @@ export function reducer(state = initialState, action: RecibosActions): State {
     case ReciboActionTypes.UpsertRecibo: {
       return adapter.upsertOne(action.payload.recibo, {
         ...state
+      });
+    }
+
+    case ReciboActionTypes.QuitarRequisicionReciboSuccess: {
+      const recibo = action.payload.recibo;
+      adapter.removeOne(recibo.id, state); // small fix porque no quita la requisicion
+      return adapter.upsertOne(action.payload.recibo, {
+        ...state,
+        loading: false
       });
     }
 

@@ -29,7 +29,7 @@ class ProductoController extends RestfulController<Producto> {
         params.sort = params.sort ?:'lastUpdated'
         params.order = params.order ?:'desc'
         params.max = 5000
-        log.info('List: ', params)
+        log.info('List: {}', params)
 
         if(params.term){
             def search = '%' + params.term + '%'
@@ -49,8 +49,8 @@ class ProductoController extends RestfulController<Producto> {
 
         // TEMPO FOR DEVONLY
         if(Environment.current == Environment.DEVELOPMENT) {
-            query = query.where {deLinea == true && activo == true}
-            params.max = 50
+            // query = query.where {deLinea == true && activo == true}
+            params.max = 5000
         }
         ///END TEMPO
 

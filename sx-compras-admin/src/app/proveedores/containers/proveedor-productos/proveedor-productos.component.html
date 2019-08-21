@@ -1,0 +1,72 @@
+<!-- <mat-card flex>
+  <sx-standard-header
+    title="Productos del proveedor"
+    [periodo]="periodo$ | async"
+    (periodoChange)="onPeriodo($event)"
+    (reload)="onReload()"
+    (download)="grid.exportData()"
+  ></sx-standard-header>
+  <mat-divider></mat-divider>
+  <ng-template
+    tdLoading
+    [tdLoadingUntil]="!(loading$ | async)"
+    tdLoadingStrategy="overlay"
+  >
+  </ng-template>
+  <div class="grid-panel">
+    <sx-recibos-table
+      #grid
+      [partidas]="rows$ | async"
+      (select)="onSelect($event)"
+      (xml)="onXml($event)"
+    >
+    </sx-recibos-table>
+  </div>
+</mat-card> -->
+<mat-card *ngIf="proveedor$ | async as proveedor">
+  <sx-search-title
+    title="Productos"
+    (search)="grid.gridApi.setQuickFilter($event)"
+  >
+    <button mat-menu-item class="actions" (click)="onAgregar(proveedor, 'MXN')">
+      <mat-icon>add</mat-icon> Agregar (MXN)
+    </button>
+    <button mat-menu-item class="actions" (click)="onAgregar(proveedor, 'USD')">
+      <mat-icon>add</mat-icon> Agregar (USD)
+    </button>
+    <button
+      mat-menu-item
+      class="actions"
+      [disabled]="selected.length === 0"
+      (click)="onDelete(selected)"
+    >
+      <mat-icon>cancel</mat-icon> Quitar
+    </button>
+    <button
+      mat-menu-item
+      class="actions"
+      (click)="grid.exportData(proveedor.clave + '_PRODUCTS_')"
+      matTooltip="Descargar registros en formato CSV"
+    >
+      <mat-icon color="primary">file_download</mat-icon> Descargar
+    </button>
+  </sx-search-title>
+  <mat-divider></mat-divider>
+  <sx-proveedor-productos-table
+    #grid
+    [partidas]="productos$ | async"
+    (select)="onEdit($event)"
+    (selectionChange)="onSelect($event)"
+  >
+  </sx-proveedor-productos-table>
+  <a
+    mat-fab
+    (click)="onAgregar(proveedor, 'MXN')"
+    matTooltip="Agregar producto"
+    matTooltipPosition="before"
+    color="accent"
+    class="mat-fab-position-bottom-right "
+  >
+    <mat-icon>add</mat-icon>
+  </a>
+</mat-card>

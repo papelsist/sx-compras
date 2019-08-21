@@ -73,7 +73,9 @@ export class RecibosdetTableComponent extends LxTableComponent
   }
 
   onModelUpdate(event: ModelUpdatedEvent) {
-    this.actualizarTotales();
+    if (this.gridApi) {
+      this.actualizarTotales();
+    }
   }
 
   clearSelection() {
@@ -83,22 +85,18 @@ export class RecibosdetTableComponent extends LxTableComponent
   actualizarTotales() {
     let registros = 0;
     let impPagado = 0;
-    if (this.gridApi) {
-      this.gridApi.forEachNodeAfterFilter((rowNode, index) => {
-        const det: Partial<ReciboDet> = rowNode.data;
-        registros++;
-        impPagado += det.impPagado;
-      });
-    }
+    this.gridApi.forEachNodeAfterFilter((rowNode, index) => {
+      const det: Partial<ReciboDet> = rowNode.data;
+      registros++;
+      impPagado += det.impPagado;
+    });
     const res = [
       {
-        UUID: `Registros: ${registros}`,
+        idDocumento: `CFDIs: ${registros}`,
         ImpPagado: impPagado
       }
     ];
-    if (this.gridApi) {
-      this.gridApi.setPinnedBottomRowData(res);
-    }
+    this.gridApi.setPinnedBottomRowData(res);
   }
 
   buildColsDef(): ColDef[] {
@@ -107,7 +105,8 @@ export class RecibosdetTableComponent extends LxTableComponent
         headerName: 'UUID',
         field: 'idDocumento',
         width: 150,
-        pinned: 'left'
+        pinned: 'left',
+        pinnedRowCellRenderer: p => p.value
       },
       {
         headerName: 'Folio',

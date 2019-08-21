@@ -44,6 +44,29 @@ class ReciboElectronicoController extends RestfulController<ReciboElectronico> {
         return reciboElectronicoService.save(resource)
     }
 
+    @CompileDynamic
+    def asignarRequisicion(ReciboElectronico recibo) {
+        Requisicion req = Requisicion.get(params.requisicionId)
+        log.info('Asignando recibo: {} a la requisicion: {}', recibo.id, req.folio)
+        recibo = reciboElectronicoService.asignarRequisicion(recibo, req)
+        log.info('Recibo: {}', recibo)
+        respond recibo, view: 'show'
+    }
+
+    @CompileDynamic
+    def quitarRequisicion(ReciboElectronico recibo) {
+        recibo = reciboElectronicoService.quitarRequisicion(recibo)
+        respond recibo, view: 'show'
+    }
+
+    @CompileDynamic
+    def requisicionesPendientes(ReciboElectronico recibo) {
+        def pendientes = RequisicionDeCompras
+            .findAll("from RequisicionDeCompras r where r.proveedor.rfc = ? and r.recibo = null and r.fecha > ? order by r.fecha", 
+            [recibo.emisorRfc, Date.parse('dd/MM/yyyy', '30/11/2018')])
+        respond pendientes
+    }
+
     def handleException(Exception e) {
         String message = ExceptionUtils.getRootCauseMessage(e)
         log.error(message, ExceptionUtils.getRootCause(e))

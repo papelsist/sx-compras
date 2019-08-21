@@ -16,6 +16,12 @@ export class InventariosPageComponent implements OnInit {
       icon: 'format_list_numbered'
     },
     {
+      route: 'alcance-simple',
+      title: 'Alcance S',
+      description: 'Alcance simple',
+      icon: 'tune'
+    },
+    {
       route: 'audit',
       title: 'Replica',
       description: 'Bitácora de replicación',

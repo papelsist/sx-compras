@@ -49,6 +49,11 @@ class ExistenciaController extends RestfulController<Existencia> {
         respond inventarioService.existenciasCrossTab()
     }
 
+    def alcanceSimpleCrossTab() {
+        int meses = params.int('meses', 2)
+        respond inventarioService.alcanceSimpleCrossTab(meses)
+    }
+
     def handleException(Exception e) {
         String message = ExceptionUtils.getRootCauseMessage(e)
         log.error(message, ExceptionUtils.getRootCause(e))

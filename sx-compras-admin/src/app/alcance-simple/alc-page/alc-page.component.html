@@ -1,0 +1,26 @@
+<mat-card flex>
+  <sx-standard-header
+    *tdLoading="
+      'alcanceLoading';
+      mode: 'indeterminate';
+      type: 'circle';
+      strategy: 'overlay';
+      color: 'accent'
+    "
+    title="Alcance Simple"
+    (reload)="onReload()"
+    (download)="grid.exportData('ALC_SIMPLE')"
+  >
+    <div layout layout-align="center center" flex class="info">
+      <span flex></span>
+      <span flex class="cursor-pointer" (click)="changeMeses()"
+        >{{ meses }} Meses</span
+      >
+    </div>
+  </sx-standard-header>
+  <mat-divider></mat-divider>
+
+  <div class="grid-panel">
+    <sx-alc-table #grid [partidas]="rows$ | async"></sx-alc-table>
+  </div>
+</mat-card>

@@ -15,6 +15,13 @@ export enum ReciboActionTypes {
   UpdateReciboSuccess = '[Recibos API] Update recibo Success',
   UpsertRecibo = '[Recibos exist guard] Recibo upsert',
 
+  // Asignar requisicion
+  AsignarRequisicionRecibo = '[Recibo component] Asignar requisicion ',
+
+  QuitarRequisicionRecibo = '[Recibo component] Quitar requisicion',
+  QuitarRequisicionReciboFail = '[Recibo effects] Quitar requisicion fil',
+  QuitarRequisicionReciboSuccess = '[Recibo effects] Quitar requisicion success',
+
   // DELETE
   DeleteRecibo = '[Recibo component] Delete recibo',
   DeleteReciboFail = '[Recibos API] Delete recibo fail',
@@ -71,6 +78,25 @@ export class DeleteReciboSuccess implements Action {
   constructor(public payload: { recibo: Partial<Recibo> }) {}
 }
 
+// Asignar Requisicion
+export class AsignarRequisicionRecibo implements Action {
+  readonly type = ReciboActionTypes.AsignarRequisicionRecibo;
+  constructor(public payload: { reciboId: number; requisicionId: string }) {}
+}
+
+export class QuitarRequisicionRecibo implements Action {
+  readonly type = ReciboActionTypes.QuitarRequisicionRecibo;
+  constructor(public payload: { reciboId: number }) {}
+}
+export class QuitarRequisicionReciboFail implements Action {
+  readonly type = ReciboActionTypes.QuitarRequisicionReciboFail;
+  constructor(public payload: { response: any }) {}
+}
+export class QuitarRequisicionReciboSuccess implements Action {
+  readonly type = ReciboActionTypes.QuitarRequisicionReciboSuccess;
+  constructor(public payload: { recibo: Recibo }) {}
+}
+
 export type RecibosActions =
   | SetPeriodo
   | LoadRecibos
@@ -82,4 +108,8 @@ export type RecibosActions =
   | UpsertRecibo
   | DeleteRecibo
   | DeleteReciboFail
-  | DeleteReciboSuccess;
+  | DeleteReciboSuccess
+  | AsignarRequisicionRecibo
+  | QuitarRequisicionRecibo
+  | QuitarRequisicionReciboFail
+  | QuitarRequisicionReciboSuccess;

@@ -26,6 +26,7 @@ import { Recibo } from '../models';
 export class RecibosTableComponent extends LxTableComponent implements OnInit {
   @Output() selectionChange = new EventEmitter<any[]>();
   @Output() xml = new EventEmitter();
+
   constructor(public tableService: SxTableService) {
     super(tableService);
   }
@@ -55,6 +56,8 @@ export class RecibosTableComponent extends LxTableComponent implements OnInit {
   buildRowStyle(params: any) {
     if (params.node.rowPinned) {
       return { 'font-weight': 'bold' };
+    } else if (!params.data.requisicion) {
+      return { color: 'red' };
     }
     return {};
   }
@@ -129,7 +132,8 @@ export class RecibosTableComponent extends LxTableComponent implements OnInit {
       {
         headerName: 'Monto',
         field: 'monto',
-        width: 120
+        width: 120,
+        valueFormatter: params => this.transformCurrency(params.value)
       },
       {
         headerName: 'F. Pago',

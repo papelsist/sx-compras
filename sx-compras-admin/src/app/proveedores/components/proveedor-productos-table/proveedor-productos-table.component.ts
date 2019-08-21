@@ -4,82 +4,153 @@ import {
   ChangeDetectionStrategy,
   Input,
   Output,
-  EventEmitter,
-  OnChanges,
-  SimpleChanges,
-  ViewChild
+  EventEmitter
 } from '@angular/core';
-import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 
+import { RowSelectedEvent, ColDef, ModelUpdatedEvent } from 'ag-grid-community';
+
+import { LxTableComponent } from 'app/_shared/components';
+import { SxTableService } from 'app/_shared/components/lx-table/sx-table.service';
 import { ProveedorProducto } from '../../models/proveedorProducto';
 
 @Component({
   selector: 'sx-proveedor-productos-table',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './proveedor-productos-table.component.html',
-  styleUrls: ['./proveedor-productos-table.component.scss']
+  template: `
+    <div style="height: 100%">
+      <ag-grid-angular
+        #agGrid
+        class="ag-theme-balham"
+        style="width: 100%; height: 100%;"
+        [gridOptions]="gridOptions"
+        [defaultColDef]="defaultColDef"
+        [floatingFilter]="false"
+        [localeText]="localeText"
+        (firstDataRendered)="onFirstDataRendered($event)"
+        (gridReady)="onGridReady($event)"
+        (modelUpdated)="onModelUpdate($event)"
+      >
+      </ag-grid-angular>
+    </div>
+  `
 })
-export class ProveedorProductosTableComponent implements OnInit, OnChanges {
-  dataSource = new MatTableDataSource<ProveedorProducto>([]);
-  @Input() productos: ProveedorProducto[];
-  @Input()
-  columnsToDisplay = [
-    // 'proveedor',
-    'clave',
-    'descripcion',
-    'unidad',
-    'claveProveedor',
-    'moneda',
-    'precioBruto',
-    'desc1',
-    'desc2',
-    'desc3',
-    'desc4',
-    'precio',
-    'operaciones'
-  ];
-  @Input() search: string;
-  @Output() select = new EventEmitter<ProveedorProducto[]>();
-  @Output() delete = new EventEmitter<ProveedorProducto>();
-  @Output() edit = new EventEmitter<ProveedorProducto>();
-  @Output() activar = new EventEmitter<ProveedorProducto>();
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
+export class ProveedorProductosTableComponent extends LxTableComponent
+  implements OnInit {
+  @Output() selectionChange = new EventEmitter<ProveedorProducto[]>();
 
-  constructor() {}
-
-  ngOnInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+  constructor(public tableService: SxTableService) {
+    super(tableService);
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes.productos && changes.productos.currentValue) {
-      this.dataSource.data = changes.productos.currentValue;
+  ngOnInit() {}
+  buildGridOptions() {
+    super.buildGridOptions();
+    this.gridOptions.rowSelection = 'multiple';
+    this.gridOptions.rowMultiSelectWithClick = true;
+    this.gridOptions.onRowSelected = (event: RowSelectedEvent) => {
+      this.selectionChange.emit(this.gridApi.getSelectedRows());
+    };
+    this.defaultColDef = {
+      editable: false,
+      filter: 'agTextColumnFilter',
+      width: 140,
+      sortable: true,
+      resizable: true,
+      pinnedRowCellRenderer: r => '',
+      pinnedRowValueFormatter: r => ''
+    };
+  }
+
+  onModelUpdate(event: ModelUpdatedEvent) {
+    this.actualizarTotales();
+  }
+
+  actualizarTotales() {
+    if (this.gridApi) {
+      let registros = 0;
+      this.gridApi.forEachNodeAfterFilter((rowNode, index) => {
+        registros++;
+      });
+      const res = [
+        {
+          descripcion: `Productos: ${registros}`
+        }
+      ];
+      this.gridApi.setPinnedBottomRowData(res);
     }
-    if (changes.search && changes.search.currentValue) {
-      this.dataSource.filter = changes.search.currentValue;
-    }
   }
 
-  toogleSelect(event: ProveedorProducto) {
-    event.selected = !event.selected;
-    const data = this.productos.filter(item => item.selected);
-    this.select.emit([...data]);
-  }
-
-  editProducto(event: Event, prod: ProveedorProducto) {
-    event.stopPropagation();
-    this.edit.emit(prod);
-  }
-
-  deleteProducto(event: Event, index: number, prod: ProveedorProducto) {
-    event.stopPropagation();
-    this.delete.emit(prod);
-  }
-
-  activarProducto(event: Event, index: number, prod: ProveedorProducto) {
-    event.stopPropagation();
-    this.activar.emit(prod);
+  buildColsDef(): ColDef[] {
+    return [
+      {
+        headerName: 'Clave',
+        field: 'clave',
+        width: 120,
+        pinned: 'left'
+      },
+      {
+        headerName: 'Descripción',
+        field: 'descripcion',
+        width: 220,
+        pinned: 'left',
+        pinnedRowCellRenderer: params => params.value
+      },
+      {
+        headerName: 'U',
+        field: 'unidad',
+        width: 80
+      },
+      {
+        headerName: 'Desc Proveedor',
+        field: 'claveProveedor',
+        width: 250,
+        valueGetter: params =>
+          `(${params.data.claveProveedor}) ${params.data.descripcionProveedor}`
+      },
+      {
+        headerName: 'Mon',
+        field: 'moneda',
+        width: 80
+      },
+      {
+        headerName: 'P. Bruto',
+        field: 'precioBruto',
+        width: 110,
+        valueFormatter: params => this.transformCurrency(params.value)
+      },
+      {
+        headerName: 'Desc1',
+        field: 'desc1',
+        width: 90
+      },
+      {
+        headerName: 'Desc2',
+        field: 'desc2',
+        width: 90
+      },
+      {
+        headerName: 'Desc3',
+        field: 'desc3',
+        width: 90
+      },
+      {
+        headerName: 'Desc4',
+        field: 'desc4',
+        width: 90
+      },
+      {
+        headerName: 'Precio',
+        field: 'precio',
+        width: 110,
+        valueFormatter: params => this.transformCurrency(params.value)
+      },
+      {
+        headerName: 'Actualizada',
+        field: 'lastUpdated',
+        valueFormatter: params =>
+          this.transformDate(params.value, 'dd/MM/yyyy HH:mm'),
+        width: 110
+      }
+    ];
   }
 }
