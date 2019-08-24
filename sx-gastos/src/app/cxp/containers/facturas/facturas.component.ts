@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { Store, select } from '@ngrx/store';
+import * as fromRoot from 'app/store';
 import * as fromStore from '../../store';
 import * as fromActions from '../../store/actions/facturas.actions';
 
@@ -9,7 +10,6 @@ import { Observable, Subject } from 'rxjs';
 import { ComprobanteFiscalService } from '../../services';
 import { CuentaPorPagar, CxPFilter } from '../../model';
 import { MatDialog } from '@angular/material';
-import { CxPFormComponent } from 'app/cxp/components';
 
 @Component({
   selector: 'sx-facturas-cxp',
@@ -66,6 +66,7 @@ export class FacturasComponent implements OnInit {
   onXml(event: CuentaPorPagar) {}
 
   onEdit(event: CuentaPorPagar) {
+    /*
     this.dialog
       .open(CxPFormComponent, { data: { cxp: event } })
       .afterClosed()
@@ -78,5 +79,7 @@ export class FacturasComponent implements OnInit {
           this.store.dispatch(new fromActions.UpdateFactura({ update }));
         }
       });
+      */
+    this.store.dispatch(new fromRoot.Go({ path: ['cxp/facturas', event.id] }));
   }
 }

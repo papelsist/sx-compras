@@ -143,6 +143,18 @@ export class AlcancesTableComponent extends LxTableComponent
         pinnedRowCellRenderer: r => r.value
       },
       {
+        headerName: 'Grs',
+        field: 'gramos',
+        pinned: 'left',
+        pinnedRowCellRenderer: r => r.value
+      },
+      {
+        headerName: 'Kg',
+        field: 'kilos',
+        pinned: 'left',
+        pinnedRowCellRenderer: r => r.value
+      },
+      {
         headerName: 'Exis',
         field: 'existencia',
         width: 120,

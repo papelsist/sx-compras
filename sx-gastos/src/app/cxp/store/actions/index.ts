@@ -8,3 +8,4 @@ export * from './aplicaciones.actions';
 export * from './cfdi.actions';
 export * from './cheque.actions';
 export * from './rembolso.actions';
+export * from './gasto.actions';

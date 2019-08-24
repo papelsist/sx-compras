@@ -394,7 +394,6 @@ class UrlMappings {
         "/api/embarques/comisiones/relacionDePagosDeFletes"(controller: 'envioComision', action: 'relacionDePagosDeFletes')
         "/api/embarques/comisiones/solicitudDeFacturacionDeFletes"(controller: 'envioComision', action: 'solicitudDeFacturacionDeFletes')
 
-
         // Prestamos
         "/api/embarques/facturistaPrestamo"(resources: 'facturistaPrestamo', excludes:['create', 'edit','patch'])
         "/api/embarques/facturistaOtroCargo"(resources: 'facturistaOtroCargo', excludes:['create', 'edit','patch'])
@@ -411,6 +410,12 @@ class UrlMappings {
 
         // Activo Fijo
         "/api/activo/activoFijo"(resources: 'activoFijo', excludes:['create', 'edit','patch'])
+
+        // Gastos
+        "/api/gastoDet"(resources: 'gastoDet', excludes:['create', 'edit','patch'])
+        "/api/gastoDet/prorratear/$id"(controller: 'gastoDet', action: 'prorratear', method: 'PUT')
+
+        "/api/productoServicio"(resources: 'productoServicio', excludes:['create', 'edit','patch'])
 
         // Audit
         "/api/audit"(resources: 'audit', excludes:['create', 'edit','patch'])

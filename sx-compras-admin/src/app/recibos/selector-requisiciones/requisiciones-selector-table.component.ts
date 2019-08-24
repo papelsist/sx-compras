@@ -109,6 +109,13 @@ export class RequisicionesSelectorTableComponent extends LxTableComponent
         headerName: 'Total',
         field: 'total',
         width: 150,
+        valueGetter: params => {
+          if (!params.node.isRowPinned()) {
+            return params.data.egreso.importe * -1;
+          } else {
+            return '';
+          }
+        },
         valueFormatter: params => this.tableService.formatCurrency(params.value)
       }
     ];

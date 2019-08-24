@@ -19,12 +19,8 @@ export class FacturaExistsGuard implements CanActivate {
   ) {}
 
   canActivate(route: ActivatedRouteSnapshot): Observable<boolean> {
-    return this.checkStore().pipe(
-      switchMap(() => {
-        const id = route.params.facturaId;
-        return this.hasFacturaInApi(id);
-      })
-    );
+    const id = route.params.facturaId;
+    return this.hasFacturaInApi(id);
   }
 
   checkStore(): Observable<boolean> {
@@ -44,8 +40,8 @@ export class FacturaExistsGuard implements CanActivate {
       map(factura => new fromActions.UpsertFactura({ factura: factura })),
       tap(action => this.store.dispatch(action)),
       map(action => !!action.payload.factura),
-      catchError(() => {
-        this.store.dispatch(new fromRoot.Go({ path: ['cxp/facturas'] }));
+      catchError(response => {
+        console.log('Error: ', response);
         return of(false);
       })
     );

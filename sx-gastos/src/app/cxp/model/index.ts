@@ -12,3 +12,4 @@ export * from './pago';
 export * from './cheque';
 export * from './rembolso';
 export * from './rembolsoDet';
+export * from './gasto-det';

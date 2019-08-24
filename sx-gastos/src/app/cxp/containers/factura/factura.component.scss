@@ -1,0 +1,25 @@
+.mat-toolbar {
+  height: 50px;
+}
+.cfdiXml {
+  max-width: 1500px;
+  max-height: 850px;
+  overflow: scroll;
+  white-space: pre;
+  font-family: monospace;
+  font-size: 12px;
+}
+.cfdiHeader {
+  padding: 20px 10px;
+  font-weight: bold;
+}
+.gastos {
+  height: 556px;
+  overflow: scroll;
+  // border: 1px solid green;
+}
+.conceptos {
+  height: 500px;
+  overflow: scroll;
+  // border: 1px solid green;
+}

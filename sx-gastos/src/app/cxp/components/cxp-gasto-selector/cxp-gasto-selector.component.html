@@ -1,0 +1,28 @@
+<h4 mat-dialog-title>Asignación de conceptos contables</h4>
+<div class="grid-panel">
+  <sx-cxp-gastos-table
+    [partidas]="conceptos"
+    (selectionChange)="onSelection($event)"
+  >
+  </sx-cxp-gastos-table>
+</div>
+<mat-dialog-content>
+  <div [formGroup]="form" layout="column">
+    <sx-producto-servicio-field formControlName="productoServicio" flex>
+    </sx-producto-servicio-field>
+
+    <sx-cuenta-contable-field
+      formControlName="cuentaContable"
+    ></sx-cuenta-contable-field>
+    <sx-sucursal-field [parent]="form"></sx-sucursal-field>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button
+    mat-button
+    (click)="asignar()"
+    [disabled]="selected.length === 0 && form.valid"
+  >
+    Seleccionar
+  </button>
+</mat-dialog-actions>

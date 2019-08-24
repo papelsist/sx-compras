@@ -7,6 +7,7 @@ import { AplicacionesEffects } from './aplicaciones.effects';
 import { CfdiEffects } from './cfdi.effects';
 import { ChequesEffects } from './cheques.effects';
 import { RembolsosEffects } from './rembolsos.effects';
+import { GastoDetEffects } from './gasto.effects';
 
 export const effects: any[] = [
   CfdiEffects,
@@ -17,7 +18,8 @@ export const effects: any[] = [
   PagosEffects,
   AplicacionesEffects,
   ChequesEffects,
-  RembolsosEffects
+  RembolsosEffects,
+  GastoDetEffects
 ];
 
 export * from './requisiciones.effects';
@@ -28,3 +30,4 @@ export * from './pagos.effects';
 export * from './aplicaciones.effects';
 export * from './cheques.effects';
 export * from './rembolsos.effects';
+export * from './gasto.effects';

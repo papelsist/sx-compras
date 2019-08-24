@@ -23,6 +23,12 @@ import { ProductoFieldComponent } from './producto-field/producto-field.componen
 import { ClienteFieldComponent } from './cliente-field/cliente-field.component';
 import { CuentaContableFieldComponent } from './cuenta-contable-field/cuenta-contable-field.componet';
 
+import { LxTableComponent } from './lx-table/lx-table.component';
+import { StandardHeaderComponent } from './standard-header/standard-header.component';
+import { StandardFooterComponent } from './standard-footer/standard-footer.component';
+import { PrintCellRendererComponent } from './lx-table/print-cell-renderer.component';
+import { ProductoServicioFieldComponent } from './producto-servicio-field/producto-servicio-field.component';
+
 export const components = [
   DireccionComponent,
   FooterComponent,
@@ -47,12 +53,19 @@ export const components = [
   ProveedorProductoFieldComponent,
   ProductoFieldComponent,
   ClienteFieldComponent,
-  CuentaContableFieldComponent
+  CuentaContableFieldComponent,
+
+  LxTableComponent,
+  StandardHeaderComponent,
+  StandardFooterComponent,
+  PrintCellRendererComponent,
+  ProductoServicioFieldComponent
 ];
 
 export const entyComponents: any[] = [
   FechaDialogComponent,
-  PeriodoDialogComponent
+  PeriodoDialogComponent,
+  PrintCellRendererComponent
 ];
 
 export * from './direccion/direccion.component';
@@ -77,3 +90,10 @@ export * from './proveedor-productos-field/proveedor-productos-field.component';
 export * from './producto-field/producto-field.component';
 export * from './cliente-field/cliente-field.component';
 export * from './cuenta-contable-field/cuenta-contable-field.componet';
+
+export * from './lx-table/lx-table.component';
+export * from './standard-header/standard-header.component';
+export * from './standard-footer/standard-footer.component';
+export * from './lx-table/print-cell-renderer.component';
+
+export * from './producto-servicio-field/producto-servicio-field.component';

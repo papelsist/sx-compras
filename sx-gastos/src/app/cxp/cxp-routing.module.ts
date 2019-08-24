@@ -21,6 +21,11 @@ const routes: Routes = [
         component: fromContainers.FacturasComponent
       },
       {
+        path: 'facturas/:facturaId',
+        canActivate: [fromGuards.FacturaExistsGuard],
+        component: fromContainers.FacturaComponent
+      },
+      {
         path: 'requisiciones',
         canActivate: [fromGuards.RequisicionesGuard],
         children: [

@@ -1,0 +1,8 @@
+import sx.cxp.ProductoServicio
+
+model {
+	Iterable<ProductoServicio> productoServicioList
+}
+
+json tmpl.productoServicio(productoServicioList ?: [])
+

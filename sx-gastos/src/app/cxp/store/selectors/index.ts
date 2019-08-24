@@ -6,3 +6,4 @@ export * from './facturas.selector';
 export * from './pagos.selectors';
 export * from './cheques.selectors';
 export * from './rembolso.selectors';
+export * from './gasto.selectors';

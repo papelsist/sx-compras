@@ -1,0 +1,18 @@
+
+.form-row {
+  display: flex;
+  justify-content: space-between;
+  mat-form-field {
+    padding: 0 5px;
+    width: 130px;
+  }
+}
+/*
+.importes-row {
+  width: 120px;
+}
+
+mat-form-field {
+  padding: 0 5px;
+}
+*/

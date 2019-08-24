@@ -1,0 +1,92 @@
+<mat-card *ngIf="factura$ | async as factura">
+  <div class="pad mat-title" layout>
+    Factura: {{ factura.serie }}-
+    {{ factura.folio }}
+    <span class="pad-left">
+      {{ factura.nombre }}
+    </span>
+    <span flex></span>
+    <span>Total: {{ factura.total | currency }}</span>
+  </div>
+  <mat-divider></mat-divider>
+  <div class="pad-left pad-right">
+    <mat-tab-group [selectedIndex]="1">
+      <mat-tab label="Cuenta por Pagar">
+        <sx-cxp-form2 [cxp]="factura"></sx-cxp-form2>
+        <div class="conceptos">
+          <sx-cfdi-conceptos-table2
+            [partidas]="factura.comprobanteFiscal.conceptos"
+          >
+          </sx-cfdi-conceptos-table2>
+        </div>
+      </mat-tab>
+
+      <mat-tab label="Conceptos de Gasto">
+        <mat-toolbar color="accent" layout layout-align="center center">
+          <span>Detalle contables del gasto</span>
+          <span flex></span>
+          <button
+            mat-button
+            mat-icon-button
+            matTooltip="Agregar conceptos"
+            (click)="agregarConceptos(factura, conceptos)"
+            *ngIf="cfdiConceptos$ | async as conceptos"
+          >
+            <mat-icon>playlist_add</mat-icon>
+          </button>
+          <button
+            mat-button
+            mat-icon-button
+            matTooltip="Quitar conceptos"
+            (click)="quitarConceptos(selected)"
+            *ngIf="cfdiConceptos$ | async as conceptos"
+            [disabled]="selected.length === 0"
+          >
+            <mat-icon>remove_circle_outline</mat-icon>
+          </button>
+          <button
+            mat-button
+            mat-icon-button
+            matTooltip="Prorratear concepto"
+            (click)="onProrratear(selected)"
+            *ngIf="cfdiConceptos$ | async as conceptos"
+            [disabled]="selected.length === 0"
+          >
+            <mat-icon>call_split</mat-icon>
+          </button>
+        </mat-toolbar>
+        <ng-template
+          tdLoading
+          [tdLoadingUntil]="!(loading$ | async)"
+          tdLoadingStrategy="overlay"
+        >
+          <div class="gastos">
+            <sx-cxp-gastosdet-table
+              [partidas]="gastos$ | async"
+              (selectionChange)="onSelectionChange($event)"
+              (select)="editGastoDet(factura, $event)"
+            ></sx-cxp-gastosdet-table>
+          </div>
+        </ng-template>
+      </mat-tab>
+      <mat-tab label="CFDI">
+        <div class="cfdiHeader">
+          UUID: {{ factura.uuid }}
+          <span class="pad-left"
+            >Total: {{ factura.comprobanteFiscal.total | currency }}</span
+          >
+          <span class="pad-left"
+            >Descuento:
+            {{ factura.comprobanteFiscal.descuento | currency }}</span
+          >
+          <span class="pad-left"
+            >Uso de Cfdi: {{ factura.comprobanteFiscal.usoCfdi }}</span
+          >
+        </div>
+        <div class="cfdiXml">
+          {{ factura.comprobanteFiscal.xml }}
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</mat-card>

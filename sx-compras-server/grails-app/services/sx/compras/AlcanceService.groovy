@@ -44,6 +44,7 @@ class AlcancesService implements DataBinder, LogUser{
             alcance.sucursal = row.sucursal
             alcance.clave = row.clave
             alcance.kilos = row.kilos
+            alcance.gramos = row.gramos
             alcance.unidad = row.unidad
             alcance.descripcion = row.descripcion
             alcance.linea = row.linea
@@ -147,6 +148,7 @@ class AlcancesService implements DataBinder, LogUser{
 	        ,P.de_linea as deLinea
 	        ,P.descripcion
 	        ,P.kilos
+            ,P.gramos
 	        ,SUM(EXI) AS existencia
 	        ,(CASE WHEN SUM(VTA)=0 AND P.UNIDAD='MIL' THEN 0.100 WHEN SUM(VTA)=0 AND P.UNIDAD<>'MIL' THEN 1 ELSE SUM(VTA)  END)  AS venta
 	        ,ROUND((ROUND(TO_DAYS('@FECHA_FIN')-TO_DAYS('@FECHA_INI'),0)),0)/30.4166 AS mesesPeriodo

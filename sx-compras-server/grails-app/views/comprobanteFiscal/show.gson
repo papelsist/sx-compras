@@ -4,4 +4,6 @@ model {
 	ComprobanteFiscal comprobanteFiscal
 }
 
-json tmpl.comprobanteFiscal(comprobanteFiscal)
+json g.render(comprobanteFiscal, [resolveTemplate: false, excludes: ['pdf','acuse']]){
+    conceptos g.render(comprobanteFiscal.conceptos)
+}

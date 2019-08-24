@@ -1,0 +1,41 @@
+<div [formGroup]="form">
+  <mat-form-field>
+    <input
+      matInput
+      placeholder="Fecha"
+      value="{{ cxp.fecha | date: 'dd/MM/yyyy' }}"
+      [disabled]="true"
+    />
+  </mat-form-field>
+  <mat-form-field>
+    <input
+      matInput
+      placeholder="Total"
+      value="{{ cxp.total | currency }}"
+      [disabled]="true"
+    />
+  </mat-form-field>
+  <mat-form-field>
+    <input
+      matInput
+      placeholder="Apagar"
+      formControlName="importePorPagar"
+      autocomplete="off"
+      type="number"
+    />
+  </mat-form-field>
+  <!-- <div class="conceptos" *ngIf="cxp.comprobanteFiscal.conceptos as conceptos">
+    <mat-list>
+      <h3 matSubheader>Conceptos</h3>
+      <mat-list-item *ngFor="let c of conceptos" class="concepto">
+        <h3 matLine>{{ c.descripcion }} ({{ c.claveProdServ }})</h3>
+        <p matLine>
+          <span> Valor unitario: {{ c.valorUnitario | currency }} </span>
+          <span>Cantidad: {{ c.cantidad }}</span>
+          <span>Importe: {{ c.importe }}</span>
+          <span>Descuento: {{ c.descuento | currency }}</span>
+        </p>
+      </mat-list-item>
+    </mat-list>
+  </div> -->
+</div>

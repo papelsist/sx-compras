@@ -1,0 +1,9 @@
+import sx.cxp.ProductoServicio
+
+model {
+	ProductoServicio productoServicio
+}
+
+json g.render(productoServicio, [resolveTemplate: false, excludes: ['cuentaConrable']]){
+	cuentaContable g.render(productoServicio.cuentaContable)
+}

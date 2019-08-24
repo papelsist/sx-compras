@@ -137,7 +137,7 @@ class ReciboElectronicoService implements LogUser {
     		from RequisicionDeCompras r 
     		where r.recibo = null 
               and r.egreso != null
-              and year(r.egreso.fecha) > 2018
+              and r.egreso.fecha > ?
             order by r.fecha asc
     		""", [Date.parse('dd/MM/yyyy','31/10/2018')])
     	return pendientes
