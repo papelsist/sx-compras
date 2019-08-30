@@ -15,8 +15,7 @@ class GastoDet {
     CuentaContable cuentaContable
 
     Sucursal sucursal
-
-    ProductoServicio productoServicio
+    String sucursalNombre
 
     String descripcion
 
@@ -36,8 +35,11 @@ class GastoDet {
     BigDecimal descuento = 0.0
 
     BigDecimal isrRetenido = 0.0
+    BigDecimal isrRetenidoTasa = 0.0
     BigDecimal ivaRetenido = 0.0
+    BigDecimal ivaRetenidoTasa = 0.0
     BigDecimal ivaTrasladado = 0.0
+    BigDecimal ivaTrasladadoTasa = 0.0
 
     String modelo
     String serie
@@ -54,8 +56,9 @@ class GastoDet {
     String updateUser
 
     static constraints = {
-        productoServicio nullable: true
-        descripcion nullable: true
+        
+        cuentaContable nullable: true
+
         comentario nullable: true
         updateUser nullable: true
         createUser nullable: true
@@ -68,5 +71,6 @@ class GastoDet {
         modelo nullable: true
         serie nullable: true
 
+        sucursalNombre maxSize: 30
     }
 }

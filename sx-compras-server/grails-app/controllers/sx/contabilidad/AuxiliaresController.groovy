@@ -48,8 +48,16 @@ class AuxiliaresController {
         }
         log.info('Auxiliar: {}', command)
 
-        List<PolizaDetDTO> res = PolizaDet.findAll(
-                """
+        def cuentaInicial = "${command.cuentaInicial}%"
+        if(cuentaInicial.split('-').size() < 4) {
+            cuentaInicial += '%'
+        }
+
+        List<PolizaDetDTO> res = []
+        
+
+        if(command.cuentaFinal == null) {
+            def hql = """
             select new sx.contabilidad.PolizaDetDTO(
                 d.id,
                 d.poliza.tipo,
@@ -67,49 +75,42 @@ class AuxiliaresController {
                 d.haber
                 )  
                 from PolizaDet d 
-                    where d.cuenta.id = ? 
-                    and d.poliza.fecha between ? and ? 
+                    where d.poliza.fecha between ? and ? 
+                    and d.cuenta.clave like ? 
                     and d.poliza.cierre != null
-                    order by d.id 
-            """,[command.cuenta.id,
-                 command.periodo.fechaInicial,
-                 command.periodo.fechaFinal])
+                    order by d.cuenta.clave 
+            """
+            log.info('Buscando movimientos de la cuenta {}', cuentaInicial)
+            res = PolizaDet.findAll(hql ,[command.periodo.fechaInicial, command.periodo.fechaFinal, cuentaInicial])
+        } else {
+            def hql = """
+            select new sx.contabilidad.PolizaDetDTO(
+                d.id,
+                d.poliza.tipo,
+                d.poliza.subtipo,
+                d.poliza.folio,
+                d.poliza.ejercicio,
+                d.poliza.mes,
+                d.poliza.fecha,
+                d.cuenta.clave,
+                d.concepto,
+                d.descripcion,
+                d.sucursal,
+                d.asiento,
+                d.debe,
+                d.haber
+                )  
+                from PolizaDet d 
+                    where d.poliza.fecha between ? and ? 
+                    and d.cuenta.clave between  ? and ? 
+                    and d.poliza.cierre != null
+                    order by d.cuenta.clave 
+            """
+            log.info('Buscando movimientos de la cuenta {} a la cuenta', cuentaInicial, command.cuentaFinal)
+            res = PolizaDet.findAll(hql ,
+                [command.periodo.fechaInicial, command.periodo.fechaFinal, cuentaInicial, command.cuentaFinal], [max: 10])
 
-        // Obtener el inicio de mes del fecha inicial
-        /*
-        Date inicioDeMes = Periodo.inicioDeMes(command.periodo.fechaInicial)
-        Integer ej = Periodo.obtenerYear(inicioDeMes)
-        Integer m = Periodo.obtenerMes(inicioDeMes) + 1
-
-        SaldoPorCuentaContable saldo = SaldoPorCuentaContable.where{
-            cuenta == command.cuentaInicial && ejercicio == ej && mes == m
-        }.find()
-        if(saldo) {
-            // Calcular los cargos y abonos en el periodo anteriro
-            def row = PolizaDet
-                    .findAll("""
-                select sum(d.debe), sum(d.haber)
-                    from PolizaDet d
-                     where d.cuenta = ?
-                     and d.poliza.ejercicio = ?
-                     and d.poliza.mes = ?
-                     """
-                    ,[command.cuentaInicial, ej, m])
-            BigDecimal debe = row.get(0)[0]?:0.0
-            BigDecimal haber = row.get(0)[1]?:0.0
-            saldoInicial = saldo.saldoInicial + debe - haber
-            log.info('Saldo Inicial: {}', saldoInicial)
         }
-        log.info('Acumulado: {}', saldoInicial)
-        BigDecimal acu = saldoInicial
-        res.each {
-            it.inicial = acu
-            it.acumulado = it.inicial + it.debe - it.haber
-            acu += it.acumulado
-            log.info('Acu: {}', acu)
-        }
-
-        */
         respond res
     }
 
@@ -126,7 +127,12 @@ class AuxiliaresController {
 @ToString
 class AuxiliarCommand implements  Validateable{
     Periodo periodo
-    CuentaContable cuenta
+    String cuentaInicial
+    String cuentaFinal
+
+    static constraints = {
+        cuentaFinal nullable: true
+    }
 }
 
 @Canonical(excludes = "inicial, acumulado")

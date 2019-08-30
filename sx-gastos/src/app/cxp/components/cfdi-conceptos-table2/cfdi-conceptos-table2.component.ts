@@ -79,7 +79,10 @@ export class CfdiConceptosTable2Component extends LxTableComponent
     this.gridApi.setPinnedBottomRowData(res);
   }
 
-  buildColsDef(): ColDef[] {
+  /**
+   * ColDef
+   */
+  buildColsDef(): any[] {
     return [
       {
         headerName: 'Clave',
@@ -108,6 +111,60 @@ export class CfdiConceptosTable2Component extends LxTableComponent
         field: 'valorUnitario',
         width: 100,
         cellRenderer: params => this.transformCurrency(params.value)
+      },
+      {
+        headerName: 'IVA Trasladado',
+        children: [
+          {
+            headerName: 'Tasa',
+            field: 'ivaTrasladadoTasa',
+            width: 100,
+            cellRenderer: params => this.transformPercent(params.value),
+            pinnedRowCellRenderer: params => ''
+          },
+          {
+            headerName: 'Importe',
+            field: 'ivaTrasladado',
+            width: 100,
+            cellRenderer: params => this.transformCurrency(params.value)
+          }
+        ]
+      },
+      {
+        headerName: 'IVA Retenido',
+        children: [
+          {
+            headerName: 'Tasa',
+            field: 'ivaRetenidoTasa',
+            width: 100,
+            cellRenderer: params => this.transformPercent(params.value),
+            pinnedRowCellRenderer: params => ''
+          },
+          {
+            headerName: 'Importe',
+            field: 'ivaRetenido',
+            width: 100,
+            cellRenderer: params => this.transformCurrency(params.value)
+          }
+        ]
+      },
+      {
+        headerName: 'ISR Retenido',
+        children: [
+          {
+            headerName: 'Tasa',
+            field: 'isrRetenidoTasa',
+            width: 100,
+            cellRenderer: params => this.transformPercent(params.value),
+            pinnedRowCellRenderer: params => ''
+          },
+          {
+            headerName: 'Importe',
+            field: 'isrRetenido',
+            width: 100,
+            cellRenderer: params => this.transformCurrency(params.value)
+          }
+        ]
       },
       {
         headerName: 'Importe',

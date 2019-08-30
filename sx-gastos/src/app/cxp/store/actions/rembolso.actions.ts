@@ -2,8 +2,10 @@ import { Action } from '@ngrx/store';
 import { Update } from '@ngrx/entity';
 
 import { Rembolso, RembolsosFilter } from '../../model';
+import { Periodo } from 'app/_core/models/periodo';
 
 export enum RembolsoActionTypes {
+  SetRembolsosPeriodo = '[Rembolsos Component] set Rembolsos periodo',
   SetRembolsosFilter = '[Rembolsos Component ] Set Rembolsos filter',
   SetRembolsosSearchTerm = '[Rembolsos Component] Set Rembolsos term',
   LoadRembolsos = '[Rembolsos Guard] Load Rembolsos',
@@ -23,6 +25,10 @@ export enum RembolsoActionTypes {
   DeleteRembolso = '[Rembolso Component] Delete Rembolso',
   DeleteRembolsoFail = '[Rembolso API] Delete Rembolso Fail',
   DeleteRembolsoSuccess = '[Rembolso API] Delete Rembolso Success'
+}
+export class SetRembolsosPeriodo implements Action {
+  readonly type = RembolsoActionTypes.SetRembolsosPeriodo;
+  constructor(public payload: { periodo: Periodo }) {}
 }
 
 export class SetRembolsosFilter implements Action {
@@ -102,6 +108,7 @@ export class DeleteRembolsoSuccess implements Action {
 }
 
 export type RembolsoActions =
+  | SetRembolsosPeriodo
   | SetRembolsosFilter
   | SetRembolsosSearchTerm
   | LoadRembolsos

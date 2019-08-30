@@ -10,7 +10,10 @@ import { map, switchMap, tap, catchError, take } from 'rxjs/operators';
 
 import { RembolsoActionTypes } from '../actions/rembolso.actions';
 import * as fromActions from '../actions/rembolso.actions';
-import { getRembolsosFilter } from '../../store/selectors/rembolso.selectors';
+import {
+  getRembolsosFilter,
+  selectPeriodoDeRembolsos
+} from '../../store/selectors/rembolso.selectors';
 
 import { RembolsoService } from '../../services';
 
@@ -26,6 +29,14 @@ export class RembolsosEffects {
   ) {}
 
   @Effect()
+  periodo$ = this.actions$.pipe(
+    ofType<fromActions.SetRembolsosPeriodo>(
+      RembolsoActionTypes.SetRembolsosPeriodo
+    ),
+    map(action => new fromActions.LoadRembolsos())
+  );
+
+  @Effect()
   changeFilter$ = this.actions$.pipe(
     ofType<fromActions.SetRembolsosFilter>(
       RembolsoActionTypes.SetRembolsosFilter
@@ -38,7 +49,7 @@ export class RembolsosEffects {
     ofType(RembolsoActionTypes.LoadRembolsos),
     switchMap(() => {
       return this.store.pipe(
-        select(getRembolsosFilter),
+        select(selectPeriodoDeRembolsos),
         take(1)
       );
     }),

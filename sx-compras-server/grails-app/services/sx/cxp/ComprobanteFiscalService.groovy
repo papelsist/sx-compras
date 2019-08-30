@@ -154,7 +154,7 @@ class ComprobanteFiscalService implements  LogUser{
                 impuestoRetenido: retenidos
         )
 
-        if(tipo == 'GASTOS') {
+        if(tipo != 'COMPRAS') {
             reader.addConceptos(comprobanteFiscal, xml)
         }
         return comprobanteFiscal
@@ -191,7 +191,7 @@ class ComprobanteFiscalService implements  LogUser{
             cxp.updateUser = 'PENDIENTE'
             cxp.createUser = 'ADMIN'
         }
-        if(tipo == 'GASTOS') {
+        if(tipo != 'COMPRAS') {
             cxp.importePorPagar = cxp.total
         }
         return cxp

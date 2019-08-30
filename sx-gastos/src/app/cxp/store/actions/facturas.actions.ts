@@ -2,8 +2,10 @@ import { Action } from '@ngrx/store';
 
 import { CuentaPorPagar, CxPFilter } from '../../model';
 import { Update } from '@ngrx/entity';
+import { Periodo } from 'app/_core/models/periodo';
 
 export enum FacturaActionTypes {
+  SetFacturasPeriodo = '[Facturas component] Set periodo',
   LoadFacturas = '[Facturas CXP] Load Facturas ',
   LoadFacturasFail = '[Facturas CXP] Load Facturas  fail',
   LoadFacturasSuccess = '[Facturas CXP] Load Facturas  Success',
@@ -20,6 +22,11 @@ export enum FacturaActionTypes {
   BuscarPendientesPorProveedor = '[Facturas CXP] Buscar cuentas por pagar por proveedor',
   BuscarPendientesPorProveedorSuccess = '[Facturas CXP] Buscar cuentas por pagar por proveedor success',
   BuscarPendientesPorProveedorFail = '[Facturas CXP] Buscar cuentas por pagar por proveedor fail'
+}
+
+export class SetFacturasPeriodo implements Action {
+  readonly type = FacturaActionTypes.SetFacturasPeriodo;
+  constructor(public payload: { periodo: Periodo }) {}
 }
 
 export class LoadFacturas implements Action {
@@ -86,6 +93,7 @@ export class BuscarPendientesPorProveedorSuccess implements Action {
 }
 
 export type FacturaActions =
+  | SetFacturasPeriodo
   | LoadFacturas
   | LoadFacturasFail
   | LoadFacturasSuccess

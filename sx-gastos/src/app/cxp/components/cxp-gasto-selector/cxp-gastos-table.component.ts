@@ -48,6 +48,7 @@ export class CxpGastosTableComponent extends LxTableComponent
   buildGridOptions() {
     super.buildGridOptions();
     this.gridOptions.rowSelection = 'multiple';
+    this.gridOptions.rowMultiSelectWithClick = true;
     this.gridOptions.onRowSelected = (event: RowSelectedEvent) => {
       this.selectionChange.emit(this.gridApi.getSelectedRows());
     };

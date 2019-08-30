@@ -32,9 +32,9 @@ class CuentaContableController extends RestfulController <CuentaContable>{
     @Secured("IS_AUTHENTICATED_ANONYMOUSLY")
     def index(Integer max) {
         // params.max = max?: 5000
-        params.max = max?: 30
-        params.sort = params.sort ?:'lastUpdated'
-        params.order = params.order ?:'desc'
+        params.max = 5000
+        params.sort = 'clave'
+        params.order = 'asc'
 
         def q = CuentaContable.where {}
 

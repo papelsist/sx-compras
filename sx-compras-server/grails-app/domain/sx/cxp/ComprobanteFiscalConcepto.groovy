@@ -25,6 +25,13 @@ class ComprobanteFiscalConcepto {
 
     BigDecimal descuento = 0.0
 
+    BigDecimal isrRetenido = 0.0
+    BigDecimal isrRetenidoTasa = 0.0
+    BigDecimal ivaRetenido = 0.0
+    BigDecimal ivaRetenidoTasa = 0.0
+    BigDecimal ivaTrasladado = 0.0
+    BigDecimal ivaTrasladadoTasa = 0.0
+
     List<ConceptoDeGasto> conceptos = []
 
     static belongsTo = [comprobante: ComprobanteFiscal]

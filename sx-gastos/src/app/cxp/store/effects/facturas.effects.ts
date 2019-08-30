@@ -4,7 +4,7 @@ import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Store, select } from '@ngrx/store';
 import * as fromRoot from 'app/store';
 import * as fromStore from '../../store';
-import { getFacturasFilter } from '../selectors/facturas.selector';
+import { getFacturasFilter, selectFacturasPeriodo } from '../selectors/facturas.selector';
 
 import { of } from 'rxjs';
 import { map, switchMap, tap, catchError, take } from 'rxjs/operators';
@@ -15,6 +15,8 @@ import * as fromActions from '../actions/facturas.actions';
 import { CuentaPorPagarService } from '../../services';
 
 import { MatSnackBar } from '@angular/material';
+import { Periodo } from 'app/_core/models/periodo';
+import { FACTURAS_DE_GASTO_PERIODO_KEY } from '../reducers/facturas.reducer';
 
 @Injectable()
 export class FacturasEffects {
@@ -26,11 +28,21 @@ export class FacturasEffects {
   ) {}
 
   @Effect()
+  periodo$ = this.actions$.pipe(
+    ofType<fromActions.SetFacturasPeriodo>(FacturaActionTypes.SetFacturasPeriodo),
+    map(action => action.payload.periodo),
+    tap(periodo =>
+      Periodo.saveOnStorage(FACTURAS_DE_GASTO_PERIODO_KEY, periodo)
+    ),
+    map(() => new fromActions.LoadFacturas())
+  );
+
+  @Effect()
   loadFacturas$ = this.actions$.pipe(
     ofType<fromActions.LoadFacturas>(FacturaActionTypes.LoadFacturas),
     switchMap(() => {
       return this.store.pipe(
-        select(getFacturasFilter),
+        select(selectFacturasPeriodo),
         take(1)
       );
     }),

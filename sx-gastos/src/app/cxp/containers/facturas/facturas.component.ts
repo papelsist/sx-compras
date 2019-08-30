@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 import { Store, select } from '@ngrx/store';
 import * as fromRoot from 'app/store';
@@ -10,29 +10,20 @@ import { Observable, Subject } from 'rxjs';
 import { ComprobanteFiscalService } from '../../services';
 import { CuentaPorPagar, CxPFilter } from '../../model';
 import { MatDialog } from '@angular/material';
+import { Periodo } from 'app/_core/models/periodo';
 
 @Component({
   selector: 'sx-facturas-cxp',
-  template: `
-    <mat-card>
-      <sx-search-title title="Facturas de compras (Cuentas por pagar)" (search)="onSearch($event)">
-        <sx-facturas-filter-btn class="options" [filter]="filter$ | async" (change)="onFilter($event)"></sx-facturas-filter-btn>
-        <button mat-menu-item class="actions" (click)="reload()"><mat-icon>refresh</mat-icon> Recargar</button>
-      </sx-search-title>
-      <mat-divider></mat-divider>
-      <sx-facturas-table [facturas]="facturas$ | async" (xml)="onXml($event)" (pdf)="onPdf($event)" (edit)="onEdit($event)"
-        [filter]="search$ | async">
-      </sx-facturas-table>
-      <mat-card-footer>
-        <sx-facturas-filter-label [filter]="filter$ | async"></sx-facturas-filter-label>
-      </mat-card-footer>
-    </mat-card>
-  `
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './facturas.component.html',
+  styleUrls: ['./facturas.component.scss']
 })
 export class FacturasComponent implements OnInit {
   facturas$: Observable<CuentaPorPagar[]>;
   filter$: Observable<CxPFilter>;
   search$ = new Subject<string>();
+  periodo$: Observable<Periodo>;
+  loading$: Observable<boolean>;
 
   constructor(
     private store: Store<fromStore.State>,
@@ -41,11 +32,15 @@ export class FacturasComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.loading$ = this.store.pipe(select(fromStore.getFacturasLoading));
+    this.periodo$ = this.store.pipe(select(fromStore.selectFacturasPeriodo));
     this.filter$ = this.store.pipe(select(fromStore.getFacturasFilter));
     this.facturas$ = this.store.pipe(select(fromStore.getAllFacturas));
   }
 
-  onSelect() {}
+  onSelect(event: Partial<CuentaPorPagar>) {
+    this.store.dispatch(new fromRoot.Go({ path: ['cxp/facturas', event.id] }));
+  }
 
   onSearch(event: string) {
     this.search$.next(event);
@@ -53,6 +48,10 @@ export class FacturasComponent implements OnInit {
 
   reload() {
     this.store.dispatch(new fromActions.LoadFacturas());
+  }
+
+  onPeriodo(periodo: Periodo) {
+    this.store.dispatch(new fromActions.SetFacturasPeriodo({ periodo }));
   }
 
   onFilter(filter: CxPFilter) {
@@ -63,23 +62,7 @@ export class FacturasComponent implements OnInit {
     this.service.imprimirCfdi(event.comprobanteFiscal.id);
   }
 
-  onXml(event: CuentaPorPagar) {}
-
   onEdit(event: CuentaPorPagar) {
-    /*
-    this.dialog
-      .open(CxPFormComponent, { data: { cxp: event } })
-      .afterClosed()
-      .subscribe(res => {
-        if (res) {
-          const update = {
-            id: event.id,
-            changes: res
-          };
-          this.store.dispatch(new fromActions.UpdateFactura({ update }));
-        }
-      });
-      */
     this.store.dispatch(new fromRoot.Go({ path: ['cxp/facturas', event.id] }));
   }
 }

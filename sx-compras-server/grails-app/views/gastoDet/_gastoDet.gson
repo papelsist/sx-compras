@@ -4,9 +4,8 @@ model {
 	GastoDet gastoDet
 }
 
-json g.render(gastoDet, [resolveTemplate: false, excludes: ['cuentaContable', 'sucursal', 'productoServicio']]) {
+json g.render(gastoDet, [resolveTemplate: false, excludes: ['cuentaContable', 'sucursal']]) {
 	cuentaContable g.render(gastoDet.cuentaContable)
 	sucursal g.render(gastoDet.sucursal)
-	productoServicio g.render(gastoDet.productoServicio)
 }
 

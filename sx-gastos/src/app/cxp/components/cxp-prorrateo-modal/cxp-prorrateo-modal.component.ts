@@ -25,8 +25,10 @@ export class CxpProrrateoModalComponent implements OnInit {
     andrade: '3',
     bolivar: '5',
     calle4: '10',
-    tacuba: '2',
-    febrero: '13'
+    tacuba: '12',
+    febrero: '13',
+    vertiz: '2',
+    solis: '14'
   };
 
   constructor(
@@ -49,9 +51,11 @@ export class CxpProrrateoModalComponent implements OnInit {
         calle4: [null, { updateOn: 'blur' }],
         bolivar: [null, { updateOn: 'blur' }],
         tacuba: [null, { updateOn: 'blur' }],
-        febrero: [null, { updateOn: 'blur' }]
-      },
-      { validator: [this.validateImporte.bind(this)] }
+        febrero: [null, { updateOn: 'blur' }],
+        vertiz: [null, { updateOn: 'blur' }],
+        solis: [null, { updateOn: 'blur' }]
+      }
+      // { validator: [this.validateImporte.bind(this)] }
     );
   }
 
@@ -67,32 +71,19 @@ export class CxpProrrateoModalComponent implements OnInit {
         calle4: this.getSucursalValue('calle4'),
         bolivar: this.getSucursalValue('bolivar'),
         tacuba: this.getSucursalValue('tacuba'),
-        febrero: this.getSucursalValue('febrero')
+        febrero: this.getSucursalValue('febrero'),
+        vertiz: this.getSucursalValue('vertiz'),
+        solis: this.getSucursalValue('solis')
       };
       this.dialogRef.close(res);
     }
   }
 
-  get importe() {
-    return this.gastoDet.importe;
-  }
-
-  get faltante(): number {
-    const val = _.values(this.form.value).reduce((prev, curr) => prev + curr);
-    return this.importe - val;
-  }
-
-  getSucursalValue(key: string): { key: string; value: number } {
-    const value: number = this.form.get(key).value;
-    if (value > 0.0) {
+  getSucursalValue(key: string): { key: string; value: boolean } {
+    const value: boolean = this.form.get(key).value;
+    if (value) {
       return { key: this.sucursales[key], value };
     }
     return null;
-  }
-
-  validateImporte(fg: FormGroup) {
-    const val = _.values(fg.value).reduce((prev, curr) => prev + curr);
-    const dif = this.importe - val;
-    return dif === 0.0 ? null : { importeImcompleto: true };
   }
 }

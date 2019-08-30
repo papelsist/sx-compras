@@ -17,13 +17,9 @@ export class RembolsoService {
   }
 
   list(filter: RembolsosFilter): Observable<Rembolso[]> {
-    let params = new HttpParams()
-      .set('registros', filter.registros.toString())
+    const params = new HttpParams()
       .set('fechaInicial', filter.fechaInicial.toISOString())
       .set('fechaFinal', filter.fechaFinal.toISOString());
-    if (filter.sucursal) {
-      params = params.set('sucursal', filter.sucursal.id);
-    }
     return this.http
       .get<Rembolso[]>(this.apiUrl, { params: params })
       .pipe(catchError((error: any) => throwError(error)));

@@ -7,7 +7,11 @@ import { CovalentModule } from './_covalent/covalent.module';
 import { AgGridModule } from 'ag-grid-angular';
 
 // components
-import { components, entyComponents } from './components';
+import {
+  components,
+  entyComponents,
+  NumericCellEditorComponent
+} from './components';
 // Directives
 import { directives } from './directives';
 import { pipes } from './pipes';
@@ -20,7 +24,7 @@ import { MAT_DATE_LOCALE } from '@angular/material';
     ReactiveFormsModule,
     MaterialModule,
     CovalentModule,
-    AgGridModule.withComponents([])
+    AgGridModule.withComponents([NumericCellEditorComponent])
   ],
   exports: [
     CommonModule,

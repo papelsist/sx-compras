@@ -19,8 +19,12 @@ import { CuentaPorPagar, GastoDet } from 'app/cxp/model';
 import {
   CxpGastoSelectorComponent,
   CxPGastodetModalComponent,
-  CxpProrrateoModalComponent
+  CxpProrrateoModalComponent,
+  CxPGastodetBulkeditComponent,
+  CxpActivofModalComponent
 } from 'app/cxp/components';
+
+import * as _ from 'lodash';
 
 @Component({
   selector: 'sx-factura',
@@ -84,7 +88,7 @@ export class FacturaComponent implements OnInit, OnDestroy {
         if (gastos) {
           from(gastos)
             .pipe(
-              concatMap(item => of(item).pipe(delay(500))) // Small delay
+              concatMap(item => of(item).pipe(delay(1000))) // Small delay
             )
             .subscribe(gasto =>
               this.store.dispatch(new fromStore.CreateGasto({ gasto }))
@@ -96,7 +100,7 @@ export class FacturaComponent implements OnInit, OnDestroy {
   quitarConceptos(conceptos: Partial<GastoDet[]>) {
     from(conceptos)
       .pipe(
-        concatMap(item => of(item.id).pipe(delay(500))) // Small delay
+        concatMap(item => of(item.id).pipe(delay(1000))) // Small delay
       )
       .subscribe(gastoId =>
         this.store.dispatch(new fromStore.DeleteGasto({ gastoId }))
@@ -120,6 +124,27 @@ export class FacturaComponent implements OnInit, OnDestroy {
       });
   }
 
+  bulEdit(factura: Partial<CuentaPorPagar>, selected: Partial<GastoDet[]>) {
+    this.dialog
+      .open(CxPGastodetBulkeditComponent, {
+        data: { factura },
+        width: '700px'
+      })
+      .afterClosed()
+      .subscribe(data => {
+        if (data) {
+          from(selected)
+            .pipe(
+              concatMap(item => of(item.id).pipe(delay(500))) // Small delay
+            )
+            .subscribe(gastoId => {
+              const gasto = { id: gastoId, changes: data };
+              this.store.dispatch(new fromStore.UpdateGasto({ gasto }));
+            });
+        }
+      });
+  }
+
   onProrratear(gastos: GastoDet[]) {
     const gasto = gastos[0];
     this.dialog
@@ -133,6 +158,39 @@ export class FacturaComponent implements OnInit, OnDestroy {
           this.store.dispatch(
             new fromStore.ProrratearPartida({ gastoDetId: gasto.id, data })
           );
+        }
+      });
+  }
+
+  onTableEdit(entity: Partial<GastoDet>) {
+    const gasto = { id: entity.id, changes: entity };
+    this.store.dispatch(new fromStore.UpdateGasto({ gasto }));
+  }
+
+  registrarRevision(cxp: Partial<CuentaPorPagar>, gastos: Partial<GastoDet>[]) {
+    const gastoAnalizado = _.sumBy(gastos, 'importe');
+    const gastoAnalizadoFecha = new Date().toISOString();
+    const update = {
+      id: cxp.id,
+      changes: { gastoAnalizado, gastoAnalizadoFecha }
+    };
+    this.store.dispatch(new fromStore.UpdateFactura({ update }));
+  }
+
+  registrarActivoFijo(
+    cxp: Partial<CuentaPorPagar>,
+    gastos: Partial<GastoDet[]>
+  ) {
+    this.dialog
+      .open(CxpActivofModalComponent, { data: { cxp, gastos }, width: '500px' })
+      .afterClosed()
+      .subscribe(res => {
+        if (res) {
+          res.activoFijo = true;
+          const entity = gastos[0];
+          const gasto = { id: entity.id, changes: res };
+          this.store.dispatch(new fromStore.UpdateGasto({ gasto }));
+
         }
       });
   }

@@ -8,12 +8,6 @@
 </div>
 <mat-dialog-content>
   <div [formGroup]="form" layout="column">
-    <sx-producto-servicio-field formControlName="productoServicio" flex>
-    </sx-producto-servicio-field>
-
-    <sx-cuenta-contable-field
-      formControlName="cuentaContable"
-    ></sx-cuenta-contable-field>
     <sx-sucursal-field [parent]="form"></sx-sucursal-field>
   </div>
 </mat-dialog-content>

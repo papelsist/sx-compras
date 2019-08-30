@@ -14,7 +14,6 @@ import groovy.transform.ToString
 import org.apache.commons.lang3.exception.ExceptionUtils
 
 import sx.reports.ReportService
-import sx.tesoreria.CuentaDeBanco
 import sx.utils.Periodo
 import sx.core.LogUser
 import sx.core.Sucursal
@@ -26,6 +25,10 @@ import sx.core.Sucursal
 class GastoDetController extends RestfulController<GastoDet> implements LogUser {
    
     static responseFormats = ['json']
+
+    GastoDetService gastoDetService
+
+    ReportService reportService
     
     GastoDetController() {
         super(GastoDet)
@@ -42,13 +45,27 @@ class GastoDetController extends RestfulController<GastoDet> implements LogUser 
 
     @Override
     protected GastoDet saveResource(GastoDet resource) {
-        logEntity(resource)
-        resource = resource.save flush: true
+        resource = gastoDetService.save(resource)
         return resource
     }
 
-    @CompileDynamic
     def prorratear() {
+        Long gastoId = params.id as Long
+        GastoDet gasto = GastoDet.get(params.id)
+        CuentaPorPagar factura = gasto.cxp
+        if (gasto == null) {
+            notFound()
+            return
+        }
+        ProrratearGasto command = new ProrratearGasto()
+        command.properties = getObjectToBind()
+        respond gastoDetService.prorratear(gasto, command.data)
+
+    }
+
+    /*
+    def prorratearOld() {
+        Long gastoId = params.id as Long
         GastoDet gasto = GastoDet.get(params.id)
         CuentaPorPagar factura = gasto.cxp
         if (gasto == null) {
@@ -80,7 +97,7 @@ class GastoDetController extends RestfulController<GastoDet> implements LogUser 
         }
         respond GastoDet.where{cxp == factura}.list()
     }
-    
+    */
 
     def handleException(Exception e) {
         String message = ExceptionUtils.getRootCauseMessage(e)

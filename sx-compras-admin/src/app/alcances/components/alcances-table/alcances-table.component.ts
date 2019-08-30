@@ -10,7 +10,7 @@ import {
 
 import * as _ from 'lodash';
 
-import { RowSelectedEvent, ModelUpdatedEvent, ColDef } from 'ag-grid-community';
+import { RowSelectedEvent, ModelUpdatedEvent, ColDef, CellDoubleClickedEvent } from 'ag-grid-community';
 
 import { LxTableComponent } from 'app/_shared/components';
 import { SxTableService } from 'app/_shared/components/lx-table/sx-table.service';
@@ -42,6 +42,8 @@ import { SxTableService } from 'app/_shared/components/lx-table/sx-table.service
 export class AlcancesTableComponent extends LxTableComponent
   implements OnInit, OnChanges {
   @Output() selectionChange = new EventEmitter<any[]>();
+
+  @Output() pendientes = new EventEmitter();
 
   frameworkComponents = {};
 
@@ -76,6 +78,11 @@ export class AlcancesTableComponent extends LxTableComponent
       sortable: true,
       resizable: true,
       pinnedRowCellRenderer: r => ''
+    };
+    this.gridOptions.onCellDoubleClicked = (event: CellDoubleClickedEvent) => {
+      if (event.column.getColId() === 'comprasPendientes') {
+        this.pendientes.emit(event.data);
+      }
     };
   }
 

@@ -32,8 +32,10 @@ import { PrintCellRendererComponent } from './print-cell-renderer.component';
   template: 'NO UI REQUIRED'
 })
 export class LxTableComponent implements OnInit, OnChanges {
-  @Input() partidas: any[] = [];
-  @Output() select = new EventEmitter();
+  @Input()
+  partidas: any[] = [];
+  @Output()
+  select = new EventEmitter();
 
   public exportKey = 'EX';
   public debug = false;

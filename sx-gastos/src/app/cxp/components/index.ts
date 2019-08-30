@@ -66,6 +66,9 @@ import { CxpGastosDetTableComponent } from './cxp-gastodet-table/cxp-gastodet-ta
 import { CfdiConceptosTable2Component } from './cfdi-conceptos-table2/cfdi-conceptos-table2.component';
 import { CxPGastodetModalComponent } from './cxp-gastodet-modal/cxp-gastodet-modal.component';
 import { CxpProrrateoModalComponent } from './cxp-prorrateo-modal/cxp-prorrateo-modal.component';
+import { CxPGastodetBulkeditComponent } from './cxp-gastodet-bulkedit/cxp-gastodet-bulkedit';
+import { FacturasTable2Component } from './facturas-table2/facturas-table2.component';
+import { CxpActivofModalComponent } from './cxp-activof-modal/cxp-activof-modal.component';
 
 export const components: any[] = [
   CfdisTableComponent,
@@ -128,7 +131,10 @@ export const components: any[] = [
   CxpGastosDetTableComponent,
   CfdiConceptosTable2Component,
   CxPGastodetModalComponent,
-  CxpProrrateoModalComponent
+  CxpProrrateoModalComponent,
+  CxPGastodetBulkeditComponent,
+  FacturasTable2Component,
+  CxpActivofModalComponent
 ];
 
 export const entryComponents = [
@@ -146,7 +152,9 @@ export const entryComponents = [
   RembolsoDetComponent,
   CxpGastoSelectorComponent,
   CxPGastodetModalComponent,
-  CxpProrrateoModalComponent
+  CxpProrrateoModalComponent,
+  CxPGastodetBulkeditComponent,
+  CxpActivofModalComponent
 ];
 
 export * from './cfdis-table/cfdis-table.component';
@@ -217,3 +225,6 @@ export * from './cxp-gastodet-table/cxp-gastodet-table.component';
 export * from './cfdi-conceptos-table2/cfdi-conceptos-table2.component';
 export * from './cxp-gastodet-modal/cxp-gastodet-modal.component';
 export * from './cxp-prorrateo-modal/cxp-prorrateo-modal.component';
+export * from './cxp-gastodet-bulkedit/cxp-gastodet-bulkedit';
+export * from './facturas-table2/facturas-table2.component';
+export * from './cxp-activof-modal/cxp-activof-modal.component';

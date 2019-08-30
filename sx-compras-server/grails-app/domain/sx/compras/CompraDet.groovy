@@ -73,8 +73,8 @@ class CompraDet {
 
     static mapping = {
         id generator: 'uuid'
-        recibido formula:'(select COALESCE(sum(x.cantidad),0) from recepcion_de_compra_det x where x.compra_det_id=id)'
-        pendiente formula:'solicitado  - (select COALESCE(sum(x.cantidad),0) from recepcion_de_compra_det x where x.compra_det_id=id) - depurado'
+        recibido formula:'(select COALESCE(sum(x.cantidad),0) from recepcion_de_compra_det x where x.compra_det_id=id and x.inventariox is not null)'
+        pendiente formula:'solicitado  - (select COALESCE(sum(x.cantidad),0) from recepcion_de_compra_det x where x.compra_det_id=id and x.inventariox is not null) - depurado'
     }
 
     static belongsTo = [compra:Compra]

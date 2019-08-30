@@ -34,8 +34,6 @@ export class CxpGastoSelectorComponent implements OnInit {
 
   private buildForm() {
     this.form = this.fb.group({
-      productoServicio: [null, [Validators.required]],
-      cuentaContable: [null, [Validators.required]],
       sucursal: [
         {
           id: '402880fc5e4ec411015e4ec64161012c',
@@ -45,9 +43,6 @@ export class CxpGastoSelectorComponent implements OnInit {
         [Validators.required]
       ]
     });
-    this.form.get('productoServicio').valueChanges.subscribe(val => {
-      this.form.get('cuentaContable').setValue(val.cuentaContable);
-    });
   }
 
   onSelection(event: any[]) {
@@ -55,21 +50,27 @@ export class CxpGastoSelectorComponent implements OnInit {
   }
 
   asignar() {
-    const { cuentaContable, productoServicio, sucursal } = this.form.value;
+    const { sucursal } = this.form.value;
     const gastos = this.selected.map(item => {
       return {
         cxp: this.cxp.id,
-        cuentaContable: cuentaContable.id,
-        productoServicio: productoServicio.id,
         sucursal: sucursal.id,
-        descripcion: productoServicio.descripcion,
+        sucursalNombre: sucursal.nombre,
+        descripcion: item.descripcion,
         cfdiDet: item.id,
         cfdiUnidad: item.unidad,
         cfdiDescripcion: item.descripcion,
+        claveProdServ: item.claveProdServ,
         cantidad: item.cantidad,
         valorUnitario: item.valorUnitario,
         importe: item.importe,
-        descuento: item.descuento
+        descuento: item.descuento,
+        isrRetenido: item.isrRetenido || 0.0,
+        isrRetenidoTasa: item.isrRetenidoTasa || 0.0,
+        ivaRetenido: item.ivaRetenido || 0.0,
+        ivaRetenidoTasa: item.ivaRetenidoTasa || 0.0,
+        ivaTrasladado: item.ivaTrasladado || 0.0,
+        ivaTrasladadoTasa: item.ivaTrasladadoTasa || 0.0
       };
     });
     this.dialogRef.close(gastos);

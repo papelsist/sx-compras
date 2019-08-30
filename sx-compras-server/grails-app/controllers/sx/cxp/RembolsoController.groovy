@@ -36,7 +36,7 @@ class RembolsoController extends RestfulController<Rembolso> {
     protected List listAllResources(Map params) {
         params.sort = 'lastUpdated'
         params.order = 'desc'
-        params.max = params.registros?: 10
+        params.max = params.registros?: 5000
         log.info('List: {}', params)
         def query = Rembolso.where{}
 
@@ -117,7 +117,7 @@ class RembolsoController extends RestfulController<Rembolso> {
     def pendientes() {
         params.max = 100
 
-        def q = CuentaPorPagar.where {tipo == 'GASTOS' && pagos <= 0}
+        def q = CuentaPorPagar.where {tipo != 'COMPRAS' && pagos <= 0}
 
         if(params.nombre) {
             def s = "${params.nombre}%"

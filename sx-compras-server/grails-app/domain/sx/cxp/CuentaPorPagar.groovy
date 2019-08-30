@@ -80,6 +80,10 @@ class CuentaPorPagar {
     BigDecimal pagosMn
     BigDecimal compensacionesMn
 
+    BigDecimal gastoAnalizado
+    Date gastoAnalizadoFecha
+
+
     static constraints = {
         tipo inList:['COMPRAS', 'GASTOS', 'HONORARIOS', 'COMISIONES']
         folio nullable: true, maxSize: 255
@@ -102,6 +106,8 @@ class CuentaPorPagar {
         tcContable nullable: true
         contrarecibo nullable: true
         diferenciaFecha nullable: true
+        gastoAnalizado nullable: true
+        gastoAnalizadoFecha nullable: true
     }
 
     static mapping ={
@@ -115,6 +121,7 @@ class CuentaPorPagar {
         atrasoCalculado formula: 'IF( TO_DAYS(CURRENT_DATE()) - TO_DAYS(vencimiento)  < 0, 0, TO_DAYS(CURRENT_DATE()) - TO_DAYS(vencimiento) ) '
         diferenciaFecha type: 'date'
         tipo index: 'CXP_TIPO_IDX'
+        gastoAnalizadoFecha type: 'date'
     }
 
 

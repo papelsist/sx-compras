@@ -69,7 +69,7 @@ export class CuentaContableFieldComponent
   required = false;
 
   @Input()
-  detalle = false;
+  detalle = true;
 
   cuentas$: Observable<any[]>;
 

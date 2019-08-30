@@ -38,6 +38,11 @@ export const getSelectedFactura = createSelector(
   }
 );
 
+export const selectFacturasPeriodo = createSelector(
+  getFacturasState,
+  fromFacturas.getPeriodo
+);
+
 export const getFacturasFilter = createSelector(
   getFacturasState,
   fromFacturas.getFacturasFilter

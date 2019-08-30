@@ -30,7 +30,7 @@ class CuentaPorPagarListenerService {
         null
     }
 
-    @Subscriber
+    // @Subscriber
     void afterInsert(PostInsertEvent event) {
         CuentaPorPagar cxp = getEntity(event)
         if(cxp) {
@@ -42,7 +42,7 @@ class CuentaPorPagarListenerService {
         }
     }
 
-    @Subscriber
+    // @Subscriber
     void afterUpdate(PostUpdateEvent event) {
         CuentaPorPagar cxp = getEntity(event)
         if(cxp) {
@@ -54,7 +54,7 @@ class CuentaPorPagarListenerService {
         }
     }
 
-    @Subscriber
+    //  @Subscriber
     void afterDelete(PostDeleteEvent event) {
         CuentaPorPagar cxp = getEntity(event)
         if(cxp) {

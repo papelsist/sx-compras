@@ -28,6 +28,7 @@ import { StandardHeaderComponent } from './standard-header/standard-header.compo
 import { StandardFooterComponent } from './standard-footer/standard-footer.component';
 import { PrintCellRendererComponent } from './lx-table/print-cell-renderer.component';
 import { ProductoServicioFieldComponent } from './producto-servicio-field/producto-servicio-field.component';
+import { NumericCellEditorComponent } from './lx-table/numeric-cell-editor.component';
 
 export const components = [
   DireccionComponent,
@@ -59,13 +60,15 @@ export const components = [
   StandardHeaderComponent,
   StandardFooterComponent,
   PrintCellRendererComponent,
-  ProductoServicioFieldComponent
+  ProductoServicioFieldComponent,
+  NumericCellEditorComponent
 ];
 
 export const entyComponents: any[] = [
   FechaDialogComponent,
   PeriodoDialogComponent,
-  PrintCellRendererComponent
+  PrintCellRendererComponent,
+  NumericCellEditorComponent
 ];
 
 export * from './direccion/direccion.component';
@@ -95,5 +98,6 @@ export * from './lx-table/lx-table.component';
 export * from './standard-header/standard-header.component';
 export * from './standard-footer/standard-footer.component';
 export * from './lx-table/print-cell-renderer.component';
+export * from './lx-table/numeric-cell-editor.component';
 
 export * from './producto-servicio-field/producto-servicio-field.component';

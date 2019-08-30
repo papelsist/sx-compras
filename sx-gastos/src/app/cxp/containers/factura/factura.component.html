@@ -6,7 +6,21 @@
       {{ factura.nombre }}
     </span>
     <span flex></span>
-    <span>Total: {{ factura.total | currency }}</span>
+    <span>Sub Total: {{ factura.subTotal | currency }}</span>
+  </div>
+  <div class="sub-title">
+    <div class="user-data">
+      <span>Actualizado: </span>
+      <span>{{ factura.lastUpdated | date: 'dd/MM/yyyy: HH:mm' }}</span>
+      <span>Usuario:</span>
+      <span>{{ factura.updateUser }}</span>
+    </div>
+    <div class="gasto-data">
+      <span>Analizada: </span>
+      <span>{{ factura.gastoAnalizadoFecha | date: 'dd/MM/yyyy' }}</span>
+      <span>Gasto : </span>
+      <span>{{ factura.gastoAnalizado | currency }}</span>
+    </div>
   </div>
   <mat-divider></mat-divider>
   <div class="pad-left pad-right">
@@ -22,7 +36,7 @@
       </mat-tab>
 
       <mat-tab label="Conceptos de Gasto">
-        <mat-toolbar color="accent" layout layout-align="center center">
+        <mat-toolbar layout layout-align="center center">
           <span>Detalle contables del gasto</span>
           <span flex></span>
           <button
@@ -54,20 +68,63 @@
           >
             <mat-icon>call_split</mat-icon>
           </button>
+
+          <button
+            mat-button
+            mat-icon-button
+            matTooltip="Editar"
+            (click)="bulEdit(factura, selected)"
+            [disabled]="selected.length === 0"
+          >
+            <mat-icon>edit</mat-icon>
+          </button>
+
+          <button mat-icon-button [matMenuTriggerFor]="toolbarMenu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #toolbarMenu="matMenu">
+            <mat-checkbox
+              [checked]="true"
+              (change)="grid.toogleCuentaDesc(desc.checked)"
+              #desc
+              class="mat-menu-item"
+              >Cta Descripción</mat-checkbox
+            >
+            <button
+              mat-menu-item
+              *ngIf="gastos$ | async as gastos"
+              (click)="registrarRevision(factura, gastos)"
+              [disabled]="gastos.length === 0"
+            >
+              <mat-icon>offline_pin</mat-icon> Revisión
+            </button>
+
+            <button
+              mat-menu-item
+              *ngIf="gastos$ | async as gastos"
+              (click)="registrarActivoFijo(factura, gastos)"
+              [disabled]="gastos.length === 0"
+            >
+              Activo Fijo
+            </button>
+          </mat-menu>
         </mat-toolbar>
+
         <ng-template
           tdLoading
           [tdLoadingUntil]="!(loading$ | async)"
           tdLoadingStrategy="overlay"
         >
-          <div class="gastos">
-            <sx-cxp-gastosdet-table
-              [partidas]="gastos$ | async"
-              (selectionChange)="onSelectionChange($event)"
-              (select)="editGastoDet(factura, $event)"
-            ></sx-cxp-gastosdet-table>
-          </div>
         </ng-template>
+        <div class="gastos">
+          <sx-cxp-gastosdet-table
+            #grid
+            [partidas]="gastos$ | async"
+            (selectionChange)="onSelectionChange($event)"
+            (select)="editGastoDet(factura, $event)"
+            (edit)="onTableEdit($event)"
+          ></sx-cxp-gastosdet-table>
+        </div>
       </mat-tab>
       <mat-tab label="CFDI">
         <div class="cfdiHeader">

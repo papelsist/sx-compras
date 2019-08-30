@@ -26,6 +26,8 @@ export interface CuentaPorPagar {
   comprobanteFiscal: any;
   analizada?: boolean;
   analisis?: string;
+  gastoAnalizado?: number;
+  gastoAnalizadoFecha?: string;
 }
 
 export class CxPFilter {

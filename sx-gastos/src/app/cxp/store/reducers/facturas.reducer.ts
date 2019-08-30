@@ -6,9 +6,14 @@ import {
   FacturaActionTypes
 } from '../actions/facturas.actions';
 
+import { Periodo } from 'app/_core/models/periodo';
+
+export const FACTURAS_DE_GASTO_PERIODO_KEY = 'sx.gastos.facturas.periodo';
+
 export interface State extends EntityState<CuentaPorPagar> {
   loading: boolean;
   loaded: boolean;
+  periodo: Periodo;
   filter: CxPFilter;
 }
 
@@ -19,11 +24,18 @@ export const adapter: EntityAdapter<CuentaPorPagar> = createEntityAdapter<
 export const initialState: State = adapter.getInitialState({
   loading: false,
   loaded: false,
+  periodo: Periodo.fromNow(30),
   filter: createCxPFilter()
 });
 
 export function reducer(state = initialState, action: FacturaActions): State {
   switch (action.type) {
+    case FacturaActionTypes.SetFacturasPeriodo: {
+      return {
+        ...state,
+        periodo: action.payload.periodo
+      };
+    }
     case FacturaActionTypes.SetFacturasFilter: {
       const filter = action.payload.filter;
       return {
@@ -94,4 +106,5 @@ export const {
 
 export const getFacturasLoading = (state: State) => state.loading;
 export const getFacturasLoaded = (state: State) => state.loaded;
+export const getPeriodo = (state: State) => state.periodo;
 export const getFacturasFilter = (state: State) => state.filter;

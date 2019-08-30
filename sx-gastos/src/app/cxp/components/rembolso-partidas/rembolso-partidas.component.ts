@@ -46,6 +46,7 @@ export class RembolsoPartidasComponent implements OnInit, OnChanges {
     'total',
     'apagar',
     'factura',
+    'cuentaContable',
     'comentario',
     'operaciones'
   ];

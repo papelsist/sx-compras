@@ -100,6 +100,18 @@ export class ProductosTable2Component extends LxTableComponent
         pinnedRowCellRenderer: params => params.value
       },
       {
+        headerName: 'g',
+        field: 'gramos',
+        width: 100,
+        pinned: 'left'
+      },
+      {
+        headerName: 'Kg',
+        field: 'kilos',
+        width: 100,
+        pinned: 'left'
+      },
+      {
         headerName: 'U',
         field: 'unidad',
         width: 60
@@ -109,11 +121,6 @@ export class ProductosTable2Component extends LxTableComponent
         field: 'activo',
         width: 110,
         valueFormatter: params => (params.data.activo ? 'A' : 'S')
-      },
-      {
-        headerName: 'Kg',
-        field: 'kilos',
-        width: 100
       },
       {
         headerName: 'P. Contado',

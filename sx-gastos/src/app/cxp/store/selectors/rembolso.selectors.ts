@@ -49,3 +49,8 @@ export const getRembolsosSearchTerm = createSelector(
   getRembolsosState,
   fromRembolsos.getRembolsosSearchTerm
 );
+
+export const selectPeriodoDeRembolsos = createSelector(
+  getRembolsosState,
+  fromRembolsos.getPeriodo
+);

@@ -5,7 +5,7 @@ export interface GastoDet {
   cxp: Partial<CuentaPorPagar>;
   cuentaContable: any;
   sucursal: any;
-  productoServicio: any;
+  sucursalNombre: string;
   descripcion: string;
   comentario: string;
   activoFijo: boolean;
@@ -17,8 +17,11 @@ export interface GastoDet {
   importe: number;
   descuento: number;
   isrRetenido: number;
+  isrRetenidoTasa: number;
   ivaRetenido: number;
+  ivaRetenidoTasa: number;
   ivaTrasladado: number;
+  ivaTrasladadoTasa: number;
   modelo: string;
   serie: string;
   // Fletes
