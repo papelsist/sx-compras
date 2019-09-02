@@ -8,7 +8,7 @@ import grails.compiler.GrailsCompileStatic
 
 // @Sortable(includes = ['ejercicio', 'mes'])
 @ToString(includes ='ejercicio, mes, actualizacion, depreciacion',includeNames=true,includePackage=false)
-@EqualsAndHashCode(includes='ejercicio, mes')
+@EqualsAndHashCode(includes='activoFijo, ejercicio, mes')
 @GrailsCompileStatic
 class ActivoDepreciacion implements  Comparable<ActivoDepreciacion>{
 
@@ -32,13 +32,9 @@ class ActivoDepreciacion implements  Comparable<ActivoDepreciacion>{
     BigDecimal depreciacion = 0.0
 
 
-
-
     static constraints = {
     }
-
-    static belongsTo = [activoFijo: ActivoFijo]
-
+   
     static mapping = {
         actualizacion type:'date'
     }
