@@ -48,7 +48,14 @@ class ComisionBancariaTask implements  AsientoBuilder{
                         rfc: comision.cuenta.rfc
                     ] 
                     String desc = generarDescripcion(row, mov.concepto)
-                    String ctaBanco = "102-${mov.moneda.currencyCode == 'MXN' ? '0001': '0002'}-${mov.cuenta.subCuentaOperativa}-0000"
+
+                    def ctaPref = '102'
+
+                    if(mov.cuenta.tipo == 'INVERSION'){
+                        ctaPref = '103'
+                    }
+
+                    String ctaBanco = "${ctaPref}-${mov.moneda.currencyCode == 'MXN' ? '0001': '0002'}-${mov.cuenta.subCuentaOperativa}-0000"
                    
                     
 

@@ -32,6 +32,10 @@ class NotasDeCargoProc implements  ProcesadorDePoliza{
                 
                 abonoMoratorios(poliza, row)
                 abonoIvaNoTrasladado(poliza, row)
+
+                if(row.documentoTipo == 'CHO'){
+                    ivaNotaCho(poliza, row)
+                }
             }
 
             if(row.asiento.startsWith("CHEQUE_DEVUELTO")){
@@ -158,6 +162,51 @@ class NotasDeCargoProc implements  ProcesadorDePoliza{
         )
         asignarComprobanteNacional(det, row,)
         poliza.addToPartidas(det)
+    }
+
+    def ivaNotaCho(Poliza poliza, def row) {
+
+        CuentaContable cuenta = buscarCuenta('209-0001-0000-0000')
+        String descripcion  = !row.origen ?
+                "${row.asiento}":
+                "CAR: ${row.documento} ${row.fecha.format('dd/MM/yyyy')} ${row.documentoTipo} ${row.sucursal}"
+        PolizaDet det = new PolizaDet(
+                cuenta: cuenta,
+                concepto: cuenta.descripcion,
+                descripcion: descripcion,
+                asiento: row.asiento,
+                referencia: row.referencia2,
+                referencia2: row.referencia2,
+                origen: row.origen,
+                entidad: 'CuentaPorCobrar',
+                documento: row.documento,
+                documentoTipo: row.documentoTipo,
+                documentoFecha: row.fecha,
+                sucursal: row.sucursal,
+                haber: 0.0,
+                debe: row.impuesto
+        )
+        poliza.addToPartidas(det)
+
+        CuentaContable cuenta2= buscarCuenta('208-0001-0000-0000')
+        PolizaDet det2 = new PolizaDet(
+                cuenta: cuenta2,
+                concepto: cuenta2.descripcion,
+                descripcion: descripcion,
+                asiento: row.asiento,
+                referencia: row.referencia2,
+                referencia2: row.referencia2,
+                origen: row.origen,
+                entidad: 'CuentaPorCobrar',
+                documento: row.documento,
+                documentoTipo: row.documentoTipo,
+                documentoFecha: row.fecha,
+                sucursal: row.sucursal,
+                haber: row.impuesto,
+                debe: 0.0
+        )
+        poliza.addToPartidas(det2)
+
     }
 
     def abonoIvaNoTrasladado(Poliza poliza, def row) {
@@ -337,6 +386,13 @@ class NotasDeCargoProc implements  ProcesadorDePoliza{
         join sucursal s on(f.sucursal_id=s.id) left  join cfdi x on(n.cfdi_id=x.id)
         join juridico j on(j.cxc_id=f.id)
         where  f.fecha='@FECHA' and f.tipo_documento in('NOTA_DE_CARGO') and f.tipo='JUR' and f.sw2 is null and (x.cancelado is false or x.cancelado is null)       
+        union
+        SELECT concat(f.tipo_documento,'_',f.tipo) as asiento,f.id as origen,f.tipo as documentoTipo,f.fecha,f.documento
+        ,f.moneda,f.tipo_de_cambio as tc,f.subtotal,f.impuesto,f.total,c.nombre referencia2,s.nombre as sucursal,f.cliente_id as cliente
+        ,concat('107-0003-',(SELECT x.cuenta_operativa FROM cuenta_operativa_proveedor x join proveedor p on(x.proveedor_id=p.id) join cliente z on(z.rfc=p.rfc) where z.id=c.id ),'-0000') as cta_cliente, c.rfc, x.uuid    
+        FROM cuenta_por_cobrar f join cliente c on(f.cliente_id=c.id) join nota_de_cargo n on(n.cuenta_por_cobrar_id=f.id)
+        LEFT join sucursal s on(f.sucursal_id=s.id) LEFT join cfdi x on(n.cfdi_id=x.id)
+        where  f.fecha='@FECHA' and f.tipo_documento in('NOTA_DE_CARGO') and f.tipo='CHO' and f.sw2 is null and (x.cancelado is false or x.cancelado is null)
         ) as x
         """
     }

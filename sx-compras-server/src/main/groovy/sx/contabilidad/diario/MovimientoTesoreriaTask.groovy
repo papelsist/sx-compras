@@ -31,7 +31,7 @@ class MovimientoTesoreriaTask implements  AsientoBuilder{
     }
 
     void procesarIntereses(Poliza poliza){
-        def movimientosTes = MovimientoDeTesoreria.executeQuery("from MovimientoDeTesoreria where fecha= ? and concepto ='DEPOSITO' and  concepto  'INTERESES'",[poliza.fecha])
+        def movimientosTes = MovimientoDeTesoreria.executeQuery("from MovimientoDeTesoreria where fecha= ? and concepto ='DEPOSITO' and  concepto = 'INTERESES'",[poliza.fecha])
         movimientosTes.each{mov ->mov.movimiento.moneda
             String ctaBanco= "102-${mov.movimiento.moneda.currencyCode == 'MXN' ? '0001': '0002'}-${mov.movimiento.cuenta.subCuentaOperativa}-0000"
              Map row = [
@@ -53,7 +53,7 @@ class MovimientoTesoreriaTask implements  AsientoBuilder{
     }
 
     void procesarRetencionesIsr(Poliza poliza){
-        def movimientosTes = MovimientoDeTesoreria.executeQuery("from MovimientoDeTesoreria where fecha= ? and concepto ='CARGO' and concpeto = 'ISR_RETENIDO'",[poliza.fecha])
+        def movimientosTes = MovimientoDeTesoreria.executeQuery("from MovimientoDeTesoreria where fecha= ? and concepto ='CARGO' and concepto = 'ISR_RETENIDO'",[poliza.fecha])
         movimientosTes.each{mov ->mov.movimiento.moneda
             String ctaBanco= "102-${mov.movimiento.moneda.currencyCode == 'MXN' ? '0001': '0002'}-${mov.movimiento.cuenta.subCuentaOperativa}-0000"
              Map row = [

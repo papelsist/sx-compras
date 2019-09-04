@@ -408,6 +408,13 @@ class UrlMappings {
         // Activo Fijo
         "/api/activo/activoFijo"(resources: 'activoFijo', excludes:['create', 'edit','patch'])
 
+        // Soporte Sist
+
+        "/logistica/soporte"(controller: "solicitudCambio", action: 'list', method: 'GET')
+        "/logistica/soporte/solicitud"(controller: "solicitudCambio", action: 'solicitud', method: 'GET')
+        "/logistica/soporte/autorizacion"(controller: "solicitudCambio", action: 'autorizacionList', method: 'GET')
+        "/logistica/soporte/salvar"(controller: "solicitudCambio", action: 'salvar', method: 'POST')
+
         // Audit
         "/api/audit"(resources: 'audit', excludes:['create', 'edit','patch'])
 

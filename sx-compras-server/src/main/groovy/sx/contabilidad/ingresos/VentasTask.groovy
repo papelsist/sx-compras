@@ -121,7 +121,8 @@ class VentasTask implements  AsientoBuilder {
             join sucursal s on(f.sucursal_id=s.id) join cfdi x on(f.cfdi_id=x.id)
             where  f.fecha='@FECHA' and tipo in('CRE') and f.tipo_documento='VENTA' and f.cancelada is null and f.sw2 is null               
             UNION                
-            SELECT concat('VENTAS_',f.tipo) as asiento,f.id as origen,f.tipo as documentoTipo,f.fecha,f.documento
+            SELECT concat('VENTAS_',f.tipo) as asiento,f.id as origen,f.tipo as documentoTipo
+            ,(case when f.tipo in ('CON','COD') then null else f.fecha end) fecha,(case when f.tipo in ('CON','COD') then null else f.documento end) documento
             ,f.moneda,f.tipo_de_cambio,f.subtotal,f.impuesto,f.total,concat('VENTA ',f.tipo,' ',s.nombre) referencia2,s.nombre sucursal, s.clave as suc
             ,concat(s.nombre,"_",f.tipo_documento,"_",f.tipo) cliente_id 
             ,concat('401-',(case when f.tipo='CON' then '0001-' when f.tipo in('COD','OTR','ACF') then '0002-' else 'nd' end ),(case when s.clave>9 then concat('00',s.clave) else concat('000',s.clave) end),'-0000') as cta_venta
