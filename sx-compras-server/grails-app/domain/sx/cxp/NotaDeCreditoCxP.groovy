@@ -7,9 +7,7 @@ import groovy.transform.ToString
 import sx.core.Proveedor
 import sx.utils.MonedaUtils
 
-/**
- * Created by rcancino on 19/04/17.
- */
+
 @ToString(excludes =  ['version','lastUpdated', 'dateCreated'], includeNames=true,includePackage=false)
 @EqualsAndHashCode(includeFields = true,includes = ['id', 'nombre', 'folio', 'serie'])
 @GrailsCompileStatic
@@ -70,6 +68,8 @@ class NotaDeCreditoCxP {
 
     BigDecimal disponibleReal
 
+    String tipo = 'COMPRAS'
+
 
 
     static constraints = {
@@ -90,6 +90,7 @@ class NotaDeCreditoCxP {
         tcContable nullable: true
         diferencia nullable: true
         diferenciaFecha nullable: true
+        tipo nullable: true
     }
 
     static mapping = {

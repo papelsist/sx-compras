@@ -8,16 +8,22 @@
       title="Notas de cargo  ({{ cartera.descripcion }})"
       (search)="search = $event"
     >
-      <sx-cartera-filter-btn
-        *ngIf="filter"
+      <sx-periodo-picker
+        [periodo]="periodo"
         class="options"
-        [filter]="filter"
-        (change)="onFilterChange($event)"
-      >
-      </sx-cartera-filter-btn>
+        (change)="onPeriodo($event)"
+      ></sx-periodo-picker>
 
-      <button mat-menu-item class="actions" (click)="reload(cartera, filter)">
+      <button mat-menu-item class="actions" (click)="reload()">
         <mat-icon>refresh</mat-icon> Recargar
+      </button>
+      <button
+        mat-menu-item
+        color="primary"
+        (click)="generarNotasPorIntereses()"
+        class="actions"
+      >
+        <span>Notas por intereses</span>
       </button>
     </sx-search-title>
     <mat-divider></mat-divider>
@@ -26,19 +32,5 @@
       [notas]="notas$ | async"
       (edit)="onSelect($event)"
     ></sx-notas-de-cargo-table>
-
-    <!-- <sx-cobros-table
-      [cobros]="cobros$ | async"
-      [filter]="search$ | async"
-      (select)="onSelect($event)"
-    >
-    </sx-cobros-table> -->
-
-    <mat-card-footer>
-      <sx-cartera-filter-label
-        [filter]="filter"
-        *ngIf="filter"
-      ></sx-cartera-filter-label>
-    </mat-card-footer>
   </ng-template>
 </mat-card>

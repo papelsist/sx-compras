@@ -129,9 +129,11 @@ class UrlMappings {
 
         // Notas de Cargo
         "/api/cxc/notasDeCargo"(resources: "notaDeCargo")
+        "/api/cxc/notasDeCargo/generarNotasDeCargoPorIntereses"(controller: 'notaDeCargo', action: 'generarNotasDeCargoPorIntereses', method: 'POST')
         // "/api/cxc/notasDeCargo/timbrar/$id"(controller: 'notaDeCargo', action: 'timbrar', method: 'POST')
         // "/api/cxc/notasDeCargo/print/$id"(controller: 'notaDeCargo', action: 'print', method: 'GET')
         // "/api/cxc/notasDeCargo/reporteDeNotasDeCargo"(controller: 'notaDeCargo', action: 'reporteDeNotasDeCargo', method: 'GET')
+
 
 
         // CXC Notas de credito
@@ -287,7 +289,9 @@ class UrlMappings {
         "/api/rembolsos/cancelarCheque/$id"(controller: 'rembolso', action: 'cancelarCheque', method: 'PUT')
         "/api/rembolsos/generarCheque/$id"(controller: 'rembolso', action: 'generarCheque', method: 'PUT')
         "/api/rembolsos/pendientes"(controller: 'rembolso', action: 'pendientes')
+        "/api/rembolsos/notasPendientes"(controller: 'rembolso', action: 'notasPendientes')
         "/api/rembolsos/print/$id"(controller: 'rembolso', action: 'print')
+        "/api/rembolsos/copiar/$id"(controller: 'rembolso', action: 'copiar', method: 'POST')
 
         //BI
         "/api/bi/ventaNetaMensual"(controller: 'bi', action:'ventaNetaMensual', method: 'GET')

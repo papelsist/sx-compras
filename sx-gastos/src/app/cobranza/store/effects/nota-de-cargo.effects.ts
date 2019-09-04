@@ -20,7 +20,7 @@ export class NotaDeCargoEffects {
     ),
     map(action => action.payload),
     switchMap(payload =>
-      this.service.list(payload.cartera, payload.filter).pipe(
+      this.service.list(payload.periodo).pipe(
         map(notas => new fromActions.LoadNotasDeCargoSuccess({ notas })),
         catchError((response: any) =>
           of(new fromActions.LoadNotasDeCargoFail({ response }))
@@ -78,17 +78,44 @@ export class NotaDeCargoEffects {
   );
 
   @Effect()
+  generarIntereses$ = this.actions$.pipe(
+    ofType<fromActions.GenerarNotasPorIntereses>(
+      NotaDeCargoActionTypes.GenerarNotasPorIntereses
+    ),
+    map(action => action.payload),
+    switchMap(command =>
+      this.service
+        .gemerarNotasDeIntereses(
+          command.fechaInicial,
+          command.fechaFinal,
+          command.descripcion,
+          command.facturista
+        )
+        .pipe(
+          map(
+            notas => new fromActions.GenerarNotasPorInteresesSuccess({ notas })
+          ),
+          catchError(response =>
+            of(new fromActions.GenerarNotasPorInteresesFail({ response }))
+          )
+        )
+    )
+  );
+
+  @Effect()
   fail$ = this.actions$.pipe(
     ofType<
       | fromActions.LoadNotasDeCargoFail
       | fromActions.CreateNotaDeCargoFail
       | fromActions.UpdateNotaDeCargoFail
       | fromActions.DeleteNotaDeCargoFail
+      | fromActions.GenerarNotasPorInteresesFail
     >(
       NotaDeCargoActionTypes.LoadNotasDeCargoFail,
       NotaDeCargoActionTypes.CreateNotaDeCargoFail,
       NotaDeCargoActionTypes.UpdateNotaDeCargoFail,
-      NotaDeCargoActionTypes.DeleteNotaDeCargoFail
+      NotaDeCargoActionTypes.DeleteNotaDeCargoFail,
+      NotaDeCargoActionTypes.GenerarNotasPorInteresesFail
     ),
     map(action => action.payload.response),
     map(response => new fromRoot.GlobalHttpError({ response }))

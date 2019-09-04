@@ -27,13 +27,13 @@ class AlcancesService implements DataBinder, LogUser{
     
 
     List<Alcance> generar(Date fechaInicial, Date fechaFinal, Integer meses) {
-        // log.debug('Consulta de alcances: {}, {} ,{}' , fechaInicial, fechaFinal, meses)
+        log.debug('Consulta de alcances: {}, {} ,{}' , fechaInicial, fechaFinal, meses)
         Alcance.executeUpdate("delete from Alcance ")
         Sucursal sucursal = AppConfig.first().sucursal
         String select = getAlcanceSql().replaceAll('@SUCURSAL', "'%'")
                 .replaceAll('@FECHA_INI',fechaInicial.format('yyyy-MM-dd'))
                 .replaceAll('@FECHA_FIN', fechaFinal.format('yyyy-MM-dd'))
-                log.info('Alcance: {}', select)
+        // log.info('Generando alcance: {}', select)
         Sql sql = new Sql(dataSource)
         List<Alcance> res = []
         sql.eachRow(select, { row->
@@ -210,7 +210,7 @@ class AlcancesService implements DataBinder, LogUser{
                     JOIN producto P ON(X.producto_id = P.ID) 
                     WHERE cc.fecha > '2018-01-01' 
                       and X.SUCURSAL_ID LIKE @SUCURSAL 
-                      GROUP BY X.PRODUCTO_ID, X.SUCURSAL_ID
+                      GROUP BY X.PRODUCTO_ID
 	        ) AS A
 	        JOIN producto P ON(A.PRODUCTO_ID=P.ID)
 	        JOIN LINEA L on(L.ID=p.LINEA_ID)

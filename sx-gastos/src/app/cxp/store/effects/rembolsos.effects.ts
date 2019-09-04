@@ -130,6 +130,20 @@ export class RembolsosEffects {
     map(res => new fromRoot.Go({ path: ['cxp/rembolsos', res.id] }))
   );
 
+  @Effect()
+  copiar$ = this.actions$.pipe(
+    ofType<fromActions.CopiarRembolso>(RembolsoActionTypes.CopiarRembolso),
+    map(action => action.payload.rembolsoId),
+    switchMap(id => {
+      return this.service.copiar(id).pipe(
+        map(rembolso => new fromActions.CopiarRembolsoSuccess({ rembolso })),
+        catchError(error =>
+          of(new fromActions.CopiarRembolsoFail({ response: error }))
+        )
+      );
+    })
+  );
+
   /*
   @Effect()
   updateSuccess$ = this.actions$.pipe(
@@ -154,11 +168,13 @@ export class RembolsosEffects {
       | fromActions.SaveRembolsoFail
       | fromActions.UpdateRembolsoFail
       | fromActions.DeleteRembolsoFail
+      | fromActions.CopiarRembolsoFail
     >(
       RembolsoActionTypes.LoadRembolsosFail,
       RembolsoActionTypes.SaveRembolsoFail,
       RembolsoActionTypes.UpdateRembolsoFail,
-      RembolsoActionTypes.DeleteRembolsoFail
+      RembolsoActionTypes.DeleteRembolsoFail,
+      RembolsoActionTypes.CopiarRembolsoFail
     ),
     map(action => action.payload.response),
     // tap(response => console.log('Error: ', response)),

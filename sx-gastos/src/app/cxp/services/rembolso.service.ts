@@ -54,4 +54,11 @@ export class RembolsoService {
       .delete(url)
       .pipe(catchError((error: any) => throwError(error)));
   }
+
+  copiar(id: number): Observable<Rembolso> {
+    const url = `${this.apiUrl}/copiar/${id}`;
+    return this.http
+      .post<Rembolso>(url, {})
+      .pipe(catchError((error: any) => throwError(error)));
+  }
 }

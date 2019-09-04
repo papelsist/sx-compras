@@ -7,6 +7,10 @@ import {
   NotaDeCargoActionTypes
 } from '../actions/nota-de-cargo.actions';
 
+function sortByFolio(a: NotaDeCargo, b: NotaDeCargo): number {
+  return b.folio > a.folio ? 1 : b.folio <= a.folio ? -1 : 0;
+}
+
 export interface State extends EntityState<NotaDeCargo> {
   loading: boolean;
   term: string;
@@ -14,7 +18,7 @@ export interface State extends EntityState<NotaDeCargo> {
 
 export const adapter: EntityAdapter<NotaDeCargo> = createEntityAdapter<
   NotaDeCargo
->();
+>({ sortComparer: sortByFolio });
 
 export const initialState: State = adapter.getInitialState({
   loading: false,
@@ -26,6 +30,7 @@ export function reducer(
   action: NotaDeCargoActions
 ): State {
   switch (action.type) {
+    case NotaDeCargoActionTypes.GenerarNotasPorIntereses:
     case NotaDeCargoActionTypes.DeleteNotaDeCargo:
     case NotaDeCargoActionTypes.UpdateNotaDeCargo:
     case NotaDeCargoActionTypes.CreateNotaDeCargo:
@@ -36,6 +41,7 @@ export function reducer(
       };
     }
 
+    case NotaDeCargoActionTypes.GenerarNotasPorInteresesFail:
     case NotaDeCargoActionTypes.DeleteNotaDeCargoFail:
     case NotaDeCargoActionTypes.UpdateNotaDeCargoFail:
     case NotaDeCargoActionTypes.CreateNotaDeCargoFail:
@@ -88,6 +94,14 @@ export function reducer(
       const nota = action.payload.nota;
       return adapter.upsertOne(nota, {
         ...state
+      });
+    }
+
+    case NotaDeCargoActionTypes.GenerarNotasPorInteresesSuccess: {
+      const notas = action.payload.notas;
+      return adapter.upsertMany(notas, {
+        ...state,
+        loading: false
       });
     }
 

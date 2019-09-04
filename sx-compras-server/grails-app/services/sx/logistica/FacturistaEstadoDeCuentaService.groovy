@@ -84,14 +84,20 @@ class FacturistaEstadoDeCuentaService implements  LogUser, FolioLog {
 
     def generarNotasDeCargoPorIntereses(Date fecha, String comentario = 'INTERESES POR PRESTAMO') {
         List<FacturistaDeEmbarque> facturistas = FacturistaDeEmbarque.list()
+        List<NotaDeCargo> res = []
         facturistas.each { f ->
-            generarNotaDeCargo(f, fecha, comentario)
+            def nota = generarNotaDeCargo(f, fecha, comentario)
+            if(nota) {
+                res << nota
+            }
         }
+        return res
     }
 
 
     @Transactional
     NotaDeCargo generarNotaDeCargo(FacturistaDeEmbarque f, Date corte = new Date(), String comentario) {
+        log.info('Generando N de Cargo por intereses para {}, Corte: {}, Desc: {}', f, corte, comentario)
         List<FacturistaEstadoDeCuenta> intereses = FacturistaEstadoDeCuenta.where{
                 facturista == f &&
                 tipo == 'INTERESES' &&
@@ -100,7 +106,7 @@ class FacturistaEstadoDeCuentaService implements  LogUser, FolioLog {
 
             }.list()
         def importe = intereses.sum 0.0 , {FacturistaEstadoDeCuenta m -> m.importe}
-        if( (importe as BigDecimal) <= 0.0)
+        if( (importe as BigDecimal) <= 1.0)
             return null
 
         NotaDeCargo nc = new NotaDeCargo()

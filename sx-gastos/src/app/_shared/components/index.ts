@@ -29,6 +29,7 @@ import { StandardFooterComponent } from './standard-footer/standard-footer.compo
 import { PrintCellRendererComponent } from './lx-table/print-cell-renderer.component';
 import { ProductoServicioFieldComponent } from './producto-servicio-field/producto-servicio-field.component';
 import { NumericCellEditorComponent } from './lx-table/numeric-cell-editor.component';
+import { FacturistasField2Component } from './facturista-field2/facturista-field2.component';
 
 export const components = [
   DireccionComponent,
@@ -61,7 +62,8 @@ export const components = [
   StandardFooterComponent,
   PrintCellRendererComponent,
   ProductoServicioFieldComponent,
-  NumericCellEditorComponent
+  NumericCellEditorComponent,
+  FacturistasField2Component
 ];
 
 export const entyComponents: any[] = [
@@ -101,3 +103,4 @@ export * from './lx-table/print-cell-renderer.component';
 export * from './lx-table/numeric-cell-editor.component';
 
 export * from './producto-servicio-field/producto-servicio-field.component';
+export * from './facturista-field2/facturista-field2.component';

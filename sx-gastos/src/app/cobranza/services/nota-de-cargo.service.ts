@@ -20,16 +20,12 @@ export class NotaDeCargoService {
     this.apiUrl = config.buildApiUrl('cxc/notasDeCargo');
   }
 
-  list(cartera: Cartera, filter?: CarteraFilter): Observable<NotaDeCargo[]> {
-    let params = new HttpParams().set('cartera', cartera.clave);
+  list(filter?: CarteraFilter): Observable<NotaDeCargo[]> {
+    let params = new HttpParams().set('cartera', 'CHO');
     if (filter) {
       params = params
-        .set('registros', filter.registros.toString())
         .set('fechaInicial', filter.fechaInicial.toISOString())
         .set('fechaFinal', filter.fechaFinal.toISOString());
-      if (filter.nombre) {
-        params = params.set('nombre', filter.nombre);
-      }
     }
     return this.http
       .get<NotaDeCargo[]>(this.apiUrl, { params })
@@ -61,5 +57,22 @@ export class NotaDeCargoService {
     return this.http
       .delete(url)
       .pipe(catchError((error: any) => throwError(error)));
+  }
+
+  gemerarNotasDeIntereses(
+    fechaInicial: string,
+    fechaFinal: string,
+    descripcion: string,
+    facturista: any = null
+  ): Observable<NotaDeCargo[]> {
+    const url = `${this.apiUrl}/generarNotasDeCargoPorIntereses`;
+    return this.http
+      .post<NotaDeCargo[]>(url, {
+        fechaInicial,
+        fechaFinal,
+        descripcion,
+        facturista
+      })
+      .pipe(catchError(error => throwError(error)));
   }
 }

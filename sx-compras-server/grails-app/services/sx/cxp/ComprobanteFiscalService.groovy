@@ -259,7 +259,7 @@ class ComprobanteFiscalService implements  LogUser{
                 cxp.save failOnError: true, flush: true
 
             } else if(cf.tipoDeComprobante == 'E'){
-                NotaDeCreditoCxP nota = this.notaDeCreditoCxPService.generarNota(cf)
+                NotaDeCreditoCxP nota = this.notaDeCreditoCxPService.generarNota(cf, tipo)
 
             }
             return cf

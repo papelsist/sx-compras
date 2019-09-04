@@ -14,7 +14,7 @@ abstract class NotaDeCreditoCxPService implements  LogUser{
 
     abstract NotaDeCreditoCxP save(NotaDeCreditoCxP nota)
 
-    NotaDeCreditoCxP generarNota(ComprobanteFiscal cfdi) {
+    NotaDeCreditoCxP generarNota(ComprobanteFiscal cfdi, String stipo = 'COMPRAS') {
         if(cfdi.versionCfdi != '3.3') {
             log.debug('CFDI no es  ver 3.3')
             return null
@@ -42,7 +42,8 @@ abstract class NotaDeCreditoCxPService implements  LogUser{
             total: cfdi.total,
             comprobanteFiscal: cfdi,
             uuid: cfdi.uuid,
-            concepto: 'DESCUENTO'
+            concepto: 'DESCUENTO',
+            tipo: stipo
         ])
         buildPartidas(cfdi).each {
             nota.addToConceptos(it)

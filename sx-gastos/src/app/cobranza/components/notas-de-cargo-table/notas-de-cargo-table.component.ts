@@ -44,8 +44,6 @@ export class NotasDeCargoTableComponent implements OnInit, OnChanges {
   ];
   @ViewChild(MatSort)
   sort: MatSort;
-  @ViewChild(MatPaginator)
-  paginator: MatPaginator;
 
   @Output()
   print = new EventEmitter();
@@ -59,7 +57,6 @@ export class NotasDeCargoTableComponent implements OnInit, OnChanges {
   constructor() {}
 
   ngOnInit() {
-    this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
   ngOnChanges(changes: SimpleChanges) {

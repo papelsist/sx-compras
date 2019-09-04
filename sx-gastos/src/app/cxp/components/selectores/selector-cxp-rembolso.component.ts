@@ -40,8 +40,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
   `,
   styles: [
     `
-      .de-facturas-table-panel {
-        max-height: 700px;
+      .facturas-table-panel {
+        height: 450px;
         overflow: auto;
       }
     `

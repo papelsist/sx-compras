@@ -8,6 +8,7 @@ import * as fromStore from '../../store';
 
 import { Rembolso, RembolsosFilter } from '../../model';
 import { Periodo } from 'app/_core/models/periodo';
+import { TdDialogService } from '@covalent/core';
 
 @Component({
   selector: 'sx-rembolsos',
@@ -21,7 +22,10 @@ export class RembolsosComponent implements OnInit {
   filter$: Observable<RembolsosFilter>;
   search = '';
 
-  constructor(private store: Store<fromStore.State>) {}
+  constructor(
+    private store: Store<fromStore.State>,
+    private dialogService: TdDialogService
+  ) {}
 
   ngOnInit() {
     this.periodo$ = this.store.pipe(select(fromStore.selectPeriodoDeRembolsos));
@@ -54,5 +58,24 @@ export class RembolsosComponent implements OnInit {
 
   reload() {
     this.store.dispatch(new fromStore.LoadRembolsos());
+  }
+
+  copiar() {
+    this.dialogService
+      .openPrompt({
+        message: 'Folio origen',
+        title: 'Copiar pago de gasto',
+        acceptButton: 'COPIAR',
+        cancelButton: 'CANCELAR'
+      })
+      .afterClosed()
+      .subscribe((res: string) => {
+        if (res) {
+          const folio = parseFloat(res);
+          this.store.dispatch(
+            new fromStore.CopiarRembolso({ rembolsoId: folio })
+          );
+        }
+      });
   }
 }

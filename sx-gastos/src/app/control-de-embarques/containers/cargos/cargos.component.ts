@@ -25,7 +25,6 @@ import { TdDialogService } from '@covalent/core';
         <mat-icon>refresh</mat-icon>
         <span>Refrescar</span>
       </button>
-
     </sx-search-title>
     <mat-divider></mat-divider>
     <div class="table-panel">

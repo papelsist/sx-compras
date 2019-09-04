@@ -7,6 +7,7 @@ import grails.compiler.GrailsCompileStatic
 
 import sx.contabilidad.CuentaContable
 import sx.cxp.GastoDet
+import sx.core.Proveedor
 
 @GrailsCompileStatic
 @ToString(includes ='id, facturaSerie, facturaFolio, facturaFecha',includeNames=true,includePackage=false)
@@ -23,7 +24,7 @@ class ActivoFijo {
     String modelo
 
     GastoDet gastoDet
-    String proveedor
+    Proveedor proveedor
 
     String sucursalOrigen
     String sucursalActual
@@ -33,15 +34,15 @@ class ActivoFijo {
     String estado
 
 
-    String tipo
+    String tipo = 'VIGENTE'
     CuentaContable cuentaContable
-    BigDecimal tasaDepreciacion
+    BigDecimal tasaDepreciacion = 0.0
 
-    BigDecimal montoOriginal
-    BigDecimal costoActualizado
+    BigDecimal montoOriginal = 0.0
+    BigDecimal costoActualizado = 0.0
 
-    BigDecimal depreciacionAcumulada
-    BigDecimal remanente
+    BigDecimal depreciacionAcumulada = 0.0
+    BigDecimal remanente = 0.0
 
     String venta
     String ventaFactura
@@ -61,14 +62,18 @@ class ActivoFijo {
 
 
     static constraints = {
+        proveedor nullable: true
         facturaSerie nullable: true
         facturaFolio nullable: true
+        facturaFecha nullable: true
         uuid nullable: true
+
         serie nullable: true
         modelo nullable: true
         cuentaContable nullable: true
         tasaDepreciacion scale: 4
         gastoDet nullable: true
+
         estado inList: ['VIGENTE', 'DEPRECIADO', 'VENDIDO']
         sucursalOrigen nullable: true
         sucursalActual nullable: true
@@ -76,6 +81,13 @@ class ActivoFijo {
         departamentoActual nullable: true
         consignatario nullable: true
         comentario nullable: true
+
+        tipo nullable: true
+
+        venta nullable: true
+        ventaFecha nullable: true
+        ventaFactura nullable: true
+        ventaImporte nullable: true
     }
 
     static transients = {
