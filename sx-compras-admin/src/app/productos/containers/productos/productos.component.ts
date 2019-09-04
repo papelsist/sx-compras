@@ -46,7 +46,7 @@ export class ProductosComponent implements OnInit {
   }
 
   onCreate() {
-    this.store.dispatch(new fromRoot.Go({ path: ['productos/create'] }));
+    this.store.dispatch(new fromRoot.Go({ path: ['catalogos/productos/create'] }));
   }
 
   reload() {
