@@ -85,6 +85,11 @@ class AlcancesController extends RestfulController<Alcance>{
         respond data, status:200
     }
 
+    def comprasPendientes() {
+        String clave = params.clave
+        respond alcancesService.comprasPendientes(clave)
+    }
+
     def print( ) {
         //params.ID = params.id;
         Periodo periodo = params.periodo

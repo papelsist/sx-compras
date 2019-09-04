@@ -1,0 +1,7 @@
+import sx.cxp.ProductoServicio
+
+model {
+	ProductoServicio productoServicio
+}
+
+json tmpl.productoServicio(productoServicio)

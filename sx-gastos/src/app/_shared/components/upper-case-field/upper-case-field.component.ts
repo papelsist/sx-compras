@@ -27,7 +27,7 @@ import { MatFormFieldControl, MatInput } from '@angular/material';
   selector: 'sx-upper-case-field',
   template: `
     <mat-form-field [style.width.%]="100" >
-      <input #input matInput [placeholder]="placeholder" autocomplete="off"
+      <input #input matInput [placeholder]="placeholder" [autocomplete]="autocomplete"
         (input)="change($event)" [required]= "required"
         (blur)="onBlur()"/>
         <mat-error *ngIf="controlDir && !controlDir.control.valid">
@@ -37,11 +37,17 @@ import { MatFormFieldControl, MatInput } from '@angular/material';
   `
 })
 export class UpperCaseFieldComponent implements OnInit, ControlValueAccessor {
-  @Input() placeholder: string;
-  @Input() required = false;
+  @Input()
+  placeholder: string;
+  @Input()
+  required = false;
+  @Input()
+  autocomplete = false;
 
-  @ViewChild('input') input: ElementRef;
-  @ViewChild(MatInput) inputField: MatInput;
+  @ViewChild('input')
+  input: ElementRef;
+  @ViewChild(MatInput)
+  inputField: MatInput;
   onChange;
   onTouched;
 

@@ -60,10 +60,12 @@ class ProveedorProductoController extends RestfulController<ProveedorProducto> {
         params.max = 3000
         String proveedorId = params.proveedorId
         String mda = params.moneda;
-        
-        // List<ProveedorProducto> res =  proveedorProductoService.findProductos(proveedorId, moneda)
-        List res = ProveedorProducto.where{ proveedor.id == proveedorId && moneda == mda}.list(params)
-        log.info('Prroductos del proveedor: {} moneda: {} Productos: {}', proveedorId, mda, res.size())
+        def query = ProveedorProducto.where{proveedor.id == proveedorId}
+        if(mda) {
+            query = query.where{moneda == mda}
+        }
+        List res = query.list(params)
+        log.info('Productos del proveedor: {} moneda: {} Productos: {}', proveedorId, mda, res.size())
         return res
     }
 

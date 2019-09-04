@@ -1,0 +1,8 @@
+import sx.cxp.GastoDet
+
+model {
+	Iterable<GastoDet> gastoDetList
+}
+
+json tmpl.gastoDet(gastoDetList ?: [])
+

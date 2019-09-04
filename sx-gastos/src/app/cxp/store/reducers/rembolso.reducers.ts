@@ -5,10 +5,14 @@ import {
   RembolsoActions,
   RembolsoActionTypes
 } from '../actions/rembolso.actions';
+import { Periodo } from 'app/_core/models/periodo';
+
+export const REMBOLSOS_PERIODO_KEY = 'sx.gastos.facturas.periodo';
 
 export interface State extends EntityState<Rembolso> {
   loading: boolean;
   loaded: boolean;
+  periodo: Periodo;
   filter: RembolsosFilter;
   term: string;
 }
@@ -24,12 +28,19 @@ export const adapter: EntityAdapter<Rembolso> = createEntityAdapter<Rembolso>({
 export const initialState: State = adapter.getInitialState({
   loading: false,
   loaded: false,
+  periodo: Periodo.fromNow(30),
   filter: createRembolsoFilter(),
   term: ''
 });
 
 export function reducer(state = initialState, action: RembolsoActions): State {
   switch (action.type) {
+    case RembolsoActionTypes.SetRembolsosPeriodo: {
+      return {
+        ...state,
+        periodo: action.payload.periodo
+      };
+    }
     case RembolsoActionTypes.SetRembolsosFilter: {
       const filter = action.payload.filter;
       return {
@@ -122,5 +133,6 @@ export const {
 
 export const getRembolsosLoading = (state: State) => state.loading;
 export const getRembolsosLoaded = (state: State) => state.loaded;
+export const getPeriodo = (state: State) => state.periodo;
 export const getRembolsosFilter = (state: State) => state.filter;
 export const getRembolsosSearchTerm = (state: State) => state.term;

@@ -1,0 +1,29 @@
+<form [formGroup]="form">
+  <span mat-dialog-title>Alta de Activo Fijo </span>
+  <mat-divider></mat-divider>
+  <div class="pad" layout="column">
+    <mat-form-field>
+      <input
+        matInput
+        formControlName="modelo"
+        autocomplete="off"
+        placeholder="Modelo"
+      />
+    </mat-form-field>
+    <mat-form-field>
+      <input
+        matInput
+        formControlName="serie"
+        autocomplete="off"
+        placeholder="Serie"
+      />
+    </mat-form-field>
+  </div>
+
+  <mat-dialog-actions>
+    <button mat-button [disabled]="form.invalid" (click)="submit()">
+      Aceptar
+    </button>
+    <button mat-button mat-dialog-close type="button">Cancelar</button>
+  </mat-dialog-actions>
+</form>

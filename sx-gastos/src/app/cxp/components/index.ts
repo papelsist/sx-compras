@@ -59,6 +59,16 @@ import { RembolsosFilterLabelComponent } from './rembolsos-filter/rembolsos-filt
 import { PrintRembolsoComponent } from './print-rembolso/print-rembolso.component';
 import { RembolsoDetComponent } from './rembolso-form/rembolso-det.component';
 import { CxPFormComponent } from './cxp-form/cxp-form.component';
+import { CxpForm2Component } from './cxp-form2/cxp-form2.component';
+import { CxpGastoSelectorComponent } from './cxp-gasto-selector/cxp-gasto-selector.component';
+import { CxpGastosTableComponent } from './cxp-gasto-selector/cxp-gastos-table.component';
+import { CxpGastosDetTableComponent } from './cxp-gastodet-table/cxp-gastodet-table.component';
+import { CfdiConceptosTable2Component } from './cfdi-conceptos-table2/cfdi-conceptos-table2.component';
+import { CxPGastodetModalComponent } from './cxp-gastodet-modal/cxp-gastodet-modal.component';
+import { CxpProrrateoModalComponent } from './cxp-prorrateo-modal/cxp-prorrateo-modal.component';
+import { CxPGastodetBulkeditComponent } from './cxp-gastodet-bulkedit/cxp-gastodet-bulkedit';
+import { FacturasTable2Component } from './facturas-table2/facturas-table2.component';
+import { CxpActivofModalComponent } from './cxp-activof-modal/cxp-activof-modal.component';
 
 export const components: any[] = [
   CfdisTableComponent,
@@ -76,6 +86,7 @@ export const components: any[] = [
   FacturasFilterBtnComponent,
   FacturasFilterLabelComponent,
   CxPFormComponent,
+  CxpForm2Component,
   ComsSelectorComponent,
   ComsTableComponent,
   RequisicionesTableComponent,
@@ -113,7 +124,17 @@ export const components: any[] = [
   RembolsosFilterBtnComponent,
   RembolsosFilterLabelComponent,
   PrintRembolsoComponent,
-  RembolsoDetComponent
+  RembolsoDetComponent,
+
+  CxpGastoSelectorComponent,
+  CxpGastosTableComponent,
+  CxpGastosDetTableComponent,
+  CfdiConceptosTable2Component,
+  CxPGastodetModalComponent,
+  CxpProrrateoModalComponent,
+  CxPGastodetBulkeditComponent,
+  FacturasTable2Component,
+  CxpActivofModalComponent
 ];
 
 export const entryComponents = [
@@ -128,7 +149,12 @@ export const entryComponents = [
   ChequesFilterComponent,
   SelectorCxpRembolsoComponent,
   RembolsosFilterComponent,
-  RembolsoDetComponent
+  RembolsoDetComponent,
+  CxpGastoSelectorComponent,
+  CxPGastodetModalComponent,
+  CxpProrrateoModalComponent,
+  CxPGastodetBulkeditComponent,
+  CxpActivofModalComponent
 ];
 
 export * from './cfdis-table/cfdis-table.component';
@@ -144,6 +170,7 @@ export * from './factura-selector/factura-selector-btn.component';
 export * from './cxp-facturas-table/cxp-facturas-table.component';
 export * from './factura-header/factura-header.component';
 export * from './cxp-form/cxp-form.component';
+export * from './cxp-form2/cxp-form2.component';
 
 export * from './facturas-filter/facturas-filter.component';
 export * from './facturas-filter/facturas-filter-label.component';
@@ -191,3 +218,13 @@ export * from './rembolsos-filter/rembolsos-filter-btn.component';
 export * from './rembolsos-filter/rembolsos-filter-label.component';
 export * from './print-rembolso/print-rembolso.component';
 export * from './rembolso-form/rembolso-det.component';
+
+export * from './cxp-gasto-selector/cxp-gasto-selector.component';
+export * from './cxp-gasto-selector/cxp-gastos-table.component';
+export * from './cxp-gastodet-table/cxp-gastodet-table.component';
+export * from './cfdi-conceptos-table2/cfdi-conceptos-table2.component';
+export * from './cxp-gastodet-modal/cxp-gastodet-modal.component';
+export * from './cxp-prorrateo-modal/cxp-prorrateo-modal.component';
+export * from './cxp-gastodet-bulkedit/cxp-gastodet-bulkedit';
+export * from './facturas-table2/facturas-table2.component';
+export * from './cxp-activof-modal/cxp-activof-modal.component';

@@ -177,6 +177,7 @@ class UrlMappings {
         "/api/alcances/generarOrden"(controller: 'alcances', action: 'generarOrden', method: 'POST')
         "/api/alcances/actualizarMeses"(controller: 'alcances', action: 'actualizarMeses', method: 'PUT')
         "/api/alcances/print"(controller: 'alcances', action: 'print', method: 'GET')
+        "/api/alcances/comprasPendientes"(controller: 'alcances', action: 'comprasPendientes', method: 'GET')
 
 
         "/api/comprobanteFiscal"(resources: 'comprobanteFiscal')
@@ -186,6 +187,9 @@ class UrlMappings {
         
 
         "/api/reciboElectronico"(resources: 'reciboElectronico', excludes:['save', 'create', 'edit','patch'])
+        "/api/reciboElectronico/asignarRequisicion/$id"(controller: 'reciboElectronico', action: 'asignarRequisicion', method: 'PUT')
+        "/api/reciboElectronico/quitarRequisicion/$id"(controller: 'reciboElectronico', action: 'quitarRequisicion', method: 'PUT')
+        "/api/reciboElectronico/requisicionesPendientes/$id"(controller: 'reciboElectronico', action: 'requisicionesPendientes')
         
 
 
@@ -391,7 +395,6 @@ class UrlMappings {
         "/api/embarques/comisiones/relacionDePagosDeFletes"(controller: 'envioComision', action: 'relacionDePagosDeFletes')
         "/api/embarques/comisiones/solicitudDeFacturacionDeFletes"(controller: 'envioComision', action: 'solicitudDeFacturacionDeFletes')
 
-
         // Prestamos
         "/api/embarques/facturistaPrestamo"(resources: 'facturistaPrestamo', excludes:['create', 'edit','patch'])
         "/api/embarques/facturistaOtroCargo"(resources: 'facturistaOtroCargo', excludes:['create', 'edit','patch'])
@@ -403,10 +406,18 @@ class UrlMappings {
         // Existencias
         "/api/existencias"(resources: 'existencia', excludes:['create', 'save', 'edit','patch'])
         "/api/existencias/crossTab"(controller: 'existencia', action: 'crossTab')
+        "/api/existencias/alcanceSimpleCrossTab"(controller: 'existencia', action: 'alcanceSimpleCrossTab')
         // SolicitudDeDepositos
 
         // Activo Fijo
-        "/api/activo/activoFijo"(resources: 'activoFijo', excludes:['create', 'edit','patch'])
+        "/api/activoFijo"(resources: 'activoFijo', excludes:['create', 'edit'])
+        "/api/activoDepreciacion"(resources: 'activoDepreciacion', excludes:['create', 'edit'])
+
+        // Gastos
+        "/api/gastoDet"(resources: 'gastoDet', excludes:['create', 'edit','patch'])
+        "/api/gastoDet/prorratear/$id"(controller: 'gastoDet', action: 'prorratear', method: 'PUT')
+
+        "/api/productoServicio"(resources: 'productoServicio', excludes:['create', 'edit','patch'])
 
         // Soporte Sist
 

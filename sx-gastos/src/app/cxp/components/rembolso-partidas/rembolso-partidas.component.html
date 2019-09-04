@@ -16,6 +16,11 @@
         </span>
       </td>
     </ng-container>
+    <ng-container matColumnDef="cuentaContable">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Cta</th>
+      <td mat-cell *matCellDef="let row">{{ row?.cuentaContable?.clave }}</td>
+    </ng-container>
+
     <ng-container matColumnDef="documentoFolio">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Folio (Dcto)</th>
       <td mat-cell *matCellDef="let row">{{ row.documentoFolio }}</td>

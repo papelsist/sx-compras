@@ -80,6 +80,10 @@ class CuentaPorPagar {
     BigDecimal pagosMn
     BigDecimal compensacionesMn
 
+    BigDecimal gastoAnalizado
+    Date gastoAnalizadoFecha
+
+
     static constraints = {
         tipo inList:['COMPRAS', 'GASTOS', 'HONORARIOS', 'COMISIONES']
         folio nullable: true, maxSize: 255
@@ -94,13 +98,6 @@ class CuentaPorPagar {
         impuestoRetenidoIva nullable: true
         total(scale:4)
         comentario(nullable:true)
-        /*
-        vencimiento (validator: { vencimiento, cxp ->
-            if( (vencimiento <=> cxp.fecha) < 0 )
-                return "vencimientoInvalido"
-            else return true
-        })
-        */
         descuentoFinanciero nullable:true
         descuentoFinancieroVto nullable:true
         uuid nullable:true, unique:true
@@ -109,6 +106,8 @@ class CuentaPorPagar {
         tcContable nullable: true
         contrarecibo nullable: true
         diferenciaFecha nullable: true
+        gastoAnalizado nullable: true
+        gastoAnalizadoFecha nullable: true
     }
 
     static mapping ={
@@ -118,11 +117,11 @@ class CuentaPorPagar {
         descuentoFinancieroVto type:'date'
         pagos formula:'(select COALESCE(sum(x.importe),0) from aplicacion_de_pago x where x.cxp_id=id and x.pago_id is not null)'
         compensaciones formula:'(select COALESCE(sum(x.importe),0) from aplicacion_de_pago x where x.cxp_id=id and x.nota_id is not null)'
-        //saldoReal formula:'total - (select COALESCE(sum(x.importe),0) from aplicacion_de_pago x where x.cxp_id=id and x.pago_id is not null) - diferencia'
         saldoReal formula:'total - (select COALESCE(sum(x.importe),0) from aplicacion_de_pago x where x.cxp_id=id) - diferencia'
         atrasoCalculado formula: 'IF( TO_DAYS(CURRENT_DATE()) - TO_DAYS(vencimiento)  < 0, 0, TO_DAYS(CURRENT_DATE()) - TO_DAYS(vencimiento) ) '
         diferenciaFecha type: 'date'
         tipo index: 'CXP_TIPO_IDX'
+        gastoAnalizadoFecha type: 'date'
     }
 
 
@@ -160,8 +159,6 @@ class CuentaPorPagar {
     BigDecimal getCompensacionesMn() {
         return MonedaUtils.round(compensaciones * this.tipoDeCambio)
     }
-
-
 
 
 }

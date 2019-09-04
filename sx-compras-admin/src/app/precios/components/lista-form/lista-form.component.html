@@ -77,6 +77,7 @@
     [partidas]="partidas"
     flex
     (selectionChange)="onSelection($event)"
+    (edited)="form.markAsDirty()"
     #partidasTable
   ></sx-listadet-table>
 </div>

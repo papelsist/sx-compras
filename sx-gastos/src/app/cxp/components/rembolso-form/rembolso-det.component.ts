@@ -14,7 +14,7 @@ import { RembolsoDet } from 'app/cxp/model';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
   <form [formGroup]="form">
-    <span mat-dialog-title>Reembolso especial (NO DEDUCIBLE)</span>
+    <span mat-dialog-title>Concepto sin factura</span>
     <div mat-dialog-content>
       <div>
         <mat-form-field flex>
@@ -34,11 +34,12 @@ import { RembolsoDet } from 'app/cxp/model';
             </mat-option>
           </mat-select>
         </mat-form-field>
-        <mat-form-field  class="pad-left">
+        <mat-form-field  class="pad-left" flex>
           <input matInput placeholder="Total" formControlName="total" type="number" autocomplete="off">
         </mat-form-field>
       </div>
-      <sx-upper-case-field placeholder="Comentario" formControlName="comentario"></sx-upper-case-field>
+      <sx-cuenta-contable-field formControlName="cuentaContable"></sx-cuenta-contable-field>
+      <sx-upper-case-field placeholder="Comentario" formControlName="comentario" [autocomplete]="true"></sx-upper-case-field>
     </div>
 
     <mat-dialog-actions>
@@ -69,11 +70,23 @@ export class RembolsoDetComponent implements OnInit {
   buildForm() {
     this.form = this.fb.group({
       total: [null, [Validators.required]],
-      documentoFecha: [new Date(), [Validators.required]],
+      documentoFecha: [null, [Validators.required]],
       documentoFolio: [],
       comentario: [null],
       concepto: ['NO_DEDUCIBLE'],
-      nombre: ['GASTO NO DEDUCIBLE']
+      nombre: ['GASTO NO DEDUCIBLE'],
+      cuentaContable: [null]
     });
+  }
+  submit() {
+    if (this.form.valid) {
+      const fechaDcto: Date = this.form.get('documentoFecha').value;
+      const cta: any = this.form.get('cuentaContable').value;
+      const data = {
+        ...this.form.value,
+        documentoFecha: fechaDcto ? fechaDcto.toISOString() : null,
+        cuentaContable: cta ? cta.id : null
+      };
+    }
   }
 }

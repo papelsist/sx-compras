@@ -1,0 +1,26 @@
+<form [formGroup]="form" novalidate (ngSubmit)="doAccept()">
+  <div layout="column" class="mat-title">
+    <span>Prorratear concepto: {{ gastoDet.descripcion }} </span>
+  </div>
+
+  <mat-dialog-content>
+    <div layout="column">
+      <mat-checkbox formControlName="oficinas">Oficinas</mat-checkbox>
+      <mat-checkbox formControlName="andrade">Andrade</mat-checkbox>
+      <mat-checkbox formControlName="bolivar">Bolivar</mat-checkbox>
+      <mat-checkbox formControlName="calle4">Calle 4</mat-checkbox>
+      <mat-checkbox formControlName="tacuba">Tacuba</mat-checkbox>
+      <mat-checkbox formControlName="febrero">5 de Febrero</mat-checkbox>
+
+      <mat-checkbox formControlName="vertiz">Vertiz</mat-checkbox>
+      <mat-checkbox formControlName="solis">Solis</mat-checkbox>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions>
+    <button mat-button class="accent" type="submit">
+      Aceptar
+    </button>
+    <button mat-button type="button" (click)="close()">Cancelar</button>
+  </mat-dialog-actions>
+</form>

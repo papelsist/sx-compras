@@ -19,9 +19,9 @@ import {
 
 import { ConfigService } from 'app/utils/config.service';
 
-
 export const CUENTA_CONTABLE_LOOKUPFIELD_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
+  // tslint:disable-next-line: no-use-before-declare
   useExisting: forwardRef(() => CuentaContableFieldComponent),
   multi: true
 };
@@ -43,10 +43,11 @@ export const CUENTA_CONTABLE_LOOKUPFIELD_VALUE_ACCESSOR: any = {
       <span>
         {{cuenta.clave}} {{cuenta.descripcion}}
       </span>
+      <!--
       <span *ngIf="cuenta.padre">
         ({{cuenta.padre.descripcion.trim()}})
       </span>
-
+      -->
     </mat-option>
   </mat-autocomplete>
   `,
@@ -68,7 +69,7 @@ export class CuentaContableFieldComponent
   required = false;
 
   @Input()
-  detalle = false;
+  detalle = true;
 
   cuentas$: Observable<any[]>;
 
@@ -96,9 +97,7 @@ export class CuentaContableFieldComponent
         debounceTime(500),
         distinctUntilChanged(),
         filter(value => _.isObject(value)),
-        distinctUntilChanged(
-          (p: any, q: any) => p.id === q.id
-        )
+        distinctUntilChanged((p: any, q: any) => p.id === q.id)
       )
       .subscribe(val => {
         this.onChange(val);

@@ -1,0 +1,59 @@
+<ng-template
+  tdLoading
+  [tdLoadingUntil]="!(loading$ | async)"
+  tdLoadingStrategy="overlay"
+>
+</ng-template>
+<mat-card>
+  <ng-template
+    tdLoading
+    [tdLoadingUntil]="!(loading$ | async)"
+    tdLoadingStrategy="overlay"
+  >
+    <sx-standard-header
+      title="Pagos de rembolsos"
+      [periodo]="periodo$ | async"
+      (periodoChange)="onPeriodo($event)"
+      (reload)="reload()"
+      (create)="onCreate()"
+      (download)="grid.exportData()"
+    ></sx-standard-header>
+  </ng-template>
+  <mat-divider></mat-divider>
+  <div class="grid-panel">
+    <sx-rembolsos-table
+      #grid
+      [rembolsos]="rembolsos$ | async"
+      (select)="onSelect($event)"
+    >
+    </sx-rembolsos-table>
+  </div>
+</mat-card>
+<!--
+<mat-card>
+  <sx-search-title
+    title="Rembolsos y pagos diversos"
+    (search)="search = $event"
+  >
+    <sx-rembolsos-filter-btn
+      [filter]="filter$ | async"
+      class="options"
+      (change)="onFilter($event)"
+    ></sx-rembolsos-filter-btn>
+    <button mat-button color="primary" (click)="reload()" class="actions">
+      <mat-icon>refresh</mat-icon> Refrescar
+    </button>
+  </sx-search-title>
+  <mat-divider></mat-divider>
+  <div class="grid-panel">
+    <sx-rembolsos-table
+      [rembolsos]="rembolsos$ | async"
+      [filter]="search"
+      (print)="onPrint($event)"
+      (select)="onSelect($event)"
+      (edit)="onEdit($event)"
+    >
+    </sx-rembolsos-table>
+  </div>
+</mat-card>
+-->

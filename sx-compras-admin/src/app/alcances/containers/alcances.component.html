@@ -57,6 +57,7 @@
     [partidas]="filteredData"
     #grid
     (selectionChange)="onSelect($event)"
+    (pendientes)="showPendientes($event)"
   ></sx-alcances-table>
 </mat-card>
 <!--

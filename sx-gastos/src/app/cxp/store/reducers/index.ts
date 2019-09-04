@@ -8,6 +8,7 @@ import * as fromFacturas from './facturas.reducer';
 import * as fromPagos from './pagos.reducer';
 import * as fromCheques from './cheques.reducer';
 import * as fromRembolsos from './rembolso.reducers';
+import * as fromGastos from './gasto.reducer';
 
 export interface State {
   cfdis: fromCfdis.State;
@@ -18,6 +19,7 @@ export interface State {
   pagos: fromPagos.State;
   cheques: fromCheques.State;
   rembolsos: fromRembolsos.State;
+  gastos: fromGastos.State;
 }
 
 export const reducers: ActionReducerMap<State> = {
@@ -28,7 +30,8 @@ export const reducers: ActionReducerMap<State> = {
   facturas: fromFacturas.reducer,
   pagos: fromPagos.reducer,
   cheques: fromCheques.reducer,
-  rembolsos: fromRembolsos.reducer
+  rembolsos: fromRembolsos.reducer,
+  gastos: fromGastos.reducer
 };
 
 export const getState = createFeatureSelector<State>('cxp');

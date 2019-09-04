@@ -46,6 +46,24 @@ export class ReciboService {
       .pipe(catchError((error: any) => throwError(error)));
   }
 
+  asignarRequisicion(
+    reciboId: number,
+    requisicionId: string
+  ): Observable<Recibo> {
+    const url = `${this.apiUrl}/asignarRequisicion/${reciboId}`;
+    const params = new HttpParams().set('requisicionId', requisicionId);
+    return this.http
+      .put<Recibo>(url, {}, { params })
+      .pipe(catchError((error: any) => throwError(error)));
+  }
+
+  quitarRequisicion(reciboId: number): Observable<Recibo> {
+    const url = `${this.apiUrl}/quitarRequisicion/${reciboId}`;
+    return this.http
+      .put<Recibo>(url, {})
+      .pipe(catchError((error: any) => throwError(error)));
+  }
+
   delete(requisicionId: number) {
     const url = `${this.apiUrl}/${requisicionId}`;
     return this.http
@@ -81,5 +99,12 @@ export class ReciboService {
       headers: headers,
       responseType: 'blob'
     });
+  }
+
+  requisicionesPendientes(recibo: Partial<Recibo>): Observable<any[]> {
+    const url = `${this.apiUrl}/requisicionesPendientes/${recibo.id}`;
+    return this.http
+      .get<any[]>(url, {})
+      .pipe(catchError((error: any) => throwError(error)));
   }
 }

@@ -34,7 +34,8 @@ import { RembolsoDetComponent } from './rembolso-det.component';
 @Component({
   selector: 'sx-rembolso-form',
   // changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './rembolso-form.component.html'
+  templateUrl: './rembolso-form.component.html',
+  styleUrls: ['./rembolso-form.component.scss']
 })
 export class RembolsoFormComponent implements OnInit, OnChanges, OnDestroy {
   @Input()
@@ -77,6 +78,12 @@ export class RembolsoFormComponent implements OnInit, OnChanges, OnDestroy {
     'ESPECIALM'
   ];
 
+  oficinas = {
+    id: '402880fc5e4ec411015e4ec64161012c',
+    clave: '1',
+    nombre: 'OFICINAS'
+  };
+
   constructor(private fb: FormBuilder, private dialog: MatDialog) {}
 
   ngOnInit() {}
@@ -109,7 +116,7 @@ export class RembolsoFormComponent implements OnInit, OnChanges, OnDestroy {
   private buildForm() {
     if (!this.form) {
       this.form = this.fb.group({
-        sucursal: [null, [Validators.required]],
+        sucursal: [this.oficinas, [Validators.required]],
         proveedor: [null],
         nombre: [null],
         concepto: [null, [Validators.required]],
@@ -131,6 +138,7 @@ export class RembolsoFormComponent implements OnInit, OnChanges, OnDestroy {
         apagar: [0.0, Validators.required],
         comentario: [],
         cuentaContable: [null],
+        
         partidas: this.fb.array([])
       });
     }
@@ -179,8 +187,8 @@ export class RembolsoFormComponent implements OnInit, OnChanges, OnDestroy {
         total,
         apagar: total
       };
-      if(this.form.get('cuentaContable').value) {
-        entity.cuentaContable = this.form.get('cuentaContable').value.id
+      if (this.form.get('cuentaContable').value) {
+        entity.cuentaContable = this.form.get('cuentaContable').value.id;
       }
       this.save.emit(entity);
     }
@@ -211,7 +219,7 @@ export class RembolsoFormComponent implements OnInit, OnChanges, OnDestroy {
 
   addNoDeducible() {
     this.dialog
-      .open(RembolsoDetComponent, { data: {} })
+      .open(RembolsoDetComponent, { data: {}, width: '650px' })
       .afterClosed()
       .subscribe(partida => {
         if (partida) {

@@ -14,7 +14,6 @@ export interface State extends EntityState<Compra> {
   periodo: Periodo;
 }
 
-
 export const adapter: EntityAdapter<Compra> = createEntityAdapter<Compra>({
   sortComparer: (item1, item2) => item2.updateTime - item1.updateTime
 });
@@ -22,10 +21,13 @@ export const adapter: EntityAdapter<Compra> = createEntityAdapter<Compra>({
 export const initialState: State = adapter.getInitialState({
   loading: false,
   loaded: false,
-  periodo: Periodo.fromStorage(ComprasPeriodoStoeKey)
+  periodo: Periodo.fromNow(45)
 });
 
-export function reducer(state = initialState, action: fromActions.CompraActions): State {
+export function reducer(
+  state = initialState,
+  action: fromActions.CompraActions
+): State {
   switch (action.type) {
     case CompraActionTypes.SetPeriodo: {
       const periodo = action.payload.periodo;

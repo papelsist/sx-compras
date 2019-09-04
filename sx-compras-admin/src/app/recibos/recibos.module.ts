@@ -12,9 +12,20 @@ import { RecibosTableComponent } from './recibos-table/recibos-table.component';
 import { ReciboPageComponent } from './recibo-page/recibo-page.component';
 import { RecibosdetTableComponent } from './recibosdet-table/recibosdet-table.component';
 import { ReqdetTableComponent } from './reqdet-table/reqdet-table.component';
+import { SelectorRequisicionesComponent } from './selector-requisiciones/selector-requisiciones.component';
+import { RequisicionesSelectorTableComponent } from './selector-requisiciones/requisiciones-selector-table.component';
 
 @NgModule({
-  declarations: [RecibosPageComponent, RecibosTableComponent, ReciboPageComponent, RecibosdetTableComponent, ReqdetTableComponent],
+  declarations: [
+    RecibosPageComponent,
+    RecibosTableComponent,
+    ReciboPageComponent,
+    RecibosdetTableComponent,
+    ReqdetTableComponent,
+    SelectorRequisicionesComponent,
+    RequisicionesSelectorTableComponent
+  ],
+  entryComponents: [SelectorRequisicionesComponent],
   imports: [
     SharedModule,
     StoreModule.forFeature(FEATURE_STORE_NAME, reducer),

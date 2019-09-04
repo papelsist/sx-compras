@@ -111,6 +111,17 @@ export class ProveedorListaPartidas2Component extends LxTableComponent
   getAllRows() {
     const data = [];
     if (this.gridApi) {
+      this.gridApi.forEachNode((rowNode, index) => {
+        const det: Partial<ListaDePreciosProveedorDet> = rowNode.data;
+        data.push(det);
+      });
+    }
+    return data;
+  }
+
+  getAllRowsOld() {
+    const data = [];
+    if (this.gridApi) {
       this.gridApi.forEachNodeAfterFilter((rowNode, index) => {
         const det: Partial<ListaDePreciosProveedorDet> = rowNode.data;
         data.push(det);

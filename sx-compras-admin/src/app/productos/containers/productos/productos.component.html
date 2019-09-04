@@ -1,3 +1,27 @@
+<mat-card flex>
+  <sx-standard-header
+    title="Catálogo de productos"
+    (reload)="reload()"
+    (create)="onCreate()"
+    (download)="grid.exportData()"
+  ></sx-standard-header>
+  <mat-divider></mat-divider>
+  <ng-template
+    tdLoading
+    [tdLoadingUntil]="!(loading$ | async)"
+    tdLoadingStrategy="overlay"
+  >
+  </ng-template>
+  <div class="grid-panel">
+    <sx-productos-table2
+      #grid
+      [partidas]="productos$ | async"
+      (select)="onSelect($event)"
+    ></sx-productos-table2>
+  </div>
+</mat-card>
+
+<!--
 <mat-card>
   <div layout layout-align="start center" class="pad-left-sm pad-right-sm">
     <span>
@@ -32,8 +56,5 @@
   ></sx-productos-table>
   <mat-divider></mat-divider>
   <mat-card-footer> </mat-card-footer>
-  <!-- <a mat-fab matTooltip="Alta de producto" matTooltipPosition="before" color="accent" class="mat-fab-position-bottom-left z-3"
-    [routerLink]="['create']">
-    <mat-icon>add</mat-icon>
-  </a> -->
 </mat-card>
+-->

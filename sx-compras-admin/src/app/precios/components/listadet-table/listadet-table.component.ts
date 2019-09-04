@@ -16,7 +16,8 @@ import {
   ColDef,
   ModelUpdatedEvent,
   RowSelectedEvent,
-  ColGroupDef
+  ColGroupDef,
+  CellEditingStoppedEvent
 } from 'ag-grid-community';
 import { ListaDePreciosVentaDet } from 'app/precios/models';
 
@@ -39,6 +40,7 @@ import * as _ from 'lodash';
         (modelUpdated)="onModelUpdate($event)"
         rowSelection="multiple"
         [rowMultiSelectWithClick]="true"
+        [enterMovesDownAfterEdit]="true"
       >
       </ag-grid-angular>
     </div>
@@ -49,6 +51,7 @@ export class ListadetTableComponent extends LxTableComponent
   implements OnInit, OnChanges {
   @Output() selectionChange = new EventEmitter<any[]>();
   @Input() selection: any[] = [];
+  @Output() edited = new EventEmitter();
 
   constructor(public tableService: SxTableService) {
     super(tableService);
@@ -75,6 +78,11 @@ export class ListadetTableComponent extends LxTableComponent
       sortable: true,
       resizable: true,
       pinnedRowCellRenderer: r => ''
+    };
+    this.gridOptions.onCellEditingStopped = (
+      event: CellEditingStoppedEvent
+    ) => {
+      this.edited.emit(event.data);
     };
   }
 
@@ -157,6 +165,7 @@ export class ListadetTableComponent extends LxTableComponent
           {
             headerName: 'Precio',
             field: 'precioContado',
+            editable: true,
             valueFormatter: params => this.transformCurrency(params.value)
           },
           {
@@ -192,6 +201,7 @@ export class ListadetTableComponent extends LxTableComponent
           {
             headerName: 'Precio',
             field: 'precioCredito',
+            editable: true,
             valueFormatter: params => this.transformCurrency(params.value)
           },
           {

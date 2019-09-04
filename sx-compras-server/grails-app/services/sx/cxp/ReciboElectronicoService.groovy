@@ -28,9 +28,9 @@ class ReciboElectronicoService implements LogUser {
     	def pendientes = ComprobanteFiscal.findAll("""
     		from ComprobanteFiscal c 
     		where c.tipoDeComprobante = 'P'
-    		  and year(c.fecha) > 2018	
+    		  and c.fecha > ?
     		  and c.id not in(select x.cfdi.id from ReciboElectronico x )
-    		""")
+    		""", [Date.parse('dd/MM/yyyy', '31/10/2018')])
     	return pendientes
     }
 
@@ -137,9 +137,9 @@ class ReciboElectronicoService implements LogUser {
     		from RequisicionDeCompras r 
     		where r.recibo = null 
               and r.egreso != null
-              and year(r.egreso.fecha) > 2018
+              and r.egreso.fecha > ?
             order by r.fecha asc
-    		""")
+    		""", [Date.parse('dd/MM/yyyy','31/10/2018')])
     	return pendientes
     }
 
@@ -156,6 +156,26 @@ class ReciboElectronicoService implements LogUser {
         		recibo.save flush: true
     		}
 		}
+    }
+
+    def asignarRequisicion(ReciboElectronico recibo, Requisicion req) {
+        req.recibo = recibo
+        req.save flush: true
+        recibo.requisicion = req.id
+        recibo = recibo.save failOnError: true, flush: true
+        return recibo
+    }
+
+    def quitarRequisicion(ReciboElectronico recibo) {
+        Requisicion req = Requisicion.get(recibo.requisicion)
+        if(req) {
+            req.recibo = null
+            req.save flush: true
+            recibo.requisicion = null
+            recibo = recibo.save failOnError: true, flush: true
+            log.info('Requisicion desvinculada: {} Recibo: {}', req.folio, recibo.id)
+        }
+        return recibo
     }
 
 

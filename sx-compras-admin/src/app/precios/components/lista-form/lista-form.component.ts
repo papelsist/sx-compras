@@ -86,8 +86,10 @@ export class ListaFormComponent implements OnInit, OnChanges {
       };
       if (this.lista) {
         this.update.emit({ id: this.lista.id, changes: res });
+        this.form.markAsPristine();
       } else {
         this.save.emit(res);
+        this.form.markAsPristine();
       }
     }
   }
@@ -151,17 +153,17 @@ export class ListaFormComponent implements OnInit, OnChanges {
         const base = det.precioAnteriorContado;
         const precio = command.operador === '/' ? base / factor : base * factor;
         const incremento = precio - base > 0 ? factor : factor * -1;
-        det.precioContado = _.round(precio, 2);
+        det.precioContado = _.round(precio, 0);
         det.incremento = _.round(incremento, 2);
-        det.factorContado = _.round( (det.costo / det.precioContado), 2);
+        det.factorContado = _.round(det.precioContado / det.costo, 2);
         item.setData(det);
       } else if (command.tipo === 'CREDITO') {
         const base = det.precioAnteriorCredito;
         const precio = command.operador === '/' ? base / factor : base * factor;
         const incremento = precio - base > 0 ? factor : factor * -1;
-        det.precioCredito = _.round(precio, 2);
+        det.precioCredito = _.round(precio, 0);
         det.incremento = _.round(incremento, 2);
-        det.factorCredito = _.round( (det.costo / det.precioCredito), 2);
+        det.factorCredito = _.round(det.precioCredito / det.costo, 2);
         item.setData(det);
       } else {
         const baseCre = det.precioAnteriorCredito;
@@ -171,11 +173,11 @@ export class ListaFormComponent implements OnInit, OnChanges {
         const precioCon =
           command.operador === '/' ? baseCon / factor : baseCon * factor;
         const incremento = precioCon - baseCon > 0 ? factor : factor * -1;
-        det.precioCredito = _.round(precioCre, 2);
-        det.precioContado = _.round(precioCon, 2);
+        det.precioCredito = _.round(precioCre, 0);
+        det.precioContado = _.round(precioCon, 0);
         det.incremento = _.round(incremento, 2);
-        det.factorCredito = _.round(det.costo / det.precioCredito, 2);
-        det.factorContado = _.round(det.costo / det.precioContado, 2);
+        det.factorCredito = _.round(det.precioCredito / det.costo, 2);
+        det.factorContado = _.round(det.precioContado / det.costo, 2);
         item.setData(det);
       }
     });
@@ -194,14 +196,12 @@ export class ListaFormComponent implements OnInit, OnChanges {
   }
 
   deleteSelection() {
-    console.log('Delete....');
-    const selectedData = this.grid.gridApi.getSelectedRows();
-    const res = this.grid.gridApi.updateRowData({ remove: selectedData });
-    const data = [];
-    // this.grid.gridApi.forEachNode((rowNode, index) => {
-    //   data.push(rowNode.data);
-    // });
-    // this.partidas = [...data];
+    const selectedData = [...this.grid.gridApi.getSelectedRows()];
+    this.grid.gridApi.updateRowData({ remove: selectedData });
+    selectedData.forEach(item => {
+      const index = this.partidas.findIndex(r => r.clave === item.clave);
+      _.remove(this.partidas, r => r.clave === item.clave);
+    });
     this.form.markAsDirty();
   }
 

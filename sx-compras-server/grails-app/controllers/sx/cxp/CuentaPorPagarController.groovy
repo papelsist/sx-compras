@@ -34,6 +34,12 @@ class CuentaPorPagarController extends RestfulController<CuentaPorPagar> impleme
         super(CuentaPorPagar)
     }
 
+    @Override
+    protected CuentaPorPagar updateResource(CuentaPorPagar resource) {
+        logEntity(resource)
+        resource = resource.save flush: true
+        return resource
+    }
 
 
     @Override
@@ -41,14 +47,16 @@ class CuentaPorPagarController extends RestfulController<CuentaPorPagar> impleme
         log.info('List: {}', params)
         params.sort = 'fecha'
         params.order = 'desc'
-        params.max = params.registros ?: 300
-
+        params.max = params.registros ?: 5000
+        
+        def query = CuentaPorPagar.where {}
         def tipo = params.tipo?: 'COMPRAS'
-        def query = CuentaPorPagar.where {tipo == tipo}
-        if(tipo == 'COMPRAS') {
-            params.max = 500
-        }
 
+        if(tipo == 'COMPRAS') {
+            query = query.where {tipo == 'COMPRAS'}   
+        } else {
+            query = query.where {tipo != 'COMPRAS'}   
+        }
 
         if(params.periodo) {
             Periodo periodo = (Periodo)params.periodo

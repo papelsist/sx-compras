@@ -26,6 +26,7 @@ import {
   AlcanceRunDialogComponent,
   AlcanceReportDialogComponent
 } from '../components';
+import { ComprasPendientesComponent } from '../components/compras-pendientes/compras-pendientes.component';
 
 @Component({
   selector: 'sx-alcances',
@@ -181,6 +182,18 @@ export class AlcancesComponent implements OnInit, AfterViewInit {
       return _.sumBy(this.filteredData, item => item.porPedirKilos / 1000);
     }
     return 0;
+  }
+
+  showPendientes(event: any) {
+    this.service.comprasPendientes(event.clave).subscribe(
+      data => {
+        this.dialog.open(ComprasPendientesComponent, {
+          data: { partidas: data },
+          width: '1100px'
+        });
+      },
+      error => console.log('Error: ', error)
+    );
   }
 
   generarReporte() {

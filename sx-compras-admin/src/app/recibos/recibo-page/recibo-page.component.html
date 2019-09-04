@@ -1,6 +1,6 @@
-<div layout flex>
+<div layout flex *ngIf="recibo$ | async as recibo">
   <mat-card flex="60">
-    <mat-card-header *ngIf="recibo$ | async as recibo">
+    <mat-card-header>
       <mat-card-title flex>
         {{ recibo.emisor }}
       </mat-card-title>
@@ -26,14 +26,22 @@
         [tdLoadingUntil]="!(loading$ | async)"
         tdLoadingStrategy="overlay"
       >
-        <ng-container *ngIf="recibo$ | async as recibo">
+        <ng-container>
           <button mat-button (click)="onBack()">
             <mat-icon>arrow_back</mat-icon> RECIBOS
           </button>
           <button
             mat-button
-            (click)="onRevision(recibo)"
+            color="primary"
             [disabled]="recibo.revision"
+            (click)="asignarRequisicion(recibo)"
+          >
+            <mat-icon>attach_file</mat-icon> ASIGNAR REQUISICIÓN
+          </button>
+          <button
+            mat-button
+            (click)="onRevision(recibo)"
+            [disabled]="!recibo.requisicion || recibo.revision"
           >
             <mat-icon>save</mat-icon> REVISION
           </button>
@@ -45,19 +53,27 @@
     </mat-card-actions>
   </mat-card>
 
-  <mat-card flex="40" *ngIf="requisicion$ | async as requisicion">
+  <mat-card flex="40" *ngIf="recibo.requisicion as requisicion">
     <mat-card-title>Requisición {{ requisicion.folio }}</mat-card-title>
     <mat-card-subtitle>
       <span>Fecha: </span>
       <span>{{ requisicion.egreso.fecha | date: 'dd/MM/yyyy' }}</span>
       <span class="pad-left">Importe</span>
-      <span class="pad-left">{{
-        requisicion.egreso.importe * -1 | currency
-      }}</span>
+      <span class="pad-left">{{ requisicion.total | currency }}</span>
     </mat-card-subtitle>
     <mat-divider></mat-divider>
     <mat-card-content>
       <sx-reqdet-table [partidas]="requisicion.partidas"></sx-reqdet-table>
     </mat-card-content>
+    <mat-card-actions>
+      <button
+        [disabled]="recibo.revision"
+        mat-button
+        color="warn"
+        (click)="onQuitarRequisicion(requisicion, recibo)"
+      >
+        <mat-icon>delete</mat-icon> QUITAR
+      </button>
+    </mat-card-actions>
   </mat-card>
 </div>

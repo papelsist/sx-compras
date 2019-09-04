@@ -9,7 +9,7 @@ import {
   Output,
   EventEmitter
 } from '@angular/core';
-import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
+import { MatTableDataSource, MatSort } from '@angular/material';
 import * as _ from 'lodash';
 import { CuentaPorPagar } from '../../model';
 
@@ -33,14 +33,10 @@ export class FacturasTableComponent implements OnInit, OnChanges {
     'serie',
     'folio',
     'fecha',
-    // 'moneda',
-    // 'tipoDeCambio',
-    // 'tcContable',
     'total',
     'importePorPagar',
     'saldo',
     'metodoDePago',
-    // 'formaDePago',
     'usoCfdi',
     'tipoDeComprobante',
     'versionCfdi',
@@ -49,8 +45,6 @@ export class FacturasTableComponent implements OnInit, OnChanges {
   ];
   @ViewChild(MatSort)
   sort: MatSort;
-  @ViewChild(MatPaginator)
-  paginator: MatPaginator;
 
   @Output()
   select = new EventEmitter();
@@ -63,7 +57,6 @@ export class FacturasTableComponent implements OnInit, OnChanges {
   constructor() {}
 
   ngOnInit() {
-    this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
 

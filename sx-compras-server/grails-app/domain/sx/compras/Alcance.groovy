@@ -25,6 +25,7 @@ class Alcance {
     String clase
     String unidad
     BigDecimal kilos
+    BigDecimal gramos
     Boolean deLinea
 
 
@@ -74,6 +75,7 @@ class Alcance {
         comentario nullable: true
         createUser nullable: true
         updateUser nullable: true
+        gramos nullable: true
     }
 
     static mapping = {

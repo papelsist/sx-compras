@@ -4,6 +4,7 @@ model {
 	RembolsoDet rembolsoDet
 }
 
-json g.render(rembolsoDet, [resolveTemplate: false]) {
+json g.render(rembolsoDet, [excludes: ['cuentaContable'], resolveTemplate: false]) {
 	uuid rembolsoDet?.cxp?.uuid
+	cuentaContable g.render(rembolsoDet.cuentaContable)
 }

@@ -1,0 +1,11 @@
+import sx.cxp.GastoDet
+
+model {
+	GastoDet gastoDet
+}
+
+json g.render(gastoDet, [resolveTemplate: false, excludes: ['cuentaContable', 'sucursal']]) {
+	cuentaContable g.render(gastoDet.cuentaContable)
+	sucursal g.render(gastoDet.sucursal)
+}
+

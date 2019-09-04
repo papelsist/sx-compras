@@ -16,8 +16,7 @@ class ImportarComprobantesDeGastoJobService {
     ComprobanteFiscalService comprobanteFiscalService
 
     @Scheduled(fixedDelay = 120000L, initialDelay = 60000L)
-    void importarComprobantesDeCompras() {
-
+    void importarComprobantesDeGastos() {
         Environment.executeForCurrentEnvironment {
             tesoreria {
                 File dir = new File(comprobanteFiscalService.gastosDir)
@@ -33,4 +32,5 @@ class ImportarComprobantesDeGastoJobService {
         }
 
     }
+    
 }

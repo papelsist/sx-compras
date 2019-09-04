@@ -237,7 +237,7 @@ class ComprasProc implements  ProcesadorDePoliza, AsientoBuilder{
         ,ROUND( ((C.sub_total-c.descuento)*C.tipo_de_cambio - ((x.importe+x.importe_flete)*C.tipo_de_cambio) ) ,2) AS diferencia
         ,(SELECT x.cuenta_operativa FROM cuenta_operativa_proveedor x where x.proveedor_id=p.id ) as cta_operativa_prov,c.uuid,p.rfc
         FROM inventario IC 
-        JOIN recepcion_de_compra_det r on(r.inventario_id=ic.id)
+        JOIN recepcion_de_compra_det r on(r.inventariox=ic.id)
         JOIN analisis_de_factura_det A ON(r.id=A.com_id)
         JOIN analisis_de_factura X ON(A.analisis_id=X.id)
         JOIN cuenta_por_pagar C ON(C.id=X.factura_id)

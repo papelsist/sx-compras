@@ -6,14 +6,13 @@ import groovy.transform.ToString
 import grails.compiler.GrailsCompileStatic
 
 import sx.contabilidad.CuentaContable
-import sx.cxp.ConceptoDeGasto
+import sx.cxp.GastoDet
 
 @GrailsCompileStatic
 @ToString(includes ='id, facturaSerie, facturaFolio, facturaFecha',includeNames=true,includePackage=false)
-@EqualsAndHashCode(includes='id, facturaSerie, facturaFolio, facturaFecha')
+@EqualsAndHashCode(includes='id, facturaSerie, facturaFolio, facturaFecha, serie, modelo')
 class ActivoFijo {
 
-    // static hasMany = [partidas: RequisicionDet]
     Date fecha
     String facturaSerie
     String facturaFolio
@@ -23,8 +22,7 @@ class ActivoFijo {
     String serie
     String modelo
 
-    ConceptoDeGasto conceptoDeGasto
-    Integer renglon
+    GastoDet gastoDet
     String proveedor
 
     String sucursalOrigen
@@ -53,8 +51,6 @@ class ActivoFijo {
 
     BigDecimal porcentajeDepreciado
 
-    SortedSet<ActivoDepreciacion> depreciaciones
-
     String comentario
 
     String createUser
@@ -72,14 +68,13 @@ class ActivoFijo {
         modelo nullable: true
         cuentaContable nullable: true
         tasaDepreciacion scale: 4
-        conceptoDeGasto nullable: true
+        gastoDet nullable: true
         estado inList: ['VIGENTE', 'DEPRECIADO', 'VENDIDO']
         sucursalOrigen nullable: true
         sucursalActual nullable: true
         departamentoOrigen nullable: true
         departamentoActual nullable: true
         consignatario nullable: true
-        renglon nullable: true
         comentario nullable: true
     }
 
@@ -88,9 +83,10 @@ class ActivoFijo {
     }
 
     static mapping = {
-        depreciaciones cascade: "all-delete-orphan"
+        table 'ACTIVO_FIJO2'
         fecha type:'date', index: 'AF_IDX1'
         facturaFecha type:'date' , index: 'AF_IDX2'
 
     }
+    
 }

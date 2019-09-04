@@ -137,6 +137,47 @@ class CfdiReader {
             concepto.cantidad = map.Cantidad.toBigDecimal()
             concepto.valorUnitario = map.ValorUnitario.toBigDecimal()
             concepto.importe = map.Importe.toBigDecimal()
+
+            /// Impuestos
+            def impuestos = it.children().find { row -> row.name() == 'Impuestos'}
+
+            if(impuestos) {
+                log.info('Procesando : {}', impuestos.name())
+                def traslados = impuestos.children().find { imp -> imp.name() == 'Traslados'}
+                if(traslados) {
+                    traslados.children().each { tr ->
+                        Map attrs = tr.attributes()
+                        def impuesto = attrs['Impuesto'] 
+                        def tasa = attrs['TasaOCuota'] as BigDecimal
+                        def importe = attrs['Importe'] as BigDecimal
+                        
+                        if(impuesto == '002' && tasa) {
+                            concepto.ivaTrasladado = importe
+                            concepto.ivaTrasladadoTasa = tasa
+                        }
+                        // println "Im: ${impuesto} Tasa: ${tasa} Importe: ${importe}"
+                    }
+                }
+                def retenciones = impuestos.children().find { imp -> imp.name() == 'Retenciones'}
+                if(retenciones) {
+                    retenciones.children().each { tr ->
+                        Map attrs = tr.attributes()
+                        def impuesto = attrs['Impuesto']
+                        def tasa = attrs['TasaOCuota'] as BigDecimal
+                        def importe = attrs['Importe'] as BigDecimal
+                        def base = attrs['Base']
+                        if(impuesto == '002') {
+                            concepto.ivaRetenido = importe
+                            concepto.ivaRetenidoTasa = tasa
+                        } else {
+                            concepto.isrRetenido = importe
+                            concepto.isrRetenidoTasa = tasa
+                        }
+                        // println "Retencion: ${impuesto} Tasa: ${tasa} Importe: ${importe}"
+                    }
+                }
+            }
+
             cfdi.addToConceptos(concepto)
         }
     }

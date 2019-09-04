@@ -4,6 +4,8 @@ import grails.compiler.GrailsCompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 
+import sx.contabilidad.CuentaContable
+
 @ToString(excludes ='id,version,dateCreated,lastUpdated,rembolso',includeNames=true,includePackage=false)
 @EqualsAndHashCode(includes='id, total, cxp, documentoSerie, documentoFolio')
 @GrailsCompileStatic
@@ -35,6 +37,8 @@ class RembolsoDet {
 
     String concepto
 
+    CuentaContable cuentaContable
+
     static belongsTo = [rembolso:Rembolso]
 
     static constraints = {
@@ -47,6 +51,7 @@ class RembolsoDet {
         concepto nullable: true
         createUser nullable: true
         updateUser nullable: true
+        cuentaContable nullable: true
     }
 
     static mapping ={

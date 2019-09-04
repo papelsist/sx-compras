@@ -9,7 +9,7 @@ import {
   Output,
   EventEmitter
 } from '@angular/core';
-import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
+import { MatTableDataSource, MatSort } from '@angular/material';
 
 import * as _ from 'lodash';
 
@@ -38,22 +38,18 @@ export class CxpFacturasTableComponent implements OnInit, OnChanges {
     'tipoDeCambio',
     'total',
     'importePorPagar',
-    // 'pagos',
-    // 'compensaciones',
     'saldo',
     'uuid'
   ];
   @ViewChild(MatSort)
   sort: MatSort;
-  @ViewChild(MatPaginator)
-  paginator: MatPaginator;
+
   @Output()
   select = new EventEmitter();
 
   constructor() {}
 
   ngOnInit() {
-    this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
 

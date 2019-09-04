@@ -9,4 +9,5 @@ json g.render(compraDet, [resolveTemplate: false]) {
     folio compraDet.compra.folio
     sucursalNombre compraDet.sucursal.nombre
     proveedorNombre compraDet.compra.nombre
+    fechaDeCompra compraDet.compra.fecha
 }

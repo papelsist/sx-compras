@@ -47,6 +47,14 @@ export class AlcancesService {
       .pipe(catchError((error: any) => throwError(error)));
   }
 
+  comprasPendientes(clave: string): Observable<any[]> {
+    const url = `${this.apiUrl}/comprasPendientes`;
+    const params = new HttpParams().set('clave', clave);
+    return this.http
+      .get<any[]>(url, { params: params })
+      .pipe(catchError((error: any) => throwError(error)));
+  }
+
   reporte(data) {
     let params = new HttpParams();
     _.forIn(data, (value, key) => {
