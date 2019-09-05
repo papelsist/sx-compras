@@ -414,8 +414,10 @@ class UrlMappings {
         // SolicitudDeDepositos
 
         // Activo Fijo
-        "/api/activoFijo"(resources: 'activoFijo', excludes:['create', 'edit'])
-        "/api/activoDepreciacion"(resources: 'activoDepreciacion', excludes:['create', 'edit'])
+        "/api/activoFijo"(resources: 'activoFijo', excludes:['create', 'edit']){
+            "/depreciaciones"(resources: 'activoDepreciacion', excludes:['create', 'edit'])
+            "/fiscales"(resources: 'activoDepreciacionFiscal', excludes:['create', 'edit'])
+        }
 
         // Gastos
         "/api/gastoDet"(resources: 'gastoDet', excludes:['create', 'edit','patch'])

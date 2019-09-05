@@ -10,50 +10,46 @@ import sx.cxp.GastoDet
 import sx.core.Proveedor
 
 @GrailsCompileStatic
-@ToString(includes ='id, facturaSerie, facturaFolio, facturaFecha',includeNames=true,includePackage=false)
-@EqualsAndHashCode(includes='id, facturaSerie, facturaFolio, facturaFecha, serie, modelo')
+@ToString(includes ='id, descripcion, modelo, serie',includeNames=true,includePackage=false)
+@EqualsAndHashCode(includes='id')
 class ActivoFijo {
-
-    Date fecha
-    String facturaSerie
-    String facturaFolio
-    Date facturaFecha
-    String uuid
+    
+    // Datos generales
+    Date adquisicion
     String descripcion
     String serie
     String modelo
 
+    // Factura orignal
+    String facturaSerie
+    String facturaFolio
+    Date facturaFecha
+    String uuid
+
+    // Clasificacion
+    String estado
+    CuentaContable cuentaContable
+
+    // Origen
     GastoDet gastoDet
     Proveedor proveedor
 
+    // Consignatario
     String sucursalOrigen
     String sucursalActual
     String departamentoOrigen
     String departamentoActual
     String consignatario
-    String estado
 
-
-    String tipo = 'VIGENTE'
-    CuentaContable cuentaContable
+    // Importes generales
+    BigDecimal montoOriginal = 0.0
     BigDecimal tasaDepreciacion = 0.0
 
-    BigDecimal montoOriginal = 0.0
-    BigDecimal costoActualizado = 0.0
-
     BigDecimal depreciacionAcumulada = 0.0
-    BigDecimal remanente = 0.0
+    BigDecimal depreciacionInicial = 0.0
 
-    String venta
-    String ventaFactura
-    String ventaFecha
-    BigDecimal ventaImporte
-
-
-    BigDecimal porcentajeDepreciado
-
-    String comentario
-
+    
+    
     String createUser
     String updateUser
 
@@ -75,30 +71,25 @@ class ActivoFijo {
         gastoDet nullable: true
 
         estado inList: ['VIGENTE', 'DEPRECIADO', 'VENDIDO']
+        
+
         sucursalOrigen nullable: true
         sucursalActual nullable: true
         departamentoOrigen nullable: true
         departamentoActual nullable: true
         consignatario nullable: true
-        comentario nullable: true
+        
 
-        tipo nullable: true
-
-        venta nullable: true
-        ventaFecha nullable: true
-        ventaFactura nullable: true
-        ventaImporte nullable: true
+        createUser nullable: true
+        updateUser nullable: true
     }
 
-    static transients = {
-        porcentajeDepreciado
-    }
+    static transients = {}
 
     static mapping = {
         table 'ACTIVO_FIJO2'
-        fecha type:'date', index: 'AF_IDX1'
-        facturaFecha type:'date' , index: 'AF_IDX2'
-
+        adquisicion type:'date' , index: 'AF_IDX2'
+        facturaFecha type: 'date'
     }
     
 }

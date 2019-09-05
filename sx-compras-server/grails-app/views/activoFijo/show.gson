@@ -4,4 +4,7 @@ model {
 	ActivoFijo activoFijo
 }
 
-json tmpl.activoFijo(activoFijo)
+json g.render(activoFijo, [excludes: ['cuentaContable']]) {
+	cuentaContable g.render(activoFijo.cuentaContable)
+	proveedor g.render(activoFijo.proveedor)
+}

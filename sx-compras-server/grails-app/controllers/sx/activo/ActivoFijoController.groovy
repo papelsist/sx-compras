@@ -35,6 +35,13 @@ class ActivoFijoController extends RestfulController<ActivoFijo> {
     }
 
     @Override
+    protected ActivoFijo createResource() {
+        ActivoFijo activo = new ActivoFijo()
+        bindData activo, getObjectToBind()
+        return activo
+    }
+
+    @Override
     protected ActivoFijo saveResource(ActivoFijo resource) {
         return activoFijoService.save(resource)
     }
