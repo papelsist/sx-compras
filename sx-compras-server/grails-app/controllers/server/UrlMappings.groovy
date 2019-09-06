@@ -426,6 +426,8 @@ class UrlMappings {
 
         "/api/productoServicio"(resources: 'productoServicio', excludes:['create', 'edit','patch'])
 
+        "/api/analisisDecs"(resources: 'analisisDeDevolucion', excludes:['create', 'edit','patch'])
+
         // Audit
         "/api/audit"(resources: 'audit', excludes:['create', 'edit','patch'])
 

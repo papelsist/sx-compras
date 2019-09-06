@@ -1,0 +1,7 @@
+import sx.compras.AnalisisDeDevolucion
+
+model {
+	AnalisisDeDevolucion analisisDeDevolucion
+}
+
+json tmpl.analisisDeDevolucion(analisisDeDevolucion)
