@@ -8,7 +8,7 @@ import groovy.transform.CompileDynamic
 
 import sx.core.LogUser
 import sx.utils.Periodo
-
+import sx.cxp.GastoDet
 
 @Transactional
 // @GrailsCompileStatic
@@ -32,16 +32,45 @@ class ActivoFijoService implements LogUser {
 
     }
 
-    def generarDepreciacionContable(ActivoFijo activo) {
-        def moi = activo.montoOriginal
+    def generarPendientes() {
+        log.info('Generando activos fijos pendientes')
+        def res = []
+        def q = GastoDet.where {activoFijo == true}
+        q = q.where {
+            def gto = GastoDet
+            notExists ActivoFijo.where {
+                def s1 = ActivoFijo
+                def em2 = gastoDet
+                return em2.id == gto.id
+            }.id()
+        }
+        def pendientes = q.list()
+        pendientes.each {item -> 
+            ActivoFijo af = new ActivoFijo()
+            af.with {
+                adquisicion = item.cxp.fecha
+                descripcion = item.descripcion
+                montoOriginal = item.importe
+                serie = item.serie
+                modelo = item.modelo
+                facturaSerie = item.cxp.serie
+                facturaFolio = item.cxp.folio
+                facturaFecha = item.cxp.fecha
+                uuid = item.cxp.uuid
+                estado = 'VIGENTE'
+                cuentaContable = item.cuentaContable
+                gastoDet = item
+                proveedor = item.cxp.proveedor
+                sucursalOrigen = item.sucursal.nombre
+                sucursalActual = item.sucursal.nombre
+            }
+            af.save failOnError: true, flush: true
+            res << af
+        }
+        log.info('Generados: {}', res.size())
+        return res
+        
     }
-
-    def generarDepreciacion(ActivoFijo activo, Date corte = new Date()) {
-        Date inicio = activo.adquisicion
-        def meses = monthsBetween(inicio, corte)
-        log.info('Meses depreciados: {}', meses)
-    }
-
 
     int monthsBetween(Date from, Date to){
         def cfrom = new GregorianCalendar(time:from)

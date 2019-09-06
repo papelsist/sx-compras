@@ -418,6 +418,7 @@ class UrlMappings {
             "/depreciaciones"(resources: 'activoDepreciacion', excludes:['create', 'edit'])
             "/fiscales"(resources: 'activoDepreciacionFiscal', excludes:['create', 'edit'])
         }
+        "/api/activoFijo/generarPendientes"(controller: 'activoFijo', action: 'generarPendientes')
 
         // Gastos
         "/api/gastoDet"(resources: 'gastoDet', excludes:['create', 'edit','patch'])

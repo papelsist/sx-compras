@@ -42,13 +42,11 @@ class ActivoFijo {
     String consignatario
 
     // Importes generales
-    BigDecimal montoOriginal = 0.0
     BigDecimal tasaDepreciacion = 0.0
-
-    BigDecimal depreciacionAcumulada = 0.0
+    BigDecimal montoOriginal = 0.0
     BigDecimal depreciacionInicial = 0.0
-
-    
+    BigDecimal depreciacionAcumulada = 0.0
+    BigDecimal remanente = 0.0
     
     String createUser
     String updateUser
@@ -87,6 +85,8 @@ class ActivoFijo {
     static transients = {}
 
     static mapping = {
+        departamentoActual formula:'(select COALESCE(sum(x.depreciacion),0) from activo_depreciacion2 x where x.activo_fijo_id=id) - depreciacion_inicial'
+        remanente formula: 'monto_original  - (select COALESCE(sum(x.depreciacion),0) from activo_depreciacion2 x where x.activo_fijo_id=id) - depreciacion_inicial'
         table 'ACTIVO_FIJO2'
         adquisicion type:'date' , index: 'AF_IDX2'
         facturaFecha type: 'date'
