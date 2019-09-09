@@ -35,7 +35,7 @@ export class NumericCellEditorComponent
 
     // only start edit if key pressed is a number, not a letter
     this.cancelBeforeStart =
-      params.charPress && '1234567890'.indexOf(params.charPress) < 0;
+      params.charPress && '1234567890.'.indexOf(params.charPress) < 0;
   }
 
   getValue(): any {
