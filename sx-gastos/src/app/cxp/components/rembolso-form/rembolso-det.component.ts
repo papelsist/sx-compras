@@ -4,10 +4,12 @@ import {
   ChangeDetectionStrategy,
   Inject
 } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 import { RembolsoDet } from 'app/cxp/model';
+
+import * as moment from 'moment';
 
 @Component({
   selector: 'sx-aplicacion-form',
@@ -27,6 +29,14 @@ import { RembolsoDet } from 'app/cxp/model';
         </mat-form-field>
       </div>
       <div layout>
+        <mat-form-field   flex>
+          <input matInput placeholder="Total" formControlName="total" type="number" autocomplete="off">
+        </mat-form-field>
+        <mat-form-field  class="pad-left" flex>
+          <input matInput placeholder="A Pagar" formControlName="apagar" type="number" autocomplete="off">
+        </mat-form-field>
+      </div>
+      <div layout>
         <mat-form-field flex>
           <mat-select placeholder="Concepto" formControlName="concepto" >
             <mat-option *ngFor="let concepto of ['NO_DEDUCIBLE']"
@@ -34,16 +44,13 @@ import { RembolsoDet } from 'app/cxp/model';
             </mat-option>
           </mat-select>
         </mat-form-field>
-        <mat-form-field  class="pad-left" flex>
-          <input matInput placeholder="Total" formControlName="total" type="number" autocomplete="off">
-        </mat-form-field>
       </div>
       <sx-cuenta-contable-field formControlName="cuentaContable"></sx-cuenta-contable-field>
       <sx-upper-case-field placeholder="Comentario" formControlName="comentario" [autocomplete]="true"></sx-upper-case-field>
     </div>
 
     <mat-dialog-actions>
-      <button mat-button [mat-dialog-close]="form.value" [disabled]="form.invalid">Aceptar</button>
+      <button mat-button (click)="submit()" [disabled]="form.invalid">Aceptar</button>
       <button mat-button mat-dialog-close type="button">Cancelar</button>
     </mat-dialog-actions>
   </form>
@@ -55,6 +62,7 @@ export class RembolsoDetComponent implements OnInit {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
+    public dialogRef: MatDialogRef<RembolsoDetComponent>,
     private fb: FormBuilder
   ) {
     this.partida = data.partida;
@@ -70,6 +78,7 @@ export class RembolsoDetComponent implements OnInit {
   buildForm() {
     this.form = this.fb.group({
       total: [null, [Validators.required]],
+      apagar: [null, [Validators.required]],
       documentoFecha: [null, [Validators.required]],
       documentoFolio: [],
       comentario: [null],
@@ -78,15 +87,19 @@ export class RembolsoDetComponent implements OnInit {
       cuentaContable: [null]
     });
   }
+
   submit() {
     if (this.form.valid) {
-      const fechaDcto: Date = this.form.get('documentoFecha').value;
+      const fechaDcto = moment(this.form.get('documentoFecha').value);
       const cta: any = this.form.get('cuentaContable').value;
       const data = {
         ...this.form.value,
         documentoFecha: fechaDcto ? fechaDcto.toISOString() : null,
-        cuentaContable: cta ? cta.id : null
+        cuentaContable: cta ? cta : null
       };
+      // console.log('Data: ', data);
+      // console.log('Form: ', this.form.value);
+      this.dialogRef.close(data);
     }
   }
 }

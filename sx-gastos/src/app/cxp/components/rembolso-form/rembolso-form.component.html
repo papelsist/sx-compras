@@ -113,6 +113,7 @@
         (delete)="onDeleteRow($event)"
         (update)="onUpdateRow($event)"
         (edit)="onEditRow($event)"
+        (split)="onSplit($event)"
         [readOnly]="form.disabled"
       >
       </sx-rembolso-partidas>
@@ -124,6 +125,14 @@
           matInput
           value="{{ total | currency }}"
           placeholder="Total"
+          [disabled]="true"
+        />
+      </mat-form-field>
+      <mat-form-field class="pad-left">
+        <input
+          matInput
+          value="{{ apagar | currency }}"
+          placeholder="A Pagar"
           [disabled]="true"
         />
       </mat-form-field>
@@ -144,6 +153,10 @@
       <ng-container>
         <sx-selector-cxp-rembolso-btn (select)="onAgregarFactura($event)">
         </sx-selector-cxp-rembolso-btn>
+        <sx-selector-cxp-notas-btn
+          [proveedor]="form.get('proveedor').value"
+          (select)="onAgregarNota($event)"
+        ></sx-selector-cxp-notas-btn>
         <button
           mat-button
           color="primary"

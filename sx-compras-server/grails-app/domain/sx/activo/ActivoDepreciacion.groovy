@@ -6,37 +6,37 @@ import groovy.transform.ToString
 
 import grails.compiler.GrailsCompileStatic
 
-// @Sortable(includes = ['ejercicio', 'mes'])
-@ToString(includes ='ejercicio, mes, actualizacion, depreciacion',includeNames=true,includePackage=false)
-@EqualsAndHashCode(includes='activoFijo, ejercicio, mes')
+
+@ToString(includes ='ejercicio, mes, depreciacionContable',includeNames=true,includePackage=false)
+@EqualsAndHashCode(includes='id, ejercicio, mes')
 @GrailsCompileStatic
 class ActivoDepreciacion implements  Comparable<ActivoDepreciacion>{
 
     Integer ejercicio
     Integer mes
     ActivoFijo activoFijo
+    Date corte
 
-    Date actualizacion
+    BigDecimal tasaDepreciacion = 0.0
 
     BigDecimal depreciacionAcumulada = 0.0
-    BigDecimal remanente = 0.0
-    BigDecimal tasaDepreciacion = 0.0
-    BigDecimal porcentajeDepreciado = 0.0
-    BigDecimal depreciacionContable = 0.0
-    BigDecimal depreciacionTotal = 0.0
-    BigDecimal saldo = 0.0
-    BigDecimal ultimoInpc = 0.0
-    BigDecimal inpc = 0.0
-    BigDecimal factorDeActualizacion = 0.0
-    BigDecimal depreciacionFiscal = 0.0
     BigDecimal depreciacion = 0.0
+    
+    
+    Date dateCreated
+    Date lastUpdated
 
+    String createUser
+    String updateUser
 
     static constraints = {
+        createUser nullable: true
+        updateUser nullable: true
     }
    
     static mapping = {
-        actualizacion type:'date'
+        table 'ACTIVO_DEPRECIACION2'
+        corte type:'date'
     }
 
     @Override

@@ -7,52 +7,47 @@ import grails.compiler.GrailsCompileStatic
 
 import sx.contabilidad.CuentaContable
 import sx.cxp.GastoDet
+import sx.core.Proveedor
 
 @GrailsCompileStatic
-@ToString(includes ='id, facturaSerie, facturaFolio, facturaFecha',includeNames=true,includePackage=false)
-@EqualsAndHashCode(includes='id, facturaSerie, facturaFolio, facturaFecha, serie, modelo')
+@ToString(includes ='id, descripcion, modelo, serie',includeNames=true,includePackage=false)
+@EqualsAndHashCode(includes='id')
 class ActivoFijo {
-
-    Date fecha
-    String facturaSerie
-    String facturaFolio
-    Date facturaFecha
-    String uuid
+    
+    // Datos generales
+    Date adquisicion
     String descripcion
     String serie
     String modelo
 
-    GastoDet gastoDet
-    String proveedor
+    // Factura orignal
+    String facturaSerie
+    String facturaFolio
+    Date facturaFecha
+    String uuid
 
+    // Clasificacion
+    String estado
+    CuentaContable cuentaContable
+
+    // Origen
+    GastoDet gastoDet
+    Proveedor proveedor
+
+    // Consignatario
     String sucursalOrigen
     String sucursalActual
     String departamentoOrigen
     String departamentoActual
     String consignatario
-    String estado
 
-
-    String tipo
-    CuentaContable cuentaContable
-    BigDecimal tasaDepreciacion
-
-    BigDecimal montoOriginal
-    BigDecimal costoActualizado
-
-    BigDecimal depreciacionAcumulada
-    BigDecimal remanente
-
-    String venta
-    String ventaFactura
-    String ventaFecha
-    BigDecimal ventaImporte
-
-
-    BigDecimal porcentajeDepreciado
-
-    String comentario
-
+    // Importes generales
+    BigDecimal tasaDepreciacion = 0.0
+    BigDecimal montoOriginal = 0.0
+    BigDecimal depreciacionInicial = 0.0
+    BigDecimal depreciacionAcumulada = 0.0
+    BigDecimal remanente = 0.0
+    
     String createUser
     String updateUser
 
@@ -61,32 +56,40 @@ class ActivoFijo {
 
 
     static constraints = {
+        proveedor nullable: true
         facturaSerie nullable: true
         facturaFolio nullable: true
+        facturaFecha nullable: true
         uuid nullable: true
+
         serie nullable: true
         modelo nullable: true
         cuentaContable nullable: true
         tasaDepreciacion scale: 4
         gastoDet nullable: true
+
         estado inList: ['VIGENTE', 'DEPRECIADO', 'VENDIDO']
+        
+
         sucursalOrigen nullable: true
         sucursalActual nullable: true
         departamentoOrigen nullable: true
         departamentoActual nullable: true
         consignatario nullable: true
-        comentario nullable: true
+        
+
+        createUser nullable: true
+        updateUser nullable: true
     }
 
-    static transients = {
-        porcentajeDepreciado
-    }
+    static transients = {}
 
     static mapping = {
+        departamentoActual formula:'(select COALESCE(sum(x.depreciacion),0) from activo_depreciacion2 x where x.activo_fijo_id=id) - depreciacion_inicial'
+        remanente formula: 'monto_original  - (select COALESCE(sum(x.depreciacion),0) from activo_depreciacion2 x where x.activo_fijo_id=id) - depreciacion_inicial'
         table 'ACTIVO_FIJO2'
-        fecha type:'date', index: 'AF_IDX1'
-        facturaFecha type:'date' , index: 'AF_IDX2'
-
+        adquisicion type:'date' , index: 'AF_IDX2'
+        facturaFecha type: 'date'
     }
     
 }

@@ -36,6 +36,9 @@ export class RembolsoPartidasComponent implements OnInit, OnChanges {
   @ViewChild(MatSort)
   sort: MatSort;
 
+  @Output()
+  split = new EventEmitter();
+
   dataSource = new MatTableDataSource<RembolsoDet>([]);
 
   displayColumns = [
@@ -47,6 +50,7 @@ export class RembolsoPartidasComponent implements OnInit, OnChanges {
     'apagar',
     'factura',
     'cuentaContable',
+    'sucursal',
     'comentario',
     'operaciones'
   ];

@@ -21,7 +21,9 @@ import {
   Rembolso,
   RembolsoDet,
   buildRembolsoDet,
-  CuentaPorPagar
+  CuentaPorPagar,
+  NotaDeCreditoCxP,
+  buildRembolsoDetFromNota
 } from '../../model';
 
 import { Subject } from 'rxjs';
@@ -30,6 +32,8 @@ import { takeUntil } from 'rxjs/operators';
 import * as _ from 'lodash';
 import { MatDialog } from '@angular/material';
 import { RembolsoDetComponent } from './rembolso-det.component';
+import { CxpProrrateoModalComponent } from '../cxp-prorrateo-modal/cxp-prorrateo-modal.component';
+import { RembolsoDetProrrateoModalComponent } from '../rembolsodet-prorrateo/rembolso-det-prorrateo-modal.component';
 
 @Component({
   selector: 'sx-rembolso-form',
@@ -56,18 +60,7 @@ export class RembolsoFormComponent implements OnInit, OnChanges, OnDestroy {
   destroy$ = new Subject();
 
   form: FormGroup;
-  /*
-  conceptos = [
-    'REMBOLSO',
-    'PAGO_TARJETA',
-    'PAGO_CONTABLE',
-    'PRESTAMO_CHOFER',
-    'PRESTAMO_EMPLEADO',
-    'CARGA_SOCIAL',
-    'PAGO_CHOFER',
-    'CUOTA_SINDICAL'
-  ];
-  */
+
   conceptos = [
     'REMBOLSO',
     'PAGO',
@@ -75,7 +68,8 @@ export class RembolsoFormComponent implements OnInit, OnChanges, OnDestroy {
     'PRESTAMO',
     'DEVOLUCION',
     'ESPECIAL',
-    'ESPECIALM'
+    'ESPECIALM',
+    'NOTA'
   ];
 
   oficinas = {
@@ -138,7 +132,7 @@ export class RembolsoFormComponent implements OnInit, OnChanges, OnDestroy {
         apagar: [0.0, Validators.required],
         comentario: [],
         cuentaContable: [null],
-        
+
         partidas: this.fb.array([])
       });
     }
@@ -216,6 +210,21 @@ export class RembolsoFormComponent implements OnInit, OnChanges, OnDestroy {
     });
     this.form.markAsDirty();
   }
+  onAgregarNota(nota: NotaDeCreditoCxP) {
+    const det = buildRembolsoDetFromNota(nota);
+    const parts: RembolsoDet[] = this.partidas.value;
+    const found = parts.find(item => {
+      if (item.nota) {
+        return item.nota.id === nota.id;
+      } else {
+        return false;
+      }
+    });
+    if (!found) {
+      this.partidas.push(new FormControl(det));
+      this.form.markAsDirty();
+    }
+  }
 
   addNoDeducible() {
     this.dialog
@@ -233,13 +242,46 @@ export class RembolsoFormComponent implements OnInit, OnChanges, OnDestroy {
     const control = this.partidas.at(index);
     const det: RembolsoDet = control.value;
     this.dialog
-      .open(RembolsoDetComponent, { data: { partida: det } })
+      .open(RembolsoDetComponent, { data: { partida: det }, width: '650px' })
       .afterClosed()
       .subscribe(partida => {
         if (partida) {
           const res = { ...det, ...partida };
           control.setValue(res);
           this.form.markAsDirty();
+        }
+      });
+  }
+
+  onSplit(index: number) {
+    const control = this.partidas.at(index);
+    const det: RembolsoDet = control.value;
+    this.dialog
+      .open(RembolsoDetProrrateoModalComponent, {
+        data: { rembolsoDet: det },
+        width: '650px'
+      })
+      .afterClosed()
+      .subscribe(res => {
+        if (res) {
+          let del = false;
+          Object.values(res).forEach((sucursal: any) => {
+            if (sucursal) {
+              const row = {
+                ...det,
+                sucursal: sucursal.nombre,
+                id: null,
+                rembolso: null
+              };
+              // console.log('Add: ', row);
+              this.partidas.push(new FormControl(row));
+              this.form.markAsDirty();
+              del = true;
+            }
+          });
+          if (del) {
+            this.onDeleteRow(index);
+          }
         }
       });
   }
@@ -254,5 +296,9 @@ export class RembolsoFormComponent implements OnInit, OnChanges, OnDestroy {
 
   get total() {
     return _.sumBy(this.partidas.value, 'total');
+  }
+
+  get apagar() {
+    return _.sumBy(this.partidas.value, 'apagar');
   }
 }

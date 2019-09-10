@@ -1,8 +1,10 @@
 import { CuentaPorPagar } from './cuentaPorPagar';
+import { NotaDeCreditoCxP } from './notaDeCreditoCxP';
 
 export interface RembolsoDet {
   id?: number;
   cxp?: CuentaPorPagar;
+  nota?: Partial<NotaDeCreditoCxP>;
   nombre: string;
   documentoFolio?: string;
   documentoSerie?: string;
@@ -12,6 +14,7 @@ export interface RembolsoDet {
   comentario?: string;
   concepto?: string;
   uuid?: string;
+  sucursal?: string;
 }
 
 export function buildRembolsoDet(cxp: CuentaPorPagar): RembolsoDet {
@@ -25,6 +28,21 @@ export function buildRembolsoDet(cxp: CuentaPorPagar): RembolsoDet {
     apagar: cxp.importePorPagar,
     concepto: 'GASTO',
     uuid: cxp.uuid
+  };
+  return det;
+}
+
+export function buildRembolsoDetFromNota(nota: NotaDeCreditoCxP): RembolsoDet {
+  const det: RembolsoDet = {
+    nota: nota,
+    nombre: nota.nombre,
+    documentoFolio: nota.folio,
+    documentoSerie: nota.serie,
+    documentoFecha: nota.fecha,
+    total: nota.subTotal * -1,
+    apagar: nota.subTotal * -1,
+    concepto: 'GASTO',
+    uuid: nota.uuid
   };
   return det;
 }

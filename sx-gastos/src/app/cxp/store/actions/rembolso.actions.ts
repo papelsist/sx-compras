@@ -24,7 +24,11 @@ export enum RembolsoActionTypes {
 
   DeleteRembolso = '[Rembolso Component] Delete Rembolso',
   DeleteRembolsoFail = '[Rembolso API] Delete Rembolso Fail',
-  DeleteRembolsoSuccess = '[Rembolso API] Delete Rembolso Success'
+  DeleteRembolsoSuccess = '[Rembolso API] Delete Rembolso Success',
+
+  CopiarRembolso = '[Rembolsos Component] Copiar rembolso',
+  CopiarRembolsoFail = '[Rembolsos Component] Copiar rembolso fail',
+  CopiarRembolsoSuccess = '[Rembolsos Component] Copiar rembolso success',
 }
 export class SetRembolsosPeriodo implements Action {
   readonly type = RembolsoActionTypes.SetRembolsosPeriodo;
@@ -107,6 +111,19 @@ export class DeleteRembolsoSuccess implements Action {
   constructor(public payload: { rembolso: Rembolso }) {}
 }
 
+export class CopiarRembolso implements Action {
+  readonly type = RembolsoActionTypes.CopiarRembolso;
+  constructor(public payload: {rembolsoId: number}) {}
+}
+export class CopiarRembolsoFail implements Action {
+  readonly type = RembolsoActionTypes.CopiarRembolsoFail;
+  constructor(public payload: {response: any}) {}
+}
+export class CopiarRembolsoSuccess implements Action {
+  readonly type = RembolsoActionTypes.CopiarRembolsoSuccess;
+  constructor(public payload: {rembolso: Rembolso}) {}
+}
+
 export type RembolsoActions =
   | SetRembolsosPeriodo
   | SetRembolsosFilter
@@ -123,4 +140,7 @@ export type RembolsoActions =
   | UpsertRembolso
   | DeleteRembolso
   | DeleteRembolsoFail
-  | DeleteRembolsoSuccess;
+  | DeleteRembolsoSuccess
+  | CopiarRembolso
+  | CopiarRembolsoFail
+  | CopiarRembolsoSuccess;

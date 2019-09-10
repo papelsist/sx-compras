@@ -211,7 +211,7 @@ export class CxpGastosDetTableComponent extends LxTableComponent
         headerName: 'Cant',
         field: 'cantidad',
         width: 90,
-        cellEditor: 'numericCellEditor',
+        // cellEditor: 'numericCellEditor',
         editable: true,
         suppressNavigable: false
       },
@@ -221,7 +221,7 @@ export class CxpGastosDetTableComponent extends LxTableComponent
         width: 100,
         editable: true,
         suppressNavigable: false,
-        cellEditor: 'numericCellEditor',
+        // cellEditor: 'numericCellEditor',
         valueFormatter: params => this.transformCurrency(params.value)
       },
       {

@@ -14,6 +14,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils
 import sx.reports.ReportService
 
 
+
 @Slf4j
 @Secured(['ROLE_GASTOS', 'ROLE_CONTABILIDAD'])
 @GrailsCompileStatic
@@ -35,8 +36,20 @@ class ActivoFijoController extends RestfulController<ActivoFijo> {
     }
 
     @Override
+    protected ActivoFijo createResource() {
+        ActivoFijo activo = new ActivoFijo()
+        bindData activo, getObjectToBind()
+        return activo
+    }
+
+    @Override
     protected ActivoFijo saveResource(ActivoFijo resource) {
         return activoFijoService.save(resource)
+    }
+
+    @CompileDynamic
+    def generarPendientes() {
+        respond activoFijoService.generarPendientes()
     }
 
     def handleException(Exception e) {

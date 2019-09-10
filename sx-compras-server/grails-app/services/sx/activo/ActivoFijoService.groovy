@@ -7,16 +7,17 @@ import grails.compiler.GrailsCompileStatic
 import groovy.transform.CompileDynamic
 
 import sx.core.LogUser
-
+import sx.utils.Periodo
+import sx.cxp.GastoDet
 
 @Transactional
-@GrailsCompileStatic
+// @GrailsCompileStatic
 @Slf4j
 class ActivoFijoService implements LogUser {
     
 
     ActivoFijo save(ActivoFijo activo) {
-    	// log.debug("Salvando activo de material {}", activo)
+    	log.debug("Salvando activo de material {}", activo)
         logEntity(activo)
         activo.save failOnError: true, flush: true
         return activo
@@ -29,6 +30,55 @@ class ActivoFijoService implements LogUser {
         activo.save failOnError: true, flush: true
         return activo
 
+    }
+
+    def generarPendientes() {
+        log.info('Generando activos fijos pendientes')
+        def res = []
+        def q = GastoDet.where {activoFijo == true}
+        q = q.where {
+            def gto = GastoDet
+            notExists ActivoFijo.where {
+                def s1 = ActivoFijo
+                def em2 = gastoDet
+                return em2.id == gto.id
+            }.id()
+        }
+        def pendientes = q.list()
+        pendientes.each {item -> 
+            ActivoFijo af = new ActivoFijo()
+            af.with {
+                adquisicion = item.cxp.fecha
+                descripcion = item.descripcion
+                montoOriginal = item.importe
+                serie = item.serie
+                modelo = item.modelo
+                facturaSerie = item.cxp.serie
+                facturaFolio = item.cxp.folio
+                facturaFecha = item.cxp.fecha
+                uuid = item.cxp.uuid
+                estado = 'VIGENTE'
+                cuentaContable = item.cuentaContable
+                gastoDet = item
+                proveedor = item.cxp.proveedor
+                sucursalOrigen = item.sucursal.nombre
+                sucursalActual = item.sucursal.nombre
+            }
+            af.save failOnError: true, flush: true
+            res << af
+        }
+        log.info('Generados: {}', res.size())
+        return res
+        
+    }
+
+    int monthsBetween(Date from, Date to){
+        def cfrom = new GregorianCalendar(time:from)
+        def cto   = new GregorianCalendar(time:to)
+ 
+        return ((cto.get(Calendar.YEAR) - cfrom.get(Calendar.YEAR)) 
+            * cto.getMaximum(Calendar.MONTH)) 
+            + (cto.get(Calendar.MONTH) - cfrom.get(Calendar.MONTH))
     }
 
    

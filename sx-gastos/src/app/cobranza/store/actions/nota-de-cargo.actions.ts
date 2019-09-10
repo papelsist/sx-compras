@@ -1,10 +1,12 @@
 import { Action } from '@ngrx/store';
 
-import { NotaDeCargo, Cartera, CarteraFilter } from '../../models';
+import { NotaDeCargo } from '../../models';
 import { Update } from '@ngrx/entity';
+import { Periodo } from 'app/_core/models/periodo';
 
 export enum NotaDeCargoActionTypes {
-  LoadNotasDeCargo = '[Notas CXC  Component] Load NotaDeCargos',
+  SetNotasDeCargoPeriodo = '[Notas de cargo Component] Set Notas de cargo periodo',
+  LoadNotasDeCargo = '[Notas de cargo Component] Load NotaDeCargos',
   LoadNotasDeCargoSuccess = '[NotaDeCargo Effect] Load NotaDeCargos Success',
   LoadNotasDeCargoFail = '[NotaDeCargo Effect] Load NotaDeCargos Fail',
 
@@ -25,12 +27,20 @@ export enum NotaDeCargoActionTypes {
 
   UpsertNotaDeCargo = '[NotaDeCargo component] Upsert NotaDeCargo',
 
-  SetNotasDeCargoSearchTerm = '[NotasDeCargo Component] Set NotasDeCargo search term'
+  SetNotasDeCargoSearchTerm = '[NotasDeCargo Component] Set NotasDeCargo search term',
+  GenerarNotasPorIntereses = 'NotasDeCargo Component] Generar notas por intereses',
+  GenerarNotasPorInteresesFail = 'NotasDeCargo Component] Generar notas por intereses fail',
+  GenerarNotasPorInteresesSuccess = 'NotasDeCargo Component] Generar notas por intereses success'
+}
+
+export class SetNotasDeCargoPeriod implements Action {
+  readonly type = NotaDeCargoActionTypes.SetNotasDeCargoPeriodo;
+  constructor(public payload: { periodo: Periodo }) {}
 }
 
 export class LoadNotasDeCargo implements Action {
   readonly type = NotaDeCargoActionTypes.LoadNotasDeCargo;
-  constructor(public payload: { cartera: Cartera; filter?: CarteraFilter }) {}
+  constructor(public payload: { periodo: Periodo }) {}
 }
 
 export class LoadNotasDeCargoSuccess implements Action {
@@ -95,7 +105,28 @@ export class UpsertNotaDeCargo implements Action {
   constructor(public payload: { nota: NotaDeCargo }) {}
 }
 
+export class GenerarNotasPorIntereses implements Action {
+  readonly type = NotaDeCargoActionTypes.GenerarNotasPorIntereses;
+  constructor(
+    public payload: {
+      fechaInicial: string;
+      fechaFinal: string;
+      descripcion: string;
+      facturista?: any;
+    }
+  ) {}
+}
+export class GenerarNotasPorInteresesFail implements Action {
+  readonly type = NotaDeCargoActionTypes.GenerarNotasPorInteresesFail;
+  constructor(public payload: { response: any }) {}
+}
+export class GenerarNotasPorInteresesSuccess implements Action {
+  readonly type = NotaDeCargoActionTypes.GenerarNotasPorInteresesSuccess;
+  constructor(public payload: { notas: NotaDeCargo[] }) {}
+}
+
 export type NotaDeCargoActions =
+  | SetNotasDeCargoPeriod
   | LoadNotasDeCargo
   | LoadNotasDeCargoFail
   | LoadNotasDeCargoSuccess
@@ -109,4 +140,7 @@ export type NotaDeCargoActions =
   | DeleteNotaDeCargoFail
   | DeleteNotaDeCargoSuccess
   | SetNotasDeCargoSearchTerm
-  | UpsertNotaDeCargo;
+  | UpsertNotaDeCargo
+  | GenerarNotasPorIntereses
+  | GenerarNotasPorInteresesFail
+  | GenerarNotasPorInteresesSuccess;

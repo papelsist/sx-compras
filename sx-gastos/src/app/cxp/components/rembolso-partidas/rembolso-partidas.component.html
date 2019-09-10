@@ -7,7 +7,6 @@
           {{ row.nombre }}
           <span flex></span>
           <mat-icon
-            *ngIf="row.concepto === 'NO_DEDUCIBLE'"
             (click)="edit.emit(i)"
             class="cursor-pointer"
             [inline]="true"
@@ -50,18 +49,36 @@
     <ng-container matColumnDef="comentario">
       <th mat-header-cell *matHeaderCellDef>Comentario</th>
       <td mat-cell *matCellDef="let row; let i = index" class="comentario">
-        <input
+        <!-- <input
           [(ngModel)]="row.comentario"
           [ngModelOptions]="{ standalone: true }"
           (input)="update.emit(row, i)"
           [disabled]="readOnly"
-        />
+        /> -->
+        {{ row.comentario }}
       </td>
     </ng-container>
     <ng-container matColumnDef="factura">
-      <th mat-header-cell *matHeaderCellDef>Factura</th>
+      <th mat-header-cell *matHeaderCellDef>CFDI</th>
       <td mat-cell *matCellDef="let row; let i = index">
-        {{ row.uuid }}
+        <span>
+          {{ row?.uuid?.substr(-12, 12) }}
+        </span>
+        <mat-icon
+          *ngIf="row.nota && !row.sucursal"
+          (click)="split.emit(i)"
+          class="cursor-pointer"
+          [inline]="false"
+          >call_split</mat-icon
+        >
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="sucursal">
+      <th mat-header-cell *matHeaderCellDef>Sucursal</th>
+      <td mat-cell *matCellDef="let row; let i = index">
+        <span>
+          {{ row?.sucursal }}
+        </span>
       </td>
     </ng-container>
     <ng-container matColumnDef="operaciones">

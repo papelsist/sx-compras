@@ -11,7 +11,7 @@ export class CarteraFilter {
 
 export function buildCarteraFilter(): CarteraFilter {
   const { fechaInicial, fechaFinal } = Periodo.fromNow(20);
-  const registros = 100;
+  const registros = 1000;
   return {
     fechaInicial,
     fechaFinal,

@@ -141,6 +141,23 @@ class RembolsoController extends RestfulController<Rembolso> {
         respond q.list(params)
     }
 
+    @CompileDynamic
+    def notasPendientes() {
+        params.max = 100
+        def proveedorId = params.proveedorId
+        def q = NotaDeCreditoCxP.where {proveedor.id == proveedorId}
+
+        q = q.where {
+            def em1 = NotaDeCreditoCxP
+            notExists RembolsoDet.where {
+                def s1 = RembolsoDet
+                def em2 = nota
+                return em2.id == em1.id
+            }.id()
+        }
+        respond q.list(params)
+    }
+
     def pagar(PagoDeRembolso command) {
         if(command == null) {
             respond status: NOT_FOUND
@@ -179,6 +196,38 @@ class RembolsoController extends RestfulController<Rembolso> {
         }
         rembolso = pagoDeRembolsoService.generarCheque(rembolso)
         respond rembolso
+    }
+
+    @CompileDynamic
+    def copiar() {
+        Rembolso source = Rembolso.get(params.id)
+        if(!source) {
+            notFound()
+            return
+        }
+        Rembolso target = new Rembolso()
+        target.sucursal = source.sucursal
+        target.proveedor = source.proveedor
+        target.fecha = new Date()
+        target.fechaDePago = target.fecha + 1
+        target.cuentaContable = source.cuentaContable
+        target.comentario = "COPIA DE PAGO ${source.id}"
+        target.total = source.total
+        target.apagar = source.apagar
+        target.formaDePago = source.formaDePago
+        target.moneda = source.moneda
+        target.tipoDeCambio = source.tipoDeCambio
+        target.concepto = source.concepto
+        target.nombre = source.nombre
+        logUser(target)
+        source.partidas.each { row ->
+            RembolsoDet det = new RembolsoDet()
+            det.properties = row.properties
+            det.rembolso = null
+            target.addToPartidas(det)
+        }
+        target = target.save failOnError: true, flush: true
+        respond target, view: 'show'
     }
 
     def print( ) {

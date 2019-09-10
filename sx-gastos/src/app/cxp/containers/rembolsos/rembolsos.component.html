@@ -1,9 +1,3 @@
-<ng-template
-  tdLoading
-  [tdLoadingUntil]="!(loading$ | async)"
-  tdLoadingStrategy="overlay"
->
-</ng-template>
 <mat-card>
   <ng-template
     tdLoading
@@ -17,7 +11,11 @@
       (reload)="reload()"
       (create)="onCreate()"
       (download)="grid.exportData()"
-    ></sx-standard-header>
+    >
+      <button mat-menu-item (click)="copiar()" class="actions">
+        <mat-icon>content_copy</mat-icon>Copiar gasto
+      </button>
+    </sx-standard-header>
   </ng-template>
   <mat-divider></mat-divider>
   <div class="grid-panel">

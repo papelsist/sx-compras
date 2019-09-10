@@ -1,28 +1,17 @@
-import {
-  Component,
-  OnInit,
-  OnDestroy,
-  ChangeDetectionStrategy
-} from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 import { Store, select } from '@ngrx/store';
 import * as fromRoot from 'app/store';
 import * as fromStore from '../../store';
 
-import { Observable, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
-import {
-  CarteraFilter,
-  Cartera,
-  NotaDeCargo,
-  readFromLocalStorage,
-  saveInLocalStorage
-} from '../../models';
+import { Cartera, NotaDeCargo } from '../../models';
 
 import { MatDialog } from '@angular/material';
 
-import { ActivatedRoute } from '@angular/router';
+import { CargosPorInteresesModalComponent } from 'app/cobranza/components';
+import { Periodo } from 'app/_core/models/periodo';
 
 @Component({
   selector: 'sx-notas-de-cargo',
@@ -37,40 +26,32 @@ import { ActivatedRoute } from '@angular/router';
     `
   ]
 })
-export class NotasDeCargoComponent implements OnInit, OnDestroy {
+export class NotasDeCargoComponent implements OnInit {
   notas$: Observable<NotaDeCargo[]>;
   search$: Observable<string>;
-  filter: CarteraFilter;
+  periodo: Periodo;
   cartera: Cartera = new Cartera('CHO', 'CHOFER');
-  destroy$ = new Subject<boolean>();
+
   loading$: Observable<boolean>;
 
-  storageKey: string;
+  storageKey = 'sx.cxp.choferes.notas-de-cargo';
 
   constructor(
     private store: Store<fromStore.State>,
-    private route: ActivatedRoute
+    private dialog: MatDialog
   ) {}
 
   ngOnInit() {
-    this.route.data.pipe(takeUntil(this.destroy$)).subscribe(data => {
-      // this.cartera = data.cartera;
-      this.storageKey = data.storageKey || 'sx.cxc.notas-cargo';
-      this.loadFilter();
-      this.reload(this.cartera, this.filter);
-    });
+    this.periodo = Periodo.fromNow(90);
     this.loading$ = this.store.pipe(select(fromStore.getNotasDeCargoLoading));
     this.notas$ = this.store.pipe(select(fromStore.getAllNotasDeCargo));
     this.search$ = this.store.pipe(select(fromStore.getNotasDeCargoSearchTerm));
+    this.reload();
   }
 
-  ngOnDestroy() {
-    this.destroy$.next(true);
-    this.destroy$.complete();
-  }
-
-  loadFilter() {
-    this.filter = readFromLocalStorage(`${this.storageKey}.filter`);
+  onPeriodo(periodo: Periodo) {
+    this.periodo = periodo;
+    this.reload();
   }
 
   onSelect(event: NotaDeCargo) {
@@ -79,14 +60,20 @@ export class NotasDeCargoComponent implements OnInit, OnDestroy {
     );
   }
 
-  onFilterChange(filter: CarteraFilter) {
-    this.filter = filter;
-    saveInLocalStorage(`${this.storageKey}.filter`, filter);
+  reload() {
+    this.store.dispatch(
+      new fromStore.LoadNotasDeCargo({ periodo: this.periodo })
+    );
   }
 
-  reload(cartera: Cartera, filter?: CarteraFilter) {
-    this.store.dispatch(
-      new fromStore.LoadNotasDeCargo({ cartera: cartera, filter })
-    );
+  generarNotasPorIntereses() {
+    this.dialog
+      .open(CargosPorInteresesModalComponent, { data: {}, width: '600px' })
+      .afterClosed()
+      .subscribe(res => {
+        if (res) {
+          this.store.dispatch(new fromStore.GenerarNotasPorIntereses(res));
+        }
+      });
   }
 }

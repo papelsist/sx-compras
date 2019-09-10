@@ -14,6 +14,7 @@ import { NotasDeCargoTableComponent } from './notas-de-cargo-table/notas-de-carg
 import { NotaDeCargoFormComponent } from './nota-de-cargo-form/nota-de-cargo-form.component';
 import { NcHeaderComponent } from './nota-de-cargo-form/nc-header/nc-header.component';
 import { NcPartidasComponent } from './nota-de-cargo-form/nc-partidas/nc-partidas.component';
+import { CargosPorInteresesModalComponent } from './cargos-por-intereses/cargos-por-intereses-modal.component';
 
 export const components: any[] = [
   CarteraFilterBtnComponent,
@@ -34,13 +35,15 @@ export const components: any[] = [
   NotasDeCargoTableComponent,
   NotaDeCargoFormComponent,
   NcHeaderComponent,
-  NcPartidasComponent
+  NcPartidasComponent,
+  CargosPorInteresesModalComponent
 ];
 
 export const entryComponents: any[] = [
   CarteraFilterComponent,
   SolicitudFormComponent,
-  CxCSelectorDialogComponent
+  CxCSelectorDialogComponent,
+  CargosPorInteresesModalComponent
 ];
 
 export * from './cartera-filter/cartera-filter-btn.component';
@@ -62,3 +65,5 @@ export * from './notas-de-cargo-table/notas-de-cargo-table.component';
 export * from './nota-de-cargo-form/nota-de-cargo-form.component';
 export * from './nota-de-cargo-form/nc-header/nc-header.component';
 export * from './nota-de-cargo-form/nc-partidas/nc-partidas.component';
+
+export * from './cargos-por-intereses/cargos-por-intereses-modal.component';

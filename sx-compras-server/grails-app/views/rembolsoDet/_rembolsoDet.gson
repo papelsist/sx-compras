@@ -6,5 +6,8 @@ model {
 
 json g.render(rembolsoDet, [excludes: ['cuentaContable'], resolveTemplate: false]) {
 	uuid rembolsoDet?.cxp?.uuid
+	if(rembolsoDet.nota) {
+		uuid rembolsoDet.nota.uuid
+	}
 	cuentaContable g.render(rembolsoDet.cuentaContable)
 }

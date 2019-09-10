@@ -1,5 +1,7 @@
 package sx.cxc
 
+import groovy.transform.CompileDynamic
+
 import grails.compiler.GrailsCompileStatic
 import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.*
@@ -8,6 +10,8 @@ import groovy.util.logging.Slf4j
 
 import sx.reports.ReportService
 import sx.utils.Periodo
+import sx.logistica.FacturistaEstadoDeCuentaService
+import sx.logistica.FacturistaDeEmbarque
 
 @Slf4j
 @GrailsCompileStatic
@@ -18,6 +22,8 @@ class NotaDeCargoController extends RestfulController<NotaDeCargo> {
 
     NotaDeCargoService notaDeCargoService
 
+    FacturistaEstadoDeCuentaService facturistaEstadoDeCuentaService
+
     ReportService reportService
 
     NotaDeCargoController() {
@@ -27,9 +33,9 @@ class NotaDeCargoController extends RestfulController<NotaDeCargo> {
     @Override
     protected List<NotaDeCargo> listAllResources(Map params) {
         log.info('List params: {}', params)
-        params.sort = params.sort ?: 'lastUpdated'
+        params.sort = params.sort ?: 'id'
         params.order = params.order ?: 'desc'
-        params.max = params.registros ?: 20
+        params.max = params.registros ?: 1000
 
         def cartera = params.cartera
 
@@ -44,7 +50,7 @@ class NotaDeCargoController extends RestfulController<NotaDeCargo> {
 
         if(params.periodo) {
             Periodo periodo = (Periodo)params.periodo
-           //  query = query.where {fecha >= periodo.fechaInicial && fecha <= periodo.fechaFinal}
+            query = query.where {fecha >= periodo.fechaInicial && fecha <= periodo.fechaFinal}
         }
         return query.list(params)
 
@@ -70,6 +76,26 @@ class NotaDeCargoController extends RestfulController<NotaDeCargo> {
 
     }
 
+    // @CompileDynamic()
+    def generarNotasDeCargoPorIntereses(NotasPorIntereses command) {
+        
+        if(command == null) {
+            notFound()
+            return
+        }
+        log.info('Generando notas {}', command)
+        def res = []
+        if(command.facturista) {
+            def nota = facturistaEstadoDeCuentaService.generarNotaDeCargo(command.facturista, command.fechaFinal, command.descripcion)
+            res << nota
+            respond res
+        } else {
+            res = facturistaEstadoDeCuentaService.generarNotasDeCargoPorIntereses(command.fechaFinal, command.descripcion)
+            respond res
+        }
+        
+    }
+
     /*
     def print(NotaDeCargo nota) {
         assert nota.cfdi, 'Nota sin timbrar: ' + nota.id
@@ -81,4 +107,19 @@ class NotaDeCargoController extends RestfulController<NotaDeCargo> {
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'NotaDeCredito.pdf')
     }
     */
+}
+
+class NotasPorIntereses  {
+    Date fechaInicial
+    Date fechaFinal
+    String descripcion
+    FacturistaDeEmbarque facturista
+
+    static constraints = {
+        facturista nullable: true
+    }
+
+    String toString() {
+        return "${descripcion} ${facturista?: 'TODOS LOS FACTURISTAS'}"
+    }
 }

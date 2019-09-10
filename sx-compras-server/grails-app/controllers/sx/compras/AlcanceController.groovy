@@ -28,39 +28,6 @@ class AlcancesController extends RestfulController<Alcance>{
 
     def list() {
         def query = Alcance.where{fecha == new Date()&& comentario == null}
-        /*
-        if(params.getBoolean('deLinea')) {
-            query = query.where { deLinea == true }
-        }
-        if(params.proveedor) {
-            def search = '%' + params.proveedor + '%'
-            query = query.where { nombre =~ search }
-        }
-        if(params.producto) {
-            def search = '%' + params.producto + '%'
-            query = query.where { clave =~ search || descripcion =~ search}
-        }
-        if(params.linea) {
-            def search = '%' + params.linea + '%'
-            query = query.where { linea =~ search }
-        }
-        if(params.marca) {
-            def search = '%' + params.marca + '%'
-            query = query.where { marca =~ search }
-        }
-        if(params.clase) {
-            def search = '%' + params.clase + '%'
-            query = query.where { clase =~ search }
-        }
-        if(params.getFloat('alcanceMenor')) {
-            float menor = params.getFloat('alcanceMenor')
-            query = query.where{alcance <= menor.toBigDecimal()}
-        }
-        if(params.getFloat('alcanceMayor')) {
-            float menor = params.getFloat('alcanceMayor')
-            query = query.where{alcance > menor.toBigDecimal()}
-        }
-        */
         respond query.list()
     }
 

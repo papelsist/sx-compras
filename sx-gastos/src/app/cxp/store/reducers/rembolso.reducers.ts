@@ -56,6 +56,7 @@ export function reducer(state = initialState, action: RembolsoActions): State {
       };
     }
 
+    case RembolsoActionTypes.CopiarRembolso:
     case RembolsoActionTypes.DeleteRembolso:
     case RembolsoActionTypes.SaveRembolso:
     case RembolsoActionTypes.LoadRembolsos: {
@@ -65,6 +66,7 @@ export function reducer(state = initialState, action: RembolsoActions): State {
       };
     }
 
+    case RembolsoActionTypes.CopiarRembolsoFail:
     case RembolsoActionTypes.DeleteRembolsoFail:
     case RembolsoActionTypes.SaveRembolsoFail:
     case RembolsoActionTypes.UpdateRembolsoFail:
@@ -113,6 +115,12 @@ export function reducer(state = initialState, action: RembolsoActions): State {
     case RembolsoActionTypes.DeleteRembolsoSuccess: {
       const rembolso = action.payload.rembolso;
       return adapter.removeOne(rembolso.id, {
+        ...state,
+        loading: false
+      });
+    }
+    case RembolsoActionTypes.CopiarRembolsoSuccess: {
+      return adapter.addOne(action.payload.rembolso, {
         ...state,
         loading: false
       });

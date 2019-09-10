@@ -67,6 +67,7 @@ class AuxiliaresController {
                 d.poliza.mes,
                 d.poliza.fecha,
                 d.cuenta.clave,
+                d.cuenta.descripcion,
                 d.concepto,
                 d.descripcion,
                 d.sucursal,
@@ -93,6 +94,7 @@ class AuxiliaresController {
                 d.poliza.mes,
                 d.poliza.fecha,
                 d.cuenta.clave,
+                d.cuenta.descripcion,
                 d.concepto,
                 d.descripcion,
                 d.sucursal,
@@ -145,6 +147,7 @@ class PolizaDetDTO {
     Integer mes
     Date fecha
     String clave
+    String ctaDescripcion
     String concepto
     String descripcion
     String sucursal
