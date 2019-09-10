@@ -52,6 +52,21 @@
           ></mat-datepicker-toggle>
           <mat-datepicker #myDatepicker></mat-datepicker>
         </mat-form-field>
+
+        <mat-form-field class="pad-left">
+          <input
+            matInput
+            [matDatepicker]="myDatepicker2"
+            formControlName="engrega"
+            placeholder="Engrega"
+          />
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="myDatepicker2"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #myDatepicker2></mat-datepicker>
+        </mat-form-field>
+
         <sx-moneda-field [parent]="form" class="pad-left"></sx-moneda-field>
         <sx-tipo-cambio-field
           [parent]="form"

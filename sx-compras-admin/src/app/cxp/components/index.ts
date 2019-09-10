@@ -43,6 +43,9 @@ import { ProveedorPeriodoFilterBtnComponent } from './proveedor-periodo-filter/p
 import { ProveedorPeriodoFilterLabelComponent } from './proveedor-periodo-filter/proveedor-periodo-filter-label.component';
 import { CfdisTable2Component } from './cfdis-table/cfdis-table2.component';
 import { FacturasTable2Component } from './facturas-table2/facturas-table2.component';
+import { NotasAnalisisTableComponent } from './notas-analisis-table/nota-analisis-table.component';
+import { AnalisisDevolucionTableComponent } from './analisis-devolucion-table/analisis-devolucion-table.component';
+import { SelectorDeDecsComponent } from './selector-de-decs/selector-de-decs.component';
 
 export const components: any[] = [
   CfdisTableComponent,
@@ -86,7 +89,11 @@ export const components: any[] = [
   RequisicionesFilterComponent,
   RequisicionesFilterLabelComponent,
   RequisicionesFilterBtnComponent,
-  FacturasTable2Component
+  FacturasTable2Component,
+
+  NotasAnalisisTableComponent,
+  AnalisisDevolucionTableComponent,
+  SelectorDeDecsComponent
 ];
 
 export const entryComponents = [
@@ -95,7 +102,8 @@ export const entryComponents = [
   ReportComsSinAnalizarComponent,
   AplicacionFormComponent,
   ProveedorPeriodoFilterDialogComponent,
-  RequisicionesFilterComponent
+  RequisicionesFilterComponent,
+  SelectorDeDecsComponent,
 ];
 
 export * from './cfdis-table/cfdis-table.component';
@@ -150,3 +158,7 @@ export * from './proveedor-periodo-filter/proveedor-periodo-filter-btn.component
 export * from './proveedor-periodo-filter/proveedor-periodo-filter-label.component';
 
 export * from './facturas-table2/facturas-table2.component';
+
+export * from './notas-analisis-table/nota-analisis-table.component';
+export * from './analisis-devolucion-table/analisis-devolucion-table.component';
+export * from './selector-de-decs/selector-de-decs.component';

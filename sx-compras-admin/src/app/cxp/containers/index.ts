@@ -12,6 +12,8 @@ import { RecibosComponent } from './recibos/recibos.component';
 import { ReciboComponent } from './recibo/recibo.component';
 import { PagosComponent } from './pagos/pagos.component';
 import { PagoComponent } from './pago/pago.component';
+import { AnalisisDeNotaComponent } from './analisis-de-nota/analisis-de-nota.component';
+import { AnalisisDeNotasComponent } from './analisis-de-notas/analisis-de-notas.component';
 
 export const containers: any[] = [
   CxpPageComponent,
@@ -27,7 +29,9 @@ export const containers: any[] = [
   RecibosComponent,
   ReciboComponent,
   PagosComponent,
-  PagoComponent
+  PagoComponent,
+  AnalisisDeNotasComponent,
+  AnalisisDeNotaComponent
 ];
 
 export * from './cxp-page/cxp-page.component';
@@ -44,3 +48,6 @@ export * from './recibos/recibos.component';
 export * from './recibo/recibo.component';
 export * from './pagos/pagos.component';
 export * from './pago/pago.component';
+
+export * from './analisis-de-notas/analisis-de-notas.component';
+export * from './analisis-de-nota/analisis-de-nota.component';

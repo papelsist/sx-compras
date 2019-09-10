@@ -9,4 +9,5 @@ json g.render(notaDeCreditoCxP, [excludes: ['conceptos', 'dateCreated', 'lastUpd
 	if(notaDeCreditoCxP.comprobanteFiscal) {
 		uuid notaDeCreditoCxP.comprobanteFiscal.uuid
 	}
+	diferencia notaDeCreditoCxP.subTotal - notaDeCreditoCxP.analizado 
 }

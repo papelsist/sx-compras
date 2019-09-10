@@ -49,6 +49,12 @@ export class CxpPageComponent implements OnInit {
       icon: 'description'
     },
     {
+      route: 'analisisDeNotas',
+      title: 'DEC Analisis',
+      description: 'Analisis de notas de crédito para DECS',
+      icon: 'rate_review'
+    },
+    {
       route: 'recibos',
       title: 'Recibos ',
       description: 'Recibos electrónicos de pago',

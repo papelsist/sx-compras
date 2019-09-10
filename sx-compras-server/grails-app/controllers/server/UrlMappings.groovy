@@ -237,7 +237,10 @@ class UrlMappings {
         "/api/cxp/contrarecibos/print/$id"(controller: 'contrarecibo', action: 'print', method: 'GET')
         "/api/cxp/contrarecibos/pendientes/$proveedorId"(controller: 'contrarecibo', action: 'pendientes', method: 'GET')
 
-        "/api/cxp/notas"(resources: 'notaDeCreditoCxP', excludes:['create', 'edit','patch'])
+        "/api/cxp/notas"(resources: 'notaDeCreditoCxP', excludes:['create', 'edit','patch']){
+            "/analisis"(resources: 'analisisDeDevolucion', excludes:['create', 'edit'])
+        }
+        "/api/cxp/notas/devolucionesPendientes"(controller: 'analisisDeDevolucion', action: 'devolucionesPendientes')
         "/api/cxp/notas/aplicar/$id"(controller:'notaDeCreditoCxP', action: 'aplicar', method: 'PUT')
         "/api/cxp/notas/print/$id"(controller: 'notaDeCreditoCxP', action: 'print', method: 'GET')
 
@@ -425,6 +428,8 @@ class UrlMappings {
         "/api/gastoDet/prorratear/$id"(controller: 'gastoDet', action: 'prorratear', method: 'PUT')
 
         "/api/productoServicio"(resources: 'productoServicio', excludes:['create', 'edit','patch'])
+
+        "/api/analisisDecs"(resources: 'analisisDeDevolucion', excludes:['create', 'edit','patch'])
 
         // Audit
         "/api/audit"(resources: 'audit', excludes:['create', 'edit','patch'])

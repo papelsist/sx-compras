@@ -1,0 +1,36 @@
+<h4 mat-dialog-title>DEC'S Pendientes de analisis</h4>
+<div layout>
+  <input
+    (keyup)="gridApi.setQuickFilter(box.value)"
+    placeholder="Buscar"
+    flex
+    #box
+  />
+</div>
+<div class="grid-panel">
+  <ag-grid-angular
+    #grid
+    class="ag-theme-balham"
+    style="width: 100%; height: 100%;"
+    [rowData]="decs"
+    [gridOptions]="gridOptions"
+    [defaultColDef]="defaultColDef"
+    [floatingFilter]="false"
+    [localeText]="localeText"
+    rowSelection="multiple"
+    [rowMultiSelectWithClick]="true"
+    (gridReady)="onGridReady($event)"
+  >
+  </ag-grid-angular>
+</div>
+<mat-dialog-content>
+  <button
+    mat-button
+    color="accent"
+    [disabled]="selected.length === 0"
+    (click)="doSubmit()"
+  >
+    SELECCIONAR
+  </button>
+  <button mat-button (click)="close()">CANCELAR</button>
+</mat-dialog-content>
