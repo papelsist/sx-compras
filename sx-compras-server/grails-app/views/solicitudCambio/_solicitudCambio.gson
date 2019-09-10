@@ -4,7 +4,9 @@ model {
 	SolicitudCambio solicitudCambio
 }
 
-json g.render(solicitudCambio, [excludes: ['usuario','sucursal'], resolveTemplate: false]){  
+json g.render(solicitudCambio, [excludes: ['usuario','sucursal','autorizo','atendio'], resolveTemplate: false]){  
     usuario solicitudCambio.usuario?.username
     sucursal solicitudCambio.sucursal?.nombre
+    autorizo solicitudCambio.autorizo?.username
+    atendio solicitudCambio.atendio?.username
 }

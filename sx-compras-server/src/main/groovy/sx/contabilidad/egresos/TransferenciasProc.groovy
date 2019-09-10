@@ -26,6 +26,12 @@ class TransferenciasProc implements  ProcesadorMultipleDePolizas {
     @Qualifier('pagoNominaTask')
     PagoNominaTask pagoNominaTask
 
+    @Autowired
+    @Qualifier('pagoGastosReqTask')
+    PagoGastosReqTask pagoGastosReqTask
+
+    
+
     @Override
     Poliza recalcular(Poliza poliza) {
         poliza.partidas.clear()
@@ -36,6 +42,9 @@ class TransferenciasProc implements  ProcesadorMultipleDePolizas {
 
             case 'PAGO_NOMINA':
                 pagoNominaTask.generarAsientos(poliza, [:])
+                break
+            case 'GASTO' :
+                pagoGastosReqTask.generarAsientos(poliza, [:])
                 break
             case 'REMBOLSO':
                 pagoGastosTask.generarAsientos(poliza,[:])
@@ -80,4 +89,6 @@ class TransferenciasProc implements  ProcesadorMultipleDePolizas {
         }
         return polizas
     }
+
+    
 }

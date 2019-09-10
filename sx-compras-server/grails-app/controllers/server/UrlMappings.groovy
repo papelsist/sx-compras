@@ -423,8 +423,9 @@ class UrlMappings {
 
         "/logistica/soporte"(controller: "solicitudCambio", action: 'list', method: 'GET')
         "/logistica/soporte/solicitud"(controller: "solicitudCambio", action: 'solicitud', method: 'GET')
+        "/logistica/soporte/atencion"(controller: "solicitudCambio", action: 'atencionList', method: 'GET')
         "/logistica/soporte/autorizacion"(controller: "solicitudCambio", action: 'autorizacionList', method: 'GET')
-        "/logistica/soporte/salvar"(controller: "solicitudCambio", action: 'salvar', method: 'POST')
+        "/logistica/soporte/actualizar"(controller: "solicitudCambio", action: 'actualizar', method: 'POST')
 
         // Audit
         "/api/audit"(resources: 'audit', excludes:['create', 'edit','patch'])
