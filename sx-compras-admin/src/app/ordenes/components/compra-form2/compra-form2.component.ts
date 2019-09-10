@@ -70,6 +70,7 @@ export class CompraForm2Component implements OnInit, OnChanges {
   buildForm() {
     this.form = this.fb.group({
       fecha: [new Date(), [Validators.required]],
+      entrega: [null],
       proveedor: [null, [Validators.required]],
       sucursal: [null],
       moneda: ['MXN', [Validators.required]],
@@ -85,6 +86,10 @@ export class CompraForm2Component implements OnInit, OnChanges {
       if (fecha instanceof Date) {
         fecha = fecha.toISOString();
       }
+      let entrega = this.form.get('entrega').value;
+      if (entrega instanceof Date) {
+        entrega = fecha.toISOString();
+      }
       const proveedor = { id: this.proveedor.id };
       const sucursal = { id: this.form.get('sucursal').value.id };
       const res = {
@@ -93,6 +98,7 @@ export class CompraForm2Component implements OnInit, OnChanges {
         proveedor,
         sucursal,
         fecha,
+        entrega,
         ...this.prepararPartidas()
       };
       this.save.emit(res);

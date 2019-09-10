@@ -70,6 +70,10 @@ class NotaDeCreditoCxP {
 
     String tipo = 'COMPRAS'
 
+    BigDecimal analizado = 0.0
+
+    Date cierreDeAnalisis
+
 
 
     static constraints = {
@@ -91,6 +95,7 @@ class NotaDeCreditoCxP {
         diferencia nullable: true
         diferenciaFecha nullable: true
         tipo nullable: true
+        cierreDeAnalisis nullable: true
     }
 
     static mapping = {
@@ -101,6 +106,8 @@ class NotaDeCreditoCxP {
         aplicado formula:'(select COALESCE(sum(x.importe),0) from aplicacion_de_pago x where x.nota_id=id)'
         disponibleReal formula:'total - (select COALESCE(sum(x.importe),0) from aplicacion_de_pago x where x.nota_id=id) - diferencia'
         diferenciaFecha type: 'date'
+        analizado formula:'(select COALESCE(sum(x.importe),0) from analisis_de_devolucion x where x.nota_id=id)'
+        cierreDeAnalisis type: 'date'
     }
 
     static transients = ['disponible', 'aplicaciones']

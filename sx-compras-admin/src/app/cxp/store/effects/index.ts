@@ -7,6 +7,7 @@ import { ContrarecibosEffects } from './contrarecibos.effects';
 import { PagosEffects } from './pagos.effects';
 import { AplicacionesEffects } from './aplicaciones.effects';
 import { CfdiEffects } from './cfdi.effects';
+import { AnalisisDeNotaEffects } from './analisis-de-nota.effects';
 
 export const effects: any[] = [
   CfdiEffects,
@@ -17,7 +18,8 @@ export const effects: any[] = [
   FacturasEffects,
   ContrarecibosEffects,
   PagosEffects,
-  AplicacionesEffects
+  AplicacionesEffects,
+  AnalisisDeNotaEffects
 ];
 
 export * from './analisis.efects';
@@ -28,3 +30,4 @@ export * from './facturas.effects';
 export * from './contrarecibos.effects';
 export * from './pagos.effects';
 export * from './aplicaciones.effects';
+export * from './analisis-de-nota.effects';

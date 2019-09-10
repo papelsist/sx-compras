@@ -30,4 +30,6 @@ export interface NotaDeCreditoCxP {
   comprobanteFiscal: Partial<ComprobanteFiscal>;
   aplicaciones: Partial<AplicacionDePago>[];
   selected?: boolean;
+  analizado?: number;
+  cierreDeAnalisis?: string;
 }

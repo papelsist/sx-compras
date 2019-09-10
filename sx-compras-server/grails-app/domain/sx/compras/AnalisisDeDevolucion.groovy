@@ -6,7 +6,7 @@ import groovy.transform.ToString
 import sx.cxp.NotaDeCreditoCxP
 
 @ToString(includes = 'folio, serie, clave, cantidad', includeNames=true,includePackage=false)
-@EqualsAndHashCode(includeFields = true,includes = 'id, clave, cantidad, dec')
+@EqualsAndHashCode(includeFields = true,includes = 'id, decFolio, clave, cantidad, dec')
 class AnalisisDeDevolucion {
 
 	NotaDeCreditoCxP nota
@@ -15,8 +15,14 @@ class AnalisisDeDevolucion {
     String serie
 
 	DevolucionDeCompraDet dec
+	String sucursal
+    Long decFolio
+    Date decFecha
+    String referencia
+    Date fechaReferencia
 	String clave
 	String descripcion
+    String unidad
     BigDecimal cantidad = 0.0
     BigDecimal costo = 0.0
     BigDecimal importe = 0.0
@@ -30,6 +36,8 @@ class AnalisisDeDevolucion {
     static constraints = {
     	folio nullable: true
     	serie nullable: true
+        referencia nullable: true
+        fechaReferencia nullable: true
     	createUser nullable: true
     	updateUser nullable: true
     }

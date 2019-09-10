@@ -48,7 +48,7 @@ abstract class CompraService {
             it.sucursal?: compra.sucursal
             actualizarPartida(it)
         }
-        if(compra.proveedor.plazo)
+        if(compra.proveedor.plazo && compra.entrega == null)
             compra.entrega = compra.fecha + compra.proveedor.plazo
         compra.importeNeto = compra.partidas.sum 0.0, { it.importeNeto }
         compra.importeBruto = compra.partidas.sum 0.0, { it.importeBruto }

@@ -2,10 +2,15 @@ package sx.compras
 
 import grails.gorm.transactions.Transactional
 
-@Transactional
-class AnalisisDeDevolucionService {
+import sx.core.LogUser
 
-    def serviceMethod() {
+@Transactional
+class AnalisisDeDevolucionService implements LogUser {
+
+    AnalisisDeDevolucion saveAnalisis(AnalisisDeDevolucion analisis) {
+    	logEntity(analisis)
+    	analisis.save failOnError: true, flush: true
+    	return analisis
 
     }
 }
