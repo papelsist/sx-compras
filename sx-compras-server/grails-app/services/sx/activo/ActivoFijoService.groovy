@@ -25,7 +25,20 @@ class ActivoFijoService implements LogUser {
     }
 
     ActivoFijo update(ActivoFijo activo) {
-    	// log.debug("Actualizando activo de material {}", activo)
+    	log.debug("Actualizando activo de material {}", activo)
+        if (activo.baja) {
+            if(activo.baja.id == null) {
+                log.info('Baja de activo: {}', activo.baja)
+                def baja = activo.baja
+                baja.with {
+                    depreciacionAcumulada = activo.depreciacionAcumulada
+                    remanente = activo.remanente
+                }
+                logEntity(baja)
+
+            }
+            activo.estado = 'VENDIDO'
+        }
         logEntity(activo)
         activo.save failOnError: true, flush: true
         return activo

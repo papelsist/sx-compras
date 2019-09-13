@@ -19,6 +19,9 @@ class VentaDeActivo extends BajaDeActivo{
 	BigDecimal importeDeVenta
 
     static constraints = {
+    	facturaSerie nullable: true
+    	facturaFolio nullable: true
+    	fechaFactura nullable: true
     }
 
     static mapping = {

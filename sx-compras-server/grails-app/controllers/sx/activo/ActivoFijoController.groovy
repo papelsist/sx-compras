@@ -34,7 +34,7 @@ class ActivoFijoController extends RestfulController<ActivoFijo> {
     protected List<ActivoFijo> listAllResources(Map params) {
         log.info('List {}', params)
         def query = ActivoFijo.where{}
-        return  query.list()
+        return  query.list([sort: 'adquisicion', order: 'desc'])
     }
 
     @Override
@@ -47,6 +47,11 @@ class ActivoFijoController extends RestfulController<ActivoFijo> {
     @Override
     protected ActivoFijo saveResource(ActivoFijo resource) {
         return activoFijoService.save(resource)
+    }
+
+    @Override
+    protected ActivoFijo updateResource(ActivoFijo resource) {
+        return activoFijoService.update(resource)
     }
 
     @CompileDynamic

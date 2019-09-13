@@ -14,9 +14,9 @@ class BajaDeActivo {
 
 	Date fecha
 
-	BigDecimal depreciacionAcumulada
+	BigDecimal depreciacionAcumulada = 0.0
 
-	BigDecimal remanente
+	BigDecimal remanente = 0.0
 
 	String comentario
 

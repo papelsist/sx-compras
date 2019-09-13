@@ -23,9 +23,9 @@ class ActivoDepreciacionService implements LogUser {
         List activos = ActivoFijo
             .findAll("""
                 from ActivoFijo a 
-                where a.remanente > 0 
-                  and a.tasaDepreciacion > 0
-                  and a.estado != 'BAJA'
+                where a.tasaDepreciacion > 0
+                  and a.estado = 'VIGENTE'
+                  order by a.id desc
                 """)
         List updated = []
         
@@ -50,7 +50,7 @@ class ActivoDepreciacionService implements LogUser {
         depreciacion.corte = corte
 
         def acumulada = ActivoDepreciacion.where{activoFijo == af}.list().sum 0.0, {it.depreciacion}
-        // def inicial = 0.0 af.depreciacionInicial
+        
         af.depreciacionAcumulada = acumulada
         
         depreciacion.tasaDepreciacion = af.tasaDepreciacion
@@ -79,13 +79,13 @@ class ActivoDepreciacionService implements LogUser {
         List activos = ActivoFijo
             .findAll("""
                 from ActivoFijo a 
-                where a.remanente > 0 
-                  and a.tasaDepreciacion > 0
-                  and a.estado != 'BAJA'
+                where a.tasaDepreciacion > 0
+                  and a.estado = 'VIGENTE'
+                  order by a.adquisicion desc
                 """)
-            activos.each { af ->
-                generarDepreciacionTotal(af, corte)
-            }
+        activos.each { af ->
+            generarDepreciacionTotal(af, corte)
+        }
     }
 
     @NotTransactional
