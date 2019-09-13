@@ -417,11 +417,16 @@ class UrlMappings {
         // SolicitudDeDepositos
 
         // Activo Fijo
+        "/api/inpc"(resources: 'inpc', excludes: ['create', 'edit'])
         "/api/activoFijo"(resources: 'activoFijo', excludes:['create', 'edit']){
             "/depreciaciones"(resources: 'activoDepreciacion', excludes:['create', 'edit'])
             "/fiscales"(resources: 'activoDepreciacionFiscal', excludes:['create', 'edit'])
         }
+        "/api/activoFijo/depreciacionBatch/$ejercicio/$mes"(controller: 'activoDepreciacion', action: 'depreciacionBatch', method: 'GET')
+        "/api/activoFijo/generarDepreciacionFiscal/$ejercicio"(controller: 'activoFijo', action: 'generarDepreciacionFiscal', method: 'GET')
+        "/api/activoFijo/asignarInpcMedioMesUso"(controller: 'activoFijo', action: 'asignarInpcMedioMesUso', method: 'PUT')
         "/api/activoFijo/generarPendientes"(controller: 'activoFijo', action: 'generarPendientes')
+        "/api/ventaDeActivo"(resources: 'ventaDeActivo', excludes: ['create','edit'])
 
         // Gastos
         "/api/gastoDet"(resources: 'gastoDet', excludes:['create', 'edit','patch'])

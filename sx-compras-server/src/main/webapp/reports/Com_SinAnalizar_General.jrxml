@@ -83,7 +83,7 @@ FROM DUAL]]></queryString>
 ,I.CANTIDAD-IFNULL((SELECT SUM(A.CANTIDAD) FROM analisis_de_factura_det A WHERE A.com_id=I.ID),0) AS X_ANALIZAR
 ,((I.CANTIDAD-IFNULL((SELECT SUM(A.CANTIDAD) FROM analisis_de_factura_det A WHERE A.com_id=I.ID),0))*Z.costo_promedio)/(case when X.unidad='MIL' then 1000 else 1 end) AS COSTO_X_ANALIZAR
 FROM recepcion_de_compra_det I JOIN recepcion_de_compra R ON(I.RECEPCION_ID=R.ID) JOIN proveedor P ON(P.ID=R.PROVEEDOR_ID) 
-JOIN sucursal S ON (S.ID=R.SUCURSAL_ID) JOIN producto X ON(I.producto_id=X.id) JOIN inventario Z ON(I.inventario_id=Z.ID)
+JOIN sucursal S ON (S.ID=R.SUCURSAL_ID) JOIN producto X ON(I.producto_id=X.id) JOIN inventario Z ON(I.inventariox=Z.ID)
 WHERE R.FECHA>'2017/12/28' AND DATE(R.FECHA) BETWEEN $P{FECHA_INI} AND $P{FECHA_FIN}  AND P.ID LIKE  $P{PROVEEDOR}
  AND X.ID LIKE $P{ARTICULOS} AND S.ID LIKE $P{SUCURSAL}  AND R.CANCELADO IS NULL
  AND  (ROUND(I.CANTIDAD)-ROUND(IFNULL((SELECT SUM(A.CANTIDAD) FROM analisis_de_factura_det A WHERE A.com_id=I.ID),0),0))<>0

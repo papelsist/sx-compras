@@ -24,6 +24,8 @@ class ActivoFijoController extends RestfulController<ActivoFijo> {
 
     ActivoFijoService activoFijoService
 
+    ActivoDepreciacionFiscalService activoDepreciacionFiscalService
+
     ActivoFijoController() {
         super(ActivoFijo)
     }
@@ -52,6 +54,20 @@ class ActivoFijoController extends RestfulController<ActivoFijo> {
         respond activoFijoService.generarPendientes()
     }
 
+    def asignarInpcMedioMesUso() {
+        def command = new AsignacionInpc()
+        bindData command, getObjectToBind()
+        respond activoFijoService.asignarInpcMedioMesUso(command.ids, command.inpc)
+    }
+
+    @CompileDynamic
+    def generarDepreciacionFiscal(Integer ejercicio) {
+        def res  = activoDepreciacionFiscalService.generarDepreciacion(ejercicio)
+        def data =  res.collect {it.activoFijo}
+        data = data*.refresh()
+        respond data
+    }
+
     def handleException(Exception e) {
         String message = ExceptionUtils.getRootCauseMessage(e)
         log.error(message, ExceptionUtils.getRootCause(e))
@@ -59,4 +75,9 @@ class ActivoFijoController extends RestfulController<ActivoFijo> {
     }
 
 
+}
+
+class AsignacionInpc {
+    List ids
+    BigDecimal inpc
 }

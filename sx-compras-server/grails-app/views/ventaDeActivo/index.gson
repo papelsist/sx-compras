@@ -1,0 +1,8 @@
+import sx.activo.VentaDeActivo
+
+model {
+	Iterable<VentaDeActivo> ventaDeActivoList
+}
+
+json tmpl.ventaDeActivo(ventaDeActivoList ?: [])
+

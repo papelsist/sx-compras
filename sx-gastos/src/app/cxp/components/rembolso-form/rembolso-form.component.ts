@@ -126,8 +126,7 @@ export class RembolsoFormComponent implements OnInit, OnChanges, OnDestroy {
           [Validators.required, Validators.min(1)]
         ],
         total: [
-          { value: 0.0, disabled: true },
-          [Validators.required, Validators.min(1)]
+          { value: 0.0, disabled: true }
         ],
         apagar: [0.0, Validators.required],
         comentario: [],

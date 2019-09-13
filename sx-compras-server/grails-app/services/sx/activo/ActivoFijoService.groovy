@@ -32,6 +32,17 @@ class ActivoFijoService implements LogUser {
 
     }
 
+    def asignarInpcMedioMesUso(List ids, BigDecimal inpc) {
+        def res = []
+        ids.each { id ->
+            def af = ActivoFijo.get(id)
+            af.inpcPrimeraMitad = inpc
+            af.save(flush: true)
+            res << af
+        }
+        return res
+    }
+
     def generarPendientes() {
         log.info('Generando activos fijos pendientes')
         def res = []
@@ -63,6 +74,10 @@ class ActivoFijoService implements LogUser {
                 proveedor = item.cxp.proveedor
                 sucursalOrigen = item.sucursal.nombre
                 sucursalActual = item.sucursal.nombre
+            }
+            def inpc = Inpc.where{ejercicio == ej && mes == mm}.find()
+            if(inpc) {
+                af.inpcDelMesAdquisicion = inpc.tasa
             }
             af.save failOnError: true, flush: true
             res << af

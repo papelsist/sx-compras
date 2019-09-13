@@ -39,6 +39,16 @@ class ActivoDepreciacionController extends RestfulController<ActivoDepreciacion>
     @Override
     def save() {
         ActivoFijo af = ActivoFijo.get(params.activoFijoId)
+        ActivoDepreciacion resource = new ActivoDepreciacion()
+        bindData resource, getObjectToBind()
+        resource.ejercicio = Periodo.obtenerYear(resource.corte)
+        resource.mes = Periodo.obtenerMes(resource.corte) + 1
+        // log.info('Generando depreciacion para activo: {} {}', af, resource)
+        respond activoDepreciacionService.generarDepreciacionUnitaria(af, resource.ejercicio, resource.mes)
+    }
+    
+    def saveOld() {
+        ActivoFijo af = ActivoFijo.get(params.activoFijoId)
         log.info('Generando depreciacion para activo: {}', af)
         ActivoDepreciacion resource = new ActivoDepreciacion(activoFijo: af)
         bindData resource, getObjectToBind()
@@ -49,8 +59,8 @@ class ActivoDepreciacionController extends RestfulController<ActivoDepreciacion>
     protected ActivoDepreciacion createResource() {
         ActivoFijo af = ActivoFijo.get(params.activoFijoId)
         ActivoDepreciacion resource = new ActivoDepreciacion()
-        resource.ejercicio = Periodo.currentYear()
-        resource.mes = Periodo.currentMes()
+        resource.ejercicio = Periodo.obtenerYear(af.corte)
+        resource.mes = Periodo.obtenerMes(af.corte) + 1
         resource.activoFijo = af
         resource.tasaDepreciacion = af.tasaDepreciacion
         resource.depreciacionAcumulada = af.depreciacionAcumulada
@@ -62,9 +72,13 @@ class ActivoDepreciacionController extends RestfulController<ActivoDepreciacion>
         return activoDepreciacionService.save(resource)
     }
 
+    def depreciacionBatch(Integer ejercicio, Integer mes) {
+        respond activoDepreciacionService.generarDepreciacionBatch(ejercicio, mes)
+    }
+
     def handleException(Exception e) {
         String message = ExceptionUtils.getRootCauseMessage(e)
-        log.error(message, ExceptionUtils.getRootCause(e))
+        log.error(message, e)
         respond([message: message], status: 500)
     }
 }
