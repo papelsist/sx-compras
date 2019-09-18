@@ -75,6 +75,7 @@ class ActivoFijoService implements LogUser {
                 adquisicion = item.cxp.fecha
                 descripcion = item.descripcion
                 montoOriginal = item.importe
+                montoOriginalFiscal = item.importe
                 serie = item.serie
                 modelo = item.modelo
                 facturaSerie = item.cxp.serie

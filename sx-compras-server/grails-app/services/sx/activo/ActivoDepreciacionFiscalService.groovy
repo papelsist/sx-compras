@@ -14,10 +14,90 @@ import sx.utils.Periodo
 @Slf4j
 class ActivoDepreciacionFiscalService implements LogUser{
 
+    @NotTransactional
+    def generarDepreciacion(Integer ejercicio) {
+        def activos = ActivoFijo.where{}.list()
+        def res = []
+        activos.each { a ->
+            generarDepreciacionUnitaria(a, ejercicio)
+            a.refresh()
+            res << a
+        }
+        return res
+    }
 
-	def generarDepreciacionUnitaria(ActivoFijo af, Integer ejercicio) {
+
+    def generarDepreciacionUnitaria(ActivoFijo af, Integer ejercicio) {
+        def moi = af.montoOriginalFiscal
+        def mesAdquisicion = Periodo.obtenerMes(af.adquisicion) + 1
+        def ejercicioAdquisicion = Periodo.obtenerYear(af.adquisicion)
+        def corteEjericioAnterior = Periodo.getPeriodoAnual( ejercicio - 1 ).fechaFinal
+        def corte = Periodo.getPeriodoAnual( ejercicio  ).fechaFinal
+        log.info('Depreciacion fiscal Activo: {}', af.id)
+        log.info('Adquisicion: {} ({}-{}) corte eje anterior: {}', 
+            af.adquisicion, mesAdquisicion, ejercicioAdquisicion, corteEjericioAnterior)
+        
+        
+        def depreciacionEjercicioAnterior = calcularDepreciacionAcumulada(af, corteEjericioAnterior)
+        def remanenteAlInicioDelEjercicio = moi - depreciacionEjercicioAnterior
+        def depreciacionAcumulada = calcularDepreciacionAcumulada(af, corte)
+        def depreciacionDelEjercicio = depreciacionAcumulada - depreciacionEjercicioAnterior
+        def remanente = moi - depreciacionAcumulada
+        log.info('Dep ejercicio anterior: {} Remanente: {}', depreciacionEjercicioAnterior, remanenteAlInicioDelEjercicio)
+        
+        if( remanenteAlInicioDelEjercicio <= 0) {
+            log.info('Activo sin dpereciacion fiscal para el {}', ejercicio)
+            return null;
+        }
+        log.info('Dep ejercicio: {}  Acumulada: {} Remanente: {}', depreciacionDelEjercicio, depreciacionAcumulada, remanente)
+        
+        def inpcAdquisicion = Inpc.where{ejercicio == ejercicioAdquisicion && mes ==  mesAdquisicion}.find()
+        if(!inpcAdquisicion) {
+            throw new RuntimeException("No existe INPC de adquisicion Adquisicion para ${ejercicioAdquisicion} / ${mesDeAdquisicion}")
+        }
+        
+        def inpcMedioUso = getInpcMitadDeUso(af.adquisicion, ejercicio)
+        if(!inpcMedioUso) {
+            throw new RuntimeException("Imposible localizar INPC mitad de uso para la adquisicion: ${af.adquisicion}")    
+        } else {
+            af.inpcPrimeraMitad = inpcMedioUso.tasa
+            af.save flush: true
+        }
+        def factor = MonedaUtils.round( (inpcMedioUso.tasa / inpcAdquisicion.tasa), 4)
+        def depreciacionFiscal = depreciacionDelEjercicio * factor
+        log.info('INPC Adquisicion: {} INPC Medio uso: {} Factor: {} Dep Fiscal: {}', 
+            inpcAdquisicion.tasa, inpcMedioUso.tasa, factor, depreciacionFiscal)
+
+        def depreciacion = ActivoDepreciacionFiscal.findOrCreateWhere(activoFijo: af, ejercicio: ejercicio)
+        
+        depreciacion.cuenta = af.cuentaContable.clave
+        depreciacion.descripcionActivo = af.descripcion
+        depreciacion.descripcion = af.cuentaContable.descripcion
+        depreciacion.adquisicion = af.adquisicion
+        depreciacion.montoOriginal = af.montoOriginal
+        depreciacion.montoOriginalFiscal = af.montoOriginalFiscal
+        depreciacion.tasa = af.tasaDepreciacion
+        depreciacion.inpcPrimeraMitad = inpcMedioUso.tasa
+        depreciacion.inpcPrimeraMitadDesc = inpcMedioUso.toString()
+        depreciacion.inpcDelMesAdquisicion = inpcAdquisicion.tasa
+        depreciacion.factorDeActualizacion = factor
+        depreciacion.depreciacionEjercicioAnterior = depreciacionEjercicioAnterior
+        depreciacion.depreciacionDelEjercicio = depreciacionDelEjercicio
+        depreciacion.depreciacionAcumulada = depreciacionAcumulada
+        depreciacion.remanente = remanente
+        depreciacion.depreciacionFiscal = MonedaUtils.round(depreciacionFiscal, 2)
+
+        depreciacion.save failOnError: true, flush: true
+        log.info('Deprecacion fiscal generada: {}', depreciacion)
+        return depreciacion
+        
+    }
+
+	def generarDepreciacionUnitariaOldDelete(ActivoFijo af, Integer ejercicio) {
+        
 		def mesAdquisicion = Periodo.obtenerMes(af.adquisicion) + 1
         def ejercicioAdquisicion = Periodo.obtenerYear(af.adquisicion)
+
         if(ejercicioAdquisicion > ejercicio)
         	return null
 
@@ -26,37 +106,62 @@ class ActivoDepreciacionFiscalService implements LogUser{
         def acumuladaEjercicioAnterior = ActivoDepreciacion.findAll("""
         	select sum(depreciacion) from ActivoDepreciacion d
         	where d.activoFijo.id = ?
-        	  and year(d.corte) <= ?
+        	  and d.ejercicio <= ?
         	""", [af.id, ejercicioAnterior])[0]?: 0.0
 
         def acumuladaEjercicio = ActivoDepreciacion.findAll("""
         	select sum(depreciacion) from ActivoDepreciacion d
         	where d.activoFijo.id = ?
-        	  and year(d.corte) = ?
+        	  and d.ejercicio = ?
         	""", [af.id, ejercicio])[0]?: 0.0
         if(acumuladaEjercicio <= 0.0) 
         	return null
 
         def acumulada = acumuladaEjercicioAnterior + acumuladaEjercicio
+        def remanente = af.montoOriginalFiscal - acumulada
+        if(remanente < 0) {
+            log.info('Activo fiscalmente ya depreciado')
+            return null
+        }
 
-        def inpcAdquisicion = af.inpcDelMesAdquisicion
-        
-        if(!inpcAdquisicion)
-        	throw new RuntimeException("Activo fijo  ID: ${id} sin INPC de adquisicion ", af.id)
+        def ina = Inpc.where{ejercicio == ejercicioAdquisicion && mes ==  mesAdquisicion}.find()
+        if(!ina) {
+            throw new RuntimeException("No existe INPC de adquisicion Adquisicion para ${ejercicioAdquisicion} / ${mesDeAdquisicion}")
+        }
+
+        af.inpcDelMesAdquisicion = ina.tasa
+        af.save flush: true
+        def inpcAdquisicion = ina.tasa
 
         def inpcMedioUso = getInpcMitadDeUso(af.adquisicion, ejercicio)
-        if(!inpcMedioUso) 
-        	throw new RuntimeException("Imposible localizar INPC mitad de uso para la adquisicion: ${af.adquisicion}")
+        if(!inpcMedioUso) {
+            throw new RuntimeException("Imposible localizar INPC mitad de uso para la adquisicion: ${af.adquisicion}")    
+        } else {
+            af.inpcPrimeraMitad = inpcMedioUso.tasa
+            af.save flush: true
+        }
+        
 
         def factor = inpcMedioUso.tasa / inpcAdquisicion
-        def res = acumulada * factor
+        def res = acumuladaEjercicio * factor
         def depreciacion = ActivoDepreciacionFiscal.findOrCreateWhere(activoFijo: af, ejercicio: ejercicio)
+        
         depreciacion.with {
+            cuenta = af.cuentaContable.clave
+            descripcionActivo = af.descripcion
+            descripcion = af.cuentaContable.descripcion
+            adquisicion = af.adquisicion
+            montoOriginal = af.montoOriginal
+            montoOriginalFiscal = af.montoOriginalFiscal
         	inpcPrimeraMitad = inpcMedioUso.tasa
 			inpcDelMesAdquisicion = inpcAdquisicion
 			factorDeActualizacion = factor
+            depreciacionEjercicioAnterior = acumuladaEjercicioAnterior
+            depreciacionDelEjercicio = acumuladaEjercicio
 			depreciacionAcumulada = acumulada
 			depreciacionFiscal = MonedaUtils.round(res, 2)
+            remanente = remanente
+
         }
         depreciacion.save failOnError: true, flush: true
         log.info('Deprecacion fiscal generada: {}', depreciacion)
@@ -105,4 +210,32 @@ class ActivoDepreciacionFiscalService implements LogUser{
 			}
 		}
 	}
+
+    /**
+    * Metodo dinamico para calcular eficiantemente la depreciacion acumulada a la fecha de
+    * corte indicada.
+    */
+    def calcularDepreciacionAcumulada(ActivoFijo af, Date corte) {
+        final BigDecimal moi = af.montoOriginalFiscal
+        final tf = af.tasaDepreciacion
+        final anual = MonedaUtils.round( (moi * tf), 2)
+        final mensual = MonedaUtils.round( (anual / 12), 2)
+        BigDecimal acumulada = 0.0
+        Periodo periodo = new Periodo(af.adquisicion, corte)
+        List periodos = Periodo.periodosMensuales(periodo)
+        for(int i = 1; i < periodos.size(); i++) {
+            def p = periodos[i]
+            def e = Periodo.obtenerYear(p.fechaFinal)
+            def m = Periodo.obtenerMes(p.fechaFinal) + 1
+            def remanente = moi - acumulada
+            if(remanente < mensual) {
+                mensual = remanente
+            }
+            acumulada += mensual
+            def saldo = moi - acumulada
+            // log.info('Periodo: {} {} MOI: {} Dep: {} Acu: {} Remanente: {}', e, m, moi, mensual, acumulada, remanente)
+        }
+        return acumulada
+
+    }
 }

@@ -23,4 +23,8 @@ class Inpc {
     	ejercicio unique:['mes']
     	tasa scale: 4
     }
+
+    String toString() {
+    	return "${ejercicio} ${mes}"
+    }
 }

@@ -44,6 +44,7 @@ class ActivoFijo {
     // Importes generales
     BigDecimal tasaDepreciacion = 0.0
     BigDecimal montoOriginal = 0.0
+    BigDecimal montoOriginalFiscal = 0.0
     BigDecimal depreciacionInicial = 0.0
     BigDecimal depreciacionAcumulada = 0.0
     BigDecimal remanente = 0.0
@@ -97,6 +98,7 @@ class ActivoFijo {
         inpcDelMesAdquisicion nullable: true, scale: 4
         inpcPrimeraMitad nullable: true, scale: 4
         baja nullable: true
+        montoOriginalFiscal nullable: true
     }
 
     static transients = {}

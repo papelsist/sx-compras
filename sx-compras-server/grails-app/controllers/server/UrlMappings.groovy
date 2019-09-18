@@ -427,6 +427,7 @@ class UrlMappings {
         "/api/activoFijo/asignarInpcMedioMesUso"(controller: 'activoFijo', action: 'asignarInpcMedioMesUso', method: 'PUT')
         "/api/activoFijo/generarPendientes"(controller: 'activoFijo', action: 'generarPendientes')
         "/api/ventaDeActivo"(resources: 'ventaDeActivo', excludes: ['create','edit'])
+        "/api/activoFijo/resumen/$ejercicio/$mes"(controller: 'activoFijo', action: 'generarResumen', method: 'GET')
 
         // Gastos
         "/api/gastoDet"(resources: 'gastoDet', excludes:['create', 'edit','patch'])

@@ -26,6 +26,8 @@ class ActivoFijoController extends RestfulController<ActivoFijo> {
 
     ActivoDepreciacionFiscalService activoDepreciacionFiscalService
 
+    DepreciacionAnalisisService depreciacionAnalisisService
+
     ActivoFijoController() {
         super(ActivoFijo)
     }
@@ -68,9 +70,13 @@ class ActivoFijoController extends RestfulController<ActivoFijo> {
     @CompileDynamic
     def generarDepreciacionFiscal(Integer ejercicio) {
         def res  = activoDepreciacionFiscalService.generarDepreciacion(ejercicio)
-        def data =  res.collect {it.activoFijo}
-        data = data*.refresh()
-        respond data
+        respond res
+    }
+
+    @CompileDynamic
+    def generarResumen(Integer ejercicio, Integer mes) {
+        def res  = depreciacionAnalisisService.generar(ejercicio, mes)
+        respond res
     }
 
     def handleException(Exception e) {

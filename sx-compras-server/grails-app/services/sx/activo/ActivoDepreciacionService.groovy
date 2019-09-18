@@ -113,6 +113,34 @@ class ActivoDepreciacionService implements LogUser {
 
     }
 
+    /**
+    * Metodo dinamico para calcular eficiantemente la depreciacion acumulada a la fecha de
+    * corte indicada.
+    */
+    def calcularDepreciacionAcumulada(ActivoFijo af, Date corte) {
+        final BigDecimal moi = af.montoOriginal
+        final tf = af.tasaDepreciacion
+        final anual = MonedaUtils.round( (af.montoOriginal * tf), 2)
+        final mensual = MonedaUtils.round( (anual / 12), 2)
+        BigDecimal acumulada = 0.0
+        Periodo periodo = new Periodo(af.adquisicion, corte)
+        List periodos = Periodo.periodosMensuales(periodo)
+        for(int i = 1; i < periodos.size(); i++) {
+            def p = periodos[i]
+            def e = Periodo.obtenerYear(p.fechaFinal)
+            def m = Periodo.obtenerMes(p.fechaFinal) + 1
+            def remanente = moi - acumulada
+            if(remanente < mensual) {
+                mensual = remanente
+            }
+            acumulada += mensual
+            def saldo = moi - acumulada
+            log.info('Periodo: {} {} MOI: {} Dep: {} Acu: {} Remanente: {}', e, m, moi, mensual, acumulada, remanente)
+        }
+        return acumulada
+
+    }
+
     ActivoDepreciacion update(ActivoDepreciacion depreciacion) {
         logEntity(depreciacion)
         depreciacion.save failOnError: true, flush: true
