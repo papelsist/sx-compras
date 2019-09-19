@@ -55,6 +55,10 @@ export class CxPGastodetModalComponent implements OnInit, OnDestroy {
       .get('ivaRetenidoTasa')
       .valueChanges.pipe(takeUntil(this.destroy$))
       .subscribe(val => this.actualizarImportes());
+    this.form
+      .get('ivaTrasladadoTasa')
+      .valueChanges.pipe(takeUntil(this.destroy$))
+      .subscribe(val => this.actualizarImportes());
   }
 
   ngOnDestroy() {

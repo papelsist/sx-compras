@@ -59,10 +59,10 @@ class PagoDeRembolsoService implements  LogUser {
         if(egreso.formaDePago == 'CHEQUE'){
             generarCheque(rembolso)
         }
-        egreso.save(flush: true)
+        egreso.save(failOnError: true, flush: true)
         log.info('Egreso generado {}', egreso.importe)
         logEntity(rembolso)
-        rembolso = rembolso.save flush: true
+        rembolso = rembolso.save failOnError: true, flush: true
         return rembolso
 
     }

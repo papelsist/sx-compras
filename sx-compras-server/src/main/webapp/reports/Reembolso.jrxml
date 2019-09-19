@@ -42,7 +42,8 @@
 	<parameter name="AUTORIZADO" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="ID" isForPrompting="true" class="java.lang.String"/>
 	<queryString><![CDATA[SELECT r.id,r.ID folio,r.nombre afavor,s.nombre as sucursal,r.fecha,r.fecha_de_pago ,r.moneda,r.tipo_de_cambio,r.forma_de_pago,r.comentario
-,d.nombre proveedor,concat(ifnull(d.documento_serie,''),ifnull(d.documento_folio,'')) as documento,d.documento_fecha,r.concepto
+,(case when d.cxp_id is null and d.comentario is not null then d.comentario else d.nombre end) as proveedor
+,d.id detId,concat(ifnull(d.documento_serie,''),ifnull(d.documento_folio,'')) as documento,d.documento_fecha,r.concepto
 ,case when c.id is null then d.total else c.total end as total
 ,d.apagar,SUBSTR(c.uuid,LENGTH(c.uuid)-12,LENGTH(c.uuid)) uuid ,f.acuse
 FROM rembolso R join sucursal s on(r.sucursal_id=s.id)
@@ -62,6 +63,7 @@ WHERE R.ID=$P{ID}]]></queryString>
 	<field name="forma_de_pago" class="java.lang.String"/>
 	<field name="comentario" class="java.lang.String"/>
 	<field name="proveedor" class="java.lang.String"/>
+	<field name="detId" class="java.lang.Long"/>
 	<field name="documento" class="java.lang.String"/>
 	<field name="documento_fecha" class="java.sql.Timestamp"/>
 	<field name="concepto" class="java.lang.String"/>
@@ -70,7 +72,7 @@ WHERE R.ID=$P{ID}]]></queryString>
 	<field name="uuid" class="java.lang.String"/>
 	<field name="acuse" class="java.lang.Object"/>
 
-	<sortField name="documento" />
+	<sortField name="detId" />
 
 	<variable name="SUMAFAC" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
 		<variableExpression><![CDATA[$F{total}]]></variableExpression>
@@ -133,7 +135,7 @@ WHERE R.ID=$P{ID}]]></queryString>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-BoldOblique" size="10" isBold="true" isItalic="true" isUnderline="true" isStrikeThrough="false" />
 					</textElement>
-				<text><![CDATA[R E E M B O L S O S   Y   P A G O S]]></text>
+				<text><![CDATA[P A G O    D E    G A S T O S]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement

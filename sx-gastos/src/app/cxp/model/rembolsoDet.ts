@@ -24,8 +24,8 @@ export function buildRembolsoDet(cxp: CuentaPorPagar): RembolsoDet {
     documentoFolio: cxp.folio,
     documentoSerie: cxp.serie,
     documentoFecha: cxp.fecha,
-    total: cxp.importePorPagar,
-    apagar: cxp.importePorPagar,
+    total: cxp.total,
+    apagar: cxp.total,
     concepto: 'GASTO',
     uuid: cxp.uuid
   };
@@ -39,8 +39,8 @@ export function buildRembolsoDetFromNota(nota: NotaDeCreditoCxP): RembolsoDet {
     documentoFolio: nota.folio,
     documentoSerie: nota.serie,
     documentoFecha: nota.fecha,
-    total: nota.subTotal * -1,
-    apagar: nota.subTotal * -1,
+    total: nota.total * -1,
+    apagar: nota.total * -1,
     concepto: 'GASTO',
     uuid: nota.uuid
   };

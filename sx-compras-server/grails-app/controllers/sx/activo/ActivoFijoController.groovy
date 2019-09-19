@@ -24,6 +24,10 @@ class ActivoFijoController extends RestfulController<ActivoFijo> {
 
     ActivoFijoService activoFijoService
 
+    ActivoDepreciacionFiscalService activoDepreciacionFiscalService
+
+    DepreciacionAnalisisService depreciacionAnalisisService
+
     ActivoFijoController() {
         super(ActivoFijo)
     }
@@ -32,7 +36,7 @@ class ActivoFijoController extends RestfulController<ActivoFijo> {
     protected List<ActivoFijo> listAllResources(Map params) {
         log.info('List {}', params)
         def query = ActivoFijo.where{}
-        return  query.list()
+        return  query.list([sort: 'adquisicion', order: 'desc'])
     }
 
     @Override
@@ -47,9 +51,32 @@ class ActivoFijoController extends RestfulController<ActivoFijo> {
         return activoFijoService.save(resource)
     }
 
+    @Override
+    protected ActivoFijo updateResource(ActivoFijo resource) {
+        return activoFijoService.update(resource)
+    }
+
     @CompileDynamic
     def generarPendientes() {
         respond activoFijoService.generarPendientes()
+    }
+
+    def asignarInpcMedioMesUso() {
+        def command = new AsignacionInpc()
+        bindData command, getObjectToBind()
+        respond activoFijoService.asignarInpcMedioMesUso(command.ids, command.inpc)
+    }
+
+    @CompileDynamic
+    def generarDepreciacionFiscal(Integer ejercicio) {
+        def res  = activoDepreciacionFiscalService.generarDepreciacion(ejercicio)
+        respond res
+    }
+
+    @CompileDynamic
+    def generarResumen(Integer ejercicio, Integer mes) {
+        def res  = depreciacionAnalisisService.generar(ejercicio, mes)
+        respond res
     }
 
     def handleException(Exception e) {
@@ -59,4 +86,9 @@ class ActivoFijoController extends RestfulController<ActivoFijo> {
     }
 
 
+}
+
+class AsignacionInpc {
+    List ids
+    BigDecimal inpc
 }

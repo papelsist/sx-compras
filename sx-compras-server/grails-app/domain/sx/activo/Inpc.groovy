@@ -6,9 +6,8 @@ import grails.rest.Resource
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 
-@Resource(readOnly = false, formats = ['json'], uri = "/api/activo/inpc")
+// @Resource(readOnly = false, formats = ['json'], uri = "/api/inpc")
 @GrailsCompileStatic
-@Secured("IS_AUTHENTICATED_ANONYMOUSLY")
 @EqualsAndHashCode(includes='ejercicio, mes')
 @ToString(includeFields = true, excludes = ['dateCreated', 'lastUpdated'])
 class Inpc {
@@ -21,5 +20,11 @@ class Inpc {
     Date lastUpdated
 
     static constraints = {
+    	ejercicio unique:['mes']
+    	tasa scale: 4
+    }
+
+    String toString() {
+    	return "${ejercicio} ${mes}"
     }
 }

@@ -25,6 +25,14 @@ class ActivoDepreciacionFiscalController extends RestfulController<ActivoDepreci
         super(ActivoDepreciacionFiscal)
     }
 
+    @Override
+    protected List<ActivoDepreciacionFiscal> listAllResources(Map params) {
+        log.info('List {}', params)
+        Long activoId = params['activoFijoId'] as Long
+        def query = ActivoDepreciacionFiscal.where{activoFijo.id == activoId}
+        return  query.list()
+    }
+
      @Override
     def save() {
         ActivoFijo af = ActivoFijo.get(params.activoFijoId)

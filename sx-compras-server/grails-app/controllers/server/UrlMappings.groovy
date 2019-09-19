@@ -237,7 +237,10 @@ class UrlMappings {
         "/api/cxp/contrarecibos/print/$id"(controller: 'contrarecibo', action: 'print', method: 'GET')
         "/api/cxp/contrarecibos/pendientes/$proveedorId"(controller: 'contrarecibo', action: 'pendientes', method: 'GET')
 
-        "/api/cxp/notas"(resources: 'notaDeCreditoCxP', excludes:['create', 'edit','patch'])
+        "/api/cxp/notas"(resources: 'notaDeCreditoCxP', excludes:['create', 'edit','patch']){
+            "/analisis"(resources: 'analisisDeDevolucion', excludes:['create', 'edit'])
+        }
+        "/api/cxp/notas/devolucionesPendientes"(controller: 'analisisDeDevolucion', action: 'devolucionesPendientes')
         "/api/cxp/notas/aplicar/$id"(controller:'notaDeCreditoCxP', action: 'aplicar', method: 'PUT')
         "/api/cxp/notas/print/$id"(controller: 'notaDeCreditoCxP', action: 'print', method: 'GET')
 
@@ -414,11 +417,17 @@ class UrlMappings {
         // SolicitudDeDepositos
 
         // Activo Fijo
+        "/api/inpc"(resources: 'inpc', excludes: ['create', 'edit'])
         "/api/activoFijo"(resources: 'activoFijo', excludes:['create', 'edit']){
             "/depreciaciones"(resources: 'activoDepreciacion', excludes:['create', 'edit'])
             "/fiscales"(resources: 'activoDepreciacionFiscal', excludes:['create', 'edit'])
         }
+        "/api/activoFijo/depreciacionBatch/$ejercicio/$mes"(controller: 'activoDepreciacion', action: 'depreciacionBatch', method: 'GET')
+        "/api/activoFijo/generarDepreciacionFiscal/$ejercicio"(controller: 'activoFijo', action: 'generarDepreciacionFiscal', method: 'GET')
+        "/api/activoFijo/asignarInpcMedioMesUso"(controller: 'activoFijo', action: 'asignarInpcMedioMesUso', method: 'PUT')
         "/api/activoFijo/generarPendientes"(controller: 'activoFijo', action: 'generarPendientes')
+        "/api/ventaDeActivo"(resources: 'ventaDeActivo', excludes: ['create','edit'])
+        "/api/activoFijo/resumen/$ejercicio/$mes"(controller: 'activoFijo', action: 'generarResumen', method: 'GET')
 
         // Gastos
         "/api/gastoDet"(resources: 'gastoDet', excludes:['create', 'edit','patch'])
@@ -432,7 +441,9 @@ class UrlMappings {
         "/logistica/soporte/solicitud"(controller: "solicitudCambio", action: 'solicitud', method: 'GET')
         "/logistica/soporte/atencion"(controller: "solicitudCambio", action: 'atencionList', method: 'GET')
         "/logistica/soporte/autorizacion"(controller: "solicitudCambio", action: 'autorizacionList', method: 'GET')
-        "/logistica/soporte/actualizar"(controller: "solicitudCambio", action: 'actualizar', method: 'POST')
+        "/logistica/soporte/actualizar"(controller: "solicitudCambio", action: 'actualizar', method: 'POST'
+        
+        "/api/analisisDecs"(resources: 'analisisDeDevolucion', excludes:['create', 'edit','patch'])
 
         // Audit
         "/api/audit"(resources: 'audit', excludes:['create', 'edit','patch'])

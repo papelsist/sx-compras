@@ -15,7 +15,15 @@ export const getNotasEntities = createSelector(
   fromNotas.selectEntities
 );
 
-export const getAllNotas = createSelector(getNotasState, fromNotas.selectAll);
+export const getAllNotas = createSelector(
+  getNotasState,
+  fromNotas.selectAll
+);
+
+export const getDevluciones = createSelector(
+  getAllNotas,
+  notas => notas.filter(item => !item.concepto.startsWith('DESCUENTO'))
+);
 
 export const getNotasLoaded = createSelector(
   getNotasState,

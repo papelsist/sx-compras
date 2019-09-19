@@ -1,0 +1,7 @@
+import sx.activo.VentaDeActivo
+
+model {
+	VentaDeActivo ventaDeActivo
+}
+
+json g.render(ventaDeActivo, [resolveTemplate: false])

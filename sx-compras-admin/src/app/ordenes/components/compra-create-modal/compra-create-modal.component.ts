@@ -30,6 +30,7 @@ export class CompraCreateModalComponent implements OnInit {
     this.form = this.fb.group({
       sucursal: [null],
       fecha: [new Date(), Validators.required],
+      entrega: [null],
       proveedor: [null, Validators.required],
       moneda: ['MXN', Validators.required],
       tipoDeCambio: [1.0, Validators.required],
@@ -41,9 +42,18 @@ export class CompraCreateModalComponent implements OnInit {
     if (this.form.valid) {
       const { id } = this.form.get('proveedor').value;
       const sucursal = this.form.get('sucursal').value || this.oficinas;
+      let fecha = this.form.get('fecha').value;
+      if (fecha instanceof Date) {
+        fecha = fecha.toISOString();
+      }
+      let entrega = this.form.get('entrega').value;
+      if (entrega instanceof Date) {
+        entrega = fecha.toISOString();
+      }
       const data = {
         ...this.form.value,
-        fecha: new Date(),
+        fecha,
+        entrega,
         proveedor: id,
         sucursal: sucursal.id
       };

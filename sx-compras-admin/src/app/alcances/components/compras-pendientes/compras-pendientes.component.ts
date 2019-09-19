@@ -225,8 +225,8 @@ export class ComprasPendientesComponent implements OnInit {
   buildColsDef(): ColDef[] {
     return [
       {
-        headerName: 'Proveedor',
-        field: 'proveedorNombre',
+        headerName: 'Descripción',
+        field: 'descripcion',
         width: 250,
         pinned: 'left'
       },
@@ -250,7 +250,19 @@ export class ComprasPendientesComponent implements OnInit {
       {
         headerName: 'Fecha',
         field: 'fechaDeCompra',
-        width: 130,
+        width: 110,
+        pinned: 'left',
+        valueFormatter: params => {
+          if (params.node.isRowPinned()) {
+            return '';
+          }
+          return this.tableService.formatDate(params.value);
+        }
+      },
+      {
+        headerName: 'Entrega',
+        field: 'fechaDeEntrega',
+        width: 110,
         pinned: 'left',
         valueFormatter: params => {
           if (params.node.isRowPinned()) {
@@ -291,6 +303,11 @@ export class ComprasPendientesComponent implements OnInit {
         width: 110,
         valueFormatter: params =>
           this.tableService.formatNumber(params.value, '3.1-1')
+      },
+      {
+        headerName: 'Proveedor',
+        field: 'proveedorNombre',
+        width: 250
       }
     ];
   }

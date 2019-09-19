@@ -12,3 +12,4 @@ export * from './notaDeCreditoCxPDet';
 export * from './aplicacionDePago';
 export * from './contrarecibo';
 export * from './pago';
+export * from './analisis-de-nota';

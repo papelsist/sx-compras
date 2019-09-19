@@ -6,3 +6,4 @@ export * from './notas.selectors';
 export * from './facturas.selector';
 export * from './contrarecibos.selectors';
 export * from './pagos.selectors';
+export * from './analisis-de-nota.selectors';

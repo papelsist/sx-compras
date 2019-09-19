@@ -72,6 +72,18 @@ const routes: Routes = [
         ]
       },
       {
+        path: 'analisisDeNotas',
+        canActivate: [fromGuards.NotasGuard],
+        children: [
+          { path: '', component: fromContainers.AnalisisDeNotasComponent },
+          {
+            path: ':notaId',
+            canActivate: [fromGuards.NotaExistsGuard],
+            component: fromContainers.AnalisisDeNotaComponent
+          }
+        ]
+      },
+      {
         path: 'contrarecibos',
         canActivate: [fromGuards.ContrarecibosGuard],
         children: [
