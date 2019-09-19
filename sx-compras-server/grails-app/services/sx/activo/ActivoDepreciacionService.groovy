@@ -39,13 +39,18 @@ class ActivoDepreciacionService implements LogUser {
             }
             log.info('Dep para activo: {}', item)
             def dep = generarDepreciacionUnitaria(item, eje, mes)
-            updated << dep.activoFijo
+            if (dep)
+                updated << dep.activoFijo
         }
         return updated
     }
 
     ActivoDepreciacion generarDepreciacionUnitaria(ActivoFijo af, Integer year, Integer month) {
+
         Date corte = Periodo.getPeriodoEnUnMes(month - 1, year).fechaFinal
+        
+        
+
         def depreciacion = ActivoDepreciacion.findOrCreateWhere(activoFijo: af, ejercicio: year, mes: month)
         depreciacion.corte = corte
 
@@ -90,9 +95,7 @@ class ActivoDepreciacionService implements LogUser {
 
     @NotTransactional
     def generarDepreciacionTotal(ActivoFijo af, Date corte) {
-        if(af.estado == 'VENDIDO') {
-            return
-        }
+        
         log.info('AF: {} Adquisicion: {}', af.id, af.adquisicion.format('dd/MM/yyyy') )
         ActivoDepreciacion.executeUpdate("delete ActivoDepreciacion where activoFijo = ?", [af])
         af.estado = 'VIGENTE'
@@ -135,7 +138,7 @@ class ActivoDepreciacionService implements LogUser {
             }
             acumulada += mensual
             def saldo = moi - acumulada
-            log.info('Periodo: {} {} MOI: {} Dep: {} Acu: {} Remanente: {}', e, m, moi, mensual, acumulada, remanente)
+            // log.info('Periodo: {} {} MOI: {} Dep: {} Acu: {} Remanente: {}', e, m, moi, mensual, acumulada, remanente)
         }
         return acumulada
 
@@ -145,6 +148,37 @@ class ActivoDepreciacionService implements LogUser {
         logEntity(depreciacion)
         depreciacion.save failOnError: true, flush: true
         return depreciacion
+
+    }
+
+    def registrarBajaContable(ActivoFijo af) {
+        def fventa = af.baja.fecha
+        def corte = af.baja.fecha
+        def mesAdquisicion = Periodo.obtenerMes(af.adquisicion) + 1
+        
+        def mes = Periodo.obtenerMes(corte) + 1
+        def ej = Periodo.obtenerYear(corte)
+        
+        if(mes == 1) {
+            mes = 12
+            ej = ej - 1
+        } else {
+            mes = mes - 1
+        }
+        
+        def p = Periodo.getPeriodoEnUnMes(mes - 1, ej)
+        corte = p.fechaFinal
+        def baja = af.baja
+
+        baja.moiContable = af.montoOriginal
+        baja.depreciacionContable = calcularDepreciacionAcumulada(af, corte)
+        baja.remanenteContable = baja.moiContable - baja.depreciacionContable
+        baja.utilidadContable = baja.importeDeVenta - baja.remanenteContable
+        log.info('MOI: {} Depreciacion: {} Remanente: {} Utilidad: {}',
+            baja.moiContable,
+            baja.depreciacionContable,
+            baja.remanenteContable,
+            baja.utilidadContable)
 
     }
 

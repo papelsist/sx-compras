@@ -10,21 +10,13 @@ import grails.compiler.GrailsCompileStatic
 @EqualsAndHashCode(includes='id')
 class VentaDeActivo extends BajaDeActivo{
 
-	String facturaSerie
-
-	String facturaFolio
-
-	Date fechaFactura
-
-	BigDecimal importeDeVenta
+	
 
     static constraints = {
-    	facturaSerie nullable: true
-    	facturaFolio nullable: true
-    	fechaFactura nullable: true
+    	
     }
 
     static mapping = {
-    	fechaFactura type: 'date'
+    	
     }
 }

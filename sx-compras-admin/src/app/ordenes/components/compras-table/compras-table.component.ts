@@ -3,13 +3,20 @@ import {
   OnInit,
   Output,
   EventEmitter,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  Input
 } from '@angular/core';
 
 import { LxTableComponent } from 'app/_shared/components';
 import { SxTableService } from 'app/_shared/components/lx-table/sx-table.service';
 
-import { ColDef, ModelUpdatedEvent, RowSelectedEvent } from 'ag-grid-community';
+import {
+  ColDef,
+  ModelUpdatedEvent,
+  RowSelectedEvent,
+  GridReadyEvent,
+  FilterChangedEvent
+} from 'ag-grid-community';
 
 import { Compra } from 'app/ordenes/models/compra';
 
@@ -23,6 +30,15 @@ export class ComprasTableComponent extends LxTableComponent implements OnInit {
   @Output() selectionChange = new EventEmitter<any[]>();
   @Output() print = new EventEmitter();
 
+  @Output() filterChange = new EventEmitter();
+  @Input() filterModel: any;
+
+  @Input() columnState: any;
+  @Output() columnStateChanged = new EventEmitter();
+
+  @Input() sortModel: any;
+  @Output() sortModelChanged = new EventEmitter();
+
   constructor(public tableService: SxTableService) {
     super(tableService);
   }
@@ -33,6 +49,11 @@ export class ComprasTableComponent extends LxTableComponent implements OnInit {
     this.gridOptions.onRowSelected = (event: RowSelectedEvent) => {
       this.selectionChange.emit(this.gridApi.getSelectedRows());
     };
+  }
+
+  setFilterModel(model: any) {
+    this.gridApi.setFilterModel(model);
+    this.gridApi.onFilterChanged();
   }
 
   buildRowStyle(params: any) {
@@ -48,6 +69,39 @@ export class ComprasTableComponent extends LxTableComponent implements OnInit {
 
   clearSelection() {
     this.gridApi.deselectAll();
+  }
+
+  onGridReady(params: GridReadyEvent) {
+    this.gridApi = params.api;
+    this.columnApi = params.columnApi;
+    this.gridApi.setRowData(this.partidas);
+
+    if (this.filterModel && this.gridApi) {
+      this.gridApi.setFilterModel(this.filterModel);
+    }
+    this.gridOptions.onFilterChanged = (event: FilterChangedEvent) => {
+      if (this.gridApi) {
+        this.filterChange.emit(event.api.getFilterModel());
+      }
+    };
+
+    if (this.columnState && this.columnState) {
+      this.columnApi.setColumnState(this.columnState);
+    }
+    this.gridOptions.onColumnMoved = event => {
+      this.columnStateChanged.emit(event.columnApi.getColumnState());
+    };
+
+    if (this.sortModel && this.columnState) {
+      this.gridApi.setSortModel(this.sortModel);
+    }
+    this.gridOptions.onColumnResized = event => {
+      this.columnStateChanged.emit(event.columnApi.getColumnState());
+    };
+
+    this.gridOptions.onSortChanged = event => {
+      this.sortModelChanged.emit(event.api.getSortModel());
+    };
   }
 
   actualizarTotales() {

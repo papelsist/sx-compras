@@ -79,6 +79,27 @@ class ActivoFijoController extends RestfulController<ActivoFijo> {
         respond res
     }
 
+    @CompileDynamic
+    def registrarBaja(ActivoFijo activo) {
+        if(activo == null) {
+            notFound()
+            return
+        }
+        bindData activo, getObjectToBind()
+        activo = activoFijoService.registrarBaja(activo)
+        respond activo, view: 'show'
+    }
+
+     @CompileDynamic
+     def cancelarBaja(ActivoFijo activo) {
+        if(activo == null) {
+            notFound()
+            return
+        }
+        activo = activoFijoService.cancelarBaja(activo)
+        respond activo, view: 'show'
+     }
+
     def handleException(Exception e) {
         String message = ExceptionUtils.getRootCauseMessage(e)
         log.error(message, ExceptionUtils.getRootCause(e))

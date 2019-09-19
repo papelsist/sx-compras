@@ -137,6 +137,9 @@ class CfdiReader {
             concepto.cantidad = map.Cantidad.toBigDecimal()
             concepto.valorUnitario = map.ValorUnitario.toBigDecimal()
             concepto.importe = map.Importe.toBigDecimal()
+            if(map.Descuento) {
+                concepto.descuento = map.Descuento.toBigDecimal()    
+            }
 
             /// Impuestos
             def impuestos = it.children().find { row -> row.name() == 'Impuestos'}
