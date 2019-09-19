@@ -40,8 +40,6 @@ class PagoGastosReqTask implements  AsientoBuilder, EgresoTask {
         }else{
             cargoProveedorGasto(poliza, r)
         }
-            
-
 
         registrarRetenciones(poliza, r)
 
@@ -61,8 +59,7 @@ class PagoGastosReqTask implements  AsientoBuilder, EgresoTask {
 
     void cargoProveedorGasto(Poliza poliza, Requisicion r) {
 
-        CuentaOperativaProveedor co = buscarCuentaOperativa(r.proveedor)
-        log.info('Cuenta Operativa: {}', co)
+      
         MovimientoDeCuenta egreso = r.egreso
         List<RequisicionDet> partidas = r.partidas.sort {it.cxp.folio}
 
@@ -102,7 +99,15 @@ class PagoGastosReqTask implements  AsientoBuilder, EgresoTask {
                     def cv = gasto.cuentaContable.clave
                     def totalGasto = gasto.importe
                     if(provision){
-                        cv = "205-0006-${co.cuentaOperativa}-0000" 
+                       CuentaOperativaProveedor co = buscarCuentaOperativa(r.proveedor)
+                       if(co){
+                           
+                           cv = "205-0006-${co.cuentaOperativa}-0000" 
+                           if( co.tipo == 'RELACIONADAS'){
+                               cv = "201-0001-${co.cuentaOperativa}-0000" 
+                           }
+                       }
+                        
                         totalGasto = gasto.importe + gasto.ivaTrasladado - gasto.ivaRetenido - gasto.isrRetenido
 
                     }
@@ -302,6 +307,15 @@ class PagoGastosReqTask implements  AsientoBuilder, EgresoTask {
                         BigDecimal imp = cxp.impuestoRetenidoIsr
                      //   poliza.addToPartidas(mapRow('216-0002-0000-0000', desc, row, imp))
                         poliza.addToPartidas(mapRow('213-0010-0000-0000', desc, row, 0.0, imp))
+                    }
+                 }else{
+                     if(cxp.impuestoRetenidoIva > 0.0) {
+                        BigDecimal imp = cxp.impuestoRetenidoIva
+                        poliza.addToPartidas(mapRow('119-0003-0000-0000', desc, row, imp))
+                       // poliza.addToPartidas(mapRow('119-0003-0000-0000', desc, row, 0.0, imp))
+
+                      //  poliza.addToPartidas(mapRow('216-0001-0000-0000', desc, row, imp))
+                        poliza.addToPartidas(mapRow('216-0001-0000-0000', desc, row, 0.0, imp))
                     }
                  }
                  if (!cheque) {

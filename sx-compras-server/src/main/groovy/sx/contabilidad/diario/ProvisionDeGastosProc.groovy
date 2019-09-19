@@ -59,8 +59,7 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
                     def importeIva = gasto.ivaTrasladado
 
                     if(gasto.ivaRetenido){                  
-                        importeIva = importeIva - gasto.ivaRetenido
-                        
+                        importeIva = importeIva - gasto.ivaRetenido     
                     } 
 
                     CuentaContable ctaIva = buscarCuenta('119-0002-0000-0000')

@@ -52,11 +52,13 @@ class PagoGastosTask implements  AsientoBuilder, EgresoTask {
             case 'PAGO':
                     
                 CuentaContable cta = r.cuentaContable
-                println "++++"+cta+" - "+ r.id
 
-                if(cta == null) throw new RuntimeException("No exister cuenta contable asignada al rembolso ${r.id}")
+                if(cta == null) throw new RuntimeException("No existe cuenta contable asignada al rembolso ${r.id}")
 
                 if(cta.clave.startsWith('600-')) {
+                    atenderGasto(poliza, r)
+                } else
+                if(cta.clave.startsWith('205-')) {
                     atenderGasto(poliza, r)
                 } else
                 if(cta.clave.startsWith('205-0008')) {
@@ -214,13 +216,51 @@ class PagoGastosTask implements  AsientoBuilder, EgresoTask {
                 def ctaOperativa = co.getCuentaOperativa()
 
                 def gastos = GastoDet.findAllByCxp(cxp)
+                Boolean provision = false
+                if(Periodo.obtenerMes(cxp.fecha) < Periodo.obtenerMes(egreso.fecha)){
+                    provision = true
+                }
 
-                gastos.each{gasto ->
-                    
-                   
+                def cheque = egreso.cheque
+                Boolean transito = false
+                if(cheque && cheque.fecha.format('dd/MM/yyyy') != cheque.fechaTransito.format('dd/MM/yyyy') ){
+                    transito = true
+                }
+
+                gastos.each{gasto -> 
                     poliza.addToPartidas(mapRow(gasto.cuentaContable, desc, row, gasto.importe))
 
+                    def importeIva = gasto.ivaTrasladado
+
+                    if(gasto.ivaRetenido){                  
+                        importeIva = importeIva - gasto.ivaRetenido 
+                    } 
+
+                    if(gasto.ivaRetenido){
+
+                        poliza.addToPartidas(mapRow('119-0003-0000-0000', desc, row, gasto.ivaRetenido)) 
+                        poliza.addToPartidas(mapRow('216-0001-0000-0000', desc, row,0.00, gasto.ivaRetenido)) 
+                        
+                    } 
+ 
+                    def ctaChe ='118-0002-0000-0000'
+
+                    if(transito && ! provision){
+                        ctaChe='119-0002-0000-0000'  
+                        poliza.addToPartidas(mapRow(ctaChe, desc, row, gasto.importeIva)) 
+                    }
+
+                    if(!transito && ! provision){
+                        poliza.addToPartidas(mapRow(ctaChe, desc, row, importeIva)) 
+                    }
+
+                    if(provision &&  ! transito){
+                        poliza.addToPartidas(mapRow(ctaChe, desc, row, gasto.ivaTrasladado)) 
+                        poliza.addToPartidas(mapRow('119-0002-0000-0000', desc, row,0.00, importeIva))  
+                    }  
+
                 }
+
 
 
             }

@@ -247,7 +247,7 @@ class PagoNominaTask implements  AsientoBuilder, EgresoTask {
                 cuenta: cuenta,
                 concepto: cuenta.descripcion,
                 descripcion: descripcion,
-                asiento: "PROVISION_NOMINA",
+                asiento: "PAGO_NOMINA",
                 referencia: row.nombre,
                 referencia2: row.periodicidad,
                 //origen: row.ne_id.toString(),

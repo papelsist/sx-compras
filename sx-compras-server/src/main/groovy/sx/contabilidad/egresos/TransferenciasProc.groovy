@@ -8,6 +8,7 @@ import sx.contabilidad.Poliza
 import sx.contabilidad.PolizaCreateCommand
 import sx.contabilidad.ProcesadorMultipleDePolizas
 import sx.tesoreria.MovimientoDeCuenta
+import sx.contabilidad.PolizaDet
 
 /**
  * Procesador para la generacion de polizas de Egreso tipo
@@ -44,8 +45,8 @@ class TransferenciasProc implements  ProcesadorMultipleDePolizas {
         log.info("Generando poliza de egreso: {} Id:{}", egreso.tipo, poliza.egreso)
         switch (egreso.tipo) {
             case 'COMPRA':
-                    pagoDeCompraTask.generarAsientos(poliza, [:])
-                    break
+                pagoDeCompraTask.generarAsientos(poliza, [:])
+                break
             case 'PAGO_NOMINA':
                 pagoNominaTask.generarAsientos(poliza, [:])
                 break
@@ -57,12 +58,13 @@ class TransferenciasProc implements  ProcesadorMultipleDePolizas {
                 break
         }
 
+        ajustar(poliza,[:])
+       
+
         poliza = poliza.save failOnError: true, flush: true
         poliza.refresh()
         return poliza
     }
-
-
 
     @Override
     List<Poliza> generarPolizas(PolizaCreateCommand command) {
@@ -83,7 +85,6 @@ class TransferenciasProc implements  ProcesadorMultipleDePolizas {
             }.find()
 
             if(p == null) {
-
                 p = new Poliza(command.properties)
                 p.concepto = "TR: ${mov.referencia} ${mov.afavor} (${mov.fecha.format('dd/MM/yyyy')}) (${mov.tipo})"
                 p.sucursal = mov.sucursal?: 'OFICINAS'
@@ -96,5 +97,58 @@ class TransferenciasProc implements  ProcesadorMultipleDePolizas {
         return polizas
     }
 
+    def ajustar(Poliza p, Map params){
+        
+        BigDecimal debe = 0
+        BigDecimal haber = 0
+
+        p.partidas.each{
+            
+        }  
+
+       
+
+       BigDecimal dif = debe - haber
+
+       log.info("Registrando Diferencias")
+
+       def det = p.partidas.find{it.cuenta .clave.startsWith('600')}
+
+       println debe +" "+haber+" "+dif
+
+        if(dif >0 ){
+           /*  PolizaDet pdet = new PolizaDet()
+            pdet.cuenta = buscarCuenta('704-0005-0000-0000')
+            pdet.sucursal = 'OFICINAS'
+            pdet.origen = det.origen
+            pdet.referencia = det.referencia
+            pdet.referencia2 = det.referencia2
+            pdet.haber = dif.abs()
+            pdet.descripcion = det.descripcion
+            pdet.entidad = det.entidad
+            pdet.asiento = det.asiento
+            pdet.documentoTipo = det.documentoTipo
+            pdet.documentoFecha = det.documentoFecha
+            pdet.documento = det.documento
+            p.addToPartidas(pdet) */
+       }
+       if(dif < 0){
+           /* PolizaDet pdet = new PolizaDet()
+            pdet.cuenta = buscarCuenta('703-0001-0000-0000')
+            pdet.sucursal = det.sucursal
+            pdet.origen = det.origen
+            pdet.referencia = det.referencia
+            pdet.referencia2 = det.referencia2
+            pdet.debe = dif.abs()
+            pdet.descripcion = det.descripcion
+            pdet.entidad = det.entidad
+            pdet.asiento = det.asiento
+            pdet.documentoTipo = det.documentoTipo
+            pdet.documentoFecha = det.documentoFecha
+            pdet.documento = det.documento */
+          //  p.addToPartidas(pdet)
+       } 
+
+     }
     
 }
