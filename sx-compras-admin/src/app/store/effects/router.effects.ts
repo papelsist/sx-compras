@@ -20,6 +20,7 @@ export class RouterEffects {
     ofType(RouterActions.GO),
     map((action: RouterActions.Go) => action.payload),
     tap(({ path, query: queryParams, extras }) => {
+      // console.log('Undefinde path: ', path);
       this.router.navigate(path, { queryParams, ...extras });
     })
   );

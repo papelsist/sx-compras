@@ -14,6 +14,9 @@ import sx.cxp.GastoDet
 // @GrailsCompileStatic
 @Slf4j
 class ActivoFijoService implements LogUser {
+
+    ActivoDepreciacionFiscalService activoDepreciacionFiscalService
+    ActivoDepreciacionService activoDepreciacionService
     
 
     ActivoFijo save(ActivoFijo activo) {
@@ -26,23 +29,31 @@ class ActivoFijoService implements LogUser {
 
     ActivoFijo update(ActivoFijo activo) {
     	log.debug("Actualizando activo de material {}", activo)
-        if (activo.baja) {
-            if(activo.baja.id == null) {
-                log.info('Baja de activo: {}', activo.baja)
-                def baja = activo.baja
-                baja.with {
-                    depreciacionAcumulada = activo.depreciacionAcumulada
-                    remanente = activo.remanente
-                }
-                logEntity(baja)
-
-            }
-            activo.estado = 'VENDIDO'
-        }
         logEntity(activo)
         activo.save failOnError: true, flush: true
         return activo
 
+    }
+
+    ActivoFijo registrarBaja(ActivoFijo activo) {
+        log.info('Baja de activo: {}', activo.baja)
+        activoDepreciacionService.registrarBajaContable(activo)
+        activoDepreciacionFiscalService.registrarBajaFiscal(activo)
+        activo.estado = 'VENDIDO'
+        logEntity(activo)
+        activo.save failOnError: true, flush: true
+        return activo
+    }
+
+    ActivoFijo cancelarBaja(ActivoFijo activo) {
+        def baja = activo.baja
+        activo.baja = null
+        activo.estado = baja.remanenteContable > 0 ? 'VIGENTE' : 'DEPRECIADO'
+        logEntity(activo)
+
+        baja.delete flush: true
+        activo = activo.save flush: true
+        return activo
     }
 
     def asignarInpcMedioMesUso(List ids, BigDecimal inpc) {

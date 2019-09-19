@@ -4,6 +4,7 @@ model {
 	ActivoFijo activoFijo
 }
 
-json g.render(activoFijo, [ excludes: ['cuentaContable'], resolveTemplate: false]) {
+json g.render(activoFijo, [ excludes: ['cuentaContable', 'baja'], resolveTemplate: false]) {
 	cuentaContable g.render(activoFijo.cuentaContable)
+	baja g.render(activoFijo.baja)
 }

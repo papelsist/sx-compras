@@ -30,6 +30,12 @@
       (select)="onSelect($event)"
       (selectionChange)="selected = $event"
       (print)="onPrint($event)"
+      [filterModel]="filterModel"
+      (filterChange)="tableFilterChanged($event)"
+      [columnState]="columnState"
+      (columnStateChanged)="columnStateChanged($event)"
+      [sortModel]="sortModel"
+      (sortModelChanged)="sortModelChanged($event)"
     ></sx-compras-table>
   </div>
 </mat-card>

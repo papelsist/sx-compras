@@ -2,7 +2,9 @@ import {
   Component,
   OnInit,
   OnDestroy,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  AfterViewInit,
+  ViewChild
 } from '@angular/core';
 
 import { Store, select } from '@ngrx/store';
@@ -16,9 +18,13 @@ import { Periodo } from 'app/_core/models/periodo';
 import { MatDialog } from '@angular/material';
 import { ComprasService } from 'app/ordenes/services';
 import { ShowCompraDetsComponent } from 'app/ordenes/components/show-compradets/show-compradets.component';
-import { CompraCreateModalComponent } from 'app/ordenes/components';
+import {
+  CompraCreateModalComponent,
+  ComprasTableComponent
+} from 'app/ordenes/components';
 import { ReportService } from 'app/reportes/services/report.service';
 import { TdDialogService } from '@covalent/core';
+import { AngularFrameworkComponentWrapper } from 'ag-grid-angular';
 
 @Component({
   selector: 'sx-compras',
@@ -26,12 +32,16 @@ import { TdDialogService } from '@covalent/core';
   templateUrl: './compras.component.html',
   styleUrls: ['./compras.component.scss']
 })
-export class ComprasComponent implements OnInit, OnDestroy {
+export class ComprasComponent implements OnInit, OnDestroy, AfterViewInit {
   compras$: Observable<Compra[]>;
   periodo$: Observable<Periodo>;
   loading$: Observable<boolean>;
 
   selected: Partial<Compra>[] = [];
+  @ViewChild('grid') grid: ComprasTableComponent;
+  filterModel: any;
+  columnState: any;
+  sortModel: any;
 
   constructor(
     private store: Store<fromStore.State>,
@@ -42,12 +52,24 @@ export class ComprasComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    this.filterModel = JSON.parse(
+      localStorage.getItem('sx.compras.table.filter')
+    );
+    this.columnState = JSON.parse(
+      localStorage.getItem('sx.compras.table.column.state')
+    );
+    this.sortModel = JSON.parse(
+      localStorage.getItem('sx.compras.table.sort.model')
+    );
+
     this.periodo$ = this.store.pipe(select(fromStore.getComprasPeriodo));
     this.loading$ = this.store.pipe(select(fromStore.getComprasLoading));
     this.compras$ = this.store.pipe(select(fromStore.getAllCompras));
   }
 
   ngOnDestroy() {}
+
+  ngAfterViewInit() {}
 
   onPeriodo(event: Periodo) {
     this.store.dispatch(new fromActions.SetPeriodo({ periodo: event }));
@@ -115,5 +137,18 @@ export class ComprasComponent implements OnInit, OnDestroy {
     const params = { clavesProveedor };
     const url = `compras/print/${compra.id}`;
     this.reportServive.runReport(url, params);
+  }
+
+  tableFilterChanged(event: any) {
+    localStorage.setItem('sx.compras.table.filter', JSON.stringify(event));
+  }
+  columnStateChanged(event: any) {
+    localStorage.setItem(
+      'sx.compras.table.column.state',
+      JSON.stringify(event)
+    );
+  }
+  sortModelChanged(event: any) {
+    localStorage.setItem('sx.compras.table.sort.model', JSON.stringify(event));
   }
 }
