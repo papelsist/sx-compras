@@ -33,6 +33,10 @@ class ChequesProc implements  ProcesadorMultipleDePolizas {
     @Qualifier('pagoGastosTask')
     PagoGastosTask pagoGastosTask
 
+    @Autowired
+    @Qualifier('pagoDeCompraTask')
+    PagoDeCompraTask pagoDeCompraTask
+
 
     @Override
     String definirConcepto(Poliza poliza) {
@@ -46,6 +50,9 @@ class ChequesProc implements  ProcesadorMultipleDePolizas {
         if(egreso) {
             log.info("Generando poliza de egreso: {} Id:{}", egreso.tipo, poliza.egreso)
             switch (egreso.tipo) {
+                case 'COMPRA':
+                    pagoDeCompraTask.generarAsientos(poliza, [:])
+                    break
                 case 'PAGO_NOMINA':
                     pagoNominaTask.generarAsientos(poliza, [:])
                     break

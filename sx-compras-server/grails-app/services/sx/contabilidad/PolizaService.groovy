@@ -85,8 +85,8 @@ abstract class PolizaService implements  LogUser{
     String resolverProcesador(String subtipo) {
         String name = subtipo.toLowerCase()
                 .replaceAll( "(_)([A-Za-z0-9])", { Object[] it -> it[2].toUpperCase() } )
-        return "${name}Proc"
 
+              return "${name}Proc"
     }
 
     @NotTransactional

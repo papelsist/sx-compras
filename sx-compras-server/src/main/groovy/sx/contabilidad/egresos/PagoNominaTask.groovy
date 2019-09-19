@@ -112,6 +112,8 @@ class PagoNominaTask implements  AsientoBuilder, EgresoTask {
             poliza.concepto = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${mov.referencia} ${mov.afavor} (${mov.fecha.format('dd/MM/yyyy')})" +
                     " (${mov.tipo} ${mov.tipo != mov.concepto ? mov.concepto : ''}) PA"
             cv = "205-D007-${nomina.pensionAlimenticiaId.toString().padLeft(4, '0')}-0000"
+            poliza.addToPartidas(toPolizaDet(cv, desc, row, egreso.importe))
+            
 
         }
         if(nomina.otraDeduccion) {
@@ -119,6 +121,7 @@ class PagoNominaTask implements  AsientoBuilder, EgresoTask {
             poliza.concepto = "CH ${mov.referencia} ${mov.afavor} (${mov.fecha.format('dd/MM/yyyy')})" +
                     " (${mov.tipo} ${mov.tipo != mov.concepto ? mov.concepto : ''}) OTRA D"
             cv = "107-D004-${nomina.numeroDeTrabajador.toString().padLeft(4, '0')}-0000"
+            poliza.addToPartidas(toPolizaDet(cv, desc, row, egreso.importe))
         }
 
         if(nomina.tipo == 'ASIMILADOS'){
@@ -137,9 +140,10 @@ class PagoNominaTask implements  AsientoBuilder, EgresoTask {
         //buildComplementoDePago(row, egreso)
 
         if(nomina.tipo != 'ASIMILADOS'){
-            poliza.addToPartidas(toPolizaDet(cv, desc, row, egreso.importe))
+          //  poliza.addToPartidas(toPolizaDet(cv, desc, row, egreso.importe))
         }
          
+         // 
 
     }
 
@@ -151,18 +155,20 @@ class PagoNominaTask implements  AsientoBuilder, EgresoTask {
 
         List rows = loadRegistros(select, [])
 
+        String desc = "${poliza.concepto} ${nomina.tipo} ${nomina.folio} ${nomina.pago})"
+
         rows.each{row ->
             if(row.tipo == 'P'){
                 BigDecimal importe = row.importe_excento + row.importe_gravado
-                poliza.addToPartidas(mapRow(poliza.concepto, row, importe))
+                poliza.addToPartidas(mapRow(desc, row, importe))
             } else if(row.tipo == 'D') {
                 BigDecimal importe = row.importe_excento + row.importe_gravado
-                poliza.addToPartidas(mapRow(poliza.concepto, row, 0, importe))
+                poliza.addToPartidas(mapRow(desc, row, 0, importe))
             } else if(row.tipo == 'A') {
                 if(row.importe_gravado > 0.0)
-                    poliza.addToPartidas(mapRow(poliza.concepto, row, row.importe_gravado))
+                    poliza.addToPartidas(mapRow(desc, row, row.importe_gravado))
                 if(row.importe_excento > 0.0) {
-                    PolizaDet det = mapRow(poliza.concepto, row,  row.importe_excento)
+                    PolizaDet det = mapRow(desc, row,  row.importe_excento)
                     det.cuenta = buscarCuenta(row.cta_contable_exe)
                     det.concepto = det.cuenta.descripcion
                     poliza.addToPartidas(det)

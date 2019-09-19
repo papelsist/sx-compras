@@ -153,10 +153,10 @@ class IngresosTask implements  AsientoBuilder {
     def asientoClientes(Poliza poliza, Map params = [:]){
         String tipo = params.tipo
 
-        def tipoStr = "  (b.tipo='${tipo}' OR (b.tipo in('COD','ACF','OTR') and (b.forma_de_pago like '%EFECTIVO%' or b.forma_de_pago like '%TARJETA%')) or (b.tipo in('CRE','CHE','JUR') AND b.forma_de_pago like '%TARJETA%'))" 
+        def tipoStr = "  (b.tipo='${tipo}' OR (b.tipo in('COD','ACF','OTR') and (b.forma_de_pago like 'EFECTIVO%' or b.forma_de_pago like '%TARJETA%')) or (b.tipo in('CRE','CHE','JUR') AND b.forma_de_pago like '%TARJETA%'))" 
 
         if(tipo == 'COD'){
-            tipoStr = "  ( ( b.tipo in('${tipo}','ACF','OTR') and (b.forma_de_pago not like '%EFECTIVO%' and b.forma_de_pago not like '%TARJETA%') ) )" 
+            tipoStr = "  ( ( b.tipo in('${tipo}','ACF','OTR') and (b.forma_de_pago not like 'EFECTIVO%' and b.forma_de_pago not like '%TARJETA%') ) )" 
         }
 
          if(tipo == 'CRE' || tipo == 'CHE' || tipo == 'JUR' ){
@@ -376,7 +376,7 @@ class IngresosTask implements  AsientoBuilder {
         ,concat((case when m.por_identificar is true then '205-0002-' else (case when m.moneda='USD' then '102-0002-' else '102-0001-' end) end),z.sub_cuenta_operativa,'-0000') cta_contable,z.numero ctaDestino,z.descripcion cliente
         ,(case when f.diferencia <0 then concat('FALTANTE_',diferencia_tipo) when f.diferencia>0 then concat('SOBRANTE_',diferencia_tipo) else '' end)  as diferenciaTipo,ifnull(f.diferencia,0) diferenciaFicha
         ,(case when f.diferencia=0 or f.diferencia is null then '000-0000-0000-0000' else concat('107-0002-',(case when f.diferencia_usuario>99 then '0' when f.diferencia_usuario>9 then '00' else '000' end),f.diferencia_usuario,'-0000') end) cta_cajera
-	    ,(case when m.forma_de_pago='TRANSFERENCIA' then ifnull((SELECT x.nombre FROM cobro_transferencia d join cobro c on(d.cobro_id=c.id) join cliente x on(c.cliente_id=x.id)  where d.ingreso_id=m.id ),'PAPEL SA DE CV') 
+	    ,(case when m.forma_de_pago='TRANSFERENCIA' then ifnull((SELECT max(x.nombre) FROM cobro_transferencia d join cobro c on(d.cobro_id=c.id) join cliente x on(c.cliente_id=x.id)  where d.ingreso_id=m.id ),'PAPEL SA DE CV') 
 	   	else ifnull((SELECT x.nombre FROM cobro_deposito d join cobro c on(d.cobro_id=c.id) join cliente x on(c.cliente_id=x.id)  where d.ingreso_id=m.id ),(case when m.forma_de_pago ='EFECTIVO' then 'Ficha EFECTIVO ' when m.forma_de_pago ='CHEQUE' and m.comentario like '%MIS%BAN%' then 'Ficha MISMO_BANCO ' when m.forma_de_pago ='CHEQUE' and m.comentario like '%OTR%BAN%' then 'Ficha OTRO_BANCO ' else m.referencia end)) end) referencia2
         ,(case when m.referencia like '%COMISION' then concat('600-0014-',(case when s.clave>9 then '00' else '000' end),s.clave,'-0000') else '000-0000-0000-0000' end) cta_comision
 	    ,(case when m.referencia like '%COMISION_IVA' then '118-0002-0000-0000' else '000-0000-0000-0000' end) cta_comision_iva
@@ -407,7 +407,7 @@ class IngresosTask implements  AsientoBuilder {
         String sql ="""
             SELECT
             cobroId, 
-            (case when a.moneda='USD' then concat(a.asiento,'_USD') else a.asiento end) asiento,a.documentoTipo,a.referencia2,a.sucursal,a.suc ,a.cta_iva_pag,a.cta_iva_pend
+            ifnull((case when a.moneda='USD' then concat(a.asiento,'_USD') else a.asiento end),"COB") asiento,a.documentoTipo,a.referencia2,a.sucursal,a.suc ,a.cta_iva_pag,a.cta_iva_pend
             ,case when a.documentoTipo in('CRE','CHE','JUR') and a.asiento like '%_TAR_%' THEN '205-0007-0001-0000' else '000-0000-0000-0000' end cta_tar
             ,a.cta_cliente,a.moneda,a.tc,sum(a.subtotal) subtotal,sum(a.impuesto) impuesto,sum(a.total) total,a.fecha,a.forma_de_pago,a.referencia,a.origen,'CuentaPorCobrar' entidad,a.documento,a.fecha_fac,a.total cobro_aplic, '@OTRO' tipo
         	  FROM (        	      	  

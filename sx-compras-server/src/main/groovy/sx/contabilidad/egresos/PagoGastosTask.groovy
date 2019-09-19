@@ -16,6 +16,7 @@ import sx.cxp.Rembolso
 import sx.cxp.RembolsoDet
 import sx.cxp.GastoDet
 import sx.core.Empresa
+import sx.utils.Periodo
 
 
 @Slf4j
@@ -51,8 +52,13 @@ class PagoGastosTask implements  AsientoBuilder, EgresoTask {
             case 'PAGO':
                     
                 CuentaContable cta = r.cuentaContable
+                println "++++"+cta+" - "+ r.id
+
                 if(cta == null) throw new RuntimeException("No exister cuenta contable asignada al rembolso ${r.id}")
 
+                if(cta.clave.startsWith('600-')) {
+                    atenderGasto(poliza, r)
+                } else
                 if(cta.clave.startsWith('205-0008')) {
                     atenderDividendosHonorarios(poliza, r)
                 } else if(cta.clave.startsWith('210-0001')) {
@@ -64,7 +70,8 @@ class PagoGastosTask implements  AsientoBuilder, EgresoTask {
                 } else if(cta.clave.startsWith('213-0006')) {
                     atenderPagoSatImss(poliza, r)
                 } else if(cta.clave.startsWith('205-0004')) {
-                    atenderPagoFlete(poliza, r)
+                    //atenderPagoFlete(poliza, r)
+                    cargoSucursal(poliza, r)
                 }
                 break
             case 'ESPECIAL':
@@ -79,12 +86,15 @@ class PagoGastosTask implements  AsientoBuilder, EgresoTask {
                 log.info('No hay handler para: {}', r.concepto)
                 break
         }
+
         abonoBanco(poliza, r)
 
     }
 
 
     void cargoSucursal(Poliza poliza, Rembolso r) {
+
+        
         MovimientoDeCuenta egreso = r.egreso
         // String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia}  ${r.sucursal.nombre} "
         String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} ${egreso.afavor} (${egreso.fecha.format('dd/MM/yyyy')})"
@@ -103,8 +113,9 @@ class PagoGastosTask implements  AsientoBuilder, EgresoTask {
 
             if(cxp) {
                 def gastos = GastoDet.findAllByCxp(cxp)
-
+                
                 gastos.each{gasto -> 
+                    desc = "FAC: ${cxp.serie? cxp.serie : '' } ${cxp.folio} ${cxp.fecha} ${gasto.descripcion}"
                     def cuenta = gasto.cuentaContable
                     PolizaDet det = mapRow(cuenta, desc, row, gasto.importe)
                     det.referencia = cuenta.descripcion
@@ -112,15 +123,45 @@ class PagoGastosTask implements  AsientoBuilder, EgresoTask {
                     poliza.addToPartidas(det)
                 }
                 BigDecimal ivaCfdi = cxp.impuestoTrasladado - cxp.impuestoRetenidoIva
-                poliza.addToPartidas(mapRow('118-0002-0000-0000', desc, row, ivaCfdi))
+                desc = "FAC: ${cxp.serie? cxp.serie : '' } ${cxp.folio} ${cxp.fecha} ${cxp.proveedor.nombre}"
+
+                 def cheque = egreso.cheque
+
+                    println "Cheque  "+cheque
+
+                def ctaChe ="118-0002-0000-0000"
+                if(cheque && cheque.fecha.format('dd/MM/yyyy') != cheque.fechaTransito.format('dd/MM/yyyy') ){
+                  
+                    ctaChe ="119-0002-0000-0000"
+                }
+                
+                poliza.addToPartidas(mapRow(ctaChe, desc, row, ivaCfdi))
+
+                if(cxp.impuestoRetenidoIva > 0.0) {
+                    BigDecimal imp = cxp.impuestoRetenidoIva
+                    
+                    def ctaCh1 = '118-0003-0000-0000'
+                    def ctaCh2 = '213-0011-0000-0000'
+
+                    if(cheque && cheque.fecha.format('dd/MM/yyyy') != cheque.fechaTransito.format('dd/MM/yyyy') ){
+                       
+                        ctaCh1 ="119-0003-0000-0000"
+                        ctaCh2 ="216-0001-0000-0000"
+                    }
+
+                    poliza.addToPartidas(mapRow(ctaCh1, desc, row, imp))
+                    poliza.addToPartidas(mapRow(ctaCh2, desc, row, 0.0, imp))
+                }
+
+                
             }else {
                 BigDecimal importe = d.apagar
                 desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} ${egreso.afavor}" +
                         " (${poliza.fecha.format('dd/MM/yyyy')}) "
                 if(importe > 0) {
-                    poliza.addToPartidas(mapRow(r.cuentaContable, desc, row, importe))
+                    poliza.addToPartidas(mapRow(d.cuentaContable, desc, row, importe))
                 } else {
-                    poliza.addToPartidas(mapRow(r.cuentaContable, desc, row, 0.0,  importe))
+                    poliza.addToPartidas(mapRow(d.cuentaContable, desc, row, 0.0,  importe))
                 }
             }  
         }
@@ -154,7 +195,37 @@ class PagoGastosTask implements  AsientoBuilder, EgresoTask {
         CuentaContable ctaPadre = r.cuentaContable
         Map row = buildDataRow(egreso)
         r.partidas.each { d ->
-            log.info('DET: {}', d)
+
+            CuentaPorPagar cxp = d.cxp
+
+            if(cxp){
+                 String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} F:${cxp?.serie?:''} ${cxp?.folio?: ''}" +
+                 " (${poliza.fecha.format('dd/MM/yyyy')}) ${egreso.sucursal?: 'OFICINAS'} "
+                row.uuid = cxp.uuid
+                row.rfc = r.proveedor.rfc
+                row.montoTotal = cxp.total
+                row.moneda = cxp.moneda
+                row.tipCamb = cxp.tipoDeCambio ?: 0.0
+                row.referencia = cxp.nombre
+                row.referencia2 = cxp.nombre
+
+                CuentaOperativaProveedor co = CuentaOperativaProveedor.where{ proveedor == cxp.proveedor}.find()
+                if(!co) throw new RuntimeException("No existe cuenta operativa para el proveedor: ${cxp.proveedor}")
+                def ctaOperativa = co.getCuentaOperativa()
+
+                def gastos = GastoDet.findAllByCxp(cxp)
+
+                gastos.each{gasto ->
+                    
+                   
+                    poliza.addToPartidas(mapRow(gasto.cuentaContable, desc, row, gasto.importe))
+
+                }
+
+
+            }
+
+           /*  log.info('DET: {}', d)
             CuentaPorPagar cxp = d.cxp
             if(cxp) {
                 row.uuid = cxp.uuid
@@ -183,46 +254,67 @@ class PagoGastosTask implements  AsientoBuilder, EgresoTask {
 
             } else {
                 cuenta = ctaPadre
-            }
-            BigDecimal importe = d.apagar
+            } */
+            // Boolean provision = false
+       /*      if (cxp) {
+                if(Periodo.obtenerMes(cxp.fecha) < Periodo.obtenerMes(egreso.fecha)){ 
+                    CuentaOperativaProveedor co = CuentaOperativaProveedor.where{ proveedor == cxp.proveedor}.find()
+                    CuentaContable found = CuentaContable.where{clave == "205-0006-${co.cuentaOperativa}-0000" }.find()
+                    if (found) {
+                         cuenta = found
+                    }
+                
+                }
+            } */
+            
+
+/*             BigDecimal importe = d.apagar
             String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} F:${cxp?.serie?:''} ${cxp?.folio?: ''}" +
                     " (${poliza.fecha.format('dd/MM/yyyy')}) ${egreso.sucursal?: 'OFICINAS'} "
             poliza.addToPartidas(mapRow(cuenta, desc, row, importe))
+
+
             if(cxp) {
+
                 BigDecimal ivaCfdi = cxp.impuestoTrasladado - cxp.impuestoRetenidoIva?: 0.0
                 BigDecimal dif = cxp.total - d.apagar
                 if(dif.abs() > 3.00) {
                     BigDecimal ii = MonedaUtils.calcularImporteDelTotal(d.apagar)
                     ivaCfdi = MonedaUtils.calcularImpuesto(ii)
                 }
-            def cheque = Cheque.findByEgreso(egreso)
+                def cheque = egreso.cheque
             
-            if(cheque && cheque.fecha.format('dd/MM/yyyy') == cheque.fechaTransito.format('dd/MM/yyyy') ){
-               if(d.comentario == 'ALIMENTOS') {
-                    BigDecimal ivaAlimientos = cxp.impuestoTrasladado * 0.085
-                    // BigDecimal noDeducible = cxp.impuestoTrasladado - ivaAlimientos
-                    poliza.addToPartidas(mapRow('118-0002-0000-0000', desc, row, ivaAlimientos))
-                    poliza.addToPartidas(mapRow('119-0002-0000-0000', desc, row, 0.0,  ivaAlimientos))
-                }else {
-                    poliza.addToPartidas(mapRow('118-0002-0000-0000', desc, row, ivaCfdi))
-                    poliza.addToPartidas(mapRow('119-0002-0000-0000', desc, row, 0.0, ivaCfdi))
-                }
-              
-            }
-            if(!cheque){
-                log.info(" No tiene cheque")
-                if(d.comentario == 'ALIMENTOS') {
-                    BigDecimal ivaAlimientos = cxp.impuestoTrasladado * 0.085
-                    // BigDecimal noDeducible = cxp.impuestoTrasladado - ivaAlimientos
-                    poliza.addToPartidas(mapRow('118-0002-0000-0000', desc, row, ivaAlimientos))
-                    poliza.addToPartidas(mapRow('119-0002-0000-0000', desc, row, 0.0,  ivaAlimientos))
-                }else {
-                    poliza.addToPartidas(mapRow('118-0002-0000-0000', desc, row, ivaCfdi))
-                    poliza.addToPartidas(mapRow('119-0002-0000-0000', desc, row, 0.0, ivaCfdi))
-                }
-            }
 
-            }
+                desc = "FAC: ${cxp.serie? cxp.serie : '' } ${cxp.folio} ${cxp.fecha} ${cxp.proveedor.nombre}"
+
+                if(cheque && cheque.fecha.format('dd/MM/yyyy') == cheque.fechaTransito.format('dd/MM/yyyy') ){
+                    if(d.comentario == 'ALIMENTOS') {
+                        BigDecimal ivaAlimientos = cxp.impuestoTrasladado * 0.085
+                        // BigDecimal noDeducible = cxp.impuestoTrasladado - ivaAlimientos
+                        poliza.addToPartidas(mapRow('118-0002-0000-0000', desc, row, ivaAlimientos))
+                        poliza.addToPartidas(mapRow('119-0002-0000-0000', desc, row, 0.0,  ivaAlimientos))
+                    }else {
+                        poliza.addToPartidas(mapRow('118-0002-0000-0000', desc, row, ivaCfdi))
+                        poliza.addToPartidas(mapRow('119-0002-0000-0000', desc, row, 0.0, ivaCfdi))
+                    }
+                
+                }
+                if(!cheque){
+
+                    
+                    log.info(" No tiene cheque")
+                    if(d.comentario == 'ALIMENTOS') {
+                        BigDecimal ivaAlimientos = cxp.impuestoTrasladado * 0.085
+                        // BigDecimal noDeducible = cxp.impuestoTrasladado - ivaAlimientos
+                        poliza.addToPartidas(mapRow('118-0002-0000-0000', desc, row, ivaAlimientos))
+                        poliza.addToPartidas(mapRow('119-0002-0000-0000', desc, row, 0.0,  ivaAlimientos))
+                    }else {
+                        poliza.addToPartidas(mapRow('118-0002-0000-0000', desc, row, ivaCfdi))
+                        poliza.addToPartidas(mapRow('119-0002-0000-0000', desc, row, 0.0, ivaCfdi))
+                    }
+                }
+
+            } */
 
         }
     }

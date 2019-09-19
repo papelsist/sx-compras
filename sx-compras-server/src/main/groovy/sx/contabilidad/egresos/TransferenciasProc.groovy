@@ -30,6 +30,10 @@ class TransferenciasProc implements  ProcesadorMultipleDePolizas {
     @Qualifier('pagoGastosReqTask')
     PagoGastosReqTask pagoGastosReqTask
 
+    @Autowired
+    @Qualifier('pagoDeCompraTask')
+    PagoDeCompraTask pagoDeCompraTask
+
     
 
     @Override
@@ -39,7 +43,9 @@ class TransferenciasProc implements  ProcesadorMultipleDePolizas {
 
         log.info("Generando poliza de egreso: {} Id:{}", egreso.tipo, poliza.egreso)
         switch (egreso.tipo) {
-
+            case 'COMPRA':
+                    pagoDeCompraTask.generarAsientos(poliza, [:])
+                    break
             case 'PAGO_NOMINA':
                 pagoNominaTask.generarAsientos(poliza, [:])
                 break

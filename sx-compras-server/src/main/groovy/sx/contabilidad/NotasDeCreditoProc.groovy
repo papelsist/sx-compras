@@ -37,8 +37,10 @@ abstract class NotasDeCreditoProc implements  ProcesadorDePoliza {
                 abonoIvaNoTrasladado(poliza,row)
                 if(row.partidas_idx == row.max)
                     abonoCliente(poliza,row)
-                registrarVariacionCambiaria(poliza)
+                
         }
+
+        registrarVariacionCambiaria(poliza)
 
         return poliza
     }
@@ -205,7 +207,7 @@ abstract class NotasDeCreditoProc implements  ProcesadorDePoliza {
             BigDecimal haber = it.value.sum 0.0, {r -> r.haber}
 
             BigDecimal dif = debe - haber
-            if(dif.abs() > 1.0 ){
+            if(dif.abs() > 0.01 ){
                 log.info("Registrando variacion cambiaria: ${it.key} Debe: ${debe} Haber: ${haber} Dif: ${dif}")
 
                 def det = it.value.find {it.cuenta.clave.startsWith('105')}

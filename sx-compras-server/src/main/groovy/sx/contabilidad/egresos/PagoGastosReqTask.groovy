@@ -13,6 +13,7 @@ import sx.tesoreria.MovimientoDeCuenta
 import sx.utils.MonedaUtils
 import sx.tesoreria.Cheque
 import sx.cxp.GastoDet
+import sx.utils.Periodo
 
 @Slf4j
 @Component
@@ -89,23 +90,54 @@ class PagoGastosReqTask implements  AsientoBuilder, EgresoTask {
             ]
 
             def gastos = GastoDet.findAllByCxp(cxp)
+
+                Boolean provision = false
+
+                if(Periodo.obtenerMes(cxp.fecha) < Periodo.obtenerMes(egreso.fecha)){
+                    provision = true
+                }
+
                 gastos.each{ gasto ->
-                    
+                    desc = "FAC: ${cxp.serie? cxp.serie : '' } ${cxp.folio} ${cxp.fecha} ${gasto.descripcion}"
                     def cv = gasto.cuentaContable.clave
+                    def totalGasto = gasto.importe
+                    if(provision){
+                        cv = "205-0006-${co.cuentaOperativa}-0000" 
+                        totalGasto = gasto.importe + gasto.ivaTrasladado - gasto.ivaRetenido - gasto.isrRetenido
+
+                    }
                
-                poliza.addToPartidas(mapRow(cv, desc, row, gasto.importe))
+                poliza.addToPartidas(mapRow(cv, desc, row, totalGasto))
             }
+            desc = "FAC: ${cxp.serie? cxp.serie : '' } ${cxp.folio} ${cxp.fecha} ${cxp.proveedor.nombre}"
 
             BigDecimal ivaCfdi = cxp.impuestoTrasladado - cxp.impuestoRetenidoIva
-            poliza.addToPartidas(mapRow('118-0002-0000-0000', desc, row, ivaCfdi))
 
+             def cheque = egreso.cheque
+            //def cheque = Cheque.findByEgreso(egreso)
 
+            Boolean transito = false
 
+            if(cheque && cheque.fecha.format('dd/MM/yyyy') != cheque.fechaTransito.format('dd/MM/yyyy') ){
+                transito = true
+            }
+
+            def ctaChe ='118-0002-0000-0000'
+
+            if(transito && ! provision){
+                ctaChe='119-0002-0000-0000'  
+                poliza.addToPartidas(mapRow(ctaChe, desc, row, ivaCfdi)) 
+            }
+
+             if(!transito && ! provision){
+                poliza.addToPartidas(mapRow(ctaChe, desc, row, ivaCfdi)) 
+            }
+
+            if(provision &&  ! transito){
+                 poliza.addToPartidas(mapRow(ctaChe, desc, row, ivaCfdi)) 
+                poliza.addToPartidas(mapRow('119-0002-0000-0000', desc, row,0.00, ivaCfdi))  
+            }          
         }
-
-
-
-
     }
 
 
@@ -185,7 +217,7 @@ class PagoGastosReqTask implements  AsientoBuilder, EgresoTask {
                     iva119 = MonedaUtils.calcularImpuesto(iii) 
                 }
 
-            def cheque = Cheque.findByEgreso(egreso)
+            def cheque = egreso.cheque
             
             if(cheque && cheque.fecha.format('dd/MM/yyyy') == cheque.fechaTransito.format('dd/MM/yyyy') ){
                 log.info("Fecha  Ceque {} and  {}",cheque.fecha.format('dd/MM/yyyy'), cheque.fechaTransito.format('dd/MM/yyyy'))
@@ -256,7 +288,7 @@ class PagoGastosReqTask implements  AsientoBuilder, EgresoTask {
                         " (${poliza.fecha.format('dd/MM/yyyy')}) ${egreso.sucursal?: 'OFICINAS'} " +
                         " ${cxp.tipoDeCambio > 1.0 ? 'T.C:' + cxp.tipoDeCambio: ''}"
 
-                def cheque = Cheque.findByEgreso(egreso)
+                def cheque = egreso.cheque
                  if(cheque && cheque.fecha.format('dd/MM/yyyy') == cheque.fechaTransito.format('dd/MM/yyyy') ){
                     if(cxp.impuestoRetenidoIva > 0.0) {
                         BigDecimal imp = cxp.impuestoRetenidoIva

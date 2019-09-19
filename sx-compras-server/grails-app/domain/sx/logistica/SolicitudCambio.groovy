@@ -43,6 +43,8 @@ class SolicitudCambio {
 
     String estado
 
+    String fechaDocumento
+
     Date dateCreated
     
     Date lastUpdated
@@ -62,6 +64,7 @@ class SolicitudCambio {
         autorizacion nullable:true
         atencion nullable:true
         estado inList:['PENDIENTE','ATENDIDA','AUTORIZADA','RECHAZADA','CANCELADA']
+        fechaDocumento nullable:true
     }
 
     static mapping ={
