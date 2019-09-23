@@ -25,6 +25,7 @@ class DepreciacionAnalisisService implements LogUser {
     }
     
     def generarResumen(CuentaContable cuenta, Integer ejercicio, Integer mes) {
+        log.info('Cuenta: {} Periodo: {}/{}', cuenta, ejercicio, mes)
         Map grupo = [:]
         grupo.cuenta = cuenta.descripcion
         grupo.descripcion = "${cuenta.descripcion}"
@@ -63,16 +64,20 @@ class DepreciacionAnalisisService implements LogUser {
         adquiridos.tipo = 'ROW'
 
         Map enajenados = [:]
+
+        def ventasData = evaluarVentas(cuenta, ejercicio, mes)
+        log.info('****** VENTAS: {}', ventasData)
         enajenados.descripcion = 'ACTIVOS ENAJENADOS'
         enajenados.cuenta = cuenta.descripcion
-        enajenados.importe = 0.0
+        enajenados.importe = ventasData.moi
         enajenados.depreciacionHistorica = 0.0
-        enajenados.depreciacionAcumulada = 0.0
-        enajenados.saldoPorDeducir = 0.0
-        enajenados.depreciacionFiscal = 0.0
+        enajenados.depreciacionAcumulada = ventasData.depreciacionContable
+        enajenados.saldoPorDeducir = ventasData.remanenteContable
+        enajenados.depreciacionFiscal = getDepreciacionFiscalDeVentas(cuenta, ejercicio, mes)
         enajenados.saldoEnBalanza = 0.0
         enajenados.diferencia = 0.0
         enajenados.tipo = 'ROW'
+            
 
         Map resumen = [:]
         resumen.descripcion = "SUMA ${cuenta.descripcion}"
@@ -171,6 +176,33 @@ class DepreciacionAnalisisService implements LogUser {
             """, [cuenta: cuenta, ejercicio: ejercicio])[0]?: 0.0
         return res
 
+    }
+
+    def evaluarVentas(CuentaContable cuenta, Integer ejercicio, Integer mes) {
+        def res = BajaDeActivo.findAll("""
+            select sum(x.moiContable), sum(x.depreciacionContable), sum(x.remanenteContable)
+            from BajaDeActivo x
+            where x.activo.cuentaContable =:cuenta 
+              and year(x.fecha) = :ejercicio
+              and month(x.fecha) <= :mes
+            """, [cuenta: cuenta, ejercicio: ejercicio, mes: mes]).get(0)
+        Map row = [
+            moi: res[0]?: 0.0,
+            depreciacionContable: res[1]?: 0.0,
+            remanenteContable: res[2]?: 0.0
+        ]
+        // log.info('R1: {} R2: {} R3: {}', res[0], res[1], res[2])
+        return row
+    }
+
+    def getDepreciacionFiscalDeVentas(CuentaContable cuenta, Integer ejercicio, Integer mes) {
+        def res = BajaDeActivo.findAll("""
+            select sum(x.depreciacionFiscalEjercicioActualizada)
+            from BajaDeActivo x
+            where x.activo.cuentaContable =:cuenta 
+              and year(x.fecha) = :ejercicio
+              and month(x.fecha) <= :mes
+            """, [cuenta: cuenta, ejercicio: ejercicio, mes: mes]).get(0)?: 0.0
     }
 
     def saldoEnBalanza(CuentaContable cuenta, Integer ej, Integer ms) {
