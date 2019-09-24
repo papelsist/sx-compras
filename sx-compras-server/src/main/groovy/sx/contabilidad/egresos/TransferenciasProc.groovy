@@ -35,6 +35,10 @@ class TransferenciasProc implements  ProcesadorMultipleDePolizas {
     @Qualifier('pagoDeCompraTask')
     PagoDeCompraTask pagoDeCompraTask
 
+    @Autowired
+    @Qualifier('devolucionClienteTask')
+    DevolucionClienteTask devolucionClienteTask
+
     
 
     @Override
@@ -56,6 +60,9 @@ class TransferenciasProc implements  ProcesadorMultipleDePolizas {
             case 'REMBOLSO':
                 pagoGastosTask.generarAsientos(poliza,[:])
                 break
+            case 'DEVOLUCION_CLIENTE':
+                    devolucionClienteTask.generarAsientos(poliza, [:])
+                    break
         }
 
         ajustar(poliza,[:])

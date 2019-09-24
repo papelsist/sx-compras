@@ -36,13 +36,28 @@ class MorrallaTask implements  AsientoBuilder{
         List<PagoDeMorralla> morrallas = PagoDeMorralla.where{fecha == poliza.fecha}list()
         morrallas.each{ morralla ->
             ajustarConcepto(poliza, morralla)
+            String ctaBanco = "102-0001-0002-0000"
+          
+             Map rowMor = [
+                            asiento: "CAJA MORRALLA ",
+                            referencia: morralla.proveedor.nombre,
+                            referencia2: morralla.proveedor.nombre,
+                            origen: morralla.id,
+                            documento: morralla.id,
+                            documentoTipo: 'TES',
+                            documentoFecha:morralla.fecha,
+                            sucursal: 'OFICINAAS',
+                            montoTotal: morralla.importe,
+                            moneda: 'MXN',
+                    ]
+            String descripcion = generarDescripcion(rowMor, morralla.proveedor.nombre,'')
             morralla.partidas.each{salida ->
                 def suc = salida.sucursal.clave.padLeft(4,'0')
               //  List<Morralla> list = Morralla.executeQuery("from Morralla where date(fecha) = date(?) and  sucursal = ? and tipo ='SALIDA' ",[salida.fecha,salida.sucursal])
               //  log.info('List: {}', list)
                     String ctaCaja = "101-0001-${suc}-0000"
                     String ctaValores = "107-0006-${suc}-0000"
-                    String ctaBanco = "102-0001-0002-0000"
+                    
                     MovimientoDeCuenta egreso = morralla.egreso
 
                     Map row = [
@@ -63,7 +78,7 @@ class MorrallaTask implements  AsientoBuilder{
 
                 String desc = generarDescripcion(row, morralla.proveedor.nombre, salida.tipo)
                 poliza.addToPartidas(mapRow(ctaValores,desc,row,salida.importe))
-                poliza.addToPartidas(mapRow(ctaBanco,desc,row,0.00,salida.importe))
+               
                 poliza.addToPartidas(mapRow(ctaCaja,desc,row,salida.importe))
                  poliza.addToPartidas(mapRow(ctaValores,desc,row,0.00,salida.importe))
                 /*
@@ -86,6 +101,8 @@ class MorrallaTask implements  AsientoBuilder{
                 }*/
 
             } 
+             poliza.addToPartidas(mapRow(ctaBanco,descripcion,rowMor,0.00,morralla.importe))
+
         }
     }
 

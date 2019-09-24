@@ -37,6 +37,14 @@ class ChequesProc implements  ProcesadorMultipleDePolizas {
     @Qualifier('pagoDeCompraTask')
     PagoDeCompraTask pagoDeCompraTask
 
+    @Autowired
+    @Qualifier('devolucionClienteTask')
+    DevolucionClienteTask devolucionClienteTask
+
+    @Autowired
+    @Qualifier('chequeCanceladoTask')
+    ChequeCanceladoTask chequeCanceladoTask
+
 
     @Override
     String definirConcepto(Poliza poliza) {
@@ -62,9 +70,12 @@ class ChequesProc implements  ProcesadorMultipleDePolizas {
                 case 'REMBOLSO':
                     pagoGastosTask.generarAsientos(poliza,[:])
                     break
+                case 'DEVOLUCION_CLIENTE':
+                    devolucionClienteTask.generarAsientos(poliza, [:])
+                    break
             }
         } else {
-
+             chequeCanceladoTask.generarAsientos(poliza, [:])
         }
 
         poliza = poliza.save flush: true

@@ -113,35 +113,68 @@ class PagoGastosReqTask implements  AsientoBuilder, EgresoTask {
                     }
                
                 poliza.addToPartidas(mapRow(cv, desc, row, totalGasto))
+
+                // Impuestos
+
+                def cheque = egreso.cheque
+                Boolean transito = false
+                if(cheque && cheque.fecha.format('dd/MM/yyyy') != cheque.fechaTransito.format('dd/MM/yyyy') ){
+                    transito = true
+                }
+
+
+                desc = "FAC: ${cxp.serie? cxp.serie : '' } ${cxp.folio} ${cxp.fecha} ${cxp.proveedor.nombre}"
+
+                //BigDecimal ivaCfdi = cxp.impuestoTrasladado - cxp.impuestoRetenidoIva
+
+                 def importeIva = gasto.ivaTrasladado
+
+                    if(gasto.ivaRetenido){                  
+                        importeIva = importeIva - gasto.ivaRetenido 
+                    } 
+
+ 
+                    def ctaChe ='118-0002-0000-0000'
+
+                    if(transito && ! provision){
+                        ctaChe='119-0002-0000-0000'  
+                        poliza.addToPartidas(mapRow(ctaChe, desc, row, importeIva)) 
+                    }
+
+                    if(!transito && ! provision){
+                        poliza.addToPartidas(mapRow(ctaChe, desc, row, importeIva)) 
+                    }
+
+                    if(provision &&  ! transito){
+                        poliza.addToPartidas(mapRow(ctaChe, desc, row, gasto.ivaTrasladado)) 
+                        poliza.addToPartidas(mapRow('119-0002-0000-0000', desc, row,0.00, importeIva))  
+                    } 
+
+                    if(gasto.ivaRetenido){
+                        def ctaIvaRet1 = '118-0003-0000-0000'
+                        def ctaIvaRet2 = '213-0011-0000-0000'
+                        if( provision || transito ){
+                            ctaIvaRet1 = '119-0003-0000-0000'
+                            ctaIvaRet2 = '216-0001-0000-0000'
+                        }
+
+                        poliza.addToPartidas(mapRow(ctaIvaRet1, desc, row, gasto.ivaRetenido)) 
+                        poliza.addToPartidas(mapRow(ctaIvaRet2, desc, row,0.00, gasto.ivaRetenido)) 
+                        
+                    } 
+
+                    if(gasto.isrRetenido){
+                        def ctaIvaRet = '213-0010-0000-0000'
+                      
+                        if(provision || transito){
+                            ctaIvaRet = '216-0002-0000-0000'
+                        }
+                        poliza.addToPartidas(mapRow(ctaIvaRet, desc, row,0.00, gasto.isrRetenido))  
+                    } 
+
+
             }
-            desc = "FAC: ${cxp.serie? cxp.serie : '' } ${cxp.folio} ${cxp.fecha} ${cxp.proveedor.nombre}"
-
-            BigDecimal ivaCfdi = cxp.impuestoTrasladado - cxp.impuestoRetenidoIva
-
-             def cheque = egreso.cheque
-            //def cheque = Cheque.findByEgreso(egreso)
-
-            Boolean transito = false
-
-            if(cheque && cheque.fecha.format('dd/MM/yyyy') != cheque.fechaTransito.format('dd/MM/yyyy') ){
-                transito = true
-            }
-
-            def ctaChe ='118-0002-0000-0000'
-
-            if(transito && ! provision){
-                ctaChe='119-0002-0000-0000'  
-                poliza.addToPartidas(mapRow(ctaChe, desc, row, ivaCfdi)) 
-            }
-
-             if(!transito && ! provision){
-                poliza.addToPartidas(mapRow(ctaChe, desc, row, ivaCfdi)) 
-            }
-
-            if(provision &&  ! transito){
-                 poliza.addToPartidas(mapRow(ctaChe, desc, row, ivaCfdi)) 
-                poliza.addToPartidas(mapRow('119-0002-0000-0000', desc, row,0.00, ivaCfdi))  
-            }          
+      
         }
     }
 
