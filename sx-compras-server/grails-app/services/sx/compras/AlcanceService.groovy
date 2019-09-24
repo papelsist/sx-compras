@@ -208,7 +208,7 @@ class AlcancesService implements DataBinder, LogUser{
     	           from compra_det X 
                     JOIN compra cc  ON(x.compra_id = cc.id) 
                     JOIN producto P ON(X.producto_id = P.ID) 
-                    WHERE cc.fecha > '2018-01-01' 
+                    WHERE cc.fecha > '2019-01-01' 
                       and X.SUCURSAL_ID LIKE @SUCURSAL 
                       GROUP BY X.PRODUCTO_ID
 	        ) AS A

@@ -25,7 +25,7 @@ class DepreciacionAnalisisService implements LogUser {
     }
     
     def generarResumen(CuentaContable cuenta, Integer ejercicio, Integer mes) {
-        log.info('Cuenta: {} Periodo: {}/{}', cuenta, ejercicio, mes)
+        // log.info('Cuenta: {} Periodo: {}/{}', cuenta, ejercicio, mes)
         Map grupo = [:]
         grupo.cuenta = cuenta.descripcion
         grupo.descripcion = "${cuenta.descripcion}"
@@ -66,7 +66,7 @@ class DepreciacionAnalisisService implements LogUser {
         Map enajenados = [:]
 
         def ventasData = evaluarVentas(cuenta, ejercicio, mes)
-        log.info('****** VENTAS: {}', ventasData)
+        // log.info('****** VENTAS: {}', ventasData)
         enajenados.descripcion = 'ACTIVOS ENAJENADOS'
         enajenados.cuenta = cuenta.descripcion
         enajenados.importe = ventasData.moi
@@ -77,15 +77,16 @@ class DepreciacionAnalisisService implements LogUser {
         enajenados.saldoEnBalanza = 0.0
         enajenados.diferencia = 0.0
         enajenados.tipo = 'ROW'
-            
+        
 
         Map resumen = [:]
         resumen.descripcion = "SUMA ${cuenta.descripcion}"
         resumen.cuenta = cuenta.descripcion
-        resumen.importe = iniciales.importe + adquiridos.importe + enajenados.importe
-        resumen.depreciacionHistorica = iniciales.depreciacionHistorica + adquiridos.depreciacionHistorica + enajenados.depreciacionHistorica
-        resumen.depreciacionAcumulada = iniciales.depreciacionAcumulada + adquiridos.depreciacionAcumulada + enajenados.depreciacionAcumulada
-        resumen.saldoPorDeducir = resumen.importe - resumen.depreciacionHistorica - resumen.depreciacionAcumulada
+        resumen.importe = iniciales.importe + adquiridos.importe - enajenados.importe
+        resumen.depreciacionHistorica = iniciales.depreciacionHistorica + adquiridos.depreciacionHistorica - enajenados.depreciacionHistorica
+        resumen.depreciacionAcumulada = iniciales.depreciacionAcumulada + adquiridos.depreciacionAcumulada - enajenados.depreciacionAcumulada
+        resumen.saldoPorDeducir = iniciales.saldoPorDeducir + adquiridos.saldoPorDeducir  - enajenados.saldoPorDeducir 
+
         resumen.depreciacionFiscal = iniciales.depreciacionFiscal + adquiridos.depreciacionFiscal + enajenados.depreciacionFiscal
         resumen.saldoEnBalanza = saldoEnBalanza(cuenta, ejercicio, mes)
         resumen.diferencia = resumen.saldoPorDeducir - resumen.saldoEnBalanza 
@@ -136,6 +137,8 @@ class DepreciacionAnalisisService implements LogUser {
         def depreciacion = ActivoDepreciacion.findAll("""
             select sum(x.depreciacion) 
             from ActivoDepreciacion x 
+            join x.activoFijo f
+            left join f.baja b
             where x.activoFijo.cuentaContable = :cuenta
               and year(x.activoFijo.adquisicion) < :ejercicio
               and x.ejercicio = :ejercicio
@@ -211,11 +214,11 @@ class DepreciacionAnalisisService implements LogUser {
 
         def saldo1 = SaldoPorCuentaContable.where{ cuenta.clave == cuenta.clave && ejercicio == ej && mes == ms}.find()
         if(!saldo1) throw new RuntimeException("No ha saldo en balanza de cta: ${cuenta.clave} (${ej}/${ms})")
-        log.info('Saldo 1: {}: {}', cuenta.clave, saldo1.saldoFinal)
+        // log.info('Saldo 1: {}: {}', cuenta.clave, saldo1.saldoFinal)
         
         def saldo2 = SaldoPorCuentaContable.where{ cuenta.clave == target && ejercicio == ej && mes == ms}.find()
         if(!saldo2) throw new RuntimeException("No ha saldo en balanza de cta: ${target} (${ej}/${ms})")
-        log.info('Saldo 2: {}: {}', target, saldo2.saldoFinal)
+        // log.info('Saldo 2: {}: {}', target, saldo2.saldoFinal)
 
 
         return saldo1.saldoFinal + saldo2.saldoFinal
