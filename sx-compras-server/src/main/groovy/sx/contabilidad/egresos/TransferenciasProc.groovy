@@ -78,7 +78,7 @@ class TransferenciasProc implements  ProcesadorMultipleDePolizas {
         List<Poliza> polizas = []
         List<MovimientoDeCuenta> movimientos = MovimientoDeCuenta
                 .where{fecha == command.fecha && formaDePago ==  'TRANSFERENCIA' && importe < 0.0}
-                .where{tipo in ['COMPRA','GASTO','REMBOLSO','PAGO_NOMINA'] && concepto != 'COMISION_POR_TRANSFERENCIA'}
+                .where{tipo in ['COMPRA','GASTO','REMBOLSO','PAGO_NOMINA','DEVOLUCION_CLIENTE'] && concepto != 'COMISION_POR_TRANSFERENCIA'}
                 .list([sort: 'fecha', order: 'asc'])
         movimientos = movimientos.sort {it.cuenta.descripcion}
         movimientos.each{ mov ->

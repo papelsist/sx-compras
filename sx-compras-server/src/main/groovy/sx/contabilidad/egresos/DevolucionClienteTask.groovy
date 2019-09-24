@@ -87,6 +87,8 @@ class DevolucionClienteTask implements  AsientoBuilder, EgresoTask {
         BigDecimal importe = MonedaUtils.calcularImporteDelTotal(d.importe)
         BigDecimal impuesto = d.importe - importe 
 
+        def cheque = egreso.cheque
+
         if(d.concepto=='DEPOSITO_DEVUELTO'){
 
              cv = "102-0001-${buscarCuentaBancoCobro(d.cobro)}-0000"
@@ -96,15 +98,23 @@ class DevolucionClienteTask implements  AsientoBuilder, EgresoTask {
         if(d.concepto=='DEPOSITO_POR_IDENTIFICAR'  ){
              cv = "205-0002-${buscarCuentaBancoCobro(d.cobro)}-0000"
              poliza.addToPartidas(mapRow(cv, desc, row,importe))
-             if(egreso.cheque.fecha.format('dd/MM/yyyy') == egreso.cheque.fechaTransito.format('dd/MM/yyyy')){
+             if(cheque && egreso.cheque.fecha.format('dd/MM/yyyy') == egreso.cheque.fechaTransito.format('dd/MM/yyyy')){
                 // IVA
                 poliza.addToPartidas(mapRow('208-0003-0000-0000', desc, row, impuesto))
-             }      
+             }  
+             if(!cheque){
+                // IVA
+                poliza.addToPartidas(mapRow('208-0003-0000-0000', desc, row, impuesto))
+             }     
         }
-        if(d.concepto=='SALDO_A_FAVOR' ){
+        if( d.concepto=='SALDO_A_FAVOR' ){
             cv = "205-0001-${venta}-0000"
              poliza.addToPartidas(mapRow(cv, desc, row,importe))
-             if(egreso.cheque.fecha.format('dd/MM/yyyy') == egreso.cheque.fechaTransito.format('dd/MM/yyyy')){
+             if(cheque && egreso.cheque.fecha.format('dd/MM/yyyy') == egreso.cheque.fechaTransito.format('dd/MM/yyyy')){
+                // IVA
+                poliza.addToPartidas(mapRow('208-0004-0000-0000', desc, row, impuesto))
+             }
+             if(!cheque ){
                 // IVA
                 poliza.addToPartidas(mapRow('208-0004-0000-0000', desc, row, impuesto))
              }
@@ -119,7 +129,17 @@ class DevolucionClienteTask implements  AsientoBuilder, EgresoTask {
                 cv = "105-0003-${buscarCuentaOperativa(d.cliente)}-0000"
             }
             poliza.addToPartidas(mapRow(cv, desc, row,d.importe))
-            if(egreso.cheque.fecha.format('dd/MM/yyyy') == egreso.cheque.fechaTransito.format('dd/MM/yyyy')){
+            if(cheque && egreso.cheque.fecha.format('dd/MM/yyyy') == egreso.cheque.fechaTransito.format('dd/MM/yyyy')){
+                // IVA
+                poliza.addToPartidas(mapRow('208-0001-0000-0000', desc, row, impuesto))
+                if(d.cobro.formaDePago == 'BONIFICACION'){
+                    poliza.addToPartidas(mapRow('209-0001-0000-0000', desc, row, 0.0, impuesto))
+                }
+                if(d.cobro.formaDePago == 'DEVOLUCION'){
+                    poliza.addToPartidas(mapRow('209-0001-0000-0000', desc, row, 0.0, impuesto))
+                }
+            }
+            if(!cheque){
                 // IVA
                 poliza.addToPartidas(mapRow('208-0001-0000-0000', desc, row, impuesto))
                 if(d.cobro.formaDePago == 'BONIFICACION'){

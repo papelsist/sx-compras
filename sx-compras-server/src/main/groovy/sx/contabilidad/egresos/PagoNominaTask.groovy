@@ -96,7 +96,8 @@ class PagoNominaTask implements  AsientoBuilder, EgresoTask {
                 referencia2: egreso.cuenta.descripcion,
                 origen: egreso.id,
                 documentoTipo: 'NOMINA',
-                sucursal: 'OFICINAS'
+                sucursal: 'OFICINAS',
+                montoTotal: nomina.total
         ]
 
         row.rfc = Empresa.first().rfc
@@ -125,16 +126,19 @@ class PagoNominaTask implements  AsientoBuilder, EgresoTask {
         }
 
         if(nomina.tipo == 'ASIMILADOS'){
+            println "**********************"
             def query = "select * from nomina_por_empleado where id = ? "
             def queryUUID = "select * from cfdi where id = ? "
             def nom = findRegistro(query, [nomina.nominaEmpleado])
             def cfdi = findRegistro(queryUUID, [nom.cfdi_id])
+            println "---------"+cfdi.uuid
             def total = nom.total_gravado
             def impuesto = nom.total - nom.total_gravado
-            poliza.addToPartidas(toPolizaDet('600-P036-0001-0000', desc, row, total))
-            poliza.addToPartidas(toPolizaDet('216-0003-0000-0000', desc, row, 0.00, impuesto))
             row.uuid = cfdi.uuid
             row.rfc = cfdi.receptor_rfc
+            poliza.addToPartidas(toPolizaDet('600-P036-0001-0000', desc, row, total))
+            poliza.addToPartidas(toPolizaDet('216-0003-0000-0000', desc, row, 0.00, impuesto))
+            
         }
 
         //buildComplementoDePago(row, egreso)
@@ -181,6 +185,11 @@ class PagoNominaTask implements  AsientoBuilder, EgresoTask {
     }
 
     void abonoBanco(Poliza poliza, PagoDeNomina nomina) {
+        def query = "select * from nomina_por_empleado where id = ? "
+        def queryUUID = "select * from cfdi where id = ? "
+        def nom = findRegistro(query, [nomina.nominaEmpleado])
+        def cfdi = findRegistro(queryUUID, [nom.cfdi_id])
+
         MovimientoDeCuenta egreso = nomina.egreso
         log.info('Abono a banco: {}', egreso)
 
@@ -188,6 +197,8 @@ class PagoNominaTask implements  AsientoBuilder, EgresoTask {
         Map row = buildDataRow(egreso)
        // buildComplementoDePago(row, egreso)
         row.rfc = Empresa.first().rfc
+        row.uuid = cfdi.uuid
+        row.montoTotal = nomina.total
 
         String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} ${egreso.afavor} (${egreso.fecha.format('dd/MM/yyyy')})"
 
@@ -225,6 +236,11 @@ class PagoNominaTask implements  AsientoBuilder, EgresoTask {
                 documentoTipo: row.documentoTipo,
                 documentoFecha: row.documentoFecha,
                 sucursal: row.sucursal,
+                uuid : row.uuid,
+                rfc: row.rfc,
+                moneda: 'MXN',
+                tipCamb: 1,
+                montoTotal: row.montoTotal ,
                 debe: debe.abs() ,
                 haber: haber.abs(),
         )
