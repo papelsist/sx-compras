@@ -225,6 +225,12 @@ export class CxpGastosDetTableComponent extends LxTableComponent
         valueFormatter: params => this.transformCurrency(params.value)
       },
       {
+        headerName: 'Desc',
+        field: 'descuento',
+        width: 100,
+        valueFormatter: params => this.transformCurrency(params.value)
+      },
+      {
         headerName: 'Importe',
         field: 'importe',
         width: 110,
@@ -285,13 +291,6 @@ export class CxpGastosDetTableComponent extends LxTableComponent
           }
         ]
       },
-      {
-        headerName: 'Desc',
-        field: 'descuento',
-        width: 110,
-        valueFormatter: params => this.transformCurrency(params.value)
-      },
-
       {
         headerName: 'Activo Fijo',
         children: [

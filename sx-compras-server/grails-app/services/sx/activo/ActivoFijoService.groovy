@@ -17,6 +17,7 @@ class ActivoFijoService implements LogUser {
 
     ActivoDepreciacionFiscalService activoDepreciacionFiscalService
     ActivoDepreciacionService activoDepreciacionService
+    VentaDeActivoService ventaDeActivoService
     
 
     ActivoFijo save(ActivoFijo activo) {
@@ -38,7 +39,7 @@ class ActivoFijoService implements LogUser {
     ActivoFijo registrarBaja(ActivoFijo activo) {
         log.info('Baja de activo: {}', activo.baja)
         activoDepreciacionService.registrarBajaContable(activo)
-        activoDepreciacionFiscalService.registrarBajaFiscal(activo)
+        ventaDeActivoService.registrarBajaFiscal(activo)
         activo.estado = 'VENDIDO'
         logEntity(activo)
         activo.save failOnError: true, flush: true

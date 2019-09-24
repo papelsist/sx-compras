@@ -48,13 +48,12 @@ class ActivoDepreciacionService implements LogUser {
     ActivoDepreciacion generarDepreciacionUnitaria(ActivoFijo af, Integer year, Integer month) {
 
         Date corte = Periodo.getPeriodoEnUnMes(month - 1, year).fechaFinal
-        
-        
 
         def depreciacion = ActivoDepreciacion.findOrCreateWhere(activoFijo: af, ejercicio: year, mes: month)
         depreciacion.corte = corte
 
-        def acumulada = ActivoDepreciacion.where{activoFijo == af}.list().sum 0.0, {it.depreciacion}
+        // def acumulada = ActivoDepreciacion.where{activoFijo == af}.list().sum 0.0, {it.depreciacion}
+        def acumulada = calcularDepreciacionAcumulada(af, corte)
         
         af.depreciacionAcumulada = acumulada
         
@@ -67,7 +66,8 @@ class ActivoDepreciacionService implements LogUser {
         
         if(remanente < mensual) {
             mensual = remanente
-            af.estado = 'DEPRECIADO'
+            if(af.estado != 'VENDIDO')
+                af.estado = 'DEPRECIADO'
             af.save flush: true
         }
 
@@ -99,6 +99,21 @@ class ActivoDepreciacionService implements LogUser {
         log.info('AF: {} Adquisicion: {}', af.id, af.adquisicion.format('dd/MM/yyyy') )
         ActivoDepreciacion.executeUpdate("delete ActivoDepreciacion where activoFijo = ?", [af])
         af.estado = 'VIGENTE'
+        if(af.baja && af.baja.fecha.before(corte)) {
+            // Ajuste por baja
+            def fbaja = af.baja.fecha
+            def mesFinal = Periodo.obtenerMes(fbaja) 
+            def ejercicioFinal = Periodo.obtenerYear(fbaja)
+            if (mesFinal == 0) {
+                ejercicioFinal = ejercicioFinal - 1
+                mesFinal = 12
+            }
+            def periodoFinal = Periodo.getPeriodoEnUnMes(mesFinal - 1, ejercicioFinal)
+            corte = periodoFinal.fechaFinal
+            log.info('Detectando baja en {} Mes: {}', fbaja, mesFinal)
+            af.estado = 'VENDIDO'
+        }
+
         Periodo periodo = new Periodo(af.adquisicion, corte)
         List periodos = Periodo.periodosMensuales(periodo)
         for(int i = 1; i < periodos.size(); i++) {
@@ -110,10 +125,7 @@ class ActivoDepreciacionService implements LogUser {
             if(af.estado == 'DEPRECIADO') {
                 break;
             }
-
         }
-        
-
     }
 
     /**

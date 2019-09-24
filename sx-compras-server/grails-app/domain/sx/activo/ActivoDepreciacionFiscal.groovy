@@ -44,7 +44,8 @@ class ActivoDepreciacionFiscal {
         createUser nullable: true
         updateUser nullable: true
         inpcDelMesAdquisicion scale: 4
-        factorDeActualizacion scael: 4
+        inpcPrimeraMitad scale: 4
+        factorDeActualizacion scale: 4
         inpcPrimeraMitadDesc maxSize: 50
         tasa sacale: 4
     }
