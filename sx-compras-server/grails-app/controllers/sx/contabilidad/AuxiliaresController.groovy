@@ -24,10 +24,11 @@ class AuxiliaresController {
 	AuxiliaresService auxiliaresService
     
     def bancos(){
-
         Periodo periodo = params.periodo
         log.info('Ejecutando: {}', this.params)
-        String select = auxiliaresService.getSelect('BANCOS').replaceAll('@FECHA_INICIAL', auxiliaresService.toSqlDate(periodo.fechaInicial)).replaceAll('@FECHA_FINAL', auxiliaresService.toSqlDate(periodo.fechaFinal)).
+        String select = auxiliaresService.getSelect('BANCOS')
+            .replaceAll('@FECHA_INICIAL', auxiliaresService.toSqlDate(periodo.fechaInicial))
+            .replaceAll('@FECHA_FINAL', auxiliaresService.toSqlDate(periodo.fechaFinal)).
         replaceAll('@CUENTA', params.cuenta)
         def rows = auxiliaresService.getAllRows(select,[])
         respond rows
@@ -48,7 +49,7 @@ class AuxiliaresController {
         }
         log.info('Auxiliar: {}', command)
 
-        def cuentaInicial = "${command.cuentaInicial}%"
+        def cuentaInicial = "${command.cuentaInicial}"
         if(cuentaInicial.split('-').size() < 4) {
             cuentaInicial += '%'
         }
@@ -81,9 +82,18 @@ class AuxiliaresController {
                     and d.poliza.cierre != null
                     order by d.cuenta.clave 
             """
-            log.info('Buscando movimientos de la cuenta {}', cuentaInicial)
-            res = PolizaDet.findAll(hql ,[command.periodo.fechaInicial, command.periodo.fechaFinal, cuentaInicial])
+            log.info('Buscando movimientos de la cta:{}', cuentaInicial)
+            
+            res = PolizaDet.findAll(hql ,[
+                command.periodo.fechaInicial, 
+                command.periodo.fechaFinal, 
+                cuentaInicial])
+
         } else {
+            def cuentaFinal = "${command.cuentaFinal}"
+            if(cuentaFinal.split('-').size() < 4) {
+                cuentaFinal += '%'
+            }
             def hql = """
             select new sx.contabilidad.PolizaDetDTO(
                 d.id,
@@ -108,9 +118,12 @@ class AuxiliaresController {
                     and d.poliza.cierre != null
                     order by d.cuenta.clave 
             """
-            log.info('Buscando movimientos de la cuenta {} a la cuenta', cuentaInicial, command.cuentaFinal)
-            res = PolizaDet.findAll(hql ,
-                [command.periodo.fechaInicial, command.periodo.fechaFinal, cuentaInicial, command.cuentaFinal], [max: 10])
+            log.info('Buscando movimientos de la cta: {} a la: {}', cuentaInicial, cuentaFinal)
+            res = PolizaDet.findAll(hql ,[
+                command.periodo.fechaInicial,
+                command.periodo.fechaFinal,
+                cuentaInicial,
+                cuentaFinal])
 
         }
         respond res

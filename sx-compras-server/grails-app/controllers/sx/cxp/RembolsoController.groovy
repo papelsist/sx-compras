@@ -117,7 +117,7 @@ class RembolsoController extends RestfulController<Rembolso> {
     def pendientes() {
         params.max = 100
 
-        def q = CuentaPorPagar.where {tipo != 'COMPRAS' && pagos <= 0}
+        def q = CuentaPorPagar.where {tipo != 'COMPRAS' && saldoReal != 0}
 
         if(params.nombre) {
             def s = "${params.nombre}%"
@@ -130,6 +130,7 @@ class RembolsoController extends RestfulController<Rembolso> {
             log.info('Utilizando folio {}', params.folio)
             q = q.where { folio == folio}
         }
+        /*
         q = q.where {
             def em1 = CuentaPorPagar
             notExists RembolsoDet.where {
@@ -138,6 +139,7 @@ class RembolsoController extends RestfulController<Rembolso> {
                 return em2.id == em1.id
             }.id()
         }
+        */
         respond q.list(params)
     }
 

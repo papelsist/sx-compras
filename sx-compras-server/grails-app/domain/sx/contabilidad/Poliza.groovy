@@ -84,6 +84,7 @@ class Poliza {
                 'ANTICIPOS','COMPRAS',
                 'INVENTARIOS',
                 'ACTIVO_FIJO',
+                'ACTIVO_FIJO_BAJA',
                 'CHEQUES_EN_TRANSITO',
                 'DEPOSITOS_EN_TRANSITO',
                 'DEPOSITOS_TESORERIA',

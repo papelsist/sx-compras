@@ -52,8 +52,8 @@ class ActivoDepreciacionService implements LogUser {
         def depreciacion = ActivoDepreciacion.findOrCreateWhere(activoFijo: af, ejercicio: year, mes: month)
         depreciacion.corte = corte
 
-        // def acumulada = ActivoDepreciacion.where{activoFijo == af}.list().sum 0.0, {it.depreciacion}
-        def acumulada = calcularDepreciacionAcumulada(af, corte)
+        def acumulada = ActivoDepreciacion.where{activoFijo == af}.list().sum 0.0, {it.depreciacion}
+        // def acumulada = calcularDepreciacionAcumulada(af, corte)
         
         af.depreciacionAcumulada = acumulada
         
