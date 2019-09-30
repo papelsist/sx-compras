@@ -3,14 +3,15 @@ package sx.compras
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 
-import sx.incentario.TransformacionDet
+
+import sx.inventario.TransformacionDet
+import sx.cxp.CuentaPorPagar
 
 
 @ToString(includes = 'folio, serie, clave, cantidad', includeNames=true,includePackage=false)
 @EqualsAndHashCode(includeFields = true,includes = 'id, uuid')
 class AnalisisDeTransformacion {
 
-    Proveedor proveedor
     
     String nombre
 	
@@ -22,13 +23,15 @@ class AnalisisDeTransformacion {
 	
     BigDecimal importe = 0.0
 
+    String comentario
+
 	Date dateCreated
 	Date lastUpdated
 
 	String createUser
 	String updateUser
 
-    Set<TransformacionDet> partidas = 
+    Set<TransformacionDet> partidas
 
     static constraints = {
     	createUser nullable: true

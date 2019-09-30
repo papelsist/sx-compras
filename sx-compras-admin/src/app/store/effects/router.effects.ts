@@ -5,7 +5,8 @@ import { Location } from '@angular/common';
 import { Effect, Actions, ofType } from '@ngrx/effects';
 import * as RouterActions from '../actions/router.actions';
 
-import { tap, map } from 'rxjs/operators';
+import { tap, map, catchError, filter } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 @Injectable()
 export class RouterEffects {
@@ -19,8 +20,18 @@ export class RouterEffects {
   navigate$ = this.actions$.pipe(
     ofType(RouterActions.GO),
     map((action: RouterActions.Go) => action.payload),
+    /* HACK POR MISTERIOSO ERROR QUE SURGE APARENTEMENTE DE LOS FILTROS EN
+     * ag-grid y posiblemente se detone desde lx-table.component.ts
+     */
+    filter(({ path }) => {
+      const errorPart = path.findIndex(item => item === undefined);
+      if (errorPart !== -1) {
+        // console.error('Encontro path con error en index: ', errorPart);
+        // console.error('Path: ', path);
+      }
+      return errorPart === -1;
+    }),
     tap(({ path, query: queryParams, extras }) => {
-      // console.log('Undefinde path: ', path);
       this.router.navigate(path, { queryParams, ...extras });
     })
   );

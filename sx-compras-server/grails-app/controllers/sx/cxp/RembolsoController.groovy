@@ -130,7 +130,12 @@ class RembolsoController extends RestfulController<Rembolso> {
             log.info('Utilizando folio {}', params.folio)
             q = q.where { folio == folio}
         }
-        /*
+        /************************** ALERTA *****
+        * SE DEBE MODIFICAR PARA TRABAJAR POR EL SALDO PERO SE REQUIERE
+        * MODIFICAR EL SISTEMA DE TESORERIA PARA QUE EN EL PAGO DE LOS MISMOS 
+        * GENERE LA APLICACION CORRESPONDIENTE Y EL SALDO SE DESCUENTE.
+        * MIENTRAS ESA MODIFIACION NO SE HAGA LAS LINEAS SIGUIENTES SON NCESARIAS
+        **/
         q = q.where {
             def em1 = CuentaPorPagar
             notExists RembolsoDet.where {
@@ -139,7 +144,7 @@ class RembolsoController extends RestfulController<Rembolso> {
                 return em2.id == em1.id
             }.id()
         }
-        */
+        
         respond q.list(params)
     }
 
