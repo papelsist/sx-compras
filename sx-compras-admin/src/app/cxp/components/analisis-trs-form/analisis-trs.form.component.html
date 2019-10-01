@@ -1,0 +1,90 @@
+<form [formGroup]="form">
+  <div layout layout-align="start start">
+    <mat-form-field flex>
+      <input
+        matInput
+        value="{{ analisis.nombre }}"
+        placeholder="Proveedor"
+        readonly="true"
+      />
+    </mat-form-field>
+    <mat-form-field class="pad-left">
+      <input
+        matInput
+        [matDatepicker]="myDatepicker"
+        formControlName="fecha"
+        placeholder="Fecha"
+      />
+      <mat-datepicker-toggle
+        matSuffix
+        [for]="myDatepicker"
+      ></mat-datepicker-toggle>
+      <mat-datepicker #myDatepicker></mat-datepicker>
+    </mat-form-field>
+    <sx-upper-case-field
+      class="pad-left"
+      formControlName="comentario"
+      flex
+    ></sx-upper-case-field>
+
+    <button
+      mat-button
+      color="primary"
+      (click)="onSubmit()"
+      [disabled]="form.pristine || form.invalid"
+      *ngIf="!analisis.cerrada"
+    >
+      <mat-icon>save</mat-icon> Actualizar
+    </button>
+  </div>
+  <div layout layout-align="start center" *ngIf="analisis.cxp as cxp">
+    <mat-form-field>
+      <input
+        matInput
+        value="{{ cxp.serie }} {{ cxp.folio }}"
+        placeholder="Factura"
+        readonly="true"
+      />
+    </mat-form-field>
+    <mat-form-field class="pad-left">
+      <input
+        matInput
+        value="{{ cxp.uuid }}"
+        placeholder="UUID"
+        readonly="true"
+      />
+    </mat-form-field>
+    <mat-form-field [ngStyle]="{ 'width.px': 110 }" class="pad-left">
+      <input
+        matInput
+        value="{{ cxp.fecha | date: 'dd/MM/yyyy' }}"
+        placeholder="Fecha"
+        readonly="true"
+      />
+    </mat-form-field>
+    <mat-form-field class="pad-left" [ngStyle]="{ 'width.px': 110 }">
+      <input
+        matInput
+        value="{{ cxp.subTotal | currency }}"
+        placeholder="Importe"
+        readonly="true"
+      />
+    </mat-form-field>
+    <mat-form-field class="pad-left" [ngStyle]="{ 'width.px': 110 }">
+      <input
+        matInput
+        value="{{ cxp.impuestoTrasladado | currency }}"
+        placeholder="Impuestos"
+        readonly="true"
+      />
+    </mat-form-field>
+    <mat-form-field class="pad-left" [ngStyle]="{ 'width.px': 110 }">
+      <input
+        matInput
+        value="{{ cxp.total | currency }}"
+        placeholder="Total"
+        readonly="true"
+      />
+    </mat-form-field>
+  </div>
+</form>

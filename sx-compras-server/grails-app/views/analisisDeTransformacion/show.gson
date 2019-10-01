@@ -1,0 +1,7 @@
+import sx.cxp.AnalisisDeTransformacion
+
+model {
+	AnalisisDeTransformacion analisisDeTransformacion
+}
+
+json tmpl.analisisDeTransformacion(analisisDeTransformacion)

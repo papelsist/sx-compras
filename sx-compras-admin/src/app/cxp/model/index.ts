@@ -13,3 +13,6 @@ export * from './aplicacionDePago';
 export * from './contrarecibo';
 export * from './pago';
 export * from './analisis-de-nota';
+
+export * from './analisis-de-transformacion';
+export * from './analisis-de-transformaciondet';

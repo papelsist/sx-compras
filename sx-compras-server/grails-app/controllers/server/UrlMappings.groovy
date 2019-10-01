@@ -439,6 +439,14 @@ class UrlMappings {
 
         "/api/analisisDecs"(resources: 'analisisDeDevolucion', excludes:['create', 'edit','patch'])
 
+        // Analisis de transformaciones
+        "/api/cxp/analisisDeTransformacion"(resources: 'analisisDeTransformacion', excludes:['create', 'edit']){
+            // "/partidas"(resources: 'analisisDeTransformacionDet', excludes:['create', 'edit'])
+        }
+        "/api/cxp/analisisDeTransformacion/pendientesDeAnalisis/$proveedorId"(controller: 'analisisDeTransformacion', action: 'pendientesDeAnalisis', method: 'GET')
+        "/api/cxp/analisisDeTransformacion/pendientes"(controller: 'analisisDeTransformacion', action: 'pendientes')
+        "/api/cxp/analisisDeTransformacion/print/$id"(controller: 'analisisDeTransformacion', action: 'print', method: 'GET')
+
         // Audit
         "/api/audit"(resources: 'audit', excludes:['create', 'edit','patch'])
 

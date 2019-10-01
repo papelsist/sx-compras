@@ -14,6 +14,8 @@ import { PagosComponent } from './pagos/pagos.component';
 import { PagoComponent } from './pago/pago.component';
 import { AnalisisDeNotaComponent } from './analisis-de-nota/analisis-de-nota.component';
 import { AnalisisDeNotasComponent } from './analisis-de-notas/analisis-de-notas.component';
+import { AnalisisDeTransformacionesComponent } from './analisis-de-transformaciones/analisis-de-transformaciones.component';
+import { AnalisisDeTransformacionComponent } from './analisis-de-transformacion/analisis-de-transformacion.component';
 
 export const containers: any[] = [
   CxpPageComponent,
@@ -31,7 +33,9 @@ export const containers: any[] = [
   PagosComponent,
   PagoComponent,
   AnalisisDeNotasComponent,
-  AnalisisDeNotaComponent
+  AnalisisDeNotaComponent,
+  AnalisisDeTransformacionesComponent,
+  AnalisisDeTransformacionComponent
 ];
 
 export * from './cxp-page/cxp-page.component';
@@ -51,3 +55,6 @@ export * from './pago/pago.component';
 
 export * from './analisis-de-notas/analisis-de-notas.component';
 export * from './analisis-de-nota/analisis-de-nota.component';
+
+export * from './analisis-de-transformaciones/analisis-de-transformaciones.component';
+export * from './analisis-de-transformacion/analisis-de-transformacion.component';

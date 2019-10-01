@@ -1,0 +1,80 @@
+<mat-card *ngIf="analisis$ | async as analisis">
+  <mat-card-title>
+    <div layout>
+      <span>Analisis de TRS Id:</span>
+      <span class="pad-left">
+        {{ analisis.id }}
+      </span>
+      <span flex></span>
+      <span *ngIf="analisis.cerrada">
+        CERRADA: {{ analisis.cerrada | date: 'dd/MM/yyyy' }}
+      </span>
+    </div>
+  </mat-card-title>
+
+  <div>
+    <!--Hack para visualizar el mat-divider-->
+    <mat-divider></mat-divider>
+  </div>
+
+  <mat-card-content>
+    <ng-template
+      tdLoading
+      [tdLoadingUntil]="!(loading$ | async)"
+      tdLoadingStrategy="overlay"
+    >
+      <sx-analisis-trs-form
+        [analisis]="analisis"
+        (update)="onUpdate($event)"
+      ></sx-analisis-trs-form>
+    </ng-template>
+  </mat-card-content>
+  <div class="grid-panel">
+    <sx-analisis-trs-partidas
+      [partidas]="analisis.partidas"
+      (selectionChange)="onSelectionChange($event)"
+    ></sx-analisis-trs-partidas>
+  </div>
+  <mat-card-actions>
+    <button mat-button (click)="back()">
+      <mat-icon>arrow_back</mat-icon> Analisis
+    </button>
+
+    <ng-container *ngIf="!analisis.cerrada">
+      <button mat-button color="primary" (click)="seleccionarFactura(analisis)">
+        Factura (XML)
+      </button>
+      <button mat-button (click)="agregarPartidas(analisis)">
+        <mat-icon>playlist_add</mat-icon> PARTIDAS
+      </button>
+
+      <button
+        mat-button
+        (click)="onDeletePartidas(analisis, selected)"
+        color="warn"
+        [disabled]="selected.length === 0"
+        matTooltip="QUITAR PARTIDAS SELECCIONADAS"
+      >
+        <mat-icon>remove_circle_outline</mat-icon> QUITAR
+      </button>
+      <button
+        mat-button
+        (click)="cerrarAnalisis(analisis)"
+        color="accent"
+        matTooltip="CERRAR EL ANALISIS"
+      >
+        CERRAR
+      </button>
+
+      <button mat-button (click)="onDelete(analisis)" color="warn">
+        <mat-icon>delete</mat-icon> ELIMINAR
+      </button>
+    </ng-container>
+    <sx-report-button
+      url="{{ 'cxp/analisisDeTransformacion/print/' + analisis.id }}"
+    ></sx-report-button>
+  </mat-card-actions>
+</mat-card>
+<!-- <pre>
+  {{ analisis$ | async | json }}
+</pre> -->

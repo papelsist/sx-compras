@@ -1,0 +1,8 @@
+import sx.cxp.AnalisisDeTransformacion
+
+model {
+	Iterable<AnalisisDeTransformacion> analisisDeTransformacionList
+}
+
+json tmpl.analisisDeTransformacion(analisisDeTransformacionList ?: [])
+

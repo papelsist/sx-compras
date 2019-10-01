@@ -1,0 +1,11 @@
+import sx.cxp.AnalisisDeTransformacion
+
+model {
+	AnalisisDeTransformacion analisisDeTransformacion
+}
+
+json g.render(analisisDeTransformacion, [excludes: ['cxp', 'partidas'], resolveTemplate: false]){
+	cxp g.render(analisisDeTransformacion.cxp)
+	total analisisDeTransformacion.cxp ? analisisDeTransformacion.cxp.total: 0.0
+	partidas g.render(analisisDeTransformacion.partidas)
+}

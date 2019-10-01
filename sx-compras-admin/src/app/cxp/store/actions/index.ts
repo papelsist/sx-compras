@@ -8,3 +8,4 @@ export * from './contrarecibos.actions';
 export * from './pagos.actions';
 export * from './aplicaciones.actions';
 export * from './analisis-de-nota.actions';
+export * from './analisis-de-transformacion.actions';

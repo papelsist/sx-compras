@@ -84,6 +84,20 @@ const routes: Routes = [
         ]
       },
       {
+        path: 'analisisDeTrs',
+        canActivate: [fromGuards.AnalisisTrsGuard],
+        children: [
+          {
+            path: '',
+            component: fromContainers.AnalisisDeTransformacionesComponent
+          },
+          {
+            path: ':analisisId',
+            component: fromContainers.AnalisisDeTransformacionComponent
+          }
+        ]
+      },
+      {
         path: 'contrarecibos',
         canActivate: [fromGuards.ContrarecibosGuard],
         children: [

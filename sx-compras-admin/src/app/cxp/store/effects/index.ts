@@ -8,6 +8,8 @@ import { PagosEffects } from './pagos.effects';
 import { AplicacionesEffects } from './aplicaciones.effects';
 import { CfdiEffects } from './cfdi.effects';
 import { AnalisisDeNotaEffects } from './analisis-de-nota.effects';
+import { AnalisisDeTrsEffects } from './analisis-de-trs.effects';
+import { AnalisisTrsDetEffects } from './analisis-trs-det.effects';
 
 export const effects: any[] = [
   CfdiEffects,
@@ -19,7 +21,9 @@ export const effects: any[] = [
   ContrarecibosEffects,
   PagosEffects,
   AplicacionesEffects,
-  AnalisisDeNotaEffects
+  AnalisisDeNotaEffects,
+  AnalisisDeTrsEffects,
+  AnalisisTrsDetEffects
 ];
 
 export * from './analisis.efects';
@@ -31,3 +35,5 @@ export * from './contrarecibos.effects';
 export * from './pagos.effects';
 export * from './aplicaciones.effects';
 export * from './analisis-de-nota.effects';
+export * from './analisis-de-trs.effects';
+export * from './analisis-trs-det.effects';
