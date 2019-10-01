@@ -95,7 +95,7 @@ environments:
             password:
     production:
         dataSource:
-            dbCreate: none
+            dbCreate: update
             #url: jdbc:mysql://10.10.1.229/siipapx?autoReconnect=false
             url: jdbc:mysql://${JDBC_CONNECTION_STRING}?autoReconnect=true
             username: root
