@@ -9,6 +9,8 @@ import * as fromFacturas from './facturas.reducer';
 import * as fromContrarecibos from './contrarecibos.reducer';
 import * as fromPagos from './pagos.reducer';
 import * as fromAnalisisDeNota from './analisis-de-nota.reducer';
+import * as fromAnalisisDeTransformacion from './analisis-de-transformacion.reducer';
+import * as fromAnalisisTrsDet from './analisis-de-transformacion-det.reducer';
 
 export interface CxpState {
   cfdis: fromCfdis.State;
@@ -20,6 +22,8 @@ export interface CxpState {
   contrarecibos: fromContrarecibos.State;
   pagos: fromPagos.State;
   analisisDeNota: fromAnalisisDeNota.State;
+  analisisDeTransformacion: fromAnalisisDeTransformacion.State;
+  analisisDeTrsDet: fromAnalisisTrsDet.State;
 }
 
 export const reducers: ActionReducerMap<CxpState> = {
@@ -31,7 +35,9 @@ export const reducers: ActionReducerMap<CxpState> = {
   facturas: fromFacturas.reducer,
   contrarecibos: fromContrarecibos.reducer,
   pagos: fromPagos.reducer,
-  analisisDeNota: fromAnalisisDeNota.reducer
+  analisisDeNota: fromAnalisisDeNota.reducer,
+  analisisDeTransformacion: fromAnalisisDeTransformacion.reducer,
+  analisisDeTrsDet: fromAnalisisTrsDet.reducer
 };
 
 export const getCxpState = createFeatureSelector<CxpState>('cxp');

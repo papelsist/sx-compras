@@ -46,6 +46,11 @@ import { FacturasTable2Component } from './facturas-table2/facturas-table2.compo
 import { NotasAnalisisTableComponent } from './notas-analisis-table/nota-analisis-table.component';
 import { AnalisisDevolucionTableComponent } from './analisis-devolucion-table/analisis-devolucion-table.component';
 import { SelectorDeDecsComponent } from './selector-de-decs/selector-de-decs.component';
+import { AnalisisTrsTableComponent } from './analisis-trs-table/analisis-trs-table.component';
+import { AnalisisTrsDialogComponent } from './analisis-trs-dialog/analisis-trs-dialog.component';
+import { AnalisisTrsFormComponent } from './analisis-trs-form/analisis-trs.form.component';
+import { SelectorDeTrsComponent } from './selector-de-trs/selector-de-trs.component';
+import { AnalisisTrsPartidasComponent } from './analisis-trs-partidas/analisis-trs-partidas.component';
 
 export const components: any[] = [
   CfdisTableComponent,
@@ -93,7 +98,13 @@ export const components: any[] = [
 
   NotasAnalisisTableComponent,
   AnalisisDevolucionTableComponent,
-  SelectorDeDecsComponent
+  SelectorDeDecsComponent,
+
+  AnalisisTrsTableComponent,
+  AnalisisTrsDialogComponent,
+  AnalisisTrsFormComponent,
+  SelectorDeTrsComponent,
+  AnalisisTrsPartidasComponent
 ];
 
 export const entryComponents = [
@@ -104,6 +115,8 @@ export const entryComponents = [
   ProveedorPeriodoFilterDialogComponent,
   RequisicionesFilterComponent,
   SelectorDeDecsComponent,
+  AnalisisTrsDialogComponent,
+  SelectorDeTrsComponent
 ];
 
 export * from './cfdis-table/cfdis-table.component';
@@ -162,3 +175,9 @@ export * from './facturas-table2/facturas-table2.component';
 export * from './notas-analisis-table/nota-analisis-table.component';
 export * from './analisis-devolucion-table/analisis-devolucion-table.component';
 export * from './selector-de-decs/selector-de-decs.component';
+
+export * from './analisis-trs-table/analisis-trs-table.component';
+export * from './analisis-trs-dialog/analisis-trs-dialog.component';
+export * from './analisis-trs-form/analisis-trs.form.component';
+export * from './selector-de-trs/selector-de-trs.component';
+export * from './analisis-trs-partidas/analisis-trs-partidas.component';

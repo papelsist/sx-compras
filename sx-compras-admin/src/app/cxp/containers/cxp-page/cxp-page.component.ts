@@ -55,6 +55,12 @@ export class CxpPageComponent implements OnInit {
       icon: 'rate_review'
     },
     {
+      route: 'analisisDeTrs',
+      title: 'TRS Analisis',
+      description: 'Analisis de transformaciones',
+      icon: 'rate_review'
+    },
+    {
       route: 'recibos',
       title: 'Recibos ',
       description: 'Recibos electrónicos de pago',

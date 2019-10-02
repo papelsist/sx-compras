@@ -30,7 +30,7 @@ class ProveedorSaldoListenerService {
         null
     }
 
-    @Subscriber
+    // @Subscriber
     void afterInsert(PostInsertEvent event) {
         Pago pago = getEntity(event)
         if(pago) {
@@ -40,7 +40,7 @@ class ProveedorSaldoListenerService {
 
     }
 
-    @Subscriber
+    // @Subscriber
     void afterUpdate(PostUpdateEvent event) {
         Pago pago = getEntity(event)
         if(pago) {
@@ -50,7 +50,7 @@ class ProveedorSaldoListenerService {
         }
     }
 
-    @Subscriber
+    // @Subscriber
     void afterDelete(PostDeleteEvent event) {
         Pago pago = getEntity(event)
         if(pago) {

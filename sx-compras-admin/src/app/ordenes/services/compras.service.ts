@@ -55,7 +55,7 @@ export class ComprasService {
 
   depuraracionBatch(partidas: string[]): Observable<any> {
     const url = this.configService.buildApiUrl('compras/depuracionBatch2');
-    return this.http.post<Compra>(url, {partidas});
+    return this.http.post<Compra>(url, { partidas });
   }
 
   actualizarPrecios(compraId: string): Observable<Compra> {
@@ -73,7 +73,6 @@ export class ComprasService {
   }
 
   getProductosDisponibles(compra: Compra): Observable<ProveedorProducto[]> {
-    console.log('Buscando disponibles', compra);
     const params = new HttpParams().set('moneda', compra.moneda);
     const url = `${this.configService.buildApiUrl('proveedores')}/${
       compra.proveedor.id

@@ -7,3 +7,5 @@ export * from './facturas.selector';
 export * from './contrarecibos.selectors';
 export * from './pagos.selectors';
 export * from './analisis-de-nota.selectors';
+export * from './anlisis-de-transformacion.selectors';
+export * from './analisis-trs-det.selectors';

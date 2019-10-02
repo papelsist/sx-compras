@@ -1,0 +1,14 @@
+mat-card {
+  height: calc(100% - 20px);
+  display: flex;
+  flex-direction: column;
+}
+// mat-divider {
+//   margin-top: 10px;
+// }
+
+.grid-panel {
+  height: 100%;
+  flex-grow: 1;
+  overflow: auto;
+}

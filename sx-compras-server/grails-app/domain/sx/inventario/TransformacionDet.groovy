@@ -1,8 +1,13 @@
 package sx.inventario
 
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
+
 import sx.core.Inventario
 import sx.core.Producto
 
+@ToString(includes = 'producto, cantidad', includeNames=true,includePackage=false)
+@EqualsAndHashCode(includeFields = true,includes = 'id, producto, inventario')
 class TransformacionDet {
 
     String	id
@@ -13,20 +18,21 @@ class TransformacionDet {
 
     Transformacion transformacion
 
-    TransformacionDet	destino
+    TransformacionDet destino
 
-    BigDecimal	cantidad	 = 0
+    BigDecimal cantidad = 0
 
-    Long	cortes	 = 0
+    Long cortes = 0
 
-    String	cortesInstruccion
+    String cortesInstruccion
 
-    String	comentario
+    String comentario
 
     String sw2
 
-    Date dateCreated
+    BigDecimal costo
 
+    Date dateCreated
     Date lastUpdated
 
 
@@ -41,6 +47,7 @@ class TransformacionDet {
         dateCreated nullable: true
         lastUpdated nullable: true
         inventario nullable: true
+        costo nullable: true
     }
 
 

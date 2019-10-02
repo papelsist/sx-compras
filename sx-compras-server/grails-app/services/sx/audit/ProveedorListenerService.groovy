@@ -27,7 +27,7 @@ class ProveedorListenerService {
     void afterInsert(PostInsertEvent event) {
         String id = getId(event)
         if ( id ) {
-            log.info 'After Proveedor save...'
+            // log.info 'After Proveedor save...'
         }
     }
 
@@ -35,7 +35,7 @@ class ProveedorListenerService {
     void afterUpdate(PostUpdateEvent event) {
         String id = getId(event)
         if ( id ) {
-            log.info "After Proveedor update..."
+            // log.info "After Proveedor update..."
         }
     }
 
