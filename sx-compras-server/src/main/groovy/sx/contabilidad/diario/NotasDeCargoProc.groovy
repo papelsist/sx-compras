@@ -27,7 +27,7 @@ class NotasDeCargoProc implements  ProcesadorDePoliza{
         rows.each { row ->
 
                 cargoClientes(poliza, row)
-
+            println row
             if(row.asiento.startsWith("NOTA_DE_CARGO")){
                 
                 abonoMoratorios(poliza, row)
@@ -298,9 +298,7 @@ class NotasDeCargoProc implements  ProcesadorDePoliza{
          if(row.documentoTipo == 'CHE'){
               cuenta = buscarCuenta('106-0001-'+ctaOperativa+"-0000")
         }
-
-
-
+        
            if(row.cta_cliente == null) {
             throw new RuntimeException("No eixste cuenta en Clientes para ${row}")
         }

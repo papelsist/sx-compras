@@ -37,11 +37,10 @@ class PagoGastosReqTask implements  AsientoBuilder, EgresoTask {
         
         if(r.class.toString().contains('Compras')){
             cargoProveedor(poliza, r)
+            registrarRetenciones(poliza, r)
         }else{
             cargoProveedorGasto(poliza, r)
         }
-
-        registrarRetenciones(poliza, r)
 
         abonoBanco(poliza, r)
         ajustarProveedorBanco(poliza)

@@ -110,10 +110,10 @@ class PagoGastosTask implements  AsientoBuilder, EgresoTask {
         row.rfc = Empresa.first().rfc
 
         r.partidas.each{d -> 
-            println "****** afdfdf****"
+            
             def cxp = d.cxp
 
-            if(cxp) {
+            if(cxp) {    
                 def gastos = GastoDet.findAllByCxp(cxp)
                 
                 gastos.each{gasto -> 
@@ -136,12 +136,11 @@ class PagoGastosTask implements  AsientoBuilder, EgresoTask {
 
                     def cheque = egreso.cheque
 
-    
-
                     def ctaChe ="118-0002-0000-0000"
                     if(cheque && cheque.fecha.format('dd/MM/yyyy') != cheque.fechaTransito.format('dd/MM/yyyy') ){
                         ctaChe ="119-0002-0000-0000"
                     }
+
                     PolizaDet detIva = mapRow(ctaChe, desc, row, ivaCfdi)
                     detIva.referencia2 = cxp.proveedor.nombre
                     poliza.addToPartidas(detIva)
@@ -153,7 +152,7 @@ class PagoGastosTask implements  AsientoBuilder, EgresoTask {
                         def ctaCh2 = '213-0011-0000-0000'
 
                         if(cheque && cheque.fecha.format('dd/MM/yyyy') != cheque.fechaTransito.format('dd/MM/yyyy') ){
-                        
+                            
                             ctaCh1 ="119-0003-0000-0000"
                             ctaCh2 ="216-0001-0000-0000"
                         }
@@ -163,7 +162,6 @@ class PagoGastosTask implements  AsientoBuilder, EgresoTask {
                     }
 
                 }
-
             }else {
                 BigDecimal importe = d.apagar
                 desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} ${egreso.afavor}" +
@@ -243,12 +241,13 @@ class PagoGastosTask implements  AsientoBuilder, EgresoTask {
                 gastos.each{gasto -> 
 
                     def ctaGasto =gasto.cuentaContable
-
+                    def gastoImporte = gasto.importe 
                     if(provision){
                         
                         switch(co.tipo) {
                             case 'GASTOS':
                                  ctaGasto = buscarCuenta("205-0006-${ctaOperativa}-0000")
+                                 gastoImporte = gastoImporte + gasto.ivaTrasladado
                             break
                             case 'COMPRAS':
                                  ctaGasto = buscarCuenta("201-0002-${ctaOperativa}-0000")
@@ -269,7 +268,7 @@ class PagoGastosTask implements  AsientoBuilder, EgresoTask {
                         
                     }
 
-                    poliza.addToPartidas(mapRow(ctaGasto, desc, row, gasto.importe))
+                    poliza.addToPartidas(mapRow(ctaGasto, desc, row, gastoImporte))
 
                     def importeIva = gasto.ivaTrasladado
 

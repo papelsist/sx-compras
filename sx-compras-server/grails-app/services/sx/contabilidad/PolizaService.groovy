@@ -6,6 +6,7 @@ import grails.gorm.services.Service
 import grails.gorm.transactions.NotTransactional
 import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
+import sx.tesoreria.MovimientoDeCuenta
 
 import sx.core.LogUser
 
@@ -165,15 +166,21 @@ abstract class PolizaService implements  LogUser{
 
     @NotTransactional
     List<Poliza> refoliar(String subtipo, Integer ejercicio, Integer mes) {
+
+        println "+++++"+ subtipo
         List<Poliza> polizas = Poliza.where{
             subtipo == subtipo && ejercicio == ejercicio && mes == mes
         }.list([sort: 'fecha', order: 'asc'])
+
+        if(subtipo == 'CHEQUES'){
+            println 'Ordenando por concepto!'
+           // polizas.sort{p -> MovimientoDeCuenta.get(p.egreso) ? MovimientoDeCuenta.get(p.egreso).cheque.folio : 100000000 }
+        }
 
         polizas.each{ p ->
             p.folio = - p.folio
             p.save(flush: true)
         }
-
 
         int folio = 0
         polizas.each { p ->

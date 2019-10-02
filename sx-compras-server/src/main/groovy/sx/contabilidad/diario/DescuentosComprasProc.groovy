@@ -32,22 +32,7 @@ class DescuentosComprasProc implements  ProcesadorDePoliza, AsientoBuilder{
             // Cargo a proveedores
             String descripcion = generarDescripcion(row)
             if(!notas.contains(row.origen)) {
-              /*
-                poliza.addToPartidas(mapRow(
-                        row.cta_proveedor.toString(),
-                        generarDescripcionDeNota(row),
-                        row,
-                        row.total))
-                notas.add(row.origen)
-                */
 
-                // IVA GLOBAL
-               /* poliza.addToPartidas(mapRow(
-                        row.cta_contable_iva.toString(),
-                        generarDescripcionDeNota(row),
-                        row,
-                        0.0,
-                        row.impuesto_total))*/
                 BigDecimal impuestoTotal = row.impuesto_total as BigDecimal
                 BigDecimal impuestoAcumulado = rows.sum 0.0, {
                     if(it.origen == row.origen) {
@@ -56,24 +41,7 @@ class DescuentosComprasProc implements  ProcesadorDePoliza, AsientoBuilder{
                         return 0.0
                 }
                 BigDecimal dif = impuestoTotal - impuestoAcumulado
-/*
-                if(dif < 0.0) {
-                    poliza.addToPartidas(mapRow(
-                            '704-0005-0000-0000',
-                            generarDescripcionDeNota(row) + ' IVA',
-                            row,
-                            0.0,
-                            dif))
 
-                } else if(dif > 0.0) {
-                    poliza.addToPartidas(mapRow(
-                            '703-0001-0000-0000',
-                            generarDescripcionDeNota(row) + ' IVA',
-                            row,
-                            dif))
-                }
-             
-*/
                 if(row.diferencia > 0.0) {
                      poliza.addToPartidas(mapRow(
                            row.cta_proveedor.toString(),
@@ -109,12 +77,41 @@ class DescuentosComprasProc implements  ProcesadorDePoliza, AsientoBuilder{
 
 
             // Abono a
+
+            def totalAbono = row.subtotal
+            def op = 0
+            if(row.OtrPrd != 0){     
+                println "SubTotNota: "+row.subTotNota
+                println "SubTot: "+row.subtotal     
+                def porcentaje = row.subtotal/row.subTotNota
+                op = row.OtrPrd * porcentaje
+                totalAbono = totalAbono - op
+                
+            }
+
             poliza.addToPartidas(mapRow(
                     row.cta_contable.toString(),
                     descripcion,
                     row,
                     0.0,
-                    row.subtotal))
+                    totalAbono))
+      
+            if( row.OtrPrd > 0){
+                poliza.addToPartidas(mapRow(
+                    '704-0005-0000-0000',
+                    descripcion,
+                    row,
+                    0.0,
+                    op))
+            }
+            if(row.OtrPrd < 0){
+                poliza.addToPartidas(mapRow(
+                    '703-0001-0000-0000',
+                    descripcion,
+                    row,
+                    op.abs()))
+            }
+
             // Abono a IVA
             
             poliza.addToPartidas(mapRow(
@@ -123,11 +120,6 @@ class DescuentosComprasProc implements  ProcesadorDePoliza, AsientoBuilder{
                     row,
                     0.0,
                     row.impuesto))
-
-
-                    
-
-
         }
 
         log.info("Registros {}", rows.size())
@@ -196,6 +188,7 @@ class DescuentosComprasProc implements  ProcesadorDePoliza, AsientoBuilder{
         x.tc,
         x.folio,       
         x.total,
+        x.subTotNota,
         x.impuesto_total,
         x.diferencia,
         x.total as montoTotal,       
@@ -208,9 +201,11 @@ class DescuentosComprasProc implements  ProcesadorDePoliza, AsientoBuilder{
         (case when asiento like '%FINANCIERO%' or asiento like '%BONIFICACION%' then concat('702-0003-',x.cta_operativa_prov,'-0000')  else (case when x.cta_operativa_prov in('0038','0061') then concat('115-',(case when asiento like '%DEVOLUCION%' then '0005-' else '0007-' end),x.cta_operativa_prov,'-0000') 
         else concat('115-',(case when asiento like '%DEVOLUCION%' then '0006-' else '0008-' end),x.cta_operativa_prov,'-0000') end) end) as cta_contable ,'119-0001-0000-0000' cta_contable_iva,
         (case when x.moneda='USD' then concat('201-0003-',x.cta_operativa_prov,'-0000') when x.cta_operativa_prov in('0038','0061') then concat('201-0001-',x.cta_operativa_prov,'-0000') else concat('201-0002-',x.cta_operativa_prov,'-0000') end) cta_proveedor
+        ,ifnull((SELECT sum(importe) FROM analisis_de_devolucion d where d.nota_id=x.origen),0) analisis        
+        ,(case when ifnull((SELECT sum(importe) FROM analisis_de_devolucion d where d.nota_id=x.origen),0)=0.0 then 0.0 else x.subTotNota - ifnull((SELECT sum(importe) FROM analisis_de_devolucion d where d.nota_id=x.origen),0) end) OtrPrd
         FROM (        
         SELECT concat('NOTA_CXP_',case when n.concepto like '%FINANCIER%' then 'FINANCIERO' else concepto end) asiento,n.id origen
-        ,round(n.total * n.tipo_de_cambio,2) total
+        ,round(n.total * n.tipo_de_cambio,2) total,round(n.sub_total * n.tipo_de_cambio,2) subTotNota
         ,round(n.impuesto_trasladado * n.tipo_de_cambio,2) impuesto_total
         ,(case when n.diferencia_fecha='@FECHA' then n.diferencia else 0.0 end) as diferencia,n.folio,n.fecha,n.concepto documentoTipo,n.moneda,n.tipo_de_cambio tc,n.proveedor_id proveedor,n.nombre referencia2
         ,round(a.importe * n.tipo_de_cambio,2) total_det,round((a.importe * n.tipo_de_cambio) / 1.16,2) subtotal,round(a.importe * n.tipo_de_cambio,2) - round((a.importe * n.tipo_de_cambio) / 1.16,2) impuesto

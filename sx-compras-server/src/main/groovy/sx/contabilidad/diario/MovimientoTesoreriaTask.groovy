@@ -28,7 +28,7 @@ class MovimientoTesoreriaTask implements  AsientoBuilder{
         procesarIntereses(poliza)
         procesarRetencionesIsr(poliza)
         procesarDepositosPorIdentificar(poliza)
-        procesarDepositosTesoreria(poliza)
+       // procesarDepositosTesoreria(poliza)
 
     }
 

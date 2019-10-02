@@ -37,7 +37,7 @@ class TraspasoTask implements  AsientoBuilder{
                     Map row = [
                         asiento: "TRASPASO ENTRE CUENTAS ${mov.concepto}",
                         referencia: traspaso.cuentaOrigen.descripcion,
-                        referencia2: mov.afavor,
+                        referencia2: mov.cuenta.descripcion,
                         origen: traspaso.id,
                         documento: traspaso.id,
                         documentoTipo: 'TES',
@@ -60,8 +60,8 @@ class TraspasoTask implements  AsientoBuilder{
                         poliza.addToPartidas(mapRow(ctaBanco,desc,row,0.00,mov.importe))
                     }
                     if(mov.concepto =='COMISION' ){
-                        String ctaComision ="107-0009-${mov.cuenta.subCuentaOperativa}-0000"
-                        //String ctaComision ="600-0014-0001-0000" 
+                        // String ctaComision ="600-0014-${mov.cuenta.subCuentaOperativa}-0000"
+                        String ctaComision ="600-0014-0001-0000" 
                         poliza.addToPartidas(mapRow(ctaComision,desc,row,mov.importe))
                         poliza.addToPartidas(mapRow(ctaBanco,desc,row,0.00,mov.importe))
                     }
