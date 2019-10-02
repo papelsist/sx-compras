@@ -57,6 +57,8 @@ class ActivoFijo {
 
     BigDecimal ultimaDepreciacionFiscal
     Integer ultimaDepreciacionFiscalEjercicio
+
+    Date depreciado
     
     String createUser
     String updateUser
@@ -99,6 +101,7 @@ class ActivoFijo {
         inpcPrimeraMitad nullable: true, scale: 4
         baja nullable: true
         montoOriginalFiscal nullable: true
+        depreciado nullable: true
     }
 
     static transients = {}
@@ -113,6 +116,7 @@ class ActivoFijo {
         ultimaDepreciacionFecha formula:'(select max(x.corte) from activo_depreciacion2 x where x.activo_fijo_id=id)'
         ultimaDepreciacionFiscal formula:'(select COALESCE( x.depreciacion_fiscal, 0) from activo_depreciacion_fiscal x where x.activo_fijo_id=id order by x.ejercicio desc limit 1)'
         ultimaDepreciacionFiscalEjercicio formula:'(select max(x.ejercicio) from activo_depreciacion_fiscal x where x.activo_fijo_id=id)'
+        depreciado type: 'date'
     }
     
 }

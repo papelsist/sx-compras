@@ -123,6 +123,7 @@ class ActivoDepreciacionService implements LogUser {
             log.info('Periodo: {} {}', e, m)
             generarDepreciacionUnitaria(af,e,m)
             if(af.estado == 'DEPRECIADO') {
+                af.depreciado = p.fechaFinal
                 break;
             }
         }
@@ -149,8 +150,13 @@ class ActivoDepreciacionService implements LogUser {
                 mensual = remanente
             }
             acumulada += mensual
-            def saldo = moi - acumulada
-            // log.info('Periodo: {} {} MOI: {} Dep: {} Acu: {} Remanente: {}', e, m, moi, mensual, acumulada, remanente)
+            if(remanente <= 0.0) {
+                def pp = Periodo.getPeriodoEnUnMes( m - 1, e)
+                log.info('Depreciada {}/{} ({})', e, m, pp.fechaFinal)
+                af.depreciado = pp.fechaFinal
+                return acumulada
+                // log.info('Periodo: {} {} MOI: {} Dep: {} Acu: {} Remanente: {}', e, m, moi, mensual, acumulada, remanente)
+            }
         }
         return acumulada
 

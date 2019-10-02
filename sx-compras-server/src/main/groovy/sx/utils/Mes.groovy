@@ -12,7 +12,7 @@ class Mes {
 	
 	static List getMeses() {
 		if(!MESES){
-			[
+			MESES = [
 				new Mes(nombre:'Enero',clave:0),
 				new Mes(nombre:'Febrero',clave:1),
 				new Mes(nombre:'Marzo',clave:2),
@@ -34,6 +34,10 @@ class Mes {
 
 	static Mes findMesByNombre(String nombre){
 		return getMeses().find{it.nombre.toUpperCase()==nombre.toUpperCase()}
+	}
+
+	static Mes findByClave(int clave){
+		return getMeses().find{it.clave == clave}
 	}
 	
 	static List getNombres(){
