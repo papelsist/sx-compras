@@ -447,6 +447,8 @@ class UrlMappings {
         "/api/cxp/analisisDeTransformacion/pendientes"(controller: 'analisisDeTransformacion', action: 'pendientes')
         "/api/cxp/analisisDeTransformacion/print/$id"(controller: 'analisisDeTransformacion', action: 'print', method: 'GET')
 
+        "/api/ajusteAnualPorInflacion"(resources: 'ajusteAnualPorInflacion', excludes: ['create', 'edit', 'patch'])
+
         // Audit
         "/api/audit"(resources: 'audit', excludes:['create', 'edit','patch'])
 

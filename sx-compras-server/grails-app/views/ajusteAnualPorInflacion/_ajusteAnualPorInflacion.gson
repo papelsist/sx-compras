@@ -1,0 +1,9 @@
+import sx.contabilidad.fiscal.AjusteAnualPorInflacion
+
+model {
+	AjusteAnualPorInflacion ajusteAnualPorInflacion
+}
+
+json g.render(ajusteAnualPorInflacion, [ excludes: ['concepto'] , resolveTemplate: false]) {
+	concepto g.render(ajusteAnualPorInflacion.concepto)
+}

@@ -1,0 +1,7 @@
+import sx.contabilidad.fiscal.AjusteAnualPorInflacion
+
+model {
+	AjusteAnualPorInflacion ajusteAnualPorInflacion
+}
+
+json tmpl.ajusteAnualPorInflacion(ajusteAnualPorInflacion)

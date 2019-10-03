@@ -28,98 +28,236 @@ class AjusteAnualPorInflacionBuilder implements  SqlAccess{
     // @Qualifier('dataSource')
     // def dataSource
 
+    public buildFrom(Integer ejercicio , Integer mes) {
+        (1..mes).each {
+            build(ejercicio, it)
+        }
+    }
+
     public build(Integer ejercicio, Integer mes) {
-        // buildBancos(ejercicio, mes)
-        // buildInversiones(ejercicio, mes)
-        // buildOtrasCuentasPorCobrar(ejercicio, mes)
-       buildPagosAnticipados(ejercicio, mes)
+        // Activos
+        
+        buildBancos(ejercicio, mes)
+        buildInversiones(ejercicio, mes)
+        buildOtrasCuentasPorCobrar(ejercicio, mes)
+        buildPagosAnticipados(ejercicio, mes)
+        // Pasivos
+        buildCuentasPorPagar(ejercicio, mes)
+        buildImpuestosPorPagar(ejercicio, mes)
+        buildDocumentosPorPagar(ejercicio, mes)
+
     }
 
     public buildBancos(Integer ej, Integer ms) {
-        
-        def rows = [
-            // BANCOS
-            new AjustePorInflacion(
-                '102-0001-0003-0000', 'BBVA BANCOMER CTA 1166228100', 'SISTEMA FINANCIERO', 'BANCOS'),
-            
-            new AjustePorInflacion('102-0001-0001-0000', 'BANAMEX CTA 1858193', 'SISTEMA FINANCIERO', 'BANCOS'),
-            new AjustePorInflacion('102-0001-0006-0000', 'HSBC CTA 4019118074', 'SISTEMA FINANCIERO', 'BANCOS'),
-            new AjustePorInflacion('102-0001-0002-0000', 'SCOTIABANK CTA 00001691945', 'SISTEMA FINANCIERO', 'BANCOS'),
-            new AjustePorInflacion('102-0001-0004-0000', 'SANTANDER SERFIN CTA 65-50219406-7', 'SISTEMA FINANCIERO', 'BANCOS'),
-            new AjustePorInflacion('102-0001-0005-0000', 'IXE BANCO SA 1666987-8', 'SISTEMA FINANCIERO', 'BANCOS'),
-            new AjustePorInflacion('', 'UBS AG CTO 406546', 'SISTEMA FINANCIERO', 'BANCOS'),
-            new AjustePorInflacion('102-0001-0007-0000', 'INTERACCIONES CASA DE BOLSA', 'SISTEMA FINANCIERO', 'BANCOS')
-            
-        ]
-        calcularPosSaldoFinal('SISTEMA FINANCIERO', 'BANCOS', ej, ms, rows)
-
+        def tpo = 'ACTIVO'
+        def gpo = 'BANCOS'
+        def conceptos = AjustePorInflacionConcepto.where{tipo == tpo && grupo == gpo && activo == true}.list()
+        def rows = []
+        conceptos.each { c ->
+            log.info('Procesando: {}', c.concepto)
+            def aju = AjusteAnualPorInflacion.findOrCreateWhere(ejercicio: ej, concepto: c)
+            aju.save failOnError: true, flush: true
+            rows << aju
+        }
+        calcularPosSaldoFinal(tpo, gpo, ej, ms, rows)
     }
+    
 
     def buildInversiones(Integer ej, Integer ms) {
-        def rows = [
-            new AjustePorInflacion('103-0001-0003-0000', 'BBVA BANCOMER CTA: 1338355940', 'SISTEMA FINANCIERO', 'INVERSIONES'),
-            new AjustePorInflacion('103-0001-0010-0000', 'BBVA BANCOMER', 'SISTEMA FINANCIERO', 'INVERSIONES'),
-            new AjustePorInflacion('103-0001-0001-0000', 'BANAMEX CTA: 74724833', 'SISTEMA FINANCIERO', 'INVERSIONES'),
-            new AjustePorInflacion('103-0001-0002-0000', 'SCOTIABANK CTA: 18705486', 'SISTEMA FINANCIERO', 'INVERSIONES'),
-            new AjustePorInflacion('', 'IXE BANCO SA INVERSION CTA: 5019623', 'SISTEMA FINANCIERO', 'INVERSIONES'),
-            new AjustePorInflacion('103-0001-0009-0000', 'CASA DE BOLSA BANORTE S.A. DE C.V.', 'SISTEMA FINANCIERO', 'INVERSIONES'),
-            // 
-        ]
-        calcularPosSaldoFinal('SISTEMA FINANCIERO', 'INVERSIONES', ej, ms, rows)
+        def tpo = 'ACTIVO'
+        def gpo = 'INVERSIONES'
+        def conceptos = AjustePorInflacionConcepto.where{tipo == tpo && grupo == gpo && activo == true}.list()
+        def rows = []
+        conceptos.each { c ->
+            log.info('Procesando: {}', c.concepto)
+            def aju = AjusteAnualPorInflacion.findOrCreateWhere(ejercicio: ej, concepto: c)
+            aju.save failOnError: true, flush: true
+            rows << aju
+        }
+        calcularPosSaldoFinal(tpo, gpo, ej, ms, rows)
     }
 
 
     def buildOtrasCuentasPorCobrar(Integer ej, Integer ms) {
-        def tipo = 'SISTEMA FINANCIERO'
-        def grupo = 'OTRAS CUENTAS POR COBRAR'
-        def rows = [
-            new AjustePorInflacion('105-0001-0000-0000', 'CLIENTES CON',tipo, grupo),
-            new AjustePorInflacion('105-0002-0000-0000', 'CLIENTES COD',tipo, grupo),
-            new AjustePorInflacion('105-0003-0000-0000', 'CLIENTES CRE',tipo, grupo),
-            new AjustePorInflacion('105-0004-0000-0000', 'PARTES RELACIONADAS',tipo, grupo),
-            new AjustePorInflacion('', 'CLIENTES EN MONEDA EXTRANJERA',tipo, grupo),
-            new AjustePorInflacion('107-0000-0000-0000', 'DEUDORES DIVERSOS',tipo, grupo),
-            new AjustePorInflacion('106-0001-0000-0000', 'DOCUMENTOS POR COBRAR',tipo, grupo),
-            new AjustePorInflacion('106-0002-0000-0000', 'CUENTAS EN TRAMITE JURIDICO',tipo, grupo)
-        ]
-        calcularPosSaldoFinal(tipo, grupo, ej, ms, rows)
+        def tpo = 'ACTIVO'
+        def gpo = 'OTRAS CUENTAS POR COBRAR'
+        def conceptos = AjustePorInflacionConcepto.where{tipo == tpo && grupo == gpo && activo == true}.list()
+        def rows = []
+        conceptos.each { c ->
+            log.info('Procesando: {}', c.concepto)
+            def aju = AjusteAnualPorInflacion.findOrCreateWhere(ejercicio: ej, concepto: c)
+            aju.save failOnError: true, flush: true
+            rows << aju
+        }
+        calcularPosSaldoFinal(tpo, gpo, ej, ms, rows)
     }
 
     def buildPagosAnticipados(Integer ej, Integer ms) {
-        def tipo = 'SISTEMA FINANCIERO'
-        def grupo = 'PAGOS ANTICIPADOS'
-        def mm = Mes.findByClave(ms - 1)
-        def prop = mm.nombre.toLowerCase()
+        def tpo = 'ACTIVO'
+        def gpo = 'PAGOS ANTICIPADOS'
         def rows = []
-
-        // ISR A FAVOR DEL EJERCICIO
-        def isrDelEjercicio = new AjustePorInflacion('113-0002-0000-0000', 'ISR A FAVOR DEL EJERCICIO',tipo, grupo);
-        def anterior = getPeriodoAnterior(ej, ms)
-        def s1 = SaldoPorCuentaContable.where{clave == isrDelEjercicio.cuenta && ejercicio == anterior.ejercicio && mes == anterior.mes}.find()
-        def s2 = SaldoPorCuentaContable.where{clave == isrDelEjercicio.cuenta && ejercicio == ej && mes == ms}.find()
-        if(s1 && s2) {
-            isrDelEjercicio[prop] = s1.saldoFinal - s2.haber
-        }
-        rows << isrDelEjercicio
-
-        // IVA DEL MES
-        def ivaDelMes = new AjustePorInflacion('113-0001-0000-0000', 'IVA A FAVOR ',tipo, grupo)
-        def sIvaDelMes = SaldoPorCuentaContable.where{clave == isrDelEjercicio.cuenta && ejercicio == ej && mes == ms}.find()
-        if (sIvaDelMes) {
-            ivaDelMes[prop] = sIvaDelMes.saldoInicial - sIvaDelMes.haber
-        }
-        rows << ivaDelMes
-
-        // ISR A FAVOR DEL MES
-        rows << generarIsrDelMes(tipo, grupo, ej, ms)
-        rows << generarDepositosEnGarantia(tipo, grupo, ej, ms)
-        rows.each {log.info('{} {}: {}', it.concepto , mm.nombre, it[prop])}
-
-        def suma = new AjustePorInflacion('', grupo, tipo, grupo)
+        rows << generarIsrDelEjercicio(ej, ms)
+        rows << generarIvaDelMes(ej, ms)
+        rows << generarIsrDelMes(ej, ms)
+        rows << generarDepositosEnGarantia(ej, ms)
+        def prop = resolverMesPropery(ms)
+        def cpto = AjustePorInflacionConcepto.findOrSaveWhere(concepto: 'SUMA', tipo: tpo, grupo: gpo)
+        def suma = AjusteAnualPorInflacion.findOrCreateWhere(ejercicio: ej, concepto: cpto)
         suma[prop] = rows.sum(0.0, {it[prop]})
-        log.info('{} : {}', suma.concepto , suma[prop])   
-        rows << suma
+        suma = suma.save failOnError: true, flush: true
+        
     }
+
+    private generarIsrDelEjercicio(Integer ej, Integer ms) {
+        def tpo = 'ACTIVO'
+        def gpo = 'PAGOS ANTICIPADOS'
+        def prop = resolverMesPropery(ms)
+
+        def cc = AjustePorInflacionConcepto.where{cuenta.clave == '113-0002-0000-0000' && tipo == tpo}.find()
+        def aju = AjusteAnualPorInflacion.findOrCreateWhere(ejercicio: ej, concepto: cc)
+        
+        def anterior = getPeriodoAnterior(ej, ms)
+        def s1 = SaldoPorCuentaContable.where{cuenta == cc.cuenta && ejercicio == anterior.ejercicio && mes == anterior.mes}.find()
+        def s2 = SaldoPorCuentaContable.where{cuenta == cc.cuenta && ejercicio == ej && mes == ms}.find()
+        if(s1 && s2) {
+            aju[prop] = s1.saldoFinal - s2.haber
+        }
+        aju.save failOnError: true, flush: true
+    }
+
+    private generarIvaDelMes(Integer ej ,Integer ms) {
+        def tpo = 'ACTIVO'
+        def gpo = 'PAGOS ANTICIPADOS'
+        def prop = resolverMesPropery(ms)
+        def cc = AjustePorInflacionConcepto.where{cuenta.clave == '113-0001-0000-0000' && tipo == tpo}.find()
+        def aju = AjusteAnualPorInflacion.findOrCreateWhere(ejercicio: ej, concepto: cc)
+        def saldo = SaldoPorCuentaContable.where{cuenta == cc.cuenta && ejercicio == ej && mes == ms}.find()
+        if (saldo) {
+            aju[prop] = saldo.saldoInicial - saldo.haber
+        }
+        aju.save failOnError: true, flush: true
+    }
+
+    private generarIsrDelMes(Integer ej, Integer ms) {
+        def tpo = 'ACTIVO'
+        def gpo = 'PAGOS ANTICIPADOS'
+        def prop = resolverMesPropery(ms)
+        def cc = AjustePorInflacionConcepto.where{cuenta.clave == '113-0004-0000-0000' && tipo == tpo}.find()
+        
+        def aju = AjusteAnualPorInflacion.findOrCreateWhere(ejercicio: ej, concepto: cc)
+        
+        def anterior = getPeriodoAnterior(ej, ms)
+        def s1 = SaldoPorCuentaContable.where{cuenta == cc.cuenta && ejercicio == anterior.ejercicio && mes == anterior.mes}.find()
+        def s2 = SaldoPorCuentaContable.where{cuenta == cc.cuenta && ejercicio == ej && mes == ms}.find()
+        if(s1 && s2) {
+            aju[prop] = s1.saldoFinal - s2.haber
+        }
+        aju.save failOnError: true, flush: true
+    }
+
+    def generarDepositosEnGarantia(Integer ej, Integer ms) {
+        def tpo = 'ACTIVO'
+        def gpo = 'PAGOS ANTICIPADOS'
+        def prop = resolverMesPropery(ms)
+        def cc = AjustePorInflacionConcepto.where{cuenta.clave == '184-0000-0000-0000' && tipo == tpo}.find()
+        def aju = AjusteAnualPorInflacion.findOrCreateWhere(ejercicio: ej, concepto: cc)
+        def saldo = SaldoPorCuentaContable.where{ejercicio == ej && mes == ms && cuenta == cc.cuenta}.find()
+        if(saldo) {
+            aju[prop] = saldo.saldoFinal
+        }
+        aju.save failOnError: true, flush: true
+    }
+
+    
+
+    /**********  Pasivos ************/
+
+    def buildCuentasPorPagar(Integer ej, Integer ms) {
+        def tpo = 'PASIVO'
+        def gpo = 'CUENTAS POR PAGAR'
+        def conceptos = AjustePorInflacionConcepto.where{tipo == tpo && grupo == gpo && activo == true}.list()
+        def rows = []
+        conceptos.each { c ->
+            log.info('Procesando: {}', c.concepto)
+            def aju = AjusteAnualPorInflacion.findOrCreateWhere(ejercicio: ej, concepto: c)
+            aju.save failOnError: true, flush: true
+            rows << aju
+        }
+        calcularPosSaldoFinal(tpo, gpo, ej, ms, rows)
+    }
+
+    def buildImpuestosPorPagar(Integer ej, Integer ms) {
+        def tpo = 'PASIVO'
+        def gpo = 'IMPUESTOS POR PAGAR'
+        def conceptos = AjustePorInflacionConcepto.where{tipo == tpo && grupo == gpo && activo == true}.list()
+        def rows = []
+        conceptos.each { c ->
+            log.info('Procesando: {}', c.concepto)
+            def aju = AjusteAnualPorInflacion.findOrCreateWhere(ejercicio: ej, concepto: c)
+            aju.save failOnError: true, flush: true
+            rows << aju
+        }
+        calcularPosSaldoFinal(tpo, gpo, ej, ms, rows)
+    }
+
+    def buildDocumentosPorPagar(Integer ej, Integer ms) {
+        
+        def tpo = 'PASIVO'
+        def gpo = 'DOCUMENTOS POR PAGAR'
+        def conceptos = AjustePorInflacionConcepto.where{
+            tipo == tpo && grupo == gpo && activo == true }.list()
+        def rows = []
+        conceptos.each { c ->
+            log.info('Procesando: {}', c.concepto)
+            def aju = AjusteAnualPorInflacion.findOrCreateWhere(ejercicio: ej, concepto: c)
+            if(aju.concepto?.cuenta?.clave == '215-0000-0000-0000') {
+                generarPtu(ej, ms, aju)
+            } 
+            aju.save failOnError: true, flush: true
+            rows << aju
+        }
+        calcularPosSaldoFinal(tpo, gpo, ej, ms, rows)
+    }
+
+    private generarPtu(Integer ej, Integer ms, def aju) {
+        def prop = resolverMesPropery(ms)
+        if(ms > 2) {
+            def saldo = SaldoPorCuentaContable.where{cuenta == aju.concepto.cuenta && ejercicio == ej && mes == ms}.find()
+            if(saldo) {
+                aju[prop] = saldo.saldoFinal.abs()
+            }
+        }
+        aju.save flush: true
+        return aju
+    }
+
+
+    /*** Utils methods **/
+
+    def calcularPosSaldoFinal(String tpo, String gpo, Integer ej, Integer ms, def rows) {
+        
+        def prop = resolverMesPropery(ms)
+        log.info('****** {} {}', gpo.toUpperCase(), prop.toUpperCase())
+        rows.each { item ->
+            def cc = item.concepto
+            if(cc.cuenta) {
+                def saldo = SaldoPorCuentaContable.where{ejercicio == ej && mes == ms && cuenta == cc.cuenta}.find()
+                if(saldo) {
+                    item[prop] = saldo.saldoFinal
+                }
+            }
+            item.save flush: true
+            log.info('{} {}: {}', item.concepto.concepto , ms, item[prop])   
+        }
+        
+        def cpto = AjustePorInflacionConcepto.findOrSaveWhere(concepto: 'SUMA', tipo: tpo, grupo: gpo)
+        def suma = AjusteAnualPorInflacion.findOrCreateWhere(ejercicio: ej, concepto: cpto)
+        suma[prop] = rows.sum(0.0, {it[prop]})
+        suma = suma.save failOnError: true, flush: true
+        log.info('{} : {}', suma.concepto , suma[prop])
+        return rows   
+    }
+    
 
     def getPeriodoAnterior(Integer ej, Integer ms) {
         def ejercicio = ej
@@ -133,109 +271,16 @@ class AjusteAnualPorInflacionBuilder implements  SqlAccess{
         return [ejercicio:ejercicio, mes: mes]
     }
 
-
-
-    def calcularPosSaldoFinal(String tipo, String grupo, Integer ej, Integer ms, def rows) {
+    def resolverMesPropery(Integer ms) {
         def mm = Mes.findByClave(ms - 1)
         def prop = mm.nombre.toLowerCase()
-        log.info('****** {} {}', grupo.toUpperCase(), prop.toUpperCase())
-
-        rows.each { item ->
-            def saldo = SaldoPorCuentaContable.where{ejercicio == ej && mes == ms && cuenta.clave == item.cuenta}.find()
-            if(saldo) {
-                item[prop] = saldo.saldoFinal
-            }
-            log.info('{} {}: {}', item.concepto , mm.nombre, item[prop])   
-        }
-        def suma = new AjustePorInflacion('', grupo, tipo, grupo)
-        suma[prop] = rows.sum(0.0, {it[prop]})
-        log.info('{} : {}', suma.concepto , suma[prop])   
-        rows << suma
     }
-
-    def generarIsrDelMes(String tipo, String grupo, Integer ej, Integer ms) {
-        def anterior = getPeriodoAnterior(ej, ms)
-        def clave = '113-0004-0000-0000'
-        def row = new AjustePorInflacion(clave, 'ISR A FAVOR DEL MES',tipo, grupo);
-        def s1 = SaldoPorCuentaContable.where{clave == row.cuenta && ejercicio == anterior.ejercicio && mes == anterior.mes}.find()
-        def s2 = SaldoPorCuentaContable.where{clave == row.cuenta && ejercicio == ej && mes == ms}.find()
-        if(s1 && s2) {
-            row[prop] = s1.saldoFinal - s2.haber
-        }
-        return row
-    }
-
-    def generarDepositosEnGarantia(String tipo, String grupo, Integer ej, Integer ms) {
-        def mm = Mes.findByClave(ms - 1)
-        def prop = mm.nombre.toLowerCase()
-        def row = new AjustePorInflacion('184-0000-0000-0000', 'DEPOSITOS EN GARANTIA',tipo, grupo)
-        def saldo = SaldoPorCuentaContable.where{ejercicio == ej && mes == ms && clave == row.cuenta}.find()
-        if(saldo) {
-            row[prop] = saldo.saldoFinal
-        }
-        return row
-
-    }
-
-    /**********  Pasivos ************/
-
-    def buildCuentasPorPagar(Integer ejercicio, Integer mes) {
-        def tipo = 'PASIVOS'
-        def grupo = 'CUENTAS POR PAGAR'
-        def rows = []
-        rows << new AjustePorInflacion('', 'PROVEEDORES EXTRANJEROS', tipo, grupo)
-        rows << new AjustePorInflacion('201-0002-0000', 'PROVEEDORES NACIONALES', tipo, grupo)
-        rows << new AjustePorInflacion('201-0001-0000', 'PROVEEDORES PARTES RELACIONADAS', tipo, grupo)
-        rows << new AjustePorInflacion('205-0001-0000', 'AVREDORES DIVERSOS', tipo, grupo)
-        
-        calcularPosSaldoFinal(tipo, grupo, ej, ms, rows)
-
-    }
-
-    def buildImpuestosPorPagar() {
-        def tipo = 'PASIVOS'
-        def grupo = 'IMPUESTOS POR PAGAR'
-        def rows = []
-        rows << new AjustePorInflacion('213-0003-0000-0000', 'IVA PAGO PROVISIONAL', tipo, grupo)
-        rows << new AjustePorInflacion('213-0004-0000-0000', 'IMPUESTO ESTATAL SOBRE NOMINAS', tipo, grupo)
-        rows << new AjustePorInflacion('213-0005-0000-0000', 'INFONAVIT', tipo, grupo)
-        rows << new AjustePorInflacion('213-0006-0000-0000', 'IMSS', tipo, grupo)
-        rows << new AjustePorInflacion('213-0007-0000-0000', 'SAR CESANTIA Y VEJEZ', tipo, grupo)
-        calcularPosSaldoFinal(tipo, grupo, ej, ms, rows)
-    }
-
-    def buildDocumentosPorPagar() {
-        def tipo = 'PASIVOS'
-        def grupo = 'DOCUMENTOS POR PAGAR'
-        def rows = []
-        rows << new AjustePorInflacion('210-0000-0000-0000', 'PROVISIONES DE PAGO', tipo, grupo)
-        rows << generarPtu(tipo, grupo, ej, ms)
-        rows << new AjustePorInflacion('', 'ACREDORES DIVERSOS A LARGO PLAZO', tipo, grupo)
-        rows << new AjustePorInflacion('', 'APORTACIONES P/FUTURO AUMENTO CAPITAL', tipo, grupo)
-     
-        calcularPosSaldoFinal(tipo, grupo, ej, ms, rows)
-    }
-
-    def generarPtu(String tipo, String grupo, Integer ej, Integer ms) {
-        def anterior = getPeriodoAnterior(ej, ms)
-        def clave = '215-0000-0000-0000'
-        def row = new AjustePorInflacion(clave, 'PTU',tipo, grupo);
-        if(mes > 2) {
-            def saldo = SaldoPorCuentaContable.where{clave == row.cuenta && ejercicio == ej && mes == ms}.find()
-            if(saldo) {
-                row[prop] = saldo.saldoFinal
-            }
-        }
-        return row
-    }
-
-
-
 
     
     
 }
 
+/*
 @Canonical( includes = ['cuenta', 'concepto', 'tipo', 'grupo'])
 @ToString()
 class AjustePorInflacion {
@@ -278,3 +323,4 @@ class AjustePorInflacionHistorico {
     BigDecimal ajusteAc
 
 }
+*/
