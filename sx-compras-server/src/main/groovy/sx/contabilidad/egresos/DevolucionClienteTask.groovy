@@ -121,7 +121,12 @@ class DevolucionClienteTask implements  AsientoBuilder, EgresoTask {
         } 
         if(d.concepto=='NOTA_CON') {
             cv = "105-${venta}-${suc}-0000"
-            poliza.addToPartidas(mapRow(cv, desc, row,d.importe))    
+            poliza.addToPartidas(mapRow(cv, desc, row,d.importe))  
+            if(cheque && egreso.cheque.fecha.format('dd/MM/yyyy') == egreso.cheque.fechaTransito.format('dd/MM/yyyy')){
+                // IVA
+                poliza.addToPartidas(mapRow('208-0001-0000-0000', desc, row, impuesto))
+                poliza.addToPartidas(mapRow('209-0001-0000-0000', desc, row,0.00, impuesto))
+             }  
         }      
         if( d.concepto=='NOTA_COD' || d.concepto=='NOTA_CRE' ){
             cv = "105-${venta}-${suc}-0000"

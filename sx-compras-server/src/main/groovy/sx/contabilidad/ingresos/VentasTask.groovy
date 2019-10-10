@@ -30,13 +30,15 @@ class VentasTask implements  AsientoBuilder {
             def docto = row.documento ?: ''
             def tcCre = row.moneda == 'USD' ? "tc:${row.tc}" : ''
             def descripcion = "VENTA ${docto} ${row.fecha}  ${row.sucursal}  ${tcCre}"
-            
+
             PolizaDet detVta = mapRow(row.cta_venta.toString(), descripcion, row,0.00, row.subtotal.abs())
             poliza.addToPartidas(detVta)
 
+            
             PolizaDet detIva = mapRow(row.cta_iva.toString(), descripcion, row,0.00, row.impuesto.abs())
             poliza.addToPartidas(detIva)
 
+       
             PolizaDet detCte = mapRow(row.cta_cliente.toString(), descripcion, row, row.total.abs())
             poliza.addToPartidas(detCte)
         }
@@ -48,6 +50,8 @@ class VentasTask implements  AsientoBuilder {
 
 
     PolizaDet mapRow(String cuentaClave, String descripcion, Map row, def debe = 0.0, def haber = 0.0) {
+
+
 
         CuentaContable cuenta = buscarCuenta(cuentaClave)
 

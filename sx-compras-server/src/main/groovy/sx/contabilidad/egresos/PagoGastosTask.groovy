@@ -202,7 +202,7 @@ class PagoGastosTask implements  AsientoBuilder, EgresoTask {
 
 
     def atenderGasto(Poliza poliza, Rembolso r) {
-      
+
         MovimientoDeCuenta egreso = r.egreso
         CuentaContable ctaPadre = r.cuentaContable
         Map row = buildDataRow(egreso)
@@ -221,12 +221,11 @@ class PagoGastosTask implements  AsientoBuilder, EgresoTask {
                 row.referencia = cxp.nombre
                 row.referencia2 = cxp.nombre
 
-                CuentaOperativaProveedor co = CuentaOperativaProveedor.where{ proveedor == cxp.proveedor}.find()
-                if(!co) throw new RuntimeException("No existe cuenta operativa para el proveedor: ${cxp.proveedor}")
-                def ctaOperativa = co.getCuentaOperativa()
+                
 
                 def gastos = GastoDet.findAllByCxp(cxp)
                 Boolean provision = false
+
                 if(Periodo.obtenerMes(cxp.fecha) < Periodo.obtenerMes(egreso.fecha)){
                     provision = true
                 }
@@ -242,7 +241,13 @@ class PagoGastosTask implements  AsientoBuilder, EgresoTask {
 
                     def ctaGasto =gasto.cuentaContable
                     def gastoImporte = gasto.importe 
+
+                    
                     if(provision){
+
+                        CuentaOperativaProveedor co = CuentaOperativaProveedor.where{ proveedor == cxp.proveedor}.find()
+                        if(!co) throw new RuntimeException("No existe cuenta operativa para el proveedor: ${cxp.proveedor}")
+                        def ctaOperativa = co.getCuentaOperativa()
                         
                         switch(co.tipo) {
                             case 'GASTOS':
@@ -255,8 +260,8 @@ class PagoGastosTask implements  AsientoBuilder, EgresoTask {
                             case 'FLETES':
                                  ctaGasto = buscarCuenta("205-0004-${ctaOperativa}-0000")
                             break
-                            case 'RELACIONDAS':
-                                 ctaGasto = buscarCuenta("205-0009-${ctaOperativa}-0000")
+                            case 'RELACIONADAS':
+                                 ctaGasto = buscarCuenta("201-0001-${ctaOperativa}-0000")
                             break
                             case 'SEGUROS':
                                  ctaGasto = buscarCuenta("205-0003-${ctaOperativa}-0000")
@@ -265,7 +270,6 @@ class PagoGastosTask implements  AsientoBuilder, EgresoTask {
                                  ctaGasto = buscarCuenta("205-0008-${ctaOperativa}-0000")
                             break
                         }
-                        
                     }
 
                     poliza.addToPartidas(mapRow(ctaGasto, desc, row, gastoImporte))
