@@ -328,6 +328,10 @@ class UrlMappings {
         "/api/contabilidad/saldos/cierreMensual/$ejercicio/$mes"(controller: 'saldoPorCuentaContable', action: 'cierreMensual', method: 'PUT')
         "/api/contabilidad/saldos/cierreAnual/$ejercicio"(controller: 'saldoPorCuentaContable', action: 'cierreAnual', method: 'PUT')
         "/api/contabilidad/saldos/loadMovimientos"(controller: 'saldoPorCuentaContable', action: 'loadMovimientos')
+        // Algunos reportes
+        "/api/contabilidad/estadoDeResultados"(controller: 'saldoPorCuentaContable', action: 'estadoDeResultados')
+        "/api/contabilidad/balanzaDeComprobacion"(controller: 'saldoPorCuentaContable', action: 'balanzaDeComprobacion')
+        "/api/contabilidad/balanceGeneral"(controller: 'saldoPorCuentaContable', action: 'balanceGeneral')
 
 
         "/api/contabilidad/saldos/drillPeriodo"(controller: 'saldoPorCuentaContable', action: 'drillPeriodo')
@@ -419,10 +423,10 @@ class UrlMappings {
         // Activo Fijo
         "/api/inpc"(resources: 'inpc', excludes: ['create', 'edit'])
         "/api/activoFijo"(resources: 'activoFijo', excludes:['create', 'edit']){
-            "/depreciaciones"(resources: 'activoDepreciacion', excludes:['create', 'edit'])
-            "/fiscales"(resources: 'activoDepreciacionFiscal', excludes:['create', 'edit'])
+            "/depreciaciones"(resources: 'activoDepreciacion', excludes:['create', 'edit', 'save', 'update'])
+            "/fiscales"(resources: 'activoDepreciacionFiscal', excludes:['create', 'edit', 'save', 'update'])
         }
-        "/api/activoFijo/depreciacionBatch/$ejercicio/$mes"(controller: 'activoDepreciacion', action: 'depreciacionBatch', method: 'GET')
+        "/api/activoFijo/generarDepreciacionContable/$ejercicio/$mes"(controller: 'activoFijo', action: 'depreciacionContable', method: 'GET')
         "/api/activoFijo/generarDepreciacionFiscal/$ejercicio"(controller: 'activoFijo', action: 'generarDepreciacionFiscal', method: 'GET')
         "/api/activoFijo/asignarInpcMedioMesUso"(controller: 'activoFijo', action: 'asignarInpcMedioMesUso', method: 'PUT')
         "/api/activoFijo/generarPendientes"(controller: 'activoFijo', action: 'generarPendientes')
@@ -454,6 +458,11 @@ class UrlMappings {
         "/api/cxp/analisisDeTransformacion/pendientesDeAnalisis/$proveedorId"(controller: 'analisisDeTransformacion', action: 'pendientesDeAnalisis', method: 'GET')
         "/api/cxp/analisisDeTransformacion/pendientes"(controller: 'analisisDeTransformacion', action: 'pendientes')
         "/api/cxp/analisisDeTransformacion/print/$id"(controller: 'analisisDeTransformacion', action: 'print', method: 'GET')
+
+        // Ajuste anual por inflacion
+        "/api/ajusteAnualPorInflacion"(resources: 'ajusteAnualPorInflacion', excludes: ['create', 'edit', 'patch'])
+        "/api/ajusteAnualPorInflacion/generar/$ejercicio/$mes"(controller: 'ajusteAnualPorInflacion', action: 'generar', method: 'POST')
+        "/api/ajusteAnualPorInflacion/sumary/$ejercicio/$mes"(controller: 'ajusteAnualPorInflacion', action: 'sumary', method: 'GET')
 
         // Audit
         "/api/audit"(resources: 'audit', excludes:['create', 'edit','patch'])

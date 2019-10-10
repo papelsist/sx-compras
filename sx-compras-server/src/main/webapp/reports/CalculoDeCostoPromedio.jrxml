@@ -40,8 +40,8 @@
 ,IFNULL((SELECT sum(x.EXISTENCIA_INICIAL/(case when p.unidad ='MIL' then 1000 else 1 end)) from existencia x where x.anio=$P{EJERCICIO} and x.mes=$P{MES} and x.clave=$P{ARTICULOS}  group by x.anio,x.mes ,x.clave),0) AS INV_INI
 ,IFNULL((SELECT X.COSTO from existencia x where x.anio=$P{EJERCICIO} and x.mes=$P{MES} and x.clave=$P{ARTICULOS}  group by x.anio,x.mes ,x.clave,X.COSTO),0) AS  CST_INI
 from inventario x join producto p on(x.clave=p.clave) 
-where year(x.fecha)=$P{EJERCICIO} and month(x.fecha)=$P{MES} and x.tipo in('TRS','REC','COM') and x.clave = $P{ARTICULOS}
-AND X.CANTIDAD>0]]></queryString>
+where year(x.fecha)=$P{EJERCICIO} and month(x.fecha)=$P{MES} and x.clave = $P{ARTICULOS}  and ((x.tipo in('TRS','REC','COM', 'MAQ') AND X.CANTIDAD>0) OR X.TIPO='DEC')
+]]></queryString>
 
 	<field name="ORIGEN" class="java.lang.String"/>
 	<field name="YEAR" class="java.lang.Long"/>

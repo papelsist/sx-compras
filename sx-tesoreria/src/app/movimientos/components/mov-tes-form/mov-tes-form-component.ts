@@ -85,14 +85,20 @@ export class MovTesFormComponent implements OnInit {
         'DEP_PENDIENTE_ACLARAR',
         'DIFDEPOSITOSABONO',
         'DIFCONCILIACIONA',
-        'ABONO_SOBRANTE'
+        'ABONO_SOBRANTE',
+        'DEPOSITO_DEUDOR',
+        'DEVOLUCION_NOMINA',
+        'DEP_ACUENTA_PRESTAMO',
+        'DEVOLUCION_ASEGURADORA'
       ];
     } else {
       this.conceptos = [
         'CARGO',
         'DIFDEPOSITOSCARGO',
         'DIFCONCILIACIONC',
-        'CARGO_FALTANTE'
+        'CARGO_FALTANTE',
+        'INTERESES',
+        'ISR_RETENIDO'
       ];
     }
   }

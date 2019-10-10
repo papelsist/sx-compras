@@ -4,11 +4,13 @@ import grails.gorm.services.Service
 
 import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
+
 import sx.contabilidad.SaldoPorCuentaContable
 import sx.core.LogUser
 import sx.cxc.CobroDeposito
 import sx.cxc.CobroTransferencia
 import sx.utils.Periodo
+import sx.utils.MonedaUtils
 
 
 @CompileDynamic
@@ -72,7 +74,7 @@ abstract class SaldoPorCuentaDeBancoService implements  LogUser{
                         " and m.importe > 0 " +
                         " and m.porIdentificar = false",
                 [saldo.cuenta, saldo.ejercicio, saldo.mes])[0]?: 0.0
-        saldo.ingresos = res
+        saldo.ingresos = MonedaUtils.round(res, 2)
     }
 
     @CompileDynamic
@@ -86,7 +88,7 @@ abstract class SaldoPorCuentaDeBancoService implements  LogUser{
                         " and m.importe < 0 " +
                         " and m.porIdentificar = false",
                 [saldo.cuenta, saldo.ejercicio, saldo.mes])[0]?: 0.0
-        saldo.egresos = res.abs()
+        saldo.egresos = MonedaUtils.round(res.abs(), 2)
 
     }
 

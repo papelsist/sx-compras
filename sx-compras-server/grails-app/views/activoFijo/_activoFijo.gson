@@ -7,5 +7,6 @@ model {
 json g.render(activoFijo, [ excludes: ['cuentaContable', 'baja'], resolveTemplate: false]) {
 	cuentaContable g.render(activoFijo.cuentaContable)
 	baja g.render(activoFijo.baja)
-	depreciacionAcumulada activoFijo.depreciado ? activoFijo.montoOriginal: activoFijo.depreciacionAcumulada
+	// depreciacionAcumulada activoFijo.depreciado ? activoFijo.montoOriginal: activoFijo.depreciacionAcumulada
+	estado activoFijo.baja ? 'VENDIDO': activoFijo.depreciado ? 'DEPRECIADO' : 'VIGENTE'
 }

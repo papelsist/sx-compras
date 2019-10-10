@@ -46,14 +46,6 @@ class ActivoDepreciacionController extends RestfulController<ActivoDepreciacion>
         // log.info('Generando depreciacion para activo: {} {}', af, resource)
         respond activoDepreciacionService.generarDepreciacionUnitaria(af, resource.ejercicio, resource.mes)
     }
-    
-    def saveOld() {
-        ActivoFijo af = ActivoFijo.get(params.activoFijoId)
-        log.info('Generando depreciacion para activo: {}', af)
-        ActivoDepreciacion resource = new ActivoDepreciacion(activoFijo: af)
-        bindData resource, getObjectToBind()
-        respond activoDepreciacionService.generarDepreciacion(resource)
-    }
 
     @Override
     protected ActivoDepreciacion createResource() {
