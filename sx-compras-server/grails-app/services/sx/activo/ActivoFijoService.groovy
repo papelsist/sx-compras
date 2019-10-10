@@ -69,7 +69,7 @@ class ActivoFijoService implements LogUser {
     }
 
     def generarPendientes() {
-        log.info('Generando activos fijos pendientes')
+        // log.info('Generando activos fijos pendientes')
         def res = []
         def q = GastoDet.where {activoFijo == true}
         q = q.where {
@@ -81,34 +81,42 @@ class ActivoFijoService implements LogUser {
             }.id()
         }
         def pendientes = q.list()
+
         pendientes.each {item -> 
-            ActivoFijo af = new ActivoFijo()
-            af.with {
-                adquisicion = item.cxp.fecha
-                descripcion = item.descripcion
-                montoOriginal = item.importe
-                montoOriginalFiscal = item.importe
-                serie = item.serie
-                modelo = item.modelo
-                facturaSerie = item.cxp.serie
-                facturaFolio = item.cxp.folio
-                facturaFecha = item.cxp.fecha
-                uuid = item.cxp.uuid
-                estado = 'VIGENTE'
-                cuentaContable = item.cuentaContable
-                gastoDet = item
-                proveedor = item.cxp.proveedor
-                sucursalOrigen = item.sucursal.nombre
-                sucursalActual = item.sucursal.nombre
+            int limit = item.cantidad.intValue()
+            (1..limit).each {
+
+                ActivoFijo af = new ActivoFijo()
+                af.with {
+                    adquisicion = item.cxp.fecha
+                    descripcion = item.descripcion
+                    montoOriginal = item.valorUnitario
+                    montoOriginalFiscal = item.valorUnitario
+                    serie = item.serie
+                    modelo = item.modelo
+                    facturaSerie = item.cxp.serie
+                    facturaFolio = item.cxp.folio
+                    facturaFecha = item.cxp.fecha
+                    uuid = item.cxp.uuid
+                    estado = 'VIGENTE'
+                    cuentaContable = item.cuentaContable
+                    gastoDet = item
+                    proveedor = item.cxp.proveedor
+                    sucursalOrigen = item.sucursal.nombre
+                    sucursalActual = item.sucursal.nombre
+                }
+
+                def ej = Periodo.obtenerYear(item.cxp.fecha)
+                def mm = Periodo.obtenerMes(item.cxp.fecha) + 1
+                def inpc = Inpc.where{ejercicio == ej && mes == mm}.find()
+                if(inpc) {
+                    af.inpcDelMesAdquisicion = inpc.tasa
+                }
+                af.save failOnError: true, flush: true
+                res << af
             }
-            def inpc = Inpc.where{ejercicio == ej && mes == mm}.find()
-            if(inpc) {
-                af.inpcDelMesAdquisicion = inpc.tasa
-            }
-            af.save failOnError: true, flush: true
-            res << af
         }
-        log.info('Generados: {}', res.size())
+        // log.info('Generados: {}', res.size())
         return res
         
     }

@@ -15,6 +15,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils
 
 import org.springframework.stereotype.Component
 
+import sx.core.LogUser
 import sx.contabilidad.SqlAccess
 import sx.contabilidad.CuentaContable
 import sx.contabilidad.SaldoPorCuentaContable
@@ -22,99 +23,90 @@ import sx.utils.Mes
 
 @Slf4j
 @Component
-class AjusteAnualPorInflacionBuilder implements  SqlAccess{
+class AjusteAnualPorInflacionBuilder implements  SqlAccess, LogUser{
 
     // @Autowired
     // @Qualifier('dataSource')
     // def dataSource
 
     public buildFrom(Integer ejercicio , Integer mes) {
+       def rows = buildAjustes(ejercicio)
+       log.info('Ajustes generados: {}', rows.size())
         (1..mes).each {
-            build(ejercicio, it)
+            build(ejercicio, it, rows)
         }
     }
 
-    public build(Integer ejercicio, Integer mes) {
-        // Activos
+    public build(Integer ejercicio, Integer mes, def rows) {
         
-        buildBancos(ejercicio, mes)
-        buildInversiones(ejercicio, mes)
-        buildOtrasCuentasPorCobrar(ejercicio, mes)
-        buildPagosAnticipados(ejercicio, mes)
+        // Activos
+        buildBancos(ejercicio, mes, rows)
+        buildInversiones(ejercicio, mes, rows)
+        buildOtrasCuentasPorCobrar(ejercicio, mes, rows)
+        buildPagosAnticipados(ejercicio, mes, rows)
+        
         // Pasivos
-        buildCuentasPorPagar(ejercicio, mes)
-        buildImpuestosPorPagar(ejercicio, mes)
-        buildDocumentosPorPagar(ejercicio, mes)
+        buildCuentasPorPagar(ejercicio, mes, rows)
+        buildImpuestosPorPagar(ejercicio, mes, rows)
+        buildDocumentosPorPagar(ejercicio, mes, rows)
+        
 
     }
 
-    public buildBancos(Integer ej, Integer ms) {
-        def tpo = 'ACTIVO'
-        def gpo = 'BANCOS'
-        def conceptos = AjustePorInflacionConcepto.where{tipo == tpo && grupo == gpo && activo == true}.list()
+    def buildAjustes(Integer ej) {
+        AjusteAnualPorInflacion.executeUpdate("delete from AjusteAnualPorInflacion where ejercicio = ?", [ej])
+        def conceptos = AjustePorInflacionConcepto.where{activo == true}.list([sort: 'orden']) 
         def rows = []
         conceptos.each { c ->
-            log.info('Procesando: {}', c.concepto)
-            def aju = AjusteAnualPorInflacion.findOrCreateWhere(ejercicio: ej, concepto: c)
-            aju.save failOnError: true, flush: true
-            rows << aju
+            log.info('Generando: {} ', c.concepto)
+            def aju = new AjusteAnualPorInflacion(ejercicio: ej, concepto: c)
+            logEntity(aju)
+            rows << aju.save(flush: true)
         }
-        calcularPosSaldoFinal(tpo, gpo, ej, ms, rows)
+        return rows
+    }
+
+    def buildBancos(Integer ej, Integer ms, def rows) {
+        def tpo = 'ACTIVO'
+        def gpo = 'BANCOS'
+        def bancos = rows.findAll{it.tipo == tpo && it.grupo == gpo} 
+        calcularPosSaldoFinal(tpo, gpo, ej, ms, bancos)
+        sumarizar(bancos, ms)
     }
     
 
-    def buildInversiones(Integer ej, Integer ms) {
+    def buildInversiones(Integer ej, Integer ms, def rows) {
         def tpo = 'ACTIVO'
         def gpo = 'INVERSIONES'
-        def conceptos = AjustePorInflacionConcepto.where{tipo == tpo && grupo == gpo && activo == true}.list()
-        def rows = []
-        conceptos.each { c ->
-            log.info('Procesando: {}', c.concepto)
-            def aju = AjusteAnualPorInflacion.findOrCreateWhere(ejercicio: ej, concepto: c)
-            aju.save failOnError: true, flush: true
-            rows << aju
-        }
-        calcularPosSaldoFinal(tpo, gpo, ej, ms, rows)
+        def bancos = rows.findAll{it.tipo == tpo && it.grupo == gpo} 
+        calcularPosSaldoFinal(tpo, gpo, ej, ms, bancos)
+        sumarizar(bancos, ms)
     }
 
 
-    def buildOtrasCuentasPorCobrar(Integer ej, Integer ms) {
+    def buildOtrasCuentasPorCobrar(Integer ej, Integer ms, def rows) {
         def tpo = 'ACTIVO'
         def gpo = 'OTRAS CUENTAS POR COBRAR'
-        def conceptos = AjustePorInflacionConcepto.where{tipo == tpo && grupo == gpo && activo == true}.list()
-        def rows = []
-        conceptos.each { c ->
-            log.info('Procesando: {}', c.concepto)
-            def aju = AjusteAnualPorInflacion.findOrCreateWhere(ejercicio: ej, concepto: c)
-            aju.save failOnError: true, flush: true
-            rows << aju
-        }
-        calcularPosSaldoFinal(tpo, gpo, ej, ms, rows)
+        def bancos = rows.findAll{it.tipo == tpo && it.grupo == gpo} 
+        calcularPosSaldoFinal(tpo, gpo, ej, ms, bancos)
+        sumarizar(bancos, ms)
     }
 
-    def buildPagosAnticipados(Integer ej, Integer ms) {
+    def buildPagosAnticipados(Integer ej, Integer ms, def rows) {
         def tpo = 'ACTIVO'
         def gpo = 'PAGOS ANTICIPADOS'
-        def rows = []
-        rows << generarIsrDelEjercicio(ej, ms)
-        rows << generarIvaDelMes(ej, ms)
-        rows << generarIsrDelMes(ej, ms)
-        rows << generarDepositosEnGarantia(ej, ms)
-        def prop = resolverMesPropery(ms)
-        def cpto = AjustePorInflacionConcepto.findOrSaveWhere(concepto: 'SUMA', tipo: tpo, grupo: gpo)
-        def suma = AjusteAnualPorInflacion.findOrCreateWhere(ejercicio: ej, concepto: cpto)
-        suma[prop] = rows.sum(0.0, {it[prop]})
-        suma = suma.save failOnError: true, flush: true
-        
+        generarIsrDelEjercicio(ej, ms, rows)
+        generarIvaDelMes(ej, ms, rows)
+        generarIsrDelMes(ej, ms, rows)
+        generarDepositosEnGarantia(ej, ms, rows)
     }
 
-    private generarIsrDelEjercicio(Integer ej, Integer ms) {
+    private generarIsrDelEjercicio(Integer ej, Integer ms, def rows) {
         def tpo = 'ACTIVO'
         def gpo = 'PAGOS ANTICIPADOS'
         def prop = resolverMesPropery(ms)
-
-        def cc = AjustePorInflacionConcepto.where{cuenta.clave == '113-0002-0000-0000' && tipo == tpo}.find()
-        def aju = AjusteAnualPorInflacion.findOrCreateWhere(ejercicio: ej, concepto: cc)
+        def aju = rows.find{it.concepto.clave == '113-0002-0000-0000' && it.tipo == tpo && it.grupo == gpo}
+        def cc = aju.concepto
         
         def anterior = getPeriodoAnterior(ej, ms)
         def s1 = SaldoPorCuentaContable.where{cuenta == cc.cuenta && ejercicio == anterior.ejercicio && mes == anterior.mes}.find()
@@ -122,29 +114,27 @@ class AjusteAnualPorInflacionBuilder implements  SqlAccess{
         if(s1 && s2) {
             aju[prop] = s1.saldoFinal - s2.haber
         }
-        aju.save failOnError: true, flush: true
     }
 
-    private generarIvaDelMes(Integer ej ,Integer ms) {
+    private generarIvaDelMes(Integer ej ,Integer ms, def rows) {
         def tpo = 'ACTIVO'
         def gpo = 'PAGOS ANTICIPADOS'
         def prop = resolverMesPropery(ms)
-        def cc = AjustePorInflacionConcepto.where{cuenta.clave == '113-0001-0000-0000' && tipo == tpo}.find()
-        def aju = AjusteAnualPorInflacion.findOrCreateWhere(ejercicio: ej, concepto: cc)
+        def aju = rows.find{it.concepto.clave == '113-0001-0000-0000' && it.tipo == tpo && it.grupo == gpo}
+        def cc = aju.concepto
+
         def saldo = SaldoPorCuentaContable.where{cuenta == cc.cuenta && ejercicio == ej && mes == ms}.find()
         if (saldo) {
             aju[prop] = saldo.saldoInicial - saldo.haber
         }
-        aju.save failOnError: true, flush: true
     }
 
-    private generarIsrDelMes(Integer ej, Integer ms) {
+    private generarIsrDelMes(Integer ej, Integer ms, def rows) {
         def tpo = 'ACTIVO'
         def gpo = 'PAGOS ANTICIPADOS'
         def prop = resolverMesPropery(ms)
-        def cc = AjustePorInflacionConcepto.where{cuenta.clave == '113-0004-0000-0000' && tipo == tpo}.find()
-        
-        def aju = AjusteAnualPorInflacion.findOrCreateWhere(ejercicio: ej, concepto: cc)
+        def aju = rows.find{it.concepto.clave == '113-0004-0000-0000' && it.tipo == tpo && it.grupo == gpo}
+        def cc = aju.concepto
         
         def anterior = getPeriodoAnterior(ej, ms)
         def s1 = SaldoPorCuentaContable.where{cuenta == cc.cuenta && ejercicio == anterior.ejercicio && mes == anterior.mes}.find()
@@ -152,58 +142,50 @@ class AjusteAnualPorInflacionBuilder implements  SqlAccess{
         if(s1 && s2) {
             aju[prop] = s1.saldoFinal - s2.haber
         }
-        aju.save failOnError: true, flush: true
     }
 
-    def generarDepositosEnGarantia(Integer ej, Integer ms) {
+    def generarDepositosEnGarantia(Integer ej, Integer ms, def rows) {
         def tpo = 'ACTIVO'
         def gpo = 'PAGOS ANTICIPADOS'
         def prop = resolverMesPropery(ms)
-        def cc = AjustePorInflacionConcepto.where{cuenta.clave == '184-0000-0000-0000' && tipo == tpo}.find()
-        def aju = AjusteAnualPorInflacion.findOrCreateWhere(ejercicio: ej, concepto: cc)
+        def aju = rows.find{it.concepto.clave == '184-0000-0000-0000' && it.tipo == tpo && it.grupo == gpo}
+        def cc = aju.concepto
         def saldo = SaldoPorCuentaContable.where{ejercicio == ej && mes == ms && cuenta == cc.cuenta}.find()
         if(saldo) {
             aju[prop] = saldo.saldoFinal
         }
-        aju.save failOnError: true, flush: true
     }
 
     
 
     /**********  Pasivos ************/
 
-    def buildCuentasPorPagar(Integer ej, Integer ms) {
+    def buildCuentasPorPagar(Integer ej, Integer ms, def rows) {
         def tpo = 'PASIVO'
         def gpo = 'CUENTAS POR PAGAR'
-        def conceptos = AjustePorInflacionConcepto.where{tipo == tpo && grupo == gpo && activo == true}.list()
-        def rows = []
-        conceptos.each { c ->
-            log.info('Procesando: {}', c.concepto)
-            def aju = AjusteAnualPorInflacion.findOrCreateWhere(ejercicio: ej, concepto: c)
-            aju.save failOnError: true, flush: true
-            rows << aju
-        }
-        calcularPosSaldoFinal(tpo, gpo, ej, ms, rows)
+        def cxcs = rows.findAll{it.tipo == tpo && it.grupo == gpo}
+        // log.info('Ctas por pagar: {}', cxcs.size()) 
+        calcularPosSaldoFinal(tpo, gpo, ej, ms, cxcs)
+        sumarizar(cxcs, ms)
     }
 
-    def buildImpuestosPorPagar(Integer ej, Integer ms) {
+    def buildImpuestosPorPagar(Integer ej, Integer ms, def rows) {
         def tpo = 'PASIVO'
         def gpo = 'IMPUESTOS POR PAGAR'
-        def conceptos = AjustePorInflacionConcepto.where{tipo == tpo && grupo == gpo && activo == true}.list()
-        def rows = []
-        conceptos.each { c ->
-            log.info('Procesando: {}', c.concepto)
-            def aju = AjusteAnualPorInflacion.findOrCreateWhere(ejercicio: ej, concepto: c)
-            aju.save failOnError: true, flush: true
-            rows << aju
-        }
-        calcularPosSaldoFinal(tpo, gpo, ej, ms, rows)
+        def impuestos = rows.findAll{it.tipo == tpo && it.grupo == gpo}
+        calcularPosSaldoFinal(tpo, gpo, ej, ms, impuestos)
+        sumarizar(impuestos, ms)
     }
 
-    def buildDocumentosPorPagar(Integer ej, Integer ms) {
+    def buildDocumentosPorPagar(Integer ej, Integer ms, def rows) {
         
         def tpo = 'PASIVO'
         def gpo = 'DOCUMENTOS POR PAGAR'
+        def documentos = rows.findAll{it.tipo == tpo && it.grupo == gpo && it.concepto.clave != '215-0000-0000-0000'}
+        calcularPosSaldoFinal(tpo, gpo, ej, ms, documentos)
+        generarPtu(ej, ms, rows)
+        sumarizar(documentos, ms)
+        /*
         def conceptos = AjustePorInflacionConcepto.where{
             tipo == tpo && grupo == gpo && activo == true }.list()
         def rows = []
@@ -216,10 +198,13 @@ class AjusteAnualPorInflacionBuilder implements  SqlAccess{
             aju.save failOnError: true, flush: true
             rows << aju
         }
+        
         calcularPosSaldoFinal(tpo, gpo, ej, ms, rows)
+        */
     }
 
-    private generarPtu(Integer ej, Integer ms, def aju) {
+    private generarPtu(Integer ej, Integer ms, def rows) {
+        def aju = rows.find{it.concepto.clave == '215-0000-0000-0000'}
         def prop = resolverMesPropery(ms)
         if(ms > 2) {
             def saldo = SaldoPorCuentaContable.where{cuenta == aju.concepto.cuenta && ejercicio == ej && mes == ms}.find()
@@ -243,20 +228,24 @@ class AjusteAnualPorInflacionBuilder implements  SqlAccess{
             if(cc.cuenta) {
                 def saldo = SaldoPorCuentaContable.where{ejercicio == ej && mes == ms && cuenta == cc.cuenta}.find()
                 if(saldo) {
-                    item[prop] = saldo.saldoFinal
+                    item[prop] = saldo.saldoFinal.abs()
+                    logEntity(item)
                 }
             }
-            item.save flush: true
-            log.info('{} {}: {}', item.concepto.concepto , ms, item[prop])   
+            // item.save flush: true
+            // log.info('{} {}: {}', item.concepto.concepto , ms, item[prop])   
         }
-        
-        def cpto = AjustePorInflacionConcepto.findOrSaveWhere(concepto: 'SUMA', tipo: tpo, grupo: gpo)
-        def suma = AjusteAnualPorInflacion.findOrCreateWhere(ejercicio: ej, concepto: cpto)
-        suma[prop] = rows.sum(0.0, {it[prop]})
-        suma = suma.save failOnError: true, flush: true
-        log.info('{} : {}', suma.concepto , suma[prop])
         return rows   
     }
+
+    def sumarizar(def rows, Integer ms) {
+        def prop = resolverMesPropery(ms)
+        def suma = rows.find{it.concepto.concepto == 'SUMA'}
+        suma[prop] = rows.sum(0.0, {it[prop]})
+        log.info('Sumarizando: {} : {}', suma.concepto.concepto , suma[prop])
+        return suma
+    }
+
     
 
     def getPeriodoAnterior(Integer ej, Integer ms) {
@@ -280,7 +269,7 @@ class AjusteAnualPorInflacionBuilder implements  SqlAccess{
     
 }
 
-/*
+
 @Canonical( includes = ['cuenta', 'concepto', 'tipo', 'grupo'])
 @ToString()
 class AjustePorInflacion {
@@ -303,7 +292,7 @@ class AjustePorInflacion {
     BigDecimal diciembre = 0.0
 
 }
-
+/*
 class AjustePorInflacionHistorico {
 
     Integer ejercicio

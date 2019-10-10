@@ -21,6 +21,7 @@ class ActivoDepreciacion implements  Comparable<ActivoDepreciacion>{
 
     BigDecimal depreciacionAcumulada = 0.0
     BigDecimal depreciacion = 0.0
+    BigDecimal remanente = 0.0
     
     
     Date dateCreated

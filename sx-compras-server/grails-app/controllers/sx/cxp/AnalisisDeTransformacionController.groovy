@@ -17,6 +17,8 @@ import sx.utils.Periodo
 import sx.inventario.Transformacion
 import sx.inventario.TransformacionDet
 
+import sx.activo.Inpc
+
 @Slf4j
 @Secured("ROLE_COMPRAS")
 @GrailsCompileStatic
@@ -81,8 +83,15 @@ class AnalisisDeTransformacionController extends RestfulController<AnalisisDeTra
             where p.tipo = ? 
               and d.cantidad > 0
               and d not in(select x.trs from AnalisisDeTransformacionDet x)
-            """, ['MET'])
+            """, ['MAQ'])
         respond res
+    }
+
+    @CompileDynamic
+    def findInpc() {
+        def ej = params.ejercicio
+        def ms = params.mes
+        respond Inpc.where{ejercicio == ej && mes == ms}
     }
 
     def print( ) {

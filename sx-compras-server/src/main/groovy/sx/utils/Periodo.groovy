@@ -239,6 +239,10 @@ class Periodo implements Comparable<Periodo>, WebDataBinding {
 		return obtenerYear(f1) == obtenerYear(f2)
 	}
 
+	public static isSameMonth(Date f1, Date f2) {
+		return obtenerMes(f1) == obtenerMes(f2)
+	}
+
 
 	
 

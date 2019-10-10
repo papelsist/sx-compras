@@ -154,13 +154,19 @@ class CostoPromedioService {
             SELECT 'INV' as tipo,P.clave
             ,SUM(CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end)) AS CANT,SUM(CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end)*(COSTO+GASTO)) AS IMP_COSTO
              FROM INVENTARIO X JOIN PRODUCTO P ON(X.producto_id=P.ID) 
-             WHERE x.costo>0 and year(x.fecha)=(?) and month(x.fecha)=(?) and x.tipo in('TRS','REC','COM')  and x.cantidad>0 and p.de_linea is true and p.inventariable is true
+             WHERE x.costo > 0 and year(x.fecha)=(?) and month(x.fecha)=(?) and x.tipo in('TRS','REC','COM', 'MAQ')  and x.cantidad > 0 and p.de_linea is true and p.inventariable is true
+             GROUP BY P.CLAVE
+             union
+             SELECT 'INV' as tipo,P.clave
+            ,SUM(CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end)) AS CANT,SUM(CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end)*(COSTO+GASTO)) AS IMP_COSTO
+             FROM INVENTARIO X JOIN PRODUCTO P ON(X.producto_id=P.ID) 
+             WHERE x.costo > 0 and year(x.fecha)=(?) and month(x.fecha)=(?) and x.tipo in('DEC')  and p.de_linea is true and p.inventariable is true
              GROUP BY P.CLAVE
              ) AS A
              GROUP BY A.CLAVE
         """
         List<CostoPromedio> actualizados = []
-        getLocalRows(sql, [ejercicio, mes, ejercicio, mes]).each { row ->
+        getLocalRows(sql, [ejercicio, mes, ejercicio, mes, ejercicio, mes]).each { row ->
             CostoPromedio cp = costos.find { it.clave == row.clave}
             if(!cp) {
                 Producto producto = Producto.findByClave(row.clave)
@@ -319,10 +325,15 @@ class CostoPromedioService {
             
             def trs = inventarios.find{it.tipo == 'TRS' && it.cantidad >0 }
             
+            def maq = inventarios.find{it.tipo == 'MAQ' && it.cantidad >0 }
+
             def rec = inventarios.find{it.tipo == 'REC' && it.cantidad >0 }
+
+            def dec = inventarios.find{it.tipo == 'DEC' }
+
            
             
-            if(!com && !trs && !rec) {
+            if(!com && !trs && !rec && !maq && !dec) {
               //  No tiene entradas
                 def row = existencias.find{it.costo != 0}
 
@@ -349,10 +360,19 @@ class CostoPromedioService {
                 def inventariosEnt =Inventario.executeQuery("""
                     from Inventario i  
                         where date(i.fecha) between ? and ? 
-                        and i.producto = ? AND TIPO in ('COM','TRS','REC') 
+                        and i.producto = ? AND TIPO in ('COM','TRS','REC','MAQ') 
                         and cantidad > 0 
-                        and costo>0 """,
+                        and costo > 0 """,
                     [fechaIni,fechaFin,producto])
+
+                def decs = Inventario.executeQuery("""
+                    from Inventario i  
+                        where date(i.fecha) between ? and ? 
+                        and i.producto = ? AND TIPO tipo = 'DEC'
+                        and costo > 0 """,
+                    [fechaIni,fechaFin,producto])
+
+                inventariosEnt.addAll(decs)
                 
                 if(inventariosEnt.size() >= 1 ){
                     

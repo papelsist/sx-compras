@@ -26,6 +26,8 @@ class AjustePorInflacionConcepto {
 
     Boolean activo = true
 
+    Integer orden = 0
+
     String createUser
     String updateUser
 

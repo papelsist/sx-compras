@@ -26,6 +26,8 @@ class ActivoFijoController extends RestfulController<ActivoFijo> {
 
     ActivoDepreciacionFiscalService activoDepreciacionFiscalService
 
+    DepreciacionContableService depreciacionContableService
+
     DepreciacionAnalisisService depreciacionAnalisisService
 
     ActivoFijoController() {
@@ -65,6 +67,13 @@ class ActivoFijoController extends RestfulController<ActivoFijo> {
         def command = new AsignacionInpc()
         bindData command, getObjectToBind()
         respond activoFijoService.asignarInpcMedioMesUso(command.ids, command.inpc)
+    }
+
+    @CompileDynamic
+    def depreciacionContable(Integer ejercicio, Integer mes) {
+        log.info('Generando depreciacion contable {} {}', ejercicio, mes)
+        depreciacionContableService.generarDepreciacion(ejercicio, mes)
+        forward action: 'index'
     }
 
     @CompileDynamic

@@ -268,6 +268,33 @@ class SaldoPorCuentaContableController extends RestfulController<SaldoPorCuentaC
         respond saldoPorCuentaContableService.auxiliarContable(ctaInicial, ctaFinal, periodo)
     }
 
+    def estadoDeResultados() {
+        Map repParams = [
+                YEAR: params.getInt('ejercicio'),
+                MES: params.getInt('mes')
+        ]
+        def pdf =  reportService.run('contabilidad/EstadoDeResultados.jrxml', repParams)
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'EstadoDeResultados.pdf')
+    }
+
+    def balanzaDeComprobacion() {
+        Map repParams = [
+                YEAR: params.getInt('ejercicio'),
+                MES: params.getInt('mes')
+        ]
+        def pdf =  reportService.run('contabilidad/BalanzaDeComprobacion.jrxml', repParams)
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'Balanza.pdf')
+    }
+
+    def balanceGeneral() {
+        Map repParams = [
+                YEAR: params.getInt('ejercicio'),
+                MES: params.getInt('mes')
+        ]
+        def pdf =  reportService.run('contabilidad/BalanceGeneral.jrxml', repParams)
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'BalanceGeneral.pdf')
+    }
+
     def handleException(Exception e) {
         String message = ExceptionUtils.getRootCauseMessage(e)
         log.error(message, e)

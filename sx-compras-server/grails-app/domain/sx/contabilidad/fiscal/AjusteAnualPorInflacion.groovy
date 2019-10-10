@@ -13,6 +13,10 @@ class AjusteAnualPorInflacion {
 
     AjustePorInflacionConcepto concepto
 
+    String tipo
+    String grupo
+    String descripcion
+
     BigDecimal enero = 0.0
     BigDecimal febrero = 0.0
     BigDecimal marzo = 0.0
@@ -38,5 +42,13 @@ class AjusteAnualPorInflacion {
         createUser nullable: true
         updateUser nullable: true
     }
+
+    def beforeValidate() {
+        tipo = this.concepto.tipo
+        grupo = this.concepto.grupo
+        descripcion = this.concepto.concepto
+    }
+
+    
 
 }

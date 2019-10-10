@@ -11,6 +11,8 @@ class AjusteAnualPorInflacionController extends RestfulController<AjusteAnualPor
     static responseFormats = ['json']
 
     AjusteAnualPorInflacionBuilder ajusteAnualPorInflacionBuilder
+
+    AjusteAnualPorInflacionService ajusteAnualPorInflacionService
     
     AjusteAnualPorInflacionController() {
         super(AjusteAnualPorInflacion)
@@ -24,11 +26,15 @@ class AjusteAnualPorInflacionController extends RestfulController<AjusteAnualPor
         return  query.list()
     }
 
-    def generar() {
-    	def ej = params.ejercicio
-    	def mes = params.mes
-		ajusteAnualPorInflacionBuilder.buildFrom(ej, mes)
-		respond AjusteAnualPorInflacion.where{ejercicio: ej}.list()
+    def sumary(Integer ejercicio, Integer mes) {
+        def ms = mes - 1
+        log.info('Sumary: {} - {}', ejercicio, ms)
+        respond ajusteAnualPorInflacionService.sumary(ejercicio, ms)
+    }
+
+    def generar(Integer ejercicio, Integer mes) {
+		ajusteAnualPorInflacionBuilder.buildFrom(ejercicio, mes)
+		respond AjusteAnualPorInflacion.where{ejercicio: ejercicio}.list()
     }
 
 }
