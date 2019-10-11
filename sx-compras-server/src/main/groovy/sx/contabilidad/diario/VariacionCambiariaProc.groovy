@@ -58,13 +58,16 @@ class VariacionCambiariaProc implements ProcesadorMultipleDePolizas {
         
         rows.each{ row ->
             log.info('Procesando {}',row.origen)
+            println row
             def descripcion = generarDescripcion(row)
-            if(row.variacion >0){
+            if(row.variacion && row.variacion > 0){
                 // 701
                 poliza.addToPartidas(mapRow(poliza,row.cta_cliente.toString(),descripcion+" TC: "+row.tc_ant,row,0.0,row.variacion))
                 poliza.addToPartidas(mapRow(poliza,row.cta_variacion.toString(),descripcion+" TC: "+row.tc_var,row,row.variacion))
-            }else{
+            }
+            if( row.variacion && row.variacion < 0){
                 // 702
+
                 poliza.addToPartidas(mapRow(poliza,row.cta_cliente.toString(),descripcion+" TC: "+row.tc_ant,row,row.variacion))
                 poliza.addToPartidas(mapRow(poliza,row.cta_variacion.toString(),descripcion+" TC: "+row.tc_var,row,0.00,row.variacion))
             } 
@@ -99,6 +102,9 @@ class VariacionCambiariaProc implements ProcesadorMultipleDePolizas {
 
     def procesarCargoProveedor(Poliza poliza) {
         String select = getSelect('CXP').replaceAll('@FECHA', toSqlDate(poliza.fecha))
+
+        
+
         List rows = getAllRows(select, [])
         rows.each{ row ->
         def descripcion = generarDescripcion(row)

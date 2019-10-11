@@ -42,7 +42,7 @@ class PagoGastosReqTask implements  AsientoBuilder, EgresoTask {
             cargoProveedorGasto(poliza, r)
         }
 
-        abonoBanco(poliza, r)
+         abonoBanco(poliza, r)
         ajustarProveedorBanco(poliza)
 
         registrarVariacionCambiaria(poliza, r)
@@ -58,6 +58,8 @@ class PagoGastosReqTask implements  AsientoBuilder, EgresoTask {
 
     void cargoProveedorGasto(Poliza poliza, Requisicion r) {
 
+        println "Generando el cargo al proveedor de gastos"
+
       
         MovimientoDeCuenta egreso = r.egreso
         List<RequisicionDet> partidas = r.partidas.sort {it.cxp.folio}
@@ -65,9 +67,11 @@ class PagoGastosReqTask implements  AsientoBuilder, EgresoTask {
         partidas.each{
             CuentaPorPagar cxp = it.cxp
 
-            String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} F:${cxp.serie?:''} ${cxp.folio}" +
+            String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} F:${cxp.serie?:''} ${cxp.folio}"  +
                         " (${cxp.fecha.format('dd/MM/yyyy')}) ${egreso.sucursal?: 'OFICINAS'} " +
                         " ${cxp.tipoDeCambio > 1.0 ? 'T.C:' + cxp.tipoDeCambio: ''}"
+
+  
 
             Map row = [
                     asiento: "PAGO_${egreso.tipo}",
@@ -94,21 +98,22 @@ class PagoGastosReqTask implements  AsientoBuilder, EgresoTask {
                 }
 
                 gastos.each{ gasto ->
+                    println "ID: "+ gasto.id
                     desc = "FAC: ${cxp.serie? cxp.serie : '' } ${cxp.folio} ${cxp.fecha} ${gasto.descripcion}"
                     def cv = gasto.cuentaContable.clave
                     def totalGasto = gasto.importe
                     if(provision){
                        CuentaOperativaProveedor co = buscarCuentaOperativa(r.proveedor)
-                       if(co){
-                           
+                       if(co){     
                            cv = "205-0006-${co.cuentaOperativa}-0000" 
                            if( co.tipo == 'RELACIONADAS'){
                                cv = "201-0001-${co.cuentaOperativa}-0000" 
                            }
+                           if(co.tipo == 'SEGUROS'){
+                               cv = "205-0003-${co.cuentaOperativa}-0000" 
+                           }
                        }
-                        
                         totalGasto = gasto.importe + gasto.ivaTrasladado - gasto.ivaRetenido - gasto.isrRetenido
-
                     }
                
                 poliza.addToPartidas(mapRow(cv, desc, row, totalGasto))
@@ -124,6 +129,8 @@ class PagoGastosReqTask implements  AsientoBuilder, EgresoTask {
 
                 desc = "FAC: ${cxp.serie? cxp.serie : '' } ${cxp.folio} ${cxp.fecha} ${cxp.proveedor.nombre}"
 
+                desc = "Temporal"
+            
                 //BigDecimal ivaCfdi = cxp.impuestoTrasladado - cxp.impuestoRetenidoIva
 
                  def importeIva = gasto.ivaTrasladado
@@ -270,6 +277,8 @@ class PagoGastosReqTask implements  AsientoBuilder, EgresoTask {
     }
 
     void abonoBanco(Poliza poliza, Requisicion r) {
+
+     
         MovimientoDeCuenta egreso = r.egreso
 
         // Abono a Banco
@@ -297,6 +306,8 @@ class PagoGastosReqTask implements  AsientoBuilder, EgresoTask {
         if(r.moneda != 'MXN') {
             desc = desc + " TC: ${r.tipoDeCambio}"
         }
+
+        
         poliza.addToPartidas(mapRow(ctaBanco, desc, row, 0.0, egreso.importe.abs()))
     }
 
@@ -399,11 +410,13 @@ class PagoGastosReqTask implements  AsientoBuilder, EgresoTask {
 
     PolizaDet mapRow(String cuentaClave, String descripcion, Map row, BigDecimal debe = 0.0, BigDecimal haber = 0.0) {
 
+            println "Desc: "+descripcion
+
         CuentaContable cuenta = buscarCuenta(cuentaClave)
         PolizaDet det = new PolizaDet(
                 cuenta: cuenta,
                 concepto: cuenta.descripcion,
-                descripcion: descripcion,
+                descripcion:   descripcion,
                 asiento: row.asiento,
                 referencia: row.referencia,
                 referencia2: row.referencia2,

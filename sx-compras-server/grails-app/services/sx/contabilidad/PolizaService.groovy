@@ -197,5 +197,10 @@ abstract class PolizaService implements  LogUser{
     }
 
 
+    def refolizarCheques( List<Poliza> polizas){
+        
+    }
+
+
 
 }

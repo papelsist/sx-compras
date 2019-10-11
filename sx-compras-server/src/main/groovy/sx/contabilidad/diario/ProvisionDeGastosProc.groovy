@@ -30,6 +30,7 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
 
     @Override
     Poliza recalcular(Poliza poliza) {
+       
         poliza.partidas.clear()
         generarAsientos(poliza, [:])
         procesarNotas(poliza,[:])
@@ -40,13 +41,14 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
 
 
      def generarAsientos(Poliza poliza, Map params) {
-
+        
         String query = getQuery()
 
         def rows = getAllRows(query,[poliza.ejercicio,poliza.mes,poliza.ejercicio,poliza.mes])
-
+        println rows.size()
         rows.each{row ->
-
+            println "procesando registro"
+            println row
             CuentaPorPagar cxp = CuentaPorPagar.get(row.cxpId)
 
             String desc = " F: ${cxp.folio} ${cxp.fecha} "
@@ -591,7 +593,7 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
                 rembolso r on(d.rembolso_id=r.id) join 
                 movimiento_de_cuenta m on(r.egreso_id=m.id)
             WHERE 
-                c.fecha>='2019-01-01' and c.tipo='GASTOS' and r.concepto='GASTOS' and month(m.fecha)>month(c.fecha) and year(c.fecha)=? and month(c.fecha)=?
+                c.fecha>='2019-01-01' and c.tipo='GASTOS' and r.concepto='GASTO' and month(m.fecha)>month(c.fecha) and year(c.fecha)=? and month(c.fecha)=?
         """
         return query
     }
