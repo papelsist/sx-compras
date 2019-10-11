@@ -41,14 +41,16 @@ class AjusteAnualPorInflacionBuilder implements  SqlAccess, LogUser{
         
         // Activos
         buildBancos(ejercicio, mes, rows)
-        buildInversiones(ejercicio, mes, rows)
-        buildOtrasCuentasPorCobrar(ejercicio, mes, rows)
-        buildPagosAnticipados(ejercicio, mes, rows)
+        // buildInversiones(ejercicio, mes, rows)
+        // buildOtrasCuentasPorCobrar(ejercicio, mes, rows)
+        // buildPagosAnticipados(ejercicio, mes, rows)
         
         // Pasivos
+        /*
         buildCuentasPorPagar(ejercicio, mes, rows)
         buildImpuestosPorPagar(ejercicio, mes, rows)
         buildDocumentosPorPagar(ejercicio, mes, rows)
+        */
         
 
     }
@@ -185,22 +187,7 @@ class AjusteAnualPorInflacionBuilder implements  SqlAccess, LogUser{
         calcularPosSaldoFinal(tpo, gpo, ej, ms, documentos)
         generarPtu(ej, ms, rows)
         sumarizar(documentos, ms)
-        /*
-        def conceptos = AjustePorInflacionConcepto.where{
-            tipo == tpo && grupo == gpo && activo == true }.list()
-        def rows = []
-        conceptos.each { c ->
-            log.info('Procesando: {}', c.concepto)
-            def aju = AjusteAnualPorInflacion.findOrCreateWhere(ejercicio: ej, concepto: c)
-            if(aju.concepto?.cuenta?.clave == '215-0000-0000-0000') {
-                generarPtu(ej, ms, aju)
-            } 
-            aju.save failOnError: true, flush: true
-            rows << aju
-        }
         
-        calcularPosSaldoFinal(tpo, gpo, ej, ms, rows)
-        */
     }
 
     private generarPtu(Integer ej, Integer ms, def rows) {
@@ -231,11 +218,24 @@ class AjusteAnualPorInflacionBuilder implements  SqlAccess, LogUser{
                     item[prop] = saldo.saldoFinal.abs()
                     logEntity(item)
                 }
+            } else {
+                aplicarManual(ej, ms, item)
             }
-            // item.save flush: true
-            // log.info('{} {}: {}', item.concepto.concepto , ms, item[prop])   
         }
         return rows   
+    }
+
+    def aplicarManual(Integer ej, Integer ms, def item) {
+        if(!item.concepto.cuenta) {
+            log.info('Buscando Calculo de depreciacion manual para {}', item.descripcion)
+            def manual = AjusteAnualPorInflacionManual
+                .where{ejercicio == ej && concepto == item.concepto}.find()
+            if(manual) {
+                log.info('Ajuste manual detectado: {}', manual.id)
+                item[prop] = saldo.saldoFinal.abs()
+                logEntity(item)
+            }
+        }
     }
 
     def sumarizar(def rows, Integer ms) {

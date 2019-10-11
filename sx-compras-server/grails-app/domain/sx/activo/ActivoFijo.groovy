@@ -16,6 +16,7 @@ class ActivoFijo {
     
     // Datos generales
     Date adquisicion
+    Date inicio
     String descripcion
     String serie
     String modelo
@@ -102,6 +103,7 @@ class ActivoFijo {
         baja nullable: true
         montoOriginalFiscal nullable: true
         depreciado nullable: true
+        inicio nullable: true
     }
 
     static transients = {}
@@ -109,6 +111,7 @@ class ActivoFijo {
     static mapping = {
         table 'ACTIVO_FIJO2'
         adquisicion type:'date' , index: 'AF_IDX2'
+        inicio type:'date' , index: 'AF_IDX6'
         facturaFecha type: 'date'
         depreciacionAcumulada formula:'depreciacion_inicial + (select COALESCE(sum(x.depreciacion),0) from activo_depreciacion2 x where x.activo_fijo_id=id) '
         remanente formula: 'monto_original  - depreciacion_inicial - (select COALESCE(sum(x.depreciacion),0) from activo_depreciacion2 x where x.activo_fijo_id=id) '

@@ -22,7 +22,7 @@ trait SqlAccess {
         }catch (SQLException e){
             Throwable c = ExceptionUtils.getRootCause(e)
             String message = ExceptionUtils.getRootCauseMessage(e)
-            log.error(e)
+            log.error('Error: {}',message, e)
             throw new RuntimeException(message,c)
         }finally {
             db.close()
@@ -36,7 +36,7 @@ trait SqlAccess {
         }catch (SQLException e){
             def c = ExceptionUtils.getRootCause(e)
             def message = ExceptionUtils.getRootCauseMessage(e)
-            log.error(e)
+            log.error('Error: {}',message, e)
             throw new RuntimeException(message,c)
         }finally {
             db.close()

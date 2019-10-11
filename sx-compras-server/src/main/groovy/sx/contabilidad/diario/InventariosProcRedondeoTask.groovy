@@ -89,14 +89,15 @@ class InventariosProcRedondeoTask implements  AsientoBuilder {
         x.suc,        
         'REDONDEO' asiento,        
         CONCAT('115-0001-',(CASE WHEN x.suc<10 THEN '000' ELSE '00' END),x.suc,'-0000') cta_contable        
-        FROM (select '02 COMPRAS' AS grupo,S.clave suc,S.NOMBRE sucursal,ROUND(SUM(I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end) * i.gasto),2) as costo,0 costo_final
+        FROM (
+        select '02 COMPRAS' AS grupo,S.clave suc,S.NOMBRE sucursal,ROUND(SUM(I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end) * i.gasto),2) as costo,0 costo_final
         from inventario I  join producto p on(p.id=i.producto_id) JOIN sucursal s on(i.sucursal_id=s.id)
          join recepcion_de_compra_det d on(d.inventario_id=i.id) join recepcion_de_compra r on(d.recepcion_id=r.id) join proveedor x on(r.proveedor_id=x.id)
         where I.TIPO='COM' AND I.GASTO>0 and YEAR(I.FECHA)=((@EJERCICIO)) AND MONTH(I.FECHA)=(((@MES))) AND I.CLAVE LIKE '%' group by 3
         UNION
-        select (CASE WHEN I.TIPO IN('COM') THEN '02 COMPRAS' WHEN I.TIPO IN('AJU','CIM','CIS','DEC','MER','RMC') THEN '03 GASTO' WHEN I.TIPO IN('VIR','OIM') THEN '04 PRODUCTO'
-                    WHEN I.TIPO IN('REC','TRS') THEN '05 TRANSFORM' WHEN I.TIPO IN('TPE','TPS') THEN '06 TRASLADO' WHEN I.TIPO IN('FAC','RMD') THEN '07 VENTAS' ELSE 'OTROS' END) AS GRUPO,S.clave SUC,S.NOMBRE SUCURSAL
-        ,ROUND(SUM(I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end) * (case when i.tipo='COM' and i.costo>0 then i.costo when i.TIPO IN('TRS','REC') AND I.CANTIDAD>0 then i.costo else I.COSTO_promedio end)),2) as COSTO,0 COSTO_FINAL
+        select (CASE WHEN I.TIPO IN('COM','DEC') THEN '02 COMPRAS' WHEN I.TIPO IN('AJU','CIM','CIS','MER','RMC') THEN '03 GASTO' WHEN I.TIPO IN('VIR','OIM') THEN '04 PRODUCTO'
+                    WHEN I.TIPO IN('REC','TRS','MAQ') THEN '05 TRANSFORM' WHEN I.TIPO IN('TPE','TPS') THEN '06 TRASLADO' WHEN I.TIPO IN('FAC','RMD') THEN '07 VENTAS' ELSE 'OTROS' END) AS GRUPO,S.clave SUC,S.NOMBRE SUCURSAL
+        ,ROUND(SUM(I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end) * (case when i.tipo IN('COM','DEC') and i.costo>0 then i.costo when i.TIPO IN('TRS','REC','MAQ') AND I.CANTIDAD>0 then i.costo else I.COSTO_promedio end)),2) as COSTO,0 COSTO_FINAL
         from inventario I  join producto p on(p.id=i.producto_id) JOIN sucursal s on(i.sucursal_id=s.id)
         where p.inventariable is true and YEAR(I.FECHA)=((@EJERCICIO)) AND MONTH(I.FECHA)=(((@MES))) AND I.CLAVE LIKE '%' group by 1,3 
         UNION

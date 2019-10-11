@@ -20,7 +20,7 @@ class InventariosProc implements  ProcesadorDePoliza, AsientoBuilder{
 
     @Override
     String definirConcepto(Poliza poliza) {
-        return "DESCUENTOS EN  COMPRAS ${poliza.fecha.format('dd/MM/yyyy')}"
+        return "INVETARIOS ${poliza.fecha.format('dd/MM/yyyy')}"
     }
 
     @Override
