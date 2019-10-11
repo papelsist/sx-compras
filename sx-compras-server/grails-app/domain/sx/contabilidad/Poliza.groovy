@@ -63,13 +63,20 @@ class Poliza {
         satComplementos nullable: true
         satComprobantes nullable: true
         subtipo inList: [
+                'INGRESOS_CON',
+                'INGRESOS_COD',
+                'INGRESOS_CRE',
+                'INGRESOS_CHE',
+                'INGRESOS_JUR',
                 'COBRANZA_CON',
                 'COBRANZA_COD',
                 'COBRANZA_CRE',
                 'COBRANZA_CHE',
                 'COBRANZA_JUR',
                 'CHEQUE',
+                'CHEQUES',
                 'TRANSFERENCIA',
+                'TRANSFERENCIAS',
                 'COMISIONES_TARJETA',
                 'VENTAS_CON',
                 'VENTAS_COD',
@@ -98,6 +105,7 @@ class Poliza {
                 'PROVISION_DE_CARGA_SOCIAL',
                 'VARIACION_CAMBIARIA',
                 'IMPUESTOS_SOBRE_NOMINA',
+                'TRASPASO_IVA',
                 'CIERRE_ANUAL',
                 'CIERRE_MENSUAL']
     }
@@ -127,6 +135,7 @@ class Poliza {
     }
 
     public static SUBTIPOS =  [
+            'INGRESOS_CON',
             'COBRANZA_CON',
             'COBRANZA_COD',
             'COBRANZA_CRE',

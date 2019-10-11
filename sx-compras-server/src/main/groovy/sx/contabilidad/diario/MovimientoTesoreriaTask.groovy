@@ -27,12 +27,15 @@ class MovimientoTesoreriaTask implements  AsientoBuilder{
     def generarAsientos(Poliza poliza, Map params = [:]) {
         procesarIntereses(poliza)
         procesarRetencionesIsr(poliza)
-       procesarDepositosPorIdentificar(poliza)
+        procesarDepositosPorIdentificar(poliza)
+       // procesarDepositosTesoreria(poliza)
+
     }
 
+
     void procesarIntereses(Poliza poliza){
-        def movimientosTes = MovimientoDeTesoreria.executeQuery("from MovimientoDeTesoreria where fecha= ? and concepto ='DEPOSITO' and  comentario like '%INTERES%'",[poliza.fecha])
-        movimientosTes.each{mov ->mov.movimiento.moneda
+        def movimientosTes = MovimientoDeTesoreria.executeQuery("from MovimientoDeTesoreria where fecha= ? and concepto ='DEPOSITO' and  concepto = 'INTERESES'",[poliza.fecha])
+        movimientosTes.each{mov -> 
             String ctaBanco= "102-${mov.movimiento.moneda.currencyCode == 'MXN' ? '0001': '0002'}-${mov.movimiento.cuenta.subCuentaOperativa}-0000"
              Map row = [
                     asiento: "INTERESES BANCARIOS",
@@ -53,8 +56,8 @@ class MovimientoTesoreriaTask implements  AsientoBuilder{
     }
 
     void procesarRetencionesIsr(Poliza poliza){
-        def movimientosTes = MovimientoDeTesoreria.executeQuery("from MovimientoDeTesoreria where fecha= ? and concepto ='CARGO' and  comentario like '%RET%ISR%'",[poliza.fecha])
-        movimientosTes.each{mov ->mov.movimiento.moneda
+        def movimientosTes = MovimientoDeTesoreria.executeQuery("from MovimientoDeTesoreria where fecha= ? and concepto ='CARGO' and concepto = 'ISR_RETENIDO'",[poliza.fecha])
+        movimientosTes.each{mov -> 
             String ctaBanco= "102-${mov.movimiento.moneda.currencyCode == 'MXN' ? '0001': '0002'}-${mov.movimiento.cuenta.subCuentaOperativa}-0000"
              Map row = [
                     asiento: "RETENCIONES ISR",
@@ -75,8 +78,8 @@ class MovimientoTesoreriaTask implements  AsientoBuilder{
     }
 
     void procesarDepositosPorIdentificar(Poliza poliza){
-        def movimientosTes = MovimientoDeTesoreria.executeQuery("from MovimientoDeTesoreria where fecha= ? and concepto ='DEP_PENDIENTE_ACLARAR'",[poliza.fecha])
-        movimientosTes.each{mov ->mov.movimiento.moneda
+        def movimientosTes = MovimientoDeTesoreria.executeQuery("from MovimientoDeTesoreria where fecha = ? and concepto ='DEP_PENDIENTE_ACLARAR'",[poliza.fecha])
+        movimientosTes.each{mov ->
             String ctaBanco= "102-${mov.movimiento.moneda.currencyCode == 'MXN' ? '0001': '0002'}-${mov.movimiento.cuenta.subCuentaOperativa}-0000"
              Map row = [
                     asiento: "DEPOSITO POR IDENTIFICAR",
@@ -99,6 +102,52 @@ class MovimientoTesoreriaTask implements  AsientoBuilder{
             poliza.addToPartidas(mapRow("208-0003-0000-0000",desc,row,0.00,iva)) 
         }
     }
+
+    def procesarDepositosTesoreria(Poliza poliza){
+         
+         def movimientosTes = MovimientoDeTesoreria.executeQuery("from MovimientoDeTesoreria where fecha = ? and (concepto = 'DEPOSITO_DEUDOR' or concepto ='DEVOLUCION_NOMINA' or concepto = 'DEVOLUCION_ASEGURADORA' or concepto = 'DEP_ACUENTA_PRESTAMO')",[poliza.fecha])
+         //println movimientosTes.size()
+         movimientosTes.each{mov ->
+            //println mov.id
+            String ctaBanco= "102-${mov.movimiento.moneda.currencyCode == 'MXN' ? '0001': '0002'}-${mov.movimiento.cuenta.subCuentaOperativa}-0000"
+            Map row = [
+                    asiento: mov.concepto,
+                    referencia: mov.comentario,
+                    referencia2: mov.comentario,
+                    origen: mov.id,
+                    documento: mov.id,
+                    documentoTipo: 'TES',
+                    documentoFecha: mov.fecha,
+                    sucursal: 'OFICINAS',
+                    montoTotal: mov.importe,
+                    moneda: mov.movimiento.moneda, 
+                ]
+                String desc = generarDescripcion(row)
+                poliza.addToPartidas(mapRow(ctaBanco,desc,row,mov.importe))
+                String ctaOp = "107-0000-0000-0000"
+                switch(mov.concepto) {
+                    case 'DEPOSITO_DEUDOR':
+                        ctaOp = "107-0000-0000-0000"
+                       // poliza.addToPartidas(mapRow(ctaOp,desc,row,0.00,mov.importe))
+                    break
+                    case 'DEVOLUCION_NOMINA':
+                        ctaOp = "210-0001-0000-0000"
+                       // poliza.addToPartidas(mapRow(ctaOp,desc,row,0.00,mov.importe))
+                    break
+                    case 'DEVOLUCION_ASEGURADORA':
+                        ctaOp = "205-0003-0000-0000"
+                       // poliza.addToPartidas(mapRow(ctaOp,desc,row,0.00,mov.importe))
+                    break
+                    case 'DEP_ACUENTA_PRESTAMO':
+                        ctaOp = "107-0003-0000-0000"
+                       // poliza.addToPartidas(mapRow(ctaOp,desc,row,0.00,mov.importe))
+                    break
+                }
+                 poliza.addToPartidas(mapRow(ctaOp,desc,row,0.00,mov.importe))
+         }
+
+    }
+
 
     String generarDescripcion(Map row) {
         if(row.tc > 1.0) {

@@ -26,6 +26,7 @@ class DepositosTesoreriaProc implements  ProcesadorDePoliza, AsientoBuilder{
     @Override
     def generarAsientos(Poliza poliza, Map params) {
             procesarDepositos(poliza)
+            procesarCobranzaCho(poliza)
     }
 
 
@@ -47,11 +48,56 @@ class DepositosTesoreriaProc implements  ProcesadorDePoliza, AsientoBuilder{
                     montoTotal: mov.importe,
                     moneda: mov.movimiento.moneda, 
                 ] 
+
+                String ctaOp = "107-0000-0000-0000"
+                switch(mov.concepto) {
+                    case 'DEPOSITO_DEUDOR':
+                        ctaOp = "107-0000-0000-0000"
+                       // poliza.addToPartidas(mapRow(ctaOp,desc,row,0.00,mov.importe))
+                    break
+                    case 'DEVOLUCION_NOMINA':
+                        ctaOp = "210-0001-0000-0000"
+                       // poliza.addToPartidas(mapRow(ctaOp,desc,row,0.00,mov.importe))
+                    break
+                    case 'DEVOLUCION_ASEGURADORA':
+                        ctaOp = "205-0003-0000-0000"
+                       // poliza.addToPartidas(mapRow(ctaOp,desc,row,0.00,mov.importe))
+                    break
+                    case 'DEP_ACUENTA_PRESTAMO':
+                        ctaOp = "107-0003-0000-0000"
+                       // poliza.addToPartidas(mapRow(ctaOp,desc,row,0.00,mov.importe))
+                    break
+                }
             String desc = generarDescripcion(row) 
                     poliza.addToPartidas(mapRow(ctaBanco,desc,row,mov.importe)) 
-                    poliza.addToPartidas(mapRow(mov.cuentaContable,desc,row,0.00,mov.importe))       
+                    poliza.addToPartidas(mapRow(ctaOp,desc,row,0.00,mov.importe))       
             }
+    }
+
+    def procesarCobranzaCho(Poliza poliza){
+
+        def movimientos = MovimientoDeCuenta.executeQuery("from MovimientoDeCuenta where  fecha = ? and tipo ='CHO'",[poliza.fecha])
+        
+        movimientos.each{ movimiento ->
+            String ctaBanco= "102-${movimiento.moneda.currencyCode == 'MXN' ? '0001': '0002'}-${movimiento.cuenta.subCuentaOperativa}-0000"
+             Map row = [
+                    asiento: 'PAGO PRESTAMO CHO',
+                    referencia: movimiento.comentario,
+                    referencia2: movimiento.comentario,
+                    origen: movimiento.id,
+                    documento: movimiento.id,
+                    documentoTipo: 'TES',
+                    documentoFecha: movimiento.fecha,
+                    sucursal: 'OFICINAS',
+                    montoTotal: movimiento.importe,
+                    moneda: movimiento.moneda, 
+                ] 
+            String desc = generarDescripcion(row) 
+                    poliza.addToPartidas(mapRow(ctaBanco,desc,row,movimiento.importe)) 
+                    poliza.addToPartidas(mapRow('107-0003-0000-0000',desc,row,0.00,movimiento.importe))       
+            
         }
+    }
 
  
 

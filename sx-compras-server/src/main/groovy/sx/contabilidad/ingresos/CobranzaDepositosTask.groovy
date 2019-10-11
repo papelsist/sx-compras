@@ -11,7 +11,6 @@ import sx.contabilidad.PolizaDet
 import sx.utils.MonedaUtils
 
 @Slf4j
-@GrailsCompileStatic
 @Component
 class CobranzaDepositosTask implements  AsientoBuilder {
 
@@ -31,7 +30,6 @@ class CobranzaDepositosTask implements  AsientoBuilder {
      * @param poliza
      */
     @Override
-    @CompileDynamic
     def generarAsientos(Poliza poliza, Map params = [:]) {
         log.info("Generando asientos contables para cobranza con DEPOSITOS/TRANSFERENCIAS {} {}", poliza.sucursal, poliza.fecha)
         String sql = getSelect()
@@ -39,7 +37,10 @@ class CobranzaDepositosTask implements  AsientoBuilder {
 
         List rows = getAllRows(sql, []).findAll {it.sucursal == poliza.sucursal}
 
+        generarAsientos(poliza, rows)
+
         // Almacenar los cobros (Para el cargo a bancos)
+
         Set cobros = new HashSet()
         rows.each { Map row ->
             // Cargo a banco NO DEBE REPETIRSE
@@ -124,6 +125,125 @@ class CobranzaDepositosTask implements  AsientoBuilder {
                 poliza.addToPartidas(ivaPag)
             }
         }
+    }
+
+
+    def generarAsientosIngresos(Poliza poliza , Map params = [:] ){
+
+        log.info("Generando asientos contables para cobranza con DEPOSITOS/TRANSFERENCIAS {} {}", poliza.sucursal, poliza.fecha)
+        String sql = getSelect()
+                .replaceAll("@FECHA", toSqlDate(poliza.fecha))
+
+       // println sql
+        List rows = getAllRows(sql, [])
+            generarAsientos(poliza, rows)
+    }
+
+
+    def generarAsientos(Poliza poliza, List<Map> rows){
+
+        Set cobros = new HashSet()
+
+        rows.each{ row ->
+            String descripcion  = generarDescripcion(row)
+                if(!cobros.contains(row.origen)) {
+
+                PolizaDet det = buildRegistro(row.cta_contable.toString(), descripcion, row, row.total)
+                poliza.addToPartidas(det)
+                cobros.add(row.origen)
+
+                // 205 es una cobranza  por identificar
+              
+                if(det.cuenta.clave.startsWith('205-0002')) {
+                    
+                    
+                    det.debe = row.cobro_aplic.abs()- row.impuesto_apl.abs()
+
+                    BigDecimal impuesto = row.impuesto_apl
+                    /*
+                    if(row.SAF > 0 ){
+                        BigDecimal total = row.total - row.SAF
+                        BigDecimal importe = MonedaUtils.calcularImporteDelTotal(total)
+                        impuesto = MonedaUtils.round(total - importe)
+                    }
+*/
+                    // Cargo a iva
+                    PolizaDet ivaPend = buildRegistro(
+                            row.cta_iva_pag.toString(),
+                            descripcion, row)
+                    ivaPend.debe = impuesto.abs()
+                    poliza.addToPartidas(ivaPend)
+                }
+
+                    if(row.SAF > 0.0 && !row.asiento.toString().contains('xIDENT')) {
+
+                        BigDecimal safTotal = row.SAF
+                        BigDecimal safImporte = MonedaUtils.calcularImporteDelTotal(safTotal)
+                        BigDecimal safIva = safTotal - safImporte
+                        row.asiento = row.asiento + '_SAF'
+
+                        poliza.addToPartidas(buildRegistro(
+                                '205-0001-0001-0000',
+                                descripcion,
+                                row,
+                                0.0,
+                                safImporte))
+
+                        poliza.addToPartidas(buildRegistro(
+                                '205-0001-0001-0000',
+                                descripcion,
+                                row,
+                                0.0,
+                                safIva))
+                                /*
+                        if(!row.asiento.toString().contains('xIDENT')) {
+                            poliza.addToPartidas(buildRegistro(
+                                    '208-0001-0000-0000',
+                                    descripcion,
+                                    row,
+                                    0.0,
+                                    safIva))
+                        }
+                        */
+                    }
+
+                    if(row.diferencia > 0.0) {
+                        PolizaDet saf = buildRegistro(
+                                '704-0001-0000-0000',
+                                descripcion, row)
+                        saf.haber = row.diferencia.abs()
+                        saf.asiento = "${saf.asiento}_OPRD"
+                        poliza.addToPartidas(saf)
+                    }
+                }
+
+                // Abono a clientes (Provision)
+                PolizaDet clienteDet = buildRegistro(
+                        row.cta_contable_fac.toString(),
+                        descripcion,
+                        row)
+                clienteDet.haber = row.cobro_aplic
+                poliza.addToPartidas(clienteDet)
+
+            /*
+                // IVAS
+                if(!row.asiento.toString().contains('xIDENT')) {
+                    PolizaDet ivaPend = buildRegistro(
+                            row.cta_iva_pend.toString(),
+                            descripcion, row)
+                    ivaPend.debe = row.impuesto_apl.abs()
+                    poliza.addToPartidas(ivaPend)
+
+                    PolizaDet ivaPag = buildRegistro(
+                            row.cta_iva_pag.toString(),
+                            descripcion, row)
+                    ivaPag.haber = row.impuesto_apl.abs()
+                    poliza.addToPartidas(ivaPag)
+                }
+            */
+        }
+
+
     }
 
     @Override

@@ -6,6 +6,7 @@ import grails.gorm.services.Service
 import grails.gorm.transactions.NotTransactional
 import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
+import sx.tesoreria.MovimientoDeCuenta
 
 import sx.core.LogUser
 
@@ -33,7 +34,7 @@ abstract class PolizaService implements  LogUser{
 
         poliza.partidas.each {
             //it.concepto = it.cuenta.descripcion// concatenar(it.cuenta)
-            it.concepto = concatenar(it.cuenta)
+            it.concepto =  concatenar(it.cuenta)
         }
         List<PolizaDet> borrar = poliza.partidas.findAll {it.debe == 0.0 && it.haber == 0.0}
         borrar.each { poliza.removeFromPartidas(it)}
@@ -85,8 +86,8 @@ abstract class PolizaService implements  LogUser{
     String resolverProcesador(String subtipo) {
         String name = subtipo.toLowerCase()
                 .replaceAll( "(_)([A-Za-z0-9])", { Object[] it -> it[2].toUpperCase() } )
-        return "${name}Proc"
 
+              return "${name}Proc"
     }
 
     @NotTransactional
@@ -95,18 +96,23 @@ abstract class PolizaService implements  LogUser{
       def sucursales = ['OFICINAS','ANDRADE','BOLIVAR','CALLE 4','CF5FEBRERO','SOLIS','VERTIZ 176','TACUBA','VENTAS','SOLIS']
         def nivel = cta.nivel
         def p1 = cta.padre
+        
         if(p1){
             // Nivel 3
              if(nivel == 3){
-              	for(int i=0 ; i< sucursales.size(); i++){
-
+                 
+              	for(int i=0 ; i < sucursales.size(); i++){
+                
+                     cto = "${cta.padre.descripcion}  ${cta.descripcion}"
+                    /*
                     if (cta.descripcion.contains(sucursales[i])) {
-                        cto = cta.padre.descripcion
+                        cto = "${cta.padre.descripcion} "
                         break
-                    } 
-                    cto = "${cta.padre.descripcion}  ${cta.descripcion}"
+                    }
+                    */    
              	}
             } 
+
             //nivel 4
             if(nivel == 4){  
                 //for 1
@@ -119,7 +125,7 @@ abstract class PolizaService implements  LogUser{
                                 cto = ctaN3.padre.descripcion
                                 break
                             }else{
-                                 cto = "${ctaN3.padre.descripcion}  ${ctaN3.descripcion}"
+                                cto = "${ctaN3.padre.descripcion}  ${ctaN3.descripcion}"
                                 break
                             }
                         }
@@ -154,20 +160,27 @@ abstract class PolizaService implements  LogUser{
             }
         }
         */
+
         return cto
     }
 
     @NotTransactional
     List<Poliza> refoliar(String subtipo, Integer ejercicio, Integer mes) {
+
+        println "+++++"+ subtipo
         List<Poliza> polizas = Poliza.where{
             subtipo == subtipo && ejercicio == ejercicio && mes == mes
         }.list([sort: 'fecha', order: 'asc'])
+
+        if(subtipo == 'CHEQUES'){
+            println 'Ordenando por concepto!'
+           // polizas.sort{p -> MovimientoDeCuenta.get(p.egreso) ? MovimientoDeCuenta.get(p.egreso).cheque.folio : 100000000 }
+        }
 
         polizas.each{ p ->
             p.folio = - p.folio
             p.save(flush: true)
         }
-
 
         int folio = 0
         polizas.each { p ->
@@ -181,6 +194,11 @@ abstract class PolizaService implements  LogUser{
         pfolio.folio = folio
         pfolio.save flush: true
         return polizas
+    }
+
+
+    def refolizarCheques( List<Poliza> polizas){
+        
     }
 
 

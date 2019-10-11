@@ -281,7 +281,7 @@ class CostoPromedioService {
     }
 
     void calcularPorProducto(Integer ejercicio, Integer mes,  Producto producto){
-    
+ 
 		def periodo = Periodo.getPeriodoEnUnMes(mes - 1 ,ejercicio)
     	
     	def ejercicioAnterior = ejercicio
@@ -357,6 +357,7 @@ class CostoPromedioService {
                         
             }else{
              //si tiene Entradas
+             log.info("Si tiene entradas")
                 def inventariosEnt =Inventario.executeQuery("""
                     from Inventario i  
                         where date(i.fecha) between ? and ? 
@@ -441,7 +442,6 @@ class CostoPromedioService {
         Sql sql = new Sql(this.dataSource)
         return sql
     }
-
 
 }
 

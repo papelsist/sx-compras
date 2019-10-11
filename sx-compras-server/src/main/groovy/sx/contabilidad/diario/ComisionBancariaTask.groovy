@@ -37,7 +37,7 @@ class ComisionBancariaTask implements  AsientoBuilder{
                     Map row = [
                         asiento: "${mov.tipo} ${mov.concepto}",
                         referencia: comision.cuenta.descripcion,
-                        referencia2: mov.afavor,
+                        referencia2: mov.cuenta.descripcion,
                         origen: comision.id,
                         documento: comision.id,
                         documentoTipo: 'TES',
@@ -48,12 +48,19 @@ class ComisionBancariaTask implements  AsientoBuilder{
                         rfc: comision.cuenta.rfc
                     ] 
                     String desc = generarDescripcion(row, mov.concepto)
-                    String ctaBanco = "102-${mov.moneda.currencyCode == 'MXN' ? '0001': '0002'}-${mov.cuenta.subCuentaOperativa}-0000"
+
+                    def ctaPref = '102'
+
+                    if(mov.cuenta.tipo == 'INVERSION'){
+                        ctaPref = '103'
+                    }
+
+                    String ctaBanco = "${ctaPref}-${mov.moneda.currencyCode == 'MXN' ? '0001': '0002'}-${mov.cuenta.subCuentaOperativa}-0000"
                    
                     
 
                     if(mov.tipo =='COMISION' ){
-                        String ctaComision ="107-0009-${mov.cuenta.subCuentaOperativa}-0000"
+                        String ctaComision ="600-0014-0001-0000"
                         if (mov.cuenta.moneda.currencyCode == 'USD') {
                             ctaComision = "600-0014-0001-0000"
                             ctaBanco = "102-0002-0008-0000"

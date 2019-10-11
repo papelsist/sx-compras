@@ -12,8 +12,10 @@ import sx.core.Proveedor
 import sx.core.Sucursal
 import sx.cxp.ConceptoDeGasto
 import sx.cxp.CuentaPorPagar
+import sx.cxp.GastoDet
 
 import sx.cxp.RembolsoDet
+import sx.cxp.Rembolso
 import sx.cxp.RequisicionDet
 import sx.utils.MonedaUtils
 
@@ -28,12 +30,194 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
 
     @Override
     Poliza recalcular(Poliza poliza) {
+       
         poliza.partidas.clear()
         generarAsientos(poliza, [:])
+        procesarNotas(poliza,[:])
+       // ajustar(poliza, [:])
         return poliza
     }
 
-    def generarAsientos(Poliza poliza, Map params) {
+
+
+     def generarAsientos(Poliza poliza, Map params) {
+        
+        String query = getQuery()
+
+        def rows = getAllRows(query,[poliza.ejercicio,poliza.mes,poliza.ejercicio,poliza.mes])
+        println rows.size()
+        rows.each{row ->
+            println "procesando registro"
+            println row
+            CuentaPorPagar cxp = CuentaPorPagar.get(row.cxpId)
+
+            String desc = " F: ${cxp.folio} ${cxp.fecha} "
+            def gastos = GastoDet.findAllByCxp(cxp)
+            gastos.each{gasto ->
+
+                desc = " F: ${cxp.folio} ${cxp.fecha} ${gasto.sucursal.nombre} "
+                PolizaDet det = build(cxp, gasto.cuentaContable, desc, gasto.sucursal.nombre, gasto.importe)
+                poliza.addToPartidas(det)
+
+                 if(gasto.ivaTrasladado){
+                    def importeIva = gasto.ivaTrasladado
+
+                    if(gasto.ivaRetenido){                  
+                        importeIva = importeIva - gasto.ivaRetenido     
+                    } 
+
+                    CuentaContable ctaIva = buscarCuenta('119-0002-0000-0000')
+                    PolizaDet detIvaT =  build(cxp, ctaIva, desc, gasto.sucursal.nombre, importeIva)
+                    poliza.addToPartidas(detIvaT)
+                 }
+
+                if(gasto.ivaRetenido){
+                    CuentaContable ivaRetenido = buscarCuenta('119-0003-0000-0000')
+                    PolizaDet detIvaRet = build(cxp, ivaRetenido, desc, gasto.sucursal.nombre, gasto.ivaRetenido)
+                    poliza.addToPartidas(detIvaRet)
+
+                    CuentaContable ivaRetPend = buscarCuenta('216-0001-0000-0000')
+                    PolizaDet detIvaRetPend = build(cxp, ivaRetPend, desc, gasto.sucursal.nombre,0.00, gasto.ivaRetenido)
+                    poliza.addToPartidas(detIvaRetPend)
+                } 
+            }
+
+             if(gastos){
+
+                
+                CuentaOperativaProveedor co = CuentaOperativaProveedor.findByProveedor(cxp.proveedor)
+                 def cv = '205-0006'
+                if(co.tipo == 'FLETES'){
+                    cv = '205-0004'
+                }
+                if(co.tipo == 'SEGUROS'){
+                    cv = '205-0003'
+                } 
+
+                  if(co.tipo == 'RELACIONADAS'){
+                    cv = '201-0001'
+                }
+
+                CuentaContable ctaProv = buscarCuenta("${cv}-${co.cuentaOperativa}-0000")
+                // CuentaContable ctaProv = buscarCuenta("205-0006-0000-0000")
+              
+                def totalCxp = cxp.total
+            
+                PolizaDet cxpDet = build(cxp, ctaProv, desc, 'OFICINAS',0.00, totalCxp)
+                poliza.addToPartidas(cxpDet) 
+            }
+           
+            
+        }
+
+     }
+
+     def procesarNotas(Poliza poliza, Map params){
+        def notas = Rembolso.executeQuery("from Rembolso where concepto= 'NOTA' and egreso is null and fecha = ?",[poliza.fecha])
+        notas.each{nota ->
+            nota.partidas.each{det ->
+
+                def subTotal = MonedaUtils.calcularImporteDelTotal(det.total) 
+                def iva = det.total - subTotal
+
+                Map row = [
+                    asiento: "PROVISION_DE_"+nota.concepto,
+                    referencia: nota.nombre,
+                    referencia2: nota.nombre,
+                    origen: nota.id,
+                    documento: det.documentoFolio,
+                    documentoTipo: 'NOTA',
+                    documentoFecha: det.documentoFecha,
+                    sucursal: 'OFICINAS',
+                    montoTotal: nota.total,
+                    moneda: 'MXN' 
+                    ] 
+
+                poliza.addToPartidas(mapRow('109-0001-0004-0000', "NOTA: ${det.documentoFolio} ${det.documentoFecha}" , row, 0.00, subTotal))
+                poliza.addToPartidas(mapRow('118-0002-0000-0000', "NOTA: ${det.documentoFolio} ${det.documentoFecha}" , row, 0.00, iva))
+                poliza.addToPartidas(mapRow('107-0005-0525-0000', "NOTA: ${det.documentoFolio} ${det.documentoFecha}" , row, nota.total))
+
+            }
+        }
+     }
+
+
+    PolizaDet mapRow(String cuentaClave, String descripcion, Map row, def debe = 0.0, def haber = 0.0) {
+
+        CuentaContable cuenta = buscarCuenta(cuentaClave)
+        
+        PolizaDet det = new PolizaDet(
+                cuenta: cuenta,
+                concepto: cuenta.descripcion,
+                descripcion: descripcion,
+                asiento: row.asiento,
+                referencia: row.referencia2,
+                referencia2: row.referencia2,
+                origen: row.origen,
+                entidad: row.entidad,
+                documento: row.documento,
+                documentoTipo: row.documentoTipo,
+                documentoFecha: row.fecha,
+                sucursal: row.sucursal,
+                debe: debe.abs(),
+                haber: haber.abs()
+        )
+        return det
+    }
+
+     def ajustar(Poliza p, Map params){
+          def grupos = p.partidas.findAll().groupBy { it.uuid }
+
+        grupos.each {
+            
+            BigDecimal debe = it.value.sum 0.0, {r -> r.debe}
+            BigDecimal haber = it.value.sum 0.0, {r -> r.haber}
+            BigDecimal dif = debe - haber
+
+            if(dif.abs() > 0.00 && dif.abs()<= 1.00){
+                log.info("Registrando Diferencias")
+
+                def det = it.value.find {it.cuenta.clave.startsWith('600')}
+
+                if(dif > 0.0) {
+                    PolizaDet pdet = new PolizaDet()
+                    pdet.cuenta = buscarCuenta('704-0005-0000-0000')
+                    pdet.sucursal = 'OFICINAS'
+                    pdet.origen = det.origen
+                    pdet.referencia = det.referencia
+                    pdet.referencia2 = det.referencia2
+                    pdet.haber = dif.abs()
+                    pdet.descripcion = det.descripcion
+                    pdet.entidad = det.entidad
+                    pdet.asiento = det.asiento
+                    pdet.documentoTipo = det.documentoTipo
+                    pdet.documentoFecha = det.documentoFecha
+                    pdet.documento = det.documento
+                    p.addToPartidas(pdet)
+
+                } else {
+                    PolizaDet pdet = new PolizaDet()
+                    pdet.cuenta = buscarCuenta('703-0001-0000-0000')
+                    pdet.sucursal = 'OFICINAS'
+                    pdet.origen = det.origen
+                    pdet.referencia = det.referencia
+                    pdet.referencia2 = det.referencia2
+                    pdet.debe = dif.abs()
+                    pdet.descripcion = det.descripcion
+                    pdet.entidad = det.entidad
+                    pdet.asiento = det.asiento
+                    pdet.documentoTipo = det.documentoTipo
+                    pdet.documentoFecha = det.documentoFecha
+                    pdet.documento = det.documento
+                    p.addToPartidas(pdet)
+                }
+            }
+
+        }
+
+     }
+
+    def generarAsientosOld(Poliza poliza, Map params) {
 
         List<RequisicionDet> requisiciones = RequisicionDet
                 .findAll("from RequisicionDet d where date(d.cxp.fecha) = ? and d.cxp.tipo = 'GASTOS'",
@@ -387,6 +571,31 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
             """)
             */
         }
+    }
+
+
+    String getQuery() {
+        String query = """           
+            SELECT 
+                c.id as cxpId
+            FROM 
+                cuenta_por_pagar c join requisicion_det d on(d.cxp_id=c.id) join 
+                requisicion r on(d.requisicion_id=r.id) join 
+                movimiento_de_cuenta m on(r.egreso=m.id)
+            WHERE  
+                c.fecha>='2019-01-01' and c.tipo='GASTOS' and month(m.fecha)>month(c.fecha) and year(c.fecha)=? and month(c.fecha)=?
+            UNION
+            SELECT 
+                c.id as cxpId
+            FROM 
+                cuenta_por_pagar c join 
+                rembolso_det d on(d.cxp_id=c.id) join
+                rembolso r on(d.rembolso_id=r.id) join 
+                movimiento_de_cuenta m on(r.egreso_id=m.id)
+            WHERE 
+                c.fecha>='2019-01-01' and c.tipo='GASTOS' and r.concepto='GASTO' and month(m.fecha)>month(c.fecha) and year(c.fecha)=? and month(c.fecha)=?
+        """
+        return query
     }
 
 

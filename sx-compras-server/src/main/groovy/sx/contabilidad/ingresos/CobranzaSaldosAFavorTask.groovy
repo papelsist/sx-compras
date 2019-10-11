@@ -20,7 +20,6 @@ class CobranzaSaldosAFavorTask implements  AsientoBuilder{
     def generarAsientos(Poliza poliza, Map params = [:]) {
         log.info("Generando asientos contables para cobranza con SALDOS A FAVOR {} {}", poliza.sucursal, poliza.fecha)
         String tipo = params.tipo
-
         List<AplicacionDeCobro> aplicaciones = findAplicaciones(poliza.fecha, tipo).findAll {it.importe.abs() > 0.0}
         if(tipo == 'CON') {
             aplicaciones = aplicaciones.findAll{it.cobro.sucursal.nombre == poliza.sucursal}
@@ -35,13 +34,30 @@ class CobranzaSaldosAFavorTask implements  AsientoBuilder{
         } else if(tipo == 'JUR') {
             generarJur(poliza, aplicaciones)
         }
+    }
+
+     def generarAsientosIngresos(Poliza poliza, Map params = [:]) {
+        log.info("Generando asientos contables para cobranza con SALDOS A FAVOR {} {}", poliza.sucursal, poliza.fecha)
+        String tipo = params.tipo
+
+        List<AplicacionDeCobro> aplicaciones = findAplicaciones(poliza.fecha, tipo).findAll {it.importe.abs() > 0.0}
+        if(tipo == 'CON') {
+            generarContado(poliza, aplicaciones)
+        } else if(tipo == 'COD') {
+            generarCod(poliza, aplicaciones)
+        } else if(tipo == 'CRE') {
+            generarCredito(poliza, aplicaciones)
+        } else  if(tipo == 'CHE') {
+            generarChe(poliza, aplicaciones)
+        } else if(tipo == 'JUR') {
+            generarJur(poliza, aplicaciones)
+        }
 
     }
 
     def generarContado(Poliza poliza, List<AplicacionDeCobro> aplicaciones) {
 
         aplicaciones.each {
-
             Map row = buildRow(it, 'CON')
 
             String desc = row.descripcion
@@ -261,6 +277,12 @@ class CobranzaSaldosAFavorTask implements  AsientoBuilder{
                     "F: ${a.cuentaPorCobrar.folio} (${a.cuentaPorCobrar.fecha.format('dd/MM/yyyy')}) " +
                     " ${a.cuentaPorCobrar.tipoDocumento}" +
                     " ${a.cuentaPorCobrar.sucursal.nombre}"
+        }else if(cobro.formaDePago == 'BONIFICACION' || cobro.formaDePago == 'DEVOLUCION' ){
+             map.asiento = "COB_NOTA_${tipo}_SAF_APL"
+            map.descripcion = "F: ${a.cuentaPorCobrar.folio} (${a.cuentaPorCobrar.fecha.format('dd/MM/yyyy')}) " +
+                    " ${a.cuentaPorCobrar.tipoDocumento}" +
+                    " ${a.cuentaPorCobrar.sucursal.nombre}"
+
         } else {
             map.asiento = "COB_FICHA_EFE_${tipo}_SAF_APL"
             map.descripcion = "F: ${a.cuentaPorCobrar.folio} (${a.cuentaPorCobrar.fecha.format('dd/MM/yyyy')}) " +
@@ -285,8 +307,7 @@ class CobranzaSaldosAFavorTask implements  AsientoBuilder{
                 "from AplicacionDeCobro a " +
                         " where date(a.fecha) = ?" +
                         "  and date(a.cobro.primeraAplicacion) != ?" +
-                        "  and a.cuentaPorCobrar.tipo = ? " +
-                        "  and a.cobro.formaDePago not in ('BONIFICACION', 'DEVOLUCION')",
+                        "  and a.cuentaPorCobrar.tipo = ? " ,
                 [dia, dia, tpo])
         /*
         return AplicacionDeCobro
@@ -301,10 +322,10 @@ class CobranzaSaldosAFavorTask implements  AsientoBuilder{
     PolizaDet buildDet(String cuentaClave, String descripcion, Map row, BigDecimal debe = 0.0, BigDecimal haber = 0.0) {
 
         CuentaContable cuenta = buscarCuenta(cuentaClave)
-
+        def cto = concatenar(cuenta)
         PolizaDet det = new PolizaDet(
                 cuenta: cuenta,
-                concepto: cuenta.descripcion,
+                concepto: cto,
                 descripcion: descripcion,
                 asiento: row.asiento,
                 referencia: row.referencia,

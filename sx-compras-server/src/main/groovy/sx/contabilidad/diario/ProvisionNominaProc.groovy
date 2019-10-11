@@ -133,7 +133,7 @@ class ProvisionNominaProc implements  ProcesadorMultipleDePolizas, AsientoBuilde
 
     @Override
     List<Poliza> generarPolizas(PolizaCreateCommand command) {
-        String query = "select folio,periodicidad,pago,sum(total) as total from nomina where pago = ? group by folio,periodicidad"
+        String query = "select folio,periodicidad,pago,sum(total) as total from nomina where pago = ? and folio > 1 and tipo= 'PTU' group by folio,periodicidad"
         println "SQL: ${query}"
         List<Poliza> polizas = []
         def polizasRow = loadRegistros(query,[command.fecha])
@@ -209,6 +209,7 @@ class ProvisionNominaProc implements  ProcesadorMultipleDePolizas, AsientoBuilde
             join seguridad_social s on(e.id=s.empleado_id)
             where c.clave in('D004','D005','D006','D007','D014','P039') AND 
             n.pago='@PAGO' AND n.periodicidad ='@PERIODICIDAD'
+            and n.folio > 1 and n.tipo='PTU'
             group by 2,3,6,9,13,14,15               
 			union			
 		    SELECT	  'ACU' AGR,(SELECT U.descripcion FROM ubicacion U WHERE ne.UBICACION_ID=U.ID) AS nombre 
@@ -233,6 +234,7 @@ class ProvisionNominaProc implements  ProcesadorMultipleDePolizas, AsientoBuilde
             join seguridad_social s on(e.id=s.empleado_id)
             where c.clave not in('D004','D005','D006','D007','D014','P039') AND  
             n.pago='@PAGO' AND n.periodicidad ='@PERIODICIDAD'
+            and n.folio > 1 and n.tipo='PTU'
             group by 2,3,6,9,13,14,15
         """
         return sql

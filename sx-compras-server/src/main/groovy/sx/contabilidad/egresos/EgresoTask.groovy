@@ -55,7 +55,11 @@ import sx.tesoreria.MovimientoDeCuenta
      }
 
      String buildCuentaDeBanco(MovimientoDeCuenta egreso) {
-         return "102-${egreso.moneda.currencyCode == 'MXN' ? '0001': '0002'}-${egreso.cuenta.subCuentaOperativa}-0000"
+         def cta = "102"
+         if(egreso.cuenta.tipo == 'INVERSION'){
+             cta = "103"
+         }
+         return "${cta}-${egreso.moneda.currencyCode == 'MXN' ? '0001': '0002'}-${egreso.cuenta.subCuentaOperativa}-0000"
      }
 
      String getMetodoDePago(MovimientoDeCuenta egreso) {

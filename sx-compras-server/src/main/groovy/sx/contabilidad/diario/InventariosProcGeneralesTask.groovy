@@ -125,7 +125,7 @@ class InventariosProcGeneralesTask implements  AsientoBuilder {
     String getSelect() {
 
         String res = """
-               SELECT 
+        SELECT 
         round(sum(x.costo),2) costo,                  
         x.sucursal,
         x.suc,        
