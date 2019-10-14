@@ -211,12 +211,14 @@ class ComprasProc implements  ProcesadorDePoliza, AsientoBuilder{
         x.fecha_doc,
         x.sucursal,
         x.suc,
-        'CMP' documentoTipo,
-        case when x.diferencia BETWEEN -10 and 10 then 'COMPRA_ENTRADA' else 'COMPRA_TRANSITO' end asiento,
+        x.documentoTipo,
+        case when documentoTipo = 'MAQ' then 'COMPRA_MAQUILA' when x.diferencia BETWEEN -10 and 10 then 'COMPRA_ENTRADA' else 'COMPRA_TRANSITO' end asiento,
         x.referencia2,
         x.origen,
         x.proveedor,
-        (case when x.cta_operativa_prov in('0038','0061') then concat('115-0002-',x.cta_operativa_prov,(case when x.suc>9 then '-00' else '-000' end),x.suc) else concat('115-0003-',x.cta_operativa_prov,(case when x.suc>9 then '-00' else '-000' end),x.suc) end) cta_contable,'119-0001-0000-0000' cta_contable_iva, 
+        (case when x.cta_operativa_prov in('0038','0061') then concat('115-0002-',x.cta_operativa_prov,(case when x.suc>9 then '-00' else '-000' end),x.suc) 
+        else concat((case when x.documentoTipo = 'MAQ' then '115-0011-' else '115-0003-' end),x.cta_operativa_prov,(case when x.suc>9 then '-00' else '-000' end),x.suc) end) cta_contable,
+        '119-0001-0000-0000' cta_contable_iva, 
         (case when x.moneda='USD' then concat('201-0003-',x.cta_operativa_prov,'-0000') when x.cta_operativa_prov in('0038','0061') then concat('201-0001-',x.cta_operativa_prov,'-0000') else concat('201-0002-',x.cta_operativa_prov,'-0000') end) cta_proveedor,
         (case when x.cta_operativa_prov in('0038','0061') then concat('115-0007-',x.cta_operativa_prov,'-0000') else concat('115-0008-',x.cta_operativa_prov,'-0000') end) cta_desc_compra_prov,
         x.uuid,
@@ -235,7 +237,7 @@ class ComprasProc implements  ProcesadorDePoliza, AsientoBuilder{
         ,round(x.importe*C.tipo_de_cambio,2) analisis
         ,round(SUM((A.CANTIDAD/(case when z.unidad='MIL' then 1000 else 1 end)*A.costo_unitario)*C.tipo_de_cambio)*1.16,2) AS total_analisis
         ,ROUND( ((C.sub_total-c.descuento)*C.tipo_de_cambio - ((x.importe+x.importe_flete)*C.tipo_de_cambio) ) ,2) AS diferencia
-        ,(SELECT x.cuenta_operativa FROM cuenta_operativa_proveedor x where x.proveedor_id=p.id ) as cta_operativa_prov,c.uuid,p.rfc
+        ,(SELECT x.cuenta_operativa FROM cuenta_operativa_proveedor x where x.proveedor_id=p.id ) as cta_operativa_prov,c.uuid,p.rfc,'CMP' documentoTipo
         FROM inventario IC 
         JOIN recepcion_de_compra_det r on(r.inventariox=ic.id)
         JOIN analisis_de_factura_det A ON(r.id=A.com_id)
@@ -246,8 +248,33 @@ class ComprasProc implements  ProcesadorDePoliza, AsientoBuilder{
         JOIN producto z on(ic.producto_id=z.id)
         WHERE  DATE(IC.FECHA) = '@FECHA'            
         GROUP BY P.ID,C.ID,S.ID,C.FECHA,C.MONEDA
-        ORDER BY s.nombre,p.nombre,c.folio
+        UNION
+        SELECT c.id origen,P.id AS proveedor,P.nombre referencia2,S.clave suc,S.nombre AS sucursal,IC.fecha
+        ,concat(ifnull(c.serie,''),(case when c.serie is null or c.folio is null then '' else '-' end),ifnull(C.folio,'')) documento,C.fecha fecha_doc,C.tipo_de_cambio tc,C.moneda
+        ,round((C.sub_total-c.descuento)*C.tipo_de_cambio,2) AS subtotal
+        ,c.descuento
+        ,ROUND(c.impuesto_trasladado * c.tipo_de_cambio, 2) impuesto
+        ,c.impuesto_retenido retenido
+        ,c.total as montoTotal
+        ,round(c.total*c.tipo_de_cambio,2) AS total
+        ,0 AS flete
+        ,round(sum(a.importe*c.tipo_de_cambio),2) analisis_det
+        ,ifnull((SELECT sum(z.importe) FROM analisis_de_transformacion_det z where z.analisis_id=x.id ),0) analisis
+        ,round(SUM((A.CANTIDAD/(case when z.unidad='MIL' then 1000 else 1 end)*A.costo)*C.tipo_de_cambio)*1.16,2) AS total_analisis
+        ,ROUND( ((C.sub_total-c.descuento)*C.tipo_de_cambio - (ifnull((SELECT sum(z.importe) FROM analisis_de_transformacion_det z where z.analisis_id=x.id ),0)*C.tipo_de_cambio) ) ,2) AS diferencia
+        ,(SELECT x.cuenta_operativa FROM cuenta_operativa_proveedor x where x.proveedor_id=p.id ) as cta_operativa_prov,c.uuid,p.rfc,'MAQ' documentoTipo
+        FROM inventario IC 
+        JOIN transformacion_det r on(r.inventario_id=ic.id)
+        JOIN analisis_de_transformacion_det A ON(r.id=A.trs_id)
+        JOIN analisis_de_transformacion X ON(A.analisis_id=X.id)
+        JOIN cuenta_por_pagar C ON(C.id=X.cxp_id)
+        JOIN sucursal S ON(S.id=IC.SUCURSAL_ID)
+        JOIN proveedor p on(c.proveedor_id=p.id)
+        JOIN producto z on(ic.producto_id=z.id)
+        WHERE  DATE(IC.FECHA) ='@FECHA' 
+        GROUP BY P.ID,C.ID,S.ID,C.FECHA,C.MONEDA
         ) as x    
+        order by 17,21,15
         """
         return query
     }
