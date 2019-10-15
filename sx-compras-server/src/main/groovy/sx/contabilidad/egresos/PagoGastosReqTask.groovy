@@ -128,8 +128,6 @@ class PagoGastosReqTask implements  AsientoBuilder, EgresoTask {
 
 
                 desc = "FAC: ${cxp.serie? cxp.serie : '' } ${cxp.folio} ${cxp.fecha} ${cxp.proveedor.nombre}"
-
-                desc = "Temporal"
             
                 //BigDecimal ivaCfdi = cxp.impuestoTrasladado - cxp.impuestoRetenidoIva
 
