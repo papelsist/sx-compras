@@ -5,7 +5,7 @@ import groovy.transform.ToString
 
 import sx.contabilidad.CuentaContable
 
-@EqualsAndHashCode(includes = 'id, ejercicio, clave')
+@EqualsAndHashCode(includes = 'id, ejercicio, concepto')
 @ToString(includeNames = true, includePackage = false)
 class AjusteAnualPorInflacionManual {
 
@@ -31,8 +31,7 @@ class AjusteAnualPorInflacionManual {
 
     static constraints = {
         concepto unique: ['ejercicio']
-        createUser nullable: true
-        updateUser nullable: true
+        
     }
     
 

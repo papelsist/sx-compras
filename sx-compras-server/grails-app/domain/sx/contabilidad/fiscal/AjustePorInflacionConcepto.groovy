@@ -10,7 +10,7 @@ import sx.contabilidad.CuentaContable
 
 @Resource(readOnly = false, formats = ['json'], uri = "/api/ajustePorInflacionConcepto")
 @Secured("IS_AUTHENTICATED_ANONYMOUSLY")
-@EqualsAndHashCode(includes = 'cuenta, concepto, tipo, grupo')
+@EqualsAndHashCode(includes = 'id, concepto')
 @ToString(includes='cuenta, concepto, tipo, grupo',includeNames=true,includePackage=false)
 class AjustePorInflacionConcepto {
 

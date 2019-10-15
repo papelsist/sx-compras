@@ -39,10 +39,10 @@
          WHEN SUBSTR(A.DESCRIPCION_ER,1,2) IN('11','12','13') THEN 'E'
          WHEN SUBSTR(A.DESCRIPCION_ER,1,2) IN('14','15') THEN 'F'    
     ELSE 'SG' END AS GRUPO
-,SUM(CASE WHEN A.YEAR=((2019))-1 AND A.MES=((3)) THEN (CASE WHEN SUBSTR(A.DESCRIPCION_ER,1,2)='10' THEN A.SALDO ELSE (A.SALDO) END) ELSE 0 END) AS MES_ANT
-,SUM(CASE WHEN A.YEAR=((2019)) AND A.MES=((3)) THEN (CASE WHEN SUBSTR(A.DESCRIPCION_ER,1,2)='10' THEN A.SALDO ELSE (A.SALDO) END) ELSE 0 END) AS MES_ACT
-,SUM(CASE WHEN A.YEAR=((2019))-1 AND A.MES<=((3)) THEN (CASE WHEN SUBSTR(A.DESCRIPCION_ER,1,2)='10' THEN A.SALDO ELSE (A.SALDO) END) ELSE 0 END) AS YEAR_ANT
-,SUM(CASE WHEN A.YEAR=((2019)) AND A.MES<=((3)) THEN (CASE WHEN SUBSTR(A.DESCRIPCION_ER,1,2)='10' THEN A.SALDO ELSE (A.SALDO) END) ELSE 0 END) AS YEAR_ACT
+,SUM(CASE WHEN A.YEAR=$P{YEAR}-1 AND A.MES=$P{MES} THEN (CASE WHEN SUBSTR(A.DESCRIPCION_ER,1,2)='10' THEN A.SALDO ELSE (A.SALDO) END) ELSE 0 END) AS MES_ANT
+,SUM(CASE WHEN A.YEAR=$P{YEAR} AND A.MES=$P{MES} THEN (CASE WHEN SUBSTR(A.DESCRIPCION_ER,1,2)='10' THEN A.SALDO ELSE (A.SALDO) END) ELSE 0 END) AS MES_ACT
+,SUM(CASE WHEN A.YEAR=$P{YEAR}-1 AND A.MES<=$P{MES} THEN (CASE WHEN SUBSTR(A.DESCRIPCION_ER,1,2)='10' THEN A.SALDO ELSE (A.SALDO) END) ELSE 0 END) AS YEAR_ANT
+,SUM(CASE WHEN A.YEAR=$P{YEAR} AND A.MES<=$P{MES} THEN (CASE WHEN SUBSTR(A.DESCRIPCION_ER,1,2)='10' THEN A.SALDO ELSE (A.SALDO) END) ELSE 0 END) AS YEAR_ACT
 ,A.VTA_CRE_MES_ANT,A.VTA_NETA_MES_ANT,A.VTA_CRE_YEAR_ANT,A.VTA_NETA_YEAR_ANT
 ,A.VTA_CRE_MES_ACT,A.VTA_NETA_MES_ACT,A.VTA_CRE_YEAR_ACT,A.VTA_NETA_YEAR_ACT
 FROM  (
@@ -65,17 +65,17 @@ SELECT S.EJERCICIO YEAR,S.MES,(case when s.mes=1 then 'ENERO' when s.mes=2 then 
 	WHEN C.PADRE_ID=59 THEN '15 P.T.U.'
     ELSE "SD"   END ) AS DESCRIPCION_ER
 ,ROUND(SUM(-(S.DEBE-S.HABER))/1000,0) AS SALDO
-,IFNULL((SELECT ROUND(SUM(-(S.DEBE-S.HABER))/1000,0) AS SALDO FROM  cuenta_contable C JOIN saldo_por_cuenta_contable S ON(S.CUENTA_ID=C.ID) WHERE C.ID=344 AND S.MES= ((3)) AND S.EJERCICIO= ((2019))-1 ),0) AS VTA_CRE_MES_ANT
-,IFNULL((SELECT ROUND(SUM(-(S.DEBE-S.HABER))/1000,0) AS SALDO FROM  cuenta_contable C JOIN saldo_por_cuenta_contable S ON(S.CUENTA_ID=C.ID) WHERE C.PADRE_ID IN(45,46,47) AND S.MES= ((3)) AND S.EJERCICIO= ((2019))-1 ),0) AS VTA_NETA_MES_ANT
-,IFNULL((SELECT ROUND(SUM(-(S.SALDO_FINAL))/1000,0) AS SALDO FROM  cuenta_contable C JOIN saldo_por_cuenta_contable S ON(S.CUENTA_ID=C.ID) WHERE C.ID=344 AND S.MES= ((3)) AND S.EJERCICIO= ((2019))-1 ),0) AS VTA_CRE_YEAR_ANT
-,IFNULL((SELECT ROUND(SUM(-(S.SALDO_FINAL))/1000,0) AS SALDO FROM  cuenta_contable C JOIN saldo_por_cuenta_contable S ON(S.CUENTA_ID=C.ID) WHERE C.PADRE_ID IN(45,46,47) AND S.MES= ((3)) AND S.EJERCICIO= ((2019))-1 ),0) AS VTA_NETA_YEAR_ANT
-,IFNULL((SELECT ROUND(SUM(-(S.DEBE-S.HABER))/1000,0) AS SALDO FROM  cuenta_contable C JOIN saldo_por_cuenta_contable S ON(S.CUENTA_ID=C.ID) WHERE C.ID=344 AND S.MES= ((3)) AND S.EJERCICIO= ((2019)) ),0) AS VTA_CRE_MES_ACT
-,IFNULL((SELECT ROUND(SUM(-(S.DEBE-S.HABER))/1000,0) AS SALDO FROM  cuenta_contable C JOIN saldo_por_cuenta_contable S ON(S.CUENTA_ID=C.ID) WHERE C.PADRE_ID IN(45,46,47) AND S.MES= ((3)) AND S.EJERCICIO= ((2019)) ),0) AS VTA_NETA_MES_ACT
-,IFNULL((SELECT ROUND(SUM(-(S.SALDO_FINAL))/1000,0) AS SALDO FROM  cuenta_contable C JOIN saldo_por_cuenta_contable S ON(S.CUENTA_ID=C.ID) WHERE C.ID=344 AND S.MES= ((3)) AND S.EJERCICIO= ((2019)) ),0) AS VTA_CRE_YEAR_ACT
-,IFNULL((SELECT ROUND(SUM(-(S.SALDO_FINAL))/1000,0) AS SALDO FROM  cuenta_contable C JOIN saldo_por_cuenta_contable S ON(S.CUENTA_ID=C.ID) WHERE C.PADRE_ID IN(45,46,47) AND S.MES= ((3)) AND S.EJERCICIO= ((2019)) ),0) AS VTA_NETA_YEAR_ACT
+,IFNULL((SELECT ROUND(SUM(-(S.DEBE-S.HABER))/1000,0) AS SALDO FROM  cuenta_contable C JOIN saldo_por_cuenta_contable S ON(S.CUENTA_ID=C.ID) WHERE C.ID=344 AND S.MES= $P{MES} AND S.EJERCICIO= $P{YEAR}-1 ),0) AS VTA_CRE_MES_ANT
+,IFNULL((SELECT ROUND(SUM(-(S.DEBE-S.HABER))/1000,0) AS SALDO FROM  cuenta_contable C JOIN saldo_por_cuenta_contable S ON(S.CUENTA_ID=C.ID) WHERE C.PADRE_ID IN(45,46,47) AND S.MES= $P{MES} AND S.EJERCICIO= $P{YEAR}-1 ),0) AS VTA_NETA_MES_ANT
+,IFNULL((SELECT ROUND(SUM(-(S.SALDO_FINAL))/1000,0) AS SALDO FROM  cuenta_contable C JOIN saldo_por_cuenta_contable S ON(S.CUENTA_ID=C.ID) WHERE C.ID=344 AND S.MES= $P{MES} AND S.EJERCICIO= $P{YEAR}-1 ),0) AS VTA_CRE_YEAR_ANT
+,IFNULL((SELECT ROUND(SUM(-(S.SALDO_FINAL))/1000,0) AS SALDO FROM  cuenta_contable C JOIN saldo_por_cuenta_contable S ON(S.CUENTA_ID=C.ID) WHERE C.PADRE_ID IN(45,46,47) AND S.MES= $P{MES} AND S.EJERCICIO= $P{YEAR}-1 ),0) AS VTA_NETA_YEAR_ANT
+,IFNULL((SELECT ROUND(SUM(-(S.DEBE-S.HABER))/1000,0) AS SALDO FROM  cuenta_contable C JOIN saldo_por_cuenta_contable S ON(S.CUENTA_ID=C.ID) WHERE C.ID=344 AND S.MES= $P{MES} AND S.EJERCICIO= $P{YEAR} ),0) AS VTA_CRE_MES_ACT
+,IFNULL((SELECT ROUND(SUM(-(S.DEBE-S.HABER))/1000,0) AS SALDO FROM  cuenta_contable C JOIN saldo_por_cuenta_contable S ON(S.CUENTA_ID=C.ID) WHERE C.PADRE_ID IN(45,46,47) AND S.MES= $P{MES} AND S.EJERCICIO= $P{YEAR} ),0) AS VTA_NETA_MES_ACT
+,IFNULL((SELECT ROUND(SUM(-(S.SALDO_FINAL))/1000,0) AS SALDO FROM  cuenta_contable C JOIN saldo_por_cuenta_contable S ON(S.CUENTA_ID=C.ID) WHERE C.ID=344 AND S.MES= $P{MES} AND S.EJERCICIO= $P{YEAR} ),0) AS VTA_CRE_YEAR_ACT
+,IFNULL((SELECT ROUND(SUM(-(S.SALDO_FINAL))/1000,0) AS SALDO FROM  cuenta_contable C JOIN saldo_por_cuenta_contable S ON(S.CUENTA_ID=C.ID) WHERE C.PADRE_ID IN(45,46,47) AND S.MES= $P{MES} AND S.EJERCICIO= $P{YEAR} ),0) AS VTA_NETA_YEAR_ACT
 FROM  cuenta_contable C 
 JOIN saldo_por_cuenta_contable S ON(S.CUENTA_ID=C.ID)
-WHERE C.NIVEL=2  AND C.CLAVE IN (401,402,403,404,501,505,600,701,702,703,704,750,755) AND S.MES<= ((3)) AND ( S.EJERCICIO= ((2019))-1 OR S.EJERCICIO= ((2019)) )  
+WHERE C.NIVEL=2  AND C.CLAVE IN (401,402,403,404,501,505,600,701,702,703,704,750,755) AND S.MES<= $P{MES} AND ( S.EJERCICIO= $P{YEAR}-1 OR S.EJERCICIO= $P{YEAR} )  
 GROUP BY S.ejercicio,S.MES,DESCRIPCION_ER
 ORDER BY MES DESC
 ) AS A GROUP BY A.DESCRIPCION_ER]]></queryString>
@@ -1025,7 +1025,7 @@ $F{DESCRIPCION}.startsWith( "03 " ) ? $F{YEAR_ACT}.abs().doubleValue()/$F{VTA_CR
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
-						<font fontName="Arial" pdfFontName="Times-Bold" size="8" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
+						<font fontName="Arial" pdfFontName="Times-Roman" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
 					</textElement>
 				<textFieldExpression   class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
 				</textField>
@@ -1137,7 +1137,7 @@ $F{DESCRIPCION}.startsWith( "03 " ) ? $F{YEAR_ACT}.abs().doubleValue()/$F{VTA_CR
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
-						<font fontName="Arial" pdfFontName="Times-Bold" size="8" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
+						<font fontName="Arial" pdfFontName="Times-Roman" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
 					</textElement>
 				<textFieldExpression   class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
 				</textField>

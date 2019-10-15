@@ -41,16 +41,16 @@ class AjusteAnualPorInflacionBuilder implements  SqlAccess, LogUser{
         
         // Activos
         buildBancos(ejercicio, mes, rows)
-        // buildInversiones(ejercicio, mes, rows)
-        // buildOtrasCuentasPorCobrar(ejercicio, mes, rows)
-        // buildPagosAnticipados(ejercicio, mes, rows)
+        buildInversiones(ejercicio, mes, rows)
+        buildOtrasCuentasPorCobrar(ejercicio, mes, rows)
+        buildPagosAnticipados(ejercicio, mes, rows)
         
         // Pasivos
-        /*
+        
         buildCuentasPorPagar(ejercicio, mes, rows)
         buildImpuestosPorPagar(ejercicio, mes, rows)
         buildDocumentosPorPagar(ejercicio, mes, rows)
-        */
+        
         
 
     }
@@ -226,13 +226,12 @@ class AjusteAnualPorInflacionBuilder implements  SqlAccess, LogUser{
     }
 
     def aplicarManual(Integer ej, Integer ms, def item) {
-        if(!item.concepto.cuenta) {
-            log.info('Buscando Calculo de depreciacion manual para {}', item.descripcion)
-            def manual = AjusteAnualPorInflacionManual
-                .where{ejercicio == ej && concepto == item.concepto}.find()
+        if(!item.concepto.cuenta && item.concepto.concepto != 'SUMA') {
+            def manual = AjusteAnualPorInflacionManual.where{ejercicio == ej && concepto == item.concepto}.find()
             if(manual) {
+                def prop = resolverMesPropery(ms)
                 log.info('Ajuste manual detectado: {}', manual.id)
-                item[prop] = saldo.saldoFinal.abs()
+                item[prop] = manual[prop]
                 logEntity(item)
             }
         }
@@ -242,7 +241,7 @@ class AjusteAnualPorInflacionBuilder implements  SqlAccess, LogUser{
         def prop = resolverMesPropery(ms)
         def suma = rows.find{it.concepto.concepto == 'SUMA'}
         suma[prop] = rows.sum(0.0, {it[prop]})
-        log.info('Sumarizando: {} : {}', suma.concepto.concepto , suma[prop])
+        log.info('Sumarizando: {} : {}', suma.concepto.grupo , suma[prop])
         return suma
     }
 
