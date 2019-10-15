@@ -58,7 +58,7 @@ class DepreciacionContableService implements LogUser {
             fechaFinal = af.baja.fecha
         }
 
-        Periodo periodo = new Periodo(fechaInicial, corte)
+        Periodo periodo = new Periodo(fechaInicial, fechaFinal)
         List periodos = Periodo.periodosMensuales(periodo)
 
         def tf = af.tasaDepreciacion
@@ -177,7 +177,25 @@ class DepreciacionContableService implements LogUser {
         final anual = MonedaUtils.round( (af.montoOriginal * tf), 2)
         final mensual = MonedaUtils.round( (anual / 12), 2)
         BigDecimal acumulada = 0.0
-        Periodo periodo = new Periodo(af.adquisicion, corte)
+
+        def fechaFinal = corte
+        
+        if(af.baja && af.baja.fecha.before(corte)) {
+            log.info('Contemplar baja {}', af.baja.fecha)
+            def mesCorte = Periodo.obtenerMes(af.baja.fecha) + 1
+            def yearCorte = Periodo.obtenerYear(af.baja.fecha)
+            if(mesCorte == 1) {
+                mesCorte = 12
+                yearCorte = yearCorte - 1
+            } else {
+                mesCorte -= 1
+            }
+            def pc = Periodo.getPeriodoEnUnMes( mesCorte - 1, yearCorte)
+            fechaFinal = pc.fechaFinal
+        }
+        def fechaInicial = af.adquisicion
+        Periodo periodo = new Periodo(fechaInicial, fechaFinal)
+
         List periodos = Periodo.periodosMensuales(periodo)
         for(int i = 1; i < periodos.size(); i++) {
             def p = periodos[i]
