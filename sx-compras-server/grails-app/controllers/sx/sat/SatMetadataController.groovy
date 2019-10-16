@@ -3,12 +3,15 @@ package sx.sat
 import grails.compiler.GrailsCompileStatic
 import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.RestfulController
-import grails.util.Environment
+import static org.springframework.http.HttpStatus.*
+
+import org.apache.commons.lang3.exception.ExceptionUtils
+
 
 import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
 
-import sx.cfdi.auditoria.MetaDataReader
+
 
 // @GrailsCompileStatic
 @Slf4j
@@ -17,7 +20,7 @@ class SatMetadataController extends RestfulController<SatMetadata> {
     
     static responseFormats = ['json']
 
-    MetaDataReader metaDataReader
+    SatMetadataService satMetadataService
 
     SatMetadataController() {
         super(SatMetadata)
@@ -26,12 +29,19 @@ class SatMetadataController extends RestfulController<SatMetadata> {
     @Override
     protected List<SatMetadata> listAllResources(Map params) {
         log.info('List: {}', params)
-        def query =  SatMetadata.where{}
-
-        def res = query.list(params)
+        def ej = params.ejercicio
+        def ms = params.mes
+        def query =  SatMetadata.where{ejercicio == ej && mes == ms}
+        def res = query.list([sort: 'fechaEmision', order: 'asc'])
         respond res
     }
 
+    def importar(Integer ejercicio, Integer mes) {
+        satMetadataService.eliminarRegistros(ejercicio, mes)
+        satMetadataService.importar(ejercicio, mes)
+        render status: NO_CONTENT
+        
+    }
 
     def handleException(Exception e) {
         String message = ExceptionUtils.getRootCauseMessage(e)
