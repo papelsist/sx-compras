@@ -29,11 +29,9 @@ class PagoGastosReqTask implements  AsientoBuilder, EgresoTask {
     @Override
     def generarAsientos(Poliza poliza, Map params = [:]) {
 
-        println "Generando asiento para el gasto de Requisicion"+ poliza.egreso
-
         Requisicion r = findRequisicion(poliza)
 
-         println "Generando asiento para el gasto de Requisicion "+ poliza.egreso
+      
 
         log.info("Pago de GASTO: {}", r.egreso)
 
@@ -62,9 +60,6 @@ class PagoGastosReqTask implements  AsientoBuilder, EgresoTask {
      */
 
     void cargoProveedorGasto(Poliza poliza, Requisicion r) {
-
-        println "Generando el cargo al proveedor de gastos"
-
       
         MovimientoDeCuenta egreso = r.egreso
         List<RequisicionDet> partidas = r.partidas.sort {it.cxp.folio}
@@ -103,7 +98,7 @@ class PagoGastosReqTask implements  AsientoBuilder, EgresoTask {
                 }
 
                 gastos.each{ gasto ->
-                    println "ID: "+ gasto.id
+                  
                     desc = "FAC: ${cxp.serie? cxp.serie : '' } ${cxp.folio} ${cxp.fecha} ${gasto.descripcion}"
                     def cv = gasto.cuentaContable.clave
                     def totalGasto = gasto.importe
@@ -416,7 +411,7 @@ class PagoGastosReqTask implements  AsientoBuilder, EgresoTask {
 
     PolizaDet mapRow(String cuentaClave, String descripcion, Map row, BigDecimal debe = 0.0, BigDecimal haber = 0.0) {
 
-            println "Desc: "+descripcion
+           
 
         CuentaContable cuenta = buscarCuenta(cuentaClave)
         PolizaDet det = new PolizaDet(
