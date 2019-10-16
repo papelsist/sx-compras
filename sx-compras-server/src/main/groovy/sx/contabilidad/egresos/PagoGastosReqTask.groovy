@@ -117,6 +117,9 @@ class PagoGastosReqTask implements  AsientoBuilder, EgresoTask {
                            if(co.tipo == 'SEGUROS'){
                                cv = "205-0003-${co.cuentaOperativa}-0000" 
                            }
+                           if(co.tipo == 'FLETES'){
+                               cv = "205-0004-${co.cuentaOperativa}-0000" 
+                           }
                        }
                         totalGasto = gasto.importe + gasto.ivaTrasladado - gasto.ivaRetenido - gasto.isrRetenido
                     }
