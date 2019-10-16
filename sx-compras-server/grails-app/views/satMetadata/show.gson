@@ -1,0 +1,7 @@
+import sx.sat.SatMetadata
+
+model {
+	SatMetadata satMetadata
+}
+
+json tmpl.satMetadata(satMetadata)

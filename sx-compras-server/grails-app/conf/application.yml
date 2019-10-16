@@ -242,6 +242,8 @@ environments:
         dir: ${user.home}/Documents/siipapx-cfdis
       logistica:
         inicioOperacionComisiones: 01/03/2019
+      sat:
+        metadata: ${user.home}/cfdis/metadata
   production:
     siipapx:
       cxp:
@@ -256,6 +258,10 @@ environments:
         gastosDir: /home/cfdGastos
       cfdi:
         dir: /home/siipapx-cfdis
+  contabilidad:
+    siipapx:
+      sat:
+        metadata: /home/metadata
   tesoreria:
     siipapx:
       cxp:

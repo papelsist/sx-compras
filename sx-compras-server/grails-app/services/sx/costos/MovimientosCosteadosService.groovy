@@ -17,7 +17,7 @@ class MovimientosCosteadosService {
     
     def movimientos(Integer ejercicio, Integer mes) {
         String select = getSelect().replaceAll('@EJERCICIO', ejercicio.toString()).replaceAll("@MES", mes.toString())
-        //  println select
+        // println select
         return getLocalRows(select, [])
     }
 
@@ -31,6 +31,7 @@ class MovimientosCosteadosService {
             ,ROUND(SUM(CASE WHEN A.TIPO='COM' THEN A.SALDO ELSE 0 END) ,3) AS comsUni
             ,ROUND(SUM(CASE WHEN A.TIPO='COM' THEN A.COSTO ELSE 0 END) ,2) AS comsCosto
             ,ROUND(SUM(CASE WHEN A.TIPO='FLT' THEN A.COSTO ELSE 0 END) ,2) AS comsFlete
+            ,ROUND(SUM(CASE WHEN A.TIPO='MAQ' THEN A.COSTO ELSE 0 END) ,2) AS comsMaq
             ,ROUND(SUM(CASE WHEN A.TIPO IN('AJU','CIM','CIS','MER','RMC','VIR','OIM') THEN A.SALDO ELSE 0 END) ,3) AS movsUni
             ,ROUND(SUM(CASE WHEN A.TIPO IN('AJU','CIM','CIS','MER','RMC','VIR','OIM') THEN A.COSTO ELSE 0 END) ,2) AS movsCosto
             ,ROUND(SUM(CASE WHEN A.TIPO='DEC' THEN A.SALDO ELSE 0 END) ,3) AS decUni
@@ -66,7 +67,18 @@ class MovimientosCosteadosService {
                 ,concat('115-0004-',(SELECT o.cuenta_operativa FROM recepcion_de_compra_det d   join recepcion_de_compra r on(d.recepcion_id=r.id) join proveedor x on(r.proveedor_id=x.id) join cuenta_operativa_proveedor o on(o.proveedor_id=x.id) where d.inventario_id=i.id ),'-0000') CTA_CONTABLE
                 from inventario I  join producto p on(p.id=i.producto_id) JOIN sucursal s on(i.sucursal_id=s.id)
                 where p.inventariable is true and  YEAR(I.FECHA)= @EJERCICIO AND MONTH(I.FECHA) = @MES
-                AND I.TIPO IN('COM') AND I.GASTO>0          
+                AND I.TIPO IN('COM') AND I.GASTO>0
+                  union
+                SELECT 'MAQUILA PROVEEDOR' ASIENTO,'MAQ' TIPO,'02 COMPRAS' AS grupo,s.sw2,S.clave SUC,S.NOMBRE SUCURSAL,P.CLAVE,P.DESCRIPCION 
+                ,0 as kilos,0 as saldo,   ( (I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end) * i.gasto) ) as COSTO
+                ,(select x.nombre from transformacion_det d join analisis_de_transformacion_det a on(d.id=a.trs_id) join analisis_de_transformacion t on(a.analisis_id=t.id) join proveedor x on(t.proveedor_id=x.id) where d.inventario_id=i.id  ) PROVEEDOR                
+                ,concat('115-0011-'
+                ,(select o.cuenta_operativa from transformacion_det d join analisis_de_transformacion_det a on(d.id=a.trs_id) join analisis_de_transformacion t on(a.analisis_id=t.id) join proveedor x on(t.proveedor_id=x.id) join cuenta_operativa_proveedor o on(o.proveedor_id=x.id) where d.inventario_id=i.id  )
+                ,(CASE WHEN S.CLAVE<10 THEN '-000' ELSE '-00' END),S.CLAVE
+                ) CTA_CONTABLE
+                from inventario I  join producto p on(p.id=i.producto_id) JOIN sucursal s on(i.sucursal_id=s.id)
+                where p.inventariable is true and YEAR(I.FECHA)=((2019)) AND MONTH(I.FECHA)=((7)) AND I.CLAVE LIKE '%'
+                AND I.TIPO IN('MAQ') AND I.GASTO>0 
                     union           
                 select a.ASIENTO,a.TIPO,a.GRUPO,a.sw2,a.SUC,a.SUCURSAL,a.CLAVE,a.DESCRIPCION,SUM(a.KILOS) KILOS,SUM(a.SALDO) SALDO,SUM(a.COSTO) COSTO,a.PROVEEDOR,a.CTA_CONTABLE 
                 from (        
@@ -92,7 +104,7 @@ class MovimientosCosteadosService {
                  WHEN I.TIPO IN('TPE') THEN '06 TRASLADO_ENTRADA'
                  WHEN I.TIPO IN('FAC','RMD') THEN '07 VENTAS' ELSE 'OTROS' END) AS GRUPO,s.sw2,S.clave SUC,S.NOMBRE SUCURSAL,P.CLAVE,P.DESCRIPCION
                 ,ROUND(   (I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end)*P.KILOS),3) as KILOS,ROUND(   (I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end)),3) as SALDO
-                ,    (   (I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end) * (case when i.tipo IN('COM','DEC') and i.costo>0 then i.costo when i.TIPO IN('TRS','REC','MAQ') AND I.CANTIDAD>0 then i.costo + i.gasto else I.COSTO_promedio end)) ) as COSTO
+                ,    (   (I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end) * (case when i.tipo IN('COM','DEC') and i.costo>0 then i.costo when i.TIPO IN('TRS','REC','MAQ') AND I.CANTIDAD>0 then i.costo else I.COSTO_promedio end)) ) as COSTO
                 ,(CASE WHEN i.TIPO IN('COM') AND I.COSTO>0 THEN (select x.nombre from recepcion_de_compra_det d join recepcion_de_compra r on(d.recepcion_id=r.id) join proveedor x on(r.proveedor_id=x.id) where d.inventario_id=i.id  )
                  WHEN i.TIPO IN('DEC') AND I.costo>0 THEN (select x.nombre from devolucion_de_compra_det d join devolucion_de_compra r on(d.devolucion_de_compra_id=r.id) join proveedor x on(r.proveedor_id=x.id) where d.inventario_id=i.id  )
                  ELSE '' END) AS PROVEEDOR
@@ -120,7 +132,7 @@ class MovimientosCosteadosService {
             LEFT JOIN CLASE C ON(X.CLASE_ID=C.ID)
             LEFT JOIN MARCA M ON(X.MARCA_ID=M.ID)
             where x.inventariable=true  
-            and ( ( (case when saldo<0 then abs(saldo) else 0 end) + (case when saldo>0 then saldo else 0 end) ) > 0  or (A.TIPO='FLT') )
+            and ( ( (case when saldo<0 then abs(saldo) else 0 end) + (case when saldo>0 then saldo else 0 end) ) > 0  or (A.TIPO in('FLT','MAQ')) )
             GROUP BY 1 ORDER BY 1
 
         """

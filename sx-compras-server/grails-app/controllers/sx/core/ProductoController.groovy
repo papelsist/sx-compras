@@ -29,7 +29,7 @@ class ProductoController extends RestfulController<Producto> {
         params.sort = params.sort ?:'lastUpdated'
         params.order = params.order ?:'desc'
         params.max = 5000
-        log.info('List: {}', params)
+        // log.info('List: {}', params)
 
         if(params.term){
             def search = '%' + params.term + '%'
@@ -55,7 +55,7 @@ class ProductoController extends RestfulController<Producto> {
         ///END TEMPO
 
         List<Producto> res =  query.list(params)
-        log.info('All Productos: {}', res.size())
+        // log.info('All Productos: {}', res.size())
         respond res
     }
 

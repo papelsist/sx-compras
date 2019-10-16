@@ -1,0 +1,8 @@
+import sx.contabilidad.fiscal.AuditoriaFiscalCfdi
+
+model {
+	Iterable<AuditoriaFiscalCfdi> auditoriaFiscalCfdiList
+}
+
+json tmpl.auditoriaFiscalCfdi(auditoriaFiscalCfdiList ?: [])
+

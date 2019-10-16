@@ -3,10 +3,15 @@ package sx.cfdi.auditoria
 import groovy.util.logging.Slf4j
 import sx.sat.SatMetadata
 
+import org.springframework.beans.factory.annotation.Value
+
 import sx.utils.Periodo
 
 @Slf4j
 class MetaDataReader {
+
+    @Value('${siipapx.sat.metadata}')
+    String metadataDir
 
     String DF = 'YYYY-MM-dd hh:mm:ss'
 
@@ -25,29 +30,22 @@ class MetaDataReader {
      10   Estatus, 
      11   FechaCancelacion
     **/
-    def read() {
-        def ejercicio = 2018
-        def mes = 1
-        // Scanner linReader = new Scanner(new File("/Users/rubencancino/cfdis/metadata.txt"));
+    def read(Integer ejercicio, Integer mes) {
+        
         def count = 0, MAXSIZE = 100
-        def file = new File('/Users/rubencancino/cfdis/metadata.txt').withReader { reader ->
+        def dir = new File(metadataDir)
+        def file = new File(metadataDir, 'metadata.txt').withReader { reader ->
             String line = reader.readLine()
             line = reader.readLine() // IGnorar los encabezados
 
             while (line) {
-
-                if (++count > MAXSIZE) {
-                    // throw new RuntimeException("Haiku should only have 3 verses  times: ${count}")
-                    // break
-                }
                 
                 def split = line.split('~')
                 def size = split.size()
-                def fechaEmision = Date.parse("yyyy-MM-dd HH:mm:ss",split[6]) // Date.parse('YYYY-MM-dd hh:mm:ss', split[6])
-
+                def fechaEmision = Date.parse("yyyy-MM-dd HH:mm:ss",split[6]) 
                 def ej = Periodo.obtenerYear(fechaEmision)
                 def ms = Periodo.obtenerMes(fechaEmision) + 1
-                
+                /*
                 def data = [
                     uuid: split[0], 
                     emisorRfc: split[1], 
@@ -66,48 +64,16 @@ class MetaDataReader {
                 if(size == 12) {
                     data.fechaCancelacion = split[11] 
                 }
-                
-                if(ms > 1) {
-                    // println 'Cambio de mes'
+                */
+
+                if(ms > mes) {
                     break
-                    // new SatMetadata(line).save failOnError: true, flush: true
                 }
                 new SatMetadata(line).save failOnError: true, flush: true
-                // log.info('F: {} {}', data.fechaEmision, fechaEmision)
-                // new SatMetadata(line).save failOnError: true, flush: true
                 line = reader.readLine()
             }
             log.info('Rows: {}', count)
         }
-        /*
-        BufferedReader r = new BufferedReader(new FileReader(file))
-        String line
-        int end = 300000 // 338558
-        for ( int ln = 0; (line = r.readLine()) != null && ln <= end; ln++ ) {
-            def split = line.split('~')
-            def data = [
-                uuid: split[0], 
-                emisorRfc: split[1], 
-                emisorNombre: split[2],
-                receptorRfc: split[3],
-                recepctorNombre: split[4],
-                pacRfc: split[5],
-                fechaEmision: split[6],
-                fechaCertificacionSat: split[7],
-                monto: split[8],
-                efectoComprobante: split[9],
-                estatus: split[10]
-                ]
-            
-            def size = split.size()
-            if(size == 12) {
-                data.fechaCancelacion = split[11] 
-                // log.info('Canceladion: {}', split.get(11)?: null)
-            }
-            log.info('L:{} {}', ln, data)
-            // log.info('Size: {}', size)
-        }
-        */
 
     }
 

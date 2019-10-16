@@ -361,7 +361,7 @@ class CostoPromedioService {
                 def inventariosEnt =Inventario.executeQuery("""
                     from Inventario i  
                         where date(i.fecha) between ? and ? 
-                        and i.producto = ? AND TIPO in ('COM','TRS','REC','MAQ') 
+                        and i.producto = ? AND tipo in ('COM','TRS','REC','MAQ') 
                         and cantidad > 0 
                         and costo > 0 """,
                     [fechaIni,fechaFin,producto])
@@ -369,7 +369,7 @@ class CostoPromedioService {
                 def decs = Inventario.executeQuery("""
                     from Inventario i  
                         where date(i.fecha) between ? and ? 
-                        and i.producto = ? AND TIPO tipo = 'DEC'
+                        and i.producto = ? AND tipo = 'DEC'
                         and costo > 0 """,
                     [fechaIni,fechaFin,producto])
 

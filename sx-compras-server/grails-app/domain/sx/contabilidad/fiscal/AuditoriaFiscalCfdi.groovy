@@ -4,25 +4,20 @@ import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 
 
-@ToString(includeNames=true,includePackage=false, excludes = ['dateCreated', 'lastUpdated', 'ack'])
+@ToString(includeNames=true,includePackage=false, excludes = ['dateCreated', 'lastUpdated'])
 @EqualsAndHashCode(includeFields = true, includes = ['id'])
 class AuditoriaFiscalCfdi {
     
     Integer ejercicio
     Integer mes
-    Integer dia
-
-    Date fecha
+    
     String tipo
     String estatus
     
     Long registrosSx = 0
     Long registrosSat = 0
-    Long registrosDiferencia = 0
+    Long diferencia
     
-    BigDecimal importeSx = 0.0
-    BigDecimal importeSat = 0.0
-    BigDecimal importeDiferencia = 0.0
 
     Date dateCreated
     Date lastUpdated
@@ -35,14 +30,13 @@ class AuditoriaFiscalCfdi {
         createUser nullable: true
         updateUser nullable: true
         tipo size: 1..1
-        estatus inList: ['VIGENTES','CANCELADOS']
+        estatus inList: ['VIGENTE','CANCELADO']
     }
 
     static mapping = {
-        ejercicio unique: ['mes', 'dia'], index: 'AUDITORIA_FISCAL_CFDI_IDX0'
+        ejercicio unique: ['mes', 'tipo', 'estatus'], index: 'AUDITORIA_FISCAL_CFDI_IDX0'
         mes index: 'AUDITORIA_FISCAL_CFDI_IDX0'
-        dia index: 'AUDITORIA_FISCAL_CFDI_IDX0'
-        fecha type: 'date', index: 'AUDITORIA_FISCAL_CFDI_IDX1'
+        diferencia formula: 'registros_sat - registros_sx'
     }
 
 }

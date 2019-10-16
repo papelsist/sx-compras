@@ -1,0 +1,8 @@
+import sx.sat.SatMetadata
+
+model {
+	Iterable<SatMetadata> satMetadataList
+}
+
+json tmpl.satMetadata(satMetadataList ?: [])
+

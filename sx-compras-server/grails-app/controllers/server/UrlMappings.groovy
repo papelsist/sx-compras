@@ -464,6 +464,8 @@ class UrlMappings {
         "/api/ajusteAnualPorInflacion/generar/$ejercicio/$mes"(controller: 'ajusteAnualPorInflacion', action: 'generar', method: 'POST')
         "/api/ajusteAnualPorInflacion/sumary/$ejercicio/$mes"(controller: 'ajusteAnualPorInflacion', action: 'sumary', method: 'GET')
 
+        "/api/sat/metadata"(resources: 'satMetadata', excludes: ['create', 'edit', 'update', 'save', 'patch'])
+
         // Audit
         "/api/audit"(resources: 'audit', excludes:['create', 'edit','patch'])
 
