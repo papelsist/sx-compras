@@ -28,7 +28,12 @@ class PagoGastosReqTask implements  AsientoBuilder, EgresoTask {
      */
     @Override
     def generarAsientos(Poliza poliza, Map params = [:]) {
+
+        println "Generando asiento para el gasto de Requisicion"+ poliza.egreso
+
         Requisicion r = findRequisicion(poliza)
+
+         println "Generando asiento para el gasto de Requisicion "+ poliza.egreso
 
         log.info("Pago de GASTO: {}", r.egreso)
 
