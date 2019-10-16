@@ -36,7 +36,10 @@ class InversionTask implements  AsientoBuilder{
                 procesarInversionSinRendimiento(poliza, inv)
             }
             if(inv.rendimientoFecha == poliza.fecha){
-               procesarRendimiento(poliza, inv)
+                if(inv.cuentaOrigen.subCuentaOperativa == "0003"){
+                    procesarRendimiento(poliza, inv)
+                }
+               
             }
         }
     }
@@ -54,6 +57,8 @@ class InversionTask implements  AsientoBuilder{
                     montoTotal: inv.importe,
                     moneda: inv.moneda, 
                 ] 
+
+            
         String ctaDestino= "103-${inv.moneda == 'MXN' ? '0001': '0002'}-${inv.cuentaDestino.subCuentaOperativa}-0000"
         String desc = generarDescripcion(rowDestino, inv.tasa)  
         poliza.addToPartidas(mapRow(ctaDestino,desc,rowDestino,inv.importe))

@@ -43,7 +43,7 @@ class IngresosTask implements  AsientoBuilder {
                 .replaceAll("@FECHA", toSqlDate(poliza.fecha))
                 .replaceAll("@TIPO", tipoStr)
 
-       // print sql
+        print sql
 
         List rows = getAllRows(sql, [])
 
