@@ -77,7 +77,8 @@ class MovimientosCosteadosService {
                 ,(CASE WHEN S.CLAVE<10 THEN '-000' ELSE '-00' END),S.CLAVE
                 ) CTA_CONTABLE
                 from inventario I  join producto p on(p.id=i.producto_id) JOIN sucursal s on(i.sucursal_id=s.id)
-                where p.inventariable is true and YEAR(I.FECHA)=((2019)) AND MONTH(I.FECHA)=((7)) AND I.CLAVE LIKE '%'
+                where p.inventariable is true and  YEAR(I.FECHA)= @EJERCICIO AND MONTH(I.FECHA) = @MES
+                AND I.CLAVE LIKE '%'
                 AND I.TIPO IN('MAQ') AND I.GASTO>0 
                     union           
                 select a.ASIENTO,a.TIPO,a.GRUPO,a.sw2,a.SUC,a.SUCURSAL,a.CLAVE,a.DESCRIPCION,SUM(a.KILOS) KILOS,SUM(a.SALDO) SALDO,SUM(a.COSTO) COSTO,a.PROVEEDOR,a.CTA_CONTABLE 

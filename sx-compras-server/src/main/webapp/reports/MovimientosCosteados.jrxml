@@ -59,7 +59,8 @@ FROM (
         ,(select x.nombre from recepcion_de_compra_det d join recepcion_de_compra r on(d.recepcion_id=r.id) join proveedor x on(r.proveedor_id=x.id) where d.inventario_id=i.id  ) PROVEEDOR                
         ,concat('115-0004-',(SELECT o.cuenta_operativa FROM recepcion_de_compra_det d   join recepcion_de_compra r on(d.recepcion_id=r.id) join proveedor x on(r.proveedor_id=x.id) join cuenta_operativa_proveedor o on(o.proveedor_id=x.id) where d.inventario_id=i.id ),'-0000') CTA_CONTABLE
         from inventario I  join producto p on(p.id=i.producto_id) JOIN sucursal s on(i.sucursal_id=s.id)
-        where p.inventariable is true and YEAR(I.FECHA)=$P{EJERCICIO} AND MONTH(I.FECHA)=$P{MES} AND I.CLAVE LIKE $P{ARTICULOS}
+        where p.inventariable is true and YEAR(I.FECHA)=$P{EJERCICIO} AND MONTH(I.FECHA)=$P{MES} 
+        AND I.CLAVE LIKE $P{ARTICULOS}
         AND I.TIPO IN('COM') AND I.GASTO>0
         	union
         SELECT 'MAQUILA PROVEEDOR' ASIENTO,'MAQ' TIPO,'02 COMPRAS' AS grupo,s.sw2,S.clave SUC,S.NOMBRE SUCURSAL,P.CLAVE,P.DESCRIPCION 
@@ -70,7 +71,8 @@ FROM (
         ,(CASE WHEN S.CLAVE<10 THEN '-000' ELSE '-00' END),S.CLAVE
         ) CTA_CONTABLE
         from inventario I  join producto p on(p.id=i.producto_id) JOIN sucursal s on(i.sucursal_id=s.id)
-        where p.inventariable is true and YEAR(I.FECHA)=((2019)) AND MONTH(I.FECHA)=((7)) AND I.CLAVE LIKE '%'
+        where p.inventariable is true and YEAR(I.FECHA)=$P{EJERCICIO} AND MONTH(I.FECHA)=$P{MES} 
+        AND I.CLAVE LIKE '%'
         AND I.TIPO IN('MAQ') AND I.GASTO>0 
             union         
         select a.ASIENTO,a.TIPO,a.GRUPO,a.sw2,a.SUC,a.SUCURSAL,a.CLAVE,a.DESCRIPCION,SUM(a.KILOS) KILOS,SUM(a.SALDO) SALDO,SUM(a.COSTO) COSTO,a.PROVEEDOR,a.CTA_CONTABLE 

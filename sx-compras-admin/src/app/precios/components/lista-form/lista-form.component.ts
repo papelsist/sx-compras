@@ -148,6 +148,7 @@ export class ListaFormComponent implements OnInit, OnChanges {
     }
     selection.forEach(item => {
       const det: Partial<ListaDePreciosVentaDet> = item.data;
+      console.log('Evaluando: ', det);
       const factor: number = command.factor;
       if (command.tipo === 'CONTADO') {
         const base = det.precioAnteriorContado;
@@ -163,7 +164,11 @@ export class ListaFormComponent implements OnInit, OnChanges {
         const incremento = precio - base > 0 ? factor : factor * -1;
         det.precioCredito = _.round(precio, 0);
         det.incremento = _.round(incremento, 2);
-        det.factorCredito = _.round(det.precioCredito / det.costo, 2);
+        if (det.costo > 0) {
+          det.factorCredito = _.round(det.precioCredito / det.costo, 2);
+        } else {
+          det.factorCredito = 0.0;
+        }
         item.setData(det);
       } else {
         const baseCre = det.precioAnteriorCredito;
@@ -176,8 +181,12 @@ export class ListaFormComponent implements OnInit, OnChanges {
         det.precioCredito = _.round(precioCre, 0);
         det.precioContado = _.round(precioCon, 0);
         det.incremento = _.round(incremento, 2);
-        det.factorCredito = _.round(det.precioCredito / det.costo, 2);
-        det.factorContado = _.round(det.precioContado / det.costo, 2);
+        // det.factorCredito = _.round(det.precioCredito / det.costo, 2);
+        if (det.costo > 0) {
+          det.factorContado = _.round(det.precioContado / det.costo, 2);
+        } else {
+          det.factorContado = 0.0;
+        }
         item.setData(det);
       }
     });

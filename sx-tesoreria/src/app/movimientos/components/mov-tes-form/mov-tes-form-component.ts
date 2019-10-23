@@ -41,7 +41,7 @@ import * as _ from 'lodash';
           </mat-form-field>
         </div>
 
-        <sx-upper-case-field formControlName="comentario" placeholder="Comentario" ></sx-upper-case-field>
+        <sx-upper-case-field formControlName="comentario" placeholder="Comentarios" ></sx-upper-case-field>
       </div>
 
     </mat-dialog-content>

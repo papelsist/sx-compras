@@ -31,6 +31,20 @@ export class CuentasEffects {
   );
 
   @Effect()
+  createCuenta$ = this.actions$.pipe(
+    ofType<fromActions.AddCuenta>(CuentaActionTypes.AddCuenta),
+    map(action => action.payload.cuenta),
+    switchMap(cta => {
+      return this.service.save(cta).pipe(
+        map(res => new fromActions.AddCuentaSuccess({ cuenta: res })),
+        catchError(error =>
+          of(new fromActions.AddCuentaFail({ response: error }))
+        )
+      );
+    })
+  );
+
+  @Effect()
   updateCuenta$ = this.actions$.pipe(
     ofType<fromActions.UpdateCuenta>(CuentaActionTypes.UpdateCuenta),
     map(action => action.payload.cuenta),

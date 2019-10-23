@@ -34,6 +34,12 @@ export class CuentasService {
       .pipe(catchError((error: any) => throwError(error)));
   }
 
+  save(cuenta: Partial<CuentaDeBanco>): Observable<CuentaDeBanco> {
+    return this.http
+      .post<CuentaDeBanco>(this.apiUrl, cuenta)
+      .pipe(catchError((error: any) => throwError(error)));
+  }
+
   update(cuenta: Update<CuentaDeBanco>): Observable<CuentaDeBanco> {
     const url = `${this.apiUrl}/${cuenta.id}`;
     return this.http

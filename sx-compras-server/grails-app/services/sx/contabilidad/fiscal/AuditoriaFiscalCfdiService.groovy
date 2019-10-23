@@ -16,14 +16,16 @@ class AuditoriaFiscalCfdiService implements LogUser, SqlAccess {
 
     def auditar(Integer ej, Integer ms) {
 
+        AuditoriaFiscalCfdi.executeUpdate("delete from AuditoriaFiscalCfdi where ejercicio = ? and mes = ?", [ej, ms])
+        
         def rows = getAllRows(getSatInfoQuery(), [ej, ms])
 
-        def periodo = Periodo.getPeriodoEnUnMes(ms + 1, ej)
+        def periodo = Periodo.getPeriodoEnUnMes(ms - 1, ej)
 
         def sxRows = getAllRows(getSiipapQuery(), [periodo.fechaInicial, periodo.fechaFinal])
         
-        // log.info('Sx: {}', sxRows)
-
+        def res = []
+        
         rows.each { row ->
             log.info('Evaluando: {}', row)
             def registrosSx = 0
@@ -31,15 +33,22 @@ class AuditoriaFiscalCfdiService implements LogUser, SqlAccess {
             if(found) {
                 registrosSx = found.registrosSx
             }
+            if(row.tipo == 'N' && row.estatus == 'VIGENTE') {
+                def nom = fromRh(getRhVigentesQuery(), [periodo.fechaInicial, periodo.fechaFinal])
+                if(nom) {
+                    registrosSx = nom.registrosSx
+                }
+                log.info('Nomina: {}', nom)
+            }
             def audit = AuditoriaFiscalCfdi.findOrCreateWhere(ejercicio: ej, mes: ms, tipo: row.tipo, estatus: row.estatus)
             audit.registrosSat = row.registrosSat
             audit.registrosSx = registrosSx
             audit.save failOnError: true, flush: true
+            audit.refresh()
+            res << audit
         }
 
-        // def entities = rows.collect{ new AuditoriaFiscalCfdi(it)}
-        // log.info('Entities: {}', entities)
-        
+        return res
     }
 
 
@@ -53,6 +62,7 @@ class AuditoriaFiscalCfdiService implements LogUser, SqlAccess {
                 count(0) as registrosSat
                 from sat_metadata 
             where ejercicio = ? and mes = ?
+            and emisor_rfc = 'PAP830101CR3'
             group by 
                 ejercicio, 
                 mes, 
@@ -69,7 +79,7 @@ class AuditoriaFiscalCfdiService implements LogUser, SqlAccess {
             case when cancelado = 0 then 'VIGENTE' else 'CANCELADO' end as estatus,  
             count(0) as registrosSx
             from cfdi 
-        where fecha between ? and ?
+        where date(fecha) between ? and ?
         group by 
             tipo_de_comprobante,
             cancelado
@@ -78,24 +88,29 @@ class AuditoriaFiscalCfdiService implements LogUser, SqlAccess {
 
     String getRecibidosQuery() {
         return """
-
         """
     }
 
-    String getRhQuery() {
+    String getRhVigentesQuery() {
         return """
-
+            select count(0) as registrosSx
+            from cfdi 
+            where date(fecha) between ? and ?
+            and cancelado is null
         """
     }
 
-    def getRhRows(String sql) {
-        def db = getRhSql()
+    
+
+    Map  fromRh(String sql, List params){
+        log.info('RH select {}', params)
+        Sql db = getRhSql()
         try {
-            return db.rows(sql)
+            return db.firstRow(sql, params)
         }catch (SQLException e){
-            e.printStackTrace()
             def c = ExceptionUtils.getRootCause(e)
             def message = ExceptionUtils.getRootCauseMessage(e)
+            log.error('Error: {}',message, e)
             throw new RuntimeException(message,c)
         }finally {
             db.close()

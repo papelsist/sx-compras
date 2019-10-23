@@ -52,6 +52,15 @@ class CuentaDeBancoController extends RestfulController {
         return query.list(params)
     }
 
+     @Override
+    protected CuentaDeBanco createResource() {
+        def instance = new CuentaDeBanco()
+        bindData instance, getObjectToBind()
+        def cve = 'SX_' + Math.floor(((Math.random() * 30)))
+        instance.clave = cve
+        return instance
+    }
+
 
     @CompileDynamic
     protected Object updateResource(CuentaDeBanco resource) {
