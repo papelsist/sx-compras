@@ -23,7 +23,7 @@ class IngresosTask implements  AsientoBuilder {
         log.info("Generando asientos contables para Ingresos {} {}", poliza.fecha)
 
         asientoBancos(poliza, params)
-        //asientoNotas(poliza, params)
+        // asientoNotas(poliza, params)
         asientoClientes(poliza, params)
         asientoSaf(poliza, params)
  
@@ -43,7 +43,7 @@ class IngresosTask implements  AsientoBuilder {
                 .replaceAll("@FECHA", toSqlDate(poliza.fecha))
                 .replaceAll("@TIPO", tipoStr)
 
-        print sql
+       // print sql
 
         List rows = getAllRows(sql, [])
 
@@ -243,7 +243,7 @@ class IngresosTask implements  AsientoBuilder {
                 
             }
 
-             if((row.tipo == 'COD' || row.tipo == 'CRE' || row.tipo == 'CHE') && ! row.asiento.toString().contains('xIDENT') && row.asiento != 'NOTA'){
+             if((row.tipo == 'COD' || row.tipo == 'CRE' || row.tipo == 'CHE') && ! row.asiento.toString().contains('xIDENT') && row.asiento != 'NOTA' && ! row.asiento.toString().contains('SAF') ){
 
                 BigDecimal importe = MonedaUtils.calcularImporteDelTotal(row.total)
                 BigDecimal iva = row.total - importe
