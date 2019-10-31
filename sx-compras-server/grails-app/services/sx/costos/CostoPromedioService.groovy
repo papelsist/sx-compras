@@ -74,7 +74,7 @@ class CostoPromedioService {
         def rows = Transformacion.findAll(
                 "from Transformacion t where date(t.fecha) between ? and ? ",
                 [periodo.fechaInicial, periodo.fechaFinal])
-        log.debug("Costeando {} registros de transformaciones para el periodo {} ", rows.size(), periodo)
+        //log.debug("Costeando {} registros de transformaciones para el periodo {} ", rows.size(), periodo)
         rows.each { Transformacion trs ->
             costearTransformacion(trs, anterior)
         }
@@ -82,7 +82,7 @@ class CostoPromedioService {
     }
 
     def costearTransformacion(Transformacion trs, PeriodoDeCosteo anterior) {
-        log.info("Costeando TRS ${trs.documento}  ${trs.sucursal.nombre}")
+        // log.info("Costeando TRS ${trs.documento}  ${trs.sucursal.nombre}")
         List<TransformacionDet> partidas = trs.partidas.sort{it.cantidad}.sort{it.sw2}
         def costo = null
         def salida = 0
@@ -90,16 +90,16 @@ class CostoPromedioService {
 
             if(tr.cantidad < 0) {
                 salida = tr.cantidad.abs()
-                log.info("Salen : ${tr.producto.clave} ${tr.cantidad}   (sw2:${tr.sw2})" )
+                //log.info("Salen : ${tr.producto.clave} ${tr.cantidad}   (sw2:${tr.sw2})" )
                 CostoPromedio cp = CostoPromedio.where{ejercicio == anterior.ejercicio && mes == anterior.mes && producto == tr.producto}.find()
                 if(cp){
                     costo = cp.costo
-                    log.info("Costo anterior: {}", costo)
+                   // log.info("Costo anterior: {}", costo)
                 } else {
                     //log.error("Error no se enctontro Costo promedio en el periodo anterior...")
                     
                     def existenciaAnt = Existencia.where{anio == anterior.ejercicio && mes == anterior.mes && producto == tr.producto && sucursal == trs.sucursal }.find()
-                    log.info("Costo en existencia {}",existenciaAnt.costoPromedio)
+                    //log.info("Costo en existencia {}",existenciaAnt.costoPromedio)
                     if(existenciaAnt)
                         costo = existenciaAnt.costoPromedio
 
@@ -107,28 +107,28 @@ class CostoPromedioService {
 
             } else {
                 if(costo) {
-                    log.info("Entran: ${tr.producto.clave} ${tr.cantidad}  (sw2:${tr.sw2})" )
+                    //log.info("Entran: ${tr.producto.clave} ${tr.cantidad}  (sw2:${tr.sw2})" )
                     try {
                         Inventario iv = tr.inventario
                         if(iv) {
 
                             if(salida != tr.cantidad.abs()) {
-                                log.info('Actualizando costo por diferencia de cantidades Salida: {} Entrada: {}', salida, tr.cantidad)
+                                //log.info('Actualizando costo por diferencia de cantidades Salida: {} Entrada: {}', salida, tr.cantidad)
                                 def factor = tr.producto.unidad == 'MIL' ? 1000 : 1
                                 def importeCosto = (salida / factor ) * costo
-                                log.info('Costo total de la salida (Importe costo: {})', importeCosto)
+                               // log.info('Costo total de la salida (Importe costo: {})', importeCosto)
                                 costo = (importeCosto /tr.cantidad) * factor
 
                             }
-                            log.info('Costo por asignar:{} anteriormente: {}', costo, iv.costo)
+                           // log.info('Costo por asignar:{} anteriormente: {}', costo, iv.costo)
                             iv.costo = costo
                             iv.save failOnError: true, flush: true
                         } else {
-                            log.info("TRS sin inventario {}", tr)
+                            //log.info("TRS sin inventario {}", tr)
                         }
                     }catch(Exception ex) {
                         ex.printStackTrace()
-                        log.error("Error costeando  ${trs.tipo} ${trs.documento} {}", ex.message)
+                        //log.error("Error costeando  ${trs.tipo} ${trs.documento} {}", ex.message)
                     }
                 }
 
@@ -140,7 +140,7 @@ class CostoPromedioService {
     @NotTransactional
     def calcular(Integer ejercicio , Integer mes) {
         List<CostoPromedio> costos = CostoPromedio.where {ejercicio == ejercicio && mes == mes}.list()
-        log.info('Actualizando costo a {} registros de costo promedio para el periodo {} - {}', costos.size(), mes, ejercicio)
+        //log.info('Actualizando costo a {} registros de costo promedio para el periodo {} - {}', costos.size(), mes, ejercicio)
 
         String sql ="""
             SELECT A.clave ,round(ifnull(SUM(a.IMP_COSTO)/SUM(A.CANT),0),2) AS costop
@@ -183,7 +183,7 @@ class CostoPromedioService {
             cp.save flush: true
             actualizados << cp
         }
-        log.debug("{} Registros actualizados ", actualizados.size())
+       // log.debug("{} Registros actualizados ", actualizados.size())
         return costos
     }
 
@@ -201,7 +201,7 @@ class CostoPromedioService {
      * @return
      */
     def costearExistenciaFinal(Integer ejercicio, Integer mes) {
-        log.debug("Costaeand el inventario final para {} - {}", mes, ejercicio)
+        //log.debug("Costaeand el inventario final para {} - {}", mes, ejercicio)
         String sql = """ 
                 UPDATE EXISTENCIA E JOIN PRODUCTO P ON(P.ID = E.PRODUCTO_ID)
                 SET COSTO_PROMEDIO = IFNULL((SELECT C.COSTO FROM COSTO_PROMEDIO C WHERE C.EJERCICIO = E.ANIO AND C.MES = E.MES AND C.PRODUCTO_ID = E.PRODUCTO_ID ), 0)
@@ -211,7 +211,7 @@ class CostoPromedioService {
     }
 
     def costearMovimientosDeInventario(Integer ejercicio, Integer mes) {
-        log.debug("Costeando los movimientos de  inventario  {} - {}", mes, ejercicio)
+        //log.debug("Costeando los movimientos de  inventario  {} - {}", mes, ejercicio)
         String sql = """ 
                 UPDATE INVENTARIO E JOIN PRODUCTO P ON(P.ID = E.PRODUCTO_ID)
                 SET COSTO_PROMEDIO = IFNULL((SELECT C.COSTO FROM COSTO_PROMEDIO C WHERE C.EJERCICIO = ? AND C.MES = ? AND C.PRODUCTO_ID = E.PRODUCTO_ID ), 0)
@@ -357,7 +357,7 @@ class CostoPromedioService {
                         
             }else{
              //si tiene Entradas
-             log.info("Si tiene entradas")
+            // log.info("Si tiene entradas")
                 def inventariosEnt =Inventario.executeQuery("""
                     from Inventario i  
                         where date(i.fecha) between ? and ? 
