@@ -120,7 +120,7 @@ class PagoGastosTask implements  AsientoBuilder, EgresoTask {
                     desc = "FAC: ${cxp.serie? cxp.serie : '' } ${cxp.folio} ${cxp.fecha} ${gasto.descripcion}"
                     def cuenta = gasto.cuentaContable
                     PolizaDet det = mapRow(cuenta, desc, row, gasto.importe)
-                    det.referencia = cuenta.descripcion
+                    det.referencia = cuenta.descripcion ?: cxp.proveedor.nombre
                     det.referencia2 = cxp.proveedor.nombre
                     poliza.addToPartidas(det)
 
@@ -168,11 +168,11 @@ class PagoGastosTask implements  AsientoBuilder, EgresoTask {
                         " (${poliza.fecha.format('dd/MM/yyyy')}) "
                 if(importe > 0) {
                     PolizaDet detVale = mapRow(d.cuentaContable, desc, row, importe)
-                    detVale.referencia2 = d.comentario 
+                    detVale.referencia2 = egreso.afavor
                     poliza.addToPartidas(detVale)
                 } else {
                     PolizaDet detVale = mapRow(d.cuentaContable, desc, row, 0.0,  importe)
-                    detVale.referencia2 = d.comentario 
+                    detVale.referencia2 = egreso.afavor 
                     poliza.addToPartidas(mapRow(d.cuentaContable, desc, row, 0.0,  importe))
                 }
             }  
@@ -326,9 +326,15 @@ class PagoGastosTask implements  AsientoBuilder, EgresoTask {
                 def desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} ${egreso.afavor}" +
                         " (${poliza.fecha.format('dd/MM/yyyy')}) "
                 if(importe > 0) {
-                    poliza.addToPartidas(mapRow(d.cuentaContable, desc, row, importe))
+                    def det1 = mapRow(d.cuentaContable, desc, row, importe)
+                    det1.referencia = egreso.afavor
+                     det1.referencia = egreso.afavor
+                    poliza.addToPartidas(det1)
                 } else {
-                    poliza.addToPartidas(mapRow(d.cuentaContable, desc, row, 0.0,  importe))
+                    def det2 = mapRow(d.cuentaContable, desc, row, 0.0,  importe)
+                    det2.referencia = egreso.afavor
+                    det2.referencia = egreso.afavor
+                    poliza.addToPartidas(det2)
                 }
                 
             }  
@@ -418,9 +424,16 @@ class PagoGastosTask implements  AsientoBuilder, EgresoTask {
             String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} ${egreso.afavor}" +
                     " (${poliza.fecha.format('dd/MM/yyyy')}) "
             if(importe > 0) {
-                poliza.addToPartidas(mapRow(r.cuentaContable, desc, row, importe))
+                
+                def det1 = mapRow(r.cuentaContable, desc, row, importe)
+                det1.referencia = egreso.afavor
+                det1.referencia = egreso.afavor
+                poliza.addToPartidas(det1)
             } else {
-                poliza.addToPartidas(mapRow(r.cuentaContable, desc, row, 0.0,  importe))
+                def det2 = mapRow(r.cuentaContable, desc, row, 0.0,  importe)
+                det2.referencia = egreso.afavor
+                det2.referencia = egreso.afavor
+                poliza.addToPartidas(det2)
             }
 
         }

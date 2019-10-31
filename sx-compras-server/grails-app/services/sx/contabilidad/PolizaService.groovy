@@ -174,7 +174,7 @@ abstract class PolizaService implements  LogUser{
 
         if(subtipo == 'CHEQUES'){
             println 'Ordenando por concepto!'
-           // polizas.sort{p -> MovimientoDeCuenta.get(p.egreso) ? MovimientoDeCuenta.get(p.egreso).cheque.folio : 100000000 }
+            polizas.sort{p -> MovimientoDeCuenta.get(p.egreso) ? MovimientoDeCuenta.get(p.egreso).cheque.folio : Cheque.get(p.egreso).folio }
         }
 
         polizas.each{ p ->

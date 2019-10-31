@@ -43,7 +43,7 @@ class IngresosTask implements  AsientoBuilder {
                 .replaceAll("@FECHA", toSqlDate(poliza.fecha))
                 .replaceAll("@TIPO", tipoStr)
 
-       // print sql
+        print sql
 
         List rows = getAllRows(sql, [])
 
@@ -372,7 +372,10 @@ class IngresosTask implements  AsientoBuilder {
         		when m.forma_de_pago IN('CHEQUE','EFECTIVO') then concat('COB_FICHA_',m.tipo) when m.forma_de_pago like 'TARJ%' then 'COB_TARJ_CON' else '' end) asiento, 'MovimientoDeCuenta' entidad
         	,case when m.referencia>0 then m.referencia else(case when t.id is null then SUBSTRING(m.referencia,LENGTH(SUBSTRING_INDEX(m.referencia,':',1))+3) else CONVERT (t.folio,CHAR) end) end documento,m.referencia
         ,m.id origen,(case when m.forma_de_pago like 'TARJ%' then 'CON' else m.tipo end) documentoTipo,m.fecha,m.referencia,m.moneda,m.tipo_de_cambio tc ,round(m.importe * m.tipo_de_cambio,2) total,m.forma_de_pago
-        ,(case when m.sucursal is null then SUBSTRING(m.comentario,LENGTH(SUBSTRING_INDEX(m.comentario,(case when m.comentario like '%BANCO%' then 'BANCO' else 'EFECTIVO' end),1))+5) else m.sucursal end) sucursal, s.clave suc
+        ,(
+            case when m.sucursal is null 
+                 then SUBSTRING(m.comentario,LENGTH(SUBSTRING_INDEX(m.comentario,(case when m.comentario like '%BANCO%' then 'BANCO' else 'EFECTIVO' end),1))+5) 
+                 else m.sucursal end) sucursal, s.clave suc
         ,concat((case when m.por_identificar is true then '205-0002-' else (case when m.moneda='USD' then '102-0002-' else '102-0001-' end) end),z.sub_cuenta_operativa,'-0000') cta_contable,z.numero ctaDestino,z.descripcion cliente
         ,(case when f.diferencia <0 then concat('FALTANTE_',diferencia_tipo) when f.diferencia>0 then concat('SOBRANTE_',diferencia_tipo) else '' end)  as diferenciaTipo,ifnull(f.diferencia,0) diferenciaFicha
         ,(case when f.diferencia=0 or f.diferencia is null then '000-0000-0000-0000' else concat('107-0002-',(case when f.diferencia_usuario>99 then '0' when f.diferencia_usuario>9 then '00' else '000' end),f.diferencia_usuario,'-0000') end) cta_cajera

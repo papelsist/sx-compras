@@ -83,7 +83,7 @@ class InventariosProcRedondeoTask implements  AsientoBuilder {
     String getSelect() {
 
         String res = """
-                SELECT 
+        SELECT 
         sum(x.costo_final) - sum(x.costo) redondeo,             
         x.sucursal,
         x.suc,        
