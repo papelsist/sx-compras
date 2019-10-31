@@ -40,7 +40,7 @@ class ActivoFijoProc implements  ProcesadorDePoliza, AsientoBuilder{
     @Override
     def generarAsientos(Poliza poliza, Map params) {
         
-        def rowsMap = buscarDepreciacionesAgrupadas(2018, 4).groupBy{ it.cuenta}
+        def rowsMap = buscarDepreciacionesAgrupadas(poliza.ejercicio, poliza.mes).groupBy{ it.cuenta}
         rowsMap.each { entry ->
             List partidas = entry.value
             partidas.each { depreciacion ->

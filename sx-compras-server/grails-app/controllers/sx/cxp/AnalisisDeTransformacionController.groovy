@@ -17,7 +17,9 @@ import sx.utils.Periodo
 import sx.inventario.Transformacion
 import sx.inventario.TransformacionDet
 
+
 import sx.activo.Inpc
+import sx.reports.SucursalPeriodoCommand
 
 @Slf4j
 @Secured("ROLE_COMPRAS")
@@ -98,6 +100,20 @@ class AnalisisDeTransformacionController extends RestfulController<AnalisisDeTra
         Map repParams = [ID: params.id]
         def pdf =  reportService.run('cxp/AnalisisDeTransformacion.jrxml', repParams)
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'AnalisisDeTransformacion.pdf')
+    }
+
+    @CompileDynamic()
+    def reporteDeAnalisis(SucursalPeriodoCommand command) {
+        log.info('Cmd: {}', command)
+        Map repParams = [:] 
+        repParams.FECHA_INI = command.fechaIni
+        repParams.FECHA_FIN = command.fechaFin
+        repParams.ARTICULOS = '%'
+        repParams.SUCURSAL = command.sucursal
+
+        def pdf =  reportService.run('compras/AnalisisDeMAQ.jrxml', repParams)
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'AnalisisDeMAQ.pdf')
+
     }
 
     def handleException(Exception e) {

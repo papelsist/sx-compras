@@ -16,6 +16,7 @@ import sx.cxp.NotaDeCreditoCxP
 import sx.reports.ReportService
 import sx.utils.Periodo
 import sx.utils.MonedaUtils
+import sx.reports.SucursalPeriodoCommand
 
 @Slf4j
 @Secured("ROLE_COMPRAS")
@@ -98,6 +99,20 @@ class AnalisisDeDevolucionController extends RestfulController<AnalisisDeDevoluc
               and d.devolucionDeCompra.proveedor.id = ?
             """, params['proveedorId'])
         respond res
+    }
+
+    @CompileDynamic()
+    def reporteDeAnalisis(SucursalPeriodoCommand command) {
+        log.info('Cmd: {}', command)
+        Map repParams = [:] 
+        repParams.FECHA_INI = command.fechaIni
+        repParams.FECHA_FIN = command.fechaFin
+        repParams.ARTICULOS = '%'
+        repParams.SUCURSAL = command.sucursal
+
+        def pdf =  reportService.run('compras/AnalisisDeDEC.jrxml', repParams)
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'AnalisisDeDEC.pdf')
+
     }
 
     def handleException(Exception e) {

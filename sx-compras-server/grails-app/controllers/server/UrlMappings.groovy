@@ -241,8 +241,11 @@ class UrlMappings {
             "/analisis"(resources: 'analisisDeDevolucion', excludes:['create', 'edit'])
         }
         "/api/cxp/notas/devolucionesPendientes"(controller: 'analisisDeDevolucion', action: 'devolucionesPendientes')
+        "/api/cxp/notas/reporteDeAnalisis"(controller: 'analisisDeDevolucion', action: 'reporteDeAnalisis')
+
         "/api/cxp/notas/aplicar/$id"(controller:'notaDeCreditoCxP', action: 'aplicar', method: 'PUT')
         "/api/cxp/notas/print/$id"(controller: 'notaDeCreditoCxP', action: 'print', method: 'GET')
+
 
 
         "/api/cxp/pagos"(resources: 'pago', excludes:['create', 'edit','patch'])
@@ -352,7 +355,8 @@ class UrlMappings {
 
         // Auxiliares
         "/api/contabilidad/auxiliar"(controller: 'auxiliares', action: 'auxiliar', method: 'GET')
-        "/api/contabilidad/auxiliar/printAuxiliar"(controller: 'auxiliar', action: 'printAuxiliar')
+        // "/api/contabilidad/auxiliar/printAuxiliar"(controller: 'auxiliar', action: 'printAuxiliar')
+        "/api/contabilidad/auxiliar/printAuxiliar"(controller: 'auxiliares', action: 'printAuxiliar', method: 'GET')
         "/api/contabilidad/auxiliarBancos"(controller: 'auxiliares', action: 'bancos', method: 'GET')
 
         // Cfdis
@@ -458,6 +462,7 @@ class UrlMappings {
         "/api/cxp/analisisDeTransformacion/pendientesDeAnalisis/$proveedorId"(controller: 'analisisDeTransformacion', action: 'pendientesDeAnalisis', method: 'GET')
         "/api/cxp/analisisDeTransformacion/pendientes"(controller: 'analisisDeTransformacion', action: 'pendientes')
         "/api/cxp/analisisDeTransformacion/print/$id"(controller: 'analisisDeTransformacion', action: 'print', method: 'GET')
+        "/api/cxp/analisisDeTransformacion/reporteDeAnalisis"(controller: 'analisisDeTransformacion', action: 'reporteDeAnalisis')
 
         // Ajuste anual por inflacion
         "/api/ajusteAnualPorInflacion"(resources: 'ajusteAnualPorInflacion', excludes: ['create', 'edit', 'patch'])

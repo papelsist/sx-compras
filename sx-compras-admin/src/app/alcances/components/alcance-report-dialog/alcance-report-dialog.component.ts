@@ -30,7 +30,7 @@ export class AlcanceReportDialogComponent implements OnInit {
     'COUCHE',
     'CUBIERTOS',
     'EUROKOTE',
-    'GALGOS',
+    'GOFRADO',
     'HIGIENICOS',
     'INSPIRA',
     'MANILA',

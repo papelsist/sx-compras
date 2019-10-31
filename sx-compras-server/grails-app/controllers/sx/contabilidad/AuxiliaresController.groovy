@@ -16,12 +16,16 @@ import sx.utils.Periodo
 import static org.springframework.http.HttpStatus.NOT_FOUND
 import static org.springframework.http.HttpStatus.OK
 
+import sx.reports.ReportService
+
 
 @Slf4j
 @Secured("ROLE_CONTABILIDAD")
 class AuxiliaresController {
 	static responseFormats = ['json']
 	AuxiliaresService auxiliaresService
+
+    ReportService reportService
     
     def bancos(){
         Periodo periodo = params.periodo
@@ -127,6 +131,34 @@ class AuxiliaresController {
 
         }
         respond res
+    }
+
+    def printAuxiliar(AuxiliarCommand command) {
+        if(command == null) {
+            render status: NOT_FOUND
+            return
+        }
+        log.info('Auxiliar: {}', command)
+        def cuentaInicial = "${command.cuentaInicial}"
+        def repParams = [
+            FECHA_INI: command.periodo.fechaInicial,
+            FECHA_FIN: command.periodo.fechaFinal
+            ]
+
+        if(cuentaInicial.split('-').size() < 4) {
+            cuentaInicial += '%'
+        }
+        repParams.CUENTA_INI = cuentaInicial
+        if(command.cuentaFinal) {
+            def cuentaFinal = command.cuentaFinal
+            if(cuentaFinal.split('-').size() < 4) {
+                cuentaFinal += '%'
+            }
+            repParams.CUENTA_FIN = cuentaFinal
+        }
+        def pdf =  reportService.run('contabilidad/AuxiliarContable.jrxml', repParams)
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'Poliza.pdf')
+
     }
 
     protected void notFound() {

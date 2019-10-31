@@ -104,6 +104,7 @@ class RembolsoController extends RestfulController<Rembolso> {
                 it.documentoFolio = it.cxp.folio
             }
         }
+        resource.apagar = resource.partidas.sum 0.0, { it.apagar }
         resource.save flush: true
     }
 

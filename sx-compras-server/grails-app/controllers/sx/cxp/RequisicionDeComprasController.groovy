@@ -92,7 +92,7 @@ class RequisicionDeComprasController extends RestfulController<RequisicionDeComp
         String id = params.proveedorId
         List<CuentaPorPagar> facturas = CuentaPorPagar
                 .findAll("from CuentaPorPagar c where c.proveedor.id = ? " +
-                "  and c.importePorPagar > 0 " +
+                "  and c.saldoReal > 0 " +
                 "  and c not in(select d.cxp from RequisicionDet d where d.requisicion.proveedor = c.proveedor)" +
                 "  order by c.fecha desc",
                 [id], [max: 400])

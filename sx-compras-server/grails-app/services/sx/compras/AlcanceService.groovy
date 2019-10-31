@@ -170,7 +170,8 @@ class AlcancesService implements DataBinder, LogUser{
                 X.CLAVE,
                 SUM(X.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end)) AS EXI,
                 0 AS VTA,
-                0 AS PEND 
+                0 AS PEND,
+                x.sucursal_id 
             FROM EXISTENCIA X 
             JOIN producto p ON(X.producto_id=p.ID) 
             WHERE X.anio=YEAR('@FECHA_FIN') 
@@ -183,7 +184,8 @@ class AlcancesService implements DataBinder, LogUser{
                 P.CLAVE,
                 0,
                 SUM((X.CANTIDAD * -1)/(case when p.unidad ='MIL' then 1000 else 1 end)) AS VTA,
-                0 AS PEND 
+                0 AS PEND ,
+                x.sucursal_id 
                 FROM INVENTARIO X 
                 JOIN producto p ON(X.producto_id=p.ID) 
                     WHERE DATE(X.FECHA) BETWEEN '@FECHA_INI' 
@@ -204,7 +206,8 @@ class AlcancesService implements DataBinder, LogUser{
                             JOIN producto Y ON(I.producto_id=Y.ID) 
                             WHERE I.compra_det_id=X.ID 
                             AND I.inventariox IS NOT NULL),0)
-                    ) AS PENDTE
+                    ) AS PENDTE,
+                    x.sucursal_id 
     	           from compra_det X 
                     JOIN compra cc  ON(x.compra_id = cc.id) 
                     JOIN producto P ON(X.producto_id = P.ID) 

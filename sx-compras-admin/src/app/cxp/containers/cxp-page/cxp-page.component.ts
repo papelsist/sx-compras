@@ -147,4 +147,34 @@ export class CxpPageComponent implements OnInit {
         }
       });
   }
+
+  analisisDevoluciones() {
+    this.dialog
+      .open(RepPeriodoSucursalComponent, {
+        data: {},
+        width: '500px'
+      })
+      .afterClosed()
+      .subscribe(params => {
+        if (params) {
+          this.reportService.runReport('cxp/notas/reporteDeAnalisis', params);
+        }
+      });
+  }
+  analisisTransformaciones() {
+    this.dialog
+      .open(RepPeriodoSucursalComponent, {
+        data: {},
+        width: '500px'
+      })
+      .afterClosed()
+      .subscribe(params => {
+        if (params) {
+          this.reportService.runReport(
+            'cxp/analisisDeTransformacion/reporteDeAnalisis',
+            params
+          );
+        }
+      });
+  }
 }

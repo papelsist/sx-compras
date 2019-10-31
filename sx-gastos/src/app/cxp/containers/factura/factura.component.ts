@@ -25,6 +25,7 @@ import {
 } from 'app/cxp/components';
 
 import * as _ from 'lodash';
+import { TdDialogService } from '@covalent/core';
 
 @Component({
   selector: 'sx-factura',
@@ -41,7 +42,8 @@ export class FacturaComponent implements OnInit, OnDestroy {
 
   constructor(
     private store: Store<fromStore.State>,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private dialogService: TdDialogService
   ) {}
 
   ngOnInit() {
@@ -194,4 +196,24 @@ export class FacturaComponent implements OnInit, OnDestroy {
         }
       });
   }
+
+  cancelarActivo(
+    cxp: Partial<CuentaPorPagar>,
+    gastos: Partial<GastoDet[]>
+  ) {
+    this.dialogService.openConfirm({
+      title: 'ACTIVO FIJO',
+      message: 'CANCELAR COMO ACTIVO FIJO',
+      acceptButton: 'ACEPTAR',
+      cancelButton: 'CANCELAR'
+    }).afterClosed().subscribe( res => {
+      if (res) {
+        const entity = gastos[0];
+        const changes = {serie: null, modelo: null, activoFijo: false};
+        const gasto = { id: entity.id, changes};
+        this.store.dispatch(new fromStore.UpdateGasto({ gasto }));
+      }
+    });
+  }
+
 }

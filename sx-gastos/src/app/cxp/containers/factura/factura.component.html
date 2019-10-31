@@ -107,6 +107,14 @@
             >
               Activo Fijo
             </button>
+            <button
+              mat-menu-item
+              *ngIf="gastos$ | async as gastos"
+              (click)="cancelarActivo(factura, gastos)"
+              [disabled]="gastos.length === 0"
+            >
+              Cancelar Activo
+            </button>
           </mat-menu>
         </mat-toolbar>
 
