@@ -7,6 +7,7 @@ import grails.gorm.transactions.NotTransactional
 import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
 import sx.tesoreria.MovimientoDeCuenta
+import sx.tesoreria.Cheque
 
 import sx.core.LogUser
 
