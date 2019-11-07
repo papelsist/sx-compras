@@ -7,6 +7,7 @@ import grails.rest.*
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.exception.ExceptionUtils
 import sx.core.Cliente
+import sx.core.Sucursal
 import sx.reports.ReportService
 
 @Slf4j
@@ -46,9 +47,27 @@ class CuentaPorCobrarController extends RestfulController<CuentaPorCobrar> {
         respond rows.sort {it.atraso }.reverse()
     }
 
+    def carteraCod(CobranzaCodCommand command) {
+        def repParams = [:]
+        repParams.FECHA = command.fecha.format('yyyy-MM-dd')
+        repParams.SUCURSAL = command.sucursal.id
+        def realPath = servletContext.getRealPath("/reports") ?: 'reports'
+        def pdf = reportService.run('cxc/CarteraCOD_Emb.jrxml', repParams)
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'CarteraCOD.pdf')
+    }
+
     def handleException(Exception e) {
         String message = ExceptionUtils.getRootCauseMessage(e)
         log.error(message, ExceptionUtils.getRootCause(e))
         respond([message: message], status: 500)
+    }
+}
+
+class CobranzaCodCommand {
+    Sucursal sucursal
+    Date fecha
+
+    static constraints = {
+        sucursal nullable: true
     }
 }

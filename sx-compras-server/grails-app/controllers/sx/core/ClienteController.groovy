@@ -5,7 +5,8 @@ import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.*
 
 // @GrailsCompileStatic
-@Secured("IS_AUTHENTICATED_ANONYMOUSLY")
+// @Secured("IS_AUTHENTICATED_ANONYMOUSLY")
+@Secured("permitAll")
 class ClienteController extends RestfulController<Cliente> {
 
     static responseFormats = ['json']

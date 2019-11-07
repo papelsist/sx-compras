@@ -109,6 +109,7 @@ class UrlMappings {
         "/api/cuentasPorCobrar"(resources: 'cuentaPorCobrar', excludes:['create', 'edit','patch'])
         "/api/cuentasPorCobrar/pendientes/$id"(controller: 'cuentaPorCobrar', action: 'pendientes', method: 'GET')
 
+        "/api/cxc/carteraCod"(controller: 'cuentaPorCobrar', action: 'carteraCod', method: 'GET')
 
 
         "/api/cxc/cobros"(resources: 'cobro')
