@@ -204,6 +204,7 @@ class PagoGastosTask implements  AsientoBuilder, EgresoTask {
     def atenderGasto(Poliza poliza, Rembolso r) {
 
         MovimientoDeCuenta egreso = r.egreso
+        
         CuentaContable ctaPadre = r.cuentaContable
         Map row = buildDataRow(egreso)
         r.partidas.each { d ->

@@ -45,10 +45,10 @@ class CostoPromedioController extends RestfulController<CostoPromedio> {
 
         def found = CostoPromedio.where{ejercicio == ejercicio && mes == mes}.count()
         // if(!found) {
-            costoPromedioService.generar(ejercicio, mes)
+          //  costoPromedioService.generar(ejercicio, mes)
         // }
-        costoPromedioService.costearExistenciaInicial(ejercicio, mes)
-        costoPromedioService.costearTransformaciones(ejercicio, mes)
+        // costoPromedioService.costearExistenciaInicial(ejercicio, mes)
+        // costoPromedioService.costearTransformaciones(ejercicio, mes)
         respond costoPromedioService.calcular(ejercicio, mes)
     }
 
