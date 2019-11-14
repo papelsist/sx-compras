@@ -41,6 +41,7 @@ class UrlMappings {
         "/api/alcances/generarRequisicion"(controller: 'alcances', action: 'generarRequisicion', method: 'POST')
         "/api/alcances/actualizarMeses"(controller: 'alcances', action: 'actualizarMeses', method: 'PUT')
         "/api/alcances/print"(controller: 'alcances', action: 'print', method: 'GET')
+        "/api/alcances/comprasPendientes"(controller: 'alcances', action: 'comprasPendientes', method: 'GET')
 
         "/"(controller: 'application', action:'index')
         "500"(view: '/error')

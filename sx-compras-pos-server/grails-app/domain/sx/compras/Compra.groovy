@@ -130,8 +130,12 @@ class Compra {
     }
 
     def getPendientes() {
-        // return partidas.sum 0.0, {it.solicitado}
-        return this.partidas.sum{ CompraDet det -> det.getPendiente()}
+        try {
+            return this.partidas.sum{ CompraDet det -> det.getPendiente()}    
+        }catch (Exception ex) {
+            println "Compra con error estructural Id:${this.id}"
+            return -9999999
+        }
     }
 
 }

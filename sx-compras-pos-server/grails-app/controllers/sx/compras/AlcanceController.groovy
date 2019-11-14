@@ -100,6 +100,11 @@ class AlcancesController extends RestfulController<Compra>{
         def pdf =  reportService.run('GeneralDeAlcance.jrxml', params)
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'OrdenDeCompraSuc.pdf')
     }
+
+    def comprasPendientes() {
+        String clave = params.clave
+        respond alcancesService.comprasPendientes(clave)
+    }
 }
 
 @ToString(includeNames=true,includePackage=false)

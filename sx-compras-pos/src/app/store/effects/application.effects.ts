@@ -77,9 +77,9 @@ export class ApplicationsEffects {
     ),
     map(action => action.payload.response),
     map(response => {
+      console.error('Error: ', response);
       const message = response.error ? response.error.message : 'Error';
       const message2 = response.message ? response.message : '';
-      console.error('Error: ', response);
       this.dialogService.openAlert({
         message: `${response.status} ${message} ${message2}`,
         title: `Error ${response.status}`,

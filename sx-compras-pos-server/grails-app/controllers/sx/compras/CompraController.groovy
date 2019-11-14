@@ -33,7 +33,7 @@ class CompraController extends RestfulController<Compra> {
         log.info('List {}', periodo)
         def query = Compra.where{}
         query = query.where{fecha >= periodo.fechaInicial && fecha <= periodo.fechaFinal}
-        return  query.list([sort: 'lastUpdated', order: 'desc', max: 10000])
+        return  query.list([sort: 'lastUpdated', order: 'desc', max: 1000])
     }
 
     // @CompileDynamic

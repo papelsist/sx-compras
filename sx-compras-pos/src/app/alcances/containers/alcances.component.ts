@@ -25,7 +25,8 @@ import { AlcancesService } from '../services/alcances.service';
 import { Periodo } from '../../_core/models/periodo';
 import {
   AlcanceRunDialogComponent,
-  AlcanceReportDialogComponent
+  AlcanceReportDialogComponent,
+  ComprasPendientesComponent
 } from '../components';
 
 // import { AlcanceRunDialogComponent } from 'app/compras/_pages/alcances/alcance-run-dialog/alcance-run-dialog.component';
@@ -185,6 +186,18 @@ export class AlcancesComponent implements OnInit, AfterViewInit {
       return _.sumBy(this.filteredData, item => item.porPedirKilos / 1000);
     }
     return 0;
+  }
+
+  showPendientes(event: any) {
+    this.service.comprasPendientes(event.clave).subscribe(
+      data => {
+        this.dialog.open(ComprasPendientesComponent, {
+          data: { partidas: data },
+          width: '1100px'
+        });
+      },
+      error => console.log('Error: ', error)
+    );
   }
 
   generarReporte() {

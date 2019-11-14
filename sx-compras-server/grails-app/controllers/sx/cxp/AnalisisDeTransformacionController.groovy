@@ -22,7 +22,7 @@ import sx.activo.Inpc
 import sx.reports.SucursalPeriodoCommand
 
 @Slf4j
-@Secured("ROLE_COMPRAS")
+@Secured("IS_AUTHENTICATED_ANONYMOUSLY")
 @GrailsCompileStatic
 class AnalisisDeTransformacionController extends RestfulController<AnalisisDeTransformacion> {
     

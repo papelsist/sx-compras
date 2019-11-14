@@ -70,7 +70,7 @@ export class CompraEffects {
   @Effect()
   errorHandler$ = this.actions$.pipe(
     ofType<fromActions.LoadComprasFail>(CompraActionTypes.LoadComprasFail),
-    map(action => action.payload.response),
+    map(action => action.payload),
     map(response => new fromRoot.GlobalHttpError({ response }))
   );
 }

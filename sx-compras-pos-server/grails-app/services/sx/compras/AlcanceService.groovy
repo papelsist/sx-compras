@@ -193,6 +193,13 @@ class AlcancesService implements DataBinder{
         return res
     }
 
+    def comprasPendientes(String clave) {
+        def rows = CompraDet.findAll("""
+            from CompraDet d where d.producto.clave = ? and pendiente > 0 order by d.compra.sucursal.nombre
+            """, [clave])
+        return rows
+    }
+
      String getAlcanceSql() {
         String SQL = """
             SELECT 

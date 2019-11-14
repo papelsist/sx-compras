@@ -30,6 +30,9 @@ class Periodo implements Comparable<Periodo>, WebDataBinding {
 		fechaInicial=f1
 		fechaFinal=f2
 	}
+	Periodo(String f1, String f2) {
+        this(Date.parse(defaultFormat, f1), Date.parse(defaultFormat, f2))
+    }
 
 	def List<Periodo> toMeses(){
 		return periodosMensuales(this)

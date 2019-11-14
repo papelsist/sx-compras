@@ -16,7 +16,8 @@ import {
   ColDef,
   GridReadyEvent,
   ColumnApi,
-  FilterModifiedEvent
+  FilterModifiedEvent,
+  CellDoubleClickedEvent
 } from 'ag-grid-community';
 
 import { LxTableComponent } from 'app/_shared/components';
@@ -51,6 +52,7 @@ import { SxTableService } from 'app/_shared/components/lx-table/sx-table.service
 export class AlcancesTableComponent extends LxTableComponent
   implements OnInit, OnChanges {
   @Output() selectionChange = new EventEmitter<any[]>();
+  @Output() pendientes = new EventEmitter();
   columnApi: ColumnApi;
 
   frameworkComponents = {};
@@ -93,6 +95,11 @@ export class AlcancesTableComponent extends LxTableComponent
       resizable: true,
       pinnedRowCellRenderer: r => ''
     };
+    this.gridOptions.onCellDoubleClicked = (event: CellDoubleClickedEvent) => {
+      if (event.column.getColId() === 'comprasPendientes') {
+        this.pendientes.emit(event.data);
+      }
+    };
   }
 
   buildRowStyle(params: any) {
@@ -110,7 +117,7 @@ export class AlcancesTableComponent extends LxTableComponent
   onFilterUpdate(event: FilterModifiedEvent) {
     // console.log('Filter: ', event);
     const model = this.gridApi.getFilterModel();
-    console.log('Filter model: ', this.gridApi.getFilterModel());
+    // console.log('Filter model: ', this.gridApi.getFilterModel());
     localStorage.setItem('alcances.table.filter', JSON.stringify(model));
   }
 

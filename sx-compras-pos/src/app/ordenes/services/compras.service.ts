@@ -54,6 +54,11 @@ export class ComprasService {
     return this.http.put<Compra>(url, {});
   }
 
+  depuraracionBatch(partidas: string[]): Observable<any> {
+    const url = this.configService.buildApiUrl('compras/depuracionBatch2');
+    return this.http.post<Compra>(url, { partidas });
+  }
+
   delete(id: string) {
     const url = `${this.apiUrl}/${id}`;
     return this.http

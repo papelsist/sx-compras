@@ -19,7 +19,7 @@ import sx.utils.MonedaUtils
 import sx.reports.SucursalPeriodoCommand
 
 @Slf4j
-@Secured("ROLE_COMPRAS")
+@Secured("IS_AUTHENTICATED_ANONYMOUSLY")
 @GrailsCompileStatic
 class AnalisisDeDevolucionController extends RestfulController<AnalisisDeDevolucion> {
     
