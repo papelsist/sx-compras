@@ -44,17 +44,15 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
         
         String query = getQuery()
 
-        def rows = getAllRows(query,[poliza.ejercicio,poliza.mes,poliza.ejercicio,poliza.mes])
+        def rows = getAllRows(query,[poliza.ejercicio,poliza.mes,poliza.ejercicio,poliza.mes,poliza.ejercicio,poliza.mes])
         println rows.size()
         rows.each{row ->
-            println "procesando registro"
-            println row
+           
             CuentaPorPagar cxp = CuentaPorPagar.get(row.cxpId)
 
             String desc = " F: ${cxp.folio} ${cxp.fecha} "
             def gastos = GastoDet.findAllByCxp(cxp)
             gastos.each{gasto ->
-
                 desc = " F: ${cxp.folio} ${cxp.fecha} ${gasto.sucursal.nombre} "
                 PolizaDet det = build(cxp, gasto.cuentaContable, desc, gasto.sucursal.nombre, gasto.importe)
                 poliza.addToPartidas(det)
@@ -83,8 +81,6 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
             }
 
              if(gastos){
-
-                
                 CuentaOperativaProveedor co = CuentaOperativaProveedor.findByProveedor(cxp.proveedor)
                  def cv = '205-0006'
                 if(co.tipo == 'FLETES'){
@@ -100,16 +96,11 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
 
                 CuentaContable ctaProv = buscarCuenta("${cv}-${co.cuentaOperativa}-0000")
                 // CuentaContable ctaProv = buscarCuenta("205-0006-0000-0000")
-              
-                def totalCxp = cxp.total
-            
+                def totalCxp = cxp.total 
                 PolizaDet cxpDet = build(cxp, ctaProv, desc, 'OFICINAS',0.00, totalCxp)
                 poliza.addToPartidas(cxpDet) 
-            }
-           
-            
+            }  
         }
-
      }
 
      def procesarNotas(Poliza poliza, Map params){
@@ -594,6 +585,16 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
                 movimiento_de_cuenta m on(r.egreso_id=m.id)
             WHERE 
                 c.fecha>='2019-01-01' and c.tipo='GASTOS' and r.concepto='GASTO' and month(m.fecha)>month(c.fecha) and year(c.fecha)=? and month(c.fecha)=?
+                UNION
+            SELECT 
+                c.id as cxpId
+            FROM 
+                cuenta_por_pagar c left join 
+                rembolso_det d on(d.cxp_id=c.id) left join
+                rembolso r on(d.rembolso_id=r.id) left join 
+                movimiento_de_cuenta m on(r.egreso_id=m.id)
+            WHERE 
+                c.fecha>='2019-01-01' and m.id is null and c.tipo='GASTOS' and year(c.fecha)=? and month(c.fecha)=?
         """
         return query
     }

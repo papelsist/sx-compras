@@ -29,12 +29,11 @@ class MovimientoTesoreriaTask implements  AsientoBuilder{
         procesarRetencionesIsr(poliza)
         procesarDepositosPorIdentificar(poliza)
        // procesarDepositosTesoreria(poliza)
-
     }
 
 
     void procesarIntereses(Poliza poliza){
-        def movimientosTes = MovimientoDeTesoreria.executeQuery("from MovimientoDeTesoreria where fecha= ? and concepto ='DEPOSITO' and  concepto = 'INTERESES'",[poliza.fecha])
+        def movimientosTes = MovimientoDeTesoreria.executeQuery("from MovimientoDeTesoreria where fecha= ? and concepto ='DEPOSITO' and  comentario = 'INTERESES'",[poliza.fecha])
         movimientosTes.each{mov -> 
             String ctaBanco= "102-${mov.movimiento.moneda.currencyCode == 'MXN' ? '0001': '0002'}-${mov.movimiento.cuenta.subCuentaOperativa}-0000"
              Map row = [
