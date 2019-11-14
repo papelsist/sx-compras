@@ -37,6 +37,7 @@ class CostoPromedioService {
 
         anteriores.each {
             CostoPromedio cp = CostoPromedio.findOrSaveWhere(ejercicio: per.ejercicio, mes: per.mes, producto: it.producto)
+    
             cp.costo = it.costo
             cp.costoAnterior = it.costo
             cp.clave = it.clave
@@ -69,7 +70,7 @@ class CostoPromedioService {
 
     @NotTransactional
     def costearTransformaciones(Integer ejercicio , Integer mes) {
-        println "Costeando Transformaciones -------------------------------"
+        
         PeriodoDeCosteo per = new PeriodoDeCosteo(ejercicio, mes)
         PeriodoDeCosteo anterior = per.getPeriodoAnterior()
         Periodo periodo = Periodo.getPeriodoEnUnMes(mes - 1, ejercicio)
@@ -77,7 +78,7 @@ class CostoPromedioService {
         def rows = Transformacion.findAll(
                 "from Transformacion t where date(t.fecha) between ? and ? ",
                 [periodo.fechaInicial, periodo.fechaFinal])
-        //log.debug("Costeando {} registros de transformaciones para el periodo {} ", rows.size(), periodo)
+        log.debug("Costeando {} registros de transformaciones para el periodo {} ", rows.size(), periodo)
         rows.each { Transformacion trs ->
             
             costearTransformacion(trs, anterior)
@@ -87,7 +88,7 @@ class CostoPromedioService {
     }
 
     def costearTransformacion(Transformacion trs, PeriodoDeCosteo anterior) {
-         log.info("Costeando TRS  ${trs.tipo} ${trs.documento}  ${trs.sucursal.nombre} ------------------------------------------")
+        // log.info("Costeando TRS  ${trs.tipo} ${trs.documento}  ${trs.sucursal.nombre} ------------------------------------------")
         List<TransformacionDet> partidas = trs.partidas.sort{it.cantidad}.sort{it.sw2}
         def costo = null
         def salida = 0
@@ -95,7 +96,7 @@ class CostoPromedioService {
 
             if(tr.cantidad < 0) {
                 salida = tr.cantidad.abs()
-                log.info("Salen : ${tr.producto.clave} ${tr.cantidad}   (sw2:${tr.sw2})" )
+                //log.info("Salen : ${tr.producto.clave} ${tr.cantidad}   (sw2:${tr.sw2})" )
                 CostoPromedio cp = CostoPromedio.where{ejercicio == anterior.ejercicio && mes == anterior.mes && producto == tr.producto}.find()
                 if(cp){
                     costo = cp.costo
@@ -112,7 +113,7 @@ class CostoPromedioService {
 
             } else {
                 if(costo) {
-                    log.info("Entran: ${tr.producto.clave} ${tr.cantidad}  (sw2:${tr.sw2})" )
+                   // log.info("Entran: ${tr.producto.clave} ${tr.cantidad}  (sw2:${tr.sw2})" )
                     try {
                         Inventario iv = tr.inventario
                         if(iv) {
@@ -184,8 +185,8 @@ class CostoPromedioService {
             cp.save flush: true
             actualizados << cp
         }
-        log.debug("{} Registros actualizados ", actualizados.size())
-         log.info('Se termino de costear los productos')
+        // log.debug("{} Registros actualizados ", actualizados.size())
+        // log.info('Se termino de costear los productos')
         return costos
     }
 
@@ -275,11 +276,25 @@ class CostoPromedioService {
     }
 
     void costeoMedidasEspeciales(Integer ejercicio, Integer mes){
-
-        def productos = Producto.findAllByDeLineaAndInventariable(false,true)
-        productos.each{producto ->
-            this.costeoPorProducto(ejercicio, mes, producto)
+        def query = """
+                        select * from 
+                        (
+                            select p.id
+                            from inventario i join producto p on (p.id = i.producto_id) 
+                            where p.de_linea is false  and inventariable is true and month(i.fecha)=? and year(i.fecha) = ?
+                            union
+                            select p.id
+                            from existencia e join producto p on (p.id = e.producto_id) 
+                            where p.de_linea is false  and inventariable is true and e.cantidad <> 0 and e.mes= ? and anio=?
+                        ) as x group by x.id
+                    """
+        def productos = getLocalRows(query,[mes, ejercicio, mes, ejercicio])
+        productos.each{
+            Producto producto = Producto.get(it.id)
+            log.info("Calculando el costo para {} de medida",producto.clave)
+            calcularPorProducto(ejercicio, mes, producto)
         }
+        log.info('Se terminaron de costear las medidas especiales')
     }
 
     void calcularPorProducto(Integer ejercicio, Integer mes,  Producto producto){

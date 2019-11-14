@@ -28,7 +28,7 @@ class ComprasProc implements  ProcesadorDePoliza, AsientoBuilder{
     @Override
     def generarAsientos(Poliza poliza, Map params) {
         String select = getSelect().replaceAll('@FECHA', toSqlDate(poliza.fecha))
-        // log.info(select)
+         log.info(select)
         List rows = getAllRows(select, [])
 
         Set compras = new HashSet()
