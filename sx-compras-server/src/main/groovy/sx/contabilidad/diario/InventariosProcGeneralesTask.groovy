@@ -28,7 +28,7 @@ class InventariosProcGeneralesTask implements  AsientoBuilder {
                 .replaceAll("@FECHA", toSqlDate(poliza.fecha))
 
 
-    println sql
+        println sql
 
         List rows = getAllRows(sql, [])
         rows.each { row ->
@@ -184,11 +184,11 @@ class InventariosProcGeneralesTask implements  AsientoBuilder {
          WHEN I.TIPO IN('FAC','RMD') THEN '07 VENTAS' ELSE 'OTROS' END) AS GRUPO,s.sw2,S.clave SUC,S.NOMBRE SUCURSAL,P.CLAVE,P.DESCRIPCION
         ,ROUND(   (I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end)*P.KILOS),3) as KILOS,ROUND(   (I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end)),3) as SALDO
         ,    (   (I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end) * (case when i.tipo IN('COM','DEC') and i.costo>0 then i.costo when i.TIPO IN('TRS','REC','MAQ') AND I.CANTIDAD>0 then i.costo else I.COSTO_promedio end)) ) as COSTO
-        ,(CASE WHEN i.TIPO IN('COM') AND I.COSTO>0 THEN (select x.nombre from recepcion_de_compra_det d join recepcion_de_compra r on(d.recepcion_id=r.id) join proveedor x on(r.proveedor_id=x.id) where d.inventario_id=i.id  )
+        ,(CASE WHEN i.TIPO IN('COM') AND I.COSTO>0 THEN (select x.nombre from recepcion_de_compra_det d join recepcion_de_compra r on(d.recepcion_id=r.id) join proveedor x on(r.proveedor_id=x.id) where d.inventariox=i.id  )
          WHEN i.TIPO IN('DEC') AND I.costo>0 THEN (select x.nombre from devolucion_de_compra_det d join devolucion_de_compra r on(d.devolucion_de_compra_id=r.id) join proveedor x on(r.proveedor_id=x.id) where d.inventario_id=i.id  )
          ELSE '' END) AS PROVEEDOR
         ,(CASE WHEN i.TIPO IN('COM') AND I.COSTO=0 THEN CONCAT('115-0001-',(CASE WHEN S.CLAVE<10 THEN '000' ELSE '00' END),S.CLAVE,'-0000')
-        WHEN i.TIPO IN('COM') AND I.COSTO>0 THEN CONCAT('115-',(select (case when x.cuenta_operativa in('0061','0038') then concat('0002-',x.cuenta_operativa) else concat('0003-',x.cuenta_operativa) end) from recepcion_de_compra_det d join recepcion_de_compra r on(d.recepcion_id=r.id) join cuenta_operativa_proveedor x on(r.proveedor_id=x.proveedor_id) where d.inventario_id=i.id  ),(CASE WHEN S.CLAVE<10 THEN '-000' ELSE '-00' END),S.CLAVE)
+        WHEN i.TIPO IN('COM') AND I.COSTO>0 THEN CONCAT('115-',(select (case when x.cuenta_operativa in('0061','0038') then concat('0002-',x.cuenta_operativa) else concat('0003-',x.cuenta_operativa) end) from recepcion_de_compra_det d join recepcion_de_compra r on(d.recepcion_id=r.id) join cuenta_operativa_proveedor x on(r.proveedor_id=x.proveedor_id) where d.inventariox=i.id  ),(CASE WHEN S.CLAVE<10 THEN '-000' ELSE '-00' END),S.CLAVE)
         WHEN i.TIPO IN('DEC')  AND I.COSTO>0 THEN CONCAT('115-',(select (case when x.cuenta_operativa in('0061','0038') then concat('0005-',x.cuenta_operativa) else concat('0006-',x.cuenta_operativa) end) from devolucion_de_compra_det d join devolucion_de_compra r on(d.devolucion_de_compra_id=r.id) join cuenta_operativa_proveedor x on(r.proveedor_id=x.proveedor_id) where d.inventario_id=i.id  ),'-0000')
         WHEN i.TIPO IN('FAC') THEN CONCAT('501-0001-',(CASE WHEN S.CLAVE<10 THEN '000' ELSE '00' END),S.CLAVE,'-0000')
         WHEN i.TIPO IN('RMD') THEN CONCAT('501-0001-',(CASE WHEN S.CLAVE<10 THEN '000' ELSE '00' END),S.CLAVE,'-0000')

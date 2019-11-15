@@ -50,21 +50,21 @@ class CostoPromedioService {
     }
 
     def costearExistenciaInicial(Integer ejercicio, Integer mes) {
-        log.info('Calculando el costo inicial de la existencia {} - {}', ejercicio, mes)
+       // log.info('Calculando el costo inicial de la existencia {} - {}', ejercicio, mes)
         Integer ejercicioAnterior = ejercicio
         Integer mesAnterior = mes - 1
         if(mes == 1) {
             ejercicioAnterior = ejercicio - 1
             mesAnterior = 12
         }
-        log.info('Ejercicio anterior: {}-{}', ejercicioAnterior, mesAnterior)
+       // log.info('Ejercicio anterior: {}-{}', ejercicioAnterior, mesAnterior)
         String sql = """ 
                 UPDATE EXISTENCIA E JOIN PRODUCTO P ON(E.PRODUCTO_ID = P.ID)
                 SET COSTO = IFNULL((SELECT C.COSTO FROM COSTO_PROMEDIO C WHERE C.EJERCICIO = ? AND C.MES = ? AND C.PRODUCTO_ID = E.PRODUCTO_ID ), 0)
                 WHERE P.DE_LINEA IS TRUE AND E.ANIO = ? AND E.MES = ? 
                 """
         executeUdate(sql, [ejercicioAnterior, mesAnterior, ejercicio, mes])
-        log.info('Se termino de costear las existencia iniciales')
+       //  log.info('Se termino de costear las existencia iniciales')
     }
 
 
@@ -78,12 +78,12 @@ class CostoPromedioService {
         def rows = Transformacion.findAll(
                 "from Transformacion t where date(t.fecha) between ? and ? ",
                 [periodo.fechaInicial, periodo.fechaFinal])
-        log.debug("Costeando {} registros de transformaciones para el periodo {} ", rows.size(), periodo)
+        // log.debug("Costeando {} registros de transformaciones para el periodo {} ", rows.size(), periodo)
         rows.each { Transformacion trs ->
             
             costearTransformacion(trs, anterior)
         }
-         log.info('Se termino de costear las Transformaciones')
+        // log.info('Se termino de costear las Transformaciones')
 
     }
 
@@ -294,7 +294,7 @@ class CostoPromedioService {
             log.info("Calculando el costo para {} de medida",producto.clave)
             calcularPorProducto(ejercicio, mes, producto)
         }
-        log.info('Se terminaron de costear las medidas especiales')
+        // log.info('Se terminaron de costear las medidas especiales')
     }
 
     void calcularPorProducto(Integer ejercicio, Integer mes,  Producto producto){

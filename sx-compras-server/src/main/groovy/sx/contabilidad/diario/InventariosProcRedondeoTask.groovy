@@ -28,6 +28,8 @@ class InventariosProcRedondeoTask implements  AsientoBuilder {
                 .replaceAll("@MES", poliza.mes.toString())
                 .replaceAll("@EJERCICIO", poliza.ejercicio.toString())
 
+                   
+
         List rows = getAllRows(sql, [])
         rows.each { row ->
             String descripcion = generarDescripcion(row)
