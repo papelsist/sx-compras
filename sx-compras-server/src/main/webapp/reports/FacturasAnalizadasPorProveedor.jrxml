@@ -33,20 +33,20 @@
 ,C.FOLIO AS DOCUMENTO,C.FECHA,C.tipo_de_cambio AS TC,C.MONEDA,C.sub_total*C.tipo_de_cambio AS IMPORTE,C.TOTAL*C.tipo_de_cambio AS TOTAL,(X.importe_flete)*C.tipo_de_cambio AS FLETE
 ,SUM((A.CANTIDAD/(case when z.unidad='MIL' then 1000 else 1 end)*A.costo_unitario)*C.tipo_de_cambio) AS IMP_ANALISIS
 ,SUM((A.CANTIDAD/(case when z.unidad='MIL' then 1000 else 1 end)*A.costo_unitario)*C.tipo_de_cambio)*1.16 AS TOT_ANALISIS
-,IFNULL((SELECT SUM((A.CANTIDAD/(case when z.unidad='MIL' then 1000 else 1 end)*A.costo_unitario)*C.tipo_de_cambio) FROM inventario IC JOIN recepcion_de_compra_det R on(R.inventario_id=IC.id) JOIN analisis_de_factura_det A ON(R.id=A.com_id)  join analisis_de_factura y on(y.id=a.ANALISIS_ID)
+,IFNULL((SELECT SUM((A.CANTIDAD/(case when z.unidad='MIL' then 1000 else 1 end)*A.costo_unitario)*C.tipo_de_cambio) FROM inventario IC JOIN recepcion_de_compra_det R on(R.inventariox=IC.id) JOIN analisis_de_factura_det A ON(R.id=A.com_id)  join analisis_de_factura y on(y.id=a.ANALISIS_ID)
 	JOIN cuenta_por_pagar X ON(X.id=Y.factura_id) WHERE DATE(IC.FECHA) BETWEEN $P{FECHA_INI} AND $P{FECHA_FIN} AND X.ID=C.ID),0) AS IMP_TOT_ANALISIS
 ,ROUND( (C.sub_total*C.tipo_de_cambio - ((x.importe+x.importe_flete)*C.tipo_de_cambio) ) ,2) AS IMP_DIF
 ,(SELECT SUM(X.IMPORTE*X.tipo_de_cambio) FROM cuenta_por_pagar X WHERE  X.MONEDA=C.MONEDA AND X.proveedor_id=C.proveedor_id AND X.ID IN(
-	SELECT   Y.factura_id FROM analisis_de_factura_det A JOIN recepcion_de_compra_det R on(r.id=A.com_id) join recepcion_de_compra e on(r.recepcion_id=e.id) join inventario IC ON(R.inventario_id=IC.id)  join analisis_de_factura y on(y.id=a.ANALISIS_ID)  
+	SELECT   Y.factura_id FROM analisis_de_factura_det A JOIN recepcion_de_compra_det R on(r.id=A.com_id) join recepcion_de_compra e on(r.recepcion_id=e.id) join inventario IC ON(R.inventariox=IC.id)  join analisis_de_factura y on(y.id=a.ANALISIS_ID)  
 	WHERE DATE(IC.FECHA) BETWEEN $P{FECHA_INI} AND $P{FECHA_FIN} and e.proveedor_id=c.proveedor_id )) AS IMP_MON
 ,(SELECT SUM(X.IMPORTE*X.tipo_de_cambio) FROM cuenta_por_pagar X WHERE  X.proveedor_id=C.proveedor_id AND X.ID IN(
-	SELECT   Y.factura_id FROM analisis_de_factura_det A JOIN recepcion_de_compra_det R on(r.id=A.com_id)  join recepcion_de_compra e on(r.recepcion_id=e.id) join inventario IC ON(R.inventario_id=IC.id)  join analisis_de_factura y on(y.id=a.ANALISIS_ID)  
+	SELECT   Y.factura_id FROM analisis_de_factura_det A JOIN recepcion_de_compra_det R on(r.id=A.com_id)  join recepcion_de_compra e on(r.recepcion_id=e.id) join inventario IC ON(R.inventariox=IC.id)  join analisis_de_factura y on(y.id=a.ANALISIS_ID)  
 	WHERE DATE(IC.FECHA) BETWEEN $P{FECHA_INI} AND $P{FECHA_FIN}  and e.proveedor_id=c.proveedor_id  )) AS IMP_TOT_FAC
 ,SUM(CASE WHEN C.FECHA<$P{FECHA_INI} THEN (A.CANTIDAD/(case when z.unidad='MIL' then 1000 else 1 end)*A.costo_unitario)*C.tipo_de_cambio ELSE 0 END) AS IMP_ANT
 ,SUM(CASE WHEN C.FECHA BETWEEN $P{FECHA_INI} AND $P{FECHA_FIN} THEN (A.CANTIDAD/(case when z.unidad='MIL' then 1000 else 1 end)*A.costo_unitario)*C.tipo_de_cambio ELSE 0 END) AS IMP_PRD
 ,SUM(CASE WHEN C.FECHA>$P{FECHA_FIN}THEN (A.CANTIDAD/(case when z.unidad='MIL' then 1000 else 1 end)*A.costo_unitario)*C.tipo_de_cambio ELSE 0 END) AS IMP_PST
 FROM inventario IC 
-JOIN recepcion_de_compra_det r on(r.inventario_id=ic.id)
+JOIN recepcion_de_compra_det r on(r.inventariox=ic.id)
 JOIN analisis_de_factura_det A ON(r.id=A.com_id)
 JOIN analisis_de_factura X ON(A.analisis_id=X.id)
 JOIN cuenta_por_pagar C ON(C.id=X.factura_id)

@@ -33,7 +33,7 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
        
         poliza.partidas.clear()
         generarAsientos(poliza, [:])
-        procesarNotas(poliza,[:])
+       // procesarNotas(poliza,[:])
        // ajustar(poliza, [:])
         return poliza
     }
@@ -103,10 +103,11 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
         }
      }
 
-     def procesarNotas(Poliza poliza, Map params){
+     /* def procesarNotas(Poliza poliza, Map params){
         def notas = Rembolso.executeQuery("from Rembolso where concepto= 'NOTA' and egreso is null and fecha = ?",[poliza.fecha])
         notas.each{nota ->
             nota.partidas.each{det ->
+            
 
                 def subTotal = MonedaUtils.calcularImporteDelTotal(det.total) 
                 def iva = det.total - subTotal
@@ -130,7 +131,7 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
 
             }
         }
-     }
+     } */
 
 
     PolizaDet mapRow(String cuentaClave, String descripcion, Map row, def debe = 0.0, def haber = 0.0) {

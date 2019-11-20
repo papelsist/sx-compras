@@ -39,7 +39,7 @@
 ,SUM(CASE WHEN S.SW2=3 THEN (A.CANTIDAD/(case when z.unidad='MIL' then 1000 else 1 end)*A.costo_unitario)*C.tipo_de_cambio ELSE 0 END) AS TAC
 ,SUM((A.CANTIDAD/(case when z.unidad='MIL' then 1000 else 1 end)*A.costo_unitario)*C.tipo_de_cambio) AS TOTAL
 FROM inventario IC 
-JOIN recepcion_de_compra_det r on(r.inventario_id=ic.id)
+JOIN recepcion_de_compra_det r on(r.inventariox=ic.id)
 JOIN analisis_de_factura_det A ON(r.id=A.com_id)
 JOIN analisis_de_factura X ON(A.analisis_id=X.id)
 JOIN cuenta_por_pagar C ON(C.id=X.factura_id)

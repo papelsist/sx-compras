@@ -39,7 +39,7 @@ class CostoService {
                     BigDecimal fleteUnitario = (part * importeFlete) / (it.cantidad / factor)
                     BigDecimal costoBruto = it.costoUnitario
 
-                    BigDecimal costo = (fleteUnitario + costoBruto) * analisis.factura.tipoDeCambio
+                    BigDecimal costo = (costoBruto) * analisis.factura.tipoDeCambio
 
 
                     Inventario inventario = null
@@ -50,11 +50,10 @@ class CostoService {
                     }
                     
                     inventario.costo = costo
-                    // inventario.gasto = fleteUnitario
+                    inventario.gasto = fleteUnitario
                     log.debug("Costo de : {} = {} ", it.clave, costo)
                     inventario.save flush: true
-                }
-
+               
             } else {
                 partidas.each {
                     BigDecimal costo = it.costoUnitario * analisis.factura.tipoDeCambio
@@ -66,7 +65,6 @@ class CostoService {
             }
 
         }
-
 
     }
 
