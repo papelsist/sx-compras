@@ -102,9 +102,7 @@ class VariacionCambiariaProc implements ProcesadorMultipleDePolizas {
 
     def procesarCargoProveedor(Poliza poliza) {
         String select = getSelect('CXP').replaceAll('@FECHA', toSqlDate(poliza.fecha))
-
         
-
         List rows = getAllRows(select, [])
         rows.each{ row ->
         def descripcion = generarDescripcion(row)

@@ -36,8 +36,7 @@ abstract class NotasDeCreditoProc implements  ProcesadorDePoliza {
                 cargoNotas(poliza,row)
                 abonoIvaNoTrasladado(poliza,row)
                 if(row.partidas_idx == row.max)
-                    abonoCliente(poliza,row)
-                
+                    abonoCliente(poliza,row)      
         }
 
         registrarVariacionCambiaria(poliza)
@@ -74,6 +73,9 @@ abstract class NotasDeCreditoProc implements  ProcesadorDePoliza {
                 if(row.cliente == '402880fc5e4ec411015e4ec7a46701de') { // PAPELSA BAJIO
                     ctaSegundo = '-0004-'
                 }
+            case 'CHE':
+                ctaPrimero = '704'
+                ctaSegundo = '-0004-'
                 break
         }
 
@@ -86,6 +88,9 @@ abstract class NotasDeCreditoProc implements  ProcesadorDePoliza {
             ctaTercero = "00" + sucursal
         }
         
+        if(tipo == 'CHE'){
+             ctaTercero = "0000"
+        }
 
 
         CuentaContable cuenta = buscarCuenta(ctaPrimero+ctaSegundo+ctaTercero+"-0000")
@@ -291,6 +296,7 @@ abstract class NotasDeCreditoProc implements  ProcesadorDePoliza {
 		concat((case when f.tipo='CRE' then concat('105-',(SELECT concat(case when x.cuenta_operativa='0266' then concat('0004-',x.cuenta_operativa) else concat('0003-',x.cuenta_operativa) end) FROM cuenta_operativa_cliente x where x.cliente_id=c.id ))
 				when f.tipo='CON' then (case when s.clave>9 then concat('105-0001-00',s.clave) else concat('105-0001-000',s.clave) end)
 				when f.tipo='COD' then (case when s.clave>9 then concat('105-0002-00',s.clave) else concat('105-0002-000',s.clave) end)
+                 when f.tipo='CHE' then concat('106-0001-',(SELECT x.cuenta_operativa FROM cuenta_operativa_cliente x where x.cliente_id=c.id ))
 				else 'no_cta' end),'-0000') as cta_cliente,d.partidas_idx,(select max(partidas_idx) from nota_de_credito_det y  where y.nota_id=n.id) as max, c.rfc, x.uuid
 		FROM cobro f join cliente c on(f.cliente_id=c.id)  
 		join nota_de_credito n on(f.id=n.cobro_id) left join nota_de_credito_det d on(d.nota_id=n.id)  join sucursal s on(d.sucursal=s.nombre)

@@ -44,7 +44,7 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
         
         String query = getQuery()
 
-        def rows = getAllRows(query,[poliza.ejercicio,poliza.mes,poliza.ejercicio,poliza.mes,poliza.ejercicio,poliza.mes])
+        def rows = getAllRows(query,[poliza.ejercicio,poliza.mes])
         println rows.size()
         rows.each{row ->
            
@@ -81,24 +81,40 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
             }
 
              if(gastos){
+        
                 CuentaOperativaProveedor co = CuentaOperativaProveedor.findByProveedor(cxp.proveedor)
-                 def cv = '205-0006'
-                if(co.tipo == 'FLETES'){
-                    cv = '205-0004'
-                }
-                if(co.tipo == 'SEGUROS'){
-                    cv = '205-0003'
-                } 
+                if( co ){
+                    def cv = '205-0006'
 
-                  if(co.tipo == 'RELACIONADAS'){
-                    cv = '201-0001'
-                }
+                    if(co.tipo == 'FLETES'){
+                        cv = '205-0004'
+                    }
+                    if(co.tipo == 'SEGUROS'){
+                        cv = '205-0003'
+                    } 
 
-                CuentaContable ctaProv = buscarCuenta("${cv}-${co.cuentaOperativa}-0000")
+                    if(co.tipo == 'RELACIONADAS'){
+                        cv = '205-0009'
+                        if( co.cuentaOperativa == '0061' || co.cuentaOperativa == '0038'){
+                            cv = '201-0001'
+                        }
+                    }
+
+                    CuentaContable ctaProv = buscarCuenta("${cv}-${co.cuentaOperativa}-0000")
+
                 // CuentaContable ctaProv = buscarCuenta("205-0006-0000-0000")
-                def totalCxp = cxp.total 
-                PolizaDet cxpDet = build(cxp, ctaProv, desc, 'OFICINAS',0.00, totalCxp)
-                poliza.addToPartidas(cxpDet) 
+                    def totalCxp = cxp.total 
+                    PolizaDet cxpDet = build(cxp, ctaProv, desc, 'OFICINAS',0.00, totalCxp)
+                /*    
+                    if (!cxpDet.validate()) {
+                        cxpDet.errors.allErrors.each {
+                            println it
+                        }
+                    } 
+                    */  
+                    poliza.addToPartidas(cxpDet) 
+                }
+               
             }  
         }
      }
@@ -568,34 +584,13 @@ class ProvisionDeGastosProc implements  ProcesadorDePoliza, AsientoBuilder {
 
     String getQuery() {
         String query = """           
-            SELECT 
-                c.id as cxpId
-            FROM 
-                cuenta_por_pagar c join requisicion_det d on(d.cxp_id=c.id) join 
-                requisicion r on(d.requisicion_id=r.id) join 
-                movimiento_de_cuenta m on(r.egreso=m.id)
-            WHERE  
-                c.fecha>='2019-01-01' and c.tipo='GASTOS' and month(m.fecha)>month(c.fecha) and year(c.fecha)=? and month(c.fecha)=?
-            UNION
-            SELECT 
-                c.id as cxpId
-            FROM 
-                cuenta_por_pagar c join 
-                rembolso_det d on(d.cxp_id=c.id) join
-                rembolso r on(d.rembolso_id=r.id) join 
-                movimiento_de_cuenta m on(r.egreso_id=m.id)
-            WHERE 
-                c.fecha>='2019-01-01' and c.tipo='GASTOS' and r.concepto='GASTO' and month(m.fecha)>month(c.fecha) and year(c.fecha)=? and month(c.fecha)=?
-                UNION
-            SELECT 
-                c.id as cxpId
-            FROM 
-                cuenta_por_pagar c left join 
-                rembolso_det d on(d.cxp_id=c.id) left join
-                rembolso r on(d.rembolso_id=r.id) left join 
-                movimiento_de_cuenta m on(r.egreso_id=m.id)
-            WHERE 
-                c.fecha>='2019-01-01' and m.id is null and c.tipo='GASTOS' and year(c.fecha)=? and month(c.fecha)=?
+            SELECT cxpId FROM (   SELECT c.id cxpId,c.fecha,d.id idGst
+            ,(SELECT min(m.fecha) FROM requisicion_det d join requisicion r  on(d.requisicion_id=r.id) join movimiento_de_cuenta m on(r.egreso=m.id) where  d.cxp_id=c.id) pago_req
+            ,(SELECT min(m.fecha) FROM rembolso_det d join rembolso r  on(d.rembolso_id=r.id) join movimiento_de_cuenta m on(r.egreso_id=m.id) where  d.cxp_id=c.id) pago_rem
+            FROM cuenta_por_pagar c left join gasto_det d on(d.cxp_id=c.id) where c.tipo='GASTOS' and c.fecha>='2019-01-01' 
+            ) as a where year(a.fecha)=? and month(a.fecha)=? and a.idGst is not null and 
+            ((month(pago_rem)<>month(fecha) or month(pago_req)<>month(fecha) ) or (pago_rem is null and  pago_req is null ))
+            group by a.cxpId   
         """
         return query
     }

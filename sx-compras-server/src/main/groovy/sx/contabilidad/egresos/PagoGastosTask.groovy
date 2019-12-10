@@ -96,7 +96,6 @@ class PagoGastosTask implements  AsientoBuilder, EgresoTask {
 
     void cargoSucursal(Poliza poliza, Rembolso r) {
 
-       
         MovimientoDeCuenta egreso = r.egreso
         // String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia}  ${r.sucursal.nombre} "
         String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} ${egreso.afavor} (${egreso.fecha.format('dd/MM/yyyy')})"
@@ -120,7 +119,7 @@ class PagoGastosTask implements  AsientoBuilder, EgresoTask {
                     desc = "FAC: ${cxp.serie? cxp.serie : '' } ${cxp.folio} ${cxp.fecha} ${gasto.descripcion}"
                     def cuenta = gasto.cuentaContable
                     PolizaDet det = mapRow(cuenta, desc, row, gasto.importe)
-                    det.referencia = cuenta.descripcion ?: cxp.proveedor.nombre
+                    det.referencia = cxp.proveedor.nombre
                     det.referencia2 = cxp.proveedor.nombre
                     poliza.addToPartidas(det)
 
@@ -143,6 +142,7 @@ class PagoGastosTask implements  AsientoBuilder, EgresoTask {
 
                     PolizaDet detIva = mapRow(ctaChe, desc, row, ivaCfdi)
                     detIva.referencia2 = cxp.proveedor.nombre
+                    detIva.referencia = cxp.proveedor.nombre
                     poliza.addToPartidas(detIva)
 
                     if(gasto.ivaRetenido > 0.0) {

@@ -277,7 +277,7 @@ class PolizaController extends RestfulController<Poliza> {
 
     def handleException(Exception e) {
         String message = ExceptionUtils.getRootCauseMessage(e)
-        // e.printStackTrace()
+         e.printStackTrace()
         log.error(message)
         respond([message: message], status: 500)
     }

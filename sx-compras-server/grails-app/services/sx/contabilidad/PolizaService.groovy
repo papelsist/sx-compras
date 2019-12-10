@@ -38,7 +38,9 @@ abstract class PolizaService implements  LogUser{
             it.concepto =  concatenar(it.cuenta)
         }
         List<PolizaDet> borrar = poliza.partidas.findAll {it.debe == 0.0 && it.haber == 0.0}
+      
         borrar.each { poliza.removeFromPartidas(it)}
+        
         return save(poliza)
     }
 
@@ -175,10 +177,12 @@ abstract class PolizaService implements  LogUser{
 
         if(subtipo == 'CHEQUES'){
             println 'Ordenando por concepto!'
-            polizas.sort{p -> MovimientoDeCuenta.get(p.egreso) ? MovimientoDeCuenta.get(p.egreso).cheque.folio : Cheque.get(p.egreso).folio }
+            polizas.sort{p -> MovimientoDeCuenta.get(p.egreso) ? MovimientoDeCuenta.get(p.egreso)?.cheque?.folio : Cheque.get(p.egreso)?.folio }
         }
 
         polizas.each{ p ->
+            println "-----"+ p.folio
+             println "*********"+ MovimientoDeCuenta.get(p.egreso) ? MovimientoDeCuenta.get(p.egreso)?.cheque?.folio : Cheque.get(p.egreso)?.folio
             p.folio = - p.folio
             p.save(flush: true)
         }
