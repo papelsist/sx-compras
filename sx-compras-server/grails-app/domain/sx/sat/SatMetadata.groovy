@@ -69,7 +69,7 @@ class SatMetadata {
             pacRfc: split[5],
             fechaEmision: Date.parse(DF, split[6]),
             fechaCertificacionSat: Date.parse(DF, split[7]),
-            monto: split[8],
+            monto: new BigDecimal(split[8]),
             efectoComprobante: split[9],
             estatus: split[10]
             ]

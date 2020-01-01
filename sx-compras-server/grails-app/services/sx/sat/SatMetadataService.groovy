@@ -27,7 +27,7 @@ class SatMetadataService {
         String df = 'yyyy-MM-dd HH:mm:ss'
         def count = 0
         def dir = new File(metadataDir)
-        def file = new File(metadataDir, 'metadata.txt').withReader { reader ->
+        def file = new File(metadataDir, 'metadata.txt').withReader('UTF-8') { reader ->
             String line = reader.readLine()
             line = reader.readLine() // IGnorar los encabezados
             while (line) {
