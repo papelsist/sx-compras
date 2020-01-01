@@ -13,6 +13,7 @@ import sx.core.Sucursal
 import sx.cxp.ConceptoDeGasto
 import sx.cxp.CuentaPorPagar
 
+import sx.cxp.Rembolso
 import sx.cxp.RembolsoDet
 import sx.cxp.RequisicionDet
 import sx.utils.MonedaUtils
@@ -28,7 +29,8 @@ class ProvisionDeSegurosProc implements  ProcesadorDePoliza, AsientoBuilder {
     @Override
     Poliza recalcular(Poliza poliza) {
         poliza.partidas.clear()
-        generarAsientos(poliza, [:])
+        //generarAsientos(poliza, [:])
+        procesarNotas(poliza,[:])
         return poliza
     }
 
@@ -71,6 +73,59 @@ class ProvisionDeSegurosProc implements  ProcesadorDePoliza, AsientoBuilder {
         return poliza
     }
 
+    def procesarNotas(Poliza poliza, Map params){
+        def notas = Rembolso.executeQuery("from Rembolso where concepto= 'NOTA' and egreso is null and fecha = ?",[poliza.fecha])
+        notas.each{nota ->
+            nota.partidas.each{det ->
+            
+
+                def subTotal = MonedaUtils.calcularImporteDelTotal(det.total) 
+                def iva = det.total - subTotal
+
+                Map row = [
+                    asiento: "PROVISION_DE_"+nota.concepto,
+                    referencia: nota.nombre,
+                    referencia2: nota.nombre,
+                    origen: nota.id,
+                    documento: det.documentoFolio,
+                    documentoTipo: 'NOTA',
+                    documentoFecha: det.documentoFecha,
+                    sucursal: 'OFICINAS',
+                    montoTotal: nota.total,
+                    moneda: 'MXN' 
+                    ] 
+
+                poliza.addToPartidas(mapRow('109-0001-0004-0000', "NOTA: ${det.documentoFolio} ${det.documentoFecha}" , row, 0.00, subTotal))
+                poliza.addToPartidas(mapRow('118-0002-0000-0000', "NOTA: ${det.documentoFolio} ${det.documentoFecha}" , row, 0.00, iva))
+                poliza.addToPartidas(mapRow('107-0005-0525-0000', "NOTA: ${det.documentoFolio} ${det.documentoFecha}" , row, nota.total))
+
+            }
+        }
+        return poliza
+     }
+
+    PolizaDet mapRow(String cuentaClave, String descripcion, Map row, def debe = 0.0, def haber = 0.0) {
+
+        CuentaContable cuenta = buscarCuenta(cuentaClave)
+        
+        PolizaDet det = new PolizaDet(
+                cuenta: cuenta,
+                concepto: cuenta.descripcion,
+                descripcion: descripcion,
+                asiento: row.asiento,
+                referencia: row.referencia2,
+                referencia2: row.referencia2,
+                origen: row.origen,
+                entidad: row.entidad,
+                documento: row.documento,
+                documentoTipo: row.documentoTipo,
+                documentoFecha: row.fecha,
+                sucursal: row.sucursal,
+                debe: debe.abs(),
+                haber: haber.abs()
+        )
+        return det
+    }
 
     def cargoGasto(Poliza poliza, CuentaPorPagar cxp, String suc) {
 

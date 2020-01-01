@@ -22,7 +22,7 @@ class CostoService {
     @Subscriber()
     void onAnalisisActualizado(AnalisisDeFactura analisis){
         // log.debug('Actualizando costos relacionados con analisis {}', analisis.id)
-        log.debug('Actualizando costo del inventario por analisis: {} Partidas: {}', analisis.folio, analisis.partidas.size())
+        //log.debug('Actualizando costo del inventario por analisis: {} Partidas: {}', analisis.folio, analisis.partidas.size())
 
 
         Inventario.withNewSession {
@@ -39,7 +39,7 @@ class CostoService {
                     BigDecimal fleteUnitario = (part * importeFlete) / (it.cantidad / factor)
                     BigDecimal costoBruto = it.costoUnitario
 
-                    BigDecimal costo = (fleteUnitario + costoBruto) * analisis.factura.tipoDeCambio
+                    BigDecimal costo = (costoBruto) * analisis.factura.tipoDeCambio
 
 
                     Inventario inventario = null
@@ -50,24 +50,20 @@ class CostoService {
                     }
                     
                     inventario.costo = costo
-                    // inventario.gasto = fleteUnitario
+                    inventario.gasto = fleteUnitario
                     log.debug("Costo de : {} = {} ", it.clave, costo)
                     inventario.save flush: true
                 }
-
             } else {
                 partidas.each {
                     BigDecimal costo = it.costoUnitario * analisis.factura.tipoDeCambio
                     Inventario inventario = it.com.inventario
                     inventario.costo = costo
-                    log.debug("Costo de : {} = {} ", it.clave, costo)
+                    //log.debug("Costo de : {} = {} ", it.clave, costo)
                     inventario.save flush: true
                 }
             }
-
-        }
-
-
+        } 
     }
 
     @Subscriber()
@@ -84,10 +80,6 @@ class CostoService {
                 }
             }
         }
-
-
     }
-
-
 
 }

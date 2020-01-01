@@ -24,6 +24,7 @@ class VentasTask implements  AsientoBuilder {
         log.info("Generando asientos contables para Ventas {} {}", poliza.fecha)
 
         String sqlVentas = getSqlVentas().replaceAll("@FECHA", toSqlDate(poliza.fecha))
+     
         List rowsVta = getAllRows(sqlVentas, [])
         rowsVta.each{row ->
 
@@ -38,7 +39,6 @@ class VentasTask implements  AsientoBuilder {
             PolizaDet detIva = mapRow(row.cta_iva.toString(), descripcion, row,0.00, row.impuesto.abs())
             poliza.addToPartidas(detIva)
 
-       
             PolizaDet detCte = mapRow(row.cta_cliente.toString(), descripcion, row, row.total.abs())
             poliza.addToPartidas(detCte)
         }

@@ -96,7 +96,7 @@ class CostoPromedioService {
 
             if(tr.cantidad < 0) {
                 salida = tr.cantidad.abs()
-                //log.info("Salen : ${tr.producto.clave} ${tr.cantidad}   (sw2:${tr.sw2})" )
+                log.info("Salen : ${tr.producto.clave} ${tr.cantidad}   (sw2:${tr.sw2})" )
                 CostoPromedio cp = CostoPromedio.where{ejercicio == anterior.ejercicio && mes == anterior.mes && producto == tr.producto}.find()
                 if(cp){
                     costo = cp.costo
@@ -113,7 +113,7 @@ class CostoPromedioService {
 
             } else {
                 if(costo) {
-                   // log.info("Entran: ${tr.producto.clave} ${tr.cantidad}  (sw2:${tr.sw2})" )
+                    log.info("Entran: ${tr.producto.clave} ${tr.cantidad}  (sw2:${tr.sw2})" )
                     try {
                         Inventario iv = tr.inventario
                         if(iv) {
@@ -298,6 +298,10 @@ class CostoPromedioService {
     }
 
     void calcularPorProducto(Integer ejercicio, Integer mes,  Producto producto){
+
+        println "Calculando por producto ---- ${producto} ----"
+
+        costearTransformaciones(ejercicio,mes)
  
 		def periodo = Periodo.getPeriodoEnUnMes(mes - 1 ,ejercicio)
     	
