@@ -25,7 +25,7 @@ export function buildRembolsoDet(cxp: CuentaPorPagar): RembolsoDet {
     documentoSerie: cxp.serie,
     documentoFecha: cxp.fecha,
     total: cxp.total,
-    apagar: cxp.total,
+    apagar: cxp.saldoReal,
     concepto: 'GASTO',
     uuid: cxp.uuid
   };

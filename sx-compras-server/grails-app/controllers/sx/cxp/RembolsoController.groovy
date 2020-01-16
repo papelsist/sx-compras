@@ -116,6 +116,7 @@ class RembolsoController extends RestfulController<Rembolso> {
 
     @CompileDynamic
     def pendientes() {
+        log.info('Factuas pendientes {}', params)
         params.max = 100
 
         def q = CuentaPorPagar.where {tipo != 'COMPRAS' && saldoReal != 0}
@@ -130,6 +131,7 @@ class RembolsoController extends RestfulController<Rembolso> {
             def folio = params.folio
             log.info('Utilizando folio {}', params.folio)
             q = q.where { folio == folio}
+            // q = q.where { folio == folio && saldoReal > 0}
         }
         /************************** ALERTA *****
         * SE DEBE MODIFICAR PARA TRABAJAR POR EL SALDO PERO SE REQUIERE
@@ -137,6 +139,7 @@ class RembolsoController extends RestfulController<Rembolso> {
         * GENERE LA APLICACION CORRESPONDIENTE Y EL SALDO SE DESCUENTE.
         * MIENTRAS ESA MODIFIACION NO SE HAGA LAS LINEAS SIGUIENTES SON NCESARIAS
         **/
+        
         q = q.where {
             def em1 = CuentaPorPagar
             notExists RembolsoDet.where {

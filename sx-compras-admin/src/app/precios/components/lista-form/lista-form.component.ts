@@ -156,7 +156,9 @@ export class ListaFormComponent implements OnInit, OnChanges {
         const incremento = precio - base > 0 ? factor : factor * -1;
         det.precioContado = _.round(precio, 0);
         det.incremento = _.round(incremento, 2);
-        det.factorContado = _.round(det.precioContado / det.costo, 2);
+        if (det.costo  > 0) {
+          det.factorContado = _.round(det.precioContado / det.costo, 2);
+        }
         item.setData(det);
       } else if (command.tipo === 'CREDITO') {
         const base = det.precioAnteriorCredito;

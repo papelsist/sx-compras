@@ -24,19 +24,20 @@ class RembolsoService implements  LogUser{
      * @return
      */
     def registrarPago(Rembolso rembolso) {
-        if(rembolso.pago == null && rembolso.egreso) {
-            log.info('Generando pagos para rembolso {}', rembolso)
-            rembolso.partidas.each { det ->
-                CuentaPorPagar cxp = det.cxp
-                Pago pago = generarPago(cxp, rembolso.egreso, det.apagar)
-                if(pago) {
-                    pago.sw2 = det.id
-                    if(!pago.createUser) {
-                        pago.createUser = 'admin'
-                        pago.updateUser = 'admin'
-                    }
-                    pago.save failOnError: true
+        log.info('Generando pagos para rembolso {}', rembolso)
+        rembolso.partidas.each { det ->
+            CuentaPorPagar cxp = det.cxp
+            Pago pago = generarPago(cxp, rembolso.egreso, det.apagar)
+            if(pago) {
+                rembolso.pago = pago
+                log.info('Pago Generado: {}', pago)
+                pago.sw2 = det.id
+                if(!pago.createUser) {
+                    pago.createUser = 'admin'
+                    pago.updateUser = 'admin'
                 }
+                rembolso.save failOnError: true, flush: true
+                // pago.save failOnError: true
             }
         }
     }
@@ -110,7 +111,7 @@ class RembolsoService implements  LogUser{
         return cobro
     }
 
-    private Pago generarPago(CuentaPorPagar cxp, MovimientoDeCuenta egreso, BigDecimal importe) {
+    private Pago generarPago(CuentaPorPagar cxp, MovimientoDeCuenta egreso, BigDecimal importe, String comentario = 'PAGO_DE_GASTOS') {
         if(cxp.saldoReal > 0.0) {
             Pago pago = new Pago()
             pago.fecha = egreso.fecha
@@ -121,16 +122,46 @@ class RembolsoService implements  LogUser{
             pago.folio = cxp.folio
             pago.serie = cxp.serie
             pago.egreso = egreso
-            pago.comentario = "PAGO DE FLETES"
+            pago.comentario = comentario
             AplicacionDePago a = new AplicacionDePago()
             a.cxp = cxp
             a.fecha = egreso.fecha
-            a.comentario = "FLETE"
+            a.comentario = comentario
             a.importe = importe.abs()
             pago.addToAplicaciones(a)
             logEntity(pago)
             return pago
         }
         return null
+    }
+
+    def aplicarPago(Rembolso rembolso) {
+        if(rembolso.pago && rembolso.pago.disponible > 0) {
+            def pago = rembolso.pago
+            rembolso.partidas.each { RembolsoDet det ->
+                def cxp = det.cxp
+                BigDecimal importe = cxp.saldoReal <= pago.disponible ? cxp.saldoReal : pago.disponible
+                if(importe ) {
+                    log.info('Importe a aplicar: {}', importe)
+                    
+                    AplicacionDePago apl = new AplicacionDePago(
+                            pago: pago,
+                            fecha: rembolso.fechaDePago,
+                            cxp: cxp,
+                            importe: importe,
+                            comentario: "Pago de Requisicion ${rembolso.id}",
+                            formaDePago: rembolso.formaDePago
+                    )
+                    apl.save flush: true
+                }
+            }
+            rembolso.save flush: true
+            // pago.refresh()
+            // logEntity(pago)
+            // log.info("Pago {} aplicado disponible: {}", pago.folio, pago.disponible)
+
+        }
+        
+        
     }
 }

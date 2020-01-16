@@ -20,6 +20,7 @@ export interface CuentaPorPagar {
   pagos?: number;
   compensaciones?: number;
   saldo?: number;
+  saldoReal?: number;
   importePorPagar?: number;
   vencimiento: string;
   selected?: boolean;
