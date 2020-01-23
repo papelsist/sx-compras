@@ -60,6 +60,7 @@ if (Environment.isDevelopmentMode() && targetDir != null) {
     logger("sx.compras", DEBUG, ['STDOUT'], false)
     logger("sx.reports", DEBUG, ['STDOUT'], false)
     logger("sx.cloud", DEBUG, ['STDOUT'], false)
+    logger("sx.cloud.LxExistenciaService", DEBUG, ['STDOUT'], false)
     
     // Log Listeners
     logger("sx.audit", DEBUG, ['STDOUT'], false)

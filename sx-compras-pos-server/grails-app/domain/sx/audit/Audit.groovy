@@ -26,6 +26,8 @@ class Audit {
     Date dateCreated
     Date lastUpdated
 
+    Long registros
+
 
     static constraints = {
         name nullable: true
@@ -38,6 +40,7 @@ class Audit {
         message nullable: true
         lastUpdated nullable: true
         dateCreated nullable: true
+        registros nullable: true
     }
 
     static mapping = {

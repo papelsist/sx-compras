@@ -46,6 +46,55 @@ class LxExistenciaService {
 
     static String ENTITY = 'CloudExis'
 
+    def publishAllExistenciaCollection() {
+        Date start = new Date()
+        Sucursal sucursal = AppConfig.first().sucursal
+        def ejercicio = Periodo.obtenerYear(new Date())
+        def mes = Periodo.obtenerMes(new Date()) + 1
+        def select = """
+            select 
+                e.sucursal_nombre as almacen, 
+                e.anio as ejercicio, 
+                e.mes as mes, 
+                p.clave, 
+                p.descripcion, 
+                CAST(e.cantidad AS UNSIGNED)as cantidad,
+                CAST(e.recorte AS UNSIGNED)as recorte, 
+                recorte_comentario as recorteComentario
+            from existencia e
+            join producto p on (e.producto_id = p.id)
+            where e.sucursal_id = :sucursal
+            and e.anio = :ejercicio  
+            and e.mes = :mes
+            and p.activo = true
+            order by p.clave 
+            limit 2
+        """
+        List<Map> rows = getRows(select, ['ejercicio': ejercicio, 'mes': mes, 'sucursal': sucursal.id])
+        
+        int updates = 0
+        
+        rows.each { row ->
+            
+            try {
+                Map exis = [clave: clave, descripcion: data.descripcion]
+                DocumentReference docRef = firebaseService
+                .getFirestore()
+                .collection('existencias')
+                .document(exis.clave)
+                .put(exis)
+            }catch (Exception ex) {
+                def c = ExceptionUtils.getRootCause(ex)
+                def message = ExceptionUtils.getRootCauseMessage(ex)
+                log.error('Error: {}', message)
+            }
+            updates++
+            
+        }
+        logChange(sucursal.nombre, 'PUBLISH_EXISTENCIA_COLLECTION', start, updates)
+        return updates
+    }
+
     def publishAll() {
         Date start = new Date()
         Sucursal sucursal = AppConfig.first().sucursal
@@ -79,7 +128,7 @@ class LxExistenciaService {
             row.mes = row.mes as Integer
             row.cantidad = row.cantidad.toLong()
             row.recorte = row.recorte.toLong()
-            log.info('Exis: {}', row)
+            log.debug('Exis: {}', row)
             
             try {
                 publish(row.clave, row)
@@ -141,9 +190,12 @@ class LxExistenciaService {
         def ids = AuditLog.findAll(
             'select distinct a.persistedObjectId from AuditLog a where a.name = ? and a.dateCreated >= ?',['Existencia', lastTime])
         if(!ids) {
-            log.info('No data to update since:{}', lastTime)
+            log.debug('No data to update since:{}', lastTime)
             return
+        } else {
+            log.debug("Existencias por actualizar: {}", ids.size())
         }
+        int updates = 1
         ids.each {
             def exis = Existencia.get(it)
             
@@ -157,11 +209,17 @@ class LxExistenciaService {
                 recorte: exis.recorte as Long,
                 recorteComentario: exis.recorteComentario
                 ]
-            log.info('Aplicando: {}', data.clave)
-            def published = publish(data.clave, data)
+            try{
+                def published = publish(data.clave, data)
+                updates++
+            } catch(Exception ex) {
+                def message = ExceptionUtils.getRootCauseMessage(ex)
+                log.error('Error actualizando existencia {}', message)
+            }
+            
         }
 
-        logChange(sucursal.nombre,'PUBLISH_FROM_AUDITLOG', start )
+        logChange(sucursal.nombre,'PUBLISH_FROM_AUDITLOG', start, updates )
     }
     /*
     @Scheduled(fixedDelay = 60000L, initialDelay = 30000L)
@@ -169,11 +227,11 @@ class LxExistenciaService {
         Environment.executeForCurrentEnvironment {
             Date start = new Date()
             production {
-                log.info('Sincronizando existencias con FireBase [PROD] Start:{}', start)
+                log.debug('Sincronizando existencias con FireBase [PROD] Start:{}', start)
                 // lxExistenciaService.publishFromAudit()
             }
             development {
-                log.info('Sincronizando existencias con FireBase [DEV] Start: {}', start)
+                log.debug('Sincronizando existencias con FireBase [DEV] Start: {}', start)
                 publishFromAudit()
             }
         }
@@ -209,7 +267,7 @@ class LxExistenciaService {
         return new Sql(dataSource)
     }
 
-    def logChange(String sucursal, String event, Date start) {
+    def logChange(String sucursal, String event, Date start, int registros) {
         def message = start.format(TIME_FORMAT)
         def id = new Date().getTime()
         Audit alog = new Audit(
@@ -219,7 +277,8 @@ class LxExistenciaService {
                 target: 'FIREBASE',
                 tableName: 'EXISTENCIA',
                 eventName: event,
-                message: message
+                message: message,
+                registros: registros
         )
         alog.save flush: true
 
