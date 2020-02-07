@@ -221,6 +221,71 @@ class LxExistenciaService {
 
         logChange(sucursal.nombre,'PUBLISH_FROM_AUDITLOG', start, updates )
     }
+
+
+    def publishFromAuditLog(){
+    
+        Sucursal sucursal = AppConfig.first().sucursal
+        def audits = AuditLog.where{name == 'Existencia' && replicatedCloud == null}.list([sort: 'dateCreated', order: 'desc'])
+        if(!audits){
+            return
+        }
+            Firestore db = firebaseService.getFirestore()
+            CollectionReference existencias  = db.collection("existencia");
+            
+
+        audits.each{
+
+            println it.persistedObjectId
+            def exis = Existencia.get(it.persistedObjectId)
+
+            if(exis){
+
+                DocumentReference docRef =  existencias.document(exis.producto.id)
+                DocumentSnapshot snapShot = docRef.get().get()
+                
+                Map data = [
+                    almacen: exis.sucursal.nombre,
+                    cantidad: exis.cantidad as Long,
+                    recorte: exis.recorte as Long,
+                    recorteComentario: exis.recorteComentario
+                    ]
+
+                ApiFuture<WriteResult> result = null
+                
+                if (!snapShot.exists()) {
+                    
+                    Map exist = [
+                        id: exis.producto.id,
+                        clave: exis.producto.clave, 
+                        descripcion: exis.producto.descripcion,
+                        producto:exis.producto.id,
+                        ejercicio: exis.anio as Integer,
+                        mes: exis.mes as Integer
+                        ]
+                    docRef.set(exist)
+                    result = docRef
+                        .collection('almacenes')
+                        .document(data.almacen)
+                        .set(data)
+                } else {
+             
+                    result = docRef
+                        .collection('almacenes')
+                        .document(data.almacen)
+                        .set(data)
+                    // return null
+                }
+                def updateTime = result.get().getUpdateTime()
+                log.debug("Publish time : {} " , updateTime)
+                it.replicatedCloud = new Date()
+                it.save failOnError: true, flush: true
+                return updateTime
+            }
+
+        }
+    }
+
     /*
     @Scheduled(fixedDelay = 60000L, initialDelay = 30000L)
     void syncWithFirebase() {
@@ -238,8 +303,6 @@ class LxExistenciaService {
     }
 
     */
-
-    
 
     def getRows(String sql, Map params) {
         Sql db = getSql()

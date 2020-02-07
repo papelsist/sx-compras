@@ -73,6 +73,7 @@ abstract class NotasDeCreditoProc implements  ProcesadorDePoliza {
                 if(row.cliente == '402880fc5e4ec411015e4ec7a46701de') { // PAPELSA BAJIO
                     ctaSegundo = '-0004-'
                 }
+                break
             case 'CHE':
                 ctaPrimero = '704'
                 ctaSegundo = '-0004-'

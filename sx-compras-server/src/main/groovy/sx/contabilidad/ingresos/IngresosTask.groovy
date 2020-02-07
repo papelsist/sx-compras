@@ -182,20 +182,17 @@ class IngresosTask implements  AsientoBuilder {
              String descripcion = "Doc: ${row.documento} ${row.fecha_fac} ${row.sucursal} ${tcCre} "
 
             if (row.asiento.toString().contains('NOTA')) {
-                
                 def nota = NotaDeCredito.findByCobro(cobro)
                 if(tipo == 'CON' || tipo == 'COD'){
                     descripcion = "NOTA: ${nota.folio}  ${nota.fecha}"
                 }else{
                     descripcion = "Doc: ${row.documento} ${row.fecha_fac} ${row.sucursal} ${tcCre} Nota: ${nota.folio} "
                 }
-                
-
             }
             
 
             if((tipo == 'CON' || tipo == 'COD') && !row.asiento.toString().contains('NOTA') ){ 
-                descripcion = "COBRANZA: ${row.documentoTipo}"
+                descripcion = "COBRANZA: ${row.documentoTipo} "
             }
 
             def ctaCte = row.cta_cliente
@@ -222,6 +219,9 @@ class IngresosTask implements  AsientoBuilder {
               if(row.asiento.endsWith('APL')){
                 def cta =  '205-0001-0004-0000'
 
+
+                println "Cobro Saf Cliente: "+ cobro.cliente.nombre
+
                 BigDecimal importeDiv = MonedaUtils.calcularImporteDelTotal(row.total)
                 BigDecimal ivaDiv = row.total - importeDiv
                 if(row.asiento.toString().contains('NOTA')){
@@ -229,6 +229,7 @@ class IngresosTask implements  AsientoBuilder {
                 }
 
                 def detCliente = mapRow(cta, descripcion, row,importeDiv)
+
                 detCliente.referencia2 = cobro.cliente.nombre
                 poliza.addToPartidas(detCliente)
                 if(row.tipo == 'CON' && !row.asiento.toString().contains('NOTA')){
@@ -263,9 +264,7 @@ class IngresosTask implements  AsientoBuilder {
                         0.0,
                         iva))
                 } 
-            } 
-
-          
+            }        
         } 
 
     }

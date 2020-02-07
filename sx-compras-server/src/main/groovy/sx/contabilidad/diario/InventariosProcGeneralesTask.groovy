@@ -27,9 +27,6 @@ class InventariosProcGeneralesTask implements  AsientoBuilder {
         String sql = getSelect()
                 .replaceAll("@FECHA", toSqlDate(poliza.fecha))
 
-
-        println sql
-
         List rows = getAllRows(sql, [])
         rows.each { row ->
             log.info('Procesando: {}',row)
@@ -137,15 +134,15 @@ class InventariosProcGeneralesTask implements  AsientoBuilder {
                 when ASIENTO='TRANSFORMACIONES' AND sum(X.COSTO)<0 then  REPLACE(x.cta_contable,'704-0005','703-0001') else x.cta_contable end) cta_contable  
         FROM (        	   
         SELECT 'FLETES PROVEEDOR' ASIENTO,'FLT' TIPO,'02 COMPRAS' AS grupo,s.sw2,S.clave SUC,S.NOMBRE SUCURSAL,P.CLAVE,P.DESCRIPCION 
-        ,0 as kilos,0 as saldo,   ( (I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end) * i.gasto) ) as COSTO
+        ,0 as kilos,0 as saldo,  sum( (I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end) * i.gasto) ) as COSTO
         ,(select x.nombre from recepcion_de_compra_det d join recepcion_de_compra r on(d.recepcion_id=r.id) join proveedor x on(r.proveedor_id=x.id) where d.inventario_id=i.id  ) PROVEEDOR                
         ,concat('115-0004-',(SELECT o.cuenta_operativa FROM recepcion_de_compra_det d   join recepcion_de_compra r on(d.recepcion_id=r.id) join proveedor x on(r.proveedor_id=x.id) join cuenta_operativa_proveedor o on(o.proveedor_id=x.id) where d.inventario_id=i.id ),'-0000') CTA_CONTABLE
         from inventario I  join producto p on(p.id=i.producto_id) JOIN sucursal s on(i.sucursal_id=s.id)
         where p.inventariable is true and YEAR(I.FECHA)=YEAR('@FECHA') AND MONTH(I.FECHA)=MONTH('@FECHA') AND I.CLAVE LIKE '%'
-        AND I.TIPO IN('COM') AND I.GASTO>0
+        AND I.TIPO IN('COM') AND I.GASTO>0 GROUP BY 6,7,12,13
         	union
         SELECT 'MAQUILA PROVEEDOR' ASIENTO,'MAQ' TIPO,'02 COMPRAS' AS grupo,s.sw2,S.clave SUC,S.NOMBRE SUCURSAL,P.CLAVE,P.DESCRIPCION 
-        ,0 as kilos,0 as saldo,   ( (I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end) * i.gasto) ) as COSTO
+        ,0 as kilos,0 as saldo,   SUM( (I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end) * i.gasto) ) as COSTO
         ,(select x.nombre from transformacion_det d join analisis_de_transformacion_det a on(d.id=a.trs_id) join analisis_de_transformacion t on(a.analisis_id=t.id) join proveedor x on(t.proveedor_id=x.id) where d.inventario_id=i.id  ) PROVEEDOR                
         ,concat('115-0011-'
         ,(select o.cuenta_operativa from transformacion_det d join analisis_de_transformacion_det a on(d.id=a.trs_id) join analisis_de_transformacion t on(a.analisis_id=t.id) join proveedor x on(t.proveedor_id=x.id) join cuenta_operativa_proveedor o on(o.proveedor_id=x.id) where d.inventario_id=i.id  )
@@ -153,7 +150,7 @@ class InventariosProcGeneralesTask implements  AsientoBuilder {
         ) CTA_CONTABLE
         from inventario I  join producto p on(p.id=i.producto_id) JOIN sucursal s on(i.sucursal_id=s.id)
         where p.inventariable is true and  YEAR(I.FECHA)=YEAR('@FECHA') AND MONTH(I.FECHA)=MONTH('@FECHA') AND I.CLAVE LIKE '%'
-        AND I.TIPO IN('MAQ') AND I.GASTO>0 
+        AND I.TIPO IN('MAQ') AND I.GASTO>0 GROUP BY 6,7,12,13
             union 
         select a.ASIENTO,a.TIPO,a.GRUPO,a.sw2,a.SUC,a.SUCURSAL,a.CLAVE,a.DESCRIPCION,SUM(a.KILOS) KILOS,SUM(a.SALDO) SALDO,SUM(a.COSTO) COSTO,a.PROVEEDOR,a.CTA_CONTABLE 
         from (        
