@@ -26,6 +26,8 @@ class AuditLog {
     Date dateCreated
     Date lastUpdated
 
+    Date replicatedCloud
+
 
     static constraints = {
         name nullable: true
@@ -38,6 +40,7 @@ class AuditLog {
         message nullable: true
         lastUpdated nullable: true
         dateCreated nullable: true
+        replicatedCloud nullable:true
     }
 
     static mapping = {
