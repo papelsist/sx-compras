@@ -5,6 +5,7 @@ import grails.events.annotation.Subscriber
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
+import grails.gorm.transactions.Transactional
 import org.grails.datastore.mapping.engine.event.AbstractPersistenceEvent
 import org.grails.datastore.mapping.engine.event.PostDeleteEvent
 import org.grails.datastore.mapping.engine.event.PostInsertEvent
@@ -16,7 +17,7 @@ import sx.core.Existencia
 
 @Slf4j
 @CompileStatic
-// @Transactional
+@Transactional
 class ExistenciasListenerService {
 
     @Autowired AuditLogDataService auditLogDataService
@@ -46,6 +47,7 @@ class ExistenciasListenerService {
 
     }
 
+    /*
     @Subscriber
     void afterUpdate(PostUpdateEvent event) {
         String id = getId(event)
@@ -55,6 +57,7 @@ class ExistenciasListenerService {
             logEntity(existencia, 'UPDATE')
         }
     }
+    */
 
     def logEntity(Existencia existencia, String type) {
 

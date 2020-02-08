@@ -12,12 +12,15 @@ import sx.core.Proveedor
 import sx.core.ProveedorProducto
 import sx.utils.Periodo
 import sx.utils.MonedaUtils
+import sx.core.ProductoService
 
 
 @Transactional
 @GrailsCompileStatic
 @Slf4j
 class ListaDePreciosVentaService implements LogUser {
+
+    ProductoService productoService
 
     ListaDePreciosVenta save(ListaDePreciosVenta lista) {
     	log.debug("Salvando lista de precios venta {}", lista.id)
@@ -55,7 +58,8 @@ class ListaDePreciosVentaService implements LogUser {
                 doSave = true
             }
             if (doSave) {
-                producto.save flush: true
+                // producto.save flush: true
+                productoService.updateProducto(producto)
             } 
         }
         lista.aplicada = new Date()
