@@ -76,6 +76,10 @@ class AnalisisDeTransformacionService implements LogUser, FolioLog {
         	inventario.gasto = det.costo
         	inventario.save flush: true
     	}
+        // Actualizando el importe por pagar en CxP
+        def cxp = analisis.cxp
+        cxp.importePorPagar = cxp.total
+        cxp.save flush: true
     }
     
 }

@@ -12,6 +12,7 @@ import grails.util.Environment
 import com.google.cloud.firestore.*
 import com.google.firebase.cloud.FirestoreClient
 import com.google.api.core.ApiFuture
+import com.google.api.core.ApiFutures
 
 import org.apache.commons.lang3.exception.ExceptionUtils
 
@@ -20,19 +21,17 @@ import sx.core.Producto
 import sx.audit.Audit
 
 @Slf4j
-// @GrailsCompileStatic
+@GrailsCompileStatic
 @Transactional
 class LxProductoService {
 
+    final static String COLLECTION = 'productos'
 
     FirebaseService firebaseService
 
-    
-
     def publish(Producto prod) {
         LxProducto xp = new LxProducto(prod)
-        ApiFuture<WriteResult> result = firebaseService.getFirestore()
-            .collection('productos')
+        ApiFuture<WriteResult> result = getCollection()
             .document(xp.id)
             .set(xp.toMap())
             def updateTime = result.get().getUpdateTime()
@@ -41,23 +40,40 @@ class LxProductoService {
         return updateTime
     }
 
+    /**
+    *
+    * Sincroniza todo el catalog de productos de Papel en Firebase
+    * 
+    */
     def publishAll() {
-        logAudit('PRODUCTOS_TB', "UPDATE", "PUBLISH ALL PRODUCTOS TO FIREBASE", 1000)
-        /*
-        try {
-          
-        }catch (Exception ex) {
-            def c = ExceptionUtils.getRootCause(ex)
-            def message = ExceptionUtils.getRootCauseMessage(ex)
-            log.error('Error: {}', message)
-            return
+        def productos = getCollection()
+        List<ApiFuture<WriteResult>> futures = new ArrayList<>();
+
+        findAllProductos().each { xp ->
+            futures.add(productos.document(xp.id).set(xp.toMap()))
         }
-        */
+
+        ApiFutures.allAsList(futures).get();
+        def rows = futures.size()
+        log.debug('Productos: {} actualizados', rows)
+        logAudit('PRODUCTOS_TB', "UPDATE", "${rows} PRODUCTOS ACTUALIZADOS EN FIREBASE", rows, new Date())
+        
+    }
+
+    CollectionReference getCollection() {
+        return firebaseService.getFirestore().collection(COLLECTION)
     }
 
     
+    @Transactional(readOnly = true)
+    List<LxProducto> findAllProductos() {
+        return  Producto.list(fetch: [linea: 'join', marca: 'join', clase: 'join', productoSat: 'join', unidadSat:'join'], 
+            sort: 'clave', order: 'asc', max: 5000)
+            .collect { Producto prod -> new LxProducto(prod)}
+    }
+    
 
-    Audit logAudit(String id, String event, String message, int registros) {
+    Audit logAudit(String id, String event, String message, int registros, Date updateTime = null) {
         Audit.withNewSession {
             Audit alog = new Audit(
                 name: 'LxProducto',
@@ -66,7 +82,8 @@ class LxProductoService {
                 target: 'FIREBASE',
                 tableName: 'Producto',
                 eventName: event,
-                message: message
+                message: message,
+                dateReplicated: updateTime
             )
             alog.save failOnError: true, flush: true
         }
@@ -83,17 +100,11 @@ class LxProductoService {
      *                  `- Second, 0-59
      */
     @Scheduled(cron = "0 0 22 ? * MON-SAT")
-    // @Scheduled(fixedDelay = 60000L, initialDelay = 30000L)
     void syncFromAuditLog() {
-        Environment.executeForCurrentEnvironment {
-            if(activo) {
-                Date start = new Date()
-                production {
-                    log.debug('Sincronizando existencias con FireBase [PROD] Start:{}', start)
-                    publishAll()
-                }
-            }
-
+        if (Environment.current == Environment.PRODUCTION) {
+            Date start = new Date()
+            log.debug('Sincronizando productos con FireBase [PROD] Start:{}', start)
+            publishAll()
         }
 
     }
