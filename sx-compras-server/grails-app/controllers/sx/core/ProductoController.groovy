@@ -77,29 +77,20 @@ class ProductoController extends RestfulController<Producto> {
     @CompileDynamic
     def rows() {
         log.info('Rows: {}', params)
-        /*
-        def query = Producto.where {}
-        params.max = 5000
-
-        if(params.activos) {
-            Boolean activos = this.params.getBoolean('activos')
-            query = query.where {activo == activos}
-        }
-        List<Producto> res =  query.list(params)
-        */
         List<Producto> res = Producto.findAll("from Producto p order by p.linea.linea")
         respond res, view: 'rows'
     }
 
-    /*
+    
     @Override
     protected Producto updateResource(Producto resource) {
-        return super.updateResource(resource)
+        return productoService.updateProducto(resource)
     }
-
+    
     @Override
     protected Producto saveResource(Producto resource) {
-        return super.saveResource(resource)
+        return productoService.saveProducto(resource)
     }
-    */
+    
+    
 }

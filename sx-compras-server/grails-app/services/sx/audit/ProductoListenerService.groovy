@@ -14,6 +14,7 @@ import org.grails.datastore.mapping.engine.event.PostUpdateEvent
 
 import sx.core.ExistenciaService
 import sx.core.Producto
+import sx.cloud.LxProductoService
 
 
 
@@ -23,6 +24,7 @@ import sx.core.Producto
 class ProductoListenerService {
 
     ExistenciaService existenciaService
+    LxProductoService lxProductoService
 
     List<String> sucursales = [
         'SOLIS',
@@ -53,10 +55,13 @@ class ProductoListenerService {
         if(producto) {
             log.debug('Alta de producto nuevo generando existencias')
             logEntity(producto, 'INSERT')
-            Thread.sleep(1000)
+            // Thread.sleep(1000)
+            // existenciaService.generarExistencias(producto)
+            /*
             Producto.withNewSession {
                 existenciaService.generarExistencias(producto)
             }
+            */
         }
 
     }
@@ -82,6 +87,7 @@ class ProductoListenerService {
         this.sucursales.each {
             buildLog(producto, it, type)
         }
+        // lxProductoService.publish(producto)
 
     }
 

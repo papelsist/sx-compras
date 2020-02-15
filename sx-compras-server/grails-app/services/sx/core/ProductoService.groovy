@@ -1,50 +1,54 @@
 package sx.core
 
+import groovy.util.logging.Slf4j
+
 import grails.compiler.GrailsCompileStatic
 import grails.gorm.services.Service
 import grails.plugin.springsecurity.SpringSecurityService
-import groovy.util.logging.Slf4j
+
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
+
 import sx.utils.Periodo
+import sx.cloud.LxProductoService
+import sx.core.ExistenciaService
 
 @Slf4j
 @GrailsCompileStatic
-@Service(Producto)
-abstract  class ProductoService implements LogUser {
+// @Service(Producto)
+class ProductoService implements LogUser {
+    
+    
+    // @Autowired
+    // @Qualifier('lxProductoService')
+    LxProductoService lxProductoService
 
-    /*
+    // @Autowired
+    ExistenciaService existenciaService
+
+/*
     @Autowired
-    @Qualifier('springSecurityService')
-    SpringSecurityService springSecurityService
+    @Qualifier('existenciaService')
+    ExistenciaService existenciaService
     */
 
-    abstract Producto save(Producto prod)
 
     Producto saveProducto(Producto producto) {
-        logEntity(producto)
-        if(producto.id == null) {
-            generarExistencias(producto)
+        if(producto.id) {
+            throw new RuntimeException("Producto ${producto.clave} ya generado con el id: ${producto.id}")
         }
-        return save(producto)
+        producto = producto.save failOnError: true, flush: true
+        existenciaService.generarExistencias(producto)
+        lxProductoService.publish(producto)
+        logEntity(producto)
+        return producto
     }
 
-    def generarExistencias(Producto producto) {
-        Integer ejercicio = Periodo.currentYear()
-        Integer mes = Periodo.currentMes()
-        List<Sucursal> sucurales = Sucursal.where{ almacen == true}.list()
-        sucurales.each {
-            Existencia existencia = Existencia.where { anio == ejercicio && mes == mes && producto == producto && sucursal == it }.find()
-            if(!existencia) {
-                existencia = new Existencia(anio: ejercicio, mes: mes, producto: producto, sucursal: it)
-                existencia.nacional = producto.nacional
-                existencia.kilos = producto.kilos
-                existencia.cantidad = 0.0
-                existencia.existenciaInicial = 0.0
-                existencia.save flush: true
-            }
-
-        }
+    Producto updateProducto(Producto producto) {
+        producto = producto.save failOnError: true, flush: true
+        lxProductoService.publish(producto)
+        logEntity(producto)
+        return producto
     }
 
 
