@@ -39,7 +39,8 @@ class RetornoMorrallaTask implements  AsientoBuilder{
             log.info("Morralla {}",morralla.comentario)
             def suc = Sucursal.findByNombre(morralla.sucursal).clave.padLeft(4,'0') //salida.sucursal.clave.padLeft(4,'0')
             String ctaCaja = "101-0001-${suc}-0000"
-            String ctaBanco = "102-0001-0002-0000"
+            //String ctaBanco = "102-0001-0002-0000"
+            String ctaBanco = "102-0001-${morralla.cuenta.subCuentaOperativa}-0000"
             Map row = [
                         asiento: "ABONO MORRALLA",
                         referencia: morralla.afavor,

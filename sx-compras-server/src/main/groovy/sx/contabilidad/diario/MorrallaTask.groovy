@@ -36,7 +36,8 @@ class MorrallaTask implements  AsientoBuilder{
         List<PagoDeMorralla> morrallas = PagoDeMorralla.where{fecha == poliza.fecha}list()
         morrallas.each{ morralla ->
             ajustarConcepto(poliza, morralla)
-            String ctaBanco = "102-0001-0002-0000"
+            // String ctaBanco = "102-0001-0002-0000"
+            String ctaBanco = "102-0001-${morralla.cuentaEgreso.subCuentaOperativa}-0000"
           
              Map rowMor = [
                             asiento: "CAJA MORRALLA ",

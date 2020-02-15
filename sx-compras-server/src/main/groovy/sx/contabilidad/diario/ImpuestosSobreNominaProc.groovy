@@ -172,7 +172,7 @@ class ImpuestosSobreNominaProc implements  ProcesadorDePoliza, AsientoBuilder{
             LEFT JOIN nomina_por_empleado_det D ON(E.ID=D.parent_id)
             LEFT JOIN concepto_de_nomina C ON(C.ID=D.concepto_id)
             WHERE mes= '@MES' AND N.EJERCICIO= @EJERCICIO  and c.tipo='PERCEPCION'  and n.tipo not in('PTU')
-            AND C.TIPO IS NOT NULL and  c.id not in (40,31,33,47,54)
+            AND C.TIPO IS NOT NULL and  c.id not in (40,31,33,47,54,58,59)
             GROUP by ubicacion_id
         """
         return query
