@@ -50,6 +50,18 @@ FROM traslado E
 JOIN envio_comision X ON(X.traslado_id=E.ID)
 JOIN CHOFER C ON(C.ID=E.chofer_ID)
 JOIN sucursal S ON(S.ID=E.sucursal_id)
+WHERE DATE(X.REGRESO) BETWEEN $P{FECHA_INI} AND $P{FECHA_FIN} AND X.chofer_id=$P{CHOFER} AND E.sucursal_id like $P{SUCURSAL}
+
+UNION
+
+SELECT E.id,X.regreso,X.documento_tipo as TIPO,X.documento_fecha as FECHA_DOCTO,x.documento_folio DOCUMENTO,E.DOCUMENTO AS DOCTO_EMB,E.FECHA ,E.fecha_inventario SALIDA,S.NOMBRE AS SUCURSAL
+,C.NOMBRE AS CHOFER,x.documento_tipo AS ORIGEN ,(SELECT s.nombre FROM sucursal s where E.sucursal_id=s.id) AS CLIENTE ,X.IMPORTE_COMISION AS TOTAL,"" AS PARCIAL 
+,X.IMPORTE_COMISION VALOR ,0 AS CANTIDAD,x.KILOS,0.0 PAQUETES,'NO' AS CE,'MAQUILA' AS VTA,0 AS FLETE
+,X.COMISION/100 COMISION,X.PRECIO_TONELADA,X.IMPORTE_COMISION,X.VALOR_CAJAS
+FROM transformacion E 
+JOIN envio_comision X ON(X.transformacion_id=E.ID)
+JOIN CHOFER C ON(C.ID=E.chofer_ID)
+JOIN sucursal S ON(S.ID=E.sucursal_id)
 WHERE DATE(X.REGRESO) BETWEEN $P{FECHA_INI} AND $P{FECHA_FIN} AND X.chofer_id=$P{CHOFER} AND E.sucursal_id like $P{SUCURSAL}]]></queryString>
 
 	<field name="id" class="java.lang.String"/>
