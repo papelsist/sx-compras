@@ -51,6 +51,12 @@ export class EmbarquesPageComponent implements OnInit {
       icon: 'account_box'
     },
     {
+      route: 'transformaciones',
+      title: 'Fletes de Maquila',
+      description: 'Asignación de choferes ',
+      icon: 'build'
+    },
+    {
       route: 'facturistas',
       title: 'Facturistas',
       descripcion: 'Proveedores de embarque',

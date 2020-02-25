@@ -77,10 +77,10 @@ dataSource:
 environments:
     development:
         dataSource:
-            dbCreate: none
+            dbCreate: update
             #url: jdbc:mysql://localhost/siipapx_oficinas?autoReconnect=true
-            # url: jdbc:mysql://10.10.1.229/siipapx_dev?autoReconnect=true
-            url: jdbc:mysql://10.10.1.229/siipapx?autoReconnect=true
+            url: jdbc:mysql://10.10.1.229/siipapx_dev?autoReconnect=true
+            # url: jdbc:mysql://10.10.1.229/siipapx?autoReconnect=true
             username: root
             password: sys
     test:

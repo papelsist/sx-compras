@@ -37,6 +37,10 @@ const routes: Routes = [
         component: fromContainers.EstadoDeCuentaComponent
       },
       {
+        path: 'transformaciones',
+        component: fromContainers.TransformacionesComponent
+      },
+      {
         path: 'facturistas',
         component: fromContainers.FacturistasComponent
       },

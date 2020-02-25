@@ -1,0 +1,8 @@
+import sx.inventario.Transformacion
+
+model {
+	Iterable<Transformacion> transformacionList
+}
+
+json tmpl.transformacion(transformacionList ?: [])
+

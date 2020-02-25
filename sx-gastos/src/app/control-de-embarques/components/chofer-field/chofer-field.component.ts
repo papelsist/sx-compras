@@ -49,7 +49,11 @@ export class ChoferFieldComponent implements OnInit, OnDestroy {
     });
   }
 
-  compareFn(c1: Chofer, c2: Chofer): boolean {
-    return c1 && c2 ? c1.id === c2.id : c1 === c2;
+  compareFn(c1: string, c2: Chofer): boolean {
+    if (c1 && c2) {
+      return c1 === c2.id;
+    } else {
+      return false;
+    }
   }
 }

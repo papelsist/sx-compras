@@ -1,0 +1,10 @@
+import sx.inventario.Transformacion
+
+model {
+	Transformacion transformacion
+}
+
+json g.render(transformacion, [excludes: ['chofer', 'sucursal'],resolveTemplate: false]) {
+	sucursal transformacion.sucursal.nombre
+	chofer g.render(transformacion.chofer)
+}

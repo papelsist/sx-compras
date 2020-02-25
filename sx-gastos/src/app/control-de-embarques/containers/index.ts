@@ -6,6 +6,7 @@ import { CargosComponent } from './cargos/cargos.component';
 import { EstadoDeCuentaComponent } from './estado-de-cuenta/estado-de-cuenta.component';
 import { FacturistasComponent } from './facturistas/facturistas.component';
 import { FacturistaComponent } from './facturista/facturista.component';
+import { TransformacionesComponent } from './transformaciones/transformaciones.component';
 
 export const containers: any[] = [
   EmbarquesPageComponent,
@@ -15,7 +16,8 @@ export const containers: any[] = [
   CargosComponent,
   EstadoDeCuentaComponent,
   FacturistasComponent,
-  FacturistaComponent
+  FacturistaComponent,
+  TransformacionesComponent
 ];
 
 export * from './embarques-page/embarques-page.component';
@@ -30,3 +32,5 @@ export * from './estado-de-cuenta/estado-de-cuenta.component';
 
 export * from './facturistas/facturistas.component';
 export * from './facturista/facturista.component';
+
+export * from './transformaciones/transformaciones.component';

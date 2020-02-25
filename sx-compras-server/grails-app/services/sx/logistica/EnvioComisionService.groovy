@@ -8,6 +8,7 @@ import sx.core.LogUser
 import sx.core.Venta
 import sx.core.VentaDet
 import sx.inventario.Traslado
+import sx.inventario.Transformacion
 import sx.utils.Periodo
 
 
@@ -55,6 +56,7 @@ class EnvioComisionService implements  LogUser{
         }
         log.info('Comisiones por venta generadas {}', res.size())
         res.addAll(generarPorTraslado(fechaInicial, fechaFinal))
+        res.addAll(generarPorTransformacion(fechaInicial, fechaFinal))
         return res
 
     }
@@ -95,6 +97,52 @@ class EnvioComisionService implements  LogUser{
 
             logEntity(ec)
             actualizarDocumento(ec)
+            ec.save failOnError: true, flush: true
+            res << ec
+        }
+        return res
+    }
+
+    List<EnvioComision> generarPorTransformacion(Date fechaInicial, Date fechaFinal) {
+
+        List<Transformacion> rows = Transformacion.findAll(
+                "from Transformacion t where date(t.fechaInventario) between ? and ? " +
+                        " and t.cancelado is null " +
+                        " and t.chofer is not null" +
+                        " and t.tipo = ?" +
+                        " and t not in (select x.transformacion from EnvioComision x)", [fechaInicial, fechaFinal, 'MAQ'])
+        log.info('TRS: {}', rows.size())
+
+        List<EnvioComision> res = []
+        rows.each { trs ->
+
+            def chofer = trs.chofer
+            def kilos = trs.partidas.sum 0.0, { 
+                if(it.cantidad > 0)
+                    return it.inventario.kilos
+                else return 0
+            }
+
+            EnvioComision ec = new EnvioComision(
+                chofer: chofer,
+                comision: chofer.comision ?: 0.0,
+                nombre: chofer.nombre,
+                transformacion: trs,
+                cliente: trs.sucursal.nombre,
+                valor: 0.0,
+                kilos: kilos,
+                regreso: trs.fechaInventario,
+                maniobra: 0.0,
+                sucursal: trs.sucursal.nombre,
+                precioTonelada: chofer.precioTonelada,
+                createUser: 'NA',
+                updateUser: 'NA',
+                comisionPorTonelada: true,
+                documentoFolio: trs.documento.toString(),
+                documentoFecha: trs.fecha,
+                documentoTipo: 'MAQ'
+            )
+            logEntity(ec)
             ec.save failOnError: true, flush: true
             res << ec
         }
@@ -194,7 +242,7 @@ class EnvioComisionService implements  LogUser{
         if(ec.traslado) {
             ec.documentoFolio = ec.traslado.documento.toString()
             ec.documentoFecha = ec.traslado.fecha
-            ec.documentoTipo = 'TRS'
+            ec.documentoTipo = 'TPS'
         }
     }
 

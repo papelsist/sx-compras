@@ -286,6 +286,8 @@ class UrlMappings {
         // TEMPORALMENTE EN ESTE CONTROLADOR
         "/api/inventario/ventasDiarias"(controller: 'inventario', action: 'ventasDiarias', method: 'GET')
 
+        // Transformaciones de inventario 
+        "/api/transformaciones"(resources: 'transformacion', excludes:['create', 'save', 'delete', 'edit','patch'])
 
         // Rembolsos
         "/api/rembolsos"(resources: 'rembolso', excludes:['create', 'edit','patch']) {

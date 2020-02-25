@@ -7,3 +7,4 @@ export * from './envio-comision';
 export * from './facturista-prestamo';
 export * from './facturista-cargo';
 export * from './facturista-estado-de-cuenta';
+export * from './transformacion';

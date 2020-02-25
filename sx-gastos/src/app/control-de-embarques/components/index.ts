@@ -21,6 +21,8 @@ import { FacturistasTableComponent } from './facturistas-table/facturistas-table
 import { FacturistaFormComponent } from './facturista-form/facturista-form.component';
 import { RelacionDePagosComponent } from './comisiones-report/relacion-de-pagos.component';
 import { SolicitudDeFacturacionComponent } from './comisiones-report/solicitud-de-facturacion.component';
+import { TransformacionesTableComponent } from './transformaciones-table/transformaciones-table.component';
+import { TransformacionFormComponent } from './transformacion-form/transformacion-form.component';
 
 export const components: any[] = [
   EnviosFilterLabelComponent,
@@ -52,7 +54,10 @@ export const components: any[] = [
   SelectorDeFacturistaComponent,
 
   // Estado de cuenta
-  EstadoDeCuentaTableComponent
+  EstadoDeCuentaTableComponent,
+
+  TransformacionesTableComponent,
+  TransformacionFormComponent
 ];
 
 export const entryComponents = [
@@ -66,7 +71,8 @@ export const entryComponents = [
   SolicitudDeFacturacionComponent,
   ComisionesPorFacturistaDialogComponent,
   SelectorDeFacturistaComponent,
-  AnalisisDeEmbarquesDialogComponent
+  AnalisisDeEmbarquesDialogComponent,
+  TransformacionFormComponent
 ];
 
 export * from './envios-filter/envios-filter-label.component';
@@ -100,3 +106,6 @@ export * from './comisiones-report/solicitud-de-facturacion.component';
 export * from './selector-de-facturista/selector-de-facturista.component';
 
 export * from './estado-de-cuenta-table/estado-de-cuenta-table.component';
+
+export * from './transformaciones-table/transformaciones-table.component';
+export * from './transformacion-form/transformacion-form.component';

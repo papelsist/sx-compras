@@ -5,6 +5,7 @@ import grails.compiler.GrailsCompileStatic
 import groovy.transform.EqualsAndHashCode
 
 import sx.inventario.Traslado
+import sx.inventario.Transformacion
 
 
 @GrailsCompileStatic
@@ -55,6 +56,8 @@ class EnvioComision {
 
     String empresa
 
+    Transformacion transformacion
+
     Date dateCreated
     Date lastUpdated
 
@@ -73,6 +76,7 @@ class EnvioComision {
         documentoFecha nullable: true
         documentoFecha nullable: true
         empresa nullable: true, maxSize: 50
+        transformacion nullable: true
 
     }
 

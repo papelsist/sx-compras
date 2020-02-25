@@ -1,37 +1,43 @@
 package sx.inventario
 
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
+
+import grails.compiler.GrailsCompileStatic
+
 import sx.core.Autorizacion
 import sx.core.Sucursal
 import sx.core.Venta
+import sx.logistica.Chofer
 
+@GrailsCompileStatic
+@ToString(excludes =  'id, partidas, venta, chofer', includeNames = true, includePackage = false)
+@EqualsAndHashCode(includes=['id', 'sucursal', 'documento'])
 class Transformacion {
 
-    String	id
+    String id
 
-    Sucursal	sucursal
+    Sucursal sucursal
 
-    Autorizacion	autorizacion
+    Autorizacion autorizacion
 
-    String	tipo
+    String tipo
 
-    Long	documento	 = 0
+    Long documento
 
-    Date	fecha
+    Date fecha
 
-    Venta	venta
+    Venta venta
 
-    Boolean	porInventario	 = false
+    Boolean	porInventario
 
     String	comentario
 
-    List partidas =[]
+    List partidas = []
 
     Date dateCreated
-
     Date lastUpdated
-
     String createUser
-
     String updateUser
 
     String sw2
@@ -39,6 +45,8 @@ class Transformacion {
     Date fechaInventario
 
     Date cancelado
+
+    Chofer chofer
 
     static  hasMany = [partidas:TransformacionDet]
 
@@ -56,6 +64,7 @@ class Transformacion {
         porInventario nullable: true
         fechaInventario nullable: true
         cancelado nullable: true
+        chofer nullable: true
 
     }
 
