@@ -81,7 +81,7 @@ if (Environment.isDevelopmentMode() && targetDir != null) {
     logger("sx.audit", DEBUG, ['STDOUT'], false)
     logger("sx.reports", DEBUG, ['STDOUT'], false)
     logger("sx.tasks", DEBUG, ['STDOUT', 'TASKJOBS'], false)
-    logger("sx.cloud", DEBUG, ['STDOUT'], false)
+    logger("sx.cloud", INFO, ['STDOUT'], false)
 } else {
     root(ERROR, ['STDOUT'])
     logger("sx.tasks", INFO, ['TASKJOBS'], false)
