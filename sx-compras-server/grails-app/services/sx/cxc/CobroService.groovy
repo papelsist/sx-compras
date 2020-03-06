@@ -16,6 +16,12 @@ class CobroService implements  LogUser{
         if(cobro.cheque) {
             cobro.cheque.nombre = cobro.cliente.nombre
         }
+        if(cobro.cheque) {
+            cobro.referencia = cobro.cheque.numero
+        }
+        if(cobro.tarjeta) {
+            cobro.referencia = cobro.tarjeta.validacion.toString()
+        }
         logEntity(cobro)
         setComisiones(cobro)
         cobro.save failOnError: true, fluhs: true

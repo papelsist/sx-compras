@@ -148,6 +148,7 @@ class RembolsoController extends RestfulController<Rembolso> {
                 return em2.id == em1.id
             }.id()
         }
+        
        
         
         respond q.list(params)
