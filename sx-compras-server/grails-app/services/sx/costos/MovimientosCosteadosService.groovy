@@ -71,9 +71,9 @@ class MovimientosCosteadosService {
                   union
                 SELECT 'MAQUILA PROVEEDOR' ASIENTO,'MAQ' TIPO,'02 COMPRAS' AS grupo,s.sw2,S.clave SUC,S.NOMBRE SUCURSAL,P.CLAVE,P.DESCRIPCION 
                 ,0 as kilos,0 as saldo,   ( (I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end) * i.gasto) ) as COSTO
-                ,(select x.nombre from transformacion_det d join analisis_de_transformacion_det a on(d.id=a.trs_id) join analisis_de_transformacion t on(a.analisis_id=t.id) join proveedor x on(t.proveedor_id=x.id) where d.inventario_id=i.id  ) PROVEEDOR                
+                ,(select max(x.nombre) from transformacion_det d join analisis_de_transformacion_det a on(d.id=a.trs_id) join analisis_de_transformacion t on(a.analisis_id=t.id) join proveedor x on(t.proveedor_id=x.id) where d.inventario_id=i.id  ) PROVEEDOR                
                 ,concat('115-0011-'
-                ,(select o.cuenta_operativa from transformacion_det d join analisis_de_transformacion_det a on(d.id=a.trs_id) join analisis_de_transformacion t on(a.analisis_id=t.id) join proveedor x on(t.proveedor_id=x.id) join cuenta_operativa_proveedor o on(o.proveedor_id=x.id) where d.inventario_id=i.id  )
+                ,(select max(o.cuenta_operativa) from transformacion_det d join analisis_de_transformacion_det a on(d.id=a.trs_id) join analisis_de_transformacion t on(a.analisis_id=t.id) join proveedor x on(t.proveedor_id=x.id) join cuenta_operativa_proveedor o on(o.proveedor_id=x.id) where d.inventario_id=i.id  )
                 ,(CASE WHEN S.CLAVE<10 THEN '-000' ELSE '-00' END),S.CLAVE
                 ) CTA_CONTABLE
                 from inventario I  join producto p on(p.id=i.producto_id) JOIN sucursal s on(i.sucursal_id=s.id)
