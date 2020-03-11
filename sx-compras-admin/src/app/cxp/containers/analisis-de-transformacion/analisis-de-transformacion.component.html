@@ -33,6 +33,7 @@
     <sx-analisis-trs-partidas
       [partidas]="analisis.partidas"
       (selectionChange)="onSelectionChange($event)"
+      (update)="onPartidaChange(analisis, $event)"
     ></sx-analisis-trs-partidas>
   </div>
   <mat-card-actions>

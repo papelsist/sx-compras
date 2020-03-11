@@ -6,7 +6,11 @@
     (reload)="reload()"
     (create)="onCreate()"
     (download)="grid.exportData()"
-  ></sx-standard-header>
+  >
+    <button mat-menu-item (click)="onConsolidar(periodo)" class="actions">
+      Consolidar costos
+    </button>
+  </sx-standard-header>
   <mat-divider></mat-divider>
   <ng-template
     tdLoading

@@ -64,7 +64,12 @@ export class AnalisisDeTrsEffects {
     ofType<fromActions.CreateAnalisisDeTransformacionSuccess>(
       AnalisisDeTrsActionTypes.CreateAnalisisDeTransformacionSuccess
     ),
-    map( action => new fromRoot.Go({path: ['cxp/analisisDeTrs', action.payload.analisis.id]}))
+    map(
+      action =>
+        new fromRoot.Go({
+          path: ['cxp/analisisDeTrs', action.payload.analisis.id]
+        })
+    )
   );
 
   @Effect()
@@ -114,7 +119,28 @@ export class AnalisisDeTrsEffects {
     ofType<fromActions.DeleteAnalisisDeTransformacionSuccess>(
       AnalisisDeTrsActionTypes.DeleteAnalisisDeTransformacionSuccess
     ),
-    map( () => new fromRoot.Go({path: ['cxp/analisisDeTrs']}))
+    map(() => new fromRoot.Go({ path: ['cxp/analisisDeTrs'] }))
+  );
+
+  @Effect()
+  consolidar$ = this.actions$.pipe(
+    ofType<fromActions.ConsolidarCostos>(
+      AnalisisDeTrsActionTypes.ConsolidarCostos
+    ),
+    map(action => action.payload.periodo),
+    switchMap(periodo => {
+      return this.service.consolidar(periodo).pipe(
+        map(
+          response =>
+            new fromActions.ConsolidarCostosSuccess({
+              response
+            })
+        ),
+        catchError(response =>
+          of(new fromActions.ConsolidarCostosFail({ response }))
+        )
+      );
+    })
   );
 
   @Effect()
@@ -124,11 +150,13 @@ export class AnalisisDeTrsEffects {
       | fromActions.CreateAnalisisDeTransformacionFail
       | fromActions.DeleteAnalisisDeTransformacionFail
       | fromActions.UpdateAnalisisDeTransformacionFail
+      | fromActions.ConsolidarCostosFail
     >(
       AnalisisDeTrsActionTypes.LoadAnalisisDeTransformacionesFail,
       AnalisisDeTrsActionTypes.CreateAnalisisDeTransformacionFail,
       AnalisisDeTrsActionTypes.UpdateAnalisisDeTransformacionFail,
-      AnalisisDeTrsActionTypes.DeleteAnalisisDeTransformacionFail
+      AnalisisDeTrsActionTypes.DeleteAnalisisDeTransformacionFail,
+      AnalisisDeTrsActionTypes.ConsolidarCostosFail
     ),
     map(action => action.payload.response),
     map(response => new fromRoot.GlobalHttpError({ response }))

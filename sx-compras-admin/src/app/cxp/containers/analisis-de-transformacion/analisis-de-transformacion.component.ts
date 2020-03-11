@@ -98,7 +98,7 @@ export class AnalisisDeTransformacionComponent implements OnInit {
     this.dialog
       .open(SelectorDeTrsComponent, {
         data: { trs },
-        width: '850px'
+        width: '80%'
       })
       .afterClosed()
       .subscribe((res: any[]) => {
@@ -182,5 +182,20 @@ export class AnalisisDeTransformacionComponent implements OnInit {
           }
         });
     }
+  }
+
+  onPartidaChange(
+    analisis: AnalisisDeTransformacion,
+    partida: Update<AnalisisDeTransformacionDet>
+  ) {
+    const partidas = analisis.partidas;
+    partidas.forEach(item => {
+      if (item.id === partida.id) {
+        item.cantidad = partida.changes.cantidad;
+      }
+    });
+    const update = { id: analisis.id, changes: { partidas } };
+    this.onUpdate(update);
+    // console.log('Partida changes: ', partida);
   }
 }

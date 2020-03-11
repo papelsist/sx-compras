@@ -12,9 +12,10 @@ import sx.core.Proveedor
 import sx.core.Producto
 import sx.core.Sucursal
 import sx.utils.MonedaUtils
+import sx.utils.Periodo
 
 @Transactional
-@GrailsCompileStatic
+// @GrailsCompileStatic
 @Slf4j
 class AnalisisDeTransformacionService implements LogUser, FolioLog {
 
@@ -45,6 +46,10 @@ class AnalisisDeTransformacionService implements LogUser, FolioLog {
     		det.descripcion = producto.descripcion
     		det.unidad = producto.unidad
         	actualizarKilos(det)
+            if (det.cantidad > det.trs.pendienteDeAnalizar) {
+                det.cantidad = det.trs.pendienteDeAnalizar
+                // throw new RuntimeException("La cantidad ${det.cantidad} excede lo pendiente del TRS ${det.trs.pendienteDeAnalizar}")
+            }
     	}
     }
 
@@ -81,5 +86,45 @@ class AnalisisDeTransformacionService implements LogUser, FolioLog {
         cxp.importePorPagar = cxp.total
         cxp.save flush: true
     }
+
+     @CompileDynamic
+     def consolidar(Periodo periodo) {
+        log.info('Consolidando costos de transformaciones Per: {}', periodo)
+        def analisis = AnalisisDeTransformacionDet
+            .executeQuery("from AnalisisDeTransformacionDet a where a.analisis.fecha between ? and ? ", 
+            [periodo.fechaInicial, periodo.fechaFinal])
+        def grupos =  analisis.groupBy{it.trs.id}
+        grupos.each{ key, value ->
+            if(value.size() > 1 ) {
+                def analisis_A = value[0]
+                log.info('TRS: {}', key )
+                value.each { a ->
+                    log.info('Analisis {} Cantidad: {} Costo: {} Importe:{}', a.analisis.id, a.cantidad, a.costo, a.importe)
+                }
+                def suma = value.sum 0.0, {r -> r.importe}
+                def cantidad = value.sum 0.0, {r-> r.cantidad}
+                def factor = analisis_A.unidad == 'MIL' ? 1000 : 1
+                def cc = cantidad / factor
+                def costo = MonedaUtils.round(suma / cc )
+                log.info('Importe total: {} Cantidad: {} Costo: {}', suma, cc, costo)
+
+                def trs = analisis_A.trs
+                trs.costo = costo
+                trs.save flush: true
+
+                def inventario = trs.inventario
+                inventario.gasto = costo
+                inventario.save flush: true
+
+                value.each { det ->
+                    def an = det.analisis
+                    an.comentario = "${an.comentario} (Costo consolidado)"
+                }
+                
+            }
+            
+        }
+        
+     }
     
 }

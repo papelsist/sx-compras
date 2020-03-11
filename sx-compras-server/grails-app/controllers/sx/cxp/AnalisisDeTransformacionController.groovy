@@ -56,6 +56,7 @@ class AnalisisDeTransformacionController extends RestfulController<AnalisisDeTra
         respond analisis, view: 'show'
     }
 
+
     def pendientesDeAnalisis() {
         String id = params.proveedorId
         List<CuentaPorPagar> res = CuentaPorPagar
@@ -67,6 +68,7 @@ class AnalisisDeTransformacionController extends RestfulController<AnalisisDeTra
         respond res
     }
 
+    @CompileDynamic
     def pendientes() {
         // log.info('Localizando TRS pendientes: {}', params)
         def res = TransformacionDet.findAll("""
@@ -78,14 +80,16 @@ class AnalisisDeTransformacionController extends RestfulController<AnalisisDeTra
                 d.producto.clave,
                 d.producto.descripcion,
                 d.producto.unidad,
-                d.cantidad
+                d.cantidad,
+                d.analizado,
+                d.pendienteDeAnalizar
                 )
             from TransformacionDet d 
             join d.transformacion p 
             where p.tipo = ? 
-              and d.cantidad > 0
-              and d not in(select x.trs from AnalisisDeTransformacionDet x)
+              and d.pendienteDeAnalizar > 0
             """, ['MAQ'])
+        // log.debug('Pendientes: {}', res)
         respond res
     }
 
@@ -116,14 +120,22 @@ class AnalisisDeTransformacionController extends RestfulController<AnalisisDeTra
 
     }
 
+    @CompileDynamic
+    def consolidar() {
+        log.info('Consolidando costos: {}', params)
+        analisisDeTransformacionService.consolidar(params.periodo)
+        respond([message: 'Costos consolidados'], status: 200) 
+    }
+
     def handleException(Exception e) {
         String message = ExceptionUtils.getRootCauseMessage(e)
         log.error(message, ExceptionUtils.getRootCause(e))
+        log.error(message, e)
         respond([message: message], status: 500)
     }
 }
 
-@Canonical
+@Canonical(excludes = ['costo', 'importe'])
 class TrsDetalleDto {
     String trs
     String sucursal
@@ -133,6 +145,8 @@ class TrsDetalleDto {
     String descripcion
     String unidad
     BigDecimal cantidad = 0.0
+    BigDecimal analizado = 0.0
+    BigDecimal pendienteDeAnalizar = 0.0
     BigDecimal costo = 0.0
     BigDecimal importe = 0.0
 }

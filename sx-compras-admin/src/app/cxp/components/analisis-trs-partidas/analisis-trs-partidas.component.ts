@@ -19,12 +19,17 @@ import {
   GridReadyEvent,
   FilterChangedEvent,
   RowDoubleClickedEvent,
-  RowSelectedEvent
+  RowSelectedEvent,
+  CellEditingStartedEvent
 } from 'ag-grid-community';
 import { spAgGridText } from 'app/_shared/components/lx-table/table-support';
 
 import { AnalisisDeTransformacionDet } from '../../model';
 import { SxTableService } from 'app/_shared/components/lx-table/sx-table.service';
+import { Update } from '@ngrx/entity';
+
+import { NumberFormatterComponent } from 'app/_shared/components/number-formatter/number-formatter.component';
+import { NumericCellEditorComponent } from 'app/_shared/components/number-cell-editor/number-cell-editor';
 
 @Component({
   selector: 'sx-analisis-trs-partidas',
@@ -47,6 +52,7 @@ import { SxTableService } from 'app/_shared/components/lx-table/sx-table.service
       [enterMovesDownAfterEdit]="true"
       rowSelection="multiple"
       [rowMultiSelectWithClick]="true"
+      [frameworkComponents]="frameworkComponents"
     >
     </ag-grid-angular>
   `
@@ -60,9 +66,13 @@ export class AnalisisTrsPartidasComponent implements OnInit, OnChanges {
 
   @Output() select = new EventEmitter();
   @Output() selectionChange = new EventEmitter<any[]>();
-  @Output() update = new EventEmitter<AnalisisDeTransformacionDet>();
+  @Output() update = new EventEmitter<Update<AnalisisDeTransformacionDet>>();
 
   localeText: any;
+  frameworkComponents = {
+    numberFormatterComponent: NumberFormatterComponent,
+    numericEditorComponent: NumericCellEditorComponent
+  };
 
   constructor(
     private cd: ChangeDetectorRef,
@@ -97,8 +107,9 @@ export class AnalisisTrsPartidasComponent implements OnInit, OnChanges {
     };
     this.localeText = spAgGridText;
     this.gridOptions.getRowStyle = this.getRowStyles.bind(this);
-    this.gridOptions.onCellEditingStopped = params => {
-      this.update.emit(params.data);
+    this.gridOptions.onCellEditingStopped = event => {
+      if (event.column.getColId() === 'cantidad') {
+      }
     };
   }
 
@@ -191,7 +202,18 @@ export class AnalisisTrsPartidasComponent implements OnInit, OnChanges {
       {
         headerName: 'Cantidad',
         field: 'cantidad',
-        width: 100
+        width: 100,
+        editable: true,
+        cellEditor: 'numericEditorComponent',
+        onCellValueChanged: params => {
+          if (params.newValue) {
+            const change: Update<AnalisisDeTransformacionDet> = {
+              id: params.data.id,
+              changes: { cantidad: params.newValue }
+            };
+            this.update.emit(change);
+          }
+        }
       },
       {
         headerName: 'Kilos',
@@ -202,7 +224,8 @@ export class AnalisisTrsPartidasComponent implements OnInit, OnChanges {
         headerName: 'Importe',
         field: 'importe',
         width: 100,
-        valueFormatter: params => this.tableService.formatCurrency(params.value)
+        cellRenderer: 'numberFormatterComponent'
+        // valueFormatter: params => this.tableService.formatCurrency(params.value)
       },
       {
         headerName: 'Costo U',
