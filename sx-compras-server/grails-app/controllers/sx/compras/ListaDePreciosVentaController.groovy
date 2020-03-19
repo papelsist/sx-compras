@@ -52,6 +52,7 @@ class ListaDePreciosVentaController extends RestfulController<ListaDePreciosVent
     protected List<ListaDePreciosVenta> listAllResources(Map params) {
         params.sort = 'lastUpdated'
         params.order = 'desc'
+        params.max = 1000
         log.info('List {}', params)
         Periodo periodo = params.periodo
         def query = ListaDePreciosVenta.where{fecha >= periodo.fechaInicial && fecha <= periodo.fechaFinal}
