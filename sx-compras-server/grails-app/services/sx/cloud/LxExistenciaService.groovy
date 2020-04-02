@@ -46,6 +46,7 @@ class LxExistenciaService {
             from Existencia e 
             where e.anio = ? 
               and e.mes = ?
+              and e.producto.activo = true
             order by e.clave
             """, [ejercicio, mes])
         def updated = 0
@@ -53,6 +54,9 @@ class LxExistenciaService {
             def map = [
                 clave:p.clave, 
                 descripcion: p.descripcion, 
+                linea: p.linea.linea,
+                marca: p.marca.marca,
+                clase: p.clase.clase,
                 ejercicio: ejercicio, 
                 mes: mes]
             log.info('Prod: {}', map)
@@ -75,11 +79,16 @@ class LxExistenciaService {
                 where e.anio = ? 
                 and e.mes = ? 
                 and e.sucursal.nombre = ?
+                and e.producto.activo = true
                 order by e.clave
             """, [ejercicio, mes, sucursal])
+        def updated = 0
         rows.each { exis ->
             updateExis(exis)
+            log.info('{}', exis.clave)
+            updated++
         }
+        log.info('Update: {}', updated)
     }
 
     def updateExis(Existencia exis) {
