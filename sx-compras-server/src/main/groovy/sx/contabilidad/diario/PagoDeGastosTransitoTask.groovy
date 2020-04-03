@@ -114,21 +114,21 @@ class PagoDeGastosTransitoTask implements  AsientoBuilder{
 
                 CuentaPorPagar cxp = it.cxp
                 String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} F:${cxp.serie?:''} ${cxp.folio}" +
-                        " (${poliza.fecha.format('dd/MM/yyyy')}) ${egreso.sucursal?: 'OFICINAS'} " +
-                        " ${cxp.tipoDeCambio > 1.0 ? 'T.C:' + cxp.tipoDeCambio: ''}"
-                    if(cxp.impuestoRetenidoIva > 0.0) {
-                        BigDecimal imp = cxp.impuestoRetenidoIva
-                        poliza.addToPartidas(mapRow('118-0003-0000-0000', desc, row, imp))
-                        poliza.addToPartidas(mapRow('119-0003-0000-0000', desc, row, 0.0, imp))
+                    " (${poliza.fecha.format('dd/MM/yyyy')}) ${egreso.sucursal?: 'OFICINAS'} " +
+                    " ${cxp.tipoDeCambio > 1.0 ? 'T.C:' + cxp.tipoDeCambio: ''}"
+                if(cxp.impuestoRetenidoIva > 0.0) {
+                    BigDecimal imp = cxp.impuestoRetenidoIva
+                    poliza.addToPartidas(mapRow('118-0003-0000-0000', desc, row, imp))
+                    poliza.addToPartidas(mapRow('119-0003-0000-0000', desc, row, 0.0, imp))
 
-                        poliza.addToPartidas(mapRow('216-0001-0000-0000', desc, row, imp))
-                        poliza.addToPartidas(mapRow('213-0011-0000-0000', desc, row, 0.0, imp))
-                    }
-                    if(cxp.impuestoRetenidoIsr > 0.0) {
-                        BigDecimal imp = cxp.impuestoRetenidoIsr
-                        poliza.addToPartidas(mapRow('216-0002-0000-0000', desc, row, imp))
-                        poliza.addToPartidas(mapRow('213-0010-0000-0000', desc, row, 0.0, imp))
-                    }
+                    poliza.addToPartidas(mapRow('216-0001-0000-0000', desc, row, imp))
+                    poliza.addToPartidas(mapRow('213-0011-0000-0000', desc, row, 0.0, imp))
+                }
+                if(cxp.impuestoRetenidoIsr > 0.0) {
+                    BigDecimal imp = cxp.impuestoRetenidoIsr
+                    poliza.addToPartidas(mapRow('216-0002-0000-0000', desc, row, imp))
+                    poliza.addToPartidas(mapRow('213-0010-0000-0000', desc, row, 0.0, imp))
+                }
             }
         }
     }

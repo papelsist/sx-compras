@@ -52,6 +52,7 @@ class VentasTask implements  AsientoBuilder {
     PolizaDet mapRow(String cuentaClave, String descripcion, Map row, def debe = 0.0, def haber = 0.0) {
 
 
+       // println row
 
         CuentaContable cuenta = buscarCuenta(cuentaClave)
 

@@ -27,6 +27,8 @@ class InventariosProcGeneralesTask implements  AsientoBuilder {
         String sql = getSelect()
                 .replaceAll("@FECHA", toSqlDate(poliza.fecha))
 
+        // println sql
+
         List rows = getAllRows(sql, [])
         rows.each { row ->
             log.info('Procesando: {}',row)
@@ -95,7 +97,7 @@ class InventariosProcGeneralesTask implements  AsientoBuilder {
     PolizaDet mapRow(Poliza poliza, String cuentaClave, String descripcion, Map row, def debe = 0.0, def haber = 0.0) {
 
         CuentaContable cuenta = buscarCuenta(cuentaClave)
-        String ejercicio = poliza.fecha.format('yyyy')
+         String ejercicio = poliza.fecha.format('yyyy')
         String mes = poliza.fecha.format('MM')
         String ref = "${row.asiento} (${ejercicio}-${mes})"
         descripcion = "${row.asiento}  (${ejercicio}-${mes}) ${row.sucursal}"
@@ -143,11 +145,11 @@ class InventariosProcGeneralesTask implements  AsientoBuilder {
         	union
         SELECT 'MAQUILA PROVEEDOR' ASIENTO,'MAQ' TIPO,'02 COMPRAS' AS grupo,s.sw2,S.clave SUC,S.NOMBRE SUCURSAL,P.CLAVE,P.DESCRIPCION 
         ,0 as kilos,0 as saldo,   SUM( (I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end) * i.gasto) ) as COSTO
-        ,(select max(x.nombre) from transformacion_det d join analisis_de_transformacion_det a on(d.id=a.trs_id) join analisis_de_transformacion t on(a.analisis_id=t.id) join proveedor x on(t.proveedor_id=x.id) where d.inventario_id=i.id  ) PROVEEDOR                
-        ,concat('1158-0011-'
+        ,ifnull((select max(x.nombre) from transformacion_det d join analisis_de_transformacion_det a on(d.id=a.trs_id) join analisis_de_transformacion t on(a.analisis_id=t.id) join proveedor x on(t.proveedor_id=x.id) where d.inventario_id=i.id  ),'TRANSITO') PROVEEDOR                
+        ,ifnull(concat('115-0011-'
         ,(select max(o.cuenta_operativa) from transformacion_det d join analisis_de_transformacion_det a on(d.id=a.trs_id) join analisis_de_transformacion t on(a.analisis_id=t.id) join proveedor x on(t.proveedor_id=x.id) join cuenta_operativa_proveedor o on(o.proveedor_id=x.id) where d.inventario_id=i.id  )
         ,(CASE WHEN S.CLAVE<10 THEN '-000' ELSE '-00' END),S.CLAVE
-        ) CTA_CONTABLE
+        ),'115-0015-0000-0000') CTA_CONTABLE
         from inventario I  join producto p on(p.id=i.producto_id) JOIN sucursal s on(i.sucursal_id=s.id)
         where p.inventariable is true and  YEAR(I.FECHA)=YEAR('@FECHA') AND MONTH(I.FECHA)=MONTH('@FECHA') AND I.CLAVE LIKE '%'
         AND I.TIPO IN('MAQ') AND I.GASTO>0 GROUP BY 6,7,12,13
