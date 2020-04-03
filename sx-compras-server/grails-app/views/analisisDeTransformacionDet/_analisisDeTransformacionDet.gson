@@ -4,4 +4,6 @@ model {
 	AnalisisDeTransformacionDet analisisDeTransformacionDet
 }
 
-json g.render(analisisDeTransformacionDet, [resolveTemplate: false])
+json g.render(analisisDeTransformacionDet, [resolveTemplate: false]) {
+	pendiente analisisDeTransformacionDet.trs.pendienteDeAnalizar
+}

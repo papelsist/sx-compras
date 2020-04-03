@@ -22,6 +22,7 @@ class ListaDePreciosProveedorController extends RestfulController<ListaDePrecios
 
     @Override
     protected List<ListaDePreciosProveedor> listAllResources(Map params) {
+        params.max = 1000
         if(params.proveedorId)
             return ListaDePreciosProveedor.where{ proveedor.id == params.proveedorId}.list()
         return super.listAllResources(params)

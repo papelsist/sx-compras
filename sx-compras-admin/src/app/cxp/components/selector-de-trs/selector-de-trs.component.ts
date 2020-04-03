@@ -34,9 +34,7 @@ export class SelectorDeTrsComponent implements OnInit {
     this.buildGridOptions();
   }
 
-  ngOnInit() {
-    // console.log('DECS: ', this.trs);
-  }
+  ngOnInit() {}
 
   buildGridOptions() {
     this.gridOptions = <GridOptions>{};
@@ -129,6 +127,16 @@ export class SelectorDeTrsComponent implements OnInit {
         headerName: 'cantidad',
         field: 'cantidad',
         maxWidth: 100
+      },
+      {
+        headerName: 'analizado',
+        field: 'analizado',
+        maxWidth: 100
+      },
+      {
+        headerName: 'pendiente',
+        field: 'pendienteDeAnalizar',
+        width: 100
       }
     ];
   }

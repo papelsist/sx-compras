@@ -459,13 +459,12 @@ class UrlMappings {
         "/api/analisisDecs"(resources: 'analisisDeDevolucion', excludes:['create', 'edit','patch'])
 
         // Analisis de transformaciones
-        "/api/cxp/analisisDeTransformacion"(resources: 'analisisDeTransformacion', excludes:['create', 'edit']){
-            // "/partidas"(resources: 'analisisDeTransformacionDet', excludes:['create', 'edit'])
-        }
+        "/api/cxp/analisisDeTransformacion"(resources: 'analisisDeTransformacion', excludes:['create', 'edit'])
         "/api/cxp/analisisDeTransformacion/pendientesDeAnalisis/$proveedorId"(controller: 'analisisDeTransformacion', action: 'pendientesDeAnalisis', method: 'GET')
         "/api/cxp/analisisDeTransformacion/pendientes"(controller: 'analisisDeTransformacion', action: 'pendientes')
         "/api/cxp/analisisDeTransformacion/print/$id"(controller: 'analisisDeTransformacion', action: 'print', method: 'GET')
         "/api/cxp/analisisDeTransformacion/reporteDeAnalisis"(controller: 'analisisDeTransformacion', action: 'reporteDeAnalisis')
+        "/api/cxp/analisisDeTransformacion/consolidar"(controller: 'analisisDeTransformacion', action: 'consolidar', method: 'GET')
 
         // Ajuste anual por inflacion
         "/api/ajusteAnualPorInflacion"(resources: 'ajusteAnualPorInflacion', excludes: ['create', 'edit', 'patch'])

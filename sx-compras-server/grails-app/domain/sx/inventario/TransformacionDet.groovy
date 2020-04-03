@@ -20,9 +20,9 @@ class TransformacionDet {
 
     TransformacionDet destino
 
-    BigDecimal cantidad = 0
+    BigDecimal cantidad
 
-    Long cortes = 0
+    Long cortes
 
     String cortesInstruccion
 
@@ -31,6 +31,8 @@ class TransformacionDet {
     String sw2
 
     BigDecimal costo
+    BigDecimal analizado
+    BigDecimal pendienteDeAnalizar
 
     Date dateCreated
     Date lastUpdated
@@ -48,6 +50,9 @@ class TransformacionDet {
         lastUpdated nullable: true
         inventario nullable: true
         costo nullable: true
+        analizado formula:'(select COALESCE(sum(x.cantidad),0) from analisis_de_transformacion_det x where x.trs_id=id)'
+        pendienteDeAnalizar formula:'cantidad - (select COALESCE(sum(x.cantidad),0) from analisis_de_transformacion_det x where x.trs_id=id)'
+
     }
 
 

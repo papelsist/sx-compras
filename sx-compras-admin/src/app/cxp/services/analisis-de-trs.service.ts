@@ -82,4 +82,14 @@ export class AnalisisDeTrsService {
       .put<AnalisisDeTransformacion>(url, { cerrada: new Date().toISOString() })
       .pipe(catchError((error: any) => throwError(error)));
   }
+
+  consolidar(periodo: Periodo): Observable<any> {
+    const url = `${this.apiUrl}/consolidar`;
+    const params = new HttpParams()
+      .set('fechaInicial', periodo.fechaInicial.toISOString())
+      .set('fechaFinal', periodo.fechaFinal.toISOString());
+    return this.http
+      .get<any>(url, { params })
+      .pipe(catchError((error: any) => throwError(error)));
+  }
 }

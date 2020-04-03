@@ -1,0 +1,10 @@
+import sx.inventario.TransformacionDet
+
+model {
+	TransformacionDet transformacionDet
+}
+
+json g.render(transformacionDet, [excludes: ['transformacion'],resolveTemplate: false]) {
+	analizado transformacionDet.analizado
+	pendiente transformacionDet.pendienteDeAnalizar
+}

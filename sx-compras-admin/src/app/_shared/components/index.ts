@@ -25,6 +25,8 @@ import { LxTableComponent } from './lx-table/lx-table.component';
 import { StandardHeaderComponent } from './standard-header/standard-header.component';
 import { StandardFooterComponent } from './standard-footer/standard-footer.component';
 import { PrintCellRendererComponent } from './lx-table/print-cell-renderer.component';
+import { NumberFormatterComponent } from './number-formatter/number-formatter.component';
+import { NumericCellEditorComponent } from './number-cell-editor/number-cell-editor';
 
 export const components = [
   DireccionComponent,
@@ -52,7 +54,9 @@ export const components = [
   LxTableComponent,
   StandardHeaderComponent,
   StandardFooterComponent,
-  PrintCellRendererComponent
+  PrintCellRendererComponent,
+  NumberFormatterComponent,
+  NumericCellEditorComponent
 ];
 
 export const entyComponents: any[] = [
@@ -86,3 +90,6 @@ export * from './lx-table/lx-table.component';
 export * from './standard-header/standard-header.component';
 export * from './standard-footer/standard-footer.component';
 export * from './lx-table/print-cell-renderer.component';
+
+export * from './number-formatter/number-formatter.component';
+export * from './number-cell-editor/number-cell-editor';

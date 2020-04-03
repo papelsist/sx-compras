@@ -150,6 +150,13 @@ export class AnalisisTrsTableComponent implements OnInit, OnChanges {
   private buildColsDef(): ColDef[] {
     return [
       {
+        headerName: 'Id',
+        field: 'id',
+        width: 100,
+        pinned: 'left',
+        resizable: true
+      },
+      {
         headerName: 'Proveedor',
         field: 'nombre',
         width: 250,

@@ -13,6 +13,7 @@ import * as _ from 'lodash';
 import { Periodo } from '../../../_core/models/periodo';
 import { MatDialog } from '@angular/material';
 import { AnalisisTrsDialogComponent } from 'app/cxp/components';
+import { PeriodoDialogComponent } from 'app/_shared/components';
 
 @Component({
   selector: 'sx-analisis-de-transformaciones',
@@ -71,5 +72,11 @@ export class AnalisisDeTransformacionesComponent implements OnInit {
   onPeriodo(event: Periodo) {
     this.periodo = event;
     this.reload();
+  }
+
+  onConsolidar(periodo: Periodo) {
+    if (periodo) {
+      this.store.dispatch(new fromActions.ConsolidarCostos({ periodo }));
+    }
   }
 }

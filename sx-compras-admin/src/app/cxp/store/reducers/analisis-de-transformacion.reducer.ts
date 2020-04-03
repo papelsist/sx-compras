@@ -34,6 +34,7 @@ export function reducer(
         loaded: true
       };
     }
+    case AnalisisDeTrsActionTypes.ConsolidarCostos:
     case AnalisisDeTrsActionTypes.LoadAnalisisDeTransformaciones:
     case AnalisisDeTrsActionTypes.CreateAnalisisDeTransformacion:
     case AnalisisDeTrsActionTypes.DeleteAnalisisDeTransformacion:
@@ -43,7 +44,7 @@ export function reducer(
         loading: true
       };
     }
-
+    case AnalisisDeTrsActionTypes.ConsolidarCostosFail:
     case AnalisisDeTrsActionTypes.LoadAnalisisDeTransformacionesFail:
     case AnalisisDeTrsActionTypes.CreateAnalisisDeTransformacionFail:
     case AnalisisDeTrsActionTypes.DeleteAnalisisDeTransformacionFail:
@@ -78,6 +79,12 @@ export function reducer(
         ...state,
         loading: false
       });
+    }
+    case AnalisisDeTrsActionTypes.ConsolidarCostosSuccess: {
+      return {
+        ...state,
+        loading: false
+      };
     }
 
     default: {

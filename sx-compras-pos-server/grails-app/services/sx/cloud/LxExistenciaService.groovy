@@ -231,7 +231,7 @@ class LxExistenciaService {
             return
         }
             Firestore db = firebaseService.getFirestore()
-            CollectionReference existencias  = db.collection("existencia");
+            CollectionReference existencias  = db.collection("existencias");
             
 
         audits.each{

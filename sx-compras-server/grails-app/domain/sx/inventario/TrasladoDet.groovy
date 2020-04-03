@@ -11,30 +11,29 @@ import sx.core.Producto
 @EqualsAndHashCode(includes = 'id, producto, cantidad')
 class TrasladoDet {
 
-    String	id
+    String id
 
-    Traslado	traslado
+    Traslado traslado
 
     Inventario inventario
 
     Producto producto
 
-    BigDecimal	solicitado	 = 0
+    BigDecimal solicitado
 
-    BigDecimal	cantidad	 = 0
+    BigDecimal cantidad
 
-    Long	cortes	 = 0
+    Long cortes
 
-    BigDecimal  kilos     = 0
+    BigDecimal kilos
 
-    String	cortesInstruccion
+    String cortesInstruccion
 
-    String	comentario
+    String comentario
 
     String sw2
 
     Date dateCreated
-
     Date lastUpdated
 
     static belongsTo = [traslado:Traslado]

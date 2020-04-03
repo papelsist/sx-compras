@@ -29,6 +29,8 @@ class AnalisisDeTransformacion {
 
     Date cerrada
 
+    Boolean manual
+
 	Date dateCreated
 	Date lastUpdated
 
@@ -44,6 +46,7 @@ class AnalisisDeTransformacion {
     	createUser nullable: true
     	updateUser nullable: true
         cerrada nullable: true
+        manual nullable: true
     }
 
     static mapping = {

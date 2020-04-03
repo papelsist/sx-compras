@@ -21,7 +21,12 @@ export enum AnalisisDeTrsActionTypes {
   // UPDATE
   UpdateAnalisisDeTransformacion = '[Analisis transformacion] Update analisis de TRS',
   UpdateAnalisisDeTransformacionFail = '[Analisis de TRS API] Update analisis de TRS fail',
-  UpdateAnalisisDeTransformacionSuccess = '[Analisis de TRS  API] Update analisis de TRS success'
+  UpdateAnalisisDeTransformacionSuccess = '[Analisis de TRS  API] Update analisis de TRS success',
+
+  // Consolidar
+  ConsolidarCostos = '[Analisis transformacion] Consolidar costos  de TRSs',
+  ConsolidarCostosFail = '[Analisis de TRS API] Consolidar costos  de TRSs fail',
+  ConsolidarCostosSuccess = '[Analisis de TRS  API] Consolidar costos  de TRSs success'
 }
 
 export class LoadAnalisisDeTransformaciones implements Action {
@@ -90,6 +95,24 @@ export class DeleteAnalisisDeTransformacionSuccess implements Action {
   constructor(public payload: { analisisId: number }) {}
 }
 
+// Consolidar
+export class ConsolidarCostos implements Action {
+  readonly type = AnalisisDeTrsActionTypes.ConsolidarCostos;
+  constructor(
+    public payload: {
+      periodo: Periodo;
+    }
+  ) {}
+}
+export class ConsolidarCostosFail implements Action {
+  readonly type = AnalisisDeTrsActionTypes.ConsolidarCostosFail;
+  constructor(public payload: { response: any }) {}
+}
+export class ConsolidarCostosSuccess implements Action {
+  readonly type = AnalisisDeTrsActionTypes.ConsolidarCostosSuccess;
+  constructor(public payload: { response: any }) {}
+}
+
 export type AnalisisDeTrsActions =
   | LoadAnalisisDeTransformaciones
   | LoadAnalisisDeTransformacionesFail
@@ -102,4 +125,7 @@ export type AnalisisDeTrsActions =
   | UpdateAnalisisDeTransformacionSuccess
   | DeleteAnalisisDeTransformacion
   | DeleteAnalisisDeTransformacionFail
-  | DeleteAnalisisDeTransformacionSuccess;
+  | DeleteAnalisisDeTransformacionSuccess
+  | ConsolidarCostos
+  | ConsolidarCostosFail
+  | ConsolidarCostosSuccess;
