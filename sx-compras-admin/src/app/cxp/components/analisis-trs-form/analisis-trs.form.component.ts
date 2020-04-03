@@ -27,7 +27,8 @@ export class AnalisisTrsFormComponent implements OnInit {
   private buildForm() {
     this.form = this.fb.group({
       fecha: [null, [Validators.required]],
-      comentario: [null, [Validators.required]]
+      comentario: [null, [Validators.required]],
+      manual: [null]
     });
   }
 

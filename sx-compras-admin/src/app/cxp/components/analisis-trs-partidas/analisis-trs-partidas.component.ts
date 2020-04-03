@@ -204,34 +204,50 @@ export class AnalisisTrsPartidasComponent implements OnInit, OnChanges {
         field: 'cantidad',
         width: 100,
         editable: true,
-        cellEditor: 'numericEditorComponent',
+        // cellEditor: 'numericEditorComponent',
         onCellValueChanged: params => {
           if (params.newValue) {
+            const importe = params.data.importe;
+            const cantidad = params.newValue;
             const change: Update<AnalisisDeTransformacionDet> = {
               id: params.data.id,
-              changes: { cantidad: params.newValue }
+              changes: { cantidad, importe }
             };
             this.update.emit(change);
           }
         }
       },
       {
-        headerName: 'Kilos',
-        field: 'kilos',
-        width: 90
-      },
-      {
         headerName: 'Importe',
         field: 'importe',
         width: 100,
-        cellRenderer: 'numberFormatterComponent'
-        // valueFormatter: params => this.tableService.formatCurrency(params.value)
+        // cellRenderer: 'numberFormatterComponent'
+        valueFormatter: params =>
+          this.tableService.formatCurrency(params.value),
+        editable: true,
+        // cellEditor: 'numericEditorComponent',
+        onCellValueChanged: params => {
+          if (params.newValue) {
+            const cantidad = parseFloat(params.data.cantidad);
+            const importe = parseFloat(params.newValue);
+            const change: Update<AnalisisDeTransformacionDet> = {
+              id: params.data.id,
+              changes: { cantidad, importe }
+            };
+            this.update.emit(change);
+          }
+        }
       },
       {
         headerName: 'Costo U',
         field: 'costo',
         width: 100,
         valueFormatter: params => this.tableService.formatCurrency(params.value)
+      },
+      {
+        headerName: 'Kilos',
+        field: 'kilos',
+        width: 90
       }
     ];
   }

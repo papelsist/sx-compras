@@ -78,6 +78,10 @@ export class AnalisisDeTransformacionComponent implements OnInit {
   }
 
   onUpdate(event: Update<AnalisisDeTransformacion>) {
+    console.log(
+      'Update: ',
+      event.changes.partidas.map(item => [item.cantidad, item.importe])
+    );
     this.store.dispatch(
       new fromStore.UpdateAnalisisDeTransformacion({ analisis: event })
     );
@@ -188,14 +192,17 @@ export class AnalisisDeTransformacionComponent implements OnInit {
     analisis: AnalisisDeTransformacion,
     partida: Update<AnalisisDeTransformacionDet>
   ) {
-    const partidas = analisis.partidas;
+    const partidas = [...analisis.partidas];
     partidas.forEach(item => {
       if (item.id === partida.id) {
-        item.cantidad = partida.changes.cantidad;
+        const cantidad = partida.changes.cantidad.toString();
+        const importe = partida.changes.importe.toString();
+        item.cantidad = parseFloat(cantidad);
+        item.importe = partida.changes.importe;
       }
     });
+
     const update = { id: analisis.id, changes: { partidas } };
     this.onUpdate(update);
-    // console.log('Partida changes: ', partida);
   }
 }
