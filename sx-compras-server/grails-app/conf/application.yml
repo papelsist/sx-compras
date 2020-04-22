@@ -78,9 +78,9 @@ environments:
     development:
         dataSource:
             dbCreate: update
-            url: jdbc:mysql://localhost/siipapx_dev?autoReconnect=true
+           # url: jdbc:mysql://localhost/siipapx_dev?autoReconnect=true
             #url: jdbc:mysql://10.10.1.229/siipapx_dev?autoReconnect=true
-            #url: jdbc:mysql://10.10.1.229/siipapx?autoReconnect=true
+            url: jdbc:mysql://10.10.1.229/siipapx?autoReconnect=true
             username: root
             password: sys
     test:
@@ -271,4 +271,22 @@ environments:
 ---
 quartz:
     autoStartup: false
+---
+---
+environments:
+  development:
+    siipapx:
+      firebase:
+        url: https://siipapx-436ce.firebaseio.com
+        bucket: siipapx-436ce.appspot.com
+  production:
+    siipapx:
+      firebase:
+        url: https://siipapx-436ce.firebaseio.com
+        bucket: siipapx-436ce.appspot.com
+  certificacion:
+    siipapx:
+      firebase:
+        url: https://siipapx-436ce.firebaseio.com
+        bucket: siipapx-436ce.appspot.com
 ---

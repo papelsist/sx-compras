@@ -78,10 +78,6 @@ export class AnalisisDeTransformacionComponent implements OnInit {
   }
 
   onUpdate(event: Update<AnalisisDeTransformacion>) {
-    console.log(
-      'Update: ',
-      event.changes.partidas.map(item => [item.cantidad, item.importe])
-    );
     this.store.dispatch(
       new fromStore.UpdateAnalisisDeTransformacion({ analisis: event })
     );
