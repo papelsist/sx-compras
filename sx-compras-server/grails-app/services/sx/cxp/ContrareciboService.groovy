@@ -1,9 +1,13 @@
 package sx.cxp
 
+
+import groovy.transform.CompileDynamic
 import grails.compiler.GrailsCompileStatic
+
 import grails.gorm.services.Service
 
 import sx.core.LogUser
+import sx.utils.MonedaUtils
 
 
 @GrailsCompileStatic
@@ -19,11 +23,15 @@ abstract class ContrareciboService implements LogUser {
         return save(recibo)
     }
 
+    @CompileDynamic
     Contrarecibo update(Contrarecibo recibo) {
         recibo.partidas.each {
             it.contrarecibo = recibo.id
-            recibo.total = recibo.total + it.total
         }
+        
+        def total = recibo.partidas.sum 0.0, {it.total}
+        recibo.total = MonedaUtils.round(total)
+        
         recibo.partidas.each { CuentaPorPagar cxp ->
             if(cxp.proveedor.fechaRevision) {
                 def plazo = cxp.proveedor.plazo ?: 0

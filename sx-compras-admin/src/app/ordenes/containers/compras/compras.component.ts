@@ -55,9 +55,11 @@ export class ComprasComponent implements OnInit, OnDestroy, AfterViewInit {
     this.filterModel = JSON.parse(
       localStorage.getItem('sx.compras.table.filter')
     );
+    /*
     this.columnState = JSON.parse(
       localStorage.getItem('sx.compras.table.column.state')
     );
+    */
     this.sortModel = JSON.parse(
       localStorage.getItem('sx.compras.table.sort.model')
     );
