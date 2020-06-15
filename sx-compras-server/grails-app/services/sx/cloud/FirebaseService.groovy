@@ -35,6 +35,9 @@ class FirebaseService {
     
     private FirebaseApp app
 
+    @Value('${siipapx.firebase.projectId}')
+    String projectId
+
     @Value('${siipapx.firebase.url}')
     String firebaseUrl
 
@@ -46,6 +49,7 @@ class FirebaseService {
     	// FileInputStream serviceAccount = new FileInputStream("/Users/rubencancino/Desktop/firebase/siipapx-436ce-firebase-adminsdk-ci4eg-779346f0c5.json");
 
 		FirebaseOptions options = new FirebaseOptions.Builder()
+        .setProjectId(this.projectId)
   		.setCredentials(GoogleCredentials.getApplicationDefault())
   		.setDatabaseUrl(this.firebaseUrl)
         .setStorageBucket(this.firebaseBucket)
