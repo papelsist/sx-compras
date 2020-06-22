@@ -308,7 +308,10 @@ export class AlcTableComponent extends LxTableComponent implements OnInit {
               const i5 = params.data['TACUBA_INV'] || 0.0;
               const i6 = params.data['CALLE 4_INV'] || 0.0;
               const i7 = params.data['BOLIVAR_INV'] || 0.0;
-              return i1 + i2 + i3 + i4 + i5 + i6 + i7;
+
+              const i8 = params.data['ALESA'] || 0.0;
+
+              return i1 + i2 + i3 + i4 + i5 + i6 + i7 + i8;
             },
             valueFormatter: params => this.transformNumber(params.value)
           },
@@ -339,7 +342,8 @@ export class AlcTableComponent extends LxTableComponent implements OnInit {
               const i5 = params.data['TACUBA_INV'] || 0.0;
               const i6 = params.data['CALLE 4_INV'] || 0.0;
               const i7 = params.data['BOLIVAR_INV'] || 0.0;
-              const itotal = i1 + i2 + i3 + i4 + i5 + i6 + i7;
+              const i8 = params.data['ALESA'] || 0.0;
+              const itotal = i1 + i2 + i3 + i4 + i5 + i6 + i7 + i8;
 
               const v1 = params.data['ANDRADE_VTA'] || 0.0;
               const v2 = params.data['VERTIZ_VTA'] || 0.0;
