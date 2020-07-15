@@ -6,6 +6,10 @@ import org.springframework.beans.factory.annotation.Value
 
 import grails.gorm.transactions.Transactional
 
+import javax.xml.XMLConstants
+import javax.xml.bind.JAXBContext
+import javax.xml.bind.Marshaller
+
 import lx.cfdi.v33.CfdiUtils
 import lx.cfdi.v33.Comprobante
 import lx.cfdi.v33.pagos.PagosUtils
@@ -40,7 +44,7 @@ class CfdiService implements  LogUser{
         if(cfdi.tipoDeComprobante == 'P') {
             data = PagosUtils.toXmlByteArray(comprobante)
         } else {
-            data = CfdiUtils.toXmlByteArray(comprobante)
+            data = toXmlByteArray(comprobante) //CfdiUtils.toXmlByteArray(comprobante)
         }
         saveXml(cfdi, data)
         logEntity(cfdi)
@@ -67,6 +71,18 @@ class CfdiService implements  LogUser{
                 }
             }
         }
+    }
+
+    def toXmlByteArray(Comprobante comprobante){
+        JAXBContext context = JAXBContext.newInstance(Comprobante.class)
+        Marshaller marshaller = context.createMarshaller()
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true)
+        String xsiSchemaLocation = "http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv33.xsd"
+        marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, xsiSchemaLocation)
+    
+        ByteArrayOutputStream os = new ByteArrayOutputStream()
+        marshaller.marshal(comprobante, os)
+        return os.toByteArray()
     }
 
 }
