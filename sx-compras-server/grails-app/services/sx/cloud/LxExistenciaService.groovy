@@ -42,11 +42,11 @@ class LxExistenciaService {
     def updateAll() {
 
         def sucursales = [
-            // 'ANDRADE',
-            // 'BOLIVAR',
+            'ANDRADE',
+            'BOLIVAR',
             'CALLE4',
-            // 'CF5FEBRERO',
-            //'TACUBA'
+            'CF5FEBRERO',
+            'TACUBA'
             ];
         sucursales.each { suc ->
             updateSucursal(suc)
@@ -109,6 +109,26 @@ class LxExistenciaService {
 
         log.info("Exis updated time : {} " , updateTime.toDate().format('dd/MM/yyyy'))
     }
+
+    ///
+
+    def deleteExis(String id, String sucursal) {
+        
+        DocumentReference exisRef =  firebaseService
+                .getFirestore()
+                .document("existencias/${id}/almacenes/${sucursal}")
+
+        DocumentSnapshot snapShot = exisRef.get().get()
+        if (snapShot.exists()) {
+            ApiFuture<WriteResult> result = exisRef.delete()
+            def updateTime = result.get().getUpdateTime()
+
+            log.info("Exis updated time : {} " , updateTime.toDate().format('dd/MM/yyyy'))
+        }
+        
+    }
+
+    ///
    
     Map mapExis(Existencia exis) {
         Map<String,Object> exist = [

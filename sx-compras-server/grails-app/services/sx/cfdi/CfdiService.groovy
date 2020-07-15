@@ -17,7 +17,7 @@ import sx.core.LogUser
 import sx.reports.ReportService
 
 @Slf4j
-@GrailsCompileStatic
+// @GrailsCompileStatic
 @Transactional
 class CfdiService implements  LogUser{
 
