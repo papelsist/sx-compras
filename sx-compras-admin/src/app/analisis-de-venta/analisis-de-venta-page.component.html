@@ -1,0 +1,21 @@
+<mat-card flex>
+  <sx-standard-header
+    title="Análisis de ventass"
+    [periodo]="periodo"
+    (periodoChange)="onPeriodo($event)"
+    (reload)="onReload(periodo)"
+    (download)="grid.exportData('VTAS')"
+  >
+  </sx-standard-header>
+  <mat-divider></mat-divider>
+  <ng-template
+    tdLoading
+    [tdLoadingUntil]="!(loading$ | async)"
+    tdLoadingStrategy="overlay"
+  >
+  </ng-template>
+  <div class="grid-panel">
+    <sx-ventas-grid #grid [partidas]="rows$" (select)="onSelect($event)">
+    </sx-ventas-grid>
+  </div>
+</mat-card>

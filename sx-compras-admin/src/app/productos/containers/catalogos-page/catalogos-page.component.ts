@@ -15,6 +15,12 @@ export class CatalogosPageComponent implements OnInit {
       icon: 'layers'
     },
     {
+      route: 'grupos',
+      title: 'Grupos',
+      description: 'Grupos de productos',
+      icon: 'local_offer'
+    },
+    {
       route: 'lineas',
       title: 'Líneas',
       description: 'Líneas',

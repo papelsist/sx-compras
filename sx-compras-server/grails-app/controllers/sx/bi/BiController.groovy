@@ -13,8 +13,15 @@ import sx.utils.Periodo
 class BiController {
 
     VentaNetaService ventaNetaService
+    AnalisisDeVentaService analisisDeVentaService
 
     ReportService reportService
+
+    def analisisDeVenta() {
+        Periodo periodo = (Periodo)params.periodo
+        log.info('Analisis de ventas {}', periodo)
+        respond analisisDeVentaService.buildAnalisis(periodo)
+    }
 
     def ventaNetaAcumulada(VentaAcumuladaCommand command){
         log.info('Venta acumulada: {}', command)

@@ -8,6 +8,11 @@ const routes: Routes = [
     component: InventariosPageComponent,
     children: [
       {
+        path: 'ventas',
+        loadChildren:
+          'app/analisis-de-venta/analisis-de-venta.module#AnalisisDeVentaModule'
+      },
+      {
         path: 'existencias',
         loadChildren: 'app/existencias/existencias.module#ExistenciasModule'
       },

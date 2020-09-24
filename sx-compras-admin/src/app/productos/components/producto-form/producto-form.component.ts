@@ -27,6 +27,8 @@ export class ProductoFormComponent implements OnInit {
   @Input()
   lineas: any[] = [];
   @Input()
+  grupos: any[] = [];
+  @Input()
   marcas: any[] = [];
   @Input()
   clases: any[] = [];
@@ -72,6 +74,7 @@ export class ProductoFormComponent implements OnInit {
         ]
       ],
       linea: [null, [Validators.required]],
+      grupo: [null],
       clase: [null],
       marca: [null],
       unidad: ['MILLAR', [Validators.required]],

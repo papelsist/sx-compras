@@ -11,22 +11,29 @@ import { Linea } from '../../models/linea';
 import { Marca } from '../../models/marca';
 import { Clase } from '../../models/clase';
 import { TdDialogService } from '@covalent/core';
+import { GrupoDeProducto } from 'app/productos/models/grupo';
 
 @Component({
   selector: 'sx-producto',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-  <ng-template tdLoading [tdLoadingUntil]="!(saving$ | async)"  tdLoadingStrategy="overlay" >
-    <sx-producto-form
-      [producto]="producto$ | async"
-      [lineas]="lineas$ | async"
-      [marcas]="marcas$ | async"
-      [clases]="clases$ | async"
-      (save)="onSave($event)"
-      (delete)="onDelete($event)"
-      (cancel)="onCancel()">
-    </sx-producto-form>
-  </ng-template>
+    <ng-template
+      tdLoading
+      [tdLoadingUntil]="!(saving$ | async)"
+      tdLoadingStrategy="overlay"
+    >
+      <sx-producto-form
+        [producto]="producto$ | async"
+        [lineas]="lineas$ | async"
+        [marcas]="marcas$ | async"
+        [clases]="clases$ | async"
+        [grupos]="grupos$ | async"
+        (save)="onSave($event)"
+        (delete)="onDelete($event)"
+        (cancel)="onCancel()"
+      >
+      </sx-producto-form>
+    </ng-template>
   `,
   styles: []
 })
@@ -35,6 +42,7 @@ export class ProductoComponent implements OnInit {
   lineas$: Observable<Linea[]>;
   marcas$: Observable<Marca[]>;
   clases$: Observable<Clase[]>;
+  grupos$: Observable<GrupoDeProducto[]>;
   saving$: Observable<boolean>;
 
   constructor(
@@ -48,6 +56,7 @@ export class ProductoComponent implements OnInit {
     this.lineas$ = this.store.select(fromStore.getAllLineas);
     this.marcas$ = this.store.select(fromStore.getAllMarcas);
     this.clases$ = this.store.select(fromStore.getAllClases);
+    this.grupos$ = this.store.select(fromStore.getAllGrupos);
   }
 
   onSave(producto: Producto) {

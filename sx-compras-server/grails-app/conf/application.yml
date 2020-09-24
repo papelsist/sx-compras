@@ -77,7 +77,7 @@ dataSource:
 environments:
     development:
         dataSource:
-            #dbCreate: update
+            dbCreate: update
             url: jdbc:mysql://localhost/siipapx_dev?autoReconnect=true
             #url: jdbc:mysql://10.10.1.229/siipapx_dev?autoReconnect=true
             #url: jdbc:mysql://10.10.1.229/siipapx?autoReconnect=true
