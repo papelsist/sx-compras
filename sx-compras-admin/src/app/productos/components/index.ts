@@ -17,6 +17,8 @@ import { UnidadSatComponent } from './unidad-sat/unidad-sat.component';
 import { AltiGridComponent } from './alti-modal/alti-grid.component';
 import { AltiModalComponent } from './alti-modal/alti-modal.component';
 import { ProductosTable2Component } from './productos-table2/productos-table2.component';
+import { GrupoFormComponent } from './grupo-form/grupo-form.component';
+import { GrupoFieldComponent } from './grupo-field/grupo-field.component';
 
 export const components = [
   ProductosTableComponent,
@@ -37,14 +39,17 @@ export const components = [
   UnidadSatComponent,
   AltiGridComponent,
   AltiModalComponent,
-  ProductosTable2Component
+  ProductosTable2Component,
+  GrupoFormComponent,
+  GrupoFieldComponent
 ];
 
 export const entryComponents: any[] = [
   LineaFormComponent,
   MarcaFormComponent,
   ClaseFormComponent,
-  AltiModalComponent
+  AltiModalComponent,
+  GrupoFormComponent
 ];
 
 export * from './productos-table/productos-table.component';
@@ -67,3 +72,5 @@ export * from './unidad-sat/unidad-sat.component';
 export * from './alti-modal/alti-grid.component';
 export * from './alti-modal/alti-modal.component';
 export * from './productos-table2/productos-table2.component';
+export * from './grupo-form/grupo-form.component';
+export * from './grupo-field/grupo-field.component';

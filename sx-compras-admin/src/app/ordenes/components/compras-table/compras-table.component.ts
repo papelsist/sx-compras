@@ -175,7 +175,7 @@ export class ComprasTableComponent extends LxTableComponent implements OnInit {
       },
       {
         headerName: 'Total',
-        field: 'totalMn',
+        field: 'total',
         width: 110,
         cellRenderer: params => this.transformCurrency(params.value)
       },

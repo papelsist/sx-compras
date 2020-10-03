@@ -8,6 +8,8 @@ import groovy.transform.CompileDynamic
 import groovy.transform.ToString
 import groovy.util.logging.Slf4j
 
+import org.springframework.beans.factory.annotation.Value
+
 import com.google.cloud.firestore.Firestore
 import com.google.cloud.firestore.DocumentChange
 import com.google.cloud.firestore.DocumentSnapshot
@@ -33,13 +35,24 @@ class FirebaseService {
     
     private FirebaseApp app
 
+    @Value('${siipapx.firebase.projectId}')
+    String projectId
+
+    @Value('${siipapx.firebase.url}')
+    String firebaseUrl
+
+    @Value('${siipapx.firebase.bucket}')
+    String firebaseBucket
+
 	
     void initFirebase() {
     	// FileInputStream serviceAccount = new FileInputStream("/Users/rubencancino/Desktop/firebase/siipapx-436ce-firebase-adminsdk-ci4eg-779346f0c5.json");
 
 		FirebaseOptions options = new FirebaseOptions.Builder()
+        .setProjectId(this.projectId)
   		.setCredentials(GoogleCredentials.getApplicationDefault())
-  		.setDatabaseUrl("https://siipapx-436ce.firebaseio.com")
+  		.setDatabaseUrl(this.firebaseUrl)
+        .setStorageBucket(this.firebaseBucket)
   		.build();
 
 		app = FirebaseApp.initializeApp(options);

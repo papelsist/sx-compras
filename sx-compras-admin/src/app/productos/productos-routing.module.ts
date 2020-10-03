@@ -7,12 +7,13 @@ import {
   LineasComponent,
   MarcasComponent,
   ClasesComponent,
-  ProductoComponent
+  ProductoComponent,
+  GruposComponent
 } from './containers';
 
 // Guards
 import * as fromGuards from './guards';
-import { LineasGuard, MarcasGuard, ClasesGuard } from './guards';
+import { LineasGuard, MarcasGuard, ClasesGuard, GruposGuard } from './guards';
 
 const routes: Routes = [
   {
@@ -30,7 +31,8 @@ const routes: Routes = [
           fromGuards.ProductosGuard,
           fromGuards.LineasGuard,
           fromGuards.MarcasGuard,
-          fromGuards.ClasesGuard
+          fromGuards.ClasesGuard,
+          fromGuards.GruposGuard
         ],
         component: ProductoComponent
       },
@@ -40,7 +42,8 @@ const routes: Routes = [
           fromGuards.ProductoExistsGuard,
           fromGuards.LineasGuard,
           fromGuards.MarcasGuard,
-          fromGuards.ClasesGuard
+          fromGuards.ClasesGuard,
+          fromGuards.GruposGuard
         ],
         component: ProductoComponent
       },
@@ -58,6 +61,11 @@ const routes: Routes = [
         path: 'clases',
         canActivate: [ClasesGuard],
         component: ClasesComponent
+      },
+      {
+        path: 'grupos',
+        canActivate: [GruposGuard],
+        component: GruposComponent
       },
       {
         path: 'listas',

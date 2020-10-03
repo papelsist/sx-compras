@@ -74,6 +74,7 @@ class NotaDeCargo {
         sw2 nullable:true
         cfdi nullable: true
         tipoDeCalculo inList: ['PORCENTAJE','PRORRATEO', 'NINGUNO']
+        cuentaPorCobrar nullable: true
     }
 
     static hasMany =[partidas:NotaDeCargoDet]

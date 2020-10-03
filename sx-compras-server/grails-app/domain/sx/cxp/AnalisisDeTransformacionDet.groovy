@@ -5,7 +5,7 @@ import groovy.transform.ToString
 import sx.inventario.TransformacionDet
 
 @ToString(includes = 'clave, descripcion, cantdad, importe',includeNames=true,includePackage=false)
-@EqualsAndHashCode(includeFields = true,includes = ['id', 'trs'])
+@EqualsAndHashCode(includeFields = true,includes = ['id'])
 class AnalisisDeTransformacionDet {
 
     AnalisisDeTransformacion analisis

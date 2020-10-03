@@ -10,6 +10,12 @@ import { TdMediaService } from '@covalent/core';
 export class InventariosPageComponent implements OnInit {
   navmenu: Object[] = [
     {
+      route: 'ventas',
+      title: 'Ventas',
+      description: 'Resumen de ventas',
+      icon: 'shopping_cart'
+    },
+    {
       route: 'existencias',
       title: 'Existencias',
       description: 'Existencias de productos',

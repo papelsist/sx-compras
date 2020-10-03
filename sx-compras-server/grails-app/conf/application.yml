@@ -79,8 +79,8 @@ environments:
         dataSource:
             dbCreate: none
             #url: jdbc:mysql://localhost/siipapx_dev?autoReconnect=true
-            #url: jdbc:mysql://10.10.1.225/siipapx_dev?autoReconnect=true
-            url: jdbc:mysql://10.10.1.229/siipapx?autoReconnect=true&useSSL=false
+            #url: jdbc:mysql://10.10.1.229/siipapx_dev?autoReconnect=true
+            url: jdbc:mysql://10.10.1.229/siipapx?autoReconnect=true
             username: root
             password: sys
     test:
@@ -94,7 +94,7 @@ environments:
             password:
     production:
         dataSource:
-            dbCreate: update
+            dbCreate: none
             #url: jdbc:mysql://10.10.1.229/siipapx?autoReconnect=false
             url: jdbc:mysql://${JDBC_CONNECTION_STRING}?autoReconnect=true
             username: root
@@ -116,7 +116,7 @@ environments:
                 validationInterval: 15000
     contabilidad:
             dataSource:
-                dbCreate: update
+                dbCreate: none
                 #url: jdbc:mysql://10.10.1.229/siipapx?autoReconnect=false
                 url: jdbc:mysql://${JDBC_CONNECTION_STRING}?autoReconnect=true
                 username: root
@@ -138,7 +138,7 @@ environments:
                     validationInterval: 15000
     tesoreria:
             dataSource:
-                dbCreate: update
+                dbCreate: none
                 url: jdbc:mysql://${JDBC_CONNECTION_STRING}?autoReconnect=true
                 #url: jdbc:mysql://10.10.1.229/siipapx_dev?autoReconnect=true
                 username: root
@@ -160,7 +160,7 @@ environments:
                     validationInterval: 15000
     compras:
             dataSource:
-                dbCreate: update
+                dbCreate: none
                 url: jdbc:mysql://${JDBC_CONNECTION_STRING}?autoReconnect=true
                 username: root
                 password: sys
@@ -181,7 +181,7 @@ environments:
                     validationInterval: 15000                    
     certificacion:
         dataSource:
-            dbCreate: update
+            dbCreate: none
             url: jdbc:mysql://localhost/siipapx_oficinas?autoReconnect=false
             username: root
             password: sys
@@ -271,4 +271,30 @@ environments:
 ---
 quartz:
     autoStartup: false
+---
+environments:
+  development:
+    siipapx:
+      firebase:
+        projectId: siipapx-436ce
+        url: https://siipapx-436ce.firebaseio.com
+        bucket: siipapx-436ce.appspot.com
+  certificacion:
+    siipapx:
+      firebase:
+        projectId: siipapx-436ce
+        url: https://siipapx-436ce.firebaseio.com
+        bucket: siipapx-436ce.appspot.com
+  compras:
+    siipapx:
+      firebase:
+        projectId: siipapx-51354
+        url: https://siipapx-51354.firebaseio.com
+        bucket: siipapx-51354.appspot.com
+  production:
+    siipapx:
+      firebase:
+        projectId: siipapx-51354
+        url: https://siipapx-51354.firebaseio.com
+        bucket: siipapx-51354.appspot.com
 ---

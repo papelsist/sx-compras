@@ -9,6 +9,7 @@ class UrlMappings {
         "/api/lineas"(resources: 'linea')
         "/api/marcas"(resources: 'marca')
         "/api/clases"(resources: 'clase')
+        "/api/grupos"(resources: 'grupoDeProducto')
         "/api/productos"(resources: 'producto')
         "/api/productos/rows"(controller: 'producto', action: 'rows', method: 'GET')
         "/api/proveedores"(resources: 'proveedor'){
@@ -306,6 +307,8 @@ class UrlMappings {
         "/api/bi/ventaNetaMensual"(controller: 'bi', action:'ventaNetaMensual', method: 'GET')
         "/api/bi/movimientoCosteado"(controller: 'bi', action:'movimientoCosteado', method:'GET')
         "/api/bi/movimientoCosteadoDet"(controller: 'bi', action:'movimientoCosteadoDet', method: 'GET')
+        "/api/bi/analisisDeVenta"(controller: 'bi', action:'analisisDeVenta', method: 'GET')
+
         // Reportes BI
         "/api/bi/bajaEnVentas"(controller: 'bi', action:'bajaEnVentas', method: 'GET')
         "/api/bi/mejoresClientes"(controller: 'bi', action:'mejoresClientes', method: 'GET')

@@ -61,6 +61,8 @@ class Producto {
 
     Clase clase
 
+    GrupoDeProducto grupo
+
     Proveedor proveedorFavorito
 
     String	comentario
@@ -97,6 +99,7 @@ class Producto {
         comentario nullable: true
         productoSat nullable: true
         unidadSat nullable: true
+        grupo nullable: true
     }
 
     static mapping={
