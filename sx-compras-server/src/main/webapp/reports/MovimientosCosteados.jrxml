@@ -8,10 +8,10 @@
 		 orientation="Landscape"
 		 pageWidth="792"
 		 pageHeight="612"
-		 columnWidth="732"
+		 columnWidth="758"
 		 columnSpacing="0"
-		 leftMargin="30"
-		 rightMargin="30"
+		 leftMargin="17"
+		 rightMargin="17"
 		 topMargin="20"
 		 bottomMargin="20"
 		 whenNoDataType="AllSectionsNoDetail"
@@ -41,7 +41,8 @@
 ,ROUND(SUM(case when A.sw2=2 THEN  A.COSTO ELSE  0 end),2) AS COSTO_CA4
 ,ROUND(SUM(case when A.sw2=9 THEN  A.COSTO ELSE  0 end),2) AS COSTO_ERM
 ,ROUND(SUM(case when A.sw2=3 THEN  A.COSTO ELSE  0 end),2) AS COSTO_TAC
-,ROUND(SUM(case when A.sw2=14 THEN  A.COSTO ELSE  0 end),2) AS COSTO_ALE
+,ROUND(SUM(case when A.sw2=14 THEN  A.COSTO ELSE  0 end),2) AS COSTO_SOL
+,ROUND(SUM(case when A.sw2=12 THEN  A.COSTO ELSE  0 end),2) AS COSTO_ALE
 FROM (
         SELECT 'REDONDEO' ASIENTO,'INI' AS TIPO,'01 A_INV' AS GRUPO,s.sw2,s.clave SUC,s.nombre SUCURSAL,P.CLAVE,P.DESCRIPCION,ROUND(   (I.EXISTENCIA_INICIAL/(case when p.unidad ='MIL' then 1000 else 1 end)*P.KILOS),3) as KILOS
 	   ,ROUND(   (I.EXISTENCIA_INICIAL/(case when p.unidad ='MIL' then 1000 else 1 end)),3) as SALDO,   (   (I.EXISTENCIA_INICIAL/(case when p.unidad ='MIL' then 1000 else 1 end) * I.COSTO )  ) as COSTO
@@ -138,6 +139,7 @@ FROM (
 	<field name="COSTO_CA4" class="java.math.BigDecimal"/>
 	<field name="COSTO_ERM" class="java.math.BigDecimal"/>
 	<field name="COSTO_TAC" class="java.math.BigDecimal"/>
+	<field name="COSTO_SOL" class="java.math.BigDecimal"/>
 	<field name="COSTO_ALE" class="java.math.BigDecimal"/>
 
 	<sortField name="GRUPO" />
@@ -272,6 +274,19 @@ FROM (
 	<variable name="CostoAle" class="java.math.BigDecimal" resetType="Group" resetGroup="GRUPO1" calculation="Sum">
 		<variableExpression><![CDATA[$F{COSTO_ALE}]]></variableExpression>
 	</variable>
+	<variable name="CostoSol" class="java.math.BigDecimal" resetType="Group" resetGroup="GRUPO1" calculation="Sum">
+		<variableExpression><![CDATA[$F{COSTO_SOL}]]></variableExpression>
+	</variable>
+	<variable name="CostoSol1" class="java.lang.Double" resetType="Report" calculation="Sum">
+		<variableExpression><![CDATA[new Double(
+($F{TIPO}.equals("FIN")) ? 0.0 : $F{COSTO_SOL}.doubleValue()
+)]]></variableExpression>
+	</variable>
+	<variable name="InvCstSol1" class="java.lang.Double" resetType="Report" calculation="Sum">
+		<variableExpression><![CDATA[new Double(
+($F{TIPO}.equals("FIN")) ? $F{COSTO_SOL}.doubleValue() : 0.0
+)]]></variableExpression>
+	</variable>
 
 		<group  name="GRUPO1" >
 			<groupExpression><![CDATA[$F{GRUPO}]]></groupExpression>
@@ -284,9 +299,9 @@ FROM (
 				<rectangle>
 					<reportElement
 						mode="Opaque"
-						x="7"
+						x="0"
 						y="3"
-						width="724"
+						width="758"
 						height="8"
 						forecolor="#DEDDDD"
 						backcolor="#E2E1E1"
@@ -295,7 +310,7 @@ FROM (
 				</rectangle>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="11"
+						x="5"
 						y="3"
 						width="55"
 						height="12"
@@ -308,7 +323,7 @@ FROM (
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.000" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="66"
+						x="60"
 						y="3"
 						width="61"
 						height="12"
@@ -321,7 +336,7 @@ FROM (
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="179"
+						x="173"
 						y="3"
 						width="70"
 						height="12"
@@ -334,7 +349,7 @@ FROM (
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="249"
+						x="243"
 						y="3"
 						width="67"
 						height="12"
@@ -347,7 +362,7 @@ FROM (
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="316"
+						x="310"
 						y="3"
 						width="67"
 						height="12"
@@ -360,7 +375,7 @@ FROM (
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="383"
+						x="377"
 						y="3"
 						width="67"
 						height="12"
@@ -373,7 +388,7 @@ FROM (
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="450"
+						x="444"
 						y="3"
 						width="67"
 						height="12"
@@ -386,7 +401,7 @@ FROM (
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="517"
+						x="511"
 						y="3"
 						width="67"
 						height="12"
@@ -399,7 +414,7 @@ FROM (
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="651"
+						x="645"
 						y="3"
 						width="67"
 						height="12"
@@ -408,11 +423,11 @@ FROM (
 					<textElement textAlignment="Right">
 						<font pdfFontName="Helvetica-Bold" size="8" isBold="true" isItalic="false"/>
 					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$V{CostoAle}]]></textFieldExpression>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$V{CostoSol}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="127"
+						x="121"
 						y="3"
 						width="52"
 						height="12"
@@ -425,7 +440,7 @@ FROM (
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="584"
+						x="578"
 						y="3"
 						width="67"
 						height="12"
@@ -435,6 +450,19 @@ FROM (
 						<font pdfFontName="Helvetica-Bold" size="8" isBold="true" isItalic="false"/>
 					</textElement>
 				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$V{CostoTac}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="713"
+						y="3"
+						width="45"
+						height="12"
+						key="textField-23"/>
+					<box></box>
+					<textElement textAlignment="Right">
+						<font pdfFontName="Helvetica-Bold" size="8" isBold="true" isItalic="false"/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$V{CostoAle}]]></textFieldExpression>
 				</textField>
 			</band>
 			</groupFooter>
@@ -566,7 +594,7 @@ FROM (
 			<band height="34"  isSplitAllowed="true" >
 				<staticText>
 					<reportElement
-						x="66"
+						x="60"
 						y="15"
 						width="61"
 						height="13"
@@ -579,7 +607,7 @@ FROM (
 				</staticText>
 				<staticText>
 					<reportElement
-						x="179"
+						x="173"
 						y="15"
 						width="70"
 						height="13"
@@ -592,7 +620,7 @@ FROM (
 				</staticText>
 				<staticText>
 					<reportElement
-						x="651"
+						x="645"
 						y="15"
 						width="67"
 						height="13"
@@ -605,7 +633,7 @@ FROM (
 				</staticText>
 				<staticText>
 					<reportElement
-						x="517"
+						x="511"
 						y="15"
 						width="67"
 						height="13"
@@ -618,7 +646,7 @@ FROM (
 				</staticText>
 				<staticText>
 					<reportElement
-						x="450"
+						x="444"
 						y="15"
 						width="67"
 						height="13"
@@ -631,7 +659,7 @@ FROM (
 				</staticText>
 				<staticText>
 					<reportElement
-						x="383"
+						x="377"
 						y="15"
 						width="67"
 						height="13"
@@ -644,7 +672,7 @@ FROM (
 				</staticText>
 				<staticText>
 					<reportElement
-						x="316"
+						x="310"
 						y="15"
 						width="67"
 						height="13"
@@ -657,7 +685,7 @@ FROM (
 				</staticText>
 				<staticText>
 					<reportElement
-						x="249"
+						x="243"
 						y="15"
 						width="67"
 						height="13"
@@ -670,7 +698,7 @@ FROM (
 				</staticText>
 				<staticText>
 					<reportElement
-						x="11"
+						x="5"
 						y="15"
 						width="55"
 						height="13"
@@ -684,9 +712,9 @@ FROM (
 				<line direction="TopDown">
 					<reportElement
 						mode="Opaque"
-						x="1"
+						x="0"
 						y="1"
-						width="731"
+						width="758"
 						height="0"
 						forecolor="#999999"
 						backcolor="#FFFFFF"
@@ -698,7 +726,7 @@ FROM (
 						mode="Opaque"
 						x="0"
 						y="33"
-						width="731"
+						width="758"
 						height="0"
 						forecolor="#999999"
 						backcolor="#FFFFFF"
@@ -707,7 +735,7 @@ FROM (
 				</line>
 				<staticText>
 					<reportElement
-						x="432"
+						x="428"
 						y="1"
 						width="69"
 						height="13"
@@ -718,21 +746,9 @@ FROM (
 					</textElement>
 				<text><![CDATA[COSTO]]></text>
 				</staticText>
-				<line direction="TopDown">
-					<reportElement
-						mode="Opaque"
-						x="214"
-						y="13"
-						width="503"
-						height="0"
-						forecolor="#999999"
-						backcolor="#FFFFFF"
-						key="line-5"/>
-					<graphicElement stretchType="NoStretch" fill="Solid" />
-				</line>
 				<staticText>
 					<reportElement
-						x="127"
+						x="121"
 						y="15"
 						width="52"
 						height="13"
@@ -745,7 +761,7 @@ FROM (
 				</staticText>
 				<staticText>
 					<reportElement
-						x="584"
+						x="578"
 						y="15"
 						width="67"
 						height="13"
@@ -756,13 +772,38 @@ FROM (
 					</textElement>
 				<text><![CDATA[TACUBA]]></text>
 				</staticText>
+				<staticText>
+					<reportElement
+						x="713"
+						y="15"
+						width="45"
+						height="13"
+						key="staticText-30"/>
+					<box></box>
+					<textElement textAlignment="Right">
+						<font pdfFontName="Helvetica-BoldOblique" size="10" isBold="true" isItalic="true"/>
+					</textElement>
+				<text><![CDATA[ALESA]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						mode="Opaque"
+						x="175"
+						y="13"
+						width="583"
+						height="0"
+						forecolor="#999999"
+						backcolor="#FFFFFF"
+						key="line-7"/>
+					<graphicElement stretchType="NoStretch" fill="Solid" />
+				</line>
 			</band>
 		</columnHeader>
 		<detail>
 			<band height="13"  isSplitAllowed="true" >
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="11"
+						x="5"
 						y="0"
 						width="55"
 						height="12"
@@ -775,7 +816,7 @@ FROM (
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.000" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="66"
+						x="60"
 						y="0"
 						width="61"
 						height="12"
@@ -788,7 +829,7 @@ FROM (
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="179"
+						x="173"
 						y="0"
 						width="70"
 						height="12"
@@ -801,7 +842,7 @@ FROM (
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="249"
+						x="243"
 						y="0"
 						width="67"
 						height="12"
@@ -814,7 +855,7 @@ FROM (
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="316"
+						x="310"
 						y="0"
 						width="67"
 						height="12"
@@ -827,7 +868,7 @@ FROM (
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="383"
+						x="377"
 						y="0"
 						width="67"
 						height="12"
@@ -840,7 +881,7 @@ FROM (
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="651"
+						x="645"
 						y="0"
 						width="67"
 						height="12"
@@ -849,11 +890,11 @@ FROM (
 					<textElement textAlignment="Right">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{COSTO_ALE}]]></textFieldExpression>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{COSTO_SOL}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="450"
+						x="444"
 						y="0"
 						width="67"
 						height="12"
@@ -866,7 +907,7 @@ FROM (
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="517"
+						x="511"
 						y="0"
 						width="67"
 						height="12"
@@ -879,7 +920,7 @@ FROM (
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="127"
+						x="121"
 						y="0"
 						width="52"
 						height="12"
@@ -892,7 +933,7 @@ FROM (
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="584"
+						x="578"
 						y="0"
 						width="67"
 						height="12"
@@ -902,6 +943,19 @@ FROM (
 						<font size="8"/>
 					</textElement>
 				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{COSTO_TAC}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="713"
+						y="0"
+						width="45"
+						height="12"
+						key="textField-24"/>
+					<box></box>
+					<textElement textAlignment="Right">
+						<font size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{COSTO_ALE}]]></textFieldExpression>
 				</textField>
 			</band>
 		</detail>
@@ -1016,7 +1070,7 @@ FROM (
 						mode="Opaque"
 						x="0"
 						y="3"
-						width="731"
+						width="758"
 						height="0"
 						forecolor="#999999"
 						backcolor="#FFFFFF"
@@ -1132,7 +1186,7 @@ FROM (
 						mode="Opaque"
 						x="0"
 						y="4"
-						width="731"
+						width="758"
 						height="0"
 						forecolor="#999999"
 						backcolor="#FFFFFF"
@@ -1146,9 +1200,9 @@ FROM (
 				<rectangle>
 					<reportElement
 						mode="Opaque"
-						x="7"
+						x="0"
 						y="4"
-						width="724"
+						width="758"
 						height="8"
 						forecolor="#DEDDDD"
 						backcolor="#E2E1E1"
@@ -1157,7 +1211,7 @@ FROM (
 				</rectangle>
 				<textField isStretchWithOverflow="false" pattern="#,##0.000" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="66"
+						x="60"
 						y="4"
 						width="61"
 						height="12"
@@ -1170,7 +1224,7 @@ FROM (
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="179"
+						x="173"
 						y="4"
 						width="70"
 						height="12"
@@ -1183,7 +1237,7 @@ FROM (
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="249"
+						x="243"
 						y="4"
 						width="67"
 						height="12"
@@ -1196,7 +1250,7 @@ FROM (
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="316"
+						x="310"
 						y="4"
 						width="67"
 						height="12"
@@ -1209,7 +1263,7 @@ FROM (
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="383"
+						x="377"
 						y="4"
 						width="67"
 						height="12"
@@ -1222,7 +1276,7 @@ FROM (
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="450"
+						x="444"
 						y="4"
 						width="67"
 						height="12"
@@ -1235,7 +1289,7 @@ FROM (
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="517"
+						x="511"
 						y="4"
 						width="67"
 						height="12"
@@ -1248,7 +1302,7 @@ FROM (
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="651"
+						x="645"
 						y="4"
 						width="67"
 						height="12"
@@ -1257,13 +1311,13 @@ FROM (
 					<textElement textAlignment="Right">
 						<font pdfFontName="Helvetica-Bold" size="8" isBold="true" isItalic="false"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.Double"><![CDATA[new Double($V{InvCstAle1}.doubleValue()-$V{CostoAle1}.doubleValue())]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[new Double($V{InvCstSol1}.doubleValue()-$V{CostoSol1}.doubleValue())]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
-						x="7"
+						x="6"
 						y="4"
-						width="64"
+						width="54"
 						height="12"
 						key="staticText-27"/>
 					<box></box>
@@ -1274,7 +1328,7 @@ FROM (
 				</staticText>
 				<textField isStretchWithOverflow="false" pattern="#,##0" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="127"
+						x="121"
 						y="4"
 						width="52"
 						height="12"
@@ -1287,7 +1341,7 @@ FROM (
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="584"
+						x="578"
 						y="4"
 						width="67"
 						height="12"
@@ -1297,6 +1351,19 @@ FROM (
 						<font pdfFontName="Helvetica-Bold" size="8" isBold="true" isItalic="false"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.Double"><![CDATA[new Double($V{InvCstTac1}.doubleValue()-$V{CostoTac1}.doubleValue())]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="713"
+						y="4"
+						width="45"
+						height="12"
+						key="textField-22"/>
+					<box></box>
+					<textElement textAlignment="Right">
+						<font pdfFontName="Helvetica-Bold" size="8" isBold="true" isItalic="false"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[new Double($V{InvCstAle1}.doubleValue()-$V{CostoAle1}.doubleValue())]]></textFieldExpression>
 				</textField>
 			</band>
 		</summary>

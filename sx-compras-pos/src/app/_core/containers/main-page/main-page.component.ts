@@ -39,6 +39,11 @@ export class MainPageComponent implements OnInit {
       route: '/alcances',
       title: 'Alcances',
       icon: 'data_usage'
+    },
+    {
+      route: '/cajas',
+      title: 'Cajas',
+      icon: 'widgets'
     }
   ];
 

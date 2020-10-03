@@ -64,7 +64,7 @@ dependencies {
 
     compile 'org.codehaus.groovy:groovy-all:2.4.11'
     compile 'org.apache.commons:commons-lang3:3.1'
-    runtime 'mysql:mysql-connector-java:5.1.29'
+    runtime 'mysql:mysql-connector-java'
 
     // compile "lx.siipapx:sx-core-plugin:1.0.0"
     // compile 'com.google.firebase:firebase-admin:6.1.0'

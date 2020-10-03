@@ -24,9 +24,12 @@ class VentasTask implements  AsientoBuilder {
         log.info("Generando asientos contables para Ventas {} {}", poliza.fecha)
 
         String sqlVentas = getSqlVentas().replaceAll("@FECHA", toSqlDate(poliza.fecha))
+        
      
         List rowsVta = getAllRows(sqlVentas, [])
         rowsVta.each{row ->
+
+            println row
 
             def docto = row.documento ?: ''
             def tcCre = row.moneda == 'USD' ? "tc:${row.tc}" : ''
@@ -52,7 +55,7 @@ class VentasTask implements  AsientoBuilder {
     PolizaDet mapRow(String cuentaClave, String descripcion, Map row, def debe = 0.0, def haber = 0.0) {
 
 
-       // println row
+        
 
         CuentaContable cuenta = buscarCuenta(cuentaClave)
 

@@ -50,27 +50,27 @@ class CostoPromedioService {
     }
 
     def costearExistenciaInicial(Integer ejercicio, Integer mes) {
-       // log.info('Calculando el costo inicial de la existencia {} - {}', ejercicio, mes)
+        log.info('Calculando el costo inicial de la existencia {} - {}', ejercicio, mes)
         Integer ejercicioAnterior = ejercicio
         Integer mesAnterior = mes - 1
         if(mes == 1) {
             ejercicioAnterior = ejercicio - 1
             mesAnterior = 12
         }
-       // log.info('Ejercicio anterior: {}-{}', ejercicioAnterior, mesAnterior)
+        log.info('Ejercicio anterior: {}-{}', ejercicioAnterior, mesAnterior)
         String sql = """ 
                 UPDATE EXISTENCIA E JOIN PRODUCTO P ON(E.PRODUCTO_ID = P.ID)
                 SET COSTO = IFNULL((SELECT C.COSTO FROM COSTO_PROMEDIO C WHERE C.EJERCICIO = ? AND C.MES = ? AND C.PRODUCTO_ID = E.PRODUCTO_ID ), 0)
                 WHERE P.DE_LINEA IS TRUE AND E.ANIO = ? AND E.MES = ? 
                 """
         executeUdate(sql, [ejercicioAnterior, mesAnterior, ejercicio, mes])
-       //  log.info('Se termino de costear las existencia iniciales')
+         log.info('Se termino de costear las existencia iniciales')
     }
 
 
     @NotTransactional
     def costearTransformaciones(Integer ejercicio , Integer mes) {
-        
+        log.info('Costeando transformaciones')
         PeriodoDeCosteo per = new PeriodoDeCosteo(ejercicio, mes)
         PeriodoDeCosteo anterior = per.getPeriodoAnterior()
         Periodo periodo = Periodo.getPeriodoEnUnMes(mes - 1, ejercicio)
@@ -83,20 +83,53 @@ class CostoPromedioService {
             
             costearTransformacion(trs, anterior)
         }
-        // log.info('Se termino de costear las Transformaciones')
+        log.info('Se termino de costear las Transformaciones')
 
     }
 
     def costearTransformacion(Transformacion trs, PeriodoDeCosteo anterior) {
-        // log.info("Costeando TRS  ${trs.tipo} ${trs.documento}  ${trs.sucursal.nombre} ------------------------------------------")
         List<TransformacionDet> partidas = trs.partidas.sort{it.cantidad}.sort{it.sw2}
-        def costo = null
+        def costo = 0
         def salida = 0
+        def costoOrigen = 0
         partidas.each { tr ->
+
+            def factor = tr.producto.unidad == 'MIL' ? 1000 : 1
 
             if(tr.cantidad < 0) {
                 salida = tr.cantidad.abs()
-                log.info("Salen : ${tr.producto.clave} ${tr.cantidad}   (sw2:${tr.sw2})" )
+                CostoPromedio cp = CostoPromedio.where{ejercicio == anterior.ejercicio && mes == anterior.mes && producto == tr.producto}.find()
+                if(cp){
+                    costo = cp.costo
+                } else {
+                    def existenciaAnt = Existencia.where{anio == anterior.ejercicio && mes == anterior.mes && producto == tr.producto && sucursal == trs.sucursal }.find()
+                    if(existenciaAnt)
+                        costo = existenciaAnt.costoPromedio
+                }
+                if(costo){
+                    costoOrigen = salida / factor * costo
+                }
+            }else{
+                if(costoOrigen){
+                    def entrada = tr.cantidad.abs()
+                    try {
+                        Inventario iv = tr.inventario
+                        if(iv) {
+                            if(salida != entrada ) {
+                                 costo = costoOrigen / (entrada / factor)
+                            }
+                            iv.costo = costo
+                            iv.save failOnError: true, flush: true
+                        }
+                    }catch(Exception ex) {
+                        ex.printStackTrace()
+                    }
+                }
+            }
+            /*
+            if(tr.cantidad < 0) {
+                salida = tr.cantidad.abs()
+                // log.info("Salen : ${tr.producto.clave} ${tr.cantidad}   (sw2:${tr.sw2})" )
                 CostoPromedio cp = CostoPromedio.where{ejercicio == anterior.ejercicio && mes == anterior.mes && producto == tr.producto}.find()
                 if(cp){
                     costo = cp.costo
@@ -113,7 +146,7 @@ class CostoPromedioService {
 
             } else {
                 if(costo) {
-                    log.info("Entran: ${tr.producto.clave} ${tr.cantidad}  (sw2:${tr.sw2})" )
+                  //  log.info("Entran: ${tr.producto.clave} ${tr.cantidad}  (sw2:${tr.sw2})" )
                     try {
                         Inventario iv = tr.inventario
                         if(iv) {
@@ -136,13 +169,14 @@ class CostoPromedioService {
                     }
                 }
             }
+            */
         }
     }
 
     @NotTransactional
     def calcular(Integer ejercicio , Integer mes) {
         List<CostoPromedio> costos = CostoPromedio.where {ejercicio == ejercicio && mes == mes}.list()
-        //log.info('Actualizando costo a {} registros de costo promedio para el periodo {} - {}', costos.size(), mes, ejercicio)
+        log.info('Actualizando costo a {} registros de costo promedio para el periodo {} - {}', costos.size(), mes, ejercicio)
 
         String sql ="""
             SELECT A.clave ,round(ifnull(SUM(a.IMP_COSTO)/SUM(A.CANT),0),2) AS costop
@@ -186,13 +220,14 @@ class CostoPromedioService {
             actualizados << cp
         }
         // log.debug("{} Registros actualizados ", actualizados.size())
-        // log.info('Se termino de costear los productos')
+        log.info('Se termino de costear los productos')
         return costos
     }
 
     def aplicar(Integer ejercicio, Integer mes) {
+        println "************Aplicando costos************"
         costearExistencias(ejercicio, mes)
-        costearInventario(ejercicio, mes)
+        costearInventario(ejercicio, mes)   
     }
 
 

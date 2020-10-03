@@ -59,8 +59,6 @@ class CobranzaEfectivoTask implements  AsientoBuilder {
                     row.cliete = row.diferenciaTipo
                     row.cliente = row.diferenciaTipo
 
-
-
                     poliza.addToPartidas(buildRegistro(
                             row.cta_caja.toString(),
                             descripcion,
@@ -253,8 +251,6 @@ class CobranzaEfectivoTask implements  AsientoBuilder {
             }
             return "Ficha: ${row.documento_gpo} Folio: ${row.documento?:''} F:${row.factura} (${row.fecha_fac}) ${row.tipo} ${row.sucursal}"
         }
-
-
         return "F:${row.factura} (${row.fecha_fac}) ${row.tipo} ${row.sucursal}"
     }
 

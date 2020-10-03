@@ -90,6 +90,8 @@ class PagoDeRembolsoTransitoTask implements  AsientoBuilder{
 
 
     void registrarRetenciones(Poliza poliza, Rembolso r) {
+
+        println "REgistrando retenciones"
         MovimientoDeCuenta egreso = r.egreso
         Map row = [
                 asiento: "PAGO_${egreso.tipo}",
@@ -107,12 +109,17 @@ class PagoDeRembolsoTransitoTask implements  AsientoBuilder{
         r.partidas.each {
             if(it.cxp.impuestoRetenido > 0) {
 
+                println "Si tiene impuesto retenido"
+
                 CuentaPorPagar cxp = it.cxp
                 String desc = "${egreso.formaDePago == 'CHEQUE' ? 'CH:': 'TR:'} ${egreso.referencia} F:${cxp.serie?:''} ${cxp.folio}" +
                     " (${poliza.fecha.format('dd/MM/yyyy')}) ${egreso.sucursal?: 'OFICINAS'} " +
                     " ${cxp.tipoDeCambio > 1.0 ? 'T.C:' + cxp.tipoDeCambio: ''}"
+
+                    println "*********** -----------  "+cxp.impuestoRetenidoIva
                 if(cxp.impuestoRetenidoIva > 0.0) {
                     BigDecimal imp = cxp.impuestoRetenidoIva
+                    println "***********   "+imp
                     poliza.addToPartidas(mapRow('118-0003-0000-0000', desc, row, imp))
                     poliza.addToPartidas(mapRow('119-0003-0000-0000', desc, row, 0.0, imp))
 

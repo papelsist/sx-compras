@@ -78,8 +78,8 @@ environments:
     development:
         dataSource:
             dbCreate: update
-            url: jdbc:mysql://10.10.1.229/siipapx_tacuba?autoReconnect=false
-            #url: jdbc:mysql://10.10.1.101/siipapx?autoReconnect=false
+            #url: jdbc:mysql://10.10.1.229/siipapx_tacuba?autoReconnect=false
+            url: jdbc:mysql://localhost/siipapx_tacuba?autoReconnect=false
             #url: jdbc:mysql://10.10.7.1/siipapx?autoReconnect=false
             #url: jdbc:mysql://localhost/siipapx_tacuba?autoReconnect=false
             #url: jdbc:mysql://${JDBC_CONNECTION_STRING}?autoReconnect=true
@@ -97,9 +97,9 @@ environments:
     production:
         dataSource:
             dbCreate: update
-            url: jdbc:mysql://${JDBC_CONNECTION_STRING}?autoReconnect=true
+            url: jdbc:mysql://${JDBC_CONNECTION_STRING}?autoReconnect=true&useSSL=false
             username: root
-            password: sys
+            password: siipap_RX1
             properties:
                 maxActive: 10
                 maxIdle: 10
