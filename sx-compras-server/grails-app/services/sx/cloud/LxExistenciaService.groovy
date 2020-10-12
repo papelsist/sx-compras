@@ -46,7 +46,8 @@ class LxExistenciaService {
             'BOLIVAR',
             'CALLE4',
             'CF5FEBRERO',
-            'TACUBA'
+            'TACUBA',
+            'SOLIS'
             ];
         sucursales.each { suc ->
             updateSucursal(suc)
