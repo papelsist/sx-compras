@@ -46,7 +46,7 @@ class CancelacionService implements  LogUser{
                     uuid cfdi.uuid
                     total cfdi.total
                     pfx(empresa.getCertificadoDigitalPfx().encodeBase64())
-                    pfxPassword('pfxfilepapel')
+                    pfxPassword(empresa.passwordPfx)
                     test isTest
                 }
             }
