@@ -169,7 +169,7 @@ class IngresosTask implements  AsientoBuilder {
                 .replaceAll("@TIPO", tipoStr)
                 .replace("@OTRO",tipo)
 
-          // println sqlClientes
+           println sqlClientes
     
         List rowsClientes = getAllRows(sqlClientes, [])
          
