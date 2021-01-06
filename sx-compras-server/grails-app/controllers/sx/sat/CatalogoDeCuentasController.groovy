@@ -36,7 +36,8 @@ class CatalogoDeCuentasController extends RestfulController<CatalogoDeCuentas> {
             notFound()
             return
         }
-        render (file: bitacora.xml, contentType: 'text/xml',
+        byte[] xml = bitacora.readXml().getBytes('UTF-8')
+        render (file: xml, contentType: 'text/xml',
                 filename: "CatalogoDeCtasBitacora_${bitacora.id}", encoding: "UTF-8")
     }
 
@@ -45,7 +46,7 @@ class CatalogoDeCuentasController extends RestfulController<CatalogoDeCuentas> {
             notFound()
             return
         }
-        render (file: bitacora.acuse, contentType: 'text/xml',
+        render (file: bitacora.readXml(), contentType: 'text/xml',
                 filename: "Acuse_CatalogoDeCtasBitacora_${bitacora.id}", encoding: "UTF-8")
     }
 
@@ -59,7 +60,7 @@ class CatalogoDeCuentasController extends RestfulController<CatalogoDeCuentas> {
         response.setHeader "Content-disposition", "attachment; filename=${fileName}"
 
 
-        ByteArrayInputStream is=new ByteArrayInputStream(cf.xml)
+        ByteArrayInputStream is=new ByteArrayInputStream(cf.xmlUrl.getBytes())
         response.outputStream << is
     }
 }

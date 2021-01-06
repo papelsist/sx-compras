@@ -236,6 +236,7 @@ environments:
         comisionesDir: /Users/rubencancino/Documents/cfdis-carga/comisiones
         honorariosDir: /Users/rubencancino/Documents/cfdis-carga/honorarios
       econta:
+        xmlDir: ${user.home}/.econta
         polizasDir: ${user.home}/Documents/econta
       cfdi:
         dir: ${user.home}/Documents/siipapx-cfdis
@@ -261,6 +262,8 @@ environments:
     siipapx:
       sat:
         metadata: /home/metadata
+      econta:
+        xmlDir: /home/econta
   tesoreria:
     siipapx:
       cxp:

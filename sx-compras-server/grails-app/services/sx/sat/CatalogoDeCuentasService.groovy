@@ -1,44 +1,54 @@
 package sx.sat
 
-import lx.econta.ContaUtils
+import grails.compiler.GrailsCompileStatic
+import grails.util.Environment
 import lx.econta.Mes
 import lx.econta.catalogo.Catalogo
 import lx.econta.catalogo.CatalogoBuilder
 import lx.econta.catalogo.Cuenta
 import lx.econta.catalogo.Naturaleza
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.transaction.annotation.Transactional
 import sx.contabilidad.CuentaContable
 import sx.core.Empresa
 import sx.core.LogUser
 
-class CatalogoDeCuentasService implements  LogUser{
+@GrailsCompileStatic
+class CatalogoDeCuentasService implements  LogUser {
 
+    @Value('${siipapx.econta.xmlDir:user.home}')
+    String econtaXmlDir
+
+    @Transactional
     CatalogoDeCuentas generar(Integer eje, Integer m) {
         Empresa empresa = Empresa.first()
         CatalogoDeCuentas catalogo = CatalogoDeCuentas.where{ejercicio == eje && mes == m}.find()
         if(!catalogo) {
             catalogo = new CatalogoDeCuentas()
             catalogo.with {
-                ejercicio = eje
+                it.ejercicio = eje
                 it.mes = m
-                emisor = empresa.nombre
-                rfc = empresa.rfc
+                it.emisor = empresa.nombre
+                it.rfc = empresa.rfc
             }
         }
-        catalogo.xml = generarXml(eje, m, empresa).getBytes('UTF-8')
-        catalogo.fileName = getFileName(catalogo)
-        return catalogo
+        Catalogo catalogoSat = generarCatalogoSat(eje, m, empresa.rfc, empresa.numeroDeCertificado)
+        File xmlFile = generarXml(catalogoSat)
+        catalogo.xmlUrl = xmlFile.toURI().toURL()
+        catalogo.fileName = xmlFile.getName()
+        return save(catalogo)
     }
 
+    @Transactional
     CatalogoDeCuentas save(CatalogoDeCuentas cta) {
         logEntity(cta)
         cta.save failOnError: true, flush: true
     }
 
-
-    def generarXml(Integer ejercicio, Integer mes, Empresa empresa = Empresa.first()) {
-        List<CuentaContable> cuentas = CuentaContable.list()
+    Catalogo generarCatalogoSat(Integer ejercicio, Integer mes, String rfc, String numeroDeCertificado) {
+        List<CuentaContable> cuentas = buscarCuentas(ejercicio, mes)
         Mes emes = getMes(mes)
-        Catalogo catalogo = new Catalogo('1.3', empresa.rfc, ejercicio, emes, empresa.numeroDeCertificado)
+        Catalogo catalogo = new Catalogo('1.3', rfc, ejercicio, emes, numeroDeCertificado)
         catalogo.cuentas = []
         cuentas.each {
             Cuenta cta = new Cuenta(it.cuentaSat.codigo, it.clave, it.descripcion)
@@ -48,15 +58,41 @@ class CatalogoDeCuentasService implements  LogUser{
                 cta.subcuentaDe = it.padre.clave
             catalogo.cuentas.add(cta)
         }
+        return catalogo
+    }
+
+    /**
+     * Regresa el catalogo de cuentas para el ejercio/mes
+     * @param ejercicio Año
+     * @param mes Mes
+     * @return Lista de cuentas contables
+     */
+    List<CuentaContable> buscarCuentas(Integer ejercicio, Integer mes) {
+        return CuentaContable.list()
+    }
+
+    File generarXml(Catalogo catalogo) {
         CatalogoBuilder builder = CatalogoBuilder.newInstance()
         String xmlString = builder.build(catalogo)
-        return xmlString
+        File target = new File(getXmlDirectory(), CatalogoBuilder.getSatFileName(catalogo))
+        target.setText(xmlString, 'UTF-8')
+        return target
     }
 
-    def getFileName(CatalogoDeCuentas catalogo) {
-
-        return "${catalogo.rfc}${catalogo.ejercicio}${catalogo.mes.value}CT.xml"
+    File getXmlDirectory() {
+        String filePath = "${this.econtaXmlDir}/catalogos"
+        File dir = new File(filePath)
+        if(!dir.exists()) {
+            dir.mkdirs()
+        }
+        return dir
     }
+
+    String getFileName(CatalogoDeCuentas catalogo) {
+        String smes = catalogo.mes.toString().padLeft(2, '0')
+        return "${catalogo.rfc}${catalogo.ejercicio}${smes}CT.xml"
+    }
+
 
     private Mes getMes(Integer v) {
         switch (v) {
