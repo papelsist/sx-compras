@@ -4,4 +4,4 @@ model {
 	CatalogoDeCuentas catalogoDeCuentas
 }
 
-json g.render(catalogoDeCuentas, [excludes: ['xml', 'acuse'], resolveTemplate: false])
+json g.render(catalogoDeCuentas, [excludes: ['catalogo', 'cuentas'], resolveTemplate: false])

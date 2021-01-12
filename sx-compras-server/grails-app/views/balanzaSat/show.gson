@@ -4,4 +4,6 @@ model {
 	BalanzaSat balanzaSat
 }
 
-json tmpl.balanzaSat(balanzaSat)
+json g.render(balanzaSat, [excludes: ['balanza', 'partidas'], resolveTemplate: false]) {
+    partidas balanzaSat.getPartidas()
+}

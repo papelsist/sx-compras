@@ -388,6 +388,7 @@ class UrlMappings {
         "/api/sat/catalogo/mostrarXml/$id"(controller:"catalogoDeCuentas", action:"mostrarXml")
         "/api/sat/catalogo/mostrarAcuse/$id"(controller:"catalogoDeCuentas", action:"mostrarAcuse")
         "/api/sat/catalogo/descargarXml/$id"(controller:"catalogoDeCuentas", action:"descargarXml")
+        "/api/sat/catalogo/uploadAcuse"(controller:'catalogoDeCuentas', action: 'uploadAcuse')
 
         // Balanza SAT
         "/api/sat/balanza"(resources: 'balanzaSat', excludes:['create', 'edit', 'update', 'patch'])

@@ -4,6 +4,6 @@ model {
 	BalanzaSat balanzaSat
 }
 
-json g.render(balanzaSat, [excludes: ['xml', 'acuse'], resolveTemplate: false]) {
-	acuse balanzaSat.acuse != null
+json g.render(balanzaSat, [excludes: ['balanza','partidas'], resolveTemplate: false]) {
+
 }

@@ -3,7 +3,7 @@ package sx.sat
 import groovy.util.logging.Slf4j
 import lx.econta.CadenaBuilder
 import org.bouncycastle.util.encoders.Base64
-import sx.core.Empresa
+
 
 import java.security.Signature
 
@@ -15,7 +15,7 @@ trait SelladorDigital {
     private Signature signature
     private CadenaBuilder cadenaBuilder
 
-    String buildSelloDigital(CadenaBuilder.Tipo tipo , byte[] data, Empresa empresa = Empresa.first()){
+    String buildSelloDigital(CadenaBuilder.Tipo tipo , byte[] data, EcontaEmpresa empresa){
         log.debug('Sellando comprobante {}', tipo)
 
         String cadenaOriginal = getCadenaBuilder().getCadena(data, tipo)

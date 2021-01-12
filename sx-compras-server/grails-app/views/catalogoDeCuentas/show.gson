@@ -4,4 +4,7 @@ model {
 	CatalogoDeCuentas catalogoDeCuentas
 }
 
-json tmpl.catalogoDeCuentas(catalogoDeCuentas)
+
+json g.render(catalogoDeCuentas, [excludes: ['cuentas'], resolveTemplate: false]) {
+    cuentas catalogoDeCuentas.getCuentas()
+}

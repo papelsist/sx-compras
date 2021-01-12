@@ -2,6 +2,7 @@ package sx.sat
 
 import grails.compiler.GrailsCompileStatic
 import grails.util.Environment
+import groovy.util.logging.Slf4j
 import lx.econta.Mes
 import lx.econta.catalogo.Catalogo
 import lx.econta.catalogo.CatalogoBuilder
@@ -9,69 +10,65 @@ import lx.econta.catalogo.Cuenta
 import lx.econta.catalogo.Naturaleza
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.multipart.MultipartFile
 import sx.contabilidad.CuentaContable
 import sx.core.Empresa
 import sx.core.LogUser
 
-@GrailsCompileStatic
-class CatalogoDeCuentasService implements  LogUser {
+// @GrailsCompileStatic
+@Slf4j
+class CatalogoDeCuentasService implements  LogUser, EcontaSupport {
 
     @Value('${siipapx.econta.xmlDir:user.home}')
     String econtaXmlDir
 
     @Transactional
-    CatalogoDeCuentas generar(Integer eje, Integer m) {
-        Empresa empresa = Empresa.first()
-        CatalogoDeCuentas catalogo = CatalogoDeCuentas.where{ejercicio == eje && mes == m}.find()
-        if(!catalogo) {
-            catalogo = new CatalogoDeCuentas()
-            catalogo.with {
-                it.ejercicio = eje
+    CatalogoDeCuentas generar(EcontaEmpresa emp, Integer ej, Integer m) {
+        CatalogoDeCuentas catalogoDeCuentas = CatalogoDeCuentas.where{empresa == emp && ejercicio == ej && mes == m}.find()
+        if(!catalogoDeCuentas) {
+            catalogoDeCuentas = new CatalogoDeCuentas()
+            catalogoDeCuentas.with {
+                it.ejercicio = ej
                 it.mes = m
-                it.emisor = empresa.nombre
+                it.emisor = emp.razonSocial
+                it.empresa = emp
                 it.rfc = empresa.rfc
             }
         }
-        Catalogo catalogoSat = generarCatalogoSat(eje, m, empresa.rfc, empresa.numeroDeCertificado)
-        File xmlFile = generarXml(catalogoSat)
-        catalogo.xmlUrl = xmlFile.toURI().toURL()
-        catalogo.fileName = xmlFile.getName()
-        return save(catalogo)
+        Catalogo catalogo = generarCatalogo(emp, ej, m)
+        File xmlFile = saveXml(catalogo)
+        catalogoDeCuentas.xmlUrl = xmlFile.toURI().toURL()
+        catalogoDeCuentas.fileName = xmlFile.getName()
+        logEntity(catalogoDeCuentas)
+        catalogoDeCuentas = catalogoDeCuentas.save failOnError: true, flush: true
+        return catalogoDeCuentas
     }
 
-    @Transactional
-    CatalogoDeCuentas save(CatalogoDeCuentas cta) {
-        logEntity(cta)
-        cta.save failOnError: true, flush: true
-    }
-
-    Catalogo generarCatalogoSat(Integer ejercicio, Integer mes, String rfc, String numeroDeCertificado) {
-        List<CuentaContable> cuentas = buscarCuentas(ejercicio, mes)
-        Mes emes = getMes(mes)
-        Catalogo catalogo = new Catalogo('1.3', rfc, ejercicio, emes, numeroDeCertificado)
+    Catalogo generarCatalogo(EcontaEmpresa empresa, Integer ej, Integer m) {
+        List cuentas = readData(empresa, empresa.sqlCatalogo)
+        Catalogo catalogo = new Catalogo(
+                rfc: empresa.rfc,
+                certificado:empresa.certificado,
+                ejercicio:ej,
+                mes:getMes(m),
+                )
         catalogo.cuentas = []
-        cuentas.each {
-            Cuenta cta = new Cuenta(it.cuentaSat.codigo, it.clave, it.descripcion)
-            cta.nivel = it.nivel
-            cta.naturaleza = it.naturaleza == 'DEUDORA' ? Naturaleza.DEUDORA : Naturaleza.ACREDORA
-            if(it.padre)
-                cta.subcuentaDe = it.padre.clave
+        cuentas.each { row ->
+            Cuenta cta = new Cuenta()
+            cta.clave = row['NumCta']
+            cta.descripcion = row['Desc']
+            cta.condigo = row['CodAgrup']
+            cta.nivel = row['Nivel'] as Integer
+            cta.naturaleza = row['Natur'] == 'DEUDORA' ? Naturaleza.DEUDORA : Naturaleza.ACREDORA
+            if(cta.nivel > 1)
+                cta.subcuentaDe = row['SubCtaDe']
             catalogo.cuentas.add(cta)
         }
         return catalogo
     }
 
-    /**
-     * Regresa el catalogo de cuentas para el ejercio/mes
-     * @param ejercicio Año
-     * @param mes Mes
-     * @return Lista de cuentas contables
-     */
-    List<CuentaContable> buscarCuentas(Integer ejercicio, Integer mes) {
-        return CuentaContable.list()
-    }
-
-    File generarXml(Catalogo catalogo) {
+    @Transactional
+    File saveXml(Catalogo catalogo) {
         CatalogoBuilder builder = CatalogoBuilder.newInstance()
         String xmlString = builder.build(catalogo)
         File target = new File(getXmlDirectory(), CatalogoBuilder.getSatFileName(catalogo))
@@ -88,42 +85,20 @@ class CatalogoDeCuentasService implements  LogUser {
         return dir
     }
 
-    String getFileName(CatalogoDeCuentas catalogo) {
+    @Transactional
+    CatalogoDeCuentas saveAcuse(EcontaUploadCommand command) {
+        CatalogoDeCuentas cat = CatalogoDeCuentas.get(command.documento)
+        String fileName = "${cat.fileName.replaceAll(".xml", '')}_ACU_" + command.file.originalFilename
+        File target = new File(getXmlDirectory(), fileName)
+        command.file.transferTo(target)
+        cat.acuseUrl = target.toURI()
+        return cat
+    }
+
+    /*String getFileName(CatalogoDeCuentas catalogo) {
         String smes = catalogo.mes.toString().padLeft(2, '0')
         return "${catalogo.rfc}${catalogo.ejercicio}${smes}CT.xml"
-    }
-
-
-    private Mes getMes(Integer v) {
-        switch (v) {
-            case 1:
-                return Mes.ENERO
-            case 2:
-                return Mes.FEBRERO
-            case 3:
-                return Mes.MARZO
-            case 4:
-                return Mes.ABRIL
-            case 5:
-                return Mes.MAYO
-            case 6:
-                return Mes.JUNIO
-            case 7:
-                return Mes.JULIO
-            case 8:
-                return Mes.AGOSTO
-            case 9:
-                return Mes.SEPTIEMBRE
-            case 10:
-                return Mes.OCTUBRE
-            case 11:
-                return Mes.NOVIEMBRE
-            case 12:
-                return Mes.DICIEMBRE
-            case 13:
-                return Mes.TRECE
-        }
-    }
-
+    }*/
 
 }
+
