@@ -221,7 +221,7 @@ class SaldoPorCuentaContableService implements LogUser{
         log.info('Bingo: {}', cta.clave)
 
         List<Map> movimientos = getMovimientosAgrupados(cta, ejercicio, mes)
-        // log.info("Movs: {}", movimientos)
+         //log.info("Movs: {}", movimientos)
         SaldoPorCuentaContable saldo = SaldoPorCuentaContable
                 .findOrCreateWhere(cuenta: cta, clave: cta.clave, ejercicio: ejercicio, mes: mes)
         saldo.nivel = cta.nivel
@@ -233,6 +233,7 @@ class SaldoPorCuentaContableService implements LogUser{
             SaldoPorCuentaContable cierreAnual = SaldoPorCuentaContable
                     .findByCuentaAndEjercicioAndMes(cta, ejercicio - 1, 13)
             saldoInicial = cierreAnual?.saldoFinal?: 0.0
+
         }else{
             saldoInicial = SaldoPorCuentaContable
                     .findByCuentaAndEjercicioAndMes(cta, ejercicio, mes-1)?.saldoFinal?:0.0
@@ -245,7 +246,9 @@ class SaldoPorCuentaContableService implements LogUser{
         log.info("{} I:{} D:{} H:{} F:{}", cta.clave, saldo.saldoInicial, saldo.debe, saldo.haber, saldo.saldoFinal)
         cta.subcuentas.each { CuentaContable c2 ->
             // Nivel 2
+            println "Evaluando el nivel 2"
             String sclave = c2.clave.substring(0, 8)
+    
             List<Map> movs2 = movimientos.findAll{ it.cuenta.startsWith(sclave) }.sort{it.clave}
             SaldoPorCuentaContable saldo2 = findSaldo(c2, ejercicio, mes)
 
@@ -257,6 +260,8 @@ class SaldoPorCuentaContableService implements LogUser{
 
             c2.subcuentas.each { CuentaContable c3 ->
                 // Nivel 3
+                println "Evaluando el nivel 3  - "+ c3.id 
+                
                 sclave = c3.clave.substring(0, 13)
                 List<Map> movs3 = movimientos.findAll{ it.cuenta.startsWith(sclave) }.sort{it.clave}
                 SaldoPorCuentaContable saldo3 = findSaldo(c3, ejercicio, mes)
@@ -267,8 +272,13 @@ class SaldoPorCuentaContableService implements LogUser{
                 saldo3.save failOnError: true, flush: true
                 log.info("    {} I:{} D:{} H:{} F:{}", sclave, saldo3.saldoInicial, saldo3.debe, saldo3.haber, saldo3.saldoFinal)
 
+                if(c3.subcuentas){
+                    println "Evaluando el nivel 4"
+                }
+
                 c3.subcuentas.each { CuentaContable c4 ->
                     // Nivel 4
+                    //
                     sclave = c4.clave
                     List<Map> movs4 = movimientos.findAll{ it.cuenta == sclave }.sort{it.clave}
                     SaldoPorCuentaContable saldo4 = findSaldo(c4, ejercicio, mes)
@@ -309,6 +319,8 @@ class SaldoPorCuentaContableService implements LogUser{
     }
 
     private SaldoPorCuentaContable findSaldo(CuentaContable cta, Integer ejercicio, Integer mes) {
+       
+
         SaldoPorCuentaContable saldo = SaldoPorCuentaContable
                 .findOrCreateWhere(cuenta: cta, clave: cta.clave, ejercicio: ejercicio, mes: mes)
         saldo.nivel = cta.nivel
@@ -320,9 +332,11 @@ class SaldoPorCuentaContableService implements LogUser{
             saldoInicial = cierreAnual?.saldoFinal?: 0.0
         }else{
             saldoInicial = SaldoPorCuentaContable
-                    .findByCuentaAndEjercicioAndMes(cta, ejercicio, mes-1)?.saldoFinal?:0.0
+                    .findByCuentaAndEjercicioAndMes(cta, ejercicio, mes-1)?.saldoFinal?:0.0  
         }
+
         saldo.saldoInicial = saldoInicial
+       
         return saldo
     }
 

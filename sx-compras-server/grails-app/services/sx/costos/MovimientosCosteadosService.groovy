@@ -23,7 +23,7 @@ class MovimientosCosteadosService {
 
     def getSelect() {
         return """
-            SELECT A.CLAVE as clave ,x.de_linea as deLinea,A.DESCRIPCION as descripcion ,L.LINEA as linea, C.CLASE as clase, M.MARCA as marca 
+        SELECT A.CLAVE as clave ,x.de_linea as deLinea,A.DESCRIPCION as descripcion ,L.LINEA as linea, C.CLASE as clase, M.MARCA as marca 
             ,ROUND(SUM(CASE WHEN A.TIPO='INI' THEN A.SALDO ELSE 0 END) ,3) AS saldoInicial
             ,ROUND(SUM(CASE WHEN A.TIPO='INI' THEN A.COSTO ELSE 0 END) ,2) AS costoInicial
             ,ROUND(SUM(CASE WHEN A.TIPO='SNA' THEN A.SALDO ELSE 0 END) ,3) AS comsSinAUni
@@ -52,19 +52,19 @@ class MovimientosCosteadosService {
             FROM (      
                 SELECT 'REDONDEO' ASIENTO,'INI' AS TIPO,'01 A_INV' AS GRUPO,s.sw2,s.clave SUC,s.nombre SUCURSAL,P.CLAVE,P.DESCRIPCION,ROUND(   (I.EXISTENCIA_INICIAL/(case when p.unidad ='MIL' then 1000 else 1 end)*P.KILOS),3) as KILOS
                ,ROUND(   (I.EXISTENCIA_INICIAL/(case when p.unidad ='MIL' then 1000 else 1 end)),3) as SALDO,   (   (I.EXISTENCIA_INICIAL/(case when p.unidad ='MIL' then 1000 else 1 end) * I.COSTO )  ) as COSTO
-               ,'' PROVEEDOR,CONCAT('115-0001-',(CASE WHEN s.sw2<10 THEN '000' ELSE '00' END),s.clave,'-0000') CTA_CONTABLE
+               ,'' PROVEEDOR,CONCAT('115-0001-',(CASE WHEN s.sw2<10 THEN '000' ELSE '00' END),s.clave,'-0000') CTA_CONTABLE,i.id
                FROM existencia i join producto p on(p.id=i.producto_id) JOIN sucursal s on(i.sucursal_id=s.id) where p.inventariable is true and I.ANIO= @EJERCICIO AND I.MES = @MES  AND I.CLAVE LIKE '%'         
                 union
                SELECT 'REDONDEO' ASIENTO,'FIN' AS TIPO,'08 Z_INV' AS GRUPO,s.sw2,s.clave SUC,s.nombre SUCURSAL,P.CLAVE,P.DESCRIPCION
                ,ROUND(   (I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end)*P.KILOS),3) as KILOS
                ,ROUND(   (I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end)),3) as SALDO,   (   (I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end) * I.COSTO_PROMEDIO )  ) as COSTO
-               ,'' PROVEEDOR,CONCAT('115-0001-',(CASE WHEN s.sw2<10 THEN '000' ELSE '00' END),s.clave,'-0000') CTA_CONTABLE
+               ,'' PROVEEDOR,CONCAT('115-0001-',(CASE WHEN s.sw2<10 THEN '000' ELSE '00' END),s.clave,'-0000') CTA_CONTABLE,i.id
                FROM existencia i join producto p on(p.id=i.producto_id) JOIN sucursal s on(i.sucursal_id=s.id) where p.inventariable is true and I.ANIO= @EJERCICIO AND I.MES = @MES  AND I.CLAVE LIKE '%'         
                 union              
                 SELECT 'FLETES PROVEEDOR' ASIENTO,'FLT' TIPO,'02 COMPRAS' AS grupo,s.sw2,S.clave SUC,S.NOMBRE SUCURSAL,P.CLAVE,P.DESCRIPCION 
                 ,0 as kilos,0 as saldo,   sum( (I.CANTIDAD/(case when p.unidad ='MIL' then 1000 else 1 end) * i.gasto) ) as COSTO
                 ,(select x.nombre from recepcion_de_compra_det d join recepcion_de_compra r on(d.recepcion_id=r.id) join proveedor x on(r.proveedor_id=x.id) where d.inventario_id=i.id  ) PROVEEDOR        
-                ,concat('115-0004-',(SELECT o.cuenta_operativa FROM recepcion_de_compra_det d   join recepcion_de_compra r on(d.recepcion_id=r.id) join proveedor x on(r.proveedor_id=x.id) join cuenta_operativa_proveedor o on(o.proveedor_id=x.id) where d.inventario_id=i.id ),'-0000') CTA_CONTABLE
+                ,concat('115-0004-',(SELECT o.cuenta_operativa FROM recepcion_de_compra_det d   join recepcion_de_compra r on(d.recepcion_id=r.id) join proveedor x on(r.proveedor_id=x.id) join cuenta_operativa_proveedor o on(o.proveedor_id=x.id) where d.inventario_id=i.id ),'-0000') CTA_CONTABLE,i.id
                 from inventario I  join producto p on(p.id=i.producto_id) JOIN sucursal s on(i.sucursal_id=s.id)
                 where p.inventariable is true and  YEAR(I.FECHA)= @EJERCICIO AND MONTH(I.FECHA) = @MES
                 AND I.TIPO IN('COM') AND I.GASTO>0   group by 1,2,3,4,7
@@ -75,13 +75,13 @@ class MovimientosCosteadosService {
                 ,concat('115-0011-'
                 ,(select max(o.cuenta_operativa) from transformacion_det d join analisis_de_transformacion_det a on(d.id=a.trs_id) join analisis_de_transformacion t on(a.analisis_id=t.id) join proveedor x on(t.proveedor_id=x.id) join cuenta_operativa_proveedor o on(o.proveedor_id=x.id) where d.inventario_id=i.id  )
                 ,(CASE WHEN S.CLAVE<10 THEN '-000' ELSE '-00' END),S.CLAVE
-                ) CTA_CONTABLE
+                ) CTA_CONTABLE,i.id
                 from inventario I  join producto p on(p.id=i.producto_id) JOIN sucursal s on(i.sucursal_id=s.id)
                 where p.inventariable is true and  YEAR(I.FECHA)= @EJERCICIO AND MONTH(I.FECHA) = @MES
                 AND I.CLAVE LIKE '%'
                 AND I.TIPO IN('MAQ') AND I.GASTO>0 
                     union           
-                select a.ASIENTO,a.TIPO,a.GRUPO,a.sw2,a.SUC,a.SUCURSAL,a.CLAVE,a.DESCRIPCION,SUM(a.KILOS) KILOS,SUM(a.SALDO) SALDO,SUM(a.COSTO) COSTO,a.PROVEEDOR,a.CTA_CONTABLE 
+                select a.ASIENTO,a.TIPO,a.GRUPO,a.sw2,a.SUC,a.SUCURSAL,a.CLAVE,a.DESCRIPCION,SUM(a.KILOS) KILOS,SUM(a.SALDO) SALDO,SUM(a.COSTO) COSTO,a.PROVEEDOR,a.CTA_CONTABLE ,a.id
                 from (        
                 SELECT (CASE WHEN i.TIPO IN('COM','DEC') AND I.COSTO=0 THEN 'COMPRAS_SNA'
                 WHEN i.TIPO IN('COM') AND I.COSTO>0 THEN 'COMPRAS'
@@ -122,7 +122,7 @@ class MovimientosCosteadosService {
                 WHEN i.TIPO IN('CIS') AND (SELECT d.tipocis FROM movimiento_de_almacen m join movimiento_de_almacen_det d on(d.movimiento_de_almacen_id=m.id) where d.inventario_id=i.id)='PAPELERIA' THEN CONCAT('600-0032-',(CASE WHEN S.CLAVE<10 THEN '000' ELSE '00' END),S.CLAVE,'-0000')
                 WHEN i.TIPO IN('CIS') AND (SELECT d.tipocis FROM movimiento_de_almacen m join movimiento_de_almacen_det d on(d.movimiento_de_almacen_id=m.id) where d.inventario_id=i.id)='MATERIAL_EMPAQUE' THEN CONCAT('600-0029-',(CASE WHEN S.CLAVE<10 THEN '000' ELSE '00' END),S.CLAVE,'-0000')
                 WHEN i.TIPO IN('CIS') AND (SELECT d.tipocis FROM movimiento_de_almacen m join movimiento_de_almacen_det d on(d.movimiento_de_almacen_id=m.id) where d.inventario_id=i.id)='PUBLICIDAD_PROPAGANDA' THEN CONCAT('600-0033-',(CASE WHEN S.CLAVE<10 THEN '000' ELSE '00' END),S.CLAVE,'-0000')
-                WHEN i.TIPO IN('CIS') AND (SELECT d.tipocis FROM movimiento_de_almacen m join movimiento_de_almacen_det d on(d.movimiento_de_almacen_id=m.id) where d.inventario_id=i.id)='NO_DEDUSIBLE' THEN CONCAT('600-0031-',(CASE WHEN S.CLAVE<10 THEN '000' ELSE '00' END),S.CLAVE,'-0000') ELSE TIPO END) CTA_CONTABLE
+                WHEN i.TIPO IN('CIS') AND (SELECT d.tipocis FROM movimiento_de_almacen m join movimiento_de_almacen_det d on(d.movimiento_de_almacen_id=m.id) where d.inventario_id=i.id)='NO_DEDUSIBLE' THEN CONCAT('600-0031-',(CASE WHEN S.CLAVE<10 THEN '000' ELSE '00' END),S.CLAVE,'-0000') ELSE TIPO END) CTA_CONTABLE,i.id
                 from inventario I  join producto p on(p.id=i.producto_id) JOIN sucursal s on(i.sucursal_id=s.id)
                 where p.inventariable is true and  YEAR(I.FECHA)= @EJERCICIO AND MONTH(I.FECHA) = @MES AND I.CLAVE LIKE '%'           
                 ) as a       

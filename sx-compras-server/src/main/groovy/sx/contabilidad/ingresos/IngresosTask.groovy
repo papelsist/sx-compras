@@ -23,7 +23,7 @@ class IngresosTask implements  AsientoBuilder {
         log.info("Generando asientos contables para Ingresos {} {}", poliza.fecha)
 
         asientoBancos(poliza, params)
-        // asientoNotas(poliza, params)
+        //asientoNotas(poliza, params)
         asientoClientes(poliza, params)
         asientoSaf(poliza, params)
  
@@ -192,6 +192,7 @@ class IngresosTask implements  AsientoBuilder {
             
 
             if((tipo == 'CON' || tipo == 'COD') && !row.asiento.toString().contains('NOTA') ){ 
+               
                 descripcion = "COBRANZA: ${row.documentoTipo} "
             }
 
@@ -220,7 +221,6 @@ class IngresosTask implements  AsientoBuilder {
                 def cta =  '205-0001-0004-0000'
 
 
-                println "Cobro Saf Cliente: "+ cobro.cliente.nombre
 
                 BigDecimal importeDiv = MonedaUtils.calcularImporteDelTotal(row.total)
                 BigDecimal ivaDiv = row.total - importeDiv
@@ -244,8 +244,8 @@ class IngresosTask implements  AsientoBuilder {
                 
             }
 
-             if((row.tipo == 'COD' || row.tipo == 'CRE' || row.tipo == 'CHE') && ! row.asiento.toString().contains('xIDENT') && row.asiento != 'NOTA' && ! row.asiento.toString().contains('SAF') ){
-
+             if((row.documentoTipo == 'COD' || row.tipo == 'CRE' || row.tipo == 'CHE') && ! row.asiento.toString().contains('xIDENT') && row.asiento != 'NOTA' && ! row.asiento.toString().contains('SAF') ){
+                 
                 BigDecimal importe = MonedaUtils.calcularImporteDelTotal(row.total)
                 BigDecimal iva = row.total - importe
 

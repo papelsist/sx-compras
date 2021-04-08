@@ -24,7 +24,7 @@ class CostoPromedio {
     Date lastUpdated
 
     static constraints = {
-        ejercicio min: 2010, max: 2020
+        ejercicio min: 2010, max: 2030
         mes inList: [1,2,3,4,5,6,7,8,9,10,11,12]
         producto unique: ['ejercicio', 'mes']
     }

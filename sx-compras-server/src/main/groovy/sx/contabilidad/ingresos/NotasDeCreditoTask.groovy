@@ -23,8 +23,10 @@ class NotasDeCreditoTask implements  AsientoBuilder {
 
         log.info("Generando asientos contables para Notas con EFECTIVO {} {}", poliza.fecha)
         String sql = getSqlNotas().replaceAll("@FECHA", toSqlDate(poliza.fecha))
-
-        List rows = getAllRows(sql, [])
+        println "*******************************"
+        println params.tipo
+         println "*******************************"
+        List rows = getAllRows(sql, [params.tipo, params.tipo])
         def descripcion = ""
 
         rows.each{row ->
@@ -84,6 +86,26 @@ class NotasDeCreditoTask implements  AsientoBuilder {
 
     }
 
+    def cobranzaNotasDeCredito(Poliza poliza, Map params = [:]) {
+
+        log.info("Generando asientos contables para cobranza de Notas  {} {}", poliza.fecha, params.tipo)
+        String sql = getSqlNotas().replaceAll("@FECHA", toSqlDate(poliza.fecha))
+        println "*******************************"
+        println params.tipo
+         println "*******************************"
+        List rows = getAllRows(sql, [params.tipo, params.tipo])
+        def descripcion = ""
+
+        rows.each{row ->
+
+                descripcion = "NOTA: ${row.folio} ${row.fecha} F: ${row.documento} ${row.documentoTipo} ${row.fecha_documento} ${row.sucursal} "   
+                PolizaDet detIvaCargo = mapRow("208-0001-0000-0000", descripcion, row, row.impuesto.abs())
+                PolizaDet detIvaAbono = mapRow("209-0001-0000-0000", descripcion, row, 0.0 ,row.impuesto.abs())
+                poliza.addToPartidas(detIvaCargo)
+                poliza.addToPartidas(detIvaAbono)
+
+        }
+    }
 
     PolizaDet mapRow(String cuentaClave, String descripcion, Map row, def debe = 0.0, def haber = 0.0) {
 
@@ -131,7 +153,7 @@ class NotasDeCreditoTask implements  AsientoBuilder {
             FROM cobro f join aplicacion_de_cobro a on(a.cobro_id=f.id) join cliente c on(f.cliente_id=c.id)  
             join nota_de_credito n on(f.id=n.cobro_id) 
             join cfdi x on(n.cfdi_id=x.id)  join cuenta_por_cobrar y on(a.cuenta_por_cobrar_id=y.id) join sucursal s on(y.sucursal_id=s.id)
-            where  a.fecha = '@FECHA' and F.forma_de_pago in('BONIFICACION') and n.sw2 is null and (x.cancelado is false or x.cancelado is null)  and a.fecha=(f.primera_aplicacion)			
+            where  a.fecha = '@FECHA' and F.forma_de_pago in('BONIFICACION') and n.sw2 is null and (x.cancelado is false or x.cancelado is null)  and f.tipo=?			
             union							
             SELECT concat('NOTA_',substr(f.forma_de_pago,1,3),'_',f.tipo) as asiento,c.nombre referencia2,n.id as origen ,f.cliente_id as cliente,n.folio,n.total,f.tipo as documentoTipo,
             y.fecha as fecha_documento,y.documento,s.nombre as sucursal ,f.fecha,round(a.importe/1.16,2) subtotal ,a.importe-round(a.importe/1.16,2) impuesto,a.importe total_det,f.moneda,f.tipo_de_cambio  tc,y.tipo_de_cambio tc_iva_fac,
@@ -142,7 +164,7 @@ class NotasDeCreditoTask implements  AsientoBuilder {
             a.aplicaciones_idx,(select max(aplicaciones_idx) from aplicacion_de_cobro y  where y.cobro_id=f.id) as max, c.rfc, x.uuid
             FROM cobro f join aplicacion_de_cobro a on(a.cobro_id=f.id) join cliente c on(f.cliente_id=c.id)  join sucursal s on(f.sucursal_id=s.id) join nota_de_credito n on(f.id=n.cobro_id) 
             join cfdi x on(n.cfdi_id=x.id) join cuenta_por_cobrar y on(a.cuenta_por_cobrar_id=y.id)
-            where  a.fecha = '@FECHA' and F.forma_de_pago in('DEVOLUCION') and n.sw2 is null and (x.cancelado is false or x.cancelado is null) and a.fecha=(f.primera_aplicacion)
+            where  a.fecha = '@FECHA' and F.forma_de_pago in('DEVOLUCION') and n.sw2 is null and (x.cancelado is false or x.cancelado is null)  and f.tipo = ?
         """
         return res
     }

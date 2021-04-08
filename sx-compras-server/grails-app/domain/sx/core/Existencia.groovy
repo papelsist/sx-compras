@@ -119,7 +119,7 @@ class Existencia {
         recorteComentario nullable: true
         recorteFecha nullable: true
         fecha nullable: true
-        costo nullbale: true
+        costo nullable: true
         costoPromedio nullable: true
     }
 

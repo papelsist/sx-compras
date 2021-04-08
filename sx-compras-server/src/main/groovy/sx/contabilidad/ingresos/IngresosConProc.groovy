@@ -19,6 +19,10 @@ class IngresosConProc implements  ProcesadorDePoliza{
     @Qualifier('ventasTask')
     VentasTask  ventasTask 
 
+    @Autowired
+    @Qualifier('notasDeCreditoTask')
+    NotasDeCreditoTask notasDeCreditoTask
+
     @Override
     String definirConcepto(Poliza poliza) {
         return "Ingresos Contado ${poliza.fecha.format('dd/MM/yyyy')}"
@@ -30,6 +34,7 @@ class IngresosConProc implements  ProcesadorDePoliza{
         poliza.partidas.clear()
         ventasTask.generarAsientos(poliza)
         ingresosTask.generarAsientos(poliza, [tipo: 'CON'])
+        notasDeCreditoTask.cobranzaNotasDeCredito(poliza, [tipo: 'CON'])
         poliza = poliza.save flush: true, failOnError:true
         return poliza
     }
