@@ -44,6 +44,16 @@ export class CfdiEffects {
   );
 
   @Effect()
+  setCfdiFilter$ = this.actions$.pipe(
+    ofType<fromActions.SetCfdiFilter>(ComprobanteActionTypes.SetCfdisFilter),
+    map(action => action.payload),
+    map(filter => {
+      console.log('Cargando registros con filtro: ', filter);
+      return new fromActions.LoadComprobantes();
+    })
+  );
+
+  @Effect()
   updateComprobante$ = this.actions$.pipe(
     ofType<fromActions.UpdateComprobante>(
       ComprobanteActionTypes.UpdateComprobante

@@ -38,7 +38,7 @@ export class ComprobanteFiscalService {
       .set('fechaFinal', filtro.fechaFinal.toISOString())
       .set('max', filtro.registros.toString());
     if (filtro.proveedor) {
-      params = params.set('proveedor', filtro.proveedor.id);
+      params = params.set('rfc', filtro.proveedor.rfc);
     }
     return this.http
       .get<ComprobanteFiscal[]>(this.apiUrl, { params: params })

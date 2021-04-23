@@ -106,7 +106,9 @@ export class ProductoFormComponent implements OnInit {
         ...this.producto,
         ...this.form.value
       };
-      this.save.emit(prod);
+      const { fechaLista, ...rest } = prod;
+      console.log('Producto actualizar: ', rest);
+      this.save.emit(rest);
     }
   }
 }

@@ -63,7 +63,7 @@ export class CfdisTableComponent implements OnInit, OnChanges {
   constructor() {}
 
   ngOnInit() {
-    this.dataSource.paginator = this.paginator;
+    // this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
 

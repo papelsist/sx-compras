@@ -45,6 +45,10 @@ class ComprobanteFiscalController extends RestfulController<ComprobanteFiscal> {
             String search = '%' + emisor + '%'
             query = query.where { emisorNombre =~ search  }
         }
+        if(params.rfc) {
+            String srfc = params.rfc
+            query = query.where{emisorRfc == srfc  }
+        }
 
         respond query.list(params)
     }
