@@ -1,26 +1,24 @@
 <mat-card flex *ngIf="nota$ | async as nota">
-  <div layout layout-align="start center" class="pad">
-    <span class="mat-title">
+    <div layout layout-align="start center" class="pad">
+        <span class="mat-title">
       <span>NC: </span>
-      <span> {{ nota.serie }} {{ nota.folio }}</span>
-      <span class="pad-left">({{ nota.fecha | date: 'dd/MM/yyyy' }})</span>
-      <span class="pad-left">{{ nota.nombre }}</span>
-    </span>
-    <span flex></span>
-    <span class="">
-      <span class="pad-left">SubTotal: {{ nota.subTotal | currency }}</span>
-    </span>
-  </div>
-  <div layout class="pad-left pad-right subtitle">
-    <span class="mat-subtitle comentario-action"
-      >Comentario: {{ nota.comentario }}</span
+        <span> {{ nota.serie }} {{ nota.folio }}</span>
+        <span class="pad-left">({{ nota.fecha | date: 'dd/MM/yyyy' }})</span>
+        <span class="pad-left">{{ nota.nombre }}</span>
+        </span>
+        <span flex></span>
+        <span class="">
+      <span class="pad-left">SubTotal: {{ nota.subTotal - nota.descuento   | currency }}</span>
+        </span>
+    </div>
+    <div layout class="pad-left pad-right subtitle">
+        <span class="mat-subtitle comentario-action">Comentario: {{ nota.comentario }}</span
     >
     <span class="pad-left pad-right">Moneda:{{ nota.moneda }}</span>
-    <span flex></span>
-    <ng-container *ngIf="analizado$ | async as analizado">
-      <span>Analizado: {{ analizado | currency }}</span>
-      <span class="pad-left"
-        >Pendiente: {{ nota.subTotal - analizado | currency }}</span
+        <span flex></span>
+        <ng-container *ngIf="analizado$ | async as analizado">
+            <span>Analizado: {{ analizado | currency }}</span>
+            <span class="pad-left">Pendiente: {{ nota.subTotal - analizado - nota.descuento | currency }}</span
       >
     </ng-container>
   </div>

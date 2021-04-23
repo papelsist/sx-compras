@@ -37,6 +37,7 @@ abstract class NotaDeCreditoCxPService implements  LogUser{
             moneda: Currency.getInstance(cfdi.moneda),
             tipoDeCambio: cfdi.tipoDeCambio,
             subTotal: cfdi.subTotal ?: 0.0,
+            descuento: cfdi.descuento,
             impuestoTrasladado: cfdi.impuestoTrasladado ?: 0.0,
             impuestoRetenido: cfdi.impuestoRetenido?: 0.0,
             total: cfdi.total,
