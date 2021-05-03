@@ -43,7 +43,7 @@ class IngresosTask implements  AsientoBuilder {
                 .replaceAll("@FECHA", toSqlDate(poliza.fecha))
                 .replaceAll("@TIPO", tipoStr)
 
-        // println sql
+        //println sql
 
         List rows = getAllRows(sql, [])
 
@@ -169,7 +169,7 @@ class IngresosTask implements  AsientoBuilder {
                 .replaceAll("@TIPO", tipoStr)
                 .replace("@OTRO",tipo)
 
-           println sqlClientes
+          // println sqlClientes
     
         List rowsClientes = getAllRows(sqlClientes, [])
          
@@ -276,7 +276,7 @@ class IngresosTask implements  AsientoBuilder {
         String sqlSaf = getSafSql()
                 .replaceAll("@FECHA", toSqlDate(poliza.fecha))
                 .replaceAll("@TIPO", tipo)
-            
+            println sqlSaf
         List rowsSaf = getAllRows(sqlSaf, [])
 
         rowsSaf.each{row ->
@@ -370,7 +370,11 @@ class IngresosTask implements  AsientoBuilder {
         		when m.forma_de_pago like 'DEP%CHE%' then concat('COB_DEP_CHE_',m.tipo,(case when m.por_identificar is true then '_xIDENT' else '' end))
         		when m.forma_de_pago IN('CHEQUE','EFECTIVO') then concat('COB_FICHA_',m.tipo) when m.forma_de_pago like 'TARJ%' then 'COB_TARJ_CON' else '' end) asiento, 'MovimientoDeCuenta' entidad
         	,case when m.referencia>0 then m.referencia else(case when t.id is null then SUBSTRING(m.referencia,LENGTH(SUBSTRING_INDEX(m.referencia,':',1))+3) else CONVERT (t.folio,CHAR) end) end documento,m.referencia
-        ,m.id origen,(case when m.forma_de_pago like 'TARJ%' then 'CON' else m.tipo end) documentoTipo,m.fecha,m.referencia,m.moneda,m.tipo_de_cambio tc ,round(m.importe * m.tipo_de_cambio,2) total,m.forma_de_pago
+        ,m.id origen,(case when m.forma_de_pago like 'TARJ%' then 'CON' else m.tipo end) documentoTipo,m.fecha,m.referencia,m.moneda,m.tipo_de_cambio tc 
+        ,round((case when m.por_identificar then 
+        (SELECT sum(a.importe) FROM cobro_transferencia t join cobro c on(t.cobro_id=c.id) join aplicacion_de_cobro a on(a.cobro_id=c.id) where t.ingreso_id=m.id )   ---aqui
+        else m.importe end) * m.tipo_de_cambio,2) total
+        ,m.forma_de_pago
         ,(
             case when m.sucursal is null 
                  then SUBSTRING(m.comentario,LENGTH(SUBSTRING_INDEX(m.comentario,(case when m.comentario like '%BANCO%' then 'BANCO' else 'EFECTIVO' end),1))+5) 
@@ -510,21 +514,29 @@ class IngresosTask implements  AsientoBuilder {
         String sql ="""
             select cobroId,forma_de_pago, z.asiento,z.sucursal,sum(z.total) total,cta_contable,concat('COB_VENTA ',z.tipo,' ',z.sucursal) referencia2,z.fecha,null origen,null entidad,null documento,null documentoTipo  
             from (         	  
-            select x.id as cobroId,concat((case when x.forma_de_pago in('BONIFICACION','DEVOLUCION') then 'NOTA_' else 'COB_' end),'VENTAS_',x.tipo,'_SAF') as asiento,x.id,x.tipo,x.forma_de_pago,x.referencia,date(primera_aplicacion) fecha,s.nombre sucursal,(x.importe-(case when x.diferencia_fecha='@FECHA' then x.diferencia else 0 end) - ifnull((SELECT sum(a.importe) FROM aplicacion_de_cobro a where a.cobro_id=x.id and a.fecha='@FECHA'),0) ) total
+            select x.id as cobroId,concat((case when x.forma_de_pago in('BONIFICACION','DEVOLUCION') then 'NOTA_' else 'COB_' end),'VENTAS_',x.tipo,'_SAF') as asiento,x.id,x.tipo,x.forma_de_pago,x.referencia,date(primera_aplicacion) fecha,s.nombre sucursal            
+            ,(x.importe-(case when x.diferencia_fecha='@FECHA' then x.diferencia else 0 end) - ifnull((SELECT sum(a.importe) FROM aplicacion_de_cobro a where a.cobro_id=x.id and a.fecha='@FECHA'),0) ) total
             ,'205-0001-0004-0000' cta_contable
+            ,(case when (SELECT m.por_identificar FROM cobro_transferencia t join movimiento_de_cuenta m on(t.ingreso_id=m.id) where t.cobro_id=x.id ) is true then 'SI' else 'NO' end) por_identificarT
+            ,(case when (SELECT m.por_identificar FROM cobro_deposito t join movimiento_de_cuenta m on(t.ingreso_id=m.id) where t.cobro_id=x.id ) is true then 'SI' else 'NO' end) por_identificarD
             from cobro x join aplicacion_de_cobro y on(y.cobro_id=x.id) join sucursal s on(x.sucursal_id=s.id) where x.tipo='@TIPO' and date(x.primera_aplicacion)='@FECHA' and  x.forma_de_pago not in('BONIFICACION','DEVOLUCION') and
-            (x.importe-(case when x.diferencia_fecha='@FECHA' then x.diferencia else 0 end) - ifnull((SELECT sum(a.importe) FROM aplicacion_de_cobro a where a.cobro_id=x.id and a.fecha='@FECHA'),0) )>0 	group by x.id 
+            (x.importe-(case when x.diferencia_fecha='@FECHA' then x.diferencia else 0 end) - ifnull((SELECT sum(a.importe) FROM aplicacion_de_cobro a where a.cobro_id=x.id and a.fecha='@FECHA'),0) )>0
             union
-            select  x.id as cobroId,concat((case when x.forma_de_pago in('BONIFICACION','DEVOLUCION') then 'NOTA_' else 'COB_' end),'VENTAS_',x.tipo,'_OPRD') as asiento,x.id,x.tipo,x.forma_de_pago,x.referencia,x.diferencia_fecha fecha,s.nombre sucursal,x.diferencia total,'704-0005-0000-0000' cta_contable
+            select  x.id as cobroId,concat((case when x.forma_de_pago in('BONIFICACION','DEVOLUCION') then 'NOTA_' else 'COB_' end),'VENTAS_',x.tipo,'_OPRD') as asiento,x.id,x.tipo,x.forma_de_pago,x.referencia,x.diferencia_fecha fecha,s.nombre sucursal,sum(x.diferencia) total,'704-0005-0000-0000' cta_contable
+            ,'NO' por_identificarT,'NO' por_identificarD
             from cobro x  join sucursal s on(x.sucursal_id=s.id) where x.tipo='@TIPO' and x.diferencia_fecha='@FECHA' and date(x.primera_aplicacion)='@FECHA' and  x.forma_de_pago not in('BONIFICACION','DEVOLUCION')
+            group by 2,8
             union
-            select x.id as cobroId,concat((case when x.forma_de_pago in('BONIFICACION','DEVOLUCION') then 'NOTA_' else 'COB_' end),'VENTAS_',x.tipo,'_OPRD_SAF') as asiento,x.id,x.tipo,x.forma_de_pago,x.referencia,x.diferencia_fecha fecha,s.nombre sucursal,x.diferencia total,'704-0005-0000-0000' cta_contable
+            select x.id as cobroId,concat((case when x.forma_de_pago in('BONIFICACION','DEVOLUCION') then 'NOTA_' else 'COB_' end),'VENTAS_',x.tipo,'_OPRD_SAF') as asiento,x.id,x.tipo,x.forma_de_pago,x.referencia,x.diferencia_fecha fecha,s.nombre sucursal,sum(x.diferencia) total,'704-0005-0000-0000' cta_contable
+            ,'NO' por_identificarT,'NO' por_identificarD
             from cobro x  join sucursal s on(x.sucursal_id=s.id) where x.tipo='@TIPO' and x.diferencia_fecha='@FECHA' and date(x.primera_aplicacion)<>'@FECHA' and  x.forma_de_pago not in('BONIFICACION','DEVOLUCION')
+            group by 2,8
             union
-            select x.id as cobroId,concat((case when x.forma_de_pago in('BONIFICACION','DEVOLUCION') then 'NOTA_' else 'COB_' end),'VENTAS_',x.tipo,'_OGST') as asiento,x.id,x.tipo,x.forma_de_pago,x.referencia,date(x.primera_aplicacion) fecha,s.nombre sucursal,x.importe total
-            ,'703-0001-0000-0000' cta_contable
+            select x.id as cobroId,concat((case when x.forma_de_pago in('BONIFICACION','DEVOLUCION') then 'NOTA_' else 'COB_' end),'VENTAS_',x.tipo,'_OGST') as asiento,x.id,x.tipo,x.forma_de_pago,x.referencia,date(x.primera_aplicacion) fecha,s.nombre sucursal,sum(x.importe) total
+            ,'703-0001-0000-0000' cta_contable,'NO' por_identificarT,'NO' por_identificarD
             from cobro x  join sucursal s on(x.sucursal_id=s.id) where x.tipo='@TIPO' and date(x.primera_aplicacion)='@FECHA' and x.forma_de_pago='PAGO_DIF' 
-            ) as z group by z.asiento,z.sucursal
+            group by 2,8
+            ) as z where z.por_identificarT ='NO' and z.por_identificarD ='NO'
         """
         return sql
     }
