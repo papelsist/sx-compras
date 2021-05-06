@@ -95,7 +95,8 @@ dependencies {
 
 
     //Firebase sdk
-    implementation 'com.google.firebase:firebase-admin:6.8.0'
+    // implementation 'com.google.firebase:firebase-admin:6.8.0'
+    implementation 'com.google.firebase:firebase-admin:7.1.1'
 
     // Mail service
     compile 'org.grails.plugins:mail:2.0.0'

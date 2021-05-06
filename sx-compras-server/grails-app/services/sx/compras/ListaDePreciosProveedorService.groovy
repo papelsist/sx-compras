@@ -1,16 +1,15 @@
 package sx.compras
 
-import grails.compiler.GrailsCompileStatic
+
 import grails.events.annotation.Publisher
 import grails.gorm.services.Service
+import groovy.util.logging.Slf4j
 import sx.core.LogUser
-import sx.core.Proveedor
 import sx.core.ProveedorProducto
 
-
-@GrailsCompileStatic
 @Service(ListaDePreciosProveedor)
-abstract class ListaDePreciosProveedorService implements LogUser{
+@Slf4j
+abstract class ListaDePreciosProveedorService implements LogUser {
 
 
     ListaDePreciosProveedor save(ListaDePreciosProveedor lp) {
