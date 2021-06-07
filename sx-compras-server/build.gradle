@@ -10,7 +10,7 @@ buildscript {
     }
 }
 
-version "1.0.12"
+version "1.0.13"
 group "sx.compras"
 
 apply plugin:"idea"
