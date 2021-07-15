@@ -4,6 +4,8 @@ import groovy.transform.ToString
 import groovy.transform.EqualsAndHashCode
 import sx.sat.ProductoSat
 import sx.sat.UnidadSat
+import sx.ecommerce.ClasificacionEcommerce
+import sx.ecommerce.UsoEcommerce
 
 @ToString(includes='id,clave,decripcion',includeNames=true,includePackage=false)
 @EqualsAndHashCode(includes='id,clave')
@@ -79,6 +81,26 @@ class Producto {
 
     UnidadSat unidadSat
 
+    /* Propiedades para Ecommerce*/
+
+    String clasificacion
+
+    ClasificacionEcommerce clasificacionEcommerce
+
+    UsoEcommerce usoEcommerce
+
+    String tipo
+
+    Boolean paquete = false
+
+    Boolean activoEcommerce = false
+
+    BigDecimal hojasPaquete = 0.00
+
+    BigDecimal stock = 0.00
+
+    String tags
+
     static constraints = {
 
         unidad minSize:2,maxSize:10
@@ -100,6 +122,15 @@ class Producto {
         productoSat nullable: true
         unidadSat nullable: true
         grupo nullable: true
+        tags nullable:true
+        clasificacion nullable:true
+        tipo nullable:true
+        paquete nullable:true
+        activoEcommerce nullable:true
+        hojasPaquete nullable:true
+        stock nullable:true
+        clasificacionEcommerce nullable:true
+        usoEcommerce nullable:true
     }
 
     static mapping={

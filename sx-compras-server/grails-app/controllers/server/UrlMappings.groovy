@@ -12,6 +12,8 @@ class UrlMappings {
         "/api/grupos"(resources: 'grupoDeProducto')
         "/api/productos"(resources: 'producto')
         "/api/productos/rows"(controller: 'producto', action: 'rows', method: 'GET')
+        "/api/productos/updateProductoEcommerce/$id"(controller: 'producto', action: 'updateProductoEcommerce', method: 'PUT')
+
         "/api/proveedores"(resources: 'proveedor'){
             "/productos"(resources: 'proveedorProducto', excludes:['create', 'save', 'edit','patch'])
             "/productos/disponibles"(controller: 'proveedorProducto', action: 'disponibles')

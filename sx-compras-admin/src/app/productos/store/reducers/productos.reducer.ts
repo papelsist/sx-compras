@@ -10,6 +10,7 @@ export interface ProductoState {
   loading: boolean;
 }
 
+
 export const initialState: ProductoState = {
   entities: {},
   loaded: false,
@@ -47,7 +48,10 @@ export function reducer(
 
     case fromProductos.REMOVE_PRODUCTO:
     case fromProductos.CREATE_PRODUCTO:
-    case fromProductos.UPDATE_PRODUCTO: {
+    case fromProductos.UPDATE_PRODUCTO:
+    case fromProductos.UPDATE_PRODUCTO_ECOMMERCE:
+    {
+      console.log('Ejecutando el reducer');
       return {
         ...state,
         loading: true

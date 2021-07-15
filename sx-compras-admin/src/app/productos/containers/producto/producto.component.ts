@@ -13,6 +13,7 @@ import { Clase } from '../../models/clase';
 import { TdDialogService } from '@covalent/core';
 import { GrupoDeProducto } from 'app/productos/models/grupo';
 
+
 @Component({
   selector: 'sx-producto',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -31,6 +32,7 @@ import { GrupoDeProducto } from 'app/productos/models/grupo';
         (save)="onSave($event)"
         (delete)="onDelete($event)"
         (cancel)="onCancel()"
+        (updateEcommerce)="onUpdateEcommerce($event)"
       >
       </sx-producto-form>
     </ng-template>
@@ -60,11 +62,25 @@ export class ProductoComponent implements OnInit {
   }
 
   onSave(producto: Producto) {
+
     if (!producto.id) {
       this.store.dispatch(new fromStore.CreateProducto(producto));
     } else {
+      console.log('Crear producto');
       this.store.dispatch(new fromStore.UpdateProducto(producto));
     }
+  }
+
+  onUpdateEcommerce(producto: Producto){
+    console.log(`Actualizando el producto ${producto.clave}`);
+    this.store.dispatch(new fromStore.UpdateProductoEcommerce(producto));
+   /*  if (!producto.id) {
+      this.store.dispatch(new fromStore.CreateProducto(producto));
+    } else {
+      console.log('Crear producto');
+      this.store.dispatch(new fromStore.UpdateProducto(producto));
+    } */
+
   }
 
   onDelete(event: Producto) {

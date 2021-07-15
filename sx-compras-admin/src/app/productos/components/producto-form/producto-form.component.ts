@@ -40,6 +40,9 @@ export class ProductoFormComponent implements OnInit {
   @Output()
   cancel = new EventEmitter();
 
+  @Output()
+  updateEcommerce = new EventEmitter();
+
   form: FormGroup;
   constructor(private fb: FormBuilder) {}
 
@@ -88,15 +91,21 @@ export class ProductoFormComponent implements OnInit {
       calibre: [0, Validators.required],
       caras: [0, Validators.required],
       m2XMillar: [0, Validators.required],
+      hojasPaquete: [0, Validators.required],
+      stock: [0, Validators.required],
       activo: [true],
       inventariable: [true],
+      activoEcommerce: [false],
+      paquete: [false],
       precioContado: [null, [Validators.required, Validators.min(1)]],
       precioCredito: [null, [Validators.required, Validators.min(1)]],
       largo: [0, Validators.required],
       ancho: [0, Validators.required],
       proveedorFavorito: [null],
       productoSat: [],
-      unidadSat: []
+      unidadSat: [],
+      clasificacionEcommerce: [],
+      usoEcommerce: [],
     });
   }
 

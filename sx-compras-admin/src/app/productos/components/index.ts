@@ -19,6 +19,9 @@ import { AltiModalComponent } from './alti-modal/alti-modal.component';
 import { ProductosTable2Component } from './productos-table2/productos-table2.component';
 import { GrupoFormComponent } from './grupo-form/grupo-form.component';
 import { GrupoFieldComponent } from './grupo-field/grupo-field.component';
+import { ClasificacionEcommerceComponent } from './clasificacion-ecommerce/clasificacion-ecommerce.component';
+import { UsoEcommerceComponent } from './uso-ecommerce/uso-ecommerce.component';
+
 
 export const components = [
   ProductosTableComponent,
@@ -41,7 +44,9 @@ export const components = [
   AltiModalComponent,
   ProductosTable2Component,
   GrupoFormComponent,
-  GrupoFieldComponent
+  GrupoFieldComponent,
+  ClasificacionEcommerceComponent,
+  UsoEcommerceComponent,
 ];
 
 export const entryComponents: any[] = [

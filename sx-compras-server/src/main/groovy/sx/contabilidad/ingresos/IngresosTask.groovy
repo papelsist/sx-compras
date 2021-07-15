@@ -282,6 +282,7 @@ class IngresosTask implements  AsientoBuilder {
         rowsSaf.each{row ->
 
             def cobro = Cobro.get(row.cobroId)
+            println(row)
             String descripcion = "${cobro.formaDePago}"
 
              if(row.asiento.endsWith('_OGST')){
@@ -371,8 +372,8 @@ class IngresosTask implements  AsientoBuilder {
         		when m.forma_de_pago IN('CHEQUE','EFECTIVO') then concat('COB_FICHA_',m.tipo) when m.forma_de_pago like 'TARJ%' then 'COB_TARJ_CON' else '' end) asiento, 'MovimientoDeCuenta' entidad
         	,case when m.referencia>0 then m.referencia else(case when t.id is null then SUBSTRING(m.referencia,LENGTH(SUBSTRING_INDEX(m.referencia,':',1))+3) else CONVERT (t.folio,CHAR) end) end documento,m.referencia
         ,m.id origen,(case when m.forma_de_pago like 'TARJ%' then 'CON' else m.tipo end) documentoTipo,m.fecha,m.referencia,m.moneda,m.tipo_de_cambio tc 
-        ,round((case when m.por_identificar then 
-        (SELECT sum(a.importe) FROM cobro_transferencia t join cobro c on(t.cobro_id=c.id) join aplicacion_de_cobro a on(a.cobro_id=c.id) where t.ingreso_id=m.id )   ---aqui
+        ,round((case    when m.por_identificar and m.forma_de_pago not like 'DEP%' then (SELECT sum(a.importe) FROM cobro_transferencia t join cobro c on(t.cobro_id=c.id) join aplicacion_de_cobro a on(a.cobro_id=c.id) where t.ingreso_id=m.id )
+                        when m.por_identificar and m.forma_de_pago like 'DEP%' then (SELECT sum(a.importe) FROM cobro_deposito t join cobro c on(t.cobro_id=c.id) join aplicacion_de_cobro a on(a.cobro_id=c.id) where t.ingreso_id=m.id )
         else m.importe end) * m.tipo_de_cambio,2) total
         ,m.forma_de_pago
         ,(
@@ -536,7 +537,7 @@ class IngresosTask implements  AsientoBuilder {
             ,'703-0001-0000-0000' cta_contable,'NO' por_identificarT,'NO' por_identificarD
             from cobro x  join sucursal s on(x.sucursal_id=s.id) where x.tipo='@TIPO' and date(x.primera_aplicacion)='@FECHA' and x.forma_de_pago='PAGO_DIF' 
             group by 2,8
-            ) as z where z.por_identificarT ='NO' and z.por_identificarD ='NO'
+            ) as z where z.por_identificarT ='NO' and z.por_identificarD ='NO' group by cobroId
         """
         return sql
     }

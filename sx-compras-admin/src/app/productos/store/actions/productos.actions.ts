@@ -44,13 +44,22 @@ export class CreateProductoSuccess implements Action {
 // Update actions
 
 export const UPDATE_PRODUCTO = '[Catalogos] Update producto';
+export const UPDATE_PRODUCTO_ECOMMERCE = '[Catalogos] Update producto Ecommerce';
 export const UPDATE_PRODUCTO_FAIL = '[Catalogos] Update producto Fail';
 export const UPDATE_PRODUCTO_SUCCESS = '[Catalogos] Update producto Success';
+
+
 
 export const UPSERT_PRODUCTO = '[Catalogos] Upsert producto';
 
 export class UpdateProducto implements Action {
   readonly type = UPDATE_PRODUCTO;
+  constructor(public payload: Producto) {}
+}
+
+export class UpdateProductoEcommerce implements Action {
+
+  readonly type = UPDATE_PRODUCTO_ECOMMERCE;
   constructor(public payload: Producto) {}
 }
 
@@ -116,6 +125,7 @@ export type ProductosAction =
   | CreateProductoFail
   | CreateProductoSuccess
   | UpdateProducto
+  | UpdateProductoEcommerce
   | UpdateProductoFail
   | UpdateProductoSuccess
   | UpsertProducto

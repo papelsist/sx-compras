@@ -1,13 +1,12 @@
 <form novalidate [formGroup]="form" (ngSubmit)="onSubmit()" flex>
-  <mat-card>
-    <mat-card-title-group>
-      <mat-card-title>
-        <span *ngIf="!producto">Alta de Producto</span>
-        <span *ngIf="producto">Producto: {{ producto.descripcion }}</span>
-      </mat-card-title>
-      <mat-card-subtitle>
-        <span *ngIf="producto"
-          >Última modificación:
+    <mat-card>
+        <mat-card-title-group>
+            <mat-card-title>
+                <span *ngIf="!producto">Alta de Producto</span>
+                <span *ngIf="producto">Producto: {{ producto.descripcion }}</span>
+            </mat-card-title>
+            <mat-card-subtitle>
+                <span *ngIf="producto">Última modificación:
           {{ producto.lastUpdated | date: 'dd/MM/yyyy HH:mm' }}</span
         >
       </mat-card-subtitle>
@@ -73,9 +72,8 @@
           />
         </mat-form-field>
         <mat-checkbox formControlName="activo">Activo</mat-checkbox>
-        <mat-checkbox formControlName="inventariable"
-          >Inventariable</mat-checkbox
-        >
+        <mat-checkbox formControlName="inventariable">Inventariable</mat-checkbox>
+        <mat-checkbox formControlName="activoEcommerce">Ecommerce</mat-checkbox> 
       </div>
 
       <div layout class="form-row">
@@ -89,6 +87,7 @@
         ></sx-upper-case-field>
         <mat-checkbox formControlName="nacional">Nacional</mat-checkbox>
         <mat-checkbox formControlName="deLinea">De Línea</mat-checkbox>
+        <mat-checkbox formControlName="paquete">Paquete</mat-checkbox> 
       </div>
 
       <div layout class="form-row">
@@ -133,6 +132,26 @@
           />
           <mat-error>Campo requerido</mat-error>
         </mat-form-field>
+        <mat-form-field>
+          <input
+            matInput
+            type="number"
+            formControlName="hojasPaquete"
+            placeholder="Hojas Por Paquete"
+          />
+          <mat-error>Campo requerido</mat-error>
+        </mat-form-field>
+      </div>
+      <div layout class="form-row">
+        <mat-form-field>
+          <input
+            matInput
+            type="number"
+            formControlName="stock"
+            placeholder="Stock Ecommerce"
+          />
+          <mat-error>Campo requerido</mat-error>
+        </mat-form-field>
       </div>
       <div layout>
         <sx-producto-sat-field [parent]="form" flex></sx-producto-sat-field>
@@ -142,10 +161,15 @@
           flex
         ></sx-unidad-sat-field>
       </div>
+      <div layout>
+        <sx-uso-ecommerce-field [parent]="form" flex></sx-uso-ecommerce-field>
+        <sx-clasificacion-ecommerce-field [parent]="form" flex></sx-clasificacion-ecommerce-field>
+      </div>
     </mat-card-content>
 
     <mat-card-actions align="end">
       <button mat-button type="button" (click)="cancel.emit()">Regresar</button>
+      <button mat-button type="button" (click)="updateEcommerce.emit(producto)">Actualizar Ec</button>
       <button
         mat-button
         color="primary"

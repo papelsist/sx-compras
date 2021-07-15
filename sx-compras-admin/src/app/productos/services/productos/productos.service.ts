@@ -42,11 +42,25 @@ export class ProductosService {
 
   update(prod: Producto): Observable<Producto> {
     const url = `${this.apiUrl}/${prod.id}`;
+    console.log(url)
+    console.log('Producto en el service');
+    console.log(prod);
     return this.http
       .put<Producto>(url, prod)
       .pipe(catchError(error => throwError(error)));
   }
 
+
+   updateProductoEcommerce(prod: Producto): Observable<Producto> {
+    const url = `${this.apiUrl}/updateProductoEcommerce/${prod.id}`;
+    console.log('Producto Ecommerce en el service ');
+    console.log(prod);
+    console.log(url);
+    return this.http
+      .put<Producto>(url, prod)
+      .pipe(catchError(error => throwError(error)));
+  }
+ 
   delete(id: string) {
     const url = `${this.apiUrl}/${id}`;
     return this.http.delete(url).pipe(catchError(error => throwError(error)));

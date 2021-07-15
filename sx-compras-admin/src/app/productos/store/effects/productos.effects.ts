@@ -65,6 +65,18 @@ export class ProductosEffects {
   );
 
   @Effect()
+  updateProductoEcommerce$ = this.actions$.pipe(
+    ofType(productoActions.UPDATE_PRODUCTO_ECOMMERCE),
+    map((action: productoActions.UpdateProductoEcommerce) => action.payload),
+    switchMap(newProduct => {
+      return this.productosService.updateProductoEcommerce(newProduct).pipe(
+        map(producto => new productoActions.UpdateProductoSuccess(producto)),
+        catchError(error => of(new productoActions.UpdateProductoFail(error)))
+      );
+    })
+  );
+
+  @Effect()
   removeProducto$ = this.actions$.pipe(
     ofType(productoActions.REMOVE_PRODUCTO),
     map((action: productoActions.RemoveProducto) => action.payload),

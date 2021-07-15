@@ -14,6 +14,8 @@ import { LineaFormComponent } from './linea-form/linea-form.component';
 import { ClaseFormComponent } from './clase-form/clase-form.component';
 import { ProductoSatComponent } from './producto-sat/producto-sat.component';
 import { UnidadSatComponent } from './unidad-sat/unidad-sat.component';
+import { ClasificacionEcommerceComponent } from '../../../../../sx-compras-admin/src/app/productos/components/clasificacion-ecommerce/clasificacion-ecommerce.component';
+
 
 export const components = [
   ProductosTableComponent,
@@ -31,14 +33,16 @@ export const components = [
   PresentacionFieldComponent,
   MododeventaFieldComponent,
   ProductoSatComponent,
-  UnidadSatComponent
+  UnidadSatComponent,
+ 
 ];
 
 export const entryComponents: any[] = [
   LineaFormComponent,
   MarcaFormComponent,
-  ClaseFormComponent
+  ClaseFormComponent,
 ];
+
 
 export * from './productos-table/productos-table.component';
 export * from './marcas-list/marcas-list.component';
@@ -55,4 +59,5 @@ export * from './unidad-field/unidad-field.component';
 export * from './producto-form/presentacion-field.component';
 export * from './producto-form/mododeventa-field.component';
 export * from './producto-sat/producto-sat.component';
-export * from './unidad-sat/unidad-sat.component';
+export * from './unidad-sat/unidad-sat.component';;
+

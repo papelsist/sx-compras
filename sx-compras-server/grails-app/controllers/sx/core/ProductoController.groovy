@@ -10,7 +10,8 @@ import groovy.util.logging.Slf4j
 
 @GrailsCompileStatic
 @Slf4j
-@Secured("IS_AUTHENTICATED_ANONYMOUSLY")
+//@Secured("IS_AUTHENTICATED_ANONYMOUSLY")
+@Secured("permitAll")
 class ProductoController extends RestfulController<Producto> {
 
     static responseFormats = ['json']
@@ -91,6 +92,19 @@ class ProductoController extends RestfulController<Producto> {
     protected Producto saveResource(Producto resource) {
         return productoService.saveProducto(resource)
     }
+
+    @CompileDynamic
+    Producto updateProductoEcommerce(Producto producto){
+        println "Actualizando producto ${producto}"
+        //respond producto
+        respond productoService.updateProductoEcommerce(producto);
+    }
+
+    @CompileDynamic
+    def updateProductosEcommerce(){
+
+    } 
+
     
     
 }
