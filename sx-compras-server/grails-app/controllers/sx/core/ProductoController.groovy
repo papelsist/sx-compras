@@ -95,7 +95,6 @@ class ProductoController extends RestfulController<Producto> {
 
     @CompileDynamic
     Producto updateProductoEcommerce(Producto producto){
-        println "Actualizando producto ${producto}"
         //respond producto
         respond productoService.updateProductoEcommerce(producto);
     }

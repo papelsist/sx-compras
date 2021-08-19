@@ -89,7 +89,7 @@ class Producto {
 
     UsoEcommerce usoEcommerce
 
-    String tipo
+    String tipoEcommerce
 
     Boolean paquete = false
 
@@ -124,7 +124,7 @@ class Producto {
         grupo nullable: true
         tags nullable:true
         clasificacion nullable:true
-        tipo nullable:true
+        tipoEcommerce nullable:true
         paquete nullable:true
         activoEcommerce nullable:true
         hojasPaquete nullable:true

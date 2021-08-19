@@ -7,6 +7,9 @@ import sx.core.ExistenciaService
 import groovy.sql.Sql
 import org.springframework.jdbc.datasource.DriverManagerDataSource
 
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
+
 @Slf4j
 class ProductoService implements LogUser {
     
@@ -16,6 +19,10 @@ class ProductoService implements LogUser {
     ExistenciaService existenciaService
 
     PapwsProductoService papwsProductoService
+
+
+    @Qualifier('productoEcommerceintegracion')
+    def productoEcommerceIntegracion
 
     Producto saveProducto(Producto producto) {
         if(producto.id) {
@@ -39,21 +46,10 @@ class ProductoService implements LogUser {
     }
 
     Producto updateProductoEcommerce(Producto producto){
-        def driverManagerDs=new DriverManagerDataSource()
-        driverManagerDs.driverClassName="com.mysql.jdbc.Driver"
-        driverManagerDs.url='jdbc:mysql://10.10.1.85:3306/siipapx_tacuba'
-        driverManagerDs.username='root'
-        driverManagerDs.password='sys'
-        def sql = new Sql(driverManagerDs)
+        println "En el update de producto ecommerce !!!"
+        productoEcommerceIntegracion.transformAndUpdateProducto(producto)
+        return producto 
 
-        def prod = sql.firstRow("Select * from producto_ecommerce where producto = ?",[producto.id])
-        println producto.properties
-        sql.execute("update producto_ecommerce set precio_contado= ? , precio_credito = ?, activo  = ?, stock = ?  where producto = ?  ",
-        [producto.precioContado, producto.precioCredito, producto.activoEcommerce, producto.stock,producto.id])
-
-       
-
-        return producto
     }
     
 

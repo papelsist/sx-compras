@@ -171,8 +171,8 @@ class InventariosProcGeneralesTask implements  AsientoBuilder {
         WHEN i.TIPO IN('CIS') AND (SELECT d.tipocis FROM movimiento_de_almacen m join movimiento_de_almacen_det d on(d.movimiento_de_almacen_id=m.id) where d.inventario_id=i.id)='MATERIAL_EMPAQUE' THEN 'MATERIAL DE EMPAQUE CIS OGST'
         WHEN i.TIPO IN('CIS') AND (SELECT d.tipocis FROM movimiento_de_almacen m join movimiento_de_almacen_det d on(d.movimiento_de_almacen_id=m.id) where d.inventario_id=i.id)='PUBLICIDAD_PROPAGANDA' THEN 'PUBLICIDAD PROPAGANDA CIS OGST'
         WHEN i.TIPO IN('CIS') AND (SELECT d.tipocis FROM movimiento_de_almacen m join movimiento_de_almacen_det d on(d.movimiento_de_almacen_id=m.id) where d.inventario_id=i.id)='NO_DEDUSIBLE' THEN 'NO DEDUCIBLE CIS OGST'
-        ELSE TIPO END) ASIENTO
-        ,(CASE WHEN i.TIPO IN('COM','DEC') AND I.COSTO=0 THEN 'SNA' WHEN i.TIPO IN('TRS','REC','MAQ') THEN 'TRS' ELSE TIPO END) AS TIPO
+        ELSE i.TIPO END) ASIENTO
+        ,(CASE WHEN i.TIPO IN('COM','DEC') AND I.COSTO=0 THEN 'SNA' WHEN i.TIPO IN('TRS','REC','MAQ') THEN 'TRS' ELSE i.TIPO END) AS TIPO
         ,(CASE WHEN I.TIPO IN('COM','DEC') THEN '02 COMPRAS' 
          WHEN I.TIPO IN('CIS','MER','RMC') AND I.CANTIDAD<0  THEN '03 GASTO' 
          WHEN I.TIPO IN('AJU','CIM') THEN '03 GASTO' 
@@ -202,7 +202,7 @@ class InventariosProcGeneralesTask implements  AsientoBuilder {
         WHEN i.TIPO IN('CIS') AND (SELECT d.tipocis FROM movimiento_de_almacen m join movimiento_de_almacen_det d on(d.movimiento_de_almacen_id=m.id) where d.inventario_id=i.id)='PAPELERIA' THEN CONCAT('600-0032-',(CASE WHEN S.CLAVE<10 THEN '000' ELSE '00' END),S.CLAVE,'-0000')
         WHEN i.TIPO IN('CIS') AND (SELECT d.tipocis FROM movimiento_de_almacen m join movimiento_de_almacen_det d on(d.movimiento_de_almacen_id=m.id) where d.inventario_id=i.id)='MATERIAL_EMPAQUE' THEN CONCAT('600-0029-',(CASE WHEN S.CLAVE<10 THEN '000' ELSE '00' END),S.CLAVE,'-0000')
         WHEN i.TIPO IN('CIS') AND (SELECT d.tipocis FROM movimiento_de_almacen m join movimiento_de_almacen_det d on(d.movimiento_de_almacen_id=m.id) where d.inventario_id=i.id)='PUBLICIDAD_PROPAGANDA' THEN CONCAT('600-0033-',(CASE WHEN S.CLAVE<10 THEN '000' ELSE '00' END),S.CLAVE,'-0000')
-        WHEN i.TIPO IN('CIS') AND (SELECT d.tipocis FROM movimiento_de_almacen m join movimiento_de_almacen_det d on(d.movimiento_de_almacen_id=m.id) where d.inventario_id=i.id)='NO_DEDUSIBLE' THEN CONCAT('600-0031-',(CASE WHEN S.CLAVE<10 THEN '000' ELSE '00' END),S.CLAVE,'-0000') ELSE TIPO END) CTA_CONTABLE,i.id
+        WHEN i.TIPO IN('CIS') AND (SELECT d.tipocis FROM movimiento_de_almacen m join movimiento_de_almacen_det d on(d.movimiento_de_almacen_id=m.id) where d.inventario_id=i.id)='NO_DEDUSIBLE' THEN CONCAT('600-0031-',(CASE WHEN S.CLAVE<10 THEN '000' ELSE '00' END),S.CLAVE,'-0000') ELSE i.TIPO END) CTA_CONTABLE,i.id
         from inventario I  join producto p on(p.id=i.producto_id) JOIN sucursal s on(i.sucursal_id=s.id)
         where p.inventariable is true and YEAR(I.FECHA)=YEAR('@FECHA') AND MONTH(I.FECHA)=MONTH('@FECHA')  AND I.CANTIDAD <> 0 AND I.CLAVE LIKE '%'
         ) as a       

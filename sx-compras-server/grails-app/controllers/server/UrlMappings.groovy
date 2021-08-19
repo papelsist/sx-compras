@@ -479,6 +479,7 @@ class UrlMappings {
 
         "/api/sat/metadata"(resources: 'satMetadata', excludes: ['create', 'edit', 'update', 'save', 'patch'])
         "/api/sat/metadata/importar/$ejercicio/$mes"(controller: 'satMetadata', action: 'importar', method: 'POST')
+        "/api/sat/metadataProveedor"(controller: 'satMetadataProveedor',action:'metaDataProveedorList', method: 'GET')
         "/api/auditoria/cfdi"(resources: 'auditoriaFiscalCfdi', excludes: ['create', 'edit', 'update', 'save', 'patch'])
         "/api/auditoria/cfdi/generar/$ejercicio/$mes"(controller: 'auditoriaFiscalCfdi', action: 'generar', method: 'POST')
 
