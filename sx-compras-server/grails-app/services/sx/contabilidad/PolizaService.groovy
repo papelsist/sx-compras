@@ -9,11 +9,15 @@ import groovy.util.logging.Slf4j
 import sx.tesoreria.MovimientoDeCuenta
 import sx.tesoreria.Cheque
 
+
+
 import sx.core.LogUser
 
 @Slf4j
 @Service(Poliza)
 abstract class PolizaService implements  LogUser{
+
+    
 
     abstract  Poliza save(Poliza poliza)
 
@@ -201,7 +205,20 @@ abstract class PolizaService implements  LogUser{
         return polizas
     }
 
+    @NotTransactional
+    def actualizarContadorFolios(String subtipo, Integer ejercicio, Integer mes){
+        PolizaFolio pfolio = PolizaFolio.where{
+            subtipo == subtipo && ejercicio == ejercicio && mes == mes
+        }.find()
+        def polizas = Poliza.findAll("from Poliza where ejercicio = ? and mes = ? and subtipo = ?",[ejercicio, mes, subtipo])
+        def maxFolio = polizas.max{it.folio}
+        println pfolio
+        println maxFolio
+        pfolio.folio = maxFolio.folio
 
+        pfolio.save flush: true
+
+    }
     def refolizarCheques( List<Poliza> polizas){
         
     }

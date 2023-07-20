@@ -1,71 +1,71 @@
 <mat-card>
-  <form [formGroup]="form">
-    <div layout layout-align="start center" class="mat-title pad-left pad-top">
-      <span class="cursor-pointer tc-indigo-600" (click)="pdf.emit(nota)">Nota: {{nota.serie}} - {{nota.folio}}</span>
-      <span class="pad-left pad-right"> {{nota.nombre}}</span>
-      <span class="pad-left">({{nota.fecha | date: 'dd/MM/yyyy'}})</span>
-      <span flex></span>
-      <span>Aplicado:</span>
-      <span class="pad-left pad-right tc-blue-600">{{nota.aplicado | currency}}</span>
-      <span>Disponible:</span>
-      <span class="pad-left pad-right tc-pink-600">{{nota.disponible | currency}}</span>
-    </div>
-    <mat-divider></mat-divider>
-    <mat-card-content>
-      <div layout>
-        <mat-form-field>
-          <input matInput [value]="nota.total | currency" [disabled]="true" placeholder="Total">
-        </mat-form-field>
+    <form [formGroup]="form">
+        <div layout layout-align="start center" class="mat-title pad-left pad-top">
+            <span class="cursor-pointer tc-indigo-600" (click)="pdf.emit(nota)">Nota: {{nota.serie}} - {{nota.folio}}</span>
+            <span class="pad-left pad-right"> {{nota.nombre}}</span>
+            <span class="pad-left">({{changeDate(nota.fecha) | date: 'dd/MM/yyyy'}})</span>
+            <span flex></span>
+            <span>Aplicado:</span>
+            <span class="pad-left pad-right tc-blue-600">{{nota.aplicado | currency}}</span>
+            <span>Disponible:</span>
+            <span class="pad-left pad-right tc-pink-600">{{nota.disponible | currency}}</span>
+        </div>
+        <mat-divider></mat-divider>
+        <mat-card-content>
+            <div layout>
+                <mat-form-field>
+                    <input matInput [value]="nota.total | currency" [disabled]="true" placeholder="Total">
+                </mat-form-field>
 
-        <mat-form-field class="pad-left moneda-field">
-          <input matInput value="{{nota.moneda}}" [disabled]="true" placeholder="Moneda">
-        </mat-form-field>
-        <mat-form-field class="pad-left tipoDeCambio-field">
-          <input matInput value="{{nota.tipoDeCambio}}" [disabled]="true" placeholder="T.C.">
-        </mat-form-field>
+                <mat-form-field class="pad-left moneda-field">
+                    <input matInput value="{{nota.moneda}}" [disabled]="true" placeholder="Moneda">
+                </mat-form-field>
+                <mat-form-field class="pad-left tipoDeCambio-field">
+                    <input matInput value="{{nota.tipoDeCambio}}" [disabled]="true" placeholder="T.C.">
+                </mat-form-field>
 
-        <mat-form-field class="pad-left">
-          <mat-select placeholder="Tipo" formControlName="concepto">
-            <mat-option *ngFor="let tipo of tipos" [value]="tipo">{{tipo}}</mat-option>
-          </mat-select>
-        </mat-form-field>
-        <sx-upper-case-field formControlName="comentario" placeholder="Comentario" class="pad-left" flex></sx-upper-case-field>
-        <!-- <td-search-input (onSearchDebounce)="onSearch($event)" debounce="500" class="pad-left"></td-search-input> -->
-        <td-search-box (searchDebounce)="onSearch($event)" class="pad-left push-right-sm" placeholder="Filtrar facturas"></td-search-box>
-      </div>
+                <mat-form-field class="pad-left">
+                    <mat-select placeholder="Tipo" formControlName="concepto">
+                        <mat-option *ngFor="let tipo of tipos" [value]="tipo">{{tipo}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <sx-upper-case-field formControlName="comentario" placeholder="Comentario" class="pad-left" flex></sx-upper-case-field>
+                <!-- <td-search-input (onSearchDebounce)="onSearch($event)" debounce="500" class="pad-left"></td-search-input> -->
+                <td-search-box (searchDebounce)="onSearch($event)" class="pad-left push-right-sm" placeholder="Filtrar facturas"></td-search-box>
+            </div>
 
 
 
-    </mat-card-content>
-    <mat-divider></mat-divider>
-    <mat-tab-group class="partidas-panel">
-      <mat-tab label="Referenciados">
-        <sx-nota-conceptos [conceptos]="conceptos.value" [filter]="search$ | async"></sx-nota-conceptos>
-      </mat-tab>
-      <mat-tab label="Aplicaciones" #aplicacionesTab>
-        <sx-aplicaciones-table [aplicaciones]="nota.aplicaciones" (delete)="quitarAplicacion.emit($event)" [filtro]="search$ | async">
+        </mat-card-content>
+        <mat-divider></mat-divider>
+        <mat-tab-group class="partidas-panel">
+            <mat-tab label="Referenciados">
+                <sx-nota-conceptos [conceptos]="conceptos.value" [filter]="search$ | async"></sx-nota-conceptos>
+            </mat-tab>
+            <mat-tab label="Aplicaciones" #aplicacionesTab>
+                <sx-aplicaciones-table [aplicaciones]="nota.aplicaciones" (delete)="quitarAplicacion.emit($event)" [filtro]="search$ | async">
 
-        </sx-aplicaciones-table>
-      </mat-tab>
-    </mat-tab-group>
+                </sx-aplicaciones-table>
+            </mat-tab>
+        </mat-tab-group>
 
-    <mat-divider></mat-divider>
-    <mat-card-actions>
-      <button type="button" mat-button [routerLink]="['../']">
+        <mat-divider></mat-divider>
+        <mat-card-actions>
+            <button type="button" mat-button [routerLink]="['../']">
         <mat-icon>arrow_back</mat-icon> Notas
       </button>
-      <button type="button" mat-button (click)="aplicar.emit(nota)" color="accent" [disabled]="nota.disponible <= 0">
+            <button type="button" mat-button (click)="aplicar.emit(nota)" color="accent" [disabled]="nota.disponible <= 0">
         <mat-icon>check_circle</mat-icon> Aplicar
       </button>
 
-      <button type="button" mat-button color="primary" (click)="onSave()" [disabled]="form.invalid || form.pristine">
+            <button type="button" mat-button color="primary" (click)="onSave()" [disabled]="form.invalid || form.pristine">
         <mat-icon>save</mat-icon> Salvar
       </button>
-      <sx-facturas-selector-btn [facturas]="cuentasPorPagar" label="Agregar" (selected)="agregarAplicaciones.emit($event)" *ngIf="aplicacionesTab.isActive || nota.disponible <= 0">
-      </sx-facturas-selector-btn>
-      <sx-nota-print [nota]="nota"></sx-nota-print>
+            <sx-facturas-selector-btn [facturas]="cuentasPorPagar" label="Agregar" (selected)="agregarAplicaciones.emit($event)" *ngIf="aplicacionesTab.isActive || nota.disponible <= 0">
+            </sx-facturas-selector-btn>
+            <sx-nota-print [nota]="nota"></sx-nota-print>
 
-      <ng-content></ng-content>
-    </mat-card-actions>
-  </form>
+            <ng-content></ng-content>
+        </mat-card-actions>
+    </form>
 </mat-card>

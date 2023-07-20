@@ -23,9 +23,7 @@ class NotasDeCreditoTask implements  AsientoBuilder {
 
         log.info("Generando asientos contables para Notas con EFECTIVO {} {}", poliza.fecha)
         String sql = getSqlNotas().replaceAll("@FECHA", toSqlDate(poliza.fecha))
-        println "*******************************"
-        println params.tipo
-         println "*******************************"
+
         List rows = getAllRows(sql, [params.tipo, params.tipo])
         def descripcion = ""
 
@@ -35,8 +33,6 @@ class NotasDeCreditoTask implements  AsientoBuilder {
 
                 PolizaDet detNota = mapRow(row.cta_nota.toString(), descripcion, row, row.subtotal.abs())
                 poliza.addToPartidas(detNota)
-
-                println "************************"+detNota.concepto
                 
                 PolizaDet detIva = mapRow("209-0001-0000-0000", descripcion, row, row.impuesto.abs())
                 poliza.addToPartidas(detIva)
@@ -90,9 +86,7 @@ class NotasDeCreditoTask implements  AsientoBuilder {
 
         log.info("Generando asientos contables para cobranza de Notas  {} {}", poliza.fecha, params.tipo)
         String sql = getSqlNotas().replaceAll("@FECHA", toSqlDate(poliza.fecha))
-        println "*******************************"
-        println params.tipo
-         println "*******************************"
+ 
         List rows = getAllRows(sql, [params.tipo, params.tipo])
         def descripcion = ""
 

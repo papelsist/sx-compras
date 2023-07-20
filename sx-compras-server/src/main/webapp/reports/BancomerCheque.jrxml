@@ -1,125 +1,78 @@
-<?xml version="1.0" encoding="UTF-8"  ?>
-<!-- Created with iReport - A designer for JasperReports -->
-<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
-<jasperReport
-		 name="bancomerUno"
-		 columnCount="1"
-		 printOrder="Vertical"
-		 orientation="Landscape"
-		 pageWidth="439"
-		 pageHeight="179"
-		 columnWidth="439"
-		 columnSpacing="0"
-		 leftMargin="0"
-		 rightMargin="0"
-		 topMargin="0"
-		 bottomMargin="0"
-		 whenNoDataType="NoPages"
-		 isTitleNewPage="false"
-		 isSummaryNewPage="false">
-	<property name="ireport.scriptlethandling" value="0" />
-	<property name="ireport.encoding" value="UTF-8" />
-	<import value="java.util.*" />
-	<import value="net.sf.jasperreports.engine.*" />
-	<import value="net.sf.jasperreports.engine.data.*" />
-
-	<parameter name="ID" isForPrompting="true" class="java.lang.String"/>
-	<parameter name="IMPLETRA" isForPrompting="true" class="java.lang.String">
-		<defaultValueExpression ><![CDATA["DOS CIENTOS OCHENTA Y DOS MIL NOVECIENTOS CUARENTA Y DOS 40/100 PESOS"]]></defaultValueExpression>
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ScotiaBanckCheque" pageWidth="612" pageHeight="792" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="584" leftMargin="14" rightMargin="14" topMargin="25" bottomMargin="28" uuid="27899b3d-78ad-4c62-9a91-51f7a05c8698">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="ID" class="java.lang.String"/>
+	<parameter name="IMPLETRA" class="java.lang.String">
+		<defaultValueExpression><![CDATA["DOS CIENTOS OCHENTA Y DOS MIL NOVECIENTOS CUARENTA Y DOS 40/100 PESOS"]]></defaultValueExpression>
 	</parameter>
-	<queryString><![CDATA[SELECT ch.ID,M.FECHA,UPPER(ch.nombre) AS AFAVOR,-m.importe as IMPORTE
-FROM cheque ch 
-join movimiento_de_cuenta m on(m.id=ch.egreso_id) 
-join requisicion r on(r.egreso=m.id) 
-where ch.id=$P{ID}]]></queryString>
-
+	<queryString>
+		<![CDATA[SELECT ch.ID,M.FECHA,UPPER(ch.nombre) AS AFAVOR,-m.importe as IMPORTE
+FROM cheque ch
+join movimiento_de_cuenta m on(m.cheque_id=ch.id)
+where ch.id=$P{ID}]]>
+	</queryString>
 	<field name="ID" class="java.lang.String"/>
 	<field name="FECHA" class="java.sql.Date"/>
 	<field name="AFAVOR" class="java.lang.String"/>
 	<field name="IMPORTE" class="java.math.BigDecimal"/>
-
-		<background>
-			<band height="0"  isSplitAllowed="true" >
-			</band>
-		</background>
-		<title>
-			<band height="0"  isSplitAllowed="true" >
-			</band>
-		</title>
-		<pageHeader>
-			<band height="0"  isSplitAllowed="true" >
-			</band>
-		</pageHeader>
-		<columnHeader>
-			<band height="0"  isSplitAllowed="true" >
-			</band>
-		</columnHeader>
-		<detail>
-			<band height="140"  isSplitAllowed="true" >
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="32"
-						y="43"
-						width="314"
-						height="26"
-						key="textField"/>
-					<box></box>
-					<textElement textAlignment="Left" verticalAlignment="Bottom">
-						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{AFAVOR}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" pattern="dd-MMMMM-yyyy" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="277"
-						y="34"
-						width="84"
-						height="17"
-						key="textField"/>
-					<box></box>
-					<textElement>
-						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.util.Date"><![CDATA[$F{FECHA}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="33"
-						y="77"
-						width="399"
-						height="16"
-						key="textField-1"/>
-					<box></box>
-					<textElement verticalAlignment="Bottom">
-						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{IMPLETRA}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" pattern="¤ #,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="361"
-						y="56"
-						width="66"
-						height="12"
-						key="textField"/>
-					<box></box>
-					<textElement>
-						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{IMPORTE}]]></textFieldExpression>
-				</textField>
-			</band>
-		</detail>
-		<columnFooter>
-			<band height="0"  isSplitAllowed="true" >
-			</band>
-		</columnFooter>
-		<pageFooter>
-			<band height="0"  isSplitAllowed="true" >
-			</band>
-		</pageFooter>
-		<summary>
-			<band height="0"  isSplitAllowed="true" >
-			</band>
-		</summary>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="140" splitType="Stretch">
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField" x="92" y="45" width="309" height="22" uuid="f80713c2-e31d-4913-8957-06a9aaa123b8"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{AFAVOR}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd-MMMMM-yyyy" isBlankWhenNull="false">
+				<reportElement key="textField" x="332" y="22" width="156" height="20" uuid="fff90143-9280-4d98-8888-03c6f16a9bea"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-1" x="92" y="67" width="389" height="22" uuid="a721e93b-c8c0-434a-8138-98ea5e61e30d"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new String("(").concat($P{IMPLETRA}).concat(")")]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="false">
+				<reportElement key="textField" x="441" y="45" width="116" height="22" uuid="03e1061d-62c1-4455-a502-564c63252e4b"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMPORTE}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
 </jasperReport>

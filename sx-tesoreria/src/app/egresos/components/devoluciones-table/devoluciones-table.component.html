@@ -1,67 +1,53 @@
 <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
-  <ng-container matColumnDef="id">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Id</th>
-    <td mat-cell *matCellDef="let row">{{ row.id }}</td>
-  </ng-container>
-  <ng-container matColumnDef="formaDePago">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>F. Pago</th>
-    <td mat-cell *matCellDef="let row">{{ row.formaDePago }}</td>
-  </ng-container>
-  <ng-container matColumnDef="fecha">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
-    <td mat-cell *matCellDef="let row">{{ row.fecha | date: 'dd/MM/yyyy' }}</td>
-  </ng-container>
-  <ng-container matColumnDef="afavor">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
-    <td mat-cell *matCellDef="let row">{{ row.afavor }}</td>
-  </ng-container>
-  <ng-container matColumnDef="concepto">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Concepto</th>
-    <td mat-cell *matCellDef="let row">{{ row.concepto }}</td>
-  </ng-container>
-  <ng-container matColumnDef="cuenta">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Cuenta</th>
-    <td mat-cell *matCellDef="let row">{{ row.cuenta.descripcion }}</td>
-  </ng-container>
-  <ng-container matColumnDef="cobro">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Cobro</th>
-    <td mat-cell *matCellDef="let row">{{ row.cobro.importe | currency }}</td>
-  </ng-container>
-  <ng-container matColumnDef="importe">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
-    <td mat-cell *matCellDef="let row">{{ row.importe | currency }}</td>
-  </ng-container>
-  <ng-container matColumnDef="referencia">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Referencia</th>
-    <td mat-cell *matCellDef="let row">{{ row?.egreso?.referencia }}</td>
-  </ng-container>
-  <ng-container matColumnDef="comentario">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Comentario</th>
-    <td mat-cell *matCellDef="let row">{{ row?.egreso?.comentario }}</td>
-  </ng-container>
-  <ng-container matColumnDef="updateUser">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Usuario</th>
-    <td
-      mat-cell
-      *matCellDef="let row"
-      matTooltip="{{row.lastUpdated | date: 'dd/MM/yyyy : HH:mm:ss'}}"
-    >
-      {{ row.updateUser }}
-    </td>
-  </ng-container>
+    <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Id</th>
+        <td mat-cell *matCellDef="let row">{{ row.id }}</td>
+    </ng-container>
+    <ng-container matColumnDef="formaDePago">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>F. Pago</th>
+        <td mat-cell *matCellDef="let row">{{ row.formaDePago }}</td>
+    </ng-container>
+    <ng-container matColumnDef="fecha">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
+        <td mat-cell *matCellDef="let row">{{ changeDate(row.fecha) | date: 'dd/MM/yyyy' }}</td>
+    </ng-container>
+    <ng-container matColumnDef="afavor">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
+        <td mat-cell *matCellDef="let row">{{ row.afavor }}</td>
+    </ng-container>
+    <ng-container matColumnDef="concepto">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Concepto</th>
+        <td mat-cell *matCellDef="let row">{{ row.concepto }}</td>
+    </ng-container>
+    <ng-container matColumnDef="cuenta">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Cuenta</th>
+        <td mat-cell *matCellDef="let row">{{ row.cuenta.descripcion }}</td>
+    </ng-container>
+    <ng-container matColumnDef="cobro">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Cobro</th>
+        <td mat-cell *matCellDef="let row">{{ row.cobro.importe | currency }}</td>
+    </ng-container>
+    <ng-container matColumnDef="importe">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
+        <td mat-cell *matCellDef="let row">{{ row.importe | currency }}</td>
+    </ng-container>
+    <ng-container matColumnDef="referencia">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Referencia</th>
+        <td mat-cell *matCellDef="let row">{{ row?.egreso?.referencia }}</td>
+    </ng-container>
+    <ng-container matColumnDef="comentario">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Comentario</th>
+        <td mat-cell *matCellDef="let row">{{ row?.egreso?.comentario }}</td>
+    </ng-container>
+    <ng-container matColumnDef="updateUser">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Usuario</th>
+        <td mat-cell *matCellDef="let row" matTooltip="{{row.lastUpdated | date: 'dd/MM/yyyy : HH:mm:ss'}}">
+            {{ row.updateUser }}
+        </td>
+    </ng-container>
 
-  <tr mat-header-row *matHeaderRowDef="displayColumns; sticky: true"></tr>
-  <tr
-    mat-row
-    *matRowDef="let row; columns: displayColumns"
-    class="cursor-pointer"
-    (click)="toggle(row)"
-    [ngClass]="{ active: selected?.id === row.id }"
-  ></tr>
+    <tr mat-header-row *matHeaderRowDef="displayColumns; sticky: true"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayColumns" class="cursor-pointer" (click)="toggle(row)" [ngClass]="{ active: selected?.id === row.id }"></tr>
 </table>
 
-<mat-paginator
-  [pageSizeOptions]="[10, 20, 50, 100, 200]"
-  [pageSize]="20"
-  showFirstLastButtons
-></mat-paginator>
+<mat-paginator [pageSizeOptions]="[10, 20, 50, 100, 200]" [pageSize]="20" showFirstLastButtons></mat-paginator>

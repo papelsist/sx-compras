@@ -126,7 +126,7 @@ class PagoNominaTask implements  AsientoBuilder, EgresoTask {
         }
 
         if(nomina.tipo == 'ASIMILADOS'){
-            println "**********************"
+
             def query = "select * from nomina_por_empleado where id = ? "
             def queryUUID = "select * from cfdi where id = ? "
             def nom = findRegistro(query, [nomina.nominaEmpleado])

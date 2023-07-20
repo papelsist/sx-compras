@@ -52,4 +52,22 @@ export class ExistenciaService {
       .put<Existencia>(url, update.changes)
       .pipe(catchError((error: any) => throwError(error)));
   }
+
+  existenciaSemana(parameters) {
+    /* console.log('Ejecutando el reporte por semana');
+    const url = `${this.apiUrl}/`;
+    return this.http.post(this.apiUrl, params); */
+
+    let params = new HttpParams();
+    _.forIn(parameters, (value, key) => {
+      params = params.set(key, value);
+    });
+    const url = `${this.apiUrl}/existenciaPorSemana`;
+    const headers = new HttpHeaders().set('Content-type', 'application/pdf');
+    return this.http.get(url, {
+      headers: headers,
+      responseType: 'blob',
+      params: params
+    });
+  }
 }

@@ -114,8 +114,7 @@ class CostoPromedioService {
         def costo = 0
         def salida = 0
         def costoOrigen = 0
-        println "**************************************"
-        println "Costeando la transformacion ${trs.documento}"
+  
         partidas.each { tr ->
             
             //println "id: ${tr.id} clave: ${tr.producto.clave}  cantidad: ${tr.cantidad}  costo: ${tr.inventario.costo}  "

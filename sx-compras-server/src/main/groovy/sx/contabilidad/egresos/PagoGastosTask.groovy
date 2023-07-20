@@ -221,9 +221,7 @@ class PagoGastosTask implements  AsientoBuilder, EgresoTask {
                 row.tipCamb = cxp.tipoDeCambio ?: 0.0
                 row.referencia = cxp.nombre
                 row.referencia2 = cxp.nombre
-
                 
-
                 def gastos = GastoDet.findAllByCxp(cxp)
                 Boolean provision = false
 

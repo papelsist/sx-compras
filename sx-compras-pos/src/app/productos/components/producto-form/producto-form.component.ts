@@ -92,4 +92,11 @@ export class ProductoFormComponent implements OnInit {
       this.save.emit(prod);
     }
   }
+  changeDate(fecha) {
+    if (fecha) {
+      const fechaFmt = new Date(fecha.substring(0, 10).replace(/-/g, '\/'));
+      return fechaFmt;
+    }
+    return fecha;
+  }
 }

@@ -264,6 +264,25 @@ export class VentasGridComponent extends LxTableComponent implements OnInit {
               this.transformNumber(params.value, '1.1-3')
           }
         ]
+      },
+      {
+        headerName: 'Zaragoza',
+        children: [
+          {
+            headerName: 'Cantidad',
+            field: 'zaragozaCantidad',
+            width: 110,
+            valueFormatter: params =>
+              this.transformNumber(params.value, '1.1-3')
+          },
+          {
+            headerName: 'Kilos',
+            field: 'zaragozaKilos',
+            width: 110,
+            valueFormatter: params =>
+              this.transformNumber(params.value, '1.1-3')
+          }
+        ]
       }
     ];
   }

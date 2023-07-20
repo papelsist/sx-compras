@@ -3,7 +3,7 @@
         <span class="mat-title">
       <span>NC: </span>
         <span> {{ nota.serie }} {{ nota.folio }}</span>
-        <span class="pad-left">({{ nota.fecha | date: 'dd/MM/yyyy' }})</span>
+        <span class="pad-left">({{ changeDate(nota.fecha) | date: 'dd/MM/yyyy' }})</span>
         <span class="pad-left">{{ nota.nombre }}</span>
         </span>
         <span flex></span>
@@ -70,7 +70,7 @@
     </ng-container>
     <ng-container *ngIf="nota.cierreDeAnalisis">
       <button mat-button [disabled]="true">
-        CERRADA EL: {{ nota.cierreDeAnalisis | date: 'dd/MM/yyyy' }}
+        CERRADA EL: {{ changeDate(nota.cierreDeAnalisis) | date: 'dd/MM/yyyy' }}
       </button>
     </ng-container>
   </mat-card-actions>

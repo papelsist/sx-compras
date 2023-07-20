@@ -32,7 +32,7 @@ import { Morralla } from 'app/egresos/models/morralla';
     <ng-container matColumnDef="fecha">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
       <td mat-cell *matCellDef="let row">
-        {{ row.fecha | date: 'dd/MM/yyyy' }}
+        {{ changeDate(row.fecha) | date: 'dd/MM/yyyy' }}
       </td>
       <td mat-footer-cell *matFooterCellDef> Total</td>
     </ng-container>
@@ -122,5 +122,12 @@ export class MorrallasTableComponent implements OnInit, OnChanges {
 
   getTotal(property: string) {
     return Math.abs(_.sumBy(this.dataSource.filteredData, property));
+  }
+  changeDate(fecha) {
+    if (fecha) {
+      const fechaFmt = new Date(fecha.substring(0, 10).replace(/-/g, '\/'));
+      return fechaFmt;
+    }
+    return fecha;
   }
 }

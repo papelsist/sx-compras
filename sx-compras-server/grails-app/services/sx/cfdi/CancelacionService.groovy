@@ -47,6 +47,8 @@ class CancelacionService implements  LogUser{
                     total cfdi.total
                     pfx(empresa.getCertificadoDigitalPfx().encodeBase64())
                     pfxPassword(empresa.passwordPfx)
+                    motivo "03"
+                    sustitucion ""
                     test isTest
                 }
             }
@@ -238,6 +240,8 @@ class CancelacionService implements  LogUser{
                     total totalTarget
                     pfx(empresa.getCertificadoDigitalPfx().encodeBase64())
                     pfxPassword('pfxfilepapel')
+                    motivo "03"
+                    sustitucion ""
                     test isTest
                 }
             }

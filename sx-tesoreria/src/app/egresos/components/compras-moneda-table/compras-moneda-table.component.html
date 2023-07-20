@@ -1,97 +1,84 @@
 <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
-  <ng-container matColumnDef="id">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Id</th>
-    <td mat-cell *matCellDef="let row" matTooltip="{{row.id}}">{{ row.id }}</td>
-  </ng-container>
+    <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Id</th>
+        <td mat-cell *matCellDef="let row" matTooltip="{{row.id}}">{{ row.id }}</td>
+    </ng-container>
 
-  <ng-container matColumnDef="fecha">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
-    <td mat-cell *matCellDef="let row">{{ row.fecha | date: 'dd/MM/yyyy' }}</td>
-  </ng-container>
+    <ng-container matColumnDef="fecha">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
+        <td mat-cell *matCellDef="let row">{{ changeDate(row.fecha) | date: 'dd/MM/yyyy' }}</td>
+    </ng-container>
 
-  <ng-container matColumnDef="origen">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Origen</th>
-    <td mat-cell *matCellDef="let row">{{ row.origen }}</td>
-  </ng-container>
-  <ng-container matColumnDef="destino">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Destino</th>
-    <td mat-cell *matCellDef="let row">{{ row.destino }}</td>
-  </ng-container>
-  <ng-container matColumnDef="afavor">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
-    <td mat-cell *matCellDef="let row">{{ row.afavor }}</td>
-  </ng-container>
-  <ng-container matColumnDef="moneda">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Moneda</th>
-    <td mat-cell *matCellDef="let row">{{ row.moneda }}</td>
-  </ng-container>
+    <ng-container matColumnDef="origen">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Origen</th>
+        <td mat-cell *matCellDef="let row">{{ row.origen }}</td>
+    </ng-container>
+    <ng-container matColumnDef="destino">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Destino</th>
+        <td mat-cell *matCellDef="let row">{{ row.destino }}</td>
+    </ng-container>
+    <ng-container matColumnDef="afavor">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
+        <td mat-cell *matCellDef="let row">{{ row.afavor }}</td>
+    </ng-container>
+    <ng-container matColumnDef="moneda">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Moneda</th>
+        <td mat-cell *matCellDef="let row">{{ row.moneda }}</td>
+    </ng-container>
 
-  <ng-container matColumnDef="importe">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
-    <td mat-cell *matCellDef="let row">{{ row.importe | currency }}</td>
-  </ng-container>
-  <ng-container matColumnDef="tipoDeCambio">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>T.C</th>
-    <td mat-cell *matCellDef="let row">{{ row.tipoDeCambio }}</td>
-  </ng-container>
-  <ng-container matColumnDef="tipoDeCambioCompra">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>T.C (Compra)</th>
-    <td mat-cell *matCellDef="let row">{{ row.tipoDeCambioCompra }}</td>
-  </ng-container>
+    <ng-container matColumnDef="importe">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
+        <td mat-cell *matCellDef="let row">{{ row.importe | currency }}</td>
+    </ng-container>
+    <ng-container matColumnDef="tipoDeCambio">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>T.C</th>
+        <td mat-cell *matCellDef="let row">{{ row.tipoDeCambio }}</td>
+    </ng-container>
+    <ng-container matColumnDef="tipoDeCambioCompra">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>T.C (Compra)</th>
+        <td mat-cell *matCellDef="let row">{{ row.tipoDeCambioCompra }}</td>
+    </ng-container>
 
-  <ng-container matColumnDef="factura">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Factura</th>
-    <td mat-cell *matCellDef="let row" matTooltip="{{row.factura}}">
-      <mat-icon color="primary" *ngIf="row.factura; else: warn">check</mat-icon>
-      <ng-template #warn>
-        <button mat-button (click)="doLookupFactura($event, row)">
+    <ng-container matColumnDef="factura">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Factura</th>
+        <td mat-cell *matCellDef="let row" matTooltip="{{row.factura}}">
+            <mat-icon color="primary" *ngIf="row.factura; else: warn">check</mat-icon>
+            <ng-template #warn>
+                <button mat-button (click)="doLookupFactura($event, row)">
           PENDIENTE
         </button>
-      </ng-template>
-    </td>
-  </ng-container>
+            </ng-template>
+        </td>
+    </ng-container>
 
-  <ng-container matColumnDef="referencia">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Referencia</th>
-    <td mat-cell *matCellDef="let row">{{ row.referencia }}</td>
-  </ng-container>
+    <ng-container matColumnDef="referencia">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Referencia</th>
+        <td mat-cell *matCellDef="let row">{{ row.referencia }}</td>
+    </ng-container>
 
-  <ng-container matColumnDef="comentario">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Comentario</th>
-    <td mat-cell *matCellDef="let row" matTooltip="{{row.comentario}}">
-      {{ row.comentario }}
-    </td>
-  </ng-container>
+    <ng-container matColumnDef="comentario">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Comentario</th>
+        <td mat-cell *matCellDef="let row" matTooltip="{{row.comentario}}">
+            {{ row.comentario }}
+        </td>
+    </ng-container>
 
-  <ng-container matColumnDef="updateUser">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Usuario</th>
-    <td
-      mat-cell
-      *matCellDef="let row"
-      matTooltip="{{row.lastUpdated | date: 'dd/MM/yyyy : HH:mm:ss'}}"
-    >
-      {{ row.updateUser }}
-    </td>
-  </ng-container>
+    <ng-container matColumnDef="updateUser">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Usuario</th>
+        <td mat-cell *matCellDef="let row" matTooltip="{{row.lastUpdated | date: 'dd/MM/yyyy : HH:mm:ss'}}">
+            {{ row.updateUser }}
+        </td>
+    </ng-container>
 
-  <ng-container matColumnDef="operaciones">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>...</th>
-    <td mat-cell *matCellDef="let row">
-      <mat-icon color="warn" (click)="doDelete($event, row)">delete</mat-icon>
-    </td>
-  </ng-container>
+    <ng-container matColumnDef="operaciones">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>...</th>
+        <td mat-cell *matCellDef="let row">
+            <mat-icon color="warn" (click)="doDelete($event, row)">delete</mat-icon>
+        </td>
+    </ng-container>
 
-  <tr mat-header-row *matHeaderRowDef="displayColumns; sticky: true"></tr>
-  <tr
-    mat-row
-    *matRowDef="let row; columns: displayColumns"
-    class="cursor-pointer"
-    (click)="toggle(row)"
-    [ngClass]="{ active: selected?.id === row.id }"
-  ></tr>
+    <tr mat-header-row *matHeaderRowDef="displayColumns; sticky: true"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayColumns" class="cursor-pointer" (click)="toggle(row)" [ngClass]="{ active: selected?.id === row.id }"></tr>
 </table>
 
-<mat-paginator
-  [pageSizeOptions]="[10, 20, 50, 100, 200]"
-  showFirstLastButtons
-></mat-paginator>
+<mat-paginator [pageSizeOptions]="[10, 20, 50, 100, 200]" showFirstLastButtons></mat-paginator>

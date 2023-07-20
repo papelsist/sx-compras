@@ -229,4 +229,12 @@ export class AlcancesComponent implements OnInit, AfterViewInit {
         error2 => console.error(error2)
       );
   }
+
+  changeDate(fecha) {
+    if (fecha) {
+      const fechaFmt = new Date(fecha.substring(0, 10).replace(/-/g, '\/'));
+      return fechaFmt;
+    }
+    return fecha;
+  }
 }

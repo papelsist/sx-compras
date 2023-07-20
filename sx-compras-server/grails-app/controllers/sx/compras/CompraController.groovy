@@ -64,6 +64,7 @@ class CompraController extends RestfulController<Compra> {
     @Override
     @CompileDynamic
     protected List<Compra> listAllResources(Map params) {
+         println "Ejecutando el controller para compras"
         Periodo periodo = params.periodo
         log.info('List {}', periodo)
         def query = Compra.where{}
@@ -72,6 +73,7 @@ class CompraController extends RestfulController<Compra> {
     }
 
     def pendientes() {
+       
         params.sort = 'lastUpdatred'
         params.order = 'desc'
         respond Compra.where{pendiente == true}.list(params)

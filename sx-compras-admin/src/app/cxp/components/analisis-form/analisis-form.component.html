@@ -1,64 +1,64 @@
 <mat-card>
-  <mat-card-title>Análisis de factura</mat-card-title>
-  <mat-divider></mat-divider>
-  <form [formGroup]="form" novalidate class="pad" layout="column">
-    <div layout>
-      <sx-proveedor-field formControlName="proveedor" flex></sx-proveedor-field>
-      <mat-form-field class="pad-left">
-        <input matInput [matDatepicker]="myDatepicker" formControlName="fecha">
-        <mat-datepicker-toggle matSuffix [for]="myDatepicker"></mat-datepicker-toggle>
-        <mat-datepicker #myDatepicker></mat-datepicker>
-      </mat-form-field>
-    </div>
+    <mat-card-title>Análisis de factura</mat-card-title>
+    <mat-divider></mat-divider>
+    <form [formGroup]="form" novalidate class="pad" layout="column">
+        <div layout>
+            <sx-proveedor-field formControlName="proveedor" flex></sx-proveedor-field>
+            <mat-form-field class="pad-left">
+                <input matInput [matDatepicker]="myDatepicker" formControlName="fecha">
+                <mat-datepicker-toggle matSuffix [for]="myDatepicker"></mat-datepicker-toggle>
+                <mat-datepicker #myDatepicker></mat-datepicker>
+            </mat-form-field>
+        </div>
 
-    <div layout>
+        <div layout>
 
-      <div layout flex layout-padding>
-        <div>
-          <button mat-button [disabled]="!proveedor" color="primary" (click)="seleccionarFactura()">Factura (XML)</button>
+            <div layout flex layout-padding>
+                <div>
+                    <button mat-button [disabled]="!proveedor" color="primary" (click)="seleccionarFactura()">Factura (XML)</button>
+                </div>
+                <mat-form-field flex>
+                    <input matInput placeholder="Serie / Folio" [disabled]="true" value="{{factura?.serie}}  {{factura?.folio}}" />
+                    <mat-icon matSuffix color="accent" class="cursor-pointer" (click)="printFactura.emit(factura)" *ngIf="factura">picture_as_pdf</mat-icon>
+                </mat-form-field>
+                <mat-form-field flex>
+                    <input matInput placeholder="Fecha" [disabled]="true" value="{{changeDate(factura?.fecha) | date: 'dd/MM/yyyy'}} " />
+                </mat-form-field>
+                <mat-form-field flex>
+                    <input matInput placeholder="Vto" [disabled]="true" value="{{changeDate(factura?.vencimiento) | date: 'dd/MM/yyyy'}} " />
+                </mat-form-field>
+
+
+                <mat-form-field flex>
+                    <input matInput type="number" placeholder="Flete" autocomplete="off" formControlName="importeFlete" />
+                </mat-form-field>
+            </div>
+        </div>
+        <div layout layout-padding>
+            <mat-form-field flex>
+                <input matInput placeholder="Moneda" [disabled]="true" [value]="factura?.moneda" />
+            </mat-form-field>
+            <mat-form-field flex>
+                <input matInput placeholder="T.C" [disabled]="true" [value]="factura?.tipoDeCambio" />
+            </mat-form-field>
+            <mat-form-field flex>
+                <input matInput placeholder="SubTotal" [disabled]="true" [value]="factura?.subTotal | currency" />
+            </mat-form-field>
+            <mat-form-field flex>
+                <input matInput placeholder="Total" [disabled]="true" [value]="factura?.total | currency" />
+            </mat-form-field>
         </div>
         <mat-form-field flex>
-          <input matInput placeholder="Serie / Folio" [disabled]="true" value="{{factura?.serie}}  {{factura?.folio}}" />
-          <mat-icon matSuffix color="accent" class="cursor-pointer" (click)="printFactura.emit(factura)" *ngIf="factura">picture_as_pdf</mat-icon>
-        </mat-form-field>
-        <mat-form-field flex>
-          <input matInput placeholder="Fecha" [disabled]="true" value="{{factura?.fecha | date: 'dd/MM/yyyy'}} " />
-        </mat-form-field>
-        <mat-form-field flex>
-          <input matInput placeholder="Vto" [disabled]="true" value="{{factura?.vencimiento | date: 'dd/MM/yyyy'}} " />
+            <textarea matInput placeholder="Comentario" formControlName="comentario"></textarea>
         </mat-form-field>
 
-
-        <mat-form-field flex>
-          <input matInput type="number" placeholder="Flete" autocomplete="off" formControlName="importeFlete" />
-        </mat-form-field>
-      </div>
-    </div>
-    <div layout layout-padding>
-      <mat-form-field flex>
-        <input matInput placeholder="Moneda" [disabled]="true" [value]="factura?.moneda" />
-      </mat-form-field>
-      <mat-form-field flex>
-        <input matInput placeholder="T.C" [disabled]="true" [value]="factura?.tipoDeCambio" />
-      </mat-form-field>
-      <mat-form-field flex>
-        <input matInput placeholder="SubTotal" [disabled]="true" [value]="factura?.subTotal | currency" />
-      </mat-form-field>
-      <mat-form-field flex>
-        <input matInput placeholder="Total" [disabled]="true" [value]="factura?.total | currency" />
-      </mat-form-field>
-    </div>
-    <mat-form-field flex>
-      <textarea matInput placeholder="Comentario" formControlName="comentario"></textarea>
-    </mat-form-field>
-
-  </form>
-  <mat-card-actions>
-    <button mat-button (click)="cancelar.emit($event)">Cancelar</button>
-    <button mat-button [disabled]="form.invalid || form.pristine" (click)="onSubmit()">
+    </form>
+    <mat-card-actions>
+        <button mat-button (click)="cancelar.emit($event)">Cancelar</button>
+        <button mat-button [disabled]="form.invalid || form.pristine" (click)="onSubmit()">
       <mat-icon>save</mat-icon> Salvar</button>
-    <button mat-icon-button>
+        <button mat-icon-button>
       <mat-icon>print</mat-icon>
     </button>
-  </mat-card-actions>
+    </mat-card-actions>
 </mat-card>

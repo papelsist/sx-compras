@@ -20,6 +20,7 @@ export class CotizacionesComponent implements OnInit {
 
     cotizacionesFilter$: Observable<any>;
     cotizaciones$: Observable<any[]>;
+    search$ = new BehaviorSubject<string>('');
     ngOnInit() {
     }
 

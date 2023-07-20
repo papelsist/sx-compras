@@ -1,79 +1,78 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <mat-card>
-    <mat-card-title *ngIf="recibo?.id">
-      <div layout>
-        <span class="pad-right"> Contrarecibo: {{recibo.id}}</span>
-        <span class="pad-left"> {{recibo.nombre}} ({{recibo.proveedor.clave}})</span>
-        <span flex></span>
-        <span>Plazo: {{recibo.proveedor.plazo}} Días</span>
-        <span class="pad-left">Vto: {{recibo.proveedor.fechaRevision ? 'REV': 'FAC'}}</span>
-        <span class="pad-left" *ngIf="recibo.atendido">Entregado: {{recibo.atendido | date: 'dd/MM/yyyy'}}</span>
-      </div>
-    </mat-card-title>
+    <mat-card>
+        <mat-card-title *ngIf="recibo?.id">
+            <div layout>
+                <span class="pad-right"> Contrarecibo: {{recibo.id}}</span>
+                <span class="pad-left"> {{recibo.nombre}} ({{recibo.proveedor.clave}})</span>
+                <span flex></span>
+                <span>Plazo: {{recibo.proveedor.plazo}} Días</span>
+                <span class="pad-left">Vto: {{recibo.proveedor.fechaRevision ? 'REV': 'FAC'}}</span>
+                <span class="pad-left" *ngIf="recibo.atendido">Entregado: {{changeDate(recibo.atendido) | date: 'dd/MM/yyyy'}}</span>
+            </div>
+        </mat-card-title>
 
-    <mat-card-title *ngIf="!recibo">Alta de Contrarecibo</mat-card-title>
+        <mat-card-title *ngIf="!recibo">Alta de Contrarecibo</mat-card-title>
 
-    <mat-divider></mat-divider>
-    <div layout="column" class="pad">
-      <div layout>
-        <sx-proveedor-field formControlName="proveedor" flex *ngIf="!recibo?.id">
-        </sx-proveedor-field>
-        <mat-form-field class="pad-left">
-          <input matInput [matDatepicker]="myDatepicker" formControlName="fecha" placeholder="Fecha">
-          <mat-datepicker-toggle matSuffix [for]="myDatepicker"></mat-datepicker-toggle>
-          <mat-datepicker #myDatepicker></mat-datepicker>
-        </mat-form-field>
-        <mat-form-field class="pad-left" [style.width.px]="60">
-          <mat-select placeholder="Moneda" formControlName="moneda">
-            <mat-option *ngFor="let tipo of ['MXN','USD', 'EUR']" [value]="tipo">{{tipo}}</mat-option>
-          </mat-select>
-        </mat-form-field>
+        <mat-divider></mat-divider>
+        <div layout="column" class="pad">
+            <div layout>
+                <sx-proveedor-field formControlName="proveedor" flex *ngIf="!recibo?.id">
+                </sx-proveedor-field>
+                <mat-form-field class="pad-left">
+                    <input matInput [matDatepicker]="myDatepicker" formControlName="fecha" placeholder="Fecha">
+                    <mat-datepicker-toggle matSuffix [for]="myDatepicker"></mat-datepicker-toggle>
+                    <mat-datepicker #myDatepicker></mat-datepicker>
+                </mat-form-field>
+                <mat-form-field class="pad-left" [style.width.px]="60">
+                    <mat-select placeholder="Moneda" formControlName="moneda">
+                        <mat-option *ngFor="let tipo of ['MXN','USD', 'EUR']" [value]="tipo">{{tipo}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
 
 
-        <sx-upper-case-field formControlName="comentario" placeholder="Comentario" flex class="pad-left"></sx-upper-case-field>
-        <mat-form-field class="pad-left">
-          <input matInput [matDatepicker]="myDatepicker2" formControlName="atendido" placeholder="Entregado">
-          <mat-datepicker-toggle matSuffix [for]="myDatepicker2"></mat-datepicker-toggle>
-          <mat-datepicker #myDatepicker2></mat-datepicker>
-        </mat-form-field>
+                <sx-upper-case-field formControlName="comentario" placeholder="Comentario" flex class="pad-left"></sx-upper-case-field>
+                <mat-form-field class="pad-left">
+                    <input matInput [matDatepicker]="myDatepicker2" formControlName="atendido" placeholder="Entregado">
+                    <mat-datepicker-toggle matSuffix [for]="myDatepicker2"></mat-datepicker-toggle>
+                    <mat-datepicker #myDatepicker2></mat-datepicker>
+                </mat-form-field>
 
-        <mat-form-field class="pad-left" flex="10">
-          <input matInput placeholder="Filtrar facturas" (input)="filtro = search.value" #search>
-        </mat-form-field>
-      </div>
+                <mat-form-field class="pad-left" flex="10">
+                    <input matInput placeholder="Filtrar facturas" (input)="filtro = search.value" #search>
+                </mat-form-field>
+            </div>
 
-    </div>
+        </div>
 
-    <div class="partidas-panel">
+        <div class="partidas-panel">
 
-      <sx-recibo-partidas [parent]="form" [partidas]="partidas.value" (delete)="onDeleteRow($event)" [filter]="filtro"
-        [readOnly]="form.disabled">
-      </sx-recibo-partidas>
+            <sx-recibo-partidas [parent]="form" [partidas]="partidas.value" (delete)="onDeleteRow($event)" [filter]="filtro" [readOnly]="form.disabled">
+            </sx-recibo-partidas>
 
-    </div>
-    <div class="totales-panel" layout layout-padding>
-      <span flex></span>
-      <mat-form-field>
-        <input matInput value="{{total | currency}}" placeholder="Total" [disabled]="true">
-      </mat-form-field>
-    </div>
-    <mat-divider></mat-divider>
-    <mat-card-actions>
-      <button mat-button type="button" [routerLink]="['../']">Cancelar</button>
-      <button mat-button [disabled]="form.invalid || form.pristine" *ngIf="!form.disabled">
+        </div>
+        <div class="totales-panel" layout layout-padding>
+            <span flex></span>
+            <mat-form-field>
+                <input matInput value="{{total | currency}}" placeholder="Total" [disabled]="true">
+            </mat-form-field>
+        </div>
+        <mat-divider></mat-divider>
+        <mat-card-actions>
+            <button mat-button type="button" [routerLink]="['../']">Cancelar</button>
+            <button mat-button [disabled]="form.invalid || form.pristine" *ngIf="!form.disabled">
         <mat-icon>save</mat-icon> Salvar
       </button>
-      <sx-facturas-selector-btn (selected)="agregarFacturas($event)" [facturas]="facturas"></sx-facturas-selector-btn>
-      <ng-container *ngIf="recibo?.id">
-        <button mat-button color="warn" type="button" (click)="delete.emit(recibo)">
+            <sx-facturas-selector-btn (selected)="agregarFacturas($event)" [facturas]="facturas"></sx-facturas-selector-btn>
+            <ng-container *ngIf="recibo?.id">
+                <button mat-button color="warn" type="button" (click)="delete.emit(recibo)">
           <mat-icon>delete</mat-icon> Eliminar
         </button>
 
-      </ng-container>
-      <sx-report-button url="cxp/contrarecibos/print/{{recibo.id}}" *ngIf="recibo?.id"> </sx-report-button>
+            </ng-container>
+            <sx-report-button url="cxp/contrarecibos/print/{{recibo.id}}" *ngIf="recibo?.id"> </sx-report-button>
 
 
 
-    </mat-card-actions>
-  </mat-card>
+        </mat-card-actions>
+    </mat-card>
 </form>

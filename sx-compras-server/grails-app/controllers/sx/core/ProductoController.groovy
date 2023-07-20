@@ -26,10 +26,11 @@ class ProductoController extends RestfulController<Producto> {
     @Override
     @CompileDynamic
     protected List<Producto> listAllResources(Map params) {
+        println "Cargando los productos ...."
         def query = Producto.where {}
         params.sort = params.sort ?:'lastUpdated'
         params.order = params.order ?:'desc'
-        params.max = 5000
+        params.max = 15000
         // log.info('List: {}', params)
 
         if(params.term){
@@ -56,7 +57,7 @@ class ProductoController extends RestfulController<Producto> {
         ///END TEMPO
 
         List<Producto> res =  query.list(params)
-        // log.info('All Productos: {}', res.size())
+         log.info('All Productos: {}', res.size())
         respond res
     }
 

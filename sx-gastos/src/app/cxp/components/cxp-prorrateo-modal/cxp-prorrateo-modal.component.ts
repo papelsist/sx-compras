@@ -28,7 +28,8 @@ export class CxpProrrateoModalComponent implements OnInit {
     tacuba: '12',
     febrero: '13',
     vertiz: '2',
-    solis: '14'
+    solis: '14',
+    zaragoza: '15',
   };
 
   constructor(
@@ -53,7 +54,8 @@ export class CxpProrrateoModalComponent implements OnInit {
         tacuba: [null, { updateOn: 'blur' }],
         febrero: [null, { updateOn: 'blur' }],
         vertiz: [null, { updateOn: 'blur' }],
-        solis: [null, { updateOn: 'blur' }]
+        solis: [null, { updateOn: 'blur' }],
+        zaragoza: [null, { updateOn: 'blur' }]
       }
       // { validator: [this.validateImporte.bind(this)] }
     );
@@ -73,7 +75,8 @@ export class CxpProrrateoModalComponent implements OnInit {
         tacuba: this.getSucursalValue('tacuba'),
         febrero: this.getSucursalValue('febrero'),
         vertiz: this.getSucursalValue('vertiz'),
-        solis: this.getSucursalValue('solis')
+        solis: this.getSucursalValue('solis'),
+        zaragoza: this.getSucursalValue('zaragoza')
       };
       this.dialogRef.close(res);
     }

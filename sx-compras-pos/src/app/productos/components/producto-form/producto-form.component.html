@@ -1,90 +1,90 @@
 <form novalidate [formGroup]="form" (ngSubmit)="onSubmit()" flex>
-  <mat-card>
-    <mat-card-title-group>
-      <mat-card-title>
-        <span *ngIf="!producto">Alta de Producto</span>
-        <span *ngIf="producto">Producto: {{producto.descripcion}}</span>
-      </mat-card-title>
-      <mat-card-subtitle>
-        <span *ngIf="producto">Última modificación: {{producto.lastUpdated | date: 'dd/MM/yyyy'}}</span>
-      </mat-card-subtitle>
-    </mat-card-title-group>
-    <mat-divider></mat-divider>
-    <mat-card-content>
+    <mat-card>
+        <mat-card-title-group>
+            <mat-card-title>
+                <span *ngIf="!producto">Alta de Producto</span>
+                <span *ngIf="producto">Producto: {{producto.descripcion}}</span>
+            </mat-card-title>
+            <mat-card-subtitle>
+                <span *ngIf="producto">Última modificación: {{changeDate(producto.lastUpdated) | date: 'dd/MM/yyyy'}}</span>
+            </mat-card-subtitle>
+        </mat-card-title-group>
+        <mat-divider></mat-divider>
+        <mat-card-content>
 
-      <div layout class="form-row">
-        <sx-producto-clave [parent]="form"></sx-producto-clave>
-        <sx-upper-case-field formControlName="descripcion" required="true" placeholder="Descripción" flex>
-        </sx-upper-case-field>
-      </div>
+            <div layout class="form-row">
+                <sx-producto-clave [parent]="form"></sx-producto-clave>
+                <sx-upper-case-field formControlName="descripcion" required="true" placeholder="Descripción" flex>
+                </sx-upper-case-field>
+            </div>
 
-      <div layout class="form-row">
-        <sx-linea-field [parent]="form" [lineas]="lineas" flex></sx-linea-field>
-        <sx-marca-field [parent]="form" [marcas]="marcas" flex></sx-marca-field>
-        <sx-clase-field [parent]="form" [clases]="clases" flex></sx-clase-field>
-      </div>
+            <div layout class="form-row">
+                <sx-linea-field [parent]="form" [lineas]="lineas" flex></sx-linea-field>
+                <sx-marca-field [parent]="form" [marcas]="marcas" flex></sx-marca-field>
+                <sx-clase-field [parent]="form" [clases]="clases" flex></sx-clase-field>
+            </div>
 
-      <div layout class="form-row">
-        <mat-form-field>
-          <input matInput type="number" formControlName="precioContado" placeholder="Precio contado">
-          <mat-error>Digite un precio</mat-error>
-        </mat-form-field>
-        <mat-form-field>
-          <input matInput type="number" formControlName="precioCredito" placeholder="Precio crédito">
-          <mat-error>Digite un precio</mat-error>
-        </mat-form-field>
-        <mat-form-field>
-          <input matInput type="number" formControlName="largo" placeholder="Largo">
-        </mat-form-field>
-        <mat-form-field>
-          <input matInput type="number" formControlName="ancho" placeholder="Ancho">
-        </mat-form-field>
-        <mat-checkbox formControlName="activo">Activo</mat-checkbox>
-        <mat-checkbox formControlName="inventariable">Inventariable</mat-checkbox>
-      </div>
+            <div layout class="form-row">
+                <mat-form-field>
+                    <input matInput type="number" formControlName="precioContado" placeholder="Precio contado">
+                    <mat-error>Digite un precio</mat-error>
+                </mat-form-field>
+                <mat-form-field>
+                    <input matInput type="number" formControlName="precioCredito" placeholder="Precio crédito">
+                    <mat-error>Digite un precio</mat-error>
+                </mat-form-field>
+                <mat-form-field>
+                    <input matInput type="number" formControlName="largo" placeholder="Largo">
+                </mat-form-field>
+                <mat-form-field>
+                    <input matInput type="number" formControlName="ancho" placeholder="Ancho">
+                </mat-form-field>
+                <mat-checkbox formControlName="activo">Activo</mat-checkbox>
+                <mat-checkbox formControlName="inventariable">Inventariable</mat-checkbox>
+            </div>
 
-      <div layout class="form-row">
-        <sx-unidad-field [parent]="form"></sx-unidad-field>
-        <sx-presentacion-field [parent]="form"></sx-presentacion-field>
-        <sx-modovta-field [parent]="form"></sx-modovta-field>
-        <sx-upper-case-field formControlName="color" placeholder="Color" required="false"></sx-upper-case-field>
-        <mat-checkbox formControlName="nacional">Nacional</mat-checkbox>
-        <mat-checkbox formControlName="deLinea">De Línea</mat-checkbox>
-      </div>
+            <div layout class="form-row">
+                <sx-unidad-field [parent]="form"></sx-unidad-field>
+                <sx-presentacion-field [parent]="form"></sx-presentacion-field>
+                <sx-modovta-field [parent]="form"></sx-modovta-field>
+                <sx-upper-case-field formControlName="color" placeholder="Color" required="false"></sx-upper-case-field>
+                <mat-checkbox formControlName="nacional">Nacional</mat-checkbox>
+                <mat-checkbox formControlName="deLinea">De Línea</mat-checkbox>
+            </div>
 
-      <div layout class="form-row">
-        <mat-form-field>
-          <input matInput type="number" formControlName="kilos" placeholder="Kilos">
-        </mat-form-field>
-        <mat-form-field>
-          <input matInput type="number" formControlName="gramos" placeholder="Gramos">
-        </mat-form-field>
-        <mat-form-field>
-          <input matInput type="number" formControlName="calibre" placeholder="Calibre">
-        </mat-form-field>
-        <mat-form-field>
-          <input matInput type="number" formControlName="caras" placeholder="Caras">
-        </mat-form-field>
-        <mat-form-field>
-          <input matInput type="number" formControlName="m2XMillar" placeholder="M2 X Millar">
-          <mat-error>Campo requerido</mat-error>
-        </mat-form-field>
-      </div>
+            <div layout class="form-row">
+                <mat-form-field>
+                    <input matInput type="number" formControlName="kilos" placeholder="Kilos">
+                </mat-form-field>
+                <mat-form-field>
+                    <input matInput type="number" formControlName="gramos" placeholder="Gramos">
+                </mat-form-field>
+                <mat-form-field>
+                    <input matInput type="number" formControlName="calibre" placeholder="Calibre">
+                </mat-form-field>
+                <mat-form-field>
+                    <input matInput type="number" formControlName="caras" placeholder="Caras">
+                </mat-form-field>
+                <mat-form-field>
+                    <input matInput type="number" formControlName="m2XMillar" placeholder="M2 X Millar">
+                    <mat-error>Campo requerido</mat-error>
+                </mat-form-field>
+            </div>
 
-    </mat-card-content>
+        </mat-card-content>
 
-    <mat-card-actions align="end">
-      <button mat-button type="button">Regresar</button>
-      <button mat-button color="primary" [disabled]="form.invalid || form.pristine">
+        <mat-card-actions align="end">
+            <button mat-button type="button">Regresar</button>
+            <button mat-button color="primary" [disabled]="form.invalid || form.pristine">
         <mat-icon>save</mat-icon> Salvar
       </button>
-      <ng-container *ngIf="producto && producto.id">
-        <button mat-button color="warn" type="button" (click)="delete.emit(producto)">
+            <ng-container *ngIf="producto && producto.id">
+                <button mat-button color="warn" type="button" (click)="delete.emit(producto)">
           <mat-icon>delete</mat-icon> Eliminar
         </button>
-      </ng-container>
-    </mat-card-actions>
-  </mat-card>
+            </ng-container>
+        </mat-card-actions>
+    </mat-card>
 
 </form>
 <!-- <pre>

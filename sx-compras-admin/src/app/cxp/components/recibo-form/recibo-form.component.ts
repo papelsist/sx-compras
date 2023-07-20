@@ -159,4 +159,11 @@ export class ReciboFormComponent implements OnInit, OnDestroy, OnChanges {
   get proveedor() {
     return this.form.get('proveedor').value;
   }
+  changeDate(fecha) {
+    if (fecha) {
+      const fechaFmt = new Date(fecha.substring(0, 10).replace(/-/g, '\/'));
+      return fechaFmt;
+    }
+    return fecha;
+  }
 }

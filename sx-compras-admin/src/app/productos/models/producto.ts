@@ -27,6 +27,7 @@ export interface Producto {
   nacional: boolean;
   precioContado: number;
   precioCredito: number;
+  precioTarjeta: number;
   presentacion: string;
   lastUpdated?: string;
   selected?: boolean;

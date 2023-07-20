@@ -1,57 +1,50 @@
 <mat-card>
-  <form [formGroup]="form">
-    <div layout layout-align="start center" class="mat-title pad-left pad-top">
-      <span>Compra: {{ compra.folio }} ({{ compra.sucursalNombre }})</span>
-      <span class="pad-left">{{ compra.nombre }}</span>
-      <span class="pad-left pad-right">Estado: {{ compra.status }}</span>
-      <span class="pad-left">({{ compra.fecha | date: 'dd/MM/yyyy' }})</span>
-      <ng-container *ngIf="compra.ultimaDepuracion">
-        <span class="pad-left pad-right">U. Depuración: </span>
-        <span class="pad-right tc-pink-600">{{
-          compra.ultimaDepuracion | date: 'dd/MM/yyyy'
+    <form [formGroup]="form">
+        <div layout layout-align="start center" class="mat-title pad-left pad-top">
+            <span>Compra: {{ compra.folio }} ({{ compra.sucursalNombre }})</span>
+            <span class="pad-left">{{ compra.nombre }}</span>
+            <span class="pad-left pad-right">Estado: {{ compra.status }}</span>
+            <span class="pad-left">({{ changeDate(compra.fecha)| date: 'dd/MM/yyyy' }})</span>
+            <ng-container *ngIf="compra.ultimaDepuracion">
+                <span class="pad-left pad-right">U. Depuración: </span>
+                <span class="pad-right tc-pink-600">{{
+          changeDate(compra.ultimaDepuracion) | date: 'dd/MM/yyyy'
         }}</span>
-      </ng-container>
-      <span flex></span>
-      <ng-container *ngIf="compra.cerrada">
-        <span class="pad-left pad-right">Cerrada: </span>
-        <span class="pad-right tc-pink-600">{{
-          compra.cerrada | date: 'dd/MM/yyyy'
+            </ng-container>
+            <span flex></span>
+            <ng-container *ngIf="compra.cerrada">
+                <span class="pad-left pad-right">Cerrada: </span>
+                <span class="pad-right tc-pink-600">{{
+          changeDate(compra.cerrada) | date: 'dd/MM/yyyy'
         }}</span>
-      </ng-container>
+            </ng-container>
 
-      <!-- <sx-compra-add-partida
+            <!-- <sx-compra-add-partida
         [parent]="form"
         [moneda]="moneda"
         [productos]="productos"
         (addPartida)="onInsertPartida($event)"
         *ngIf="!compra.cerrada"
       ></sx-compra-add-partida> -->
-    </div>
+        </div>
 
-    <mat-divider></mat-divider>
+        <mat-divider></mat-divider>
 
-    <div class="partidas-panel">
-      <sx-compra-partidas-table
-        [parent]="form"
-        [partidas]="partidas.value"
-        (delete)="onDeletePartida($event)"
-        (depurar)="onDepurar($event)"
-        (update)="onEditPartida($event)"
-        [cerrada]="cerrada"
-      >
-      </sx-compra-partidas-table>
-    </div>
-    <mat-divider></mat-divider>
-    <mat-card-actions align="end">
-      <button type="button" mat-button [routerLink]="['../']">
+        <div class="partidas-panel">
+            <sx-compra-partidas-table [parent]="form" [partidas]="partidas.value" (delete)="onDeletePartida($event)" (depurar)="onDepurar($event)" (update)="onEditPartida($event)" [cerrada]="cerrada">
+            </sx-compra-partidas-table>
+        </div>
+        <mat-divider></mat-divider>
+        <mat-card-actions align="end">
+            <button type="button" mat-button [routerLink]="['../']">
         <mat-icon>arrow_back</mat-icon> Compras
       </button>
 
-      <ng-container *ngIf="compra"> </ng-container>
-      <ng-content></ng-content>
-      <span flex></span>
-      <span class="pad-left pad-right">Total</span>
-      <span class="pad-left pad-right">{{ compra?.total | currency }}</span>
-    </mat-card-actions>
-  </form>
+            <ng-container *ngIf="compra"> </ng-container>
+            <ng-content></ng-content>
+            <span flex></span>
+            <span class="pad-left pad-right">Total</span>
+            <span class="pad-left pad-right">{{ compra?.total | currency }}</span>
+        </mat-card-actions>
+    </form>
 </mat-card>

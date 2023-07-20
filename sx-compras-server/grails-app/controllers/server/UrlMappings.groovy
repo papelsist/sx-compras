@@ -183,6 +183,7 @@ class UrlMappings {
         "/api/alcances/generarOrden"(controller: 'alcances', action: 'generarOrden', method: 'POST')
         "/api/alcances/actualizarMeses"(controller: 'alcances', action: 'actualizarMeses', method: 'PUT')
         "/api/alcances/print"(controller: 'alcances', action: 'print', method: 'GET')
+        "/api/alcances/printPorLinea"(controller: 'alcances', action: 'printPorLinea', method: 'GET')
         "/api/alcances/comprasPendientes"(controller: 'alcances', action: 'comprasPendientes', method: 'GET')
 
 
@@ -331,6 +332,7 @@ class UrlMappings {
         "/api/contabilidad/polizas/printComprobantes/$id"(controller: 'poliza', action: 'printComprobantes')
         "/api/contabilidad/polizas/generarComplementos/$id"(controller: 'poliza', action: 'generarComplementos', method: 'PUT')
         "/api/contabilidad/polizas/generarFolios/$subtipo/$ejercicio/$mes"(controller: 'poliza', action: 'generarFolios', method: 'PUT')
+         "/api/contabilidad/polizas/actualizarContadorFolios/$subtipo/$ejercicio/$mes"(controller: 'poliza', action: 'actualizarContadorFolios', method: 'PUT')
         "/api/contabilidad/polizas/prorratearPartida/$id"(controller: 'poliza', action: 'prorratearPartida', method: 'PUT')
         "/api/contabilidad/polizas/copiar/$id"(controller: 'poliza', action: 'copiar', method: 'POST')
 
@@ -431,6 +433,8 @@ class UrlMappings {
         "/api/existencias"(resources: 'existencia', excludes:['create', 'save', 'edit','patch'])
         "/api/existencias/crossTab"(controller: 'existencia', action: 'crossTab')
         "/api/existencias/alcanceSimpleCrossTab"(controller: 'existencia', action: 'alcanceSimpleCrossTab')
+        "/api/existencias/existenciaPorSemana"(controller: 'existencia', action: 'existenciaSemana')
+
         // SolicitudDeDepositos
 
         // Activo Fijo
@@ -480,6 +484,7 @@ class UrlMappings {
         "/api/sat/metadata"(resources: 'satMetadata', excludes: ['create', 'edit', 'update', 'save', 'patch'])
         "/api/sat/metadata/importar/$ejercicio/$mes"(controller: 'satMetadata', action: 'importar', method: 'POST')
         "/api/sat/metadataProveedor"(controller: 'satMetadataProveedor',action:'metaDataProveedorList', method: 'GET')
+        "/api/sat/metadataProveedor/importar/$ejercicio/$mes"(controller: 'satMetadataProveedor',action:'importar', method: 'POST')
         "/api/auditoria/cfdi"(resources: 'auditoriaFiscalCfdi', excludes: ['create', 'edit', 'update', 'save', 'patch'])
         "/api/auditoria/cfdi/generar/$ejercicio/$mes"(controller: 'auditoriaFiscalCfdi', action: 'generar', method: 'POST')
 

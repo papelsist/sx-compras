@@ -10,7 +10,7 @@ import sx.utils.Periodo
 
 
 @GrailsCompileStatic
-@EqualsAndHashCode(includes='ejercicio, mes')
+@EqualsAndHashCode(includes='id,ejercicio, mes')
 @ToString(includeNames = true, includePackage = false)
 class SatMetadataProveedor {
 

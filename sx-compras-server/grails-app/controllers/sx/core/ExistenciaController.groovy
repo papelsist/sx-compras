@@ -13,6 +13,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils
 import sx.logistica.InventarioService
 import sx.reports.ReportService
 import sx.utils.Periodo
+import groovy.transform.ToString
 
 @GrailsCompileStatic
 @Slf4j
@@ -29,6 +30,12 @@ class ExistenciaController extends RestfulController<Existencia> {
     
     ExistenciaController() {
         super(Existencia)
+    }
+
+    def test(){
+        //def fechaFinal = params.fechaFinal
+        print('Reporte Por Semana: '+ params)
+        //print(fechaFinal)
     }
 
     @Override
@@ -49,6 +56,15 @@ class ExistenciaController extends RestfulController<Existencia> {
         respond inventarioService.existenciasCrossTab()
     }
 
+    def existenciaSemana(ExistenciaCommand command){
+        params.FECHA_FIN = command.fechaFinal
+        println(params)
+        println("Command")
+        println(command)
+        def pdf =  reportService.run('ExistenciaSemanal.jrxml', params)
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'ExistenciasSemanal.pdf')
+    }
+
     def alcanceSimpleCrossTab() {
         int meses = params.int('meses', 2)
         respond inventarioService.alcanceSimpleCrossTab(meses)
@@ -59,4 +75,11 @@ class ExistenciaController extends RestfulController<Existencia> {
         log.error(message, ExceptionUtils.getRootCause(e))
         respond([message: message], status: 500)
     }
+
 }
+
+
+    @ToString(includeNames=true,includePackage=false)
+    class ExistenciaCommand {
+        Date fechaFinal
+    }

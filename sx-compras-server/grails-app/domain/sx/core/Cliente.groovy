@@ -46,10 +46,14 @@ class Cliente {
 
     String updateUser
 
+
+  String razonSocial
+
+  String regimenFiscal
+
     Set<ComunicacionEmpresa> medios = []
 
     // ClienteCredito credito
-
     // Transient properties
     Set telefonos
     String fax
@@ -67,6 +71,8 @@ class Cliente {
         vendedor nullable: true
         createUser nullable: true
         updateUser nullable: true
+        razonSocial nullable: true
+        regimenFiscal nullable: true
     }
 
     static hasOne = [credito: ClienteCredito]

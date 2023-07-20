@@ -67,7 +67,7 @@ export class PrestamoInteresesFormComponent implements OnInit {
       corte: [new Date(), [Validators.required]],
       tasa: [
         0.0,
-        [Validators.required, Validators.min(0.01), Validators.max(10.0)]
+        [Validators.required, Validators.min(0.01), Validators.max(20.0)]
       ]
     });
   }

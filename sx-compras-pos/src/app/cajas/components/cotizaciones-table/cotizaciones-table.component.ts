@@ -20,7 +20,7 @@ import {
     styleUrls: ['./cotizaciones-table.component.scss']
   })
   export class CotizacionesTableComponent implements OnInit, OnChanges, OnDestroy {
-    
+
     @Input() cotizaciones: any[] = [];
     @Input() multipleSelection = true;
     @Input() filter;
@@ -66,22 +66,20 @@ import {
       }
       ngOnChanges() {}
       ngOnDestroy() {}
-      /*
 
-
-  
-
-  
-    
-  
-  
+      changeDate(fecha) {
+        if (fecha) {
+          const fechaFmt = new Date(fecha.substring(0, 10).replace(/-/g, '\/'));
+          return fechaFmt;
+        }
+        return fecha;
+      }
+    /*
     ngOnInit() {
       this.dataSource.sort = this.sort;
-  
       this.subscription = this.sort.sortChange.subscribe(e =>
         localStorage.setItem('sx-compras.coms-table.sort', JSON.stringify(e))
       );
-  
       const sdata: string = localStorage.getItem('sx-compras.coms-table.sort');
       if (sdata) {
         const data: {
@@ -95,7 +93,6 @@ import {
         this.sort.direction = 'desc';
       }
     }
-  
     ngOnChanges(changes: SimpleChanges) {
       if (changes.coms && changes.coms.currentValue) {
         this.dataSource.data = changes.coms.currentValue;
@@ -104,24 +101,20 @@ import {
         this.dataSource.filter = changes.filter.currentValue;
       }
     }
-  
     ngOnDestroy() {
       if (this.subscription) {
         this.subscription.unsubscribe();
       }
     }
-  
     applyFilter(filterValue: string) {
       filterValue = filterValue.trim();
       filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
       this.dataSource.filter = filterValue;
     }
-  
     onEdit($event: Event, row) {
       $event.preventDefault();
       this.edit.emit(row);
     }
-  
     getPrintUrl(event: RecepcionDeCompra) {
       return `coms/print/${event.id}`;
     }

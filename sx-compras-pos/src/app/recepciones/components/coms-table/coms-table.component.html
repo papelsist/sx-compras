@@ -1,93 +1,85 @@
 <table mat-table [dataSource]="dataSource" matSort>
-  <ng-container matColumnDef="sucursalNombre">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal</th>
-    <td mat-cell *matCellDef="let com">{{ com.sucursalNombre }}</td>
-  </ng-container>
+    <ng-container matColumnDef="sucursalNombre">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal</th>
+        <td mat-cell *matCellDef="let com">{{ com.sucursalNombre }}</td>
+    </ng-container>
 
-  <ng-container matColumnDef="nombre">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Proveedor</th>
-    <td mat-cell *matCellDef="let com">{{ com.nombre }}</td>
-  </ng-container>
+    <ng-container matColumnDef="nombre">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Proveedor</th>
+        <td mat-cell *matCellDef="let com">{{ com.nombre }}</td>
+    </ng-container>
 
-  <ng-container matColumnDef="documento">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Documento</th>
-    <td mat-cell *matCellDef="let com">
-      {{ com.documento }}
-    </td>
-  </ng-container>
-  <ng-container matColumnDef="fecha">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
-    <td mat-cell *matCellDef="let com">{{ com.fecha | date: 'dd/MM/yyyy' }}</td>
-  </ng-container>
+    <ng-container matColumnDef="documento">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Documento</th>
+        <td mat-cell *matCellDef="let com">
+            {{ com.documento }}
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="fecha">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
+        <td mat-cell *matCellDef="let com">{{ changeDate(com.fecha) | date: 'dd/MM/yyyy' }}</td>
+    </ng-container>
 
-  <ng-container matColumnDef="compraFolio">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Compra</th>
-    <td mat-cell *matCellDef="let com">
-      {{ com.compraFolio }}
-    </td>
-  </ng-container>
+    <ng-container matColumnDef="compraFolio">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Compra</th>
+        <td mat-cell *matCellDef="let com">
+            {{ com.compraFolio }}
+        </td>
+    </ng-container>
 
-  <ng-container matColumnDef="remision">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Remisión</th>
-    <td mat-cell *matCellDef="let com">{{ com.remision }}</td>
-  </ng-container>
-  <ng-container matColumnDef="fechaRemision">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha R</th>
-    <td mat-cell *matCellDef="let com">
-      {{ com.fechaRemision | date: 'dd/MM/yyyy' }}
-    </td>
-  </ng-container>
+    <ng-container matColumnDef="remision">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Remisión</th>
+        <td mat-cell *matCellDef="let com">{{ com.remision }}</td>
+    </ng-container>
+    <ng-container matColumnDef="fechaRemision">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha R</th>
+        <td mat-cell *matCellDef="let com">
+            {{ changeDate(com.fechaRemision) | date: 'dd/MM/yyyy' }}
+        </td>
+    </ng-container>
 
-  <ng-container matColumnDef="total">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Total</th>
-    <td mat-cell *matCellDef="let com">{{ com.total | currency: 'USD' }}</td>
-  </ng-container>
+    <ng-container matColumnDef="total">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Total</th>
+        <td mat-cell *matCellDef="let com">{{ com.total | currency: 'USD' }}</td>
+    </ng-container>
 
-  <ng-container matColumnDef="comentario">
-    <th mat-header-cell *matHeaderCellDef>Comentario</th>
-    <td mat-cell *matCellDef="let com">{{ com.comentario }}</td>
-  </ng-container>
+    <ng-container matColumnDef="comentario">
+        <th mat-header-cell *matHeaderCellDef>Comentario</th>
+        <td mat-cell *matCellDef="let com">{{ com.comentario }}</td>
+    </ng-container>
 
-  <ng-container matColumnDef="createUser">
-    <th mat-header-cell *matHeaderCellDef>Creada</th>
-    <td mat-cell *matCellDef="let com">{{ com.createUser }}</td>
-  </ng-container>
+    <ng-container matColumnDef="createUser">
+        <th mat-header-cell *matHeaderCellDef>Creada</th>
+        <td mat-cell *matCellDef="let com">{{ com.createUser }}</td>
+    </ng-container>
 
-  <ng-container matColumnDef="lastUpdatedBy">
-    <th mat-header-cell *matHeaderCellDef>Usuario</th>
-    <td mat-cell *matCellDef="let com">{{ com.updateUser }}</td>
-  </ng-container>
+    <ng-container matColumnDef="lastUpdatedBy">
+        <th mat-header-cell *matHeaderCellDef>Usuario</th>
+        <td mat-cell *matCellDef="let com">{{ com.updateUser }}</td>
+    </ng-container>
 
-  <ng-container matColumnDef="modificado">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>U. Modificación</th>
-    <td mat-cell *matCellDef="let com">
-      {{ com.modificado | date: 'dd/MM/yyyy: HH:mm' }}
-    </td>
-  </ng-container>
+    <ng-container matColumnDef="modificado">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>U. Modificación</th>
+        <td mat-cell *matCellDef="let com">
+            {{ changeDate(com.modificado) | date: 'dd/MM/yyyy: HH:mm' }}
+        </td>
+    </ng-container>
 
-  <ng-container matColumnDef="fechaInventario">
-    <th mat-header-cell *matHeaderCellDef>Inventariado</th>
-    <td mat-cell *matCellDef="let com">
-      <mat-icon *ngIf="com.fechaInventario">checked</mat-icon>
-    </td>
-  </ng-container>
+    <ng-container matColumnDef="fechaInventario">
+        <th mat-header-cell *matHeaderCellDef>Inventariado</th>
+        <td mat-cell *matCellDef="let com">
+            <mat-icon *ngIf="com.fechaInventario">checked</mat-icon>
+        </td>
+    </ng-container>
 
-  <ng-container matColumnDef="operaciones">
-    <th mat-header-cell *matHeaderCellDef></th>
-    <td mat-cell *matCellDef="let com">
-      <mat-icon [routerLink]="com.id" class="pad-right">edit</mat-icon>
-      <sx-report-button
-        [url]="getPrintUrl(com)"
-        [smallIcon]="true"
-      ></sx-report-button>
-    </td>
-  </ng-container>
+    <ng-container matColumnDef="operaciones">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let com">
+            <mat-icon [routerLink]="com.id" class="pad-right">edit</mat-icon>
+            <sx-report-button [url]="getPrintUrl(com)" [smallIcon]="true"></sx-report-button>
+        </td>
+    </ng-container>
 
-  <tr mat-header-row *matHeaderRowDef="displayColumns"></tr>
-  <tr
-    mat-row
-    *matRowDef="let com; columns: displayColumns"
-    class="cursor-pointer "
-    [ngClass]="{ active: com.selected }"
-  ></tr>
+    <tr mat-header-row *matHeaderRowDef="displayColumns"></tr>
+    <tr mat-row *matRowDef="let com; columns: displayColumns" class="cursor-pointer " [ngClass]="{ active: com.selected }"></tr>
 </table>

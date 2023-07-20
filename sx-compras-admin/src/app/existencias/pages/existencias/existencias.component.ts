@@ -7,8 +7,19 @@ import { Update } from '@ngrx/entity';
 
 import { Observable } from 'rxjs';
 
-import { Periodo } from 'app/_core/models/periodo';
 import { Existencia } from 'app/existencias/models';
+
+import { MatDialog } from '@angular/material';
+import {
+  TdLoadingService,
+  TdMediaService,
+  TdDialogService
+} from '@covalent/core';
+import { finalize } from 'rxjs/operators';
+
+ // tslint:disable-next-line:max-line-length
+ import {ExistenciaSemanaReportDialogComponent} from './components/existencia-semana-report-dialog/existencia-semana-report-dialog.component';
+import { ExistenciaService } from '../../services/existencia.service';
 
 @Component({
   selector: 'sx-existencias',
@@ -17,21 +28,24 @@ import { Existencia } from 'app/existencias/models';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ExistenciasComponent implements OnInit {
-  periodo$: Observable<Periodo>;
   rows$: Observable<Existencia[]>;
   loading$: Observable<boolean>;
 
-  constructor(private store: Store<fromStore.State>) {}
+  constructor(
+    private store: Store<fromStore.State>,
+    private dialogService: TdDialogService,
+    private dialog: MatDialog,
+    private loadingService: TdLoadingService,
+    private service: ExistenciaService
+    ) {}
 
   ngOnInit() {
-    this.periodo$ = this.store.pipe(select(fromStore.selectPeriodo));
+    // this.periodo$ = this.store.pipe(select(fromStore.selectPeriodo));
     this.loading$ = this.store.pipe(select(fromStore.selectExistenciasLoading));
     this.rows$ = this.store.pipe(select(fromStore.getAllExistencias));
   }
 
-  onPeriodo(event: Periodo) {
-    this.store.dispatch(new fromStore.SetPeriodo({ periodo: event }));
-  }
+
 
   onReload() {
     this.store.dispatch(new fromStore.LoadExistencias());
@@ -40,6 +54,35 @@ export class ExistenciasComponent implements OnInit {
   onSelect(event: Partial<Existencia>) {
     this.store.dispatch(
       new fromRoot.Go({ path: ['inventarios/existencias', event.id] })
+    );
+  }
+
+  generarReporteExistenciaSemana() {
+    const dialogRef = this.dialog
+      .open(ExistenciaSemanaReportDialogComponent, {
+      })
+      .afterClosed()
+      .subscribe(res => {
+        if (res) {
+          this.doRunReporteExistenciaSemana(res);
+        }
+      });
+  }
+
+  doRunReporteExistenciaSemana(params) {
+    this.loadingService.register('procesando');
+    this.service.existenciaSemana(params)
+    .pipe(
+      finalize(() => this.loadingService.resolve('procesando'))
+    ).subscribe(
+      res => {
+        const blob = new Blob([res], {
+          type: 'application/pdf'
+        });
+        const fileURL = window.URL.createObjectURL(blob);
+        window.open(fileURL, '_blank');
+      },
+      error2 => console.error(error2)
     );
   }
 }

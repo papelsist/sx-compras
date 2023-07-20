@@ -112,4 +112,11 @@ export class FichasTableComponent implements OnInit, OnChanges {
   isDeletable(row: Ficha) {
     return row.origen !== 'CON' && row.origen !== 'COD';
   }
+  changeDate(fecha) {
+    if (fecha) {
+      const fechaFmt = new Date(fecha.substring(0, 10).replace(/-/g, '\/'));
+      return fechaFmt;
+    }
+    return fecha;
+  }
 }

@@ -201,4 +201,11 @@ export class AnalisisDeTransformacionComponent implements OnInit {
     const update = { id: analisis.id, changes: { partidas } };
     this.onUpdate(update);
   }
+  changeDate(fecha) {
+    if (fecha) {
+      const fechaFmt = new Date(fecha.substring(0, 10).replace(/-/g, '\/'));
+      return fechaFmt;
+    }
+    return fecha;
+  }
 }

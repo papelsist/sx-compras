@@ -25,20 +25,27 @@ class VentasTask implements  AsientoBuilder {
 
         String sqlVentas = getSqlVentas().replaceAll("@FECHA", toSqlDate(poliza.fecha))
         
+        // println sqlVentas
      
         List rowsVta = getAllRows(sqlVentas, [])
         rowsVta.each{row ->
-
-            println row
+            def venta_subtotal = row.subtotal.abs() + row.descuento.abs()
+            def cta_descuento = row.cta_venta.replace('401','403')
 
             def docto = row.documento ?: ''
             def tcCre = row.moneda == 'USD' ? "tc:${row.tc}" : ''
             def descripcion = "VENTA ${docto} ${row.fecha}  ${row.sucursal}  ${tcCre}"
 
-            PolizaDet detVta = mapRow(row.cta_venta.toString(), descripcion, row,0.00, row.subtotal.abs())
+            //def venta_subtotal = row.subtotal.abs() + row.descuento.abs()
+
+            //PolizaDet detVta = mapRow(row.cta_venta.toString(), descripcion, row,0.00, row.subtotal.abs())
+            PolizaDet detVta = mapRow(row.cta_venta.toString(), descripcion, row,0.00, venta_subtotal.abs())
             poliza.addToPartidas(detVta)
 
             
+            PolizaDet detDto = mapRow(cta_descuento, descripcion, row, row.descuento.abs(),0.00)
+            poliza.addToPartidas(detDto)
+
             PolizaDet detIva = mapRow(row.cta_iva.toString(), descripcion, row,0.00, row.impuesto.abs())
             poliza.addToPartidas(detIva)
 
@@ -46,16 +53,10 @@ class VentasTask implements  AsientoBuilder {
             poliza.addToPartidas(detCte)
         }
 
-
- 
-
     }
 
 
     PolizaDet mapRow(String cuentaClave, String descripcion, Map row, def debe = 0.0, def haber = 0.0) {
-
-
-        
 
         CuentaContable cuenta = buscarCuenta(cuentaClave)
 
@@ -117,11 +118,11 @@ class VentasTask implements  AsientoBuilder {
     String getSqlVentas() {
         String res = """
         SELECT a.asiento,a.documentoTipo,a.moneda,a.referencia2,a.sucursal,a.suc,a.cta_venta,a.cta_iva,a.cta_cliente
-        ,sum(round(a.subtotal*a.tc,2)) subtotal,sum(case when a.tc>1 then round(a.total*a.tc,2) - round(a.subtotal*a.tc,2) else a.impuesto end) impuesto,sum(round(a.total*a.tc,2)) total,
+        ,sum(round(a.subtotal*a.tc,2)) subtotal,sum(round(a.descuento_importe*a.tc,2)) as descuento,sum(case when a.tc>1 then round(a.total*a.tc,2) - round(a.subtotal*a.tc,2) else a.impuesto end) impuesto,sum(round(a.total*a.tc,2)) total,
         a.fecha,case when a.documentoTipo='CRE' then a.origen else null end origen,case when a.documentoTipo='CRE' then a.documento else null end documento,documentoTipo,a.tc
         FROM (        
             SELECT concat('VENTAS_',f.tipo,(case when f.moneda='USD' then '_USD' else '' end)) as asiento,f.id as origen,f.tipo as documentoTipo,f.fecha,f.documento
-            ,f.moneda,f.tipo_de_cambio as tc,f.subtotal,f.impuesto,f.total,c.nombre referencia2,s.nombre sucursal, s.clave as suc, f.cliente_id as cliente
+            ,f.moneda,f.tipo_de_cambio as tc,f.subtotal,f.descuento_importe,f.impuesto,f.total,c.nombre referencia2,s.nombre sucursal, s.clave as suc, f.cliente_id as cliente
             ,concat('401-0003-',(case when s.clave>9 then concat('00',s.clave) else concat('000',s.clave) end),'-0000') as cta_venta,'209-0001-0000-0000' cta_iva
             ,concat('105-',(SELECT concat(case when x.cuenta_operativa='0266' then concat('0004-',x.cuenta_operativa) else concat('0003-',x.cuenta_operativa) end) FROM cuenta_operativa_cliente x where x.cliente_id=c.id ),'-0000') as cta_cliente
             , c.rfc, x.uuid
@@ -131,7 +132,7 @@ class VentasTask implements  AsientoBuilder {
             UNION                
             SELECT concat('VENTAS_',f.tipo) as asiento,f.id as origen,f.tipo as documentoTipo
             ,(case when f.tipo in ('CON','COD') then null else f.fecha end) fecha,(case when f.tipo in ('CON','COD') then null else f.documento end) documento
-            ,f.moneda,f.tipo_de_cambio,f.subtotal,f.impuesto,f.total,concat('VENTA ',f.tipo,' ',s.nombre) referencia2,s.nombre sucursal, s.clave as suc
+            ,f.moneda,f.tipo_de_cambio,f.subtotal,f.descuento_importe,f.impuesto,f.total,concat('VENTA ',f.tipo,' ',s.nombre) referencia2,s.nombre sucursal, s.clave as suc
             ,concat(s.nombre,"_",f.tipo_documento,"_",f.tipo) cliente_id 
             ,concat('401-',(case when f.tipo='CON' then '0001-' when f.tipo in('COD','OTR','ACF') then '0002-' else 'nd' end ),(case when s.clave>9 then concat('00',s.clave) else concat('000',s.clave) end),'-0000') as cta_venta
             ,(case when f.tipo='CON' then '208-0001-0000-0000' else '209-0001-0000-0000' end) cta_iva    

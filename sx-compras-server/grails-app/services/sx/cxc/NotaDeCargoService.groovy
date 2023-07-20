@@ -3,14 +3,18 @@ package sx.cxc
 import grails.compiler.GrailsCompileStatic
 import grails.gorm.transactions.Transactional
 import groovy.util.logging.Slf4j
-import lx.cfdi.v33.Comprobante
+//import lx.cfdi.v33.Comprobante
+import com.cfdi4.comprobante.Comprobante
 import org.apache.commons.lang3.exception.ExceptionUtils
 import sx.cfdi.Cfdi
 import sx.cfdi.CfdiService
+import sx.cfdi.Cfdi4Service
 import sx.cfdi.CfdiTimbradoService
 import sx.cfdi.v33.NotaDeCargoBuilder
 import sx.core.FolioLog
 import sx.core.LogUser
+
+import com.cfdi4.Cfdi4NotaDeCargoBuilder
 
 
 
@@ -20,8 +24,11 @@ import sx.core.LogUser
 class NotaDeCargoService implements  LogUser, FolioLog {
 
     NotaDeCargoBuilder notaDeCargoBuilder
+    Cfdi4NotaDeCargoBuilder cfdi4NotaDeCargoBuilder
 
     CfdiService cfdiService
+
+    Cfdi4Service cfdi4Service
 
     CfdiTimbradoService cfdiTimbradoService
 
@@ -80,9 +87,10 @@ class NotaDeCargoService implements  LogUser, FolioLog {
         if(nota.cfdi)
             throw new RuntimeException("Nota de cargo ${nota.serie} ${nota.folio} YA tiene CFDI (XML) generado")
 
-        Comprobante comprobante = notaDeCargoBuilder.build(nota)
-        Cfdi cfdi = cfdiService.generarCfdi(comprobante, 'I', 'NOTA_CARGO')
-
+        //Comprobante comprobante = notaDeCargoBuilder.build(nota)
+        Comprobante comprobante = cfdi4NotaDeCargoBuilder.build(nota)
+     
+        Cfdi cfdi = cfdi4Service.generarCfdi(comprobante, 'I', 'NOTA_CARGO')
 
         nota.cuentaPorCobrar.cfdi = cfdi
         nota.cfdi = cfdi

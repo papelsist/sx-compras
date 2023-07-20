@@ -43,7 +43,7 @@ class IngresosTask implements  AsientoBuilder {
                 .replaceAll("@FECHA", toSqlDate(poliza.fecha))
                 .replaceAll("@TIPO", tipoStr)
 
-        //println sql
+        println sql
 
         List rows = getAllRows(sql, [])
 
@@ -372,8 +372,8 @@ class IngresosTask implements  AsientoBuilder {
         		when m.forma_de_pago IN('CHEQUE','EFECTIVO') then concat('COB_FICHA_',m.tipo) when m.forma_de_pago like 'TARJ%' then 'COB_TARJ_CON' else '' end) asiento, 'MovimientoDeCuenta' entidad
         	,case when m.referencia>0 then m.referencia else(case when t.id is null then SUBSTRING(m.referencia,LENGTH(SUBSTRING_INDEX(m.referencia,':',1))+3) else CONVERT (t.folio,CHAR) end) end documento,m.referencia
         ,m.id origen,(case when m.forma_de_pago like 'TARJ%' then 'CON' else m.tipo end) documentoTipo,m.fecha,m.referencia,m.moneda,m.tipo_de_cambio tc 
-        ,round((case    when m.por_identificar and m.forma_de_pago not like 'DEP%' then (SELECT sum(a.importe) FROM cobro_transferencia t join cobro c on(t.cobro_id=c.id) join aplicacion_de_cobro a on(a.cobro_id=c.id) where t.ingreso_id=m.id )
-                        when m.por_identificar and m.forma_de_pago like 'DEP%' then (SELECT sum(a.importe) FROM cobro_deposito t join cobro c on(t.cobro_id=c.id) join aplicacion_de_cobro a on(a.cobro_id=c.id) where t.ingreso_id=m.id )
+        ,round((case    when m.por_identificar and m.forma_de_pago not like 'DEP%' then (SELECT sum(a.importe) FROM cobro_transferencia t join cobro c on(t.cobro_id=c.id) join aplicacion_de_cobro a on(a.cobro_id=c.id) where t.ingreso_id=m.id and a.fecha=m.fecha)
+                        when m.por_identificar and m.forma_de_pago like 'DEP%' then (SELECT sum(a.importe) FROM cobro_deposito t join cobro c on(t.cobro_id=c.id) join aplicacion_de_cobro a on(a.cobro_id=c.id) where t.ingreso_id=m.id and a.fecha=m.fecha)
         else m.importe end) * m.tipo_de_cambio,2) total
         ,m.forma_de_pago
         ,(

@@ -114,7 +114,12 @@ export class ProductosTable2Component extends LxTableComponent
       {
         headerName: 'U',
         field: 'unidad',
-        width: 60
+        width: 70
+      },
+      {
+        headerName: 'Modo',
+        field: 'modoVenta',
+        width: 100
       },
       {
         headerName: 'Estado',
@@ -131,6 +136,12 @@ export class ProductosTable2Component extends LxTableComponent
       {
         headerName: 'P. Crédito',
         field: 'precioCredito',
+        width: 110,
+        valueFormatter: params => this.transformCurrency(params.value)
+      },
+      {
+        headerName: 'P. Tarjeta',
+        field: 'precioTarjeta',
         width: 110,
         valueFormatter: params => this.transformCurrency(params.value)
       },

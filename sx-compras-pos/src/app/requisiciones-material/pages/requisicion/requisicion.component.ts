@@ -183,4 +183,12 @@ export class RequisicionComponent implements OnInit, OnDestroy {
     const url = `requisicionDeMaterial/print/${row.id}`;
     this.reportService.runReport(url, {});
   }
+
+  changeDate(fecha) {
+    if (fecha) {
+      const fechaFmt = new Date(fecha.substring(0, 10).replace(/-/g, '\/'));
+      return fechaFmt;
+    }
+    return fecha;
+  }
 }

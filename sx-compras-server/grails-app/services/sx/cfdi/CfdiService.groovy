@@ -12,6 +12,7 @@ import javax.xml.bind.Marshaller
 
 import lx.cfdi.v33.CfdiUtils
 import lx.cfdi.v33.Comprobante
+import com.cfdi4.comprobante.Comprobante
 import lx.cfdi.v33.pagos.PagosUtils
 import sx.core.LogUser
 import sx.reports.ReportService

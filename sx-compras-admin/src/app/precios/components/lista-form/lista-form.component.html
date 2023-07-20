@@ -1,83 +1,33 @@
 <form [formGroup]="form" novalidate>
-  <div layout>
-    <mat-form-field class="date-field">
-      <input
-        matInput
-        [matDatepicker]="myDatepicker"
-        formControlName="fecha"
-        placeholder="Fecha"
-      />
-      <mat-datepicker-toggle
-        matSuffix
-        [for]="myDatepicker"
-      ></mat-datepicker-toggle>
-      <mat-datepicker #myDatepicker></mat-datepicker>
-    </mat-form-field>
-    <mat-form-field class="pad-left date-field">
-      <input
-        matInput
-        [matDatepicker]="myDatepicker2"
-        formControlName="inicio"
-        placeholder="Inicio"
-      />
-      <mat-datepicker-toggle
-        matSuffix
-        [for]="myDatepicker2"
-      ></mat-datepicker-toggle>
-      <mat-datepicker #myDatepicker2></mat-datepicker>
-    </mat-form-field>
-    <sx-tipo-cambio-field
-      [parent]="form"
-      class="pad-left"
-    ></sx-tipo-cambio-field>
-    <sx-upper-case-field
-      class="pad-left"
-      placeholder="Descripción"
-      formControlName="descripcion"
-      flex="35"
-    ></sx-upper-case-field>
-    <div flex layout layout-align="center center" *ngIf="lista">
-      <mat-form-field>
-        <input
-          matInput
-          readonly="true"
-          placeholder="Creado"
-          value="{{ lista?.dateCreated | date: 'dd/MM/yyyy:HH:mm' }}"
-        />
-      </mat-form-field>
-      <mat-form-field>
-        <input
-          matInput
-          readonly="true"
-          placeholder="Modificado"
-          value="{{ lista?.lastUpdated | date: 'dd/MM/yyyy:HH:mm' }}"
-        />
-      </mat-form-field>
-      <mat-form-field>
-        <input
-          matInput
-          readonly="true"
-          placeholder="Creado por"
-          value="{{ lista?.createUser }}"
-        />
-      </mat-form-field>
-      <mat-form-field>
-        <input
-          matInput
-          readonly="true"
-          placeholder="Actualizó"
-          value="{{ lista?.updateUser }}"
-        />
-      </mat-form-field>
+    <div layout>
+        <mat-form-field class="date-field">
+            <input matInput [matDatepicker]="myDatepicker" formControlName="fecha" placeholder="Fecha" />
+            <mat-datepicker-toggle matSuffix [for]="myDatepicker"></mat-datepicker-toggle>
+            <mat-datepicker #myDatepicker></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field class="pad-left date-field">
+            <input matInput [matDatepicker]="myDatepicker2" formControlName="inicio" placeholder="Inicio" />
+            <mat-datepicker-toggle matSuffix [for]="myDatepicker2"></mat-datepicker-toggle>
+            <mat-datepicker #myDatepicker2></mat-datepicker>
+        </mat-form-field>
+        <sx-tipo-cambio-field [parent]="form" class="pad-left"></sx-tipo-cambio-field>
+        <sx-upper-case-field class="pad-left" placeholder="Descripción" formControlName="descripcion" flex="35"></sx-upper-case-field>
+        <div flex layout layout-align="center center" *ngIf="lista">
+            <mat-form-field>
+                <input matInput readonly="true" placeholder="Creado" value="{{ changeDate(lista?.dateCreated) | date: 'dd/MM/yyyy:HH:mm' }}" />
+            </mat-form-field>
+            <mat-form-field>
+                <input matInput readonly="true" placeholder="Modificado" value="{{ changeDate(lista?.lastUpdated) | date: 'dd/MM/yyyy:HH:mm' }}" />
+            </mat-form-field>
+            <mat-form-field>
+                <input matInput readonly="true" placeholder="Creado por" value="{{ lista?.createUser }}" />
+            </mat-form-field>
+            <mat-form-field>
+                <input matInput readonly="true" placeholder="Actualizó" value="{{ lista?.updateUser }}" />
+            </mat-form-field>
+        </div>
     </div>
-  </div>
 </form>
 <div layout class="partidas-panel">
-  <sx-listadet-table
-    [partidas]="partidas"
-    flex
-    (selectionChange)="onSelection($event)"
-    (edited)="form.markAsDirty()"
-    #partidasTable
-  ></sx-listadet-table>
+    <sx-listadet-table [partidas]="partidas" flex (selectionChange)="onSelection($event)" (edited)="form.markAsDirty()" #partidasTable></sx-listadet-table>
 </div>

@@ -1,97 +1,96 @@
 <form [formGroup]="form" novalidate (ngSubmit)="onSubmit()">
-  <mat-card>
-    <mat-card-title>
-      <div layout>
-        <span class="pad-right">Analisis de factura: </span>
-        <span class="pad-right">{{analisis.folio}}</span>
-        <span class="pad-right"> Factura: </span>
-        <sx-factura-header [factura]="analisis.factura"></sx-factura-header>
-        <span flex></span>
-        <div layout="column">
-          <span layout>
+    <mat-card>
+        <mat-card-title>
+            <div layout>
+                <span class="pad-right">Analisis de factura: </span>
+                <span class="pad-right">{{analisis.folio}}</span>
+                <span class="pad-right"> Factura: </span>
+                <sx-factura-header [factura]="analisis.factura"></sx-factura-header>
+                <span flex></span>
+                <div layout="column">
+                    <span layout>
             <span>Analizado:</span>
-            <span class="pad-left">{{importe | currency}}</span>
-          </span>
-          <span layout class="tc-pink-600" *ngIf="analisis.cerrado">
+                    <span class="pad-left">{{importe | currency}}</span>
+                    </span>
+                    <span layout class="tc-pink-600" *ngIf="analisis.cerrado">
             <span>Cerrado:</span>
-            <span class="pad-left">{{analisis.cerrado | date: 'dd/MM/yyyy'}}</span>
-          </span>
-        </div>
-      </div>
-    </mat-card-title>
-    <mat-card-subtitle>
-      <span layout>
+                    <span class="pad-left">{{changeDate(analisis.cerrado) | date: 'dd/MM/yyyy'}}</span>
+                    </span>
+                </div>
+            </div>
+        </mat-card-title>
+        <mat-card-subtitle>
+            <span layout>
         <span>{{analisis.proveedor.nombre}}</span>
-        <span flex></span>
-        <span>{{analisis.factura.moneda}}</span>
-        <span class="pad-left pad-right" *ngIf="analisis.factura.moneda !== 'MXN'"> T.C: {{analisis.factura.tipoDeCambio}}</span>
-        <span *ngIf="analisis.updateUser !== analisis.createUser">Creado: {{analisis.createUser}}</span>
-        <span class="pad-left">Modificado: {{analisis.updateUser}}</span>
-      </span>
-    </mat-card-subtitle>
-    <mat-divider></mat-divider>
+            <span flex></span>
+            <span>{{analisis.factura.moneda}}</span>
+            <span class="pad-left pad-right" *ngIf="analisis.factura.moneda !== 'MXN'"> T.C: {{analisis.factura.tipoDeCambio}}</span>
+            <span *ngIf="analisis.updateUser !== analisis.createUser">Creado: {{analisis.createUser}}</span>
+            <span class="pad-left">Modificado: {{analisis.updateUser}}</span>
+            </span>
+        </mat-card-subtitle>
+        <mat-divider></mat-divider>
 
 
 
-    <div class="partidas-panel">
-      <sx-analisis-partidas-table [readOnly]="analisis.cerrado" [parent]="form" [partidas]="partidas.value" (update)="onUpdateRow($event)"
-        (delete)="onDeleteRow($event)">
-      </sx-analisis-partidas-table>
-    </div>
-    <mat-divider></mat-divider>
-    <div layout>
-      <mat-form-field flex class="pad-left">
-        <input matInput formControlName="comentario" placeholder="Comentario">
-      </mat-form-field>
-      <span flex></span>
-      <div class="totales-panel" layout layout-padding>
-        <mat-form-field>
-          <input matInput placeholder="Factura (Subtotal)" [disabled]="true" [value]="factura.total | currency">
-        </mat-form-field>
-        <mat-form-field>
-          <input matInput placeholder="Factura (Subtotal)" [disabled]="true" [value]="factura.subTotal | currency">
-        </mat-form-field>
+        <div class="partidas-panel">
+            <sx-analisis-partidas-table [readOnly]="analisis.cerrado" [parent]="form" [partidas]="partidas.value" (update)="onUpdateRow($event)" (delete)="onDeleteRow($event)">
+            </sx-analisis-partidas-table>
+        </div>
+        <mat-divider></mat-divider>
+        <div layout>
+            <mat-form-field flex class="pad-left">
+                <input matInput formControlName="comentario" placeholder="Comentario">
+            </mat-form-field>
+            <span flex></span>
+            <div class="totales-panel" layout layout-padding>
+                <mat-form-field>
+                    <input matInput placeholder="Factura (Subtotal)" [disabled]="true" [value]="factura.total | currency">
+                </mat-form-field>
+                <mat-form-field>
+                    <input matInput placeholder="Factura (Subtotal)" [disabled]="true" [value]="factura.subTotal | currency">
+                </mat-form-field>
 
-        <mat-form-field>
-          <input matInput placeholder="Analizado" [disabled]="true" [value]="importe | currency">
-        </mat-form-field>
+                <mat-form-field>
+                    <input matInput placeholder="Analizado" [disabled]="true" [value]="importe | currency">
+                </mat-form-field>
 
-        <mat-form-field>
-          <input matInput formControlName="importeFlete" placeholder="Flete" type="number" autocomplete="off">
-          <span matPrefix>$&nbsp;</span>
-        </mat-form-field>
-
-
-        <mat-form-field>
-          <input matInput placeholder="Pendiente" [disabled]="true" value="{{diferencia | currency}} ({{pendiente | percent:'2.2-2'}})">
-        </mat-form-field>
-      </div>
-    </div>
+                <mat-form-field>
+                    <input matInput formControlName="importeFlete" placeholder="Flete" type="number" autocomplete="off">
+                    <span matPrefix>$&nbsp;</span>
+                </mat-form-field>
 
 
-    <mat-divider></mat-divider>
-    <mat-card-actions>
-      <button mat-button (click)="cancel.emit($event)" type="button"> Cancelar </button>
-      <ng-container *ngIf="!analisis.cerrado">
-        <button mat-button type="button" (click)="onAgregarCom()" [disabled]="pendiente <= 0">
+                <mat-form-field>
+                    <input matInput placeholder="Pendiente" [disabled]="true" value="{{diferencia | currency}} ({{pendiente | percent:'2.2-2'}})">
+                </mat-form-field>
+            </div>
+        </div>
+
+
+        <mat-divider></mat-divider>
+        <mat-card-actions>
+            <button mat-button (click)="cancel.emit($event)" type="button"> Cancelar </button>
+            <ng-container *ngIf="!analisis.cerrado">
+                <button mat-button type="button" (click)="onAgregarCom()" [disabled]="pendiente <= 0">
           <mat-icon>assignment_returned</mat-icon> Agregar COM
         </button>
-        <button mat-button color="accent" [disabled]="form.invalid || form.pristine">
+                <button mat-button color="accent" [disabled]="form.invalid || form.pristine">
           <mat-icon>save</mat-icon> Actualizar
         </button>
 
-        <button mat-button color="warn" type="button" (click)="delete.emit(analisis)">
+                <button mat-button color="warn" type="button" (click)="delete.emit(analisis)">
           <mat-icon>delete</mat-icon> Eliminar
         </button>
 
-        <button mat-button color="primary" type="button" (click)="cerrar.emit(analisis)">
+                <button mat-button color="primary" type="button" (click)="cerrar.emit(analisis)">
           <mat-icon>grid_off</mat-icon> Cerrar
         </button>
-      </ng-container>
-      <!-- <sx-report-button url="analisisDeFactura/print/{{analisis.id}}"></sx-report-button> -->
-      <sx-print-analisis [analisis]="analisis"></sx-print-analisis>
+            </ng-container>
+            <!-- <sx-report-button url="analisisDeFactura/print/{{analisis.id}}"></sx-report-button> -->
+            <sx-print-analisis [analisis]="analisis"></sx-print-analisis>
 
-    </mat-card-actions>
+        </mat-card-actions>
 
-  </mat-card>
+    </mat-card>
 </form>

@@ -225,4 +225,13 @@ export class ListaFormComponent implements OnInit, OnChanges {
   get disponibles(): any[] {
     return _.valuesIn(this._disponibles);
   }
+
+  changeDate(fecha) {
+    if (fecha) {
+      const fechaFmt = new Date(fecha.substring(0, 10).replace(/-/g, '\/'));
+      return fechaFmt;
+    }
+    return fecha;
+  }
+
 }

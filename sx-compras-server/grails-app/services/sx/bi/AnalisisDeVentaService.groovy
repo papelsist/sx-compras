@@ -60,6 +60,8 @@ class AnalisisDeVentaService {
       ,sum(case when sucursal='TACUBA' then a.kilos else 0 end) as tacubaKilos
       ,sum(case when sucursal='VERTIZ 176' then a.cantidad else 0 end) as vertizCantidad
       ,sum(case when sucursal='VERTIZ 176' then a.kilos else 0 end) as vertizKilos
+      ,sum(case when sucursal='ZARAGOZA' then a.cantidad else 0 end) as zaragozaCantidad
+      ,sum(case when sucursal='ZARAGOZA' then a.kilos else 0 end) as zaragozaKilos
       FROM (
       SELECT s.nombre AS sucursal,p.clave,p.descripcion,l.linea,g.nombre as grupo, c.clase,m.marca,p.unidad,p.kilos kgXmillar,p.gramos
       ,ROUND(SUM(D.CANTIDAD/(CASE WHEN P.UNIDAD='MIL' THEN 1000 ELSE 1 END) ),3) AS cantidad
@@ -69,7 +71,7 @@ class AnalisisDeVentaService {
       LEFT JOIN grupo_de_producto g on(p.grupo_id = g.id)
       left join clase c on(p.clase_id=c.id) left join marca m on(p.marca_id=m.id)
       JOIN sucursal S ON(S.ID=D.SUCURSAL_ID) join cuenta_por_cobrar f on(f.id=v.cuenta_por_cobrar_id)
-      WHERE v.FECHA BETWEEN :FECHA_INICIAL AND :FECHA_FINAL and d.inventario_id is not null and f.cfdi_id is not null and f.cancelada is null
+      WHERE f.FECHA BETWEEN :FECHA_INICIAL AND :FECHA_FINAL and d.inventario_id is not null and f.cfdi_id is not null and f.cancelada is null
       GROUP BY clave,sucursal
       ) AS a
       group by a.clave

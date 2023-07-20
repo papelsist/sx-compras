@@ -69,6 +69,20 @@ export class AlcancesService {
     });
   }
 
+  reportePorLinea(data) {
+    let params = new HttpParams();
+    _.forIn(data, (value, key) => {
+      params = params.set(key, value);
+    });
+    const url = `${this.apiUrl}/printPorLinea`;
+    const headers = new HttpHeaders().set('Content-type', 'application/pdf');
+    return this.http.get(url, {
+      headers: headers,
+      responseType: 'blob',
+      params: params
+    });
+  }
+
   actualizarMeses(meses: number): Observable<any> {
     const url = `${this.apiUrl}/actualizarMeses`;
     const params = new HttpParams().set('meses', meses.toString());

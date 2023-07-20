@@ -74,6 +74,8 @@ export class ComsComponent implements OnInit {
       .subscribe((res: Date) => {
         if (res) {
           const url = `coms/recepcionesPorDia`;
+          console.log('Fecha en Iso STring');
+          console.log(res.toISOString());
           this.reportService.runReport(url, { fecha: res.toISOString() });
         }
       });

@@ -1,83 +1,83 @@
 <mat-card>
-  <mat-card-title>
-    <div layout>
-      <span class="pad-right"> Requisición: {{requisicion.folio}} ({{requisicion.tipo}})</span>
-      <span class="pad-left"> {{requisicion.nombre}}</span>
-      <span flex></span>
-      <span class="tc-pink-600 pad-right"> CERRADA: </span>
-      <span class="tc-pink-600"> {{requisicion.cerrada | date:'dd/MM/yyyy'}} </span>
-    </div>
-  </mat-card-title>
+    <mat-card-title>
+        <div layout>
+            <span class="pad-right"> Requisición: {{requisicion.folio}} ({{requisicion.tipo}})</span>
+            <span class="pad-left"> {{requisicion.nombre}}</span>
+            <span flex></span>
+            <span class="tc-pink-600 pad-right"> CERRADA: </span>
+            <span class="tc-pink-600"> {{requisicion.cerrada | date:'dd/MM/yyyy'}} </span>
+        </div>
+    </mat-card-title>
 
-  <div class="md-title pad-bottom-sm" layout>
-    <span class="pad-left pad-right">Fecha: </span>
-    <span class="pad-left"> {{requisicion.fecha | date:'dd/MM/yyyy'}}</span>
-    <span class="pad-left">Fecha de Pago: </span>
-    <span class="pad-left"> {{requisicion.fechaDePago| date:'dd/MM/yyyy'}}</span>
-    <span flex></span>
+    <div class="md-title pad-bottom-sm" layout>
+        <span class="pad-left pad-right">Fecha: </span>
+        <span class="pad-left"> {{changeDate(requisicion.fecha) | date:'dd/MM/yyyy'}}</span>
+        <span class="pad-left">Fecha de Pago: </span>
+        <span class="pad-left"> {{changeDate(requisicion.fechaDePago)| date:'dd/MM/yyyy'}}</span>
+        <span flex></span>
 
-    <span *ngIf="requisicion?.egreso">
+        <span *ngIf="requisicion?.egreso">
       <span>Pagada </span>
-      <span>{{requisicion.pagada | date: 'dd/MM/yyyy'}}</span>
-      <span class="pad-left" *ngIf="requisicion?.egreso?.cheque">
+        <span>{{requisicion.pagada | date: 'dd/MM/yyyy'}}</span>
+        <span class="pad-left" *ngIf="requisicion?.egreso?.cheque">
         Cheque: {{requisicion.egreso.cheque.folio}} ({{requisicion.egreso.cheque.banco}})
       </span>
-      <span class="pad-left" *ngIf="requisicion?.egreso?.cheque?.impresion">
+        <span class="pad-left" *ngIf="requisicion?.egreso?.cheque?.impresion">
         Impreso: ({{requisicion.egreso.cheque.impresion | date: 'dd/MM/yyyy'}})
       </span>
-    </span>
-    <ng-container *ngIf="requisicion.egreso && requisicion.formaDePago !== 'CHEQUE'">
+        </span>
+        <ng-container *ngIf="requisicion.egreso && requisicion.formaDePago !== 'CHEQUE'">
 
-      <span class="pad-left">
+            <span class="pad-left">
         Banco: {{requisicion.egreso.cuenta.descripcion}}
       </span>
-      <span class="pad-left">
+            <span class="pad-left">
         Referencia: {{requisicion.egreso.referencia}}
       </span>
-    </ng-container>
-    <span flex></span>
-    <span class="pad-left pad-right">
+        </ng-container>
+        <span flex></span>
+        <span class="pad-left pad-right">
       Usuario: {{requisicion.updateUser}}
     </span>
-  </div>
-  <mat-divider></mat-divider>
-  <div layout="column" class="pad">
-    <div layout>
-      <mat-form-field class="pad-right">
-        <input matInput value="{{requisicion.formaDePago}}" placeholder="Forma de pago" [disabled]="true">
-      </mat-form-field>
-      <mat-form-field class="pad-right" [style.width.px]="60">
-        <input matInput value="{{requisicion.moneda}}" placeholder="Moneda" [disabled]="true">
-      </mat-form-field>
-      <mat-form-field class="pad-right" [style.width.px]="60">
-        <input matInput value="{{requisicion.tipoDeCambio}}" placeholder="T.C" [disabled]="true">
-      </mat-form-field>
-      <mat-form-field flex>
-        <input matInput value="{{requisicion.comentario}}" placeholder="Comentario" [disabled]="true">
-      </mat-form-field>
     </div>
-  </div>
+    <mat-divider></mat-divider>
+    <div layout="column" class="pad">
+        <div layout>
+            <mat-form-field class="pad-right">
+                <input matInput value="{{requisicion.formaDePago}}" placeholder="Forma de pago" [disabled]="true">
+            </mat-form-field>
+            <mat-form-field class="pad-right" [style.width.px]="60">
+                <input matInput value="{{requisicion.moneda}}" placeholder="Moneda" [disabled]="true">
+            </mat-form-field>
+            <mat-form-field class="pad-right" [style.width.px]="60">
+                <input matInput value="{{requisicion.tipoDeCambio}}" placeholder="T.C" [disabled]="true">
+            </mat-form-field>
+            <mat-form-field flex>
+                <input matInput value="{{requisicion.comentario}}" placeholder="Comentario" [disabled]="true">
+            </mat-form-field>
+        </div>
+    </div>
 
-  <div class="partidas-panel">
-    <sx-requisicion-partidas [partidas]="requisicion.partidas" [readOnly]="true">
-    </sx-requisicion-partidas>
-  </div>
-  <div class="totales-panel" layout layout-padding>
-    <span flex></span>
-    <mat-form-field>
-      <input matInput value="{{requisicion.total | currency}}" placeholder="Total" [disabled]="true">
-    </mat-form-field>
-    <mat-form-field class="pad-left">
-      <input matInput value="{{requisicion.apagar | currency}}" placeholder="A Pagar" [disabled]="true">
-    </mat-form-field>
-    <mat-form-field class="pad-left">
-      <input matInput value="{{getImporteLocal(requisicion) | currency}}" placeholder="A Pagar (MX)" [disabled]="true">
-    </mat-form-field>
-  </div>
-  <mat-divider></mat-divider>
+    <div class="partidas-panel">
+        <sx-requisicion-partidas [partidas]="requisicion.partidas" [readOnly]="true">
+        </sx-requisicion-partidas>
+    </div>
+    <div class="totales-panel" layout layout-padding>
+        <span flex></span>
+        <mat-form-field>
+            <input matInput value="{{requisicion.total | currency}}" placeholder="Total" [disabled]="true">
+        </mat-form-field>
+        <mat-form-field class="pad-left">
+            <input matInput value="{{requisicion.apagar | currency}}" placeholder="A Pagar" [disabled]="true">
+        </mat-form-field>
+        <mat-form-field class="pad-left">
+            <input matInput value="{{getImporteLocal(requisicion) | currency}}" placeholder="A Pagar (MX)" [disabled]="true">
+        </mat-form-field>
+    </div>
+    <mat-divider></mat-divider>
 
-  <mat-card-actions>
-    <button mat-button type="button" (click)="cancel.emit($event)">Cancelar</button>
-    <ng-content></ng-content>
-  </mat-card-actions>
+    <mat-card-actions>
+        <button mat-button type="button" (click)="cancel.emit($event)">Cancelar</button>
+        <ng-content></ng-content>
+    </mat-card-actions>
 </mat-card>

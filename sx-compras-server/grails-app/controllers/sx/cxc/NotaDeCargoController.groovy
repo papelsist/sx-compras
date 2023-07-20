@@ -86,7 +86,9 @@ class NotaDeCargoController extends RestfulController<NotaDeCargo> {
         log.info('Generando notas {}', command)
         def res = []
         if(command.facturista) {
+      
             def nota = facturistaEstadoDeCuentaService.generarNotaDeCargo(command.facturista, command.fechaFinal, command.descripcion)
+            println nota
             res << nota
             respond res
         } else {

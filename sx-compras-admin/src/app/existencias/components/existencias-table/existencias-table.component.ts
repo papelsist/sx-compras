@@ -171,6 +171,12 @@ export class ExistenciasTableComponent extends LxTableComponent
         valueFormatter: params => this.transformNumber(params.value, '1.1-3')
       },
       {
+        headerName: 'Zaragoza',
+        field: 'ZARAGOZA',
+        width: 110,
+        valueFormatter: params => this.transformNumber(params.value, '1.1-3')
+      },
+      {
         headerName: 'Total',
         field: 'cantidad',
         valueFormatter: params => this.transformNumber(params.value, '1.1-3')

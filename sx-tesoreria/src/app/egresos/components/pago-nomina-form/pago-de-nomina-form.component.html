@@ -10,12 +10,12 @@
 
   <div class="md-title pad-bottom-sm" layout>
     <span class="pad-left pad-right">Pago: </span>
-    <span class="pad-left"> {{ pagoNomina.pago | date: 'dd/MM/yyyy' }}</span>
+    <span class="pad-left"> {{ changeDate(pagoNomina.pago) | date: 'dd/MM/yyyy' }}</span>
     <span flex></span>
 
     <span *ngIf="pagoNomina?.egreso">
       <span>Pagada </span>
-      <span>{{ pagoNomina.egreso.fecha | date: 'dd/MM/yyyy' }}</span>
+      <span>{{ changeDate(pagoNomina.egreso.fecha) | date: 'dd/MM/yyyy' }}</span>
       <span class="pad-left" *ngIf="pagoNomina.formaDePago === 'CHEQUE'">
         <span>Cheque: </span>
         <span

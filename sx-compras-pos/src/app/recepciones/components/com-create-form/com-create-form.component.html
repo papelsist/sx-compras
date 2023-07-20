@@ -1,50 +1,48 @@
 <mat-card>
-  <form [formGroup]="form">
-    <div layout layout-align="start center" class="mat-title pad-left pad-top">
-      <span>Alta de Recepción de compra</span>
-      <span flex></span>
-      <span *ngIf="compra"> Compra:
+    <form [formGroup]="form">
+        <div layout layout-align="start center" class="mat-title pad-left pad-top">
+            <span>Alta de Recepción de compra</span>
+            <span flex></span>
+            <span *ngIf="compra"> Compra:
         <span> {{compra.folio}}</span>
-        <span class="pad-left"> {{compra.fecha | date: 'dd/MM/yyyy'}}</span>
-      </span>
-      <span flex></span>
-    </div>
+            <span class="pad-left"> {{changeDate(compra.fecha) | date: 'dd/MM/yyyy'}}</span>
+            </span>
+            <span flex></span>
+        </div>
 
-    <div layout class="pad-left pad-right pad-top">
-      <sx-proveedor-field formControlName="proveedor" flex></sx-proveedor-field>
-      <mat-form-field class="pad-left">
-        <input matInput formControlName="remision" placeholder="Remisión" autocomplete="off">
-      </mat-form-field>
-      <mat-form-field class="pad-left">
-        <input matInput [matDatepicker]="myDatepicker" formControlName="fechaRemision" placeholder="Fecha Remision"
-          autocomplete="off">
-        <mat-datepicker-toggle matSuffix [for]="myDatepicker"></mat-datepicker-toggle>
-        <mat-datepicker #myDatepicker></mat-datepicker>
-      </mat-form-field>
-      <sx-upper-case-field formControlName="comentario" placeholder="Comentario" flex class="pad-left pad-right"></sx-upper-case-field>
-      <mat-form-field class="pad-left">
-        <input matInput placeholder="Filtrar partidas" #filter autocomplete="off">
-      </mat-form-field>
-    </div>
+        <div layout class="pad-left pad-right pad-top">
+            <sx-proveedor-field formControlName="proveedor" flex></sx-proveedor-field>
+            <mat-form-field class="pad-left">
+                <input matInput formControlName="remision" placeholder="Remisión" autocomplete="off">
+            </mat-form-field>
+            <mat-form-field class="pad-left">
+                <input matInput [matDatepicker]="myDatepicker" formControlName="fechaRemision" placeholder="Fecha Remision" autocomplete="off">
+                <mat-datepicker-toggle matSuffix [for]="myDatepicker"></mat-datepicker-toggle>
+                <mat-datepicker #myDatepicker></mat-datepicker>
+            </mat-form-field>
+            <sx-upper-case-field formControlName="comentario" placeholder="Comentario" flex class="pad-left pad-right"></sx-upper-case-field>
+            <mat-form-field class="pad-left">
+                <input matInput placeholder="Filtrar partidas" #filter autocomplete="off">
+            </mat-form-field>
+        </div>
 
-    <div class="partidas-panel ">
-      <sx-com-partidas [parent]="form" [partidas]="partidas.value" (delete)="onDeletePartida($event)" (update)="onEditPartida($event)"
-        [filter]="filter.value">
-      </sx-com-partidas>
-    </div>
-    <mat-divider></mat-divider>
+        <div class="partidas-panel ">
+            <sx-com-partidas [parent]="form" [partidas]="partidas.value" (delete)="onDeletePartida($event)" (update)="onEditPartida($event)" [filter]="filter.value">
+            </sx-com-partidas>
+        </div>
+        <mat-divider></mat-divider>
 
-    <mat-card-actions>
-      <button type="button" mat-button [routerLink]="['../']">
+        <mat-card-actions>
+            <button type="button" mat-button [routerLink]="['../']">
         <mat-icon>arrow_back</mat-icon> Coms
       </button>
-      <button type="button" mat-button color="primary" (click)="onSave()" [disabled]="form.invalid || form.pristine">
+            <button type="button" mat-button color="primary" (click)="onSave()" [disabled]="form.invalid || form.pristine">
         <mat-icon>save</mat-icon> Salvar
       </button>
-      <button type="button" mat-button color="accent" (click)="seleccionarCompra()" [disabled]="!proveedor">Seleccionar
+            <button type="button" mat-button color="accent" (click)="seleccionarCompra()" [disabled]="!proveedor">Seleccionar
         compra</button>
-      <ng-content></ng-content>
-    </mat-card-actions>
+            <ng-content></ng-content>
+        </mat-card-actions>
 
-  </form>
+    </form>
 </mat-card>

@@ -98,6 +98,8 @@ class FacturistaEstadoDeCuentaService implements  LogUser, FolioLog {
     @Transactional
     NotaDeCargo generarNotaDeCargo(FacturistaDeEmbarque f, Date corte = new Date(), String comentario) {
         log.info('Generando N de Cargo por intereses para {}, Corte: {}, Desc: {}', f, corte, comentario)
+        
+       
         List<FacturistaEstadoDeCuenta> intereses = FacturistaEstadoDeCuenta.where{
                 facturista == f &&
                 tipo == 'INTERESES' &&
@@ -105,10 +107,17 @@ class FacturistaEstadoDeCuentaService implements  LogUser, FolioLog {
                 fecha <= corte
 
             }.list()
+    
         def importe = intereses.sum 0.0 , {FacturistaEstadoDeCuenta m -> m.importe}
+
+        def cliente = Cliente.findByNombre(f)
+ 
         if( (importe as BigDecimal) <= 1.0)
             return null
 
+      
+
+    
         NotaDeCargo nc = new NotaDeCargo()
         nc.tipo = 'CHO'
         nc.formaDePago = 'COMPENSACION'
@@ -152,15 +161,16 @@ class FacturistaEstadoDeCuentaService implements  LogUser, FolioLog {
         /** END TEMPO **/
 
         nc = nc.save failOnError: true, flush: true
-
         notaDeCargoService.generarCfdi(nc)
         notaDeCargoService.timbrar(nc)
+      
 
         intereses.each {
             it.origen = nc.id
             it.save failOnError: true, flush: true
         }
 
+     
         return nc
     }
 

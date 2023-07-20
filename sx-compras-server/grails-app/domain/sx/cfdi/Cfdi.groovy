@@ -67,7 +67,7 @@ class Cfdi {
         // serie unique: 'folio', nullable:true,maxSize:30
         tipoDeComprobante inList:['I','E','T','P','N']
         sw2 nullable: true
-        versionCfdi inList: ['3.2', '3.3']
+        versionCfdi inList: ['3.2', '3.3','4.0']
         origen inList:['VENTA','NOTA_CARGO','NOTA_CREDITO','TRASLADO', 'COBROS']
         cancelado nullable: true
         status nullable: true

@@ -11,6 +11,7 @@ import grails.web.context.ServletContextHolder
 
 import sx.cfdi.v33.NotaDeCargoPdfGenerator
 import sx.cfdi.v33.NotaDeCreditoPdfGenerator
+import com.cfdi4.V4NotaDeCargoPdfGenerator
 import sx.cfdi.v33.V33PdfGenerator
 import sx.cxc.NotaDeCargo
 import sx.cxc.NotaDeCredito
@@ -73,12 +74,18 @@ class CfdiPrintService implements  ResourceLoaderAware {
 
         log.info('Report: {} Exists: {} Path: {}', realPath.filename, realPath.exists(), realPath.getFile().getAbsolutePath())
         */
-        def data = NotaDeCargoPdfGenerator.getReportData(nota, xmlData)
-        Map parametros = data['PARAMETROS']
 
-        // LOGO
 
         def realPath = grailsApplication.mainContext.servletContext.getRealPath("/reports") ?: 'reports'
+        Map data =null
+        def cfdi = nota.cfdi
+        if(cfdi.versionCfdi == '3.3'){
+            data = notaDeCargoPdfGenerator.getReportData(nota)
+        }else{
+            data = V4NotaDeCargoPdfGenerator.getReportData(nota)
+        }
+        Map parametros = data['PARAMETROS']
+        // LOGO
         parametros.LOGO = realPath + '/PAPEL_CFDI_LOGO.jpg'
         return reportService.run('cfdis/PapelCFDI3Nota.jrxml', data['PARAMETROS'], data['CONCEPTOS'])
 

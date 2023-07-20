@@ -198,7 +198,7 @@ class EnvioComisionService implements  LogUser{
     def calcularPorEnvio(EnvioComision ec) {
         ec.valor = ec.envio.valor
         ec.precioTonelada = 0.0
-        ec.importeComision = (ec.comision * (ec.valor + (ec.valorCajas * 2) )) / 100.00
+        ec.importeComision = (ec.comision * (ec.valor + (ec.valorCajas * 0.5) )) / 100.00
         ec.fechaComision = new Date()
         ec.save flush: true
 

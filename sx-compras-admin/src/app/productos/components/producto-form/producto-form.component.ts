@@ -99,6 +99,7 @@ export class ProductoFormComponent implements OnInit {
       paquete: [false],
       precioContado: [null, [Validators.required, Validators.min(1)]],
       precioCredito: [null, [Validators.required, Validators.min(1)]],
+      precioTarjeta: [null, [Validators.required, Validators.min(1)]],
       largo: [0, Validators.required],
       ancho: [0, Validators.required],
       proveedorFavorito: [null],
@@ -119,5 +120,12 @@ export class ProductoFormComponent implements OnInit {
       console.log('Producto actualizar: ', rest);
       this.save.emit(rest);
     }
+  }
+  changeDate(fecha) {
+    if (fecha) {
+      const fechaFmt = new Date(fecha.substring(0, 10).replace(/-/g, '\/'));
+      return fechaFmt;
+    }
+    return fecha;
   }
 }

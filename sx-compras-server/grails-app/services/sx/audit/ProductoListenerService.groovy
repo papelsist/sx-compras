@@ -33,7 +33,8 @@ class ProductoListenerService {
          'CALLE 4',
          'CF5FEBRERO',
          'VERTIZ 176',
-         'BOLIVAR']
+         'BOLIVAR',
+         'ZARAGOZA']
 
     String getId(AbstractPersistenceEvent event) {
         if ( event.entityObject instanceof Producto ) {

@@ -160,4 +160,11 @@ export class ProveedorListaFormComponent implements OnInit, OnChanges {
   onFilter(event: string) {
     this.filter$.next(event.toLowerCase());
   }
+  changeDate(fecha) {
+    if (fecha) {
+      const fechaFmt = new Date(fecha.substring(0, 10).replace(/-/g, '\/'));
+      return fechaFmt;
+    }
+    return fecha;
+  }
 }

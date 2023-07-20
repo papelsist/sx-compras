@@ -37,7 +37,7 @@ import { Cobro } from 'app/ingresos/models';
     <ng-container matColumnDef="fecha">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
       <td mat-cell *matCellDef="let row">
-        {{ row.fecha | date: 'dd/MM/yyyy' }}
+        {{ changeDate(row.fecha) | date: 'dd/MM/yyyy' }}
       </td>
       <td mat-footer-cell *matFooterCellDef> Total</td>
     </ng-container>

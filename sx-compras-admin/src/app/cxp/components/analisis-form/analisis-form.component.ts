@@ -95,4 +95,12 @@ export class AnalisisFormComponent implements OnInit, OnDestroy {
       this.save.emit(analisis);
     }
   }
+
+  changeDate(fecha) {
+    if (fecha) {
+      const fechaFmt = new Date(fecha.substring(0, 10).replace(/-/g, '\/'));
+      return fechaFmt;
+    }
+    return fecha;
+  }
 }

@@ -59,12 +59,12 @@ class InventarioService {
         Integer mes = Periodo.currentMes()
 		String fromExistencia = ""
 		sucursales.each{sucursal ->  
-    		fromExistencia <<= " ,SUM(CASE WHEN SUCURSAL_NOMBRE = '${sucursal.nombre}' AND TIPO = 'INV' THEN CANTIDAD ELSE 0 END )AS '${sucursal.nombre}_INV' " +
-    						   " ,SUM(CASE WHEN SUCURSAL_NOMBRE = '${sucursal.nombre}' AND TIPO = 'VTA' THEN CANTIDAD ELSE 0 END ) / ${meses} AS '${sucursal.nombre}_VTA' "
+    		fromExistencia <<= " ,SUM(CASE WHEN SUCURSAL_NOMBRE = '${sucursal.nombre}' AND TIPO = 'INV' THEN CANTIDAD/(CASE WHEN P.UNIDAD='MIL' THEN 1000 ELSE 1 END) ELSE 0 END )AS '${sucursal.nombre}_INV' " +
+    						   " ,SUM(CASE WHEN SUCURSAL_NOMBRE = '${sucursal.nombre}' AND TIPO = 'VTA' THEN CANTIDAD/(CASE WHEN P.UNIDAD='MIL' THEN 1000 ELSE 1 END) ELSE 0 END ) / ${meses} AS '${sucursal.nombre}_VTA' "
 		}
 		
-
-		String query ="""
+	/*
+		String query_old ="""
 			SELECT 
 				P.CLAVE as clave,
 			 	P.DESCRIPCION as descripcion,
@@ -89,6 +89,32 @@ class InventarioService {
 			LEFT JOIN linea l on (p.linea_id = l.id)
 			GROUP BY producto_id  HAVING SUM(CASE WHEN TIPO='INV' THEN CANTIDAD ELSE 0 END) + SUM(CASE WHEN TIPO='VTA' THEN CANTIDAD ELSE 0 END) <>0
 			ORDER BY p.clave
+			"""
+*/
+		String query = """
+				SELECT 
+						P.CLAVE as clave,
+						P.DESCRIPCION as descripcion,
+						P.UNIDAD as unidad,
+						P.KILOS as kilos,
+						L.LINEA as linea,
+						SUM(CANTIDAD/(CASE WHEN P.UNIDAD='MIL' THEN 1000 ELSE 1 END)) as cantidad
+						@CASE
+							FROM 
+							(
+								SELECT 'INV' tipo ,producto_id,e.CLAVE, sucursal_nombre, (E.CANTIDAD) CANTIDAD
+								FROM existencia E  WHERE anio = ? and e.mes = ?
+								union						
+								SELECT 'VTA' tipo ,d.producto_id,i.clave,s.nombre sucursal_nombre,SUM(D.CANTIDAD)  AS CANTIDAD
+								FROM venta_det D join venta v on(v.id=d.venta_id) join inventario i on(d.inventario_id=i.id) 
+								JOIN sucursal S ON(S.ID=D.SUCURSAL_ID) join cuenta_por_cobrar c on(c.id=v.cuenta_por_cobrar_id)
+								WHERE c.fecha BETWEEN ? and ? and d.inventario_id is not null and c.cfdi_id is not null and c.cancelada is null
+								GROUP BY i.clave,s.id
+							) as x 
+					JOIN producto P ON (P.ID = X.PRODUCTO_ID )
+					LEFT JOIN linea l on (p.linea_id = l.id)
+					GROUP BY clave  HAVING SUM(CASE WHEN TIPO='INV' THEN CANTIDAD ELSE 0 END) + SUM(CASE WHEN TIPO='VTA' THEN CANTIDAD ELSE 0 END) <>0
+					ORDER BY clave
 			"""
 
 		String select = query.replaceAll("@CASE", fromExistencia)

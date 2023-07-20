@@ -45,14 +45,16 @@ class SatMetadataProveedorController extends RestfulController<SatMetadataProvee
         def query =  SatMetadataProveedor.where{ejercicio == ej && mes == ms}.findAll()
     
         println query.size
-        render query
+        respond query
     }
 
 
     def importar(Integer ejercicio, Integer mes) {
+        println "Importando El metadata de proveedores para ${ejercicio} - ${mes}"
         satMetadataProveedorService.importar()
+        satMetadataProveedorService.validar(ejercicio, mes)
         render status: NO_CONTENT
-        
+        //respond []
     }
 
     def handleException(Exception e) {

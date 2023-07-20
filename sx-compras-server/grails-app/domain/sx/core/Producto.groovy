@@ -100,6 +100,8 @@ class Producto {
     BigDecimal stock = 0.00
 
     String tags
+    
+    BigDecimal precioTarjeta = 0.0
 
     static constraints = {
 

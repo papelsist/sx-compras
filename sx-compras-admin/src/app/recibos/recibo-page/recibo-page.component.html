@@ -1,17 +1,16 @@
 <div layout flex *ngIf="recibo$ | async as recibo">
-  <mat-card flex="60">
-    <mat-card-header>
-      <mat-card-title flex>
-        {{ recibo.emisor }}
-      </mat-card-title>
-      <mat-card-subtitle>
-        Id: {{ recibo.id }}
-        <span class="pad-left">UUID:</span>
-        <span class="pad-left">{{ recibo.uuid }}</span>
-        <span class="pad-left">Monto: </span>
-        <span class="pad-left">{{ recibo.monto | currency }}</span>
-        <span class="pad-left"
-          >FechaPago:{{ recibo.fechaPago | date: 'dd/MM/yyyy' }}</span
+    <mat-card flex="60">
+        <mat-card-header>
+            <mat-card-title flex>
+                {{ recibo.emisor }}
+            </mat-card-title>
+            <mat-card-subtitle>
+                Id: {{ recibo.id }}
+                <span class="pad-left">UUID:</span>
+                <span class="pad-left">{{ recibo.uuid }}</span>
+                <span class="pad-left">Monto: </span>
+                <span class="pad-left">{{ recibo.monto | currency }}</span>
+                <span class="pad-left">FechaPago:{{ changeDate(recibo.fechaPago) | date: 'dd/MM/yyyy' }}</span
         >
       </mat-card-subtitle>
     </mat-card-header>
@@ -46,34 +45,29 @@
             <mat-icon>save</mat-icon> REVISION
           </button>
           <span class="pad-left" *ngIf="recibo.revision">
-            Rev : {{ recibo.revision | date: 'dd/MM/yyyy' }}
+            Rev : {{ changeDate(recibo.revision) | date: 'dd/MM/yyyy' }}
           </span>
-        </ng-container>
-      </ng-template>
-    </mat-card-actions>
-  </mat-card>
+                </ng-container>
+                </ng-template>
+                </mat-card-actions>
+    </mat-card>
 
-  <mat-card flex="40" *ngIf="recibo.requisicion as requisicion">
-    <mat-card-title>Requisición {{ requisicion.folio }}</mat-card-title>
-    <mat-card-subtitle>
-      <span>Fecha: </span>
-      <span>{{ requisicion.egreso.fecha | date: 'dd/MM/yyyy' }}</span>
-      <span class="pad-left">Importe</span>
-      <span class="pad-left">{{ requisicion.total | currency }}</span>
-    </mat-card-subtitle>
-    <mat-divider></mat-divider>
-    <mat-card-content>
-      <sx-reqdet-table [partidas]="requisicion.partidas"></sx-reqdet-table>
-    </mat-card-content>
-    <mat-card-actions>
-      <button
-        [disabled]="recibo.revision"
-        mat-button
-        color="warn"
-        (click)="onQuitarRequisicion(requisicion, recibo)"
-      >
+    <mat-card flex="40" *ngIf="recibo.requisicion as requisicion">
+        <mat-card-title>Requisición {{ requisicion.folio }}</mat-card-title>
+        <mat-card-subtitle>
+            <span>Fecha: </span>
+            <span>{{ changeDate(requisicion.egreso.fecha) | date: 'dd/MM/yyyy' }}</span>
+            <span class="pad-left">Importe</span>
+            <span class="pad-left">{{ requisicion.total | currency }}</span>
+        </mat-card-subtitle>
+        <mat-divider></mat-divider>
+        <mat-card-content>
+            <sx-reqdet-table [partidas]="requisicion.partidas"></sx-reqdet-table>
+        </mat-card-content>
+        <mat-card-actions>
+            <button [disabled]="recibo.revision" mat-button color="warn" (click)="onQuitarRequisicion(requisicion, recibo)">
         <mat-icon>delete</mat-icon> QUITAR
       </button>
-    </mat-card-actions>
-  </mat-card>
+        </mat-card-actions>
+    </mat-card>
 </div>

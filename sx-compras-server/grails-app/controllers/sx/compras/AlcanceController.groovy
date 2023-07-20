@@ -61,13 +61,27 @@ class AlcancesController extends RestfulController<Alcance>{
         //params.ID = params.id;
         Periodo periodo = params.periodo
         // periodo.properties = params
-        log.info('Reporte: {}', params)
+        log.info('Reporte de Alcance: {}', params)
         params.SUCURSAL = '%'
         params.FECHA_INI = periodo.fechaInicial
         params.FECHA_FIN = periodo.fechaFinal
         params.MESES = params.getDouble('MESES')
         params.MESESF = params.getDouble('MESESF')
         def pdf =  reportService.run('compras/GeneralDeAlcance.jrxml', params)
+        render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'OrdenDeCompraSuc.pdf')
+    }
+
+     def printPorLinea( ) {
+        //params.ID = params.id;
+        Periodo periodo = params.periodo
+        // periodo.properties = params
+        log.info('Reporte Por Linea: {}', params)
+        params.SUCURSAL = '%'
+        params.FECHA_INI = periodo.fechaInicial
+        params.FECHA_FIN = periodo.fechaFinal
+        params.MESES = params.getDouble('MESES')
+        params.MESESF = params.getDouble('MESESF')
+        def pdf =  reportService.run('compras/GeneralDeAlcanceLinea.jrxml', params)
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'OrdenDeCompraSuc.pdf')
     }
 }

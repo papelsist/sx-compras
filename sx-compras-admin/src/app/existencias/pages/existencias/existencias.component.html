@@ -1,23 +1,62 @@
 <mat-card flex>
-  <sx-standard-header
-    title="Existencias de productos"
-    (periodoChange)="onPeriodo($event)"
-    (reload)="onReload()"
-    (download)="grid.exportData('EXIS')"
-  ></sx-standard-header>
-  <mat-divider></mat-divider>
-  <ng-template
-    tdLoading
-    [tdLoadingUntil]="!(loading$ | async)"
-    tdLoadingStrategy="overlay"
-  >
-  </ng-template>
-  <div class="grid-panel">
-    <sx-existencias-table
-      #grid
-      [partidas]="rows$ | async"
-      (select)="onSelect($event)"
-    >
-    </sx-existencias-table>
-  </div>
+    <!-- <sx-standard-header title="Existencias de productos" (periodoChange)="onPeriodo($event)" (reload)="onReload()" (download)="grid.exportData('EXIS')"></sx-standard-header> -->
+    <!-- <div layout layout-align="start center" class="pad" *tdLoading="
+        'procesando';
+        mode: 'indeterminate';
+        type: 'circle';
+        strategy: 'overlay';
+        color: 'accent'
+    ">
+        <span>
+            <span class="mat-title">Reporte general de alcances</span>
+        </span>
+        <span>
+            <button mat-icon-button [matMenuTriggerFor]="toolbarMenu">
+                <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #toolbarMenu="matMenu">
+            </mat-menu>
+        </span>
+    </div> -->
+    <div layout layout-align="start center" class="pad" *tdLoading="
+        'procesando';
+        mode: 'indeterminate';
+        type: 'circle';
+        strategy: 'overlay';
+        color: 'accent'
+        ">
+        <span>
+            <span class="mat-title">Existencias de productos</span>
+        </span>
+        <span flex></span>
+        <span>
+            <button mat-icon-button [matMenuTriggerFor]="toolbarMenu">
+                <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #toolbarMenu="matMenu">
+                <button (click)="onReload()" mat-menu-item>
+                    <mat-icon>refresh</mat-icon> Recargar
+                </button>
+                <button
+                  mat-menu-item
+                  (click)="grid.exportData('ALCANCE')"
+                  matTooltip="Descargar registros en formato CSV"
+                >
+                  <mat-icon color="primary">file_download</mat-icon> Descargar
+                </button>
+                <button (click)="generarReporteExistenciaSemana()" mat-menu-item>
+                    <mat-icon>format_list_numbered</mat-icon> Existencia por Semana
+                </button>
+            
+            </mat-menu>
+        </span>
+    </div>
+
+    <mat-divider></mat-divider>
+    <ng-template tdLoading [tdLoadingUntil]="!(loading$ | async)" tdLoadingStrategy="overlay">
+    </ng-template>
+    <div class="grid-panel">
+        <sx-existencias-table #grid [partidas]="rows$ | async" (select)="onSelect($event)">
+        </sx-existencias-table>
+    </div>
 </mat-card>

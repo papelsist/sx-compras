@@ -1,88 +1,89 @@
 <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
 
-  <ng-container matColumnDef="uuid">
-    <th mat-header-cell *matHeaderCellDef>UUID</th>
-    <td mat-cell *matCellDef="let row" class="cursor-pointer">{{row.uuid}}</td>
-    <td mat-footer-cell *matFooterCellDef>Totales </td>
-  </ng-container>
+    <ng-container matColumnDef="uuid">
+        <th mat-header-cell *matHeaderCellDef>UUID</th>
+        <td mat-cell *matCellDef="let row" class="cursor-pointer">{{row.uuid}}</td>
+        <td mat-footer-cell *matFooterCellDef>Totales </td>
+    </ng-container>
 
-  <ng-container matColumnDef="serie">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Serie</th>
-    <td mat-cell *matCellDef="let row" class="cursor-pointer">{{row?.cxp?.serie}}</td>
-    <td mat-footer-cell *matFooterCellDef> </td>
-  </ng-container>
+    <ng-container matColumnDef="serie">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Serie</th>
+        <td mat-cell *matCellDef="let row" class="cursor-pointer">{{row?.cxp?.serie}}</td>
+        <td mat-footer-cell *matFooterCellDef> </td>
+    </ng-container>
 
-  <ng-container matColumnDef="folio">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Folio</th>
-    <td mat-cell *matCellDef="let row" class="cursor-pointer">{{row.folio}}</td>
-    <td mat-footer-cell *matFooterCellDef> </td>
-  </ng-container>
+    <ng-container matColumnDef="folio">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Folio</th>
+        <td mat-cell *matCellDef="let row" class="cursor-pointer">{{row.folio}}</td>
+        <td mat-footer-cell *matFooterCellDef> </td>
+    </ng-container>
 
-  <ng-container matColumnDef="fecha">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha </th>
-    <td mat-cell *matCellDef="let row">{{row?.cxp?.fecha | date: 'dd/MM/yyyy'}}</td>
-    <td mat-footer-cell *matFooterCellDef> </td>
-  </ng-container>
+    <ng-container matColumnDef="fecha">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha </th>
+        ss
+        <td mat-cell *matCellDef="let row">{{changeDate(row?.cxp?.fecha) | date: 'dd/MM/yyyy'}}</td>
+        <td mat-footer-cell *matFooterCellDef> </td>
+    </ng-container>
 
-  <ng-container matColumnDef="moneda">
-    <th mat-header-cell *matHeaderCellDef>Moneda</th>
-    <td mat-cell *matCellDef="let row">{{row?.cxp?.moneda}}</td>
-    <td mat-footer-cell *matFooterCellDef> </td>
-  </ng-container>
+    <ng-container matColumnDef="moneda">
+        <th mat-header-cell *matHeaderCellDef>Moneda</th>
+        <td mat-cell *matCellDef="let row">{{row?.cxp?.moneda}}</td>
+        <td mat-footer-cell *matFooterCellDef> </td>
+    </ng-container>
 
-  <ng-container matColumnDef="tipoDeCambio">
-    <th mat-header-cell *matHeaderCellDef>TC</th>
-    <td mat-cell *matCellDef="let row">{{row?.cxp?.tipoDeCambio}}</td>
-    <td mat-footer-cell *matFooterCellDef> </td>
-  </ng-container>
+    <ng-container matColumnDef="tipoDeCambio">
+        <th mat-header-cell *matHeaderCellDef>TC</th>
+        <td mat-cell *matCellDef="let row">{{row?.cxp?.tipoDeCambio}}</td>
+        <td mat-footer-cell *matFooterCellDef> </td>
+    </ng-container>
 
-  <ng-container matColumnDef="total">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Total (Dcto)</th>
-    <td mat-cell *matCellDef="let req">{{req?.cxp?.total | currency:'USD'}}</td>
-    <td mat-footer-cell *matFooterCellDef> </td>
-  </ng-container>
+    <ng-container matColumnDef="total">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Total (Dcto)</th>
+        <td mat-cell *matCellDef="let req">{{req?.cxp?.total | currency:'USD'}}</td>
+        <td mat-footer-cell *matFooterCellDef> </td>
+    </ng-container>
 
-  <ng-container matColumnDef="pagos">
-    <th mat-header-cell *matHeaderCellDef>Aplicado</th>
-    <td mat-cell *matCellDef="let req">{{req?.cxp?.pagos | currency:'USD'}}</td>
-    <td mat-footer-cell *matFooterCellDef> </td>
-  </ng-container>
+    <ng-container matColumnDef="pagos">
+        <th mat-header-cell *matHeaderCellDef>Aplicado</th>
+        <td mat-cell *matCellDef="let req">{{req?.cxp?.pagos | currency:'USD'}}</td>
+        <td mat-footer-cell *matFooterCellDef> </td>
+    </ng-container>
 
-  <ng-container matColumnDef="saldo">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Saldo</th>
-    <td mat-cell *matCellDef="let req">{{req?.cxp?.saldo | currency:'USD'}}</td>
-    <td mat-footer-cell *matFooterCellDef> </td>
-  </ng-container>
+    <ng-container matColumnDef="saldo">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Saldo</th>
+        <td mat-cell *matCellDef="let req">{{req?.cxp?.saldo | currency:'USD'}}</td>
+        <td mat-footer-cell *matFooterCellDef> </td>
+    </ng-container>
 
-  <ng-container matColumnDef="analizado">
-    <th mat-header-cell *matHeaderCellDef>Analizado</th>
-    <td mat-cell *matCellDef="let req">{{req.analizado | currency:'USD'}}</td>
-    <td mat-footer-cell *matFooterCellDef> {{getTotal('analizado') | currency: 'USD'}} </td>
-  </ng-container>
+    <ng-container matColumnDef="analizado">
+        <th mat-header-cell *matHeaderCellDef>Analizado</th>
+        <td mat-cell *matCellDef="let req">{{req.analizado | currency:'USD'}}</td>
+        <td mat-footer-cell *matFooterCellDef> {{getTotal('analizado') | currency: 'USD'}} </td>
+    </ng-container>
 
-  <ng-container matColumnDef="pagado">
-    <th mat-header-cell *matHeaderCellDef>Pagado (Req)</th>
-    <td mat-cell *matCellDef="let req">{{req.pagado | currency:'USD'}}</td>
-    <td mat-footer-cell *matFooterCellDef> {{getTotal('pagado') | currency: 'USD'}} </td>
-  </ng-container>
+    <ng-container matColumnDef="pagado">
+        <th mat-header-cell *matHeaderCellDef>Pagado (Req)</th>
+        <td mat-cell *matCellDef="let req">{{req.pagado | currency:'USD'}}</td>
+        <td mat-footer-cell *matFooterCellDef> {{getTotal('pagado') | currency: 'USD'}} </td>
+    </ng-container>
 
-  <ng-container matColumnDef="aplicable">
-    <th mat-header-cell *matHeaderCellDef>Aplicable</th>
-    <td mat-cell *matCellDef="let req">{{req.aplicable | currency:'USD'}}</td>
-    <td mat-footer-cell *matFooterCellDef> {{getTotal('aplicable') | currency: 'USD'}} </td>
-  </ng-container>
+    <ng-container matColumnDef="aplicable">
+        <th mat-header-cell *matHeaderCellDef>Aplicable</th>
+        <td mat-cell *matCellDef="let req">{{req.aplicable | currency:'USD'}}</td>
+        <td mat-footer-cell *matFooterCellDef> {{getTotal('aplicable') | currency: 'USD'}} </td>
+    </ng-container>
 
-  <ng-container matColumnDef="operaciones">
-    <th mat-header-cell *matHeaderCellDef></th>
-    <td mat-cell *matCellDef="let req">
-      <mat-icon (click)="info.emit(req)" class="cursor-pointer pad-right">edit</mat-icon>
-    </td>
-    <td mat-footer-cell *matFooterCellDef> </td>
-  </ng-container>
+    <ng-container matColumnDef="operaciones">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let req">
+            <mat-icon (click)="info.emit(req)" class="cursor-pointer pad-right">edit</mat-icon>
+        </td>
+        <td mat-footer-cell *matFooterCellDef> </td>
+    </ng-container>
 
-  <tr mat-header-row *matHeaderRowDef="displayColumns"></tr>
-  <tr mat-row *matRowDef="let req; columns: displayColumns"></tr>
-  <tr mat-footer-row *matFooterRowDef="displayColumns"></tr>
+    <tr mat-header-row *matHeaderRowDef="displayColumns"></tr>
+    <tr mat-row *matRowDef="let req; columns: displayColumns"></tr>
+    <tr mat-footer-row *matFooterRowDef="displayColumns"></tr>
 
 </table>
 <mat-paginator [pageSizeOptions]="[10, 50, 100, 200]" showFirstLastButtons></mat-paginator>

@@ -176,7 +176,6 @@ class NotaDeCargoBuilder {
             concepto.cantidad = 1
             concepto.unidad = unidad
             concepto.descripcion = "${prefix} ${nota.tipo} ${item.documento?: ''}  (${item.documentoFecha.format('dd/MM/yyyy')}) ${item.sucursal}"
-
             if(nota.tipo == 'CHO') {
                 concepto.descripcion = nota.comentario
             }

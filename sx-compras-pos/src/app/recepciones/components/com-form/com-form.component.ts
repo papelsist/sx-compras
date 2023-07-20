@@ -82,4 +82,11 @@ export class ComFormComponent implements OnInit, OnChanges {
   get partidas() {
     return this.form.get('partidas') as FormArray;
   }
+  changeDate(fecha) {
+    if (fecha) {
+      const fechaFmt = new Date(fecha.substring(0, 10).replace(/-/g, '\/'));
+      return fechaFmt;
+    }
+    return fecha;
+  }
 }

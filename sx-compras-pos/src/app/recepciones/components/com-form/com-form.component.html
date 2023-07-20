@@ -1,53 +1,51 @@
 <mat-card>
-  <form [formGroup]="form">
+    <form [formGroup]="form">
 
-    <div layout layout-align="start center" class="mat-title pad-left pad-top">
-      <span>Com: {{com.documento}} {{com.nombre}}</span>
-      <span class="pad-left"> ({{com.fecha | date: 'dd/MM/yyyy'}})</span>
-      <span flex></span>
+        <div layout layout-align="start center" class="mat-title pad-left pad-top">
+            <span>Com: {{com.documento}} {{com.nombre}}</span>
+            <span class="pad-left"> ({{changeDate(com.fecha) | date: 'dd/MM/yyyy'}})</span>
+            <span flex></span>
 
-      <ng-container *ngIf="com.fechaInventario">
-        <span class="pad-left pad-right">Inventariada: </span>
-        <span class="pad-right tc-pink-600">{{com.fechaInventario | date: 'dd/MM/yyyy'}}</span>
-      </ng-container>
-    </div>
-    <mat-divider></mat-divider>
-    <div layout class="pad-left pad-right pad-top">
+            <ng-container *ngIf="com.fechaInventario">
+                <span class="pad-left pad-right">Inventariada: </span>
+                <span class="pad-right tc-pink-600">{{changeDate(com.fechaInventario) | date: 'dd/MM/yyyy'}}</span>
+            </ng-container>
+        </div>
+        <mat-divider></mat-divider>
+        <div layout class="pad-left pad-right pad-top">
 
-      <mat-form-field class="pad-left">
-        <input matInput [value]="com.compraFolio" [disabled]="true" placeholder="Compra">
-      </mat-form-field>
-      <mat-form-field class="pad-left">
-        <input matInput value="{{com.compraFecha | date: 'dd/MM/yyyy'}}" [disabled]="true" placeholder="F. Compra">
-      </mat-form-field>
-      <mat-form-field class="pad-left">
-        <input matInput [value]="com.remision" [disabled]="true" placeholder="Remisión" autocomplete="off">
-      </mat-form-field>
+            <mat-form-field class="pad-left">
+                <input matInput [value]="com.compraFolio" [disabled]="true" placeholder="Compra">
+            </mat-form-field>
+            <mat-form-field class="pad-left">
+                <input matInput value="{{com.compraFecha | date: 'dd/MM/yyyy'}}" [disabled]="true" placeholder="F. Compra">
+            </mat-form-field>
+            <mat-form-field class="pad-left">
+                <input matInput [value]="com.remision" [disabled]="true" placeholder="Remisión" autocomplete="off">
+            </mat-form-field>
 
-      <mat-form-field class="pad-left">
-        <input matInput value="{{com.compraFecha | date: 'dd/MM/yyyy'}}" [disabled]="true" placeholder="Fecha Remisión "
-          autocomplete="off">
-      </mat-form-field>
-      <sx-upper-case-field formControlName="comentario" placeholder="Comentario" flex class="pad-left pad-right"></sx-upper-case-field>
-      <mat-form-field class="pad-left">
-        <input matInput placeholder="Filtrar partidas" #filter autocomplete="off">
-      </mat-form-field>
-    </div>
+            <mat-form-field class="pad-left">
+                <input matInput value="{{com.compraFecha | date: 'dd/MM/yyyy'}}" [disabled]="true" placeholder="Fecha Remisión " autocomplete="off">
+            </mat-form-field>
+            <sx-upper-case-field formControlName="comentario" placeholder="Comentario" flex class="pad-left pad-right"></sx-upper-case-field>
+            <mat-form-field class="pad-left">
+                <input matInput placeholder="Filtrar partidas" #filter autocomplete="off">
+            </mat-form-field>
+        </div>
 
 
-    <div class="partidas-panel ">
-      <sx-com-partidas [parent]="form" [partidas]="partidas.value" [filter]="filter.value" (delete)="onDeletePartida($event)"
-        [readOnly]="com.id">
-      </sx-com-partidas>
-    </div>
+        <div class="partidas-panel ">
+            <sx-com-partidas [parent]="form" [partidas]="partidas.value" [filter]="filter.value" (delete)="onDeletePartida($event)" [readOnly]="com.id">
+            </sx-com-partidas>
+        </div>
 
-    <mat-divider></mat-divider>
-    <mat-card-actions>
-      <button type="button" mat-button [routerLink]="['../']">
+        <mat-divider></mat-divider>
+        <mat-card-actions>
+            <button type="button" mat-button [routerLink]="['../']">
         <mat-icon>arrow_back</mat-icon> Coms
       </button>
-      <ng-content></ng-content>
-    </mat-card-actions>
+            <ng-content></ng-content>
+        </mat-card-actions>
 
-  </form>
+    </form>
 </mat-card>

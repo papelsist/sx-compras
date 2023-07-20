@@ -209,6 +209,39 @@ export class AlcancesComponent implements OnInit, AfterViewInit {
       });
   }
 
+  generarReportePorLinea() {
+    const dialogRef = this.dialog
+      .open(AlcanceReportDialogComponent, {
+        data: { periodo: Periodo.monthsAgo(2) }
+      })
+      .afterClosed()
+      .subscribe(res => {
+        if (res) {
+          this.doRunReportPorLinea(res);
+        }
+      });
+  }
+
+  doRunReportPorLinea(params) {
+    this.loadingService.register('procesando');
+    this.service
+      .reportePorLinea(params)
+      .pipe(finalize(() => this.loadingService.resolve('procesando')))
+      .subscribe(
+        res => {
+          const blob = new Blob([res], {
+            type: 'application/pdf'
+          });
+          const fileURL = window.URL.createObjectURL(blob);
+          window.open(fileURL, '_blank');
+        },
+        error2 => console.error(error2)
+      );
+  }
+
+
+  
+
   doRunReport(params) {
     this.loadingService.register('procesando');
     this.service
@@ -224,5 +257,13 @@ export class AlcancesComponent implements OnInit, AfterViewInit {
         },
         error2 => console.error(error2)
       );
+  }
+
+  changeDate(fecha) {
+    if (fecha) {
+      const fechaFmt = new Date(fecha.substring(0, 10).replace(/-/g, '\/'));
+      return fechaFmt;
+    }
+    return fecha;
   }
 }

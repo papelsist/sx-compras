@@ -72,4 +72,11 @@ export class MovimientosTableComponent implements OnInit, OnChanges {
     event.stopPropagation();
     this.edit.emit(cuenta);
   }
+  changeDate(fecha) {
+    if (fecha) {
+      const fechaFmt = new Date(fecha.substring(0, 10).replace(/-/g, '\/'));
+      return fechaFmt;
+    }
+    return fecha;
+  }
 }

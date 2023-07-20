@@ -208,6 +208,14 @@ class PolizaController extends RestfulController<Poliza> {
     }
 
     @CompileDynamic
+    def actualizarContadorFolios(String subtipo, Integer ejercicio, Integer mes) {
+        print(" Actualizando ${subtipo} - ${ejercicio}- ${mes}")
+        polizaService.actualizarContadorFolios(subtipo, ejercicio, mes)
+        respond([response: "Success"], status: 200)
+
+    }
+
+    @CompileDynamic
     def prorratearPartida() {
         Poliza poliza = Poliza.get(params.id)
         if (poliza == null) {

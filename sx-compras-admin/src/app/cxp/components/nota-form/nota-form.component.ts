@@ -95,4 +95,11 @@ export class NotaFormComponent implements OnInit, OnChanges {
     const search = event !== '' ? event : ' ';
     this.search$.next(search.toLowerCase());
   }
+  changeDate(fecha) {
+    if (fecha) {
+      const fechaFmt = new Date(fecha.substring(0, 10).replace(/-/g, '\/'));
+      return fechaFmt;
+    }
+    return fecha;
+  }
 }

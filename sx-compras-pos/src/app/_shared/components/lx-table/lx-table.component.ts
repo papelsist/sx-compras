@@ -132,7 +132,16 @@ export class LxTableComponent implements OnInit, OnChanges {
   }
 
   transformDate(data, format: string = 'dd/MM/yyyy') {
-    return this.tableService.formatDate(data, format);
+    const fecha = this.changeDate(data);
+    return this.tableService.formatDate(fecha, format);
+  }
+
+  changeDate(fecha) {
+    if (fecha) {
+      const fechaFmt = new Date(fecha.substring(0, 10).replace(/-/g, '\/'));
+      return fechaFmt;
+    }
+    return fecha;
   }
 
   buildColsDef(): ColDef[] {

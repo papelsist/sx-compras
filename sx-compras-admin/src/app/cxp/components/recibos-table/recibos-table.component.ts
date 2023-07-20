@@ -66,6 +66,14 @@ export class RecibosTableComponent implements OnInit, OnChanges {
     const data = this.recibos.filter(item => item.selected);
     this.select.emit([...data]);
   }
+
+  changeDate(fecha) {
+    if (fecha) {
+      const fechaFmt = new Date(fecha.substring(0, 10).replace(/-/g, '\/'));
+      return fechaFmt;
+    }
+    return fecha;
+  }
   /*
   onEdit($event: Event, row) {
     $event.preventDefault();

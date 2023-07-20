@@ -1,29 +1,23 @@
 <mat-card>
-  <div
-    layout
-    layout-align="start center"
-    class="pad"
-    *tdLoading="
+    <div layout layout-align="start center" class="pad" *tdLoading="
       'procesando';
       mode: 'indeterminate';
       type: 'circle';
       strategy: 'overlay';
       color: 'accent'
-    "
-  >
-    <span>
+    ">
+        <span>
       <span class="mat-title">Reporte general de alcances</span>
+        </span>
+        <span flex></span>
+        <span class="pad-right">
+      Periodo: {{ changeDate(ultimaEjecucion?.fechaInicial) | date: 'dd/MM/yyyy' }} -
+      {{ changeDate(ultimaEjecucion?.fechaFinal) | date: 'dd/MM/yyyy' }}
     </span>
-    <span flex></span>
-    <span class="pad-right">
-      Periodo: {{ ultimaEjecucion?.fechaInicial | date: 'dd/MM/yyyy' }} -
-      {{ ultimaEjecucion?.fechaFinal | date: 'dd/MM/yyyy' }}
-    </span>
-    <span class="pad-right cursor-pointer" (click)="actualizarMeses()"
-      >Meses: {{ ultimaEjecucion?.meses }}</span
+        <span class="pad-right cursor-pointer" (click)="actualizarMeses()">Meses: {{ ultimaEjecucion?.meses }}</span
     >
     <span flex></span>
-    <span>
+        <span>
       <button mat-icon-button [matMenuTriggerFor]="toolbarMenu">
         <mat-icon>more_vert</mat-icon>
       </button>
@@ -49,16 +43,11 @@
         </button>
       </mat-menu>
     </span>
-  </div>
+    </div>
 
-  <mat-divider></mat-divider>
+    <mat-divider></mat-divider>
 
-  <sx-alcances-table
-    [partidas]="filteredData"
-    #grid
-    (selectionChange)="onSelect($event)"
-    (pendientes)="showPendientes($event)"
-  ></sx-alcances-table>
+    <sx-alcances-table [partidas]="filteredData" #grid (selectionChange)="onSelect($event)" (pendientes)="showPendientes($event)"></sx-alcances-table>
 </mat-card>
 <!--
   *tdLoading="
