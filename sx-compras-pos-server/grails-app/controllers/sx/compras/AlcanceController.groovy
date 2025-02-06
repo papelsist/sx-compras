@@ -97,7 +97,13 @@ class AlcancesController extends RestfulController<Compra>{
         params.FECHA_FIN = periodo.fechaFinal
         params.MESES = params.getDouble('MESES')
         params.MESESF = params.getDouble('MESESF')
-        def pdf =  reportService.run('GeneralDeAlcance.jrxml', params)
+        def pdf = null
+        if(params.ORDEN == "12"){
+             pdf =  reportService.run('GeneralDeAlcanceInventario.jrxml', params)
+        }else{
+            pdf =  reportService.run('GeneralDeAlcance.jrxml', params)
+        }
+        
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'OrdenDeCompraSuc.pdf')
     }
 

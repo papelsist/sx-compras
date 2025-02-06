@@ -28,6 +28,12 @@ export class InventariosPageComponent implements OnInit {
       icon: 'tune'
     },
     {
+      route: 'alcance',
+      title: 'Alcance',
+      description: 'Alcance',
+      icon: 'tune'
+    },
+    {
       route: 'audit',
       title: 'Replica',
       description: 'Bitácora de replicación',

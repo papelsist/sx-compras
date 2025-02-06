@@ -151,7 +151,14 @@ abstract  class InversionService implements  LogUser{
         BigDecimal rendimientoDiario = (importe * (tasa / 100)) / 360
         BigDecimal rendimientoBruto = rendimientoDiario * plazo
 
-        BigDecimal isrDiario = (importe * (isr / 100)) / 365
+        /* 
+            def diasAnio = 365
+
+            if ((year % 4 == 0) && (year %100 !=0) || (year % 400 == 0)){
+                diasAnio = 366
+            }
+        */
+        BigDecimal isrDiario = (importe * (isr / 100)) / 366
         BigDecimal isrImporte = MonedaUtils.round(isrDiario * plazo, 2)
 
         BigDecimal rendimientoNeto = rendimientoBruto - isrImporte

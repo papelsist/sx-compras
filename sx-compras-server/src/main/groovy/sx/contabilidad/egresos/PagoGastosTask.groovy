@@ -116,6 +116,7 @@ class PagoGastosTask implements  AsientoBuilder, EgresoTask {
                 def gastos = GastoDet.findAllByCxp(cxp)
                 
                 gastos.each{gasto -> 
+                    row.sucursal = gasto.sucursalNombre
                     desc = "FAC: ${cxp.serie? cxp.serie : '' } ${cxp.folio} ${cxp.fecha} ${gasto.descripcion}"
                     def cuenta = gasto.cuentaContable
                     PolizaDet det = mapRow(cuenta, desc, row, gasto.importe)
@@ -240,6 +241,8 @@ class PagoGastosTask implements  AsientoBuilder, EgresoTask {
 
                     def ctaGasto =gasto.cuentaContable
                     def gastoImporte = gasto.importe 
+
+                    row.sucursal = gasto.sucursalNombre
 
                     
                     if(provision){

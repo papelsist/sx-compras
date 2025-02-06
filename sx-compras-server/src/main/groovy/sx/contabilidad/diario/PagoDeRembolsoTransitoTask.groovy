@@ -62,6 +62,7 @@ class PagoDeRembolsoTransitoTask implements  AsientoBuilder{
        r.partidas.each{
 
             CuentaPorPagar cxp = it.cxp
+        
             BigDecimal ivaCfdi = cxp.impuestoTrasladado - cxp.impuestoRetenidoIva
             BigDecimal dif = cxp.total -it.apagar
 

@@ -9,7 +9,7 @@
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
 	<parameter name="COMPANY" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["PAPEL S.A. DE C.V."]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["INTERMINER SA DE CV"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="FECHA_INI" class="java.util.Date"/>
 	<parameter name="FECHA_FIN" class="java.util.Date"/>

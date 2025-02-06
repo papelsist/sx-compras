@@ -36,7 +36,7 @@ class InversionTask implements  AsientoBuilder{
                 procesarInversionSinRendimiento(poliza, inv)
             }
             if(inv.rendimientoFecha == poliza.fecha){
-                if(inv.cuentaOrigen.subCuentaOperativa == "0003"){
+                if(inv.cuentaOrigen.subCuentaOperativa == "0003" || inv.cuentaOrigen.subCuentaOperativa == "0004"){
                     procesarRendimiento(poliza, inv)
                 }
                

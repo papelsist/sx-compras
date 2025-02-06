@@ -28,7 +28,14 @@
 		<defaultValueExpression><![CDATA[" "]]></defaultValueExpression>
 	</parameter>
 	<queryString>
-		<![CDATA[SELECT CASE WHEN $P{SUCURSAL}='%' THEN "TODAS" ELSE (SELECT S.NOMBRE FROM sucursal S WHERE S.activa IS TRUE AND S.ID LIKE $P{SUCURSAL} ) END AS SUCURSAL,L.LINEA,C.CLASE,M.MARCA,P.CLAVE,P.DESCRIPCION,P.KILOS
+		<![CDATA[SELECT x.*
+
+,(EXIST+PED_PEND)/PROM_VTA ALC_TOT_PED
+
+,if( ((PROM_VTA*$P{MESES})-(EXIST+PED_PEND)) <=0.000,0.000,((PROM_VTA*$P{MESES})-(EXIST+PED_PEND)) ) PEDIDO
+
+FROM(
+SELECT CASE WHEN $P{SUCURSAL}='%' THEN "TODAS" ELSE (SELECT S.NOMBRE FROM sucursal S WHERE S.activa IS TRUE AND S.ID LIKE $P{SUCURSAL} ) END AS SUCURSAL,L.LINEA,C.CLASE,M.MARCA,P.CLAVE,P.DESCRIPCION,P.KILOS
 ,SUM(EXI) AS EXIST,(CASE WHEN SUM(VTA)=0 AND P.UNIDAD='MIL' THEN 0.100 WHEN SUM(VTA)=0 AND P.UNIDAD<>'MIL' THEN 1 ELSE SUM(VTA)  END)  AS VTA,ROUND((ROUND(TO_DAYS($P{FECHA_FIN})-TO_DAYS($P{FECHA_INI}),0)),0)/30.4166 AS MESES_PRDO
 ,(CASE WHEN SUM(VTA)=0 AND P.UNIDAD='MIL' THEN 0.100 WHEN SUM(VTA)=0 AND P.UNIDAD<>'MIL' THEN 1 ELSE (SUM(VTA)/(ROUND((ROUND(TO_DAYS($P{FECHA_FIN})-TO_DAYS($P{FECHA_INI}),0)),0)/30.4166)) END) AS PROM_VTA
 ,IFNULL(IFNULL(SUM(EXI),0)/IFNULL((CASE WHEN SUM(VTA)=0 AND P.UNIDAD='MIL' THEN 0.100 WHEN SUM(VTA)=0 AND P.UNIDAD<>'MIL' THEN 1 ELSE (SUM(VTA)/(ROUND((ROUND(TO_DAYS($P{FECHA_FIN})-TO_DAYS($P{FECHA_INI}),0)),0)/30.4166)) END),0),0) AS ALC_TOT
@@ -40,15 +47,16 @@ UNION
 SELECT X.PRODUCTO_ID,P.CLAVE,0,SUM((X.CANTIDAD*-1)/(case when p.unidad ='MIL' then 1000 else 1 end)) AS VTA,0 AS PEND FROM INVENTARIO X JOIN producto p ON(X.producto_id=p.ID) WHERE DATE(X.FECHA) BETWEEN $P{FECHA_INI} AND $P{FECHA_FIN} AND X.TIPO IN('FAC','DEV') AND   X.sucursal_id LIKE $P{SUCURSAL} GROUP BY P.CLAVE,X.PRODUCTO_ID
 UNION
 SELECT X.PRODUCTO_ID,P.CLAVE,0,0,SUM(((X.SOLICITADO-X.DEPURADO)/(case when P.unidad ='MIL' then 1000 else 1 end))-IFNULL((SELECT SUM(I.CANTIDAD/(case when Y.unidad ='MIL' then 1000 else 1 end)) FROM recepcion_de_compra_det I JOIN producto Y ON(I.producto_id=Y.ID) WHERE I.compra_det_id=X.ID AND I.inventariox IS NOT NULL),0)) AS PENDTE
-from compra_det X join compra cc on (x.compra_id = cc.id) JOIN producto P ON(X.producto_id=P.ID) WHERE cc.fecha > '2019-01-01' and cc.pendiente is true  and X.SUCURSAL_ID LIKE $P{SUCURSAL} GROUP BY X.PRODUCTO_ID
+from compra_det X join compra cc on (x.compra_id = cc.id) JOIN producto P ON(X.producto_id=P.ID) WHERE cc.fecha > '2021-01-01' and cc.pendiente is true  and X.SUCURSAL_ID LIKE $P{SUCURSAL} GROUP BY X.PRODUCTO_ID
 ) AS A
 JOIN producto P ON(A.PRODUCTO_ID=P.ID)
 join LINEA L on(L.ID=p.LINEA_ID)
 JOIN CLASE C ON(C.ID=P.CLASE_ID)
 JOIN marca M ON(M.ID=P.MARCA_ID)
-WHERE P.ACTIVO IS TRUE AND P.INVENTARIABLE IS TRUE
+WHERE P.ACTIVO IS TRUE AND P.INVENTARIABLE IS TRUE AND L.LINEA LIKE $P{LINEA} $P!{DELINEA}
 GROUP BY P.CLAVE,P.ID
-ORDER BY LINEA,CLASE, $P!{ORDEN} $P!{FORMA}]]>
+ORDER BY LINEA,CLASE, $P!{ORDEN} $P!{FORMA}
+) AS x]]>
 	</queryString>
 	<field name="SUCURSAL" class="java.lang.String"/>
 	<field name="LINEA" class="java.lang.String"/>
@@ -66,6 +74,8 @@ ORDER BY LINEA,CLASE, $P!{ORDEN} $P!{FORMA}]]>
 	<field name="PED_PEND_TON" class="java.math.BigDecimal"/>
 	<field name="EX_TON" class="java.math.BigDecimal"/>
 	<field name="PROMVTA_TON" class="java.math.BigDecimal"/>
+	<field name="PEDIDO" class="java.math.BigDecimal"/>
+	<field name="ALC_TOT_PED" class="java.math.BigDecimal"/>
 	<variable name="ALC_TOT_PED" class="java.lang.Double">
 		<variableExpression><![CDATA[new Double(($F{EXIST}.doubleValue()+$F{PED_PEND}.doubleValue())/$F{PROM_VTA}.doubleValue())]]></variableExpression>
 	</variable>
@@ -418,8 +428,8 @@ new String($P{FILTRADO}.concat(new String(" A ")).concat($P{MESESF}.toString())
 				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($P{DELINEA}.equals(new String("AND DELINEA IS TRUE"))? "DE LINEA" :
-$P{DELINEA}.equals(new String("AND DELINEA IS FALSE")) ? "ESPECIALES" :
+				<textFieldExpression><![CDATA[($P{DELINEA}.equals(new String("AND DE_LINEA IS TRUE"))? "DE LINEA" :
+$P{DELINEA}.equals(new String("AND DE_LINEA IS FALSE")) ? "ESPECIALES" :
 "TODOS")]]></textFieldExpression>
 			</textField>
 		</band>
@@ -569,19 +579,19 @@ $P{DELINEA}.equals(new String("AND DELINEA IS FALSE")) ? "ESPECIALES" :
 				</textElement>
 				<textFieldExpression><![CDATA[$F{PED_PEND}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.0" isBlankWhenNull="false">
-				<reportElement key="textField-9" x="471" y="0" width="42" height="11" uuid="e96a28ee-0bce-4f3c-b917-4e26e53c3277"/>
+			<textField pattern="#,##0.00" isBlankWhenNull="false">
+				<reportElement key="textField-10" x="513" y="0" width="46" height="11" uuid="d60787de-ffca-42bb-a438-46a3b21f263d"/>
 				<textElement textAlignment="Right">
 					<font fontName="Arial" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{ALC_TOT_PED}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{PEDIDO}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0" isBlankWhenNull="false">
-				<reportElement key="textField-10" x="513" y="0" width="46" height="11" uuid="6fdb800a-a9f4-4c32-aad9-a448fad83183"/>
+			<textField pattern="#,##0.0" isBlankWhenNull="false">
+				<reportElement key="textField-9" x="471" y="0" width="42" height="11" uuid="d132601f-3365-4967-9b90-38586c5d1639"/>
 				<textElement textAlignment="Right">
 					<font fontName="Arial" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{PEDIDO}.longValue()<=0 ? new Double(0) : $V{PEDIDO}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{ALC_TOT_PED}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -805,6 +815,20 @@ $P{DELINEA}.equals(new String("AND DELINEA IS FALSE")) ? "ESPECIALES" :
 				</textElement>
 				<text><![CDATA[Totales :  ]]></text>
 			</staticText>
+			<textField pattern="#,##0.0" isBlankWhenNull="false">
+				<reportElement key="textField-21" x="514" y="2" width="45" height="11" uuid="4e5989ec-dd0a-4b30-bf9a-968e749b9a41"/>
+				<box>
+					<pen lineStyle="Double"/>
+					<topPen lineWidth="1.5" lineStyle="Double"/>
+					<leftPen lineStyle="Double"/>
+					<bottomPen lineStyle="Double"/>
+					<rightPen lineStyle="Double"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PED_TON_TOT}]]></textFieldExpression>
+			</textField>
 		</band>
 	</summary>
 </jasperReport>

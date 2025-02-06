@@ -149,7 +149,7 @@ class CostoPromedioController extends RestfulController<CostoPromedio> {
         repParams.FECHA_FINAL = command.fechaFin
         repParams.TIPO = command.tipo
         repParams.GRUPO = command.grupo
-        repParams.SUCURSAL = command.sucursal.id
+        repParams.SUCURSAL = command.sucursal.id ?: '%'
 
         def pdf =  reportService.run('MovimientosCosteadosDeDocumentos.jrxml', repParams)
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'MovimientosCosteadosDeDocumentos.pdf')
@@ -162,7 +162,7 @@ class CostoPromedioController extends RestfulController<CostoPromedio> {
         repParams.FECHA = command.fecha
         repParams.DOCTO = command.documento
         repParams.TIPO = command.tipo
-        repParams.SUCURSAL = command.sucursal.id
+        repParams.SUCURSAL = command.sucursal.id ?: '%'
 
         def pdf =  reportService.run('MovimientosCosteadosDetalle.jrxml', repParams)
         render (file: pdf.toByteArray(), contentType: 'application/pdf', filename: 'MovimientosCosteadosDetalle.pdf')

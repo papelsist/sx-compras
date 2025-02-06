@@ -94,10 +94,7 @@ UNION
 
 SELECT 'XDESGLOSE' TIPO,FACTURISTA,'FACTURISTA' VTA,CHOFER,SUCURSAL,SUM(VALOR) VALOR,SUM(VALOR_CAJAS) CAJAS,SUM(VALOR+(VALOR_CAJAS*2)) IMPORTE,SUM(KILOS) KILOS,SUM(MANIOBRA) FLETE
 ,(CASE WHEN COMISION>0 THEN COMISION ELSE PRECIO_TONELADA END) FACTOR,SUM(IMPORTE_COMISION) IMP_COMISION,SALDO
-,(SELECT SUM(C.TOTAL)-SUM(IFNULL((SELECT SUM(A.IMPORTE) FROM aplicacion_de_cobro A WHERE A.cuenta_por_cobrar_id=C.ID AND A.FECHA<=$P{FECHA_CORTE}),0))
-	FROM cuenta_por_cobrar C JOIN cliente T ON(C.cliente_id=T.ID) JOIN facturista_de_embarque F ON(F.RFC=T.RFC)
-	WHERE F.ID=A.FACT_ID AND C.TIPO='CHO' AND C.tipo_documento='NOTA_DE_CARGO' AND C.FECHA<=$P{FECHA_CORTE})
- INT_E_IVA
+,IFNULL((SELECT SUM(IMPORTE) FROM facturista_estado_de_cuenta X WHERE CONCEPTO='INTERESES' AND  X.FECHA BETWEEN $P{FECHA_INI} AND $P{FECHA_FIN} AND 	X.FACTURISTA_ID=$P{FACTURISTA}),0) INT_E_IVA
 ,MATERIAL,CELULAR,PATIN,MANIOBRA_LOCAL,MANIOBRA_FORANEA,VALES,OTROS
 ,CASE WHEN SALDO=0.0 THEN 0.0
 WHEN SALDO<=round((ROUND((SUM(IMPORTE_COMISION)+SUM(MANIOBRA))* (1+(0.16-RETENCION)) ,2)*a.descuent_en_prestamo/100.00),0) THEN SALDO ELSE round((ROUND((SUM(IMPORTE_COMISION)+SUM(MANIOBRA))* (1+(0.16-RETENCION)) ,2)*a.descuent_en_prestamo/100.00),0) END DESCTO,a.descuent_en_prestamo,RETENCION
@@ -588,14 +585,14 @@ GROUP BY FACTURISTA]]>
 				<textFieldExpression><![CDATA["CALCULO DE FLETES"]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement key="staticText-39" x="4" y="21" width="67" height="12" uuid="513ccbce-45b4-4234-a4a8-d5573c5aabc3"/>
+				<reportElement key="staticText-39" x="4" y="21" width="184" height="12" uuid="513ccbce-45b4-4234-a4a8-d5573c5aabc3"/>
 				<textElement textAlignment="Left">
 					<font fontName="SansSerif" size="9" isBold="false" isItalic="true" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<text><![CDATA[PROVEEDOR  : ]]></text>
+				<text><![CDATA[PROVEEDOR: INTERMINER SA DE CV  -   ]]></text>
 			</staticText>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-14" x="71" y="21" width="231" height="12" uuid="c3c8f8e1-8f1f-44d9-8382-19430efa2b60"/>
+				<reportElement key="textField-14" x="188" y="21" width="231" height="12" uuid="c3c8f8e1-8f1f-44d9-8382-19430efa2b60"/>
 				<textElement textAlignment="Left">
 					<font size="9" isBold="true" isItalic="true" isUnderline="false" pdfFontName="Helvetica-BoldOblique"/>
 				</textElement>

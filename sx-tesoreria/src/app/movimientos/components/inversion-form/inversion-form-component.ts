@@ -248,7 +248,7 @@ export class InversionFormComponent implements OnInit, OnDestroy {
 
     const rendimientoBruto = rendimientoDiario * plazo;
 
-    const isrDiario = (importe * (isr / 100)) / 365;
+    const isrDiario = (importe * (isr / 100)) / 366;
     const isrImporte = _.round(isrDiario * plazo, 2);
 
     const rendimientoNeto = rendimientoBruto - isrImporte;

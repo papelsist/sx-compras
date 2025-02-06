@@ -111,6 +111,7 @@ export class CobrosTableComponent implements OnInit, OnChanges {
     event.stopPropagation();
     this.delete.emit(row);
   }
+
   changeDate(fecha) {
     if (fecha) {
       const fechaFmt = new Date(fecha.substring(0, 10).replace(/-/g, '\/'));

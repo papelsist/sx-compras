@@ -18,6 +18,7 @@ import { UnautorizedInterceptor } from './services/unauthorized.interceptor';
 
 import { components } from './components';
 import { containers } from './containers';
+import { AuthRoleGuard } from './services/auth_role.guard';
 
 @NgModule({
   imports: [SharedModule],
@@ -31,6 +32,7 @@ export class AuthModule {
       providers: [
         AuthService,
         AuthGuard,
+        AuthRoleGuard,
         { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
         {
           provide: HTTP_INTERCEPTORS,

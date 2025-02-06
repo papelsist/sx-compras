@@ -169,7 +169,7 @@ class IngresosTask implements  AsientoBuilder {
                 .replaceAll("@TIPO", tipoStr)
                 .replace("@OTRO",tipo)
 
-          // println sqlClientes
+        println sqlClientes
     
         List rowsClientes = getAllRows(sqlClientes, [])
          
@@ -218,9 +218,7 @@ class IngresosTask implements  AsientoBuilder {
             poliza.addToPartidas(clienteDet)
             
               if(row.asiento.endsWith('APL')){
-                def cta =  '205-0001-0004-0000'
-
-
+                def cta =  row.cta_saf_ident
 
                 BigDecimal importeDiv = MonedaUtils.calcularImporteDelTotal(row.total)
                 BigDecimal ivaDiv = row.total - importeDiv
@@ -276,7 +274,7 @@ class IngresosTask implements  AsientoBuilder {
         String sqlSaf = getSafSql()
                 .replaceAll("@FECHA", toSqlDate(poliza.fecha))
                 .replaceAll("@TIPO", tipo)
-            println sqlSaf
+            // println sqlSaf
         List rowsSaf = getAllRows(sqlSaf, [])
 
         rowsSaf.each{row ->
@@ -416,6 +414,9 @@ class IngresosTask implements  AsientoBuilder {
             cobroId, 
             ifnull((case when a.moneda='USD' then concat(a.asiento,'_USD') else a.asiento end),"COB") asiento,a.documentoTipo,a.referencia2,a.sucursal,a.suc ,a.cta_iva_pag,a.cta_iva_pend
             ,case when a.documentoTipo in('CRE','CHE','JUR') and a.asiento like '%_TAR_%' THEN '205-0007-0001-0000' else '000-0000-0000-0000' end cta_tar
+            ,(case when a.asiento not like '%_xIDENT%' THEN '205-0001-0004-0000' else
+                CONCAT('205-0002-', (case 	when a.asiento like 'COB_TRANSF%' THEN ifnull((SELECT sub_cuenta_operativa FROM cobro_transferencia xx join movimiento_de_cuenta m on(xx.ingreso_id=m.id) join cuenta_de_banco x on(m.cuenta_id=x.id) where xx.cobro_id=a.cobroId),'0000')
+                when a.asiento like 'COB_DEP%' THEN ifnull((SELECT sub_cuenta_operativa FROM cobro_deposito xx join movimiento_de_cuenta m on(xx.ingreso_id=m.id) join cuenta_de_banco x on(m.cuenta_id=x.id) where xx.cobro_id=a.cobroId),'0000') else '0000' end),'-0000') end) cta_saf_ident
             ,a.cta_cliente,a.moneda,a.tc,sum(a.subtotal) subtotal,sum(a.impuesto) impuesto,sum(a.total) total,a.fecha,a.forma_de_pago,a.referencia,a.origen,'CuentaPorCobrar' entidad,a.documento,a.fecha_fac,a.total cobro_aplic, '@OTRO' tipo
         	  FROM (        	      	  
             SELECT 
@@ -463,7 +464,7 @@ class IngresosTask implements  AsientoBuilder {
             ,f.tipo as documentoTipo,a.fecha,(case when f.tipo in('CON','COD') or b.forma_De_pago like 'TARJ%' then null else f.documento end) documento,(case when f.tipo in('CON','COD') then null else f.fecha end) fecha_fac,b.forma_de_pago,b.referencia
             ,f.moneda,f.tipo_de_cambio tc,round((a.importe*b.tipo_de_cambio)/1.16,2) subtotal,round(a.importe*b.tipo_de_cambio,2) - round((a.importe*b.tipo_de_cambio)/1.16,2) impuesto,round(a.importe*b.tipo_de_cambio,2) total
             ,(case when f.tipo in('CON','COD') then concat('VENTA ',f.tipo,' ',s.nombre) else (select c.nombre from cliente c where f.cliente_id=c.id) end) referencia2,s.nombre sucursal, s.clave as suc
-			,concat(s.nombre,"_",f.tipo_documento,"_",f.tipo) cliente_id,'208-0001-0000-0000' cta_iva_pag,'209-0001-0000-0000' cta_iva_pend
+			,f.cliente_id,'208-0001-0000-0000' cta_iva_pag,'209-0001-0000-0000' cta_iva_pend
             ,concat(
                 (case when b.tipo in('CHE','JUR') then '106-' else '105-' end)
                 ,(case 
@@ -505,7 +506,7 @@ class IngresosTask implements  AsientoBuilder {
             join sucursal s on(b.sucursal_id=s.id) 
             where a.fecha='@FECHA' and a.fecha>date(b.primera_aplicacion) and f.cancelada is null and  b.forma_de_pago not in('BONIFICACION','DEVOLUCION') and  @TIPO
             ) as a
-            group by a.asiento,a.documentoTipo,a.documento,a.referencia2,a.moneda,a.tc,a.sucursal,a.suc
+            group by a.asiento,a.documentoTipo,a.documento,a.referencia2,a.moneda,a.tc,a.sucursal,a.suc,a.cliente_id
         """ 
         return sql
 

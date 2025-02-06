@@ -45,7 +45,7 @@ class PagoGastosReqTask implements  AsientoBuilder, EgresoTask {
             cargoProveedorGasto(poliza, r)
         }
 
-         abonoBanco(poliza, r)
+        abonoBanco(poliza, r)
         ajustarProveedorBanco(poliza)
 
         registrarVariacionCambiaria(poliza, r)
@@ -98,6 +98,8 @@ class PagoGastosReqTask implements  AsientoBuilder, EgresoTask {
                 }
 
                 gastos.each{ gasto ->
+
+                    row.sucursal = gasto.sucursalNombre
                   
                     desc = "FAC: ${cxp.serie? cxp.serie : '' } ${cxp.folio} ${cxp.fecha} ${gasto.descripcion}"
                     def cv = gasto.cuentaContable.clave
@@ -410,8 +412,6 @@ class PagoGastosReqTask implements  AsientoBuilder, EgresoTask {
     }
 
     PolizaDet mapRow(String cuentaClave, String descripcion, Map row, BigDecimal debe = 0.0, BigDecimal haber = 0.0) {
-
-           
 
         CuentaContable cuenta = buscarCuenta(cuentaClave)
         PolizaDet det = new PolizaDet(

@@ -35,6 +35,7 @@
 ,if( ((PROM_VTA*$P{MESES})-(EXIST+PED_PEND)) <=0.000,0.000,((PROM_VTA*$P{MESES})-(EXIST+PED_PEND)) ) PEDIDO
 
 FROM(
+
 SELECT CASE WHEN $P{SUCURSAL}='%' THEN "TODAS" ELSE (SELECT S.NOMBRE FROM sucursal S WHERE S.activa IS TRUE AND S.ID LIKE $P{SUCURSAL} ) END AS SUCURSAL,L.LINEA,C.CLASE,M.MARCA,P.CLAVE,P.DESCRIPCION,P.KILOS
 ,SUM(EXI) AS EXIST,(CASE WHEN SUM(VTA)=0 AND P.UNIDAD='MIL' THEN 0.100 WHEN SUM(VTA)=0 AND P.UNIDAD<>'MIL' THEN 1 ELSE SUM(VTA)  END)  AS VTA,ROUND((ROUND(TO_DAYS($P{FECHA_FIN})-TO_DAYS($P{FECHA_INI}),0)),0)/30.4166 AS MESES_PRDO
 ,(CASE WHEN SUM(VTA)=0 AND P.UNIDAD='MIL' THEN 0.100 WHEN SUM(VTA)=0 AND P.UNIDAD<>'MIL' THEN 1 ELSE (SUM(VTA)/(ROUND((ROUND(TO_DAYS($P{FECHA_FIN})-TO_DAYS($P{FECHA_INI}),0)),0)/30.4166)) END) AS PROM_VTA
@@ -53,10 +54,10 @@ JOIN producto P ON(A.PRODUCTO_ID=P.ID)
 join LINEA L on(L.ID=p.LINEA_ID)
 JOIN CLASE C ON(C.ID=P.CLASE_ID)
 JOIN marca M ON(M.ID=P.MARCA_ID)
-WHERE P.ACTIVO IS TRUE AND P.INVENTARIABLE IS TRUE AND L.LINEA LIKE $P{LINEA} $P!{DELINEA}
-GROUP BY P.CLAVE,P.ID
-ORDER BY LINEA,CLASE, $P!{ORDEN} $P!{FORMA}
-) AS x]]>
+WHERE P.ACTIVO IS TRUE AND P.INVENTARIABLE IS TRUE  AND L.LINEA LIKE $P{LINEA}  $P!{DELINEA}
+GROUP BY P.CLAVE
+ORDER BY $P!{ORDEN} $P!{FORMA}
+) as x]]>
 	</queryString>
 	<field name="SUCURSAL" class="java.lang.String"/>
 	<field name="LINEA" class="java.lang.String"/>
@@ -139,86 +140,10 @@ true
 	<group name="LINEA">
 		<groupExpression><![CDATA[$F{LINEA}]]></groupExpression>
 		<groupHeader>
-			<band height="13" splitType="Stretch">
-				<textField isBlankWhenNull="false">
-					<reportElement key="textField-11" x="37" y="0" width="148" height="13" uuid="944550f0-06d0-42c4-9d16-1643053d4766"/>
-					<textElement textAlignment="Left">
-						<font fontName="Arial" size="10" isBold="true" isUnderline="true" pdfFontName="Helvetica-Bold"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{LINEA}]]></textFieldExpression>
-				</textField>
-			</band>
+			<band splitType="Stretch"/>
 		</groupHeader>
 		<groupFooter>
-			<band height="16" splitType="Stretch">
-				<textField isBlankWhenNull="false">
-					<reportElement key="textField-14" x="78" y="0" width="130" height="11" uuid="e8ca7e71-dffb-46e3-93e6-e577eaa35906"/>
-					<textElement verticalAlignment="Top">
-						<font fontName="Arial" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{LINEA}]]></textFieldExpression>
-				</textField>
-				<staticText>
-					<reportElement key="staticText-29" x="12" y="0" width="65" height="11" uuid="87ad0498-16b2-48e0-a8b6-a08feb4f9926"/>
-					<textElement textAlignment="Right" verticalAlignment="Top">
-						<font fontName="Arial" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
-					</textElement>
-					<text><![CDATA[LINEA : ]]></text>
-				</staticText>
-				<textField pattern="#,##0.000" isBlankWhenNull="false">
-					<reportElement key="textField-17" x="268" y="0" width="62" height="11" uuid="0feb3855-0f8b-46f0-963a-3b6b9accfdd8"/>
-					<textElement textAlignment="Right" verticalAlignment="Top">
-						<font fontName="Arial" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{EX_TON_LINEA}]]></textFieldExpression>
-				</textField>
-				<textField pattern="#,##0.0" isBlankWhenNull="false">
-					<reportElement key="textField-21" x="330" y="0" width="49" height="11" uuid="ab9df9ea-20a9-4389-a99a-83889efabd36"/>
-					<textElement textAlignment="Right" verticalAlignment="Top">
-						<font fontName="Arial" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{PVTA_TON_LINEA}]]></textFieldExpression>
-				</textField>
-				<textField pattern="#,##0.000" isBlankWhenNull="false">
-					<reportElement key="textField-24" x="513" y="0" width="46" height="11" uuid="e2e318de-f1aa-4451-824c-8fffac5138a6"/>
-					<textElement textAlignment="Right" verticalAlignment="Top">
-						<font fontName="Arial" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{PED_TON_LINEA}]]></textFieldExpression>
-				</textField>
-				<staticText>
-					<reportElement key="staticText-41" x="208" y="0" width="41" height="11" uuid="35e813b3-eac9-4199-a3ae-8259af821580"/>
-					<textElement textAlignment="Right" verticalAlignment="Top">
-						<font fontName="Arial" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
-					</textElement>
-					<text><![CDATA[Toneladas ]]></text>
-				</staticText>
-				<textField pattern="#,##0.0" isBlankWhenNull="false">
-					<reportElement key="textField-28" x="415" y="0" width="49" height="11" uuid="c89dcd66-24cb-4ffb-aaba-1e5b6836f107"/>
-					<textElement textAlignment="Right" verticalAlignment="Top">
-						<font fontName="Arial" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{PED_PEND_TON_LINEA}]]></textFieldExpression>
-				</textField>
-				<textField pattern="#,##0.0" isBlankWhenNull="false">
-					<reportElement key="textField-21" x="379" y="0" width="36" height="11" uuid="74e463ab-59d9-4140-820d-132ac9548b50"/>
-					<textElement textAlignment="Right" verticalAlignment="Top">
-						<font fontName="Arial" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
-					</textElement>
-					<textFieldExpression><![CDATA[new Double(
-    $V{EX_TON_LINEA}.doubleValue() / $V{PVTA_TON_LINEA}.doubleValue()
-)]]></textFieldExpression>
-				</textField>
-				<textField pattern="#,##0.0" isBlankWhenNull="false">
-					<reportElement key="textField-24" x="464" y="0" width="49" height="11" uuid="5bdc1c0e-f557-4afd-acba-adf06e24d9db"/>
-					<textElement textAlignment="Right" verticalAlignment="Top">
-						<font fontName="Arial" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
-					</textElement>
-					<textFieldExpression><![CDATA[new Double(
-    ( $V{EX_TON_LINEA}.doubleValue() + $V{PED_PEND_TON_LINEA}.doubleValue() ) / $V{PVTA_TON_LINEA}.doubleValue()
-)]]></textFieldExpression>
-				</textField>
-			</band>
+			<band splitType="Stretch"/>
 		</groupFooter>
 	</group>
 	<group name="CLASE">
@@ -227,75 +152,7 @@ true
 			<band splitType="Stretch"/>
 		</groupHeader>
 		<groupFooter>
-			<band height="15" splitType="Stretch">
-				<textField isBlankWhenNull="false">
-					<reportElement key="textField-12" x="78" y="0" width="130" height="11" uuid="23d408a8-ac6d-4ddb-ba7b-6670c3bf44c1"/>
-					<textElement verticalAlignment="Top">
-						<font fontName="Arial" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{CLASE}]]></textFieldExpression>
-				</textField>
-				<staticText>
-					<reportElement key="staticText-28" x="8" y="0" width="69" height="11" uuid="4929e68e-d2e4-466b-b48d-60667f215c1c"/>
-					<textElement textAlignment="Right" verticalAlignment="Top">
-						<font fontName="Arial" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
-					</textElement>
-					<text><![CDATA[CLASE : ]]></text>
-				</staticText>
-				<staticText>
-					<reportElement key="staticText-37" x="208" y="0" width="41" height="11" uuid="bb4d3006-eebc-487e-b89e-5b9a02dafffb"/>
-					<textElement textAlignment="Right" verticalAlignment="Top">
-						<font fontName="Arial" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
-					</textElement>
-					<text><![CDATA[Toneladas ]]></text>
-				</staticText>
-				<textField pattern="#,##0.000" isBlankWhenNull="false">
-					<reportElement key="textField-16" x="268" y="0" width="62" height="11" uuid="d982e3dd-5361-40e6-b18e-0ba866657c66"/>
-					<textElement textAlignment="Right" verticalAlignment="Top">
-						<font fontName="Arial" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{EX_TON_CLASE}]]></textFieldExpression>
-				</textField>
-				<textField pattern="#,##0.0" isBlankWhenNull="false">
-					<reportElement key="textField-20" x="330" y="0" width="49" height="11" uuid="1cfb1c34-c61f-4f41-8add-ed9d189969ce"/>
-					<textElement textAlignment="Right" verticalAlignment="Top">
-						<font fontName="Arial" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{PVTA_TON_CLASE}]]></textFieldExpression>
-				</textField>
-				<textField pattern="#,##0.000" isBlankWhenNull="false">
-					<reportElement key="textField-23" x="513" y="0" width="46" height="11" uuid="258e353a-52db-4730-a903-c079650811e0"/>
-					<textElement textAlignment="Right" verticalAlignment="Top">
-						<font fontName="Arial" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{PED_TON_CLASE}]]></textFieldExpression>
-				</textField>
-				<textField pattern="#,##0.0" isBlankWhenNull="false">
-					<reportElement key="textField-29" x="415" y="0" width="49" height="11" uuid="e89b7a5b-d28a-4b02-bed4-c927719260cc"/>
-					<textElement textAlignment="Right" verticalAlignment="Top">
-						<font fontName="Arial" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{PED_PEND_TON_CLASE}]]></textFieldExpression>
-				</textField>
-				<textField pattern="#,##0.0" isBlankWhenNull="false">
-					<reportElement key="textField-21" x="379" y="0" width="36" height="11" uuid="eb448b9e-a497-4dcc-88a1-9523f842cdfa"/>
-					<textElement textAlignment="Right" verticalAlignment="Top">
-						<font fontName="Arial" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
-					</textElement>
-					<textFieldExpression><![CDATA[new Double(
-    $V{EX_TON_CLASE}.doubleValue() / $V{PVTA_TON_CLASE}.doubleValue()
-)]]></textFieldExpression>
-				</textField>
-				<textField pattern="#,##0.0" isBlankWhenNull="false">
-					<reportElement key="textField-24" x="464" y="0" width="49" height="11" uuid="b7d8539a-be48-40ef-9332-d1177a4e2e85"/>
-					<textElement textAlignment="Right" verticalAlignment="Top">
-						<font fontName="Arial" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
-					</textElement>
-					<textFieldExpression><![CDATA[new Double(
-    ( $V{EX_TON_CLASE}.doubleValue() + $V{PED_PEND_TON_CLASE}.doubleValue() ) / $V{PVTA_TON_CLASE}.doubleValue()
-)]]></textFieldExpression>
-				</textField>
-			</band>
+			<band splitType="Stretch"/>
 		</groupFooter>
 	</group>
 	<background>
@@ -431,6 +288,14 @@ new String($P{FILTRADO}.concat(new String(" A ")).concat($P{MESESF}.toString())
 				<textFieldExpression><![CDATA[($P{DELINEA}.equals(new String("AND DE_LINEA IS TRUE"))? "DE LINEA" :
 $P{DELINEA}.equals(new String("AND DE_LINEA IS FALSE")) ? "ESPECIALES" :
 "TODOS")]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-11" x="43" y="1" width="148" height="13" uuid="944550f0-06d0-42c4-9d16-1643053d4766"/>
+				<textElement textAlignment="Left">
+					<font fontName="Arial" size="10" isBold="true" isUnderline="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{LINEA}.equals(new String("%"))? "LINEA: TODOS" :
+$P{LINEA}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -579,19 +444,19 @@ $P{DELINEA}.equals(new String("AND DE_LINEA IS FALSE")) ? "ESPECIALES" :
 				</textElement>
 				<textFieldExpression><![CDATA[$F{PED_PEND}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.00" isBlankWhenNull="false">
-				<reportElement key="textField-10" x="513" y="0" width="46" height="11" uuid="d60787de-ffca-42bb-a438-46a3b21f263d"/>
-				<textElement textAlignment="Right">
-					<font fontName="Arial" size="8"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{PEDIDO}]]></textFieldExpression>
-			</textField>
 			<textField pattern="#,##0.0" isBlankWhenNull="false">
-				<reportElement key="textField-9" x="471" y="0" width="42" height="11" uuid="d132601f-3365-4967-9b90-38586c5d1639"/>
+				<reportElement key="textField-9" x="471" y="0" width="42" height="11" uuid="e96a28ee-0bce-4f3c-b917-4e26e53c3277"/>
 				<textElement textAlignment="Right">
 					<font fontName="Arial" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{ALC_TOT_PED}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="false">
+				<reportElement key="textField-10" x="513" y="0" width="46" height="11" uuid="6fdb800a-a9f4-4c32-aad9-a448fad83183"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PEDIDO}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -816,7 +681,7 @@ $P{DELINEA}.equals(new String("AND DE_LINEA IS FALSE")) ? "ESPECIALES" :
 				<text><![CDATA[Totales :  ]]></text>
 			</staticText>
 			<textField pattern="#,##0.0" isBlankWhenNull="false">
-				<reportElement key="textField-21" x="514" y="2" width="45" height="11" uuid="4e5989ec-dd0a-4b30-bf9a-968e749b9a41"/>
+				<reportElement key="textField-28" x="515" y="2" width="44" height="11" uuid="342a6611-cae0-4da5-8b3d-0d59d6cbb6c5"/>
 				<box>
 					<pen lineStyle="Double"/>
 					<topPen lineWidth="1.5" lineStyle="Double"/>

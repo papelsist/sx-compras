@@ -57,7 +57,7 @@ class ImpuestosSobreNominaProc implements  ProcesadorDePoliza, AsientoBuilder{
             sucursal: 'OFICINAS',
         ]
 
-        poliza.addToPartidas(mapRow(ctaImpuesto,"Impuesto Sobre Nomina 3%",row1,0.00,totalTres))
+        poliza.addToPartidas(mapRow(ctaImpuesto,"Impuesto Sobre Nomina 4%",row1,0.00,totalTres))
         return poliza
     }
 
@@ -162,7 +162,7 @@ class ImpuestosSobreNominaProc implements  ProcesadorDePoliza, AsientoBuilder{
             E.UBICACION_ID as referencia2,(SELECT U.descripcion FROM ubicacion U WHERE U.ID=E.UBICACION_ID) AS sucursal
             ,sum(D.importe_excento) AS EXENTO
             ,sum(D.importe_gravado) AS GRAVADO
-            ,SUM(D.importe_excento + D.importe_gravado) * .03 as TRESPORCIEN
+            ,SUM(D.importe_excento + D.importe_gravado) * .04 as TRESPORCIEN
             FROM 
             calendario a join calendario_det b on (b.calendario_id=a.id) join
             NOMINA N ON ( N.calendario_det_id= b.ID )
@@ -172,7 +172,7 @@ class ImpuestosSobreNominaProc implements  ProcesadorDePoliza, AsientoBuilder{
             LEFT JOIN nomina_por_empleado_det D ON(E.ID=D.parent_id)
             LEFT JOIN concepto_de_nomina C ON(C.ID=D.concepto_id)
             WHERE mes= '@MES' AND N.EJERCICIO= @EJERCICIO  and c.tipo='PERCEPCION'  and n.tipo not in('PTU')
-            AND C.TIPO IS NOT NULL and  c.id not in (40,31,33,47,54,58,59)
+            AND C.TIPO IS NOT NULL and  c.id not in (40,31,33,47,54,58,59,60)
             GROUP by ubicacion_id
         """
         return query

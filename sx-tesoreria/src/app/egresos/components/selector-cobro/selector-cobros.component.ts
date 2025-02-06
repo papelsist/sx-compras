@@ -49,6 +49,7 @@ export class SelectorCobrosComponent implements OnInit {
   onSelection(event: Cobro[]) {
     this.selected = event;
   }
+
   changeDate(fecha) {
     if (fecha) {
       const fechaFmt = new Date(fecha.substring(0, 10).replace(/-/g, '\/'));
@@ -56,4 +57,5 @@ export class SelectorCobrosComponent implements OnInit {
     }
     return fecha;
   }
+
 }

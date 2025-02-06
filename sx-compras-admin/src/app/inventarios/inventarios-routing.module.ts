@@ -22,6 +22,11 @@ const routes: Routes = [
           'app/alcance-simple/alcance-simple.module#AlcanceSimpleModule'
       },
       {
+        path: 'alcance',
+        loadChildren:
+          'app/alcances/alcances.module#AlcancesModule'
+      },
+      {
         path: 'audit',
         loadChildren: 'app/audit/audit.module#AuditModule'
       }

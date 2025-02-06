@@ -92,7 +92,13 @@ class NotaDeCargoController extends RestfulController<NotaDeCargo> {
             res << nota
             respond res
         } else {
+            /*
+            // Cambio para generar notas de cargo por intereses Repse
             res = facturistaEstadoDeCuentaService.generarNotasDeCargoPorIntereses(command.fechaFinal, command.descripcion)
+            respond res
+            */
+            def nota = facturistaEstadoDeCuentaService.generarNotasDeCargoPorIntereses(command.fechaFinal, command.descripcion)
+            res << nota
             respond res
         }
         
